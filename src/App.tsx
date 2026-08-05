@@ -164,16 +164,58 @@ export const App: React.FC = () => {
           const accessToken = params.get('access_token');
           if (accessToken) {
             try {
+              // Try Google userinfo
               const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
                 headers: { Authorization: `Bearer ${accessToken}` }
               });
-              const userInfo = await userInfoRes.json();
-              email = userInfo.email || '';
-              name = userInfo.name || '';
-              picture = userInfo.picture || '';
-              googleId = userInfo.sub || '';
+              if (userInfoRes.ok) {
+                const userInfo = await userInfoRes.json();
+                email = userInfo.email || '';
+                name = userInfo.name || '';
+                picture = userInfo.picture || '';
+                googleId = userInfo.sub || '';
+              }
             } catch (e) {
               console.error('Error fetching Google userinfo:', e);
+            }
+
+            // Try Facebook userinfo if Google failed
+            if (!email) {
+              try {
+                const fbRes = await fetch(`https://graph.facebook.com/v18.0/me?fields=id,name,email,picture.type(large)&access_token=${accessToken}`);
+                if (fbRes.ok) {
+                  const fbUser = await fbRes.json();
+                  email = fbUser.email || `fb_${fbUser.id}@chocudan24h.com`;
+                  name = fbUser.name || 'Thành viên Facebook';
+                  picture = fbUser.picture?.data?.url || '';
+                  googleId = fbUser.id || '';
+
+                  // Call Facebook auth endpoint
+                  const res = await fetch('/api/auth/facebook', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      email,
+                      name,
+                      avatar: picture,
+                      facebookId: fbUser.id
+                    })
+                  });
+                  const data = await res.json();
+                  if (data && data.user) {
+                    setUser(data.user);
+                    localStorage.setItem('hb_user', JSON.stringify(data.user));
+
+                    if (window.opener && window.opener !== window) {
+                      window.opener.postMessage({ type: 'FACEBOOK_OAUTH_SUCCESS', user: data.user }, '*');
+                      window.close();
+                      return;
+                    }
+                  }
+                }
+              } catch (e) {
+                console.error('Error fetching Facebook userinfo:', e);
+              }
             }
           }
         }

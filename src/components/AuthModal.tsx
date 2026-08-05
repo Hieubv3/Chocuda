@@ -249,26 +249,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
   const handleFacebookAuth = () => {
     setErrorMsg('');
     setSuccessMsg('');
-    const facebookAppId = (import.meta as any).env?.VITE_FACEBOOK_APP_ID || localStorage.getItem('VITE_FACEBOOK_APP_ID');
 
-    if (facebookAppId) {
-      const redirectUri = `${window.location.origin}/auth/callback`;
-      const fbAuthUrl = `https://www.facebook.com/v18.0/dialog/oauth?` + new URLSearchParams({
-        client_id: facebookAppId,
-        redirect_uri: redirectUri,
-        scope: 'email,public_profile',
-        response_type: 'token'
-      }).toString();
+    const facebookAppId = (import.meta as any).env?.VITE_FACEBOOK_APP_ID || localStorage.getItem('VITE_FACEBOOK_APP_ID') || '1000000000000000';
 
-      const popup = window.open(fbAuthUrl, 'facebook_oauth_popup', 'width=600,height=700');
-      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-        window.open(fbAuthUrl, '_blank');
-      }
-      return;
+    const redirectUri = `${window.location.origin}/auth/callback`;
+    const fbAuthUrl = `https://www.facebook.com/v18.0/dialog/oauth?` + new URLSearchParams({
+      client_id: facebookAppId,
+      redirect_uri: redirectUri,
+      scope: 'email,public_profile',
+      response_type: 'token'
+    }).toString();
+
+    // Directly open real Facebook Login dialog popup / window!
+    const popup = window.open(fbAuthUrl, 'facebook_oauth_popup', 'width=600,height=750,scrollbars=yes,resizable=yes');
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      window.location.href = fbAuthUrl;
     }
-
-    setFacebookStep('chooser');
-    setShowFacebookPrompt(true);
   };
 
   const submitFacebookLoginWithEmail = async (emailStr: string, nameStr?: string, avatarStr?: string) => {
@@ -759,169 +755,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                   )}
                 </button>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Facebook OAuth / Login Overlay Modal if active */}
-        {showFacebookPrompt && (
-          <div className="absolute inset-0 z-20 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 flex flex-col justify-between animate-in fade-in zoom-in duration-200">
-            {facebookStep === 'chooser' && (
-              <div className="space-y-5">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 shrink-0 fill-[#1877F2]" viewBox="0 0 24 24">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                    </svg>
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Đăng nhập bằng Facebook</span>
-                  </div>
-                  <button onClick={() => setShowFacebookPrompt(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-full">
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <div>
-                  <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Xác thực tài khoản Facebook</h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Tiếp tục tới <span className="font-bold text-blue-600 dark:text-blue-400">chocudan24h.com</span>
-                  </p>
-                  
-                  <div className="mt-2.5 p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl text-[11px] text-blue-900 dark:text-blue-200 leading-relaxed space-y-2">
-                    <div>
-                      💡 <b>Mã Facebook App ID</b><br />
-                      Để dùng trang đăng nhập Facebook chính thức từ Facebook.com, bạn có thể nhập <b>Facebook App ID</b> của ứng dụng bên dưới.
-                    </div>
-
-                    {!showFacebookAppIdInput ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowFacebookAppIdInput(true)}
-                        className="font-bold text-blue-600 dark:text-blue-400 underline hover:text-blue-700 block"
-                      >
-                        👉 Dán Facebook App ID để kích hoạt SDK Facebook thật!
-                      </button>
-                    ) : (
-                      <div className="pt-1 space-y-2 border-t border-blue-500/20">
-                        <label className="font-bold block text-slate-800 dark:text-slate-200">Dán Facebook App ID (Ví dụ: 1234567890):</label>
-                        <input
-                          type="text"
-                          value={inputFacebookAppId}
-                          onChange={(e) => setInputFacebookAppId(e.target.value)}
-                          placeholder="Dán Facebook App ID vào đây..."
-                          className="w-full px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-mono text-slate-900 dark:text-white"
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (inputFacebookAppId.trim()) {
-                                localStorage.setItem('VITE_FACEBOOK_APP_ID', inputFacebookAppId.trim());
-                                setShowFacebookPrompt(false);
-                                handleFacebookAuth();
-                              }
-                            }}
-                            className="px-3 py-1 bg-blue-600 text-white font-bold rounded-lg text-xs hover:bg-blue-500 shadow"
-                          >
-                            Lưu & Mở Facebook
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setShowFacebookAppIdInput(false)}
-                            className="px-2 py-1 text-slate-500 hover:text-slate-700 text-xs"
-                          >
-                            Hủy
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Account Selection */}
-                <div className="space-y-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => submitFacebookLoginWithEmail('kinhdoanh1.fpt@gmail.com', 'Bùi Văn Hiếu (Facebook)')}
-                    className="w-full flex items-center gap-3.5 p-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl transition text-left border border-slate-200 dark:border-slate-800 group"
-                  >
-                    <img
-                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
-                      alt="Bùi Văn Hiếu"
-                      className="w-10 h-10 rounded-full object-cover border border-slate-300 dark:border-slate-700"
-                    />
-                    <div className="flex-1">
-                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition">Bùi Văn Hiếu</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">kinhdoanh1.fpt@gmail.com</div>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => submitFacebookLoginWithEmail('hotro.chocudan24h@gmail.com', 'Admin Chợ Cư Dân 24H')}
-                    className="w-full flex items-center gap-3.5 p-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl transition text-left border border-slate-200 dark:border-slate-800 group"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-[#1877F2] text-white font-bold flex items-center justify-center text-xs shrink-0">
-                      FB
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition">Admin Chợ Cư Dân 24H</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">hotro.chocudan24h@gmail.com</div>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setFacebookStep('custom_input')}
-                    className="w-full flex items-center gap-3.5 p-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl transition text-left border border-dashed border-slate-300 dark:border-slate-700"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold text-lg shrink-0">
-                      +
-                    </div>
-                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200">Nhập Email/SĐT Facebook khác</div>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {facebookStep === 'custom_input' && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (!facebookEmailInput.trim()) return;
-                  submitFacebookLoginWithEmail(facebookEmailInput.trim());
-                }}
-                className="space-y-5"
-              >
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <button type="button" onClick={() => setFacebookStep('chooser')} className="text-slate-500 hover:text-slate-800 text-xs font-bold flex items-center gap-1">
-                    ← Trở lại
-                  </button>
-                  <button type="button" onClick={() => setShowFacebookPrompt(false)} className="text-slate-400 hover:text-slate-600">
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">Nhập tài khoản Facebook</h2>
-                  <p className="text-xs text-slate-500">Nhập địa chỉ Email hoặc Số điện thoại Facebook</p>
-                </div>
-
-                <input
-                  type="text"
-                  required
-                  value={facebookEmailInput}
-                  onChange={(e) => setFacebookEmailInput(e.target.value)}
-                  placeholder="Email hoặc Số điện thoại Facebook"
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-2xl text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-
-                <button
-                  type="submit"
-                  className="w-full py-3 bg-[#1877F2] hover:bg-[#166FE5] text-white font-extrabold text-xs rounded-2xl shadow-md transition"
-                >
-                  Tiếp tục với Facebook
-                </button>
-              </form>
             )}
           </div>
         )}
