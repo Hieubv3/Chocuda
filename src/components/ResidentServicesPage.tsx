@@ -20,6 +20,7 @@ import { UserStorefrontModal } from './UserStorefrontModal';
 import { StoreLocatorMapModal } from './StoreLocatorMapModal';
 import { ServicePricingModal } from './ServicePricingModal';
 import { AllStorefrontsDirectoryModal } from './AllStorefrontsDirectoryModal';
+import { TripartiteAgreementModal } from './TripartiteAgreementModal';
 
 interface ResidentServicesPageProps {
   currentUser: UserType | null;
@@ -51,6 +52,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState<boolean>(false);
   const [isAllStoresDirectoryOpen, setIsAllStoresDirectoryOpen] = useState<boolean>(false);
+  const [isTripartiteModalOpen, setIsTripartiteModalOpen] = useState<boolean>(false);
   const [stores, setStores] = useState<UserStorefront[]>(INITIAL_USER_STOREFRONTS);
 
   // Reputation PR posts state for resident partners & stores
@@ -342,6 +344,14 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               >
                 <Sparkles className="w-3.5 h-3.5 text-slate-950 fill-slate-950" />
                 <span>💎 BẢNG GIÁ QUẢNG BÁ</span>
+              </button>
+
+              <button
+                onClick={() => setIsTripartiteModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 shadow-md transition active:scale-95 cursor-pointer"
+              >
+                <FileText className="w-3.5 h-3.5 text-amber-400" />
+                <span>📜 THỎA THUẬN BA BÊN</span>
               </button>
 
               <button
@@ -2273,6 +2283,12 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
           }}
         />
       )}
+
+      {/* Tripartite Legal Agreement Modal */}
+      <TripartiteAgreementModal
+        isOpen={isTripartiteModalOpen}
+        onClose={() => setIsTripartiteModalOpen(false)}
+      />
 
     </div>
   );

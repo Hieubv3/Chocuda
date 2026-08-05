@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import { ShieldCheck, Upload, CheckCircle2, AlertTriangle, Sparkles, X, FileText, UserCheck, Lock } from 'lucide-react';
+import { addWatermarkToImage } from '../lib/watermark';
 
 interface KycVerificationModalProps {
   user: User;
@@ -156,6 +157,22 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                 📷 Ảnh CCCD Mặt Trước
               </span>
               <img src={idCardFrontUrl} alt="CCCD Front" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
+              <label className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1.5 cursor-pointer shadow transition">
+                <Upload className="w-3.5 h-3.5" />
+                <span>📁 CHỌN TỪ PC</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const watermarked = await addWatermarkToImage(file);
+                      setIdCardFrontUrl(watermarked);
+                    }
+                  }}
+                />
+              </label>
             </div>
 
             <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
@@ -163,6 +180,22 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                 📷 Ảnh CCCD Mặt Sau
               </span>
               <img src={idCardBackUrl} alt="CCCD Back" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
+              <label className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1.5 cursor-pointer shadow transition">
+                <Upload className="w-3.5 h-3.5" />
+                <span>📁 CHỌN TỪ PC</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const watermarked = await addWatermarkToImage(file);
+                      setIdCardBackUrl(watermarked);
+                    }
+                  }}
+                />
+              </label>
             </div>
 
             {user.role === 'sale' && (
@@ -177,6 +210,22 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                   </span>
                 </div>
                 <img src={brokerLicenseUrl} alt="Broker License" className="w-full h-32 object-cover rounded-xl border border-amber-500/30" />
+                <label className="w-full py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition">
+                  <Upload className="w-4 h-4" />
+                  <span>📁 CHỌN CHỨNG CHỈ TỪ MÁY TÍNH (PC)</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const watermarked = await addWatermarkToImage(file);
+                        setBrokerLicenseUrl(watermarked);
+                      }
+                    }}
+                  />
+                </label>
               </div>
             )}
           </div>

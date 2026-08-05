@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Lock, Mail, User as UserIcon, Phone, ShieldCheck, AlertCircle, CheckCircle2, Building2, Briefcase, Check } from 'lucide-react';
 import { User as UserType, BUSINESS_CATEGORIES } from '../types';
 import { Logo } from './Logo';
+import { TripartiteAgreementModal } from './TripartiteAgreementModal';
 
 interface AuthModalProps {
   onClose: () => void;
@@ -20,6 +21,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
   const [role, setRole] = useState<'owner' | 'sale' | 'visitor'>('owner');
   const [selectedCategories, setSelectedCategories] = useState<string[]>(['bds-vinhomes']);
   const [agreeTerms, setAgreeTerms] = useState(true);
+  const [showTripartiteModal, setShowTripartiteModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -1011,10 +1013,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                   id="agreeTerms"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="mt-1 rounded text-amber-500 focus:ring-amber-500"
+                  className="mt-1 rounded text-amber-500 focus:ring-amber-500 cursor-pointer"
                 />
                 <label htmlFor="agreeTerms" className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
-                  Tôi đồng ý với <strong>Điều khoản dịch vụ</strong> & <strong>Chính sách bảo mật</strong> của chocudan24h.com
+                  Tôi đã đọc & đồng ý với{' '}
+                  <button
+                    type="button"
+                    onClick={() => setShowTripartiteModal(true)}
+                    className="text-amber-600 dark:text-amber-400 font-bold underline hover:text-amber-500 inline-flex items-center gap-0.5"
+                  >
+                    Thỏa thuận Ba Bên (Cư dân - Đối tác - chocudan24h.com)
+                  </button>
+                  {' '}và Chính sách Bảo mật.
                 </label>
               </div>
             </>
@@ -1051,6 +1061,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
         </div>
 
       </div>
+
+      <TripartiteAgreementModal
+        isOpen={showTripartiteModal}
+        onClose={() => setShowTripartiteModal(false)}
+        onAccept={() => {
+          setAgreeTerms(true);
+          setShowTripartiteModal(false);
+        }}
+        userRole={role === 'owner' ? 'partner' : 'resident'}
+      />
     </div>
   );
 };

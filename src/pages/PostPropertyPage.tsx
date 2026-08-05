@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield } from 'lucide-react';
 import { PropertyType, ProjectCategory, PropertyCategory, Language, Property, User as UserType } from '../types';
 import { SoDoCensorEditor } from '../components/SoDoCensorEditor';
+import { addWatermarkToImage } from '../lib/watermark';
 
 interface PostPropertyPageProps {
   language: Language;
@@ -129,9 +130,10 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
     }
   };
 
-  const handleAddImage = () => {
+  const handleAddImage = async () => {
     if (!newImgInput) return;
-    setImagesList([...imagesList, newImgInput]);
+    const watermarked = await addWatermarkToImage(newImgInput);
+    setImagesList(prev => [...prev, watermarked]);
     setNewImgInput('');
   };
 
@@ -656,22 +658,43 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
             {/* Gallery Images List */}
             <div className="space-y-3">
-              <label className="block">Danh sách hình ảnh bất động sản (Tải link hoặc chọn file)</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="url"
-                  placeholder="Dán link ảnh (https://images.unsplash.com/...)"
-                  value={newImgInput}
-                  onChange={e => setNewImgInput(e.target.value)}
-                  className="flex-1 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddImage}
-                  className="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl"
-                >
-                  + Thêm Ảnh
-                </button>
+              <label className="block font-bold">Danh sách hình ảnh bất động sản (Chọn file từ PC hoặc dán link URL)</label>
+              
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <label className="px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
+                  <Upload className="w-4 h-4" />
+                  <span>📁 CHỌN ẢNH TỪ MÁY TÍNH (PC)</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files || []);
+                      files.forEach(async file => {
+                        const watermarked = await addWatermarkToImage(file);
+                        setImagesList(prev => [...prev, watermarked]);
+                      });
+                    }}
+                  />
+                </label>
+
+                <div className="flex-1 flex items-center gap-2">
+                  <input
+                    type="url"
+                    placeholder="Hoặc dán link ảnh Web (https://...)"
+                    value={newImgInput}
+                    onChange={e => setNewImgInput(e.target.value)}
+                    className="flex-1 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddImage}
+                    className="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs shrink-0"
+                  >
+                    + Thêm Link
+                  </button>
+                </div>
               </div>
 
               {/* Thumbnails */}
@@ -716,16 +739,36 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   <label className="block font-bold text-slate-800 dark:text-slate-200 text-[11px]">
                     Ảnh Sổ Đỏ / Hợp Đồng Mua Bán Nguyên Bản (Admin bảo mật tuyệt đối):
                   </label>
-                  <input
-                    type="url"
-                    placeholder="https://images.unsplash.com/... (Link ảnh Sổ Đỏ gốc)"
-                    value={soDoImage}
-                    onChange={(e) => {
-                      setSoDoImage(e.target.value);
-                      setSoDoRedactedImage(e.target.value);
-                    }}
-                    className="w-full p-2.5 bg-white dark:bg-slate-900 border border-amber-500/30 rounded-xl font-mono text-[11px] text-slate-900 dark:text-white"
-                  />
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <label className="px-3.5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
+                      <Upload className="w-4 h-4" />
+                      <span>📁 CHỌN SỔ ĐỎ TỪ PC</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const watermarked = await addWatermarkToImage(file);
+                            setSoDoImage(watermarked);
+                            setSoDoRedactedImage(watermarked);
+                          }
+                        }}
+                      />
+                    </label>
+
+                    <input
+                      type="url"
+                      placeholder="Hoặc dán link ảnh Sổ Đỏ gốc (https://...)"
+                      value={soDoImage}
+                      onChange={(e) => {
+                        setSoDoImage(e.target.value);
+                        setSoDoRedactedImage(e.target.value);
+                      }}
+                      className="flex-1 p-2.5 bg-white dark:bg-slate-900 border border-amber-500/30 rounded-xl font-mono text-[11px] text-slate-900 dark:text-white"
+                    />
+                  </div>
                   {soDoImage && (
                     <div className="w-36 h-24 rounded-xl overflow-hidden border border-amber-500/40 shadow-sm mt-1">
                       <img src={soDoImage} alt="Sổ đỏ gốc" className="w-full h-full object-cover" />
@@ -744,13 +787,32 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   <p className="text-slate-600 dark:text-slate-300 text-[11px]">
                     Môi giới bán hộ cần tải lên <strong>Chứng chỉ hành nghề BĐS</strong> hoặc <strong>Giấy ủy quyền / Thỏa thuận môi giới</strong> từ Chủ nhà để được xác minh uy tín.
                   </p>
-                  <input
-                    type="url"
-                    placeholder="Dán link ảnh Chứng chỉ hành nghề / Giấy ủy quyền (https://...)"
-                    value={brokerCertImage}
-                    onChange={(e) => setBrokerCertImage(e.target.value)}
-                    className="w-full p-2.5 bg-white dark:bg-slate-900 border border-teal-500/30 rounded-xl font-mono text-[11px] text-slate-900 dark:text-white"
-                  />
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <label className="px-3.5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
+                      <Upload className="w-4 h-4" />
+                      <span>📁 CHỌN GIẤY TỜ TỪ PC</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const watermarked = await addWatermarkToImage(file);
+                            setBrokerCertImage(watermarked);
+                          }
+                        }}
+                      />
+                    </label>
+
+                    <input
+                      type="url"
+                      placeholder="Hoặc dán link ảnh Chứng chỉ hành nghề (https://...)"
+                      value={brokerCertImage}
+                      onChange={(e) => setBrokerCertImage(e.target.value)}
+                      className="flex-1 p-2.5 bg-white dark:bg-slate-900 border border-teal-500/30 rounded-xl font-mono text-[11px] text-slate-900 dark:text-white"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

@@ -14,6 +14,20 @@ export const AndroidApkModal: React.FC<AndroidApkModalProps> = ({ isOpen, onClos
   const [showDirectGuide, setShowDirectGuide] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
+  // WebToNative / Custom APK Download Link State
+  const [webToNativeUrl, setWebToNativeUrl] = useState<string>(() => {
+    return localStorage.getItem('CHOCUDAN_WEBTONATIVE_APK_URL') || 'https://webtonative.com/download/chocudan24h.apk';
+  });
+  const [isEditingUrl, setIsEditingUrl] = useState(false);
+  const [savedSuccessMsg, setSavedSuccessMsg] = useState(false);
+
+  const handleSaveApkUrl = () => {
+    localStorage.setItem('CHOCUDAN_WEBTONATIVE_APK_URL', webToNativeUrl);
+    setIsEditingUrl(false);
+    setSavedSuccessMsg(true);
+    setTimeout(() => setSavedSuccessMsg(false), 3000);
+  };
+
   React.useEffect(() => {
     const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
@@ -66,18 +80,13 @@ export const AndroidApkModal: React.FC<AndroidApkModalProps> = ({ isOpen, onClos
   const handleDownloadApk = () => {
     setDownloadStarted(true);
     
-    // Create a download link for the APK payload
-    const apkUrl = '/api/download/apk';
-    const link = document.createElement('a');
-    link.href = apkUrl;
-    link.download = 'ChoCuDan24h_v2.8_Pro.apk';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Open WebToNative download URL or direct APK URL
+    const targetUrl = webToNativeUrl.trim() || 'https://webtonative.com/download/chocudan24h.apk';
+    window.open(targetUrl, '_blank');
 
     setTimeout(() => {
       setDownloadStarted(false);
-    }, 4000);
+    }, 3000);
   };
 
   return (
@@ -269,17 +278,17 @@ export const AndroidApkModal: React.FC<AndroidApkModalProps> = ({ isOpen, onClos
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded text-[10px] font-bold">
-                      ⚡ Tải Trực Tiếp Máy Android
+                      ⚡ Tải Trực Tiếp File APK
                     </span>
-                    <span className="text-slate-400 text-xs font-semibold">Gói APK Launcher v2.8</span>
+                    <span className="text-slate-400 text-xs font-semibold">WebToNative Android v2.8</span>
                   </div>
 
                   <h3 className="text-base font-black text-white leading-tight">
-                    ChoCuDan24h_v2.8_Production.apk
+                    ChoCuDan24h_App_Native.apk
                   </h3>
 
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    File đóng gói ứng dụng Android. Hỗ trợ tra cứu BĐS, lưu danh sách yêu thích và xem bản đồ masterplan.
+                    File ứng dụng Android đóng gói trực tiếp từ WebToNative. Người dùng chỉ cần nhấn nút Tải File APK để tải và cài đặt ngay.
                   </p>
                 </div>
 
@@ -291,8 +300,79 @@ export const AndroidApkModal: React.FC<AndroidApkModalProps> = ({ isOpen, onClos
                     className="w-full md:w-auto px-6 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-2xl shadow-xl shadow-emerald-500/25 transition active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wide disabled:opacity-75"
                   >
                     <Download className={`w-5 h-5 ${downloadStarted ? 'animate-bounce' : ''}`} />
-                    <span>{downloadStarted ? 'ĐANG TẢI VỀ...' : 'TẢI FILE APK (.APK)'}</span>
+                    <span>{downloadStarted ? 'ĐANG CHUYỂN TẢI...' : 'TẢI FILE APK (.APK)'}</span>
                   </button>
+                </div>
+              </div>
+
+              {/* WebToNative Link Configuration Box */}
+              <div className="p-5 bg-slate-800/90 rounded-2xl border border-indigo-500/40 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-indigo-400" />
+                    <h4 className="text-xs font-black text-white uppercase tracking-wider">
+                      CẤU HÌNH LINK TẢI APK TỪ WEBTONATIVE
+                    </h4>
+                  </div>
+                  <button
+                    onClick={() => setIsEditingUrl(!isEditingUrl)}
+                    className="px-3 py-1 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 rounded-lg text-xs font-bold border border-indigo-500/30 transition"
+                  >
+                    {isEditingUrl ? 'Đóng' : '✏️ Cập Nhật Link APK'}
+                  </button>
+                </div>
+
+                {savedSuccessMsg && (
+                  <div className="p-2.5 bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 rounded-xl text-xs font-bold text-center">
+                    ✅ Đã lưu Link tải APK WebToNative thành công!
+                  </div>
+                )}
+
+                {isEditingUrl ? (
+                  <div className="space-y-2 pt-1">
+                    <label className="block text-[11px] text-slate-300 font-medium">
+                      Dán đường link tải APK do WebToNative cấp (hoặc link Google Drive / Dropbox / Cloud Storage):
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={webToNativeUrl}
+                        onChange={(e) => setWebToNativeUrl(e.target.value)}
+                        placeholder="https://webtonative.com/download/... hoặc https://drive.google.com/..."
+                        className="flex-1 p-3 bg-slate-900 border border-indigo-500/50 rounded-xl text-xs font-mono text-indigo-200"
+                      />
+                      <button
+                        onClick={handleSaveApkUrl}
+                        className="px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl text-xs shrink-0 transition"
+                      >
+                        Lưu Link
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 bg-slate-900/90 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2 overflow-hidden">
+                    <span className="text-xs font-mono text-slate-300 truncate">
+                      {webToNativeUrl}
+                    </span>
+                    <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded shrink-0">
+                      Link Hiện Tại
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Step-by-step guide for WebToNative APK Deployment */}
+              <div className="p-5 bg-slate-800/60 rounded-2xl border border-slate-700 space-y-3 text-xs">
+                <h4 className="font-extrabold text-amber-400 flex items-center gap-1.5 uppercase">
+                  <HelpCircle className="w-4 h-4" /> 3 BƯỚC ĐỂ KHÁCH HÀNG TẢI FILE APK WEBTONATIVE VỀ MÁY:
+                </h4>
+                <div className="space-y-2 text-slate-300 leading-relaxed">
+                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-700/80">
+                    <strong className="text-emerald-400">Cách 1 (Khuyên dùng - Nhanh nhất):</strong> Sau khi WebToNative render xong file APK, copy link tải APK từ WebToNative (hoặc upload file .apk lên Google Drive rồi chọn "Chia sẻ ai có link cũng xem được"). Nhấn nút <strong>"Cập Nhật Link APK"</strong> ở ô trên và dán link vào. Khi khách bấm nút <strong>"TẢI FILE APK"</strong>, file sẽ lập tức được tải về máy Android của khách.
+                  </div>
+                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-700/80">
+                    <strong className="text-emerald-400">Cách 2 (Lưu trực tiếp trong Web Render):</strong> Đặt tên file là <code>ChoCuDan24h.apk</code> và copy vào thư mục <code>/public</code> của dự án web. Khách truy cập đường dẫn <code>https://chocudan24h.onrender.com/ChoCuDan24h.apk</code> để tải trực tiếp.
+                  </div>
                 </div>
               </div>
 

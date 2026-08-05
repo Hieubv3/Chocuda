@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { UserStorefront, StoreProduct, StoreOrder, User } from '../types';
 import { UserStorefrontModal } from './UserStorefrontModal';
+import { addWatermarkToImage } from '../lib/watermark';
 
 interface UserStorefrontManagerProps {
   user: User;
@@ -487,25 +488,61 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  URL Ảnh Logo Cửa Hàng:
+                  Logo Cửa Hàng (Chọn từ PC hoặc nhập Link URL):
                 </label>
-                <input
-                  type="text"
-                  value={logoUrl}
-                  onChange={(e) => setLogoUrl(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px]"
-                />
+                <div className="flex gap-2">
+                  <label className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shrink-0 shadow">
+                    <span>📁 Chọn PC</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const watermarked = await addWatermarkToImage(file);
+                          setLogoUrl(watermarked);
+                        }
+                      }}
+                    />
+                  </label>
+                  <input
+                    type="text"
+                    value={logoUrl}
+                    onChange={(e) => setLogoUrl(e.target.value)}
+                    placeholder="https://..."
+                    className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px]"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  URL Ảnh Banner Gian Hàng:
+                  Banner Gian Hàng (Chọn từ PC hoặc nhập Link URL):
                 </label>
-                <input
-                  type="text"
-                  value={bannerUrl}
-                  onChange={(e) => setBannerUrl(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px]"
-                />
+                <div className="flex gap-2">
+                  <label className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shrink-0 shadow">
+                    <span>📁 Chọn PC</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const watermarked = await addWatermarkToImage(file);
+                          setBannerUrl(watermarked);
+                        }
+                      }}
+                    />
+                  </label>
+                  <input
+                    type="text"
+                    value={bannerUrl}
+                    onChange={(e) => setBannerUrl(e.target.value)}
+                    placeholder="https://..."
+                    className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px]"
+                  />
+                </div>
               </div>
             </div>
 
@@ -915,13 +952,31 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
             </div>
 
             <div>
-              <label className="block font-bold mb-1 text-slate-700 dark:text-slate-300">URL Ảnh Sản Phẩm:</label>
-              <input
-                type="text"
-                value={newProdImage}
-                onChange={(e) => setNewProdImage(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px]"
-              />
+              <label className="block font-bold mb-1 text-slate-700 dark:text-slate-300">Ảnh Sản Phẩm (Chọn từ PC hoặc dán Link URL):</label>
+              <div className="flex gap-2">
+                <label className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shrink-0 shadow">
+                  <span>📁 Chọn Ảnh Từ PC</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const watermarked = await addWatermarkToImage(file);
+                        setNewProdImage(watermarked);
+                      }
+                    }}
+                  />
+                </label>
+                <input
+                  type="text"
+                  value={newProdImage}
+                  onChange={(e) => setNewProdImage(e.target.value)}
+                  placeholder="https://..."
+                  className="flex-1 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                />
+              </div>
             </div>
 
             {/* AI SEO Description Generator Button */}
@@ -1003,8 +1058,24 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
 
             {/* Image Preview / Input */}
             <div className="space-y-2">
-              <label className="block font-bold text-slate-300">Đường Dẫn / Ảnh Menu Giấy Đã Chụp:</label>
-              <div className="flex gap-2">
+              <label className="block font-bold text-slate-300">Ảnh Menu Giấy Đã Chụp (Tải từ PC hoặc dán Link Web):</label>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <label className="px-3.5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow">
+                  <span>📁 CHỌN ẢNH MENU TỪ PC</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const watermarked = await addWatermarkToImage(file);
+                        setPhotoMenuUrl(watermarked);
+                      }
+                    }}
+                  />
+                </label>
+
                 <input
                   type="text"
                   value={photoMenuUrl}
@@ -1012,6 +1083,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                   placeholder="https://..."
                   className="flex-1 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
                 />
+                
                 <button
                   type="button"
                   onClick={() => {
@@ -1021,7 +1093,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                       alert('✨ Đã AI nhận diện thành công các món & giá niêm yết từ ảnh Menu!');
                     }, 1200);
                   }}
-                  className="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl shrink-0 flex items-center gap-1.5"
+                  className="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl shrink-0 flex items-center justify-center gap-1.5"
                 >
                   <Sparkles className={`w-4 h-4 ${isAnalyzingPhoto ? 'animate-spin' : ''}`} />
                   <span>{isAnalyzingPhoto ? 'Đang Quét...' : 'Quét Lại Ảnh'}</span>
