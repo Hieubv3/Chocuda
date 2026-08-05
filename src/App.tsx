@@ -1,0 +1,797 @@
+import React, { useState, useEffect } from 'react';
+import { Header } from './components/Header';
+import { RealTimeMarketTicker } from './components/RealTimeMarketTicker';
+import { StraightLineAiChatbot } from './components/StraightLineAiChatbot';
+import { Footer } from './components/Footer';
+import { ZaloWidget } from './components/ZaloWidget';
+import { HomePage } from './pages/HomePage';
+import { PropertiesPage } from './pages/PropertiesPage';
+import { ProjectsPage } from './pages/ProjectsPage';
+import { NewsPage } from './pages/NewsPage';
+import { PostPropertyPage } from './pages/PostPropertyPage';
+import { HieuBuiProfilePage } from './pages/HieuBuiProfilePage';
+import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { UserDashboardPage } from './pages/UserDashboardPage';
+import { AdminLoginPage } from './pages/AdminLoginPage';
+import { ResidentServicesPage } from './components/ResidentServicesPage';
+import { PropertyDetailModal } from './components/PropertyDetailModal';
+import { CompareModal } from './components/CompareModal';
+import { AuthModal } from './components/AuthModal';
+import { AiWriterModal } from './components/AiWriterModal';
+import { OmnichannelBulkMarketingModal } from './components/OmnichannelBulkMarketingModal';
+import { AndroidApkModal } from './components/AndroidApkModal';
+import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig } from './types';
+import { INITIAL_PROPERTIES, INITIAL_PROJECTS, INITIAL_NEWS } from './data/initialData';
+
+export const App: React.FC = () => {
+  // Theme & Language
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [language, setLanguage] = useState<Language>('vi');
+
+  // Navigation
+  const [currentTab, setCurrentTab] = useState<string>('home');
+  const [selectedProjectId, setSelectedProjectId] = useState<ProjectCategory>('ocean-park-2');
+
+  // User Auth - Restore session from local storage if existing
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const saved = localStorage.getItem('hb_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  // Up-Tin & VietQR Pricing Config State
+  const [pricingConfig, setPricingConfig] = useState<UpTinPricingConfig>({
+    singlePushPrice: 20000,
+    autoPush5Price: 90000,
+    vipSilverPriceDay: 50000,
+    vipGoldPriceDay: 100000,
+    vipDiamondPriceDay: 200000,
+    paymentEnabled: true,
+    donateModeEnabled: false,
+    donateMessage: 'Hệ thống hỗ trợ Đăng tin & Up-tin BĐS MIỄN PHÍ. Quý khách có thể Donate tùy tâm ủng hộ Admin duy trì máy chủ qua VietQR bên dưới.',
+    bankName: 'MSB (Ngân hàng Hàng Hải Việt Nam)',
+    accountNumber: '3028031988',
+    accountHolder: 'BUI VAN HIEU'
+  });
+
+  // App Data
+  const [properties, setProperties] = useState<Property[]>(INITIAL_PROPERTIES);
+  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
+  const [news, setNews] = useState<NewsArticle[]>(INITIAL_NEWS);
+  const [contacts, setContacts] = useState<LeadContact[]>([]);
+
+  // Modals
+  const [selectedPropertyModal, setSelectedPropertyModal] = useState<Property | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [aiWriterModalOpen, setAiWriterModalOpen] = useState(false);
+  const [marketingModalOpen, setMarketingModalOpen] = useState(false);
+  const [compareModalOpen, setCompareModalOpen] = useState(false);
+  const [androidModalOpen, setAndroidModalOpen] = useState(false);
+
+  // Favorites & Compare IDs
+  const [savedIds, setSavedIds] = useState<string[]>(() => {
+    const local = localStorage.getItem('hb_saved_properties');
+    return local ? JSON.parse(local) : [];
+  });
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+
+  // Apply dark mode class to html document
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
+  // Fetch initial data from server APIs
+  const refreshServerData = () => {
+    fetch('/api/properties')
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data)) setProperties(data); })
+      .catch(err => console.warn('Using initial properties fallback:', err));
+
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data)) setProjects(data); })
+      .catch(err => console.warn('Using initial projects fallback:', err));
+
+    fetch('/api/news')
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data)) setNews(data); })
+      .catch(err => console.warn('Using initial news fallback:', err));
+
+    fetch('/api/contacts')
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data)) setContacts(data); })
+      .catch(err => console.warn('Using initial contacts fallback:', err));
+
+    fetch('/api/admin/pricing')
+      .then(res => res.json())
+      .then(data => { if (data && data.singlePushPrice) setPricingConfig(data); })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    refreshServerData();
+
+    // Check for Google OAuth callback in URL hash or pathname
+    const handleOAuthCallback = async () => {
+      const hash = window.location.hash;
+      const search = window.location.search;
+      const pathname = window.location.pathname;
+
+      if (
+        pathname === '/auth/callback' ||
+        hash.includes('id_token=') ||
+        hash.includes('access_token=') ||
+        search.includes('code=')
+      ) {
+        let email = '';
+        let name = '';
+        let picture = '';
+        let googleId = '';
+
+        const params = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
+        const idToken = params.get('id_token');
+
+        if (idToken) {
+          try {
+            const payloadBase64 = idToken.split('.')[1];
+            if (payloadBase64) {
+              const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
+              const jsonPayload = decodeURIComponent(
+                atob(base64)
+                  .split('')
+                  .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                  .join('')
+              );
+              const parsed = JSON.parse(jsonPayload);
+              email = parsed.email || '';
+              name = parsed.name || '';
+              picture = parsed.picture || '';
+              googleId = parsed.sub || '';
+            }
+          } catch (e) {
+            console.error('Error parsing ID token:', e);
+          }
+        }
+
+        if (!email) {
+          const accessToken = params.get('access_token');
+          if (accessToken) {
+            try {
+              const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${accessToken}` }
+              });
+              const userInfo = await userInfoRes.json();
+              email = userInfo.email || '';
+              name = userInfo.name || '';
+              picture = userInfo.picture || '';
+              googleId = userInfo.sub || '';
+            } catch (e) {
+              console.error('Error fetching Google userinfo:', e);
+            }
+          }
+        }
+
+        if (email) {
+          try {
+            const res = await fetch('/api/auth/google', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email,
+                name: name || email.split('@')[0],
+                avatar: picture,
+                googleId
+              })
+            });
+            const data = await res.json();
+            if (data && data.user) {
+              setUser(data.user);
+              localStorage.setItem('hb_user', JSON.stringify(data.user));
+
+              if (window.opener && window.opener !== window) {
+                window.opener.postMessage({ type: 'GOOGLE_OAUTH_SUCCESS', user: data.user }, '*');
+                window.close();
+                return;
+              }
+            }
+          } catch (e) {
+            console.error('Error authenticating Google user on server:', e);
+          }
+        }
+
+        window.history.replaceState({}, document.title, '/');
+        setCurrentTab('home');
+      }
+    };
+
+    handleOAuthCallback();
+
+    const handleHashAndSearch = () => {
+      const hash = window.location.hash.toLowerCase();
+      const search = window.location.search.toLowerCase();
+      const pathname = window.location.pathname.toLowerCase();
+      if (
+        hash === '#quantri' ||
+        hash === '#admin' ||
+        hash === '#admin-secret' ||
+        hash === '#quantri24h' ||
+        pathname.endsWith('/admin') ||
+        pathname.endsWith('/quantri') ||
+        pathname.endsWith('/admin-login') ||
+        search.includes('admin=1') ||
+        search.includes('admin=true') ||
+        search.includes('mode=admin') ||
+        search.includes('quantri=1') ||
+        search.includes('page=admin')
+      ) {
+        if (user?.role === 'admin') {
+          setCurrentTab('admin');
+        } else {
+          setCurrentTab('admin_login');
+        }
+      }
+    };
+
+    handleHashAndSearch();
+
+    const handlePopupMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'GOOGLE_OAUTH_SUCCESS' && event.data.user) {
+        setUser(event.data.user);
+        localStorage.setItem('hb_user', JSON.stringify(event.data.user));
+      }
+    };
+
+    window.addEventListener('popstate', handleHashAndSearch);
+    window.addEventListener('hashchange', handleHashAndSearch);
+    window.addEventListener('message', handlePopupMessage);
+
+    return () => {
+      window.removeEventListener('popstate', handleHashAndSearch);
+      window.removeEventListener('hashchange', handleHashAndSearch);
+      window.removeEventListener('message', handlePopupMessage);
+    };
+  }, [user]);
+
+  // Save favorites to local storage
+  const handleToggleSave = (property: Property) => {
+    setSavedIds(prev => {
+      const next = prev.includes(property.id)
+        ? prev.filter(id => id !== property.id)
+        : [...prev, property.id];
+      localStorage.setItem('hb_saved_properties', JSON.stringify(next));
+      return next;
+    });
+  };
+
+  // Compare toggle
+  const handleToggleCompare = (property: Property) => {
+    setCompareIds(prev => {
+      if (prev.includes(property.id)) {
+        return prev.filter(id => id !== property.id);
+      }
+      if (prev.length >= 3) {
+        alert('Chỉ có thể so sánh tối đa 3 bất động sản cùng lúc.');
+        return prev;
+      }
+      return [...prev, property.id];
+    });
+  };
+
+  // Property Admin approval handler
+  const handleApproveProperty = async (id: string) => {
+    try {
+      await fetch(`/api/properties/${id}/approve`, { method: 'PUT' });
+      setProperties(prev => prev.map(p => p.id === id ? { ...p, approved: true, status: 'approved' } : p));
+    } catch (e) {
+      setProperties(prev => prev.map(p => p.id === id ? { ...p, approved: true, status: 'approved' } : p));
+    }
+  };
+
+  // Property Update handler
+  const handleUpdateProperty = async (updatedProperty: Property) => {
+    setProperties(prev => prev.map(p => p.id === updatedProperty.id ? updatedProperty : p));
+    try {
+      await fetch(`/api/properties/${updatedProperty.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedProperty)
+      });
+    } catch (e) {
+      console.warn('Updated property locally:', updatedProperty.id);
+    }
+  };
+
+  // Project Update & Add handlers
+  const handleUpdateProject = async (updatedProject: Project) => {
+    setProjects(prev => prev.map(p => p.id === updatedProject.id ? updatedProject : p));
+    try {
+      await fetch(`/api/projects/${updatedProject.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedProject)
+      });
+    } catch (e) {
+      console.warn('Updated project locally:', updatedProject.id);
+    }
+  };
+
+  const handleAddProject = async (newProject: Project) => {
+    setProjects(prev => [newProject, ...prev]);
+    try {
+      await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProject)
+      });
+    } catch (e) {
+      console.warn('Added project locally:', newProject.id);
+    }
+  };
+
+  // News Update handler
+  const handleUpdateNews = async (updatedNews: NewsArticle) => {
+    setNews(prev => prev.map(n => n.id === updatedNews.id ? updatedNews : n));
+    try {
+      await fetch(`/api/news/${updatedNews.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedNews)
+      });
+    } catch (e) {
+      console.warn('Updated news article locally:', updatedNews.id);
+    }
+  };
+
+  // News Add handler
+  const handleAddNews = async (newArticle: NewsArticle) => {
+    setNews(prev => [newArticle, ...prev]);
+    try {
+      await fetch('/api/news', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newArticle)
+      });
+    } catch (e) {
+      console.warn('Added news article locally');
+    }
+  };
+
+  // News Delete handler
+  const handleDeleteNews = async (id: string) => {
+    if (!confirm('Bạn có chắc chắn muốn xóa bài viết này?')) return;
+    setNews(prev => prev.filter(n => n.id !== id));
+    try {
+      await fetch(`/api/news/${id}`, { method: 'DELETE' });
+    } catch (e) {
+      console.warn('Deleted news article locally:', id);
+    }
+  };
+
+  // Property Delete handler
+  const handleDeleteProperty = async (id: string) => {
+    if (!confirm('Bạn có chắc chắn muốn xóa tin đăng này?')) return;
+    try {
+      await fetch(`/api/properties/${id}`, { method: 'DELETE' });
+      setProperties(prev => prev.filter(p => p.id !== id));
+    } catch (e) {
+      setProperties(prev => prev.filter(p => p.id !== id));
+    }
+  };
+
+  // Save Pricing Config
+  const handleSavePricingConfig = async (newConfig: UpTinPricingConfig) => {
+    setPricingConfig(newConfig);
+    try {
+      await fetch('/api/admin/pricing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newConfig)
+      });
+    } catch (e) {
+      console.warn('Saved local pricing config');
+    }
+  };
+
+  const [propertiesHeightCategory, setPropertiesHeightCategory] = useState<HeightCategory>('all');
+  const [propertiesCategory, setPropertiesCategory] = useState<PropertyCategory | 'all'>('all');
+
+  const handleNavigateWithFilter = (type: 'sale' | 'rent', heightCategory: HeightCategory = 'all', category: PropertyCategory | 'all' = 'all') => {
+    setPropertiesHeightCategory(heightCategory);
+    setPropertiesCategory(category);
+    setCurrentTab(type);
+  };
+  const handleSeed1000Properties = async () => {
+    try {
+      const res = await fetch('/api/seed-1000', { method: 'POST' });
+      const data = await res.json();
+      if (data && data.properties) {
+        setProperties(data.properties);
+      }
+    } catch (e) {
+      // Fallback local 1000 items generator for extreme speed
+      const new1000: Property[] = Array.from({ length: 1000 }, (_, i) => {
+        const idNum = i + 1;
+        const projectTypes: ProjectCategory[] = ['ocean-park-2', 'ocean-park-3', 'ha-long-xanh'];
+        const pType = projectTypes[i % 3];
+        const isRent = i % 2 === 0;
+        const price = isRent ? Math.floor(Math.random() * 25) + 8 : (Math.floor(Math.random() * 200) + 30) / 10;
+        const priceDisplay = isRent ? `${price} Triệu/tháng` : `${price.toFixed(1)} Tỷ`;
+
+        return {
+          id: `seed-1000-prop-${idNum}`,
+          title: `${isRent ? 'Cho Thuê' : 'Bán'} Căn Căn Hộ/Biệt Thự Shophouse Vị Trí VIP #${idNum}`,
+          type: isRent ? 'rent' : 'sale',
+          project: pType,
+          category: i % 4 === 0 ? 'biet-thu-don-lap' : i % 3 === 0 ? 'shophouse' : '2pn',
+          price: price * (isRent ? 1000000 : 1000000000),
+          priceDisplay: priceDisplay,
+          area: Math.floor(Math.random() * 180) + 45,
+          bedrooms: (i % 3) + 1,
+          bathrooms: (i % 2) + 1,
+          direction: 'Đông Nam',
+          furniture: 'full',
+          legal: 'so-do',
+          address: `Phân khu Chà Là / San Hô #${idNum}, Vinhomes`,
+          description: `Bất động sản vị trí đắc địa tại ${pType.toUpperCase()}, phân khu VIP.`,
+          images: [
+            `https://images.unsplash.com/photo-${1545324418 + (i % 10)}?auto=format&fit=crop&w=800&q=80`
+          ],
+          sellerName: `Chủ Nhà/Sale #${(i % 50) + 1}`,
+          sellerPhone: `0868.499.${100 + (i % 800)}`,
+          sellerRole: i % 2 === 0 ? 'owner' : 'sale',
+          status: 'approved',
+          approved: true,
+          vipLevel: i < 20 ? 'diamond' : i < 60 ? 'gold' : 'normal',
+          createdAt: 'Hôm nay'
+        };
+      });
+      setProperties(new1000);
+    }
+  };
+
+  // Add news generated by AI Writer
+  const handlePublishNewsFromAi = (newsData: Partial<NewsArticle>) => {
+    const newArticle: NewsArticle = {
+      id: `news-${Date.now()}`,
+      title: newsData.title || 'Tin tức mới',
+      summary: newsData.summary || '',
+      content: newsData.content || '',
+      category: newsData.category || 'vinhomes',
+      author: newsData.author || 'Gemini AI',
+      publishedAt: 'Hôm nay',
+      source: 'ai',
+      image: newsData.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
+      views: 1,
+      status: 'published'
+    };
+
+    setNews(prev => [newArticle, ...prev]);
+    setAiWriterModalOpen(false);
+    setCurrentTab('news');
+  };
+
+  // Render Page Body
+  const renderCurrentPage = () => {
+    switch (currentTab) {
+      case 'home':
+        return (
+          <HomePage
+            language={language}
+            projects={projects}
+            properties={properties.filter(p => p.approved || p.status === 'approved')}
+            news={news}
+            setCurrentTab={setCurrentTab}
+            onSelectProperty={setSelectedPropertyModal}
+            savedIds={savedIds}
+            onToggleSave={handleToggleSave}
+            compareIds={compareIds}
+            onToggleCompare={handleToggleCompare}
+            onSelectProject={(projId) => {
+              setSelectedProjectId(projId);
+            }}
+          />
+        );
+
+      case 'sale':
+        return (
+          <PropertiesPage
+            properties={properties.filter(p => p.approved || p.status === 'approved')}
+            language={language}
+            initialType="sale"
+            initialHeightCategory={propertiesHeightCategory}
+            initialCategory={propertiesCategory}
+            onSelectProperty={setSelectedPropertyModal}
+            savedIds={savedIds}
+            onToggleSave={handleToggleSave}
+            compareIds={compareIds}
+            onToggleCompare={handleToggleCompare}
+          />
+        );
+
+      case 'rent':
+        return (
+          <PropertiesPage
+            properties={properties.filter(p => p.approved || p.status === 'approved')}
+            language={language}
+            initialType="rent"
+            initialHeightCategory={propertiesHeightCategory}
+            initialCategory={propertiesCategory}
+            onSelectProperty={setSelectedPropertyModal}
+            savedIds={savedIds}
+            onToggleSave={handleToggleSave}
+            compareIds={compareIds}
+            onToggleCompare={handleToggleCompare}
+          />
+        );
+
+      case 'projects':
+        return (
+          <ProjectsPage
+            projects={projects}
+            language={language}
+            selectedProjectId={selectedProjectId}
+            onFilterPropertiesByProject={(projId) => {
+              setSelectedProjectId(projId);
+              setCurrentTab('sale');
+            }}
+            properties={properties}
+            onSelectProperty={setSelectedPropertyModal}
+            savedIds={savedIds}
+            onToggleSave={handleToggleSave}
+            compareIds={compareIds}
+            onToggleCompare={handleToggleCompare}
+          />
+        );
+
+      case 'services':
+        return (
+          <ResidentServicesPage
+            currentUser={user}
+            onOpenAuth={() => setAuthModalOpen(true)}
+          />
+        );
+
+      case 'news':
+        return <NewsPage news={news} language={language} currentUser={user} />;
+
+      case 'post':
+        return (
+          <PostPropertyPage
+            language={language}
+            user={user}
+            onOpenAuth={() => setAuthModalOpen(true)}
+            existingProperties={properties}
+            onPropertySubmitted={() => {
+              refreshServerData();
+              if (user) {
+                setCurrentTab('user_dashboard');
+              }
+            }}
+          />
+        );
+
+      case 'profile':
+        return <HieuBuiProfilePage language={language} />;
+
+      case 'user_dashboard':
+        return user ? (
+          <UserDashboardPage
+            user={user}
+            properties={properties}
+            language={language}
+            pricingConfig={pricingConfig}
+            onPostNewProperty={() => setCurrentTab('post')}
+            onSelectProperty={setSelectedPropertyModal}
+            onDeleteProperty={handleDeleteProperty}
+            onRefreshData={refreshServerData}
+            onLogout={() => {
+              setUser(null);
+              setAuthModalOpen(true);
+            }}
+          />
+        ) : (
+          <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4 shadow-xl">
+            <div className="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-950 font-black text-xl mx-auto shadow-md">
+              HB
+            </div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white">BẠN CHƯA ĐĂNG NHẬP</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Vui lòng đăng nhập tài khoản Chủ nhà, Sale hoặc Khách hàng để quản lý tin đăng & sử dụng tính năng Up Tin.
+            </p>
+            <button
+              onClick={() => setAuthModalOpen(true)}
+              className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md"
+            >
+              🔑 ĐĂNG NHẬP / ĐĂNG KÝ NGAY
+            </button>
+          </div>
+        );
+
+      case 'admin_login':
+        return (
+          <AdminLoginPage
+            language={language}
+            onLoginSuccess={(u) => {
+              setUser(u);
+              setCurrentTab(u.role === 'admin' ? 'admin' : 'user_dashboard');
+            }}
+            onBackToHome={() => setCurrentTab('home')}
+          />
+        );
+
+      case 'admin':
+        return (
+          <AdminDashboardPage
+            properties={properties}
+            projects={projects}
+            news={news}
+            contacts={contacts}
+            pricingConfig={pricingConfig}
+            onSavePricingConfig={handleSavePricingConfig}
+            onApproveProperty={handleApproveProperty}
+            onUpdateProperty={handleUpdateProperty}
+            onDeleteProperty={handleDeleteProperty}
+            onUpdateProject={handleUpdateProject}
+            onAddProject={handleAddProject}
+            onUpdateNews={handleUpdateNews}
+            onAddNews={handleAddNews}
+            onDeleteNews={handleDeleteNews}
+            onOpenAiWriter={() => setAiWriterModalOpen(true)}
+            onRefreshData={refreshServerData}
+            onSeed1000Properties={handleSeed1000Properties}
+          />
+        );
+
+      default:
+        return (
+          <HomePage
+            language={language}
+            projects={projects}
+            properties={properties.filter(p => p.approved || p.status === 'approved')}
+            news={news}
+            setCurrentTab={setCurrentTab}
+            onSelectProperty={setSelectedPropertyModal}
+            savedIds={savedIds}
+            onToggleSave={handleToggleSave}
+            compareIds={compareIds}
+            onToggleCompare={handleToggleCompare}
+            onSelectProject={(projId) => {
+              setSelectedProjectId(projId);
+            }}
+          />
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
+      
+      {/* Navigation Header */}
+      <Header
+        language={language}
+        setLanguage={setLanguage}
+        darkMode={theme === 'dark'}
+        setDarkMode={(val) => setTheme(val ? 'dark' : 'light')}
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+        currentUser={user}
+        onOpenAuth={() => setAuthModalOpen(true)}
+        onLogout={() => {
+          setUser(null);
+          localStorage.removeItem('hb_user');
+          setCurrentTab('home');
+        }}
+        savedCount={savedIds.length}
+        compareCount={compareIds.length}
+        onOpenSaved={() => setCurrentTab('sale')}
+        onOpenCompare={() => setCompareModalOpen(true)}
+        onOpenAiWriter={() => setAiWriterModalOpen(true)}
+        onOpenMarketingModal={() => setMarketingModalOpen(true)}
+        onOpenAndroidModal={() => setAndroidModalOpen(true)}
+        onNavigateWithFilter={handleNavigateWithFilter}
+      />
+
+      {/* Main Page Render */}
+      <main className="flex-1 w-full overflow-x-hidden">
+        {renderCurrentPage()}
+      </main>
+
+      {/* Footer */}
+      <Footer
+        language={language}
+        setCurrentTab={setCurrentTab}
+        onOpenSecretAdmin={() => setCurrentTab('admin_login')}
+        onOpenAndroidModal={() => setAndroidModalOpen(true)}
+      />
+
+      {/* Zalo Floating Contacts Widget */}
+      <ZaloWidget />
+
+      {/* Property Details Modal */}
+      {selectedPropertyModal && (
+        <PropertyDetailModal
+          property={selectedPropertyModal}
+          language={language}
+          onClose={() => setSelectedPropertyModal(null)}
+          onOpenMortgageWithPrice={() => {
+            setCurrentTab('home');
+            window.scrollTo({ top: 1200, behavior: 'smooth' });
+          }}
+        />
+      )}
+
+      {/* Compare Side-By-Side Modal */}
+      {compareModalOpen && (
+        <CompareModal
+          properties={properties.filter(p => compareIds.includes(p.id))}
+          language={language}
+          onClose={() => setCompareModalOpen(false)}
+          onRemove={(id) => setCompareIds(prev => prev.filter(i => i !== id))}
+          onSelectProperty={(p) => {
+            setCompareModalOpen(false);
+            setSelectedPropertyModal(p);
+          }}
+        />
+      )}
+
+      {/* Auth Modal */}
+      {authModalOpen && (
+        <AuthModal
+          onClose={() => setAuthModalOpen(false)}
+          onLoginSuccess={(u) => {
+            setUser(u);
+            try {
+              localStorage.setItem('hb_user', JSON.stringify(u));
+            } catch (e) {}
+            setAuthModalOpen(false);
+            if (u.role === 'admin') {
+              setCurrentTab('admin');
+            } else {
+              setCurrentTab('user_dashboard');
+            }
+          }}
+        />
+      )}
+
+      {/* AI Straight Line Sales Chatbot */}
+      <StraightLineAiChatbot
+        properties={properties}
+        projects={projects}
+        news={news}
+        onOpenConsultation={() => setAuthModalOpen(true)}
+        onOpenUpTin={() => setCurrentTab('up_tin')}
+      />
+
+      {/* Gemini AI Writer Studio Modal */}
+      {aiWriterModalOpen && (
+        <AiWriterModal
+          onClose={() => setAiWriterModalOpen(false)}
+          onPublishNews={handlePublishNewsFromAi}
+        />
+      )}
+
+      {/* Omnichannel Bulk Marketing Modal */}
+      <OmnichannelBulkMarketingModal
+        isOpen={marketingModalOpen}
+        onClose={() => setMarketingModalOpen(false)}
+        properties={properties}
+      />
+
+      {/* Android APK Download Modal */}
+      <AndroidApkModal
+        isOpen={androidModalOpen}
+        onClose={() => setAndroidModalOpen(false)}
+      />
+
+    </div>
+  );
+};
+
+export default App;

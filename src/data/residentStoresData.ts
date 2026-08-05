@@ -1,0 +1,180 @@
+import { UserStorefront, StoreOrder } from '../types';
+
+export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
+  {
+    id: 'store-1',
+    userId: 'user-mai-1',
+    ownerName: 'Trần Thị Mai',
+    ownerPhone: '0988123456',
+    ownerZalo: '0988123456',
+    storeName: 'Nông Sản Sạch & Trái Cây Nhập Khẩu Mai Farm - San Hô 2',
+    slug: 'mai-farm-san-ho-2',
+    logoUrl: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80',
+    category: 'Thực Phẩm & Nông Sản Sạch',
+    project: 'ocean-park-2',
+    subdivision: 'San Hô 2',
+    address: 'Shophouse SH2-18, Phân khu San Hô, Vinhomes Ocean Park 2',
+    description: 'Chuyên cung cấp trái cây tươi nhập khẩu (Sầu riêng Musang King, Táo Envy, Nho mẫu đơn), rau củ hữu cơ giao nhanh 15 phút tận cửa căn hộ cư dân.',
+    operatingHours: '07:00 - 21:30 hàng ngày',
+    verified: true,
+    rating: 4.9,
+    reviewCount: 38,
+    createdAt: '2026-01-15',
+    lat: 20.9592,
+    lng: 105.9765,
+    kiotVietConfig: {
+      enabled: true,
+      storeDomain: 'maifarmvinhomes.kiotviet.vn',
+      clientId: 'kv-client-8839210',
+      clientSecret: '••••••••••••••••',
+      retailerName: 'Mai Farm Vinhomes',
+      branchId: 'Chi nhánh Ocean Park 2 (ID: 10928)',
+      autoSync: true,
+      lastSyncedAt: '2026-08-02 09:20',
+      syncStatus: 'connected',
+      syncedProductsCount: 12
+    },
+    products: [
+      {
+        id: 'p-101',
+        storeId: 'store-1',
+        kiotVietId: 'KV-9901',
+        code: 'TC-ENVY-1KG',
+        name: 'Táo Envy Mỹ Size Lớn (Hộp 1kg)',
+        category: 'Trái Cây Nhập Khẩu',
+        price: 220000,
+        originalPrice: 250000,
+        unit: 'hộp 1kg',
+        stockQuantity: 45,
+        images: ['https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80'],
+        description: 'Táo Envy nhập khẩu trực tiếp từ Mỹ, giòn ngọt đậm đà, đóng hộp sang trọng phục vụ cư dân.',
+        isAvailable: true,
+        soldCount: 142
+      },
+      {
+        id: 'p-102',
+        storeId: 'store-1',
+        kiotVietId: 'KV-9902',
+        code: 'TC-NHO-MD',
+        name: 'Nho Mẫu Đơn Shine Muscat Hàn Quốc (Chùm 700g)',
+        category: 'Trái Cây Nhập Khẩu',
+        price: 390000,
+        originalPrice: 450000,
+        unit: 'chùm',
+        stockQuantity: 18,
+        images: ['https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=600&q=80'],
+        description: 'Nho Mẫu Đơn giòn ngọt ngào thơm mùi sữa, trái to tròn mọng nước, giao tận giường cư dân.',
+        isAvailable: true,
+        soldCount: 89
+      },
+      {
+        id: 'p-103',
+        storeId: 'store-1',
+        kiotVietId: 'KV-9903',
+        code: 'RC-HUUC-COMBO',
+        name: 'Combo Rau Củ Hữu Cơ Đà Lạt (Túi 3kg)',
+        category: 'Rau Củ Tươi Sạch',
+        price: 125000,
+        unit: 'túi 3kg',
+        stockQuantity: 30,
+        images: ['https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80'],
+        description: 'Bao gồm Cải kale, Cà chua cherry, Dưa leo baby, Ớt chuông đà lạt trồng chuẩn VietGAP.',
+        isAvailable: true,
+        soldCount: 210
+      }
+    ]
+  },
+  {
+    id: 'store-2',
+    userId: 'user-hieu-bui',
+    ownerName: 'Bùi Trung Hiếu',
+    ownerPhone: '0868499929',
+    ownerZalo: '0868499929',
+    storeName: 'Nội Thất & Thiết Bị Điện Thông Minh Bùi Gia - Chà Là 1',
+    slug: 'bui-gia-noi-that-smart-home',
+    logoUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
+    category: 'Nội Thất & Thi Công',
+    project: 'ocean-park-2',
+    subdivision: 'Chà Là 1',
+    address: 'Shophouse CL1-28, Vinhomes Ocean Park 2',
+    description: 'Tư vấn, thiết kế, thi công nội thất trọn gói biệt thự, shophouse và căn hộ Vinhomes. Phân phối khóa cửa vân tay, đèn LED cảm ứng Smart Home kết nối ứng dụng.',
+    operatingHours: '08:00 - 19:00',
+    verified: true,
+    rating: 5.0,
+    reviewCount: 52,
+    createdAt: '2026-02-10',
+    lat: 20.9568,
+    lng: 105.9721,
+    kiotVietConfig: {
+      enabled: true,
+      storeDomain: 'buigianoithat.kiotviet.vn',
+      clientId: 'kv-client-992104',
+      clientSecret: '••••••••••••••••',
+      retailerName: 'Bùi Gia Smart Home',
+      branchId: 'Trụ sở Vinhomes Ocean Park (ID: 8812)',
+      autoSync: true,
+      lastSyncedAt: '2026-08-02 08:45',
+      syncStatus: 'connected',
+      syncedProductsCount: 8
+    },
+    products: [
+      {
+        id: 'p-201',
+        storeId: 'store-2',
+        kiotVietId: 'KV-8801',
+        code: 'KHOA-VT-VINH3',
+        name: 'Khóa Cửa Vân Tay Thông Minh Xiaomi Face ID 3D',
+        category: 'Thiết Bị Smart Home',
+        price: 4850000,
+        originalPrice: 5500000,
+        unit: 'bộ',
+        stockQuantity: 12,
+        images: ['https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&q=80'],
+        description: 'Mở cửa bằng Nhận diện khuôn mặt 3D, Vân tay FPO, Thẻ từ & App thoại. Hỗ trợ miến phí công lắp đặt tại Vinhomes.',
+        isAvailable: true,
+        soldCount: 45
+      },
+      {
+        id: 'p-202',
+        storeId: 'store-2',
+        kiotVietId: 'KV-8802',
+        code: 'DEN-LED-RAY-AM',
+        name: 'Gói Đèn LED Ray Nam Châm Thông Minh Căn Hộ 2PN (Trọn gói)',
+        category: 'Hệ Thống Chiếu Sáng',
+        price: 12500000,
+        originalPrice: 15000000,
+        unit: 'gói trọn gói',
+        stockQuantity: 5,
+        images: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80'],
+        description: 'Trọn gói vật tư & thi công hệ thống đèn ray nam châm đổi màu 3 chế độ theo tâm trạng cho căn hộ Vinhomes.',
+        isAvailable: true,
+        soldCount: 19
+      }
+    ]
+  }
+];
+
+export const INITIAL_STORE_ORDERS: StoreOrder[] = [
+  {
+    id: 'ord-1001',
+    orderCode: 'DH-KV-8821',
+    storeId: 'store-1',
+    storeName: 'Nông Sản Sạch & Trái Cây Nhập Khẩu Mai Farm - San Hô 2',
+    customerId: 'cust-1',
+    customerName: 'Nguyễn Hoàng Nam',
+    customerPhone: '0912345678',
+    customerAddress: 'Căn 12.08 Tòa S2.01 Ocean Park 1',
+    note: 'Giao gấp trước 11h trưa giúp mình nhé!',
+    items: [
+      { productId: 'p-101', productName: 'Táo Envy Mỹ Size Lớn (Hộp 1kg)', price: 220000, quantity: 2, unit: 'hộp 1kg' }
+    ],
+    totalAmount: 440000,
+    paymentMethod: 'vietqr',
+    paymentStatus: 'paid',
+    orderStatus: 'delivering',
+    createdAt: '2026-08-02 08:30',
+    kiotVietSyncStatus: 'synced'
+  }
+];
