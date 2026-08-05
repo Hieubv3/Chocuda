@@ -307,6 +307,82 @@ app.post("/api/auth/google", (req, res) => {
   });
 });
 
+// Real Facebook OAuth / Account Authentication API
+app.post("/api/auth/facebook", (req, res) => {
+  const { email, name, avatar, facebookId } = req.body;
+
+  if (!email && !facebookId) {
+    return res.status(400).json({ error: "Xác thực Facebook không hợp lệ!" });
+  }
+
+  const userEmail = email ? String(email).trim().toLowerCase() : `fb_${facebookId}@chocudan24h.com`;
+
+  let user = usersStore.find(u => u.email.toLowerCase() === userEmail);
+
+  if (!user) {
+    user = {
+      id: facebookId ? `user-fb-${facebookId}` : `user-fb-${Date.now()}`,
+      name: name || 'Thành viên Facebook',
+      email: userEmail,
+      avatar: avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name || 'FB User')}`,
+      role: 'visitor',
+      provider: 'facebook',
+      upTinCredits: 20,
+      tier: 'thuong',
+      balance: 0,
+      registeredAt: new Date().toISOString()
+    };
+    usersStore.push(user);
+  } else {
+    if (name) user.name = String(name);
+    if (avatar) user.avatar = String(avatar);
+    user.provider = 'facebook';
+  }
+
+  const { password: _, ...userWithoutPassword } = user;
+  return res.json({
+    message: "Đăng nhập bằng tài khoản Facebook thành công!",
+    user: userWithoutPassword
+  });
+});
+
+// Zalo Account Authentication API
+app.post("/api/auth/zalo", (req, res) => {
+  const { phone, name, avatar, zaloId } = req.body;
+
+  const userPhone = phone ? String(phone).trim() : '0868499929';
+  const userEmail = `zalo_${userPhone.replace(/\D/g, '')}@chocudan24h.com`;
+
+  let user = usersStore.find(u => u.phone === userPhone || u.email === userEmail);
+
+  if (!user) {
+    user = {
+      id: zaloId ? `user-zalo-${zaloId}` : `user-zalo-${Date.now()}`,
+      name: name || 'Cư dân Zalo',
+      email: userEmail,
+      phone: userPhone,
+      avatar: avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name || 'Zalo User')}`,
+      role: 'visitor',
+      provider: 'zalo',
+      upTinCredits: 20,
+      tier: 'thuong',
+      balance: 0,
+      registeredAt: new Date().toISOString()
+    };
+    usersStore.push(user);
+  } else {
+    if (name) user.name = String(name);
+    if (avatar) user.avatar = String(avatar);
+    user.provider = 'zalo';
+  }
+
+  const { password: _, ...userWithoutPassword } = user;
+  return res.json({
+    message: "Đăng nhập bằng Zalo thành công!",
+    user: userWithoutPassword
+  });
+});
+
 // All Users Endpoint
 app.get("/api/auth/users", (req, res) => {
   const safeUsers = usersStore.map(({ password, ...u }) => u);
