@@ -671,7 +671,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     className="hidden"
                     onChange={(e) => {
                       const files = Array.from(e.target.files || []);
-                      files.forEach(async file => {
+                      files.forEach(async (file: File) => {
                         const watermarked = await addWatermarkToImage(file);
                         setImagesList(prev => [...prev, watermarked]);
                       });
