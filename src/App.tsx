@@ -945,7 +945,7 @@ export const App: React.FC = () => {
           }`}
         >
           <UserIcon className="w-5 h-5" />
-          <span className="text-[10px] mt-0.5 font-medium">{user ? (user.name || 'Tài Khoản') : 'Cá Nhân'}</span>
+          <span className="text-[10px] mt-0.5 font-medium">Cá Nhân</span>
         </button>
       </div>
 

@@ -466,10 +466,11 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="relative group shrink-0">
                 <button
                   onClick={() => setCurrentTab('user_dashboard')}
-                  className="px-2 sm:px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-200 rounded-xl text-xs font-bold flex items-center space-x-1 transition border border-emerald-200 dark:border-emerald-800"
+                  className="px-2 sm:px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-200 rounded-xl text-xs font-bold flex items-center space-x-1 transition border border-emerald-200 dark:border-emerald-800 shrink-0"
+                  title={currentUser.name}
                 >
                   <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span className="truncate max-w-[70px] sm:max-w-none">{currentUser.name}</span>
+                  <span className="hidden xs:inline sm:inline">Cá Nhân</span>
                 </button>
                 <div className="absolute right-0 top-full pt-1.5 w-52 hidden group-hover:block z-50 text-xs font-bold">
                   <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 py-1">
