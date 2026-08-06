@@ -45,8 +45,8 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
   const [bedrooms, setBedrooms] = useState('');
   const [furniture, setFurniture] = useState('');
   const [sortBy, setSortBy] = useState('newest');
-  const [viewMode, setViewMode] = useState<'grid' | 'grid-2col' | 'list'>(() => {
-    return (localStorage.getItem('hb_properties_view_mode') as any) || 'grid-2col';
+  const [viewMode, setViewMode] = useState<'grid-3col' | 'grid-2col' | 'grid' | 'list'>(() => {
+    return (localStorage.getItem('hb_properties_view_mode') as any) || 'list';
   });
 
   useEffect(() => {
@@ -155,16 +155,29 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
         <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl shrink-0 gap-1 border border-slate-200 dark:border-slate-700">
           <button
             onClick={() => {
+              setViewMode('grid-3col');
+              localStorage.setItem('hb_properties_view_mode', 'grid-3col');
+            }}
+            className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+              viewMode === 'grid-3col' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            }`}
+            title="Hiển thị Lưới 3 Cột vừa vặn"
+          >
+            <LayoutGrid className="w-4 h-4" />
+            <span className="hidden sm:inline">3 Cột</span>
+          </button>
+          <button
+            onClick={() => {
               setViewMode('grid-2col');
               localStorage.setItem('hb_properties_view_mode', 'grid-2col');
             }}
             className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
               viewMode === 'grid-2col' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
-            title="Hiển thị 2 cột ô vuông trên Mobi"
+            title="Hiển thị 2 cột ô vuông trên Mobi & Tablet"
           >
             <Grid2x2 className="w-4 h-4" />
-            <span className="hidden sm:inline">2 Cột Mobi</span>
+            <span className="hidden sm:inline">2 Cột</span>
           </button>
           <button
             onClick={() => {
@@ -254,10 +267,12 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
         </div>
       ) : (
         <div className={
-          viewMode === 'grid-2col'
-            ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-5'
+          viewMode === 'grid-3col'
+            ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6'
+            : viewMode === 'grid-2col'
+            ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5'
             : viewMode === 'grid'
-            ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
+            ? 'grid grid-cols-1 md:grid-cols-2 gap-6'
             : 'space-y-4'
         }>
           {filteredProperties.map((property) => (
@@ -270,6 +285,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
               onToggleSave={onToggleSave}
               isCompared={compareIds.includes(property.id)}
               onToggleCompare={onToggleCompare}
+              viewMode={viewMode}
             />
           ))}
         </div>

@@ -296,7 +296,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
                 <strong>Sở Kế hoạch & Đầu tư Hà Nội:</strong> ĐKKD số 0109882341 do SKHĐT Hà Nội cấp lần đầu ngày 12/10/2021.
               </p>
               <p className="text-[10px] text-slate-500">
-                Chịu trách nhiệm nội dung: Ban Quản Trị Hệ Thống Chợ Cư Dân Vinhomes 24h.
+                Chịu trách nhiệm nội dung: Ban Quản Trị Hệ Thống Chợ Cư Dân 24H (chocudan24h.com).
               </p>
             </div>
           </div>

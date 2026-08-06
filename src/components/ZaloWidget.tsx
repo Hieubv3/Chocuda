@@ -146,7 +146,7 @@ export const ZaloWidget: React.FC = () => {
                   alt="QR Zalo Admin"
                   className="w-36 h-36 mx-auto rounded-xl shadow-lg border border-white/20"
                 />
-                <p className="text-xs text-amber-300 font-bold">Quét QR bằng app Zalo để nhắn tin trao đổi trực tiếp với BQT</p>
+                <p className="text-xs text-amber-300 font-bold">Quét QR bằng app Zalo để nhắn tin trao đổi trực tiếp với BQT Chợ Cư Dân 24H</p>
               </div>
             )}
 

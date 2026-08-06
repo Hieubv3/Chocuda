@@ -362,7 +362,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     businessLicenseNo: '0108928372-VIN',
     taxCode: '0108928372',
     kycApprovedAt: '2026-07-16',
-    kycApprovedBy: 'Ban Quản Trị Vincity',
+    kycApprovedBy: 'Ban Quản Trị Hệ Thống chocudan24h.com',
     submittedDocs: [
       {
         id: 'doc-101',

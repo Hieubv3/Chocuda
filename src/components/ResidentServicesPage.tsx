@@ -1103,8 +1103,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
           /* 1 CỘT LỚN HOẶC 3 CỘT NHỎ */
           <div className={
             viewMode === 'grid-3col'
-              ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3"
-              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
+              : "grid grid-cols-1 md:grid-cols-2 gap-6"
           }>
             {filteredServices.map(service => {
               const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
@@ -1452,7 +1452,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     <span>HỒ SƠ ĐỊNH DANH NÚT XANH & GIẤY PHÉP NGÀNH NGHỀ</span>
                   </span>
                   <span className="text-xs font-bold text-emerald-300 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">
-                    ✓ Đã Kiểm Định BQT Vinhomes
+                    ✓ Đã Thẩm Định Bởi Chợ Cư Dân 24H
                   </span>
                 </div>
 
@@ -1463,7 +1463,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     <div>• <b>Số ĐKKD / Đăng ký Doanh nghiệp:</b> <span className="font-mono text-emerald-300 font-bold">{selectedServiceModal.businessLicenseNo}</span></div>
                   )}
                   {selectedServiceModal.kycApprovedAt && (
-                    <div>• <b>Ngày cấp Nút Xanh:</b> {selectedServiceModal.kycApprovedAt} bởi {selectedServiceModal.kycApprovedBy || 'BQT Vinhomes'}</div>
+                    <div>• <b>Ngày cấp Nút Xanh:</b> {selectedServiceModal.kycApprovedAt} bởi {selectedServiceModal.kycApprovedBy || 'Ban Quản Trị chocudan24h.com'}</div>
                   )}
                 </div>
 

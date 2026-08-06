@@ -263,7 +263,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           <div className="space-y-2">
             <h2 className="text-2xl font-black text-slate-900 dark:text-white">ĐĂNG TIN THÀNH CÔNG!</h2>
             <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
-              Hệ thống đã ghi nhận bất động sản của bạn. Ban quản trị Nhà đẹp Vinhomes sẽ xác minh thông tin chính chủ và duyệt hiển thị.
+              Hệ thống đã ghi nhận bất động sản của bạn. Ban quản trị Chợ Cư Dân 24H sẽ xác minh thông tin chính chủ và duyệt hiển thị.
             </p>
           </div>
 

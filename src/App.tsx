@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon } from 'lucide-react';
 import { Header } from './components/Header';
 import { RealTimeMarketTicker } from './components/RealTimeMarketTicker';
 import { StraightLineAiChatbot } from './components/StraightLineAiChatbot';
@@ -742,7 +743,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300 pb-16 md:pb-0">
       
       {/* Navigation Header */}
       <Header
@@ -860,6 +861,93 @@ export const App: React.FC = () => {
         isOpen={androidModalOpen}
         onClose={() => setAndroidModalOpen(false)}
       />
+
+      {/* Mobile Bottom Navigation Bar - Standard Chợ Tốt / Nhà Tốt App Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1.5 py-1 flex items-center justify-around shadow-2xl">
+        <button
+          onClick={() => {
+            setCurrentTab('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
+            currentTab === 'home'
+              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
+              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Home className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">Trang Chủ</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setCurrentTab('properties');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
+            currentTab === 'properties' || currentTab === 'sale'
+              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
+              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Building2 className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">Bất Động Sản</span>
+        </button>
+
+        {/* Center Highlighted Post Button */}
+        <button
+          onClick={() => {
+            if (!user) {
+              setAuthModalOpen(true);
+            } else {
+              setCurrentTab('post');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="flex flex-col items-center -mt-4 group shrink-0"
+        >
+          <div className="w-11 h-11 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 ring-4 ring-white dark:ring-slate-900 group-active:scale-95 transition transform">
+            <PlusCircle className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-[10px] mt-0.5 font-black text-emerald-600 dark:text-emerald-400">Đăng Tin</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setCurrentTab('resident_services');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
+            currentTab === 'resident_services'
+              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
+              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <ShoppingBag className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">Chợ Cư Dân</span>
+        </button>
+
+        <button
+          onClick={() => {
+            if (!user) {
+              setAuthModalOpen(true);
+            } else if (user.role === 'admin') {
+              setCurrentTab('admin');
+            } else {
+              setCurrentTab('user_dashboard');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
+            currentTab === 'user_dashboard' || currentTab === 'admin'
+              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
+              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <UserIcon className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">{user ? (user.name || 'Tài Khoản') : 'Cá Nhân'}</span>
+        </button>
+      </div>
 
     </div>
   );
