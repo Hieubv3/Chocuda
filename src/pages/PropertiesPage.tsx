@@ -137,33 +137,32 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
   }, [properties, selectedType, selectedProject, selectedHeightCategory, selectedCategory, furniture, bedrooms, minPrice, maxPrice, searchQuery, sortBy]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-3">
       
-      {/* Header Title */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+      {/* Header Title & View Toggle */}
+      <div className="flex flex-row items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5">
         <div>
-          <span className="text-xs font-black uppercase text-amber-500 tracking-wider">DANH MỤC BẤT ĐỘNG SẢN</span>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
-            QUỸ CĂN MUA BÁN & CHO THUÊ CHÍNH CHỦ
+          <h1 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            Quỹ Căn Mua Bán & Cho Thuê
+            <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-full">
+              {filteredProperties.length} căn
+            </span>
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Tổng hợp {filteredProperties.length} bất động sản đáp ứng tiêu chuẩn vị trí, pháp lý & giá tốt
-          </p>
         </div>
 
         {/* Grid / List View Toggle */}
-        <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl shrink-0 gap-1 border border-slate-200 dark:border-slate-700">
+        <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg shrink-0 gap-0.5 border border-slate-200 dark:border-slate-700">
           <button
             onClick={() => {
               setViewMode('grid-3col');
               localStorage.setItem('hb_properties_view_mode', 'grid-3col');
             }}
-            className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
-              viewMode === 'grid-3col' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
+              viewMode === 'grid-3col' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
-            title="Hiển thị Lưới 3 Cột vừa vặn"
+            title="Hiển thị Lưới 3 Cột"
           >
-            <LayoutGrid className="w-4 h-4" />
+            <LayoutGrid className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">3 Cột</span>
           </button>
           <button
@@ -171,12 +170,12 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
               setViewMode('grid-2col');
               localStorage.setItem('hb_properties_view_mode', 'grid-2col');
             }}
-            className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
-              viewMode === 'grid-2col' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
+              viewMode === 'grid-2col' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
-            title="Hiển thị 2 cột ô vuông trên Mobi & Tablet"
+            title="Hiển thị 2 cột ô vuông"
           >
-            <Grid2x2 className="w-4 h-4" />
+            <Grid2x2 className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">2 Cột</span>
           </button>
           <button
@@ -184,25 +183,25 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
               setViewMode('grid');
               localStorage.setItem('hb_properties_view_mode', 'grid');
             }}
-            className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
-              viewMode === 'grid' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
+              viewMode === 'grid' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
             title="Hiển thị 1 cột thẻ lớn"
           >
-            <LayoutGrid className="w-4 h-4" />
-            <span className="hidden sm:inline">1 Cột Lớn</span>
+            <LayoutGrid className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">1 Cột</span>
           </button>
           <button
             onClick={() => {
               setViewMode('list');
               localStorage.setItem('hb_properties_view_mode', 'list');
             }}
-            className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
-              viewMode === 'list' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
+              viewMode === 'list' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
             title="Hiển thị dạng danh sách hàng ngang"
           >
-            <List className="w-4 h-4" />
+            <List className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Danh sách</span>
           </button>
         </div>

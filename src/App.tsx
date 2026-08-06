@@ -558,6 +558,7 @@ export const App: React.FC = () => {
           />
         );
 
+      case 'properties':
       case 'sale':
         return (
           <PropertiesPage
@@ -610,6 +611,8 @@ export const App: React.FC = () => {
         );
 
       case 'services':
+      case 'resident_services':
+      case 'resident-services':
         return (
           <ResidentServicesPage
             currentUser={user}
@@ -885,7 +888,7 @@ export const App: React.FC = () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
-            currentTab === 'properties' || currentTab === 'sale'
+            currentTab === 'properties' || currentTab === 'sale' || currentTab === 'rent'
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
@@ -918,7 +921,7 @@ export const App: React.FC = () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
-            currentTab === 'resident_services'
+            currentTab === 'resident_services' || currentTab === 'services'
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}

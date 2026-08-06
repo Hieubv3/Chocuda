@@ -268,10 +268,21 @@ export const HomePage: React.FC<HomePageProps> = ({
                   onChange={(e) => setSearchProject(e.target.value)}
                   className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                 >
-                  <option value="all">Tất cả dự án Vinhomes</option>
-                  <option value="ocean-park-2">Vinhomes Ocean Park 2</option>
-                  <option value="ocean-park-3">Vinhomes Ocean Park 3</option>
-                  <option value="ha-long-xanh">Vinhomes Hạ Long Xanh</option>
+                  <option value="all">🏢 Tất cả dự án Vinhomes (Toàn quốc)</option>
+                  <option value="ocean-park-2">Vinhomes Ocean Park 2 (The Empire)</option>
+                  <option value="ocean-park-3">Vinhomes Ocean Park 3 (The Crown)</option>
+                  <option value="ocean-park-1">Vinhomes Ocean Park 1 (Gia Lâm)</option>
+                  <option value="smart-city">Vinhomes Smart City (Tây Mỗ)</option>
+                  <option value="grand-park">Vinhomes Grand Park (TP. Thủ Đức)</option>
+                  <option value="ha-long-xanh">Vinhomes Hạ Long Xanh (Quảng Ninh)</option>
+                  <option value="royal-island">Vinhomes Royal Island (Vũ Yên - Hải Phòng)</option>
+                  <option value="riverside">Vinhomes Riverside & Harmony (Long Biên)</option>
+                  <option value="golden-avenue">Vinhomes Golden Avenue (Móng Cái)</option>
+                  <option value="tan-my-hau-nghia">Vinhomes Tân Mỹ Hậu Nghĩa (Long An)</option>
+                  <option value="green-paradise-can-gio">Vinhomes Green Paradise Cần Giờ</option>
+                  <option value="green-city-hoc-mon">Vinhomes Green City Hóc Môn</option>
+                  <option value="lang-van-da-nang">Vinhomes Làng Vân Đà Nẵng</option>
+                  <option value="khac">Dự án Vinhomes khác</option>
                 </select>
               </div>
 

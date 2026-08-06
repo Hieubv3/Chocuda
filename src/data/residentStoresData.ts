@@ -153,6 +153,28 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         soldCount: 19
       }
     ]
+  },
+  {
+    id: 'store-3',
+    userId: 'user-phuong-3',
+    ownerName: 'Lê Thanh Phương',
+    ownerPhone: '0977112233',
+    ownerZalo: '0977112233',
+    storeName: 'Tiệm Giặt Sấy Lấy Ngay Phương Clean - S1.05',
+    slug: 'tiem-giat-say-phuong-clean',
+    logoUrl: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=400&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=1200&q=80',
+    category: 'Giặt Là & Chăm Sóc Nhà',
+    project: 'ocean-park-1',
+    subdivision: 'S1.05',
+    address: 'S1.05, Vinhomes Ocean Park 1',
+    description: 'Giặt hấp cao cấp, giặt sấy diệt khuẩn thơm tho, giặt rèm thảm tận nhà. Đang gửi hồ sơ đăng ký định danh KYC.',
+    operatingHours: '07:30 - 21:00',
+    verified: false,
+    rating: 4.8,
+    reviewCount: 12,
+    createdAt: '2026-08-01',
+    products: []
   }
 ];
 

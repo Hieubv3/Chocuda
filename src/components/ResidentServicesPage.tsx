@@ -201,6 +201,81 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     });
   }, [services, selectedProject, selectedCategory, selectedSubCategory, searchQuery]);
 
+  // Tab for store & service verification status: 'verified' (Đã định danh) | 'pending' (Chờ định danh)
+  const [storeVerificationTab, setStoreVerificationTab] = useState<'verified' | 'pending'>('verified');
+
+  // Activate KYC Handler for Service
+  const handleActivateServiceKyc = (serviceId: string, title: string) => {
+    setServices(prev => {
+      const updated = prev.map(s => {
+        if (s.id === serviceId) {
+          return {
+            ...s,
+            verified: true,
+            kycStatus: 'verified' as const,
+            kycBadgeType: 'gold_certified' as const
+          };
+        }
+        return s;
+      });
+      localStorage.setItem('hb_resident_services', JSON.stringify(updated));
+      return updated;
+    });
+
+    fetch(`/api/resident-services/${serviceId}/verify`, { method: 'POST' }).catch(() => {});
+
+    setStoreVerificationTab('verified');
+    alert(`🎉 KÍCH HOẠT ĐỊNH DANH THÀNH CÔNG!\n\nDịch vụ/Cửa hàng "${title}" đã được xác minh thành công.\nSản phẩm/Thợ đã được tự động chuyển sang tab "Cửa Hàng Đã Định Danh".`);
+  };
+
+  // Activate KYC Handler for Store
+  const handleActivateStoreKyc = (storeId: string, storeName: string) => {
+    setStores(prev => {
+      return prev.map(st => {
+        if (st.id === storeId) {
+          return { ...st, verified: true };
+        }
+        return st;
+      });
+    });
+
+    setStoreVerificationTab('verified');
+    alert(`🎉 KÍCH HOẠT ĐỊNH DANH THÀNH CÔNG!\n\nGian hàng "${storeName}" đã được xác minh thành công.\nGian hàng đã được tự động chuyển sang tab "Cửa Hàng Đã Định Danh".`);
+  };
+
+  // Filtered Services by Verification Tab
+  const displayServicesByTab = useMemo(() => {
+    return filteredServices.filter(item => {
+      const isVerified = item.verified || item.kycStatus === 'verified';
+      return storeVerificationTab === 'verified' ? isVerified : !isVerified;
+    });
+  }, [filteredServices, storeVerificationTab]);
+
+  // Filtered Stores by Verification Tab
+  const displayStoresByTab = useMemo(() => {
+    return stores.filter(st => {
+      if (selectedProject !== 'all' && st.project !== selectedProject) return false;
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchName = st.storeName.toLowerCase().includes(q);
+        const matchOwner = st.ownerName.toLowerCase().includes(q);
+        const matchCat = st.category.toLowerCase().includes(q);
+        if (!matchName && !matchOwner && !matchCat) return false;
+      }
+      return storeVerificationTab === 'verified' ? st.verified : !st.verified;
+    });
+  }, [stores, selectedProject, searchQuery, storeVerificationTab]);
+
+  // Tab Counts
+  const verifiedServicesCount = useMemo(() => filteredServices.filter(s => s.verified || s.kycStatus === 'verified').length, [filteredServices]);
+  const pendingServicesCount = useMemo(() => filteredServices.filter(s => !s.verified && s.kycStatus !== 'verified').length, [filteredServices]);
+
+  const verifiedStoresCount = useMemo(() => stores.filter(st => st.verified && (selectedProject === 'all' || st.project === selectedProject)).length, [stores, selectedProject]);
+  const pendingStoresCount = useMemo(() => stores.filter(st => !st.verified && (selectedProject === 'all' || st.project === selectedProject)).length, [stores, selectedProject]);
+
+  const totalVerified = verifiedServicesCount + verifiedStoresCount;
+  const totalPending = pendingServicesCount + pendingStoresCount;
+
   // Submit Post Service Handler
   const handlePostServiceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -318,48 +393,50 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
       
       {/* 1. HERO BANNER & HEADER SECTION */}
-      <section className="bg-slate-900 text-white relative overflow-hidden pt-6 pb-8 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      <section className="bg-slate-900 text-white relative py-3.5 px-3 sm:px-6 lg:px-8 border-b border-slate-800 z-20">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none overflow-hidden"></div>
         
-        <div className="max-w-7xl mx-auto relative z-10 space-y-5">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto relative z-20 space-y-3">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2.5">
             <div>
-              <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-[11px] font-bold mb-2 shadow-xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>NỀN TẢNG THƯƠNG MẠI & CỬA HÀNG ĐÃ XÁC MINH CƯ DÂN VINHOMES</span>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-xs">
+                  <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                  <span>CỬA HÀNG ĐÃ XÁC MINH CƯ DÂN</span>
+                </span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white leading-snug">
+              <h1 className="text-base sm:text-lg font-black tracking-tight text-white leading-snug">
                 CHỢ DỊCH VỤ & THỢ CƯ DÂN <span className="text-emerald-400">VINHOMES</span>
               </h1>
-              <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
-                Lắp thang máy, sửa điện máy tính, taxi 24/7, ẩm thực ATVSTP, y tế gia đình & spa — Cửa hàng đã xác minh chính chủ & đã qua kiểm duyệt chứng chỉ ngành nghề!
+              <p className="text-slate-300 text-[11px] sm:text-xs mt-0.5 max-w-xl line-clamp-1">
+                Lắp thang máy, sửa điện máy tính, taxi 24/7, ẩm thực ATVSTP, y tế gia đình & spa — Cửa hàng đã xác minh chính chủ!
               </p>
             </div>
 
-            {/* Action Buttons - Bản đồ định vị + Bảng giá + Quản lý gian hàng & định danh */}
-            <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {/* Action Buttons - Compact Row */}
+            <div className="flex flex-wrap items-center gap-1.5 shrink-0">
               <button
                 onClick={() => setIsPricingModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 shadow-md transition active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 shadow-xs transition active:scale-95 cursor-pointer"
               >
-                <Sparkles className="w-3.5 h-3.5 text-slate-950 fill-slate-950" />
-                <span>💎 BẢNG GIÁ QUẢNG BÁ</span>
+                <Sparkles className="w-3 h-3 text-slate-950 fill-slate-950" />
+                <span>BẢNG GIÁ QUẢNG BÁ</span>
               </button>
 
               <button
                 onClick={() => setIsTripartiteModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 shadow-md transition active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 shadow-xs transition active:scale-95 cursor-pointer"
               >
-                <FileText className="w-3.5 h-3.5 text-amber-400" />
-                <span>📜 THỎA THUẬN BA BÊN</span>
+                <FileText className="w-3 h-3 text-amber-400" />
+                <span>THỎA THUẬN 3 BÊN</span>
               </button>
 
               <button
                 onClick={() => setIsMapModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md transition active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs transition active:scale-95 cursor-pointer"
               >
-                <Compass className="w-3.5 h-3.5 text-slate-950" />
-                <span>📍 BẢN ĐỒ ĐỊNH VỊ</span>
+                <Compass className="w-3 h-3 text-slate-950" />
+                <span>BẢN ĐỒ ĐỊNH VỊ</span>
               </button>
 
               <button
@@ -370,24 +447,24 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     window.location.hash = '#user-dashboard';
                   }
                 }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition active:scale-95 cursor-pointer"
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+                <ShieldCheck className="w-3 h-3 text-emerald-300" />
                 <span>+ XÁC MINH CỬA HÀNG</span>
               </button>
             </div>
           </div>
 
           {/* Combined Search Box & Project Dropdown Selector */}
-          <div className="bg-white dark:bg-slate-900 p-2 sm:p-2.5 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-900 p-2 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               
               {/* Project Selector Dropdown Button & Popover */}
-              <div className="relative w-full sm:w-72 shrink-0">
+              <div className="relative w-full sm:w-72 shrink-0 z-30">
                 <button
                   type="button"
                   onClick={() => setIsProjectDropdownOpen(!isProjectDropdownOpen)}
-                  className="w-full flex items-center justify-between gap-2 px-3 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl text-xs font-black border border-slate-200 dark:border-slate-700 transition cursor-pointer"
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg text-xs font-black border border-slate-200 dark:border-slate-700 transition cursor-pointer shadow-xs"
                 >
                   <span className="flex items-center gap-2 truncate">
                     <Building2 className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -402,13 +479,18 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
 
                 {/* Dropdown Menu Sổ Ra */}
                 {isProjectDropdownOpen && (
-                  <div className="absolute top-full left-0 right-0 sm:w-72 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 p-3 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
-                    <div className="text-[11px] font-black text-slate-400 uppercase tracking-wider px-1 flex items-center justify-between">
-                      <span>CHỌN DỰ ÁN VINHOMES</span>
-                      <button onClick={() => setIsProjectDropdownOpen(false)} className="text-slate-400 hover:text-slate-200 p-1">
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                  <>
+                    <div
+                      className="fixed inset-0 z-40 bg-slate-950/40"
+                      onClick={() => setIsProjectDropdownOpen(false)}
+                    />
+                    <div className="absolute top-full left-0 right-0 sm:w-80 mt-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl shadow-2xl z-50 p-3 space-y-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                      <div className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1 flex items-center justify-between">
+                        <span>CHỌN DỰ ÁN VINHOMES</span>
+                        <button onClick={() => setIsProjectDropdownOpen(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1 cursor-pointer">
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
 
                     {/* Filter Input Inside Popover */}
                     <div className="relative">
@@ -418,13 +500,13 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                         value={projectSearchTerm}
                         onChange={(e) => setProjectSearchTerm(e.target.value)}
                         placeholder="Gõ tên dự án..."
-                        className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 border border-slate-200 dark:border-slate-700 font-bold"
+                        className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 border border-slate-200 dark:border-slate-700 font-bold"
                         autoFocus
                       />
                     </div>
 
                     {/* Quick Suggestion Chips */}
-                    <div className="flex flex-wrap gap-1 pt-1">
+                    <div className="flex flex-wrap gap-1 pt-0.5">
                       {[
                         { name: 'Ocean Park 1', id: 'ocean-park-1' },
                         { name: 'Ocean Park 2', id: 'ocean-park-2' },
@@ -441,7 +523,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                             setIsProjectDropdownOpen(false);
                             setProjectSearchTerm('');
                           }}
-                          className={`px-2 py-0.5 font-bold text-[10px] rounded-lg border transition cursor-pointer ${
+                          className={`px-2 py-0.5 font-bold text-[10px] rounded-md border transition cursor-pointer ${
                             selectedProject === chip.id
                               ? 'bg-amber-500 text-slate-950 border-amber-400 font-black'
                               : 'bg-slate-100 dark:bg-slate-800 hover:bg-emerald-500 hover:text-white text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
@@ -453,25 +535,25 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     </div>
 
                     {/* Options List */}
-                    <div className="max-h-64 overflow-y-auto space-y-1.5 pr-1 scrollbar-thin">
+                    <div className="max-h-64 overflow-y-auto space-y-1 pr-1 scrollbar-thin bg-white dark:bg-slate-900">
                       <button
                         onClick={() => {
                           setSelectedProject('all');
                           setIsProjectDropdownOpen(false);
                           setProjectSearchTerm('');
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-between cursor-pointer ${
+                        className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-between cursor-pointer border ${
                           selectedProject === 'all'
-                            ? 'bg-emerald-600 text-white shadow-sm'
-                            : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
+                            ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                            : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
                         }`}
                       >
                         <span className="flex items-center gap-2">
-                          <Building2 className="w-4 h-4 text-amber-400" />
-                          <span>🏢 Tất Cả Dự Án Vinhomes (Toàn Quốc)</span>
+                          <Building2 className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
+                          <span className="truncate">🏢 Tất Cả Dự Án Vinhomes (Toàn Quốc)</span>
                         </span>
-                        <span className="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded-full font-black">
-                          {services.length} Dịch Vụ
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 px-1.5 py-0.5 rounded-full font-black shrink-0">
+                          {services.length}
                         </span>
                       </button>
 
@@ -486,10 +568,10 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                               setIsProjectDropdownOpen(false);
                               setProjectSearchTerm('');
                             }}
-                            className={`w-full text-left p-2.5 rounded-xl text-xs font-bold transition flex flex-col gap-1 cursor-pointer border ${
+                            className={`w-full text-left p-2 rounded-lg text-xs font-bold transition flex flex-col gap-0.5 cursor-pointer border ${
                               isSelected
                                 ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
-                                : 'bg-slate-50/50 dark:bg-slate-800/50 border-slate-200/60 dark:border-slate-700/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 hover:border-emerald-500/50'
+                                : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
                             }`}
                           >
                             <div className="flex items-center justify-between gap-1">
@@ -497,8 +579,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                                 <MapPin className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-amber-300' : 'text-emerald-500'}`} />
                                 <span className="truncate">{proj.name}</span>
                               </span>
-                              <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full shrink-0 ${
-                                isSelected ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                              <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-full shrink-0 ${
+                                isSelected ? 'bg-white/20 text-white' : 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
                               }`}>
                                 {count} dịch vụ
                               </span>
@@ -506,7 +588,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
 
                             <div className="flex items-center justify-between text-[10px] opacity-80 pl-5">
                               <span>📍 {proj.location}</span>
-                              <span className={`px-1.5 py-0.2 rounded ${isSelected ? 'bg-amber-400/30 text-amber-200' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
+                              <span className={`px-1.5 py-0.2 rounded ${isSelected ? 'bg-amber-400/30 text-amber-200' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}>
                                 {proj.tag}
                               </span>
                             </div>
@@ -515,6 +597,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       })}
                     </div>
                   </div>
+                </>
                 )}
               </div>
 
@@ -603,52 +686,6 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
         
         {/* ==================== LEFT COLUMN: CATEGORIES & RESIDENT SERVICES / STOREFRONTS (HIỂN THỊ BÊN TRÁI - 8 CỘT) ==================== */}
         <div className="lg:col-span-8 space-y-6">
-          
-          {/* Prominent Storefront Directory Banner */}
-          <div className="p-5 bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white rounded-3xl border border-purple-500/30 shadow-xl space-y-3 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-              <ShoppingBag className="w-48 h-48 text-purple-300" />
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
-              <div className="space-y-1">
-                <span className="px-3 py-1 bg-purple-500/30 border border-purple-400/40 text-purple-200 text-[10px] font-black rounded-full uppercase tracking-wider inline-flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-300" /> CHỢ CƯ DÂN VINHOMES 24H
-                </span>
-                <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">
-                  🏪 Gian Hàng Cư Dân & Đối Tác Dịch Vụ
-                </h2>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Bảng tổng hợp tất cả gian hàng chính chủ cư dân, quán ăn, thực phẩm, sửa chữa, nội thất... được phân loại theo ngành nghề trên toàn bộ hệ thống.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsAllStoresDirectoryOpen(true)}
-                className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs rounded-2xl shadow-lg transition flex items-center justify-center gap-1.5 shrink-0 cursor-pointer hover:scale-105 active:scale-95"
-              >
-                <ShoppingBag className="w-4 h-4" />
-                <span>Xem Toàn Bộ Gian Hàng ({stores.length})</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Quick Preview Store Badges */}
-            <div className="pt-2 border-t border-purple-500/20 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin relative z-10">
-              <span className="text-[10px] font-bold text-slate-400 shrink-0">Ngành nghề nổi bật:</span>
-              {Array.from(new Set(stores.map(s => s.category).filter(Boolean))).map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setIsAllStoresDirectoryOpen(true)}
-                  className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-purple-100 font-extrabold text-[10px] rounded-xl transition shrink-0 border border-purple-400/20 cursor-pointer"
-                >
-                  🏪 {cat}
-                </button>
-              ))}
-            </div>
-          </div>
 
           {/* Categories Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -740,496 +777,595 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             </div>
           )}
 
-          {/* Stores Showcase Horizontal Slider / Cards */}
-          {stores.length > 0 && (
-            <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-5 border border-amber-500/40 shadow-lg space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div>
-                  <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[9px] rounded-full uppercase tracking-wider">
-                    🏪 GIAN HÀNG CỬA HÀNG ĐÃ XÁC MINH
+          {/* ==================== UNIFIED CONTAINER FOR STORES, MERCHANTS & CRAFTSMEN WITH 2 VERIFICATION TABS ==================== */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-xl space-y-4">
+            
+            {/* Consolidated Title & Header Action Controls */}
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2.5 py-0.5 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-black text-[10px] rounded-full border border-purple-500/20 uppercase tracking-wider inline-flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-500" /> CHỢ CƯ DÂN VINHOMES 24H
                   </span>
-                  <h3 className="text-sm font-black text-amber-400 mt-0.5">
-                    ĐẶT ĐỒ ĂN & MUA SẮM NỘI KHU VINHOMES
-                  </h3>
+                  <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-full border border-emerald-500/20">
+                    GIAN HÀNG & THỢ DỊCH VỤ CƯ DÂN
+                  </span>
                 </div>
+                <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white mt-1 tracking-tight">
+                  🏪 Gian Hàng Cư Dân & Đối Tác Dịch Vụ
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Bảng tổng hợp tất cả gian hàng chính chủ cư dân, quán ăn, thực phẩm, sửa chữa, nội thất... được phân loại theo ngành nghề trên hệ thống.
+                </p>
+              </div>
+
+              {/* ACTION BUTTON & THE 2 VERIFICATION TABS */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsAllStoresDirectoryOpen(true)}
+                  className="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-2xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  <span>Xem Toàn Bộ Gian Hàng ({stores.length})</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                {/* THE 2 TABS */}
+                <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700/80 shrink-0">
+                  <button
+                    onClick={() => setStoreVerificationTab('verified')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 cursor-pointer ${
+                      storeVerificationTab === 'verified'
+                        ? 'bg-emerald-600 text-white shadow-md'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <ShieldCheck className="w-4 h-4 text-emerald-200" />
+                    <span>🛡️ Cửa Hàng Đã Định Danh ({totalVerified})</span>
+                  </button>
+
+                  <button
+                    onClick={() => setStoreVerificationTab('pending')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 cursor-pointer ${
+                      storeVerificationTab === 'pending'
+                        ? 'bg-amber-500 text-slate-950 shadow-md'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <Clock className="w-4 h-4 text-slate-950" />
+                    <span>⏳ Chờ Được Định Danh ({totalPending})</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Preview Store Category Badges */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              <span className="text-[10px] font-bold text-slate-400 shrink-0">Ngành nghề nổi bật:</span>
+              {Array.from(new Set(stores.map(s => s.category).filter(Boolean))).map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setIsAllStoresDirectoryOpen(true)}
+                  className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-extrabold text-[10px] rounded-xl transition shrink-0 border border-slate-200 dark:border-slate-700/80 cursor-pointer"
+                >
+                  🏪 {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Helper Alert Banner */}
+            <div className={`p-3 rounded-2xl border text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+              storeVerificationTab === 'verified'
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-800 dark:text-emerald-300'
+                : 'bg-amber-500/10 border-amber-500/20 text-amber-900 dark:text-amber-300'
+            }`}>
+              <div className="flex items-center gap-2">
+                {storeVerificationTab === 'verified' ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+                )}
+                <span className="font-bold">
+                  {storeVerificationTab === 'verified'
+                    ? 'Danh sách gian hàng & thợ dịch vụ đã hoàn tất xác minh căn cước & giấy phép chính chủ.'
+                    : 'Danh sách gian hàng & dịch vụ đang gửi hồ sơ KYC. Khi bấm kích hoạt định danh, cửa hàng sẽ tự động chuyển sang tab Đã Định Danh.'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                 <button
                   onClick={() => setIsPricingModalOpen(true)}
-                  className="text-[10px] font-bold text-amber-300 bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-500/40 hover:bg-amber-500/30 transition"
+                  className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[11px] rounded-lg shrink-0 cursor-pointer shadow-xs"
                 >
-                  + Mở Gian Hàng
+                  + Mở Gian Hàng Mới
+                </button>
+                {storeVerificationTab === 'pending' && (
+                  <button
+                    onClick={() => setIsPostingModalOpen(true)}
+                    className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] rounded-lg shrink-0 cursor-pointer shadow-xs"
+                  >
+                    + Đăng Bài Dịch Vụ
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* View Mode & Count Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+              <span className="text-xs font-extrabold text-slate-500 dark:text-slate-400">
+                Hiển thị trong tab này: {displayStoresByTab.length} gian hàng, {displayServicesByTab.length} thợ & dịch vụ
+              </span>
+
+              {/* View Mode Buttons */}
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs">
+                <button
+                  onClick={() => { setViewMode('grid-2col'); localStorage.setItem('hb_resident_services_view_mode', 'grid-2col'); }}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'grid-2col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+                >
+                  <Grid2x2 className="w-3.5 h-3.5" />
+                  <span>2 Cột (Mobi)</span>
+                </button>
+                <button
+                  onClick={() => { setViewMode('card-1col'); localStorage.setItem('hb_resident_services_view_mode', 'card-1col'); }}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'card-1col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span>1 Cột Lớn</span>
+                </button>
+                <button
+                  onClick={() => { setViewMode('list-row'); localStorage.setItem('hb_resident_services_view_mode', 'list-row'); }}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'list-row' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+                >
+                  <List className="w-3.5 h-3.5" />
+                  <span>Hàng Ngang</span>
+                </button>
+                <button
+                  onClick={() => { setViewMode('grid-3col'); localStorage.setItem('hb_resident_services_view_mode', 'grid-3col'); }}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'grid-3col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+                >
+                  <Grid3x3 className="w-3.5 h-3.5" />
+                  <span>3 Cột Nhỏ</span>
                 </button>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {stores.slice(0, 2).map((st) => (
-                  <div 
-                    key={st.id} 
-                    onClick={() => setSelectedStoreModal(st)}
-                    className="bg-slate-950/90 rounded-2xl border border-slate-800 hover:border-amber-500/80 p-3 space-y-2 transition group flex flex-col justify-between cursor-pointer hover:shadow-md"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img 
-                        src={st.logoUrl} 
-                        alt={st.storeName}
-                        className="w-12 h-12 rounded-xl object-cover border-2 border-amber-400 shadow-sm shrink-0"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <span className="text-xs font-black text-white line-clamp-1 block group-hover:text-amber-400 transition">{st.storeName}</span>
-                        <span className="text-[10px] text-amber-300 font-bold block">{st.category} • {st.address}</span>
-                        <span className="text-[9px] text-slate-400">Chủ tiệm: <strong className="text-white">{st.ownerName}</strong></span>
-                      </div>
-                    </div>
+            {/* SECTION 1: STORES / GIAN HÀNG CỬA HÀNG */}
+            {displayStoresByTab.length > 0 && (
+              <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black text-amber-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <ShoppingBag className="w-4 h-4" />
+                    <span>GIAN HÀNG CỬA HÀNG IN-STORE ({displayStoresByTab.length})</span>
+                  </span>
+                </div>
 
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedStoreModal(st);
-                      }}
-                      className="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1 shadow-xs cursor-pointer"
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {displayStoresByTab.map((st) => (
+                    <div 
+                      key={st.id} 
+                      className="bg-slate-950 text-white rounded-2xl border border-slate-800 p-3.5 space-y-3 hover:border-amber-500 transition group flex flex-col justify-between"
                     >
-                      <ShoppingBag className="w-3.5 h-3.5" />
-                      <span>Vào Gian Hàng ({st.products?.length || 0} món)</span>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* View Mode Bar */}
-          <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div className="text-xs font-black text-slate-800 dark:text-slate-200 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>DANH SÁCH DỊCH VỤ ({filteredServices.length})</span>
-            </div>
-
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs">
-              <button
-                onClick={() => { setViewMode('grid-2col'); localStorage.setItem('hb_resident_services_view_mode', 'grid-2col'); }}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 ${viewMode === 'grid-2col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
-              >
-                <Grid2x2 className="w-3.5 h-3.5" />
-                <span>2 Cột</span>
-              </button>
-              <button
-                onClick={() => { setViewMode('card-1col'); localStorage.setItem('hb_resident_services_view_mode', 'card-1col'); }}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 ${viewMode === 'card-1col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
-              >
-                <LayoutGrid className="w-3.5 h-3.5" />
-                <span>1 Cột Lớn</span>
-              </button>
-              <button
-                onClick={() => { setViewMode('list-row'); localStorage.setItem('hb_resident_services_view_mode', 'list-row'); }}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 ${viewMode === 'list-row' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
-              >
-                <List className="w-3.5 h-3.5" />
-                <span>Hàng Ngang</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
-          <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <span>DANH SÁCH DỊCH VỤ & CỬA HÀNG CƯ DÂN</span>
-            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-              {filteredServices.length} Kết Quả
-            </span>
-          </h2>
-
-          {/* View Mode Toggle Controls for Mobile & Desktop */}
-          <div className="flex items-center gap-1 bg-slate-200/80 dark:bg-slate-800/90 p-1 rounded-2xl shrink-0 self-start md:self-auto overflow-x-auto max-w-full border border-slate-300/60 dark:border-slate-700/60">
-            <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 px-2 hidden sm:inline">
-              Dạng xem Mobi:
-            </span>
-
-            {/* 2 Cột Ô Vuông (Chợ Mobi) */}
-            <button
-              onClick={() => {
-                setViewMode('grid-2col');
-                localStorage.setItem('hb_resident_services_view_mode', 'grid-2col');
-              }}
-              className={`px-2.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 whitespace-nowrap ${
-                viewMode === 'grid-2col'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-300/60 dark:hover:bg-slate-700'
-              }`}
-              title="Lưới 2 cột ô vuông - Rất dễ lướt xem trên điện thoại"
-            >
-              <Grid2x2 className="w-4 h-4" />
-              <span>2 Cột (Mobi)</span>
-            </button>
-
-            {/* 1 Cột Thẻ Lớn */}
-            <button
-              onClick={() => {
-                setViewMode('card-1col');
-                localStorage.setItem('hb_resident_services_view_mode', 'card-1col');
-              }}
-              className={`px-2.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 whitespace-nowrap ${
-                viewMode === 'card-1col'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-300/60 dark:hover:bg-slate-700'
-              }`}
-              title="1 Cột thẻ lớn hình ảnh rộng"
-            >
-              <LayoutGrid className="w-4 h-4" />
-              <span>1 Cột Lớn</span>
-            </button>
-
-            {/* Hàng Ngang List Row */}
-            <button
-              onClick={() => {
-                setViewMode('list-row');
-                localStorage.setItem('hb_resident_services_view_mode', 'list-row');
-              }}
-              className={`px-2.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 whitespace-nowrap ${
-                viewMode === 'list-row'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-300/60 dark:hover:bg-slate-700'
-              }`}
-              title="Danh sách hàng ngang gọn gàng"
-            >
-              <List className="w-4 h-4" />
-              <span>Hàng Ngang</span>
-            </button>
-
-            {/* 3 Cột Lưới Nhỏ */}
-            <button
-              onClick={() => {
-                setViewMode('grid-3col');
-                localStorage.setItem('hb_resident_services_view_mode', 'grid-3col');
-              }}
-              className={`px-2.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 whitespace-nowrap ${
-                viewMode === 'grid-3col'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-300/60 dark:hover:bg-slate-700'
-              }`}
-              title="Lưới 3 cột nhỏ thu gọn"
-            >
-              <Grid3x3 className="w-4 h-4" />
-              <span>3 Cột Nhỏ</span>
-            </button>
-          </div>
-        </div>
-
-        {filteredServices.length === 0 ? (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center space-y-3">
-            <Wrench className="w-12 h-12 text-slate-300 mx-auto" />
-            <h3 className="text-base font-extrabold text-slate-700 dark:text-slate-300">
-              Chưa có dịch vụ nào thuộc danh mục này
-            </h3>
-            <p className="text-xs text-slate-500">
-              Bạn là cư dân Vinhomes cung cấp dịch vụ này? Đăng ký ngay để xuất hiện trên chợ dịch vụ.
-            </p>
-          </div>
-        ) : viewMode === 'list-row' ? (
-          /* HÀNG NGANG LIST ROW LAYOUT */
-          <div className="space-y-3">
-            {filteredServices.map(service => {
-              const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
-              const isGold = service.kycBadgeType === 'gold_certified';
-              const isVerified = service.verified || service.kycStatus === 'verified';
-
-              return (
-                <div 
-                  key={service.id}
-                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition duration-200 flex flex-col sm:flex-row items-stretch group"
-                >
-                  <div className="relative w-full sm:w-48 md:w-56 h-36 sm:h-auto bg-slate-100 dark:bg-slate-800 shrink-0 overflow-hidden cursor-pointer" onClick={() => setSelectedServiceModal(service)}>
-                    <img
-                      src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
-                      alt={service.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-10">
-                      <span className="bg-slate-900/90 text-white text-[9px] font-black px-2 py-0.5 rounded-md border border-slate-700">
-                        {projectObj?.name.split(' (')[0]}
-                      </span>
-                      {isVerified && (
-                        <span className="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-md flex items-center gap-0.5">
-                          <ShieldCheck className="w-3 h-3" /> KYC
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between space-y-2">
-                    <div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md">
-                          {service.subCategory}
-                        </span>
-                        <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-slate-950" /> {service.rating.toFixed(1)}
-                        </span>
+                      <div className="flex items-center gap-3 cursor-pointer" onClick={() => setSelectedStoreModal(st)}>
+                        <img 
+                          src={st.logoUrl} 
+                          alt={st.storeName}
+                          className="w-12 h-12 rounded-xl object-cover border-2 border-amber-400 shadow-sm shrink-0"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-black text-white line-clamp-1 group-hover:text-amber-400 transition">{st.storeName}</span>
+                            {st.verified ? (
+                              <span className="bg-emerald-500/20 text-emerald-400 text-[9px] font-black px-1.5 py-0.2 rounded border border-emerald-500/30 shrink-0 flex items-center gap-0.5">
+                                <ShieldCheck className="w-2.5 h-2.5" /> KYC
+                              </span>
+                            ) : (
+                              <span className="bg-amber-500/20 text-amber-300 text-[9px] font-black px-1.5 py-0.2 rounded border border-amber-500/30 shrink-0 flex items-center gap-0.5">
+                                <Clock className="w-2.5 h-2.5" /> Chờ KYC
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-amber-300 font-bold block">{st.category} • {st.address}</span>
+                          <span className="text-[9px] text-slate-400">Chủ tiệm: <strong className="text-white">{st.ownerName}</strong> ({st.ownerPhone})</span>
+                        </div>
                       </div>
 
-                      <h3 
-                        onClick={() => setSelectedServiceModal(service)}
-                        className="font-black text-sm text-slate-900 dark:text-white hover:text-emerald-600 cursor-pointer transition mt-1.5 leading-snug"
-                      >
-                        {service.title}
-                      </h3>
-
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
-                        <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-extrabold">
-                          <User className="w-3.5 h-3.5 text-slate-400" />
-                          {service.providerName}
-                        </span>
-                        <span className="flex items-center gap-1 truncate">
-                          <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                          {service.address}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
-                      <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">
-                        💰 {service.priceDisplay}
-                      </span>
-
-                      <div className="flex items-center gap-2 shrink-0">
-                        <a
-                          href={`tel:${service.providerPhone}`}
-                          className="flex items-center justify-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition"
+                      <div className="flex items-center gap-2 pt-1 border-t border-slate-800">
+                        <button
+                          onClick={() => setSelectedStoreModal(st)}
+                          className="flex-1 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1 cursor-pointer shadow-xs"
                         >
-                          <Phone className="w-3.5 h-3.5" />
-                          <span>Gọi</span>
-                        </a>
-                        <a
-                          href={service.providerZalo || `https://zalo.me/${service.providerPhone}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="flex items-center justify-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition"
-                        >
-                          <MessageSquare className="w-3.5 h-3.5" />
-                          <span>Zalo</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : viewMode === 'grid-2col' ? (
-          /* 2 CỘT Ô VUÔNG DỰ DỰA TRÊN THIẾT BỊ DI ĐỘNG */
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
-            {filteredServices.map(service => {
-              const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
-              const isGold = service.kycBadgeType === 'gold_certified';
-              const isVerified = service.verified || service.kycStatus === 'verified';
+                          <ShoppingBag className="w-3.5 h-3.5" />
+                          <span>Vào Gian Hàng ({st.products?.length || 0} món)</span>
+                        </button>
 
-              return (
-                <div 
-                  key={service.id}
-                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between group"
-                >
-                  <div className="relative h-28 sm:h-36 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => setSelectedServiceModal(service)}>
-                    <img
-                      src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
-                      alt={service.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    
-                    <div className="absolute top-1.5 left-1.5 flex flex-wrap gap-1 z-10">
-                      <span className="bg-slate-900/90 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded border border-slate-700">
-                        {projectObj?.name.split(' (')[0]}
-                      </span>
-                      {isVerified && (
-                        <span className="bg-blue-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                          <ShieldCheck className="w-3 h-3 text-blue-200" />
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
-                      <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                        <Star className="w-2.5 h-2.5 fill-slate-950" />
-                        <span>{service.rating.toFixed(1)}</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between space-y-2">
-                    <div>
-                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 truncate block">
-                        {service.subCategory}
-                      </span>
-                      
-                      <h3 
-                        onClick={() => setSelectedServiceModal(service)}
-                        className="font-black text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 hover:text-emerald-600 cursor-pointer transition leading-snug mt-0.5"
-                      >
-                        {service.title}
-                      </h3>
-
-                      <div className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 mt-1 truncate">
-                        👤 {service.providerName}
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
-                      <div className="text-xs font-black text-emerald-600 dark:text-emerald-400 truncate">
-                        💰 {service.priceDisplay}
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-1">
-                        <a
-                          href={`tel:${service.providerPhone}`}
-                          className="flex items-center justify-center gap-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-extrabold"
-                        >
-                          <Phone className="w-3 h-3" />
-                          <span>Gọi</span>
-                        </a>
-                        <a
-                          href={service.providerZalo || `https://zalo.me/${service.providerPhone}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="flex items-center justify-center gap-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-extrabold"
-                        >
-                          <MessageSquare className="w-3 h-3" />
-                          <span>Zalo</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          /* 1 CỘT LỚN HOẶC 3 CỘT NHỎ */
-          <div className={
-            viewMode === 'grid-3col'
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
-              : "grid grid-cols-1 md:grid-cols-2 gap-6"
-          }>
-            {filteredServices.map(service => {
-              const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
-              const isGold = service.kycBadgeType === 'gold_certified';
-              const isVerified = service.verified || service.kycStatus === 'verified';
-              const isPending = service.kycStatus === 'pending';
-
-              return (
-                <div 
-                  key={service.id}
-                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition duration-200 flex flex-col justify-between group"
-                >
-                  {/* Thumbnail Header */}
-                  <div className="relative h-48 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => setSelectedServiceModal(service)}>
-                    <img
-                      src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
-                      alt={service.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    
-                    {/* Project & BLUE BADGE KYC Badges */}
-                    <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-                      <span className="bg-slate-900/90 backdrop-blur-md text-white text-[10px] font-black px-2.5 py-1 rounded-lg border border-slate-700">
-                        {projectObj?.name.split(' (')[0]}
-                      </span>
-
-                      {/* Gold Badge */}
-                      {isGold && (
-                        <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
-                          <Award className="w-3.5 h-3.5 fill-slate-950" />
-                          <span>ĐỐI TÁC VÀNG KYC</span>
-                        </span>
-                      )}
-
-                      {/* Blue Badge KYC */}
-                      {isVerified && !isGold && (
-                        <span className="bg-blue-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md border border-blue-400/50">
-                          <ShieldCheck className="w-3.5 h-3.5 text-blue-200" />
-                          <span>NÚT XANH KYC CHÍNH CHỦ</span>
-                        </span>
-                      )}
-
-                      {/* Pending Badge */}
-                      {isPending && (
-                        <span className="bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg flex items-center gap-1 shadow-xs">
-                          <Clock className="w-3 h-3 text-amber-200" />
-                          <span>Chờ Duyệt Giấy Phép</span>
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Subcategory Tag */}
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                      <span className="bg-emerald-950/90 backdrop-blur-md text-emerald-300 text-[10px] font-bold px-2.5 py-1 rounded-md border border-emerald-800/80">
-                        {service.subCategory}
-                      </span>
-                      <span className="bg-amber-500 text-slate-950 text-[11px] font-black px-2 py-0.5 rounded-md flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-slate-950" />
-                        <span>{service.rating.toFixed(1)} ({service.reviewCount})</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Content Body */}
-                  <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                    <div>
-                      <h3 
-                        onClick={() => setSelectedServiceModal(service)}
-                        className="font-black text-sm text-slate-900 dark:text-white line-clamp-2 hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer transition"
-                      >
-                        {service.title}
-                      </h3>
-                      
-                      <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 mt-2">
-                        <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        <span className="truncate">{service.address}</span>
-                      </div>
-
-                      <div className="text-xs font-bold text-slate-700 dark:text-slate-300 mt-1 flex items-center gap-1">
-                        <User className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="text-emerald-700 dark:text-emerald-400 font-extrabold">{service.providerName}</span>
-                        {service.subdivision && (
-                          <span className="text-[11px] text-slate-400 font-normal">({service.subdivision})</span>
+                        {!st.verified && (
+                          <button
+                            onClick={() => handleActivateStoreKyc(st.id, st.storeName)}
+                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl transition shrink-0 cursor-pointer shadow-xs flex items-center gap-1"
+                            title="Bấm kích hoạt định danh -> Gian hàng tự chuyển sang tab Đã Định Danh"
+                          >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Kích Hoạt KYC</span>
+                          </button>
                         )}
                       </div>
-
-                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mt-2 leading-relaxed">
-                        {service.description}
-                      </p>
                     </div>
-
-                    {/* Price & Contact Action Bar */}
-                    <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                      <div className="text-xs font-black text-emerald-600 dark:text-emerald-400">
-                        💰 {service.priceDisplay}
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2">
-                        <a
-                          href={`tel:${service.providerPhone}`}
-                          className="flex items-center justify-center gap-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-xs"
-                        >
-                          <Phone className="w-3.5 h-3.5" />
-                          <span>Gọi Điện</span>
-                        </a>
-
-                        <a
-                          href={service.providerZalo || `https://zalo.me/${service.providerPhone}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-xs"
-                        >
-                          <MessageSquare className="w-3.5 h-3.5" />
-                          <span>Chat Zalo</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              );
-            })}
+              </div>
+            )}
+
+            {/* SECTION 2: SERVICES & CRAFTSMEN / THỢ DỊCH VỤ CƯ DÂN */}
+            <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Wrench className="w-4 h-4" />
+                  <span>THỢ & DỊCH VỤ CƯ DÂN ({displayServicesByTab.length})</span>
+                </span>
+              </div>
+
+              {displayServicesByTab.length === 0 && displayStoresByTab.length === 0 ? (
+                <div className="bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-8 text-center space-y-2">
+                  <Wrench className="w-10 h-10 text-slate-400 mx-auto" />
+                  <h3 className="text-sm font-extrabold text-slate-700 dark:text-slate-300">
+                    {storeVerificationTab === 'verified'
+                      ? 'Chưa có gian hàng / dịch vụ nào trong Tab Cửa Hàng Đã Định Danh'
+                      : 'Tất cả gian hàng & dịch vụ hiện đã được định danh xác minh thành công! 🎉'}
+                  </h3>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto">
+                    {storeVerificationTab === 'pending'
+                      ? 'Không có dịch vụ nào đang chờ phê duyệt giấy phép.'
+                      : 'Bạn có thể bấm nút "Đăng Bài Dịch Vụ" để gửi thông tin phục vụ cư dân.'}
+                  </p>
+                </div>
+              ) : viewMode === 'list-row' ? (
+                /* HÀNG NGANG LIST ROW LAYOUT */
+                <div className="space-y-3">
+                  {displayServicesByTab.map(service => {
+                    const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
+                    const isVerified = service.verified || service.kycStatus === 'verified';
+
+                    return (
+                      <div 
+                        key={service.id}
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition duration-200 flex flex-col sm:flex-row items-stretch group"
+                      >
+                        <div className="relative w-full sm:w-48 md:w-56 h-36 sm:h-auto bg-slate-100 dark:bg-slate-800 shrink-0 overflow-hidden cursor-pointer" onClick={() => setSelectedServiceModal(service)}>
+                          <img
+                            src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
+                            alt={service.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-10">
+                            <span className="bg-slate-900/90 text-white text-[9px] font-black px-2 py-0.5 rounded-md border border-slate-700">
+                              {projectObj?.name.split(' (')[0]}
+                            </span>
+                            {isVerified ? (
+                              <span className="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-md flex items-center gap-0.5">
+                                <ShieldCheck className="w-3 h-3 text-blue-200" /> KYC
+                              </span>
+                            ) : (
+                              <span className="bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-md flex items-center gap-0.5">
+                                <Clock className="w-3 h-3 text-slate-950" /> Chờ KYC
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between space-y-2">
+                          <div>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md">
+                                {service.subCategory}
+                              </span>
+                              <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded flex items-center gap-1">
+                                <Star className="w-3 h-3 fill-slate-950" /> {service.rating.toFixed(1)}
+                              </span>
+                            </div>
+
+                            <h3 
+                              onClick={() => setSelectedServiceModal(service)}
+                              className="font-black text-sm text-slate-900 dark:text-white hover:text-emerald-600 cursor-pointer transition mt-1.5 leading-snug"
+                            >
+                              {service.title}
+                            </h3>
+
+                            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                              <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-extrabold">
+                                <User className="w-3.5 h-3.5 text-slate-400" />
+                                {service.providerName}
+                              </span>
+                              <span className="flex items-center gap-1 truncate">
+                                <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                                {service.address}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">
+                              💰 {service.priceDisplay}
+                            </span>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              {!isVerified && (
+                                <button
+                                  onClick={() => handleActivateServiceKyc(service.id, service.title)}
+                                  className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black transition flex items-center gap-1 cursor-pointer shadow-xs"
+                                  title="Kích hoạt định danh -> Tự động chuyển sang tab Cửa Hàng Đã Định Danh"
+                                >
+                                  <Sparkles className="w-3.5 h-3.5" />
+                                  <span>Kích Hoạt KYC</span>
+                                </button>
+                              )}
+                              <a
+                                href={`tel:${service.providerPhone}`}
+                                className="flex items-center justify-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition"
+                              >
+                                <Phone className="w-3.5 h-3.5" />
+                                <span>Gọi</span>
+                              </a>
+                              <a
+                                href={service.providerZalo || `https://zalo.me/${service.providerPhone}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center justify-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                                <span>Zalo</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : viewMode === 'grid-2col' ? (
+                /* 2 CỘT Ô VUÔNG DỰ DỰA TRÊN THIẾT BỊ DI ĐỘNG */
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
+                  {displayServicesByTab.map(service => {
+                    const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
+                    const isVerified = service.verified || service.kycStatus === 'verified';
+
+                    return (
+                      <div 
+                        key={service.id}
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between group"
+                      >
+                        <div className="relative h-28 sm:h-36 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => setSelectedServiceModal(service)}>
+                          <img
+                            src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
+                            alt={service.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          
+                          <div className="absolute top-1.5 left-1.5 flex flex-wrap gap-1 z-10">
+                            <span className="bg-slate-900/90 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded border border-slate-700">
+                              {projectObj?.name.split(' (')[0]}
+                            </span>
+                            {isVerified ? (
+                              <span className="bg-blue-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                <ShieldCheck className="w-3 h-3 text-blue-200" />
+                              </span>
+                            ) : (
+                              <span className="bg-amber-500 text-slate-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                <Clock className="w-3 h-3 text-slate-950" />
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
+                            <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                              <Star className="w-2.5 h-2.5 fill-slate-950" />
+                              <span>{service.rating.toFixed(1)}</span>
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between space-y-2">
+                          <div>
+                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 truncate block">
+                              {service.subCategory}
+                            </span>
+                            
+                            <h3 
+                              onClick={() => setSelectedServiceModal(service)}
+                              className="font-black text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 hover:text-emerald-600 cursor-pointer transition leading-snug mt-0.5"
+                            >
+                              {service.title}
+                            </h3>
+
+                            <div className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 mt-1 truncate">
+                              👤 {service.providerName}
+                            </div>
+                          </div>
+
+                          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
+                            <div className="text-xs font-black text-emerald-600 dark:text-emerald-400 truncate">
+                              💰 {service.priceDisplay}
+                            </div>
+
+                            {!isVerified && (
+                              <button
+                                onClick={() => handleActivateServiceKyc(service.id, service.title)}
+                                className="w-full py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-black transition flex items-center justify-center gap-0.5 cursor-pointer shadow-xs"
+                                title="Kích hoạt định danh ngay -> Tự động chuyển sang tab Đã Định Danh"
+                              >
+                                <Sparkles className="w-3 h-3" />
+                                <span>Kích Hoạt KYC</span>
+                              </button>
+                            )}
+
+                            <div className="grid grid-cols-2 gap-1">
+                              <a
+                                href={`tel:${service.providerPhone}`}
+                                className="flex items-center justify-center gap-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-extrabold"
+                              >
+                                <Phone className="w-3 h-3" />
+                                <span>Gọi</span>
+                              </a>
+                              <a
+                                href={service.providerZalo || `https://zalo.me/${service.providerPhone}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center justify-center gap-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-extrabold"
+                              >
+                                <MessageSquare className="w-3 h-3" />
+                                <span>Zalo</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                /* 1 CỘT LỚN HOẶC 3 CỘT NHỎ */
+                <div className={
+                  viewMode === 'grid-3col'
+                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
+                    : "grid grid-cols-1 md:grid-cols-2 gap-6"
+                }>
+                  {displayServicesByTab.map(service => {
+                    const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
+                    const isGold = service.kycBadgeType === 'gold_certified';
+                    const isVerified = service.verified || service.kycStatus === 'verified';
+                    const isPending = !isVerified;
+
+                    return (
+                      <div 
+                        key={service.id}
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition duration-200 flex flex-col justify-between group"
+                      >
+                        {/* Thumbnail Header */}
+                        <div className="relative h-48 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => setSelectedServiceModal(service)}>
+                          <img
+                            src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
+                            alt={service.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          
+                          {/* Project & BLUE BADGE KYC Badges */}
+                          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
+                            <span className="bg-slate-900/90 backdrop-blur-md text-white text-[10px] font-black px-2.5 py-1 rounded-lg border border-slate-700">
+                              {projectObj?.name.split(' (')[0]}
+                            </span>
+
+                            {/* Gold Badge */}
+                            {isGold && (
+                              <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
+                                <Award className="w-3.5 h-3.5 fill-slate-950" />
+                                <span>ĐỐI TÁC VÀNG KYC</span>
+                              </span>
+                            )}
+
+                            {/* Blue Badge KYC */}
+                            {isVerified && !isGold && (
+                              <span className="bg-blue-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md border border-blue-400/50">
+                                <ShieldCheck className="w-3.5 h-3.5 text-blue-200" />
+                                <span>KYC CHÍNH CHỦ</span>
+                              </span>
+                            )}
+
+                            {/* Pending Badge */}
+                            {isPending && (
+                              <span className="bg-amber-500 text-slate-950 text-[10px] font-bold px-2 py-1 rounded-lg flex items-center gap-1 shadow-xs">
+                                <Clock className="w-3 h-3 text-slate-950" />
+                                <span>Chờ Định Danh KYC</span>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Subcategory Tag */}
+                          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                            <span className="bg-emerald-950/90 backdrop-blur-md text-emerald-300 text-[10px] font-bold px-2.5 py-1 rounded-md border border-emerald-800/80">
+                              {service.subCategory}
+                            </span>
+                            <span className="bg-amber-500 text-slate-950 text-[11px] font-black px-2 py-0.5 rounded-md flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-slate-950" />
+                              <span>{service.rating.toFixed(1)} ({service.reviewCount})</span>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Content Body */}
+                        <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                          <div>
+                            <h3 
+                              onClick={() => setSelectedServiceModal(service)}
+                              className="font-black text-sm text-slate-900 dark:text-white line-clamp-2 hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer transition"
+                            >
+                              {service.title}
+                            </h3>
+                            
+                            <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 mt-2">
+                              <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span className="truncate">{service.address}</span>
+                            </div>
+
+                            <div className="text-xs font-bold text-slate-700 dark:text-slate-300 mt-1 flex items-center gap-1">
+                              <User className="w-3.5 h-3.5 text-slate-400" />
+                              <span className="text-emerald-700 dark:text-emerald-400 font-extrabold">{service.providerName}</span>
+                              {service.subdivision && (
+                                <span className="text-[11px] text-slate-400 font-normal">({service.subdivision})</span>
+                              )}
+                            </div>
+
+                            <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mt-2 leading-relaxed">
+                              {service.description}
+                            </p>
+                          </div>
+
+                          {/* Price & Contact Action Bar */}
+                          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                            <div className="text-xs font-black text-emerald-600 dark:text-emerald-400">
+                              💰 {service.priceDisplay}
+                            </div>
+
+                            {!isVerified && (
+                              <button
+                                onClick={() => handleActivateServiceKyc(service.id, service.title)}
+                                className="w-full py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                                title="Bấm kích hoạt định danh -> Dịch vụ tự động chuyển sang tab Cửa Hàng Đã Định Danh"
+                              >
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>⚡ Kích Hoạt Định Danh Ngay</span>
+                              </button>
+                            )}
+
+                            <div className="grid grid-cols-2 gap-2">
+                              <a
+                                href={`tel:${service.providerPhone}`}
+                                className="flex items-center justify-center gap-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-xs"
+                              >
+                                <Phone className="w-3.5 h-3.5" />
+                                <span>Gọi Điện</span>
+                              </a>
+
+                              <a
+                                href={service.providerZalo || `https://zalo.me/${service.providerPhone}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-xs"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                                <span>Chat Zalo</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
 
         {/* ==================== RIGHT COLUMN: BẢNG TIN CƯ DÂN & BÀI PR UY TÍN (HIỂN THỊ BÊN PHẢI - 4 CỘT) ==================== */}
         <div className="lg:col-span-4 space-y-5">
@@ -1885,9 +2021,20 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 mt-0.5 shrink-0"
                   />
                   <span className="text-xs font-extrabold text-amber-950 dark:text-amber-200 leading-snug">
-                    Tôi xác nhận thông tin đăng bài là trung thực. Tôi cam kết cung cấp dịch vụ đúng chất lượng, đúng giá và tự chịu 100% trách nhiệm trước pháp luật & cư dân. (*)
+                    Tôi xác nhận thông tin đăng bài là trung thực, đồng ý tuân thủ{' '}
+                    <button
+                      type="button"
+                      onClick={() => setIsTripartiteModalOpen(true)}
+                      className="text-amber-700 dark:text-amber-400 font-black underline hover:text-amber-600 inline-flex items-center gap-0.5 cursor-pointer"
+                    >
+                      📄 Thỏa thuận Ba Bên
+                    </button>
+                    {' '}và cam kết cung cấp dịch vụ đúng chất lượng, đúng giá, tự chịu 100% trách nhiệm trước pháp luật & cư dân. (*)
                   </span>
                 </label>
+                <div className="text-[10px] text-amber-700 dark:text-amber-300/80 pl-6">
+                  (👉 Bấm vào "📄 Thỏa thuận Ba Bên" ở trên để xem chi tiết Popup văn bản quy chế).
+                </div>
               </div>
 
               {/* Submit */}

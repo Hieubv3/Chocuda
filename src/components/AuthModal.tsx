@@ -20,7 +20,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState<'owner' | 'sale' | 'visitor'>('owner');
   const [selectedCategories, setSelectedCategories] = useState<string[]>(['bds-vinhomes']);
-  const [agreeTerms, setAgreeTerms] = useState(true);
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [showTripartiteModal, setShowTripartiteModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -367,7 +367,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           return;
         }
         if (!agreeTerms) {
-          setErrorMsg('Bạn cần đồng ý với Điều khoản dịch vụ & Chính sách bảo mật.');
+          setErrorMsg('⚠️ Bạn phải tích chọn đồng ý với Thỏa thuận 3 bên (Bên A Cư dân - Bên B Nhà cung cấp - Bên C chocudan24h.com) thì mới có thể chuyển sang bước tiếp theo.');
           return;
         }
 
@@ -1124,25 +1124,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                 </div>
               </div>
 
-              <div className="flex items-start space-x-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="agreeTerms"
-                  checked={agreeTerms}
-                  onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="mt-1 rounded text-amber-500 focus:ring-amber-500 cursor-pointer"
-                />
-                <label htmlFor="agreeTerms" className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
-                  Tôi đã đọc & đồng ý với{' '}
-                  <button
-                    type="button"
-                    onClick={() => setShowTripartiteModal(true)}
-                    className="text-amber-600 dark:text-amber-400 font-bold underline hover:text-amber-500 inline-flex items-center gap-0.5"
-                  >
-                    Thỏa thuận Ba Bên (Cư dân - Đối tác - chocudan24h.com)
-                  </button>
-                  {' '}và Chính sách Bảo mật.
+              <div className="p-3 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 rounded-2xl space-y-1.5">
+                <label htmlFor="agreeTerms" className="flex items-start space-x-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="agreeTerms"
+                    required
+                    checked={agreeTerms}
+                    onChange={(e) => setAgreeTerms(e.target.checked)}
+                    className="mt-0.5 rounded text-amber-500 focus:ring-amber-500 cursor-pointer w-4.5 h-4.5 shrink-0"
+                  />
+                  <span className="text-[11px] text-slate-800 dark:text-slate-200 leading-snug font-semibold">
+                    Tôi đã đọc, hiểu rõ & đồng ý tuân thủ{' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowTripartiteModal(true)}
+                      className="text-amber-600 dark:text-amber-400 font-extrabold underline hover:text-amber-500 inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>📄 Thỏa thuận Ba Bên (Cư dân / Khách hàng - Nhà cung cấp / Chủ shop - chocudan24h.com)</span>
+                    </button>
+                    {' '}và Chính sách Bảo mật. <span className="text-rose-500 font-black">(*)</span>
+                  </span>
                 </label>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 pl-7 flex items-center gap-1">
+                  <span>👉 Click vào đường dẫn gạch chân màu cam ở trên để mở Popup xem chi tiết đầy đủ 10 Điều khoản văn bản.</span>
+                </div>
               </div>
             </>
           )}
