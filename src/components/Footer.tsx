@@ -330,9 +330,25 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
         <div className="mt-8 pt-6 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500">
           <p>{t.footer.rights}</p>
           <div className="mt-2 sm:mt-0 flex items-center space-x-4">
-            <span className="hover:text-slate-300">Chính sách bảo mật</span>
+            <button
+              onClick={() => {
+                setCurrentTab('privacy');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-amber-400 font-semibold transition cursor-pointer"
+            >
+              Chính sách bảo mật (Privacy Policy)
+            </button>
             <span>•</span>
-            <span className="hover:text-slate-300">Điều khoản sử dụng</span>
+            <button
+              onClick={() => {
+                setCurrentTab('privacy');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-amber-400 font-semibold transition cursor-pointer"
+            >
+              Điều khoản sử dụng
+            </button>
             <span>•</span>
             <span className="text-amber-500 font-semibold">SSL Secured</span>
           </div>

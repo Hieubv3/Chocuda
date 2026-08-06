@@ -13,6 +13,7 @@ import { HieuBuiProfilePage } from './pages/HieuBuiProfilePage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { UserDashboardPage } from './pages/UserDashboardPage';
 import { AdminLoginPage } from './pages/AdminLoginPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { ResidentServicesPage } from './components/ResidentServicesPage';
 import { PropertyDetailModal } from './components/PropertyDetailModal';
 import { CompareModal } from './components/CompareModal';
@@ -259,6 +260,21 @@ export const App: React.FC = () => {
       const hash = window.location.hash.toLowerCase();
       const search = window.location.search.toLowerCase();
       const pathname = window.location.pathname.toLowerCase();
+      if (
+        hash === '#privacy' ||
+        hash === '#privacy-policy' ||
+        hash === '#chinh-sach-bao-mat text-amber-500' ||
+        hash === '#chinh-sach-bao-mat' ||
+        pathname.endsWith('/privacy') ||
+        pathname.endsWith('/privacy-policy') ||
+        pathname.endsWith('/chinh-sach-bao-mat') ||
+        search.includes('page=privacy') ||
+        search.includes('privacy=1')
+      ) {
+        setCurrentTab('privacy');
+        return;
+      }
+
       if (
         hash === '#quantri' ||
         hash === '#admin' ||
@@ -654,6 +670,19 @@ export const App: React.FC = () => {
               🔑 ĐĂNG NHẬP / ĐĂNG KÝ NGAY
             </button>
           </div>
+        );
+
+      case 'privacy':
+      case 'privacy-policy':
+      case 'chinh-sach-bao-mat':
+        return (
+          <PrivacyPolicyPage
+            language={language}
+            onBackToHome={() => {
+              setCurrentTab('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         );
 
       case 'admin_login':
