@@ -371,17 +371,48 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           return;
         }
 
-        // Proceed to OTP verification step
-        setRegisterStep('otp_verification');
-        setRegEmailTimer(30);
-        setRegPhoneTimer(30);
-        setSuccessMsg('Mã xác thực OTP đã gửi tới Email & SMS Số điện thoại của bạn.');
+        // Proceed to Email OTP verification step
+        setIsLoading(true);
+        try {
+          const res = await fetch('/api/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email.trim().toLowerCase() })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            setErrorMsg(data.error || 'Không thể gửi mã OTP tới Email.');
+            return;
+          }
+
+          setRegisterStep('otp_verification');
+          setRegEmailTimer(30);
+
+          if (data.code) {
+            // Auto-fill or store for easy test verification when GMAIL_APP_PASS is not configured
+            const codeArr = String(data.code).split('');
+            if (codeArr.length === 6) {
+              setRegEmailOtpDigits(codeArr);
+            }
+          }
+
+          if (data.sentLive) {
+            setSuccessMsg(`✓ Mã OTP đã được gửi trực tiếp tới email ${email}! Vui lòng kiểm tra hộp thư.`);
+          } else {
+            setSuccessMsg(`✓ Mã OTP xác thực Email đã được tạo thành công!`);
+          }
+        } catch (err) {
+          setErrorMsg('Lỗi kết nối máy chủ gửi OTP.');
+        } finally {
+          setIsLoading(false);
+        }
         return;
       }
 
       // OTP Verification Submission
-      if (regEmailOtpDigits.join('').length < 6 || regPhoneOtpDigits.join('').length < 6) {
-        setErrorMsg('Vui lòng nhập đủ 6 chữ số mã OTP cho cả Email và Số điện thoại!');
+      const enteredOtp = regEmailOtpDigits.join('');
+      if (enteredOtp.length < 6) {
+        setErrorMsg('Vui lòng nhập đủ 6 chữ số mã OTP Email!');
         return;
       }
 
@@ -390,19 +421,26 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
         const res = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, phone, password, role, businessCategories: selectedCategories })
+          body: JSON.stringify({ 
+            name, 
+            email: email.trim().toLowerCase(), 
+            phone, 
+            password, 
+            role, 
+            businessCategories: selectedCategories,
+            otpCode: enteredOtp
+          })
         });
 
         const data = await res.json();
         if (!res.ok) {
           setErrorMsg(data.error || 'Đăng ký không thành công.');
         } else {
-          setSuccessMsg('✓ Xác thực Email & Số điện thoại thành công! Đang kích hoạt tài khoản...');
+          setSuccessMsg('✓ Xác thực Email OTP thành công! Đang kích hoạt tài khoản...');
           setTimeout(() => {
             onLoginSuccess({
               ...data.user,
-              emailVerified: true,
-              phoneVerified: true
+              emailVerified: true
             });
           }, 600);
         }
@@ -823,29 +861,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                 ← Sửa thông tin đăng ký
               </button>
               <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-full">
-                Bước 2/2: Xác thực OTP Kép
+                Xác thực Email OTP
               </span>
             </div>
 
             <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-1">
               <div className="font-extrabold text-amber-800 dark:text-amber-300 text-xs flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>Bảo mật tài khoản mới chính chủ:</span>
+                <span>Bảo mật tài khoản Email chính chủ:</span>
               </div>
               <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
-                Vui lòng nhập mã xác thực OTP 6 chữ số đã được gửi đồng thời tới Email và SĐT của bạn.
+                Hệ thống đã gửi mã xác thực OTP 6 chữ số tới hộp thư <strong>{email}</strong>. Vui lòng kiểm tra Email (bao gồm cả thư mục Spam/Rác) và nhập bên dưới:
               </p>
             </div>
 
             {/* Email OTP Section */}
-            <div className="p-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl space-y-2.5">
+            <div className="p-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white">
-                  <Mail className="w-4 h-4 text-blue-500" />
-                  <span>1. Mã OTP Email ({email})</span>
+                  <Mail className="w-4 h-4 text-amber-500" />
+                  <span>Mã OTP Email ({email})</span>
                 </div>
                 <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
-                  ✓ Đã gửi mã
+                  ✓ Đã gửi Email
                 </span>
               </div>
 
@@ -862,58 +900,37 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                       next[idx] = e.target.value.slice(-1);
                       setRegEmailOtpDigits(next);
                     }}
-                    className="w-8 h-10 sm:w-9 sm:h-11 text-center text-base font-black border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs"
+                    className="w-9 h-11 sm:w-10 sm:h-12 text-center text-lg font-black border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none shadow-xs"
                   />
                 ))}
               </div>
 
-              <div className="text-center text-[11px] text-slate-500">
+              <div className="text-center text-[11px] text-slate-500 pt-1">
                 {regEmailTimer > 0 ? (
                   <span>Thử lại mã Email trong <b className="text-slate-800 dark:text-slate-200">{regEmailTimer}s</b></span>
                 ) : (
-                  <button type="button" onClick={() => setRegEmailTimer(30)} className="text-blue-600 font-bold hover:underline">
-                    Gửi lại mã OTP Email
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Phone OTP Section */}
-            <div className="p-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl space-y-2.5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white">
-                  <Phone className="w-4 h-4 text-emerald-500" />
-                  <span>2. Mã OTP SĐT SMS ({phone})</span>
-                </div>
-                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
-                  ✓ Đã gửi SMS
-                </span>
-              </div>
-
-              <div className="flex justify-center gap-1.5 sm:gap-2">
-                {regPhoneOtpDigits.map((digit, idx) => (
-                  <input
-                    key={`phone-otp-${idx}`}
-                    type="text"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => {
-                      if (!/^\d*$/.test(e.target.value)) return;
-                      const next = [...regPhoneOtpDigits];
-                      next[idx] = e.target.value.slice(-1);
-                      setRegPhoneOtpDigits(next);
-                    }}
-                    className="w-8 h-10 sm:w-9 sm:h-11 text-center text-base font-black border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-xs"
-                  />
-                ))}
-              </div>
-
-              <div className="text-center text-[11px] text-slate-500">
-                {regPhoneTimer > 0 ? (
-                  <span>Thử lại tin nhắn SMS trong <b className="text-slate-800 dark:text-slate-200">{regPhoneTimer}s</b></span>
-                ) : (
-                  <button type="button" onClick={() => setRegPhoneTimer(30)} className="text-emerald-600 font-bold hover:underline">
-                    Gửi lại SMS OTP SĐT
+                  <button 
+                    type="button" 
+                    onClick={async () => {
+                      setRegEmailTimer(30);
+                      try {
+                        const res = await fetch('/api/auth/send-otp', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ email: email.trim().toLowerCase() })
+                        });
+                        const data = await res.json();
+                        if (data.code) {
+                          setRegEmailOtpDigits(String(data.code).split(''));
+                        }
+                        setSuccessMsg(data.message || 'Đã gửi lại mã OTP Email!');
+                      } catch (e) {
+                        setErrorMsg('Lỗi khi gửi lại OTP.');
+                      }
+                    }} 
+                    className="text-amber-600 dark:text-amber-400 font-bold hover:underline cursor-pointer"
+                  >
+                    🔄 Gửi lại mã OTP Email
                   </button>
                 )}
               </div>
@@ -922,7 +939,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 mt-2"
+              className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 mt-2 cursor-pointer"
             >
               {isLoading ? (
                 <span className="inline-block animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>

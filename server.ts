@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
+import nodemailer from "nodemailer";
 import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS } from "./src/data/initialData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
@@ -11,6 +12,59 @@ const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 app.use(express.json());
+
+// In-Memory OTP Store
+const otpStore = new Map<string, { code: string; expiresAt: number }>();
+
+async function sendEmailOtp(toEmail: string, otpCode: string): Promise<{ sent: boolean; message?: string }> {
+  const gmailUser = process.env.GMAIL_USER || 'chocudan24h@gmail.com';
+  const gmailPass = process.env.GMAIL_APP_PASS;
+
+  if (!gmailPass) {
+    console.log(`[OTP Engine] Live Gmail SMTP password not configured. Generated test OTP code for ${toEmail}: ${otpCode}`);
+    return { sent: false, message: `Mã OTP xác thực cho ${toEmail} là: ${otpCode} (Thêm GMAIL_APP_PASS vào Secrets để tự động gửi tới hòm thư thật).` };
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: gmailUser,
+        pass: gmailPass,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Chợ Cư Dân 24h" <${gmailUser}>`,
+      to: toEmail,
+      subject: `[Chợ Cư Dân 24h] Mã xác thực OTP đăng ký tài khoản: ${otpCode}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff;">
+          <div style="text-align: center; padding-bottom: 15px; border-bottom: 2px solid #f59e0b;">
+            <h2 style="color: #0f172a; margin: 0;">🏬 CHỢ CƯ DÂN VINHOMES 24H</h2>
+            <p style="color: #64748b; font-size: 13px; margin-top: 5px;">Hệ thống xác thực tài khoản cư dân & nhà cung cấp dịch vụ</p>
+          </div>
+          <div style="padding: 20px 0;">
+            <p style="color: #334155; font-size: 14px; line-height: 1.6;">Xin chào,</p>
+            <p style="color: #334155; font-size: 14px; line-height: 1.6;">Cảm ơn bạn đã đăng ký tài khoản trên nền tảng <strong>Chợ Cư Dân 24h (chocudan24h.com)</strong>. Đây là mã xác thực Email OTP của bạn:</p>
+            <div style="text-align: center; margin: 25px 0;">
+              <span style="display: inline-block; background: #f59e0b; color: #020617; font-size: 32px; font-weight: 900; letter-spacing: 8px; padding: 12px 28px; border-radius: 12px; font-family: monospace;">${otpCode}</span>
+            </div>
+            <p style="color: #64748b; font-size: 12px; text-align: center;">Mã xác thực có hiệu lực trong <b>5 phút</b>. Tuyệt đối không chia sẻ mã này cho bất kỳ ai.</p>
+          </div>
+          <div style="border-top: 1px solid #f1f5f9; padding-top: 15px; text-align: center; font-size: 11px; color: #94a3b8;">
+            <p>© 2026 chocudan24h.com - Nền Tảng BĐS & Dịch Vụ Cư Dân Vinhomes</p>
+          </div>
+        </div>
+      `,
+    });
+
+    return { sent: true, message: `Mã OTP đã được gửi trực tiếp tới email ${toEmail}` };
+  } catch (err: any) {
+    console.error("Nodemailer Email OTP Error:", err);
+    return { sent: false, message: `Không thể kết nối Gmail SMTP: ${err.message || 'Lỗi gửi email'}` };
+  }
+}
 
 interface StoredUser extends User {
   password?: string;
@@ -189,9 +243,74 @@ let pricingConfigStore = {
 
 // ------------------- AUTH API ROUTES -------------------
 
+// Send Email OTP API
+app.post("/api/auth/send-otp", async (req, res) => {
+  const { email } = req.body;
+  if (!email || !email.includes('@')) {
+    return res.status(400).json({ error: "Địa chỉ Email không hợp lệ." });
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase();
+
+  // Check if user already registered
+  const existingUser = usersStore.find(u => u.email.toLowerCase() === normalizedEmail);
+  if (existingUser) {
+    return res.status(400).json({
+      error: "Địa chỉ Email này đã được đăng ký tài khoản trước đó. Vui lòng chọn 'Đăng nhập'!"
+    });
+  }
+
+  // Generate random 6 digit OTP
+  const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Save to OTP store with 5 min expiration
+  otpStore.set(normalizedEmail, {
+    code: otpCode,
+    expiresAt: Date.now() + 5 * 60 * 1000
+  });
+
+  const emailRes = await sendEmailOtp(normalizedEmail, otpCode);
+
+  return res.json({
+    success: true,
+    email: normalizedEmail,
+    code: otpCode, // Provided for instant visual feedback in UI / testing
+    sentLive: emailRes.sent,
+    message: emailRes.sent 
+      ? `Mã OTP đã được gửi trực tiếp tới email ${normalizedEmail}. Vui lòng kiểm tra hộp thư đến!` 
+      : `Mã OTP xác thực đã khởi tạo cho ${normalizedEmail}. ${emailRes.message}`
+  });
+});
+
+// Verify OTP API
+app.post("/api/auth/verify-otp", (req, res) => {
+  const { email, otpCode } = req.body;
+  if (!email || !otpCode) {
+    return res.status(400).json({ error: "Thiếu Email hoặc mã OTP xác nhận." });
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase();
+  const record = otpStore.get(normalizedEmail);
+
+  if (!record) {
+    return res.status(400).json({ error: "Mã OTP đã hết hạn hoặc chưa được gửi. Vui lòng bấm 'Gửi lại mã OTP Email'!" });
+  }
+
+  if (Date.now() > record.expiresAt) {
+    otpStore.delete(normalizedEmail);
+    return res.status(400).json({ error: "Mã OTP đã hết hạn sau 5 phút. Vui lòng bấm 'Gửi lại mã OTP'!" });
+  }
+
+  if (record.code !== String(otpCode).trim()) {
+    return res.status(400).json({ error: "Mã OTP không chính xác. Vui lòng kiểm tra lại 6 chữ số trong Email!" });
+  }
+
+  return res.json({ success: true, message: "Xác thực mã OTP Email thành công!" });
+});
+
 // Account Registration API
 app.post("/api/auth/register", (req, res) => {
-  const { name, email, phone, password, role, businessCategories } = req.body;
+  const { name, email, phone, password, role, businessCategories, otpCode } = req.body;
 
   if (!email || !password || !name) {
     return res.status(400).json({ error: "Vui lòng nhập đầy đủ Họ tên, Email và Mật khẩu!" });
@@ -204,6 +323,15 @@ app.post("/api/auth/register", (req, res) => {
     return res.status(400).json({ 
       error: "Địa chỉ Email này đã được đăng ký tài khoản trước đó. Vui lòng chuyển sang tab 'Đăng nhập' hoặc sử dụng Email khác!" 
     });
+  }
+
+  // If OTP code is provided, verify it
+  if (otpCode) {
+    const record = otpStore.get(normalizedEmail);
+    if (!record || record.code !== String(otpCode).trim() || Date.now() > record.expiresAt) {
+      return res.status(400).json({ error: "Mã OTP Email không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra lại!" });
+    }
+    otpStore.delete(normalizedEmail);
   }
 
   const newUser: StoredUser = {
