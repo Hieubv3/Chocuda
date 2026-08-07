@@ -189,8 +189,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
 
   const selectAccountAndRequestOtp = (name: string, email: string, avatar?: string) => {
     setSelectedGoogleAccount({ name, email, avatar });
-    setOtpTimer(25);
-    setGoogleStep('otp_verify');
+    submitGoogleLoginWithEmail(email, name, avatar);
   };
 
   const handleOtpChange = (index: number, value: string) => {
