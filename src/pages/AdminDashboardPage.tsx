@@ -305,6 +305,64 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
   const [isAddingNews, setIsAddingNews] = useState(false);
 
+  // User Add / Edit Modal States
+  const [isAddingUser, setIsAddingUser] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [userFormData, setUserFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    role: 'owner',
+    upTinCredits: 10,
+    balance: 0,
+    password: ''
+  });
+
+  const handleCreateUserSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/auth/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userFormData)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Lỗi khi tạo tài khoản');
+      alert(data.message || 'Thêm thành viên mới thành công!');
+      setIsAddingUser(false);
+      setUserFormData({ name: '', email: '', phone: '', role: 'owner', upTinCredits: 10, balance: 0, password: '' });
+      fetchUsers();
+    } catch (err: any) {
+      alert(err.message || 'Lỗi hệ thống');
+    }
+  };
+
+  const handleUpdateUserSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    try {
+      const res = await fetch(`/api/auth/users/${editingUser.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: editingUser.name,
+          email: editingUser.email,
+          phone: editingUser.phone,
+          role: editingUser.role,
+          upTinCredits: editingUser.upTinCredits,
+          balance: editingUser.balance,
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Lỗi khi cập nhật tài khoản');
+      alert(data.message || 'Cập nhật tài khoản thành công!');
+      setEditingUser(null);
+      fetchUsers();
+    } catch (err: any) {
+      alert(err.message || 'Lỗi hệ thống');
+    }
+  };
+
   // Ad Banners State & Handlers (Persisted in localStorage)
   const [adsList, setAdsList] = useState<AdBanner[]>(() => {
     try {
@@ -2060,11 +2118,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 QUẢN LÝ THÀNH VIÊN, CƯ DÂN & PHÂN CẤP QUẢN TRỊ
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Xem thống kê tài khoản, phân vai trò (Admin / Cư Dân / Môi Giới), cộng lượt Up Tin & tạm khóa tài khoản
+                Xem thống kê tài khoản, tạo mới user, phân vai trò (Admin / Cư Dân / Môi Giới), cộng lượt Up Tin & tạm khóa tài khoản
               </p>
             </div>
 
-            {/* Quick User Stats Pills */}
+            {/* Quick User Stats Pills & Add Button */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
                 👥 Tổng: <strong className="text-amber-500">{registeredUsers.length}</strong>
@@ -2078,6 +2136,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <span className="px-3 py-1.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
                 👑 Admin: <strong>{registeredUsers.filter(u => u.role === 'admin').length}</strong>
               </span>
+
+              <button
+                onClick={() => setIsAddingUser(true)}
+                className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md flex items-center gap-1.5 cursor-pointer"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>+ THÊM THÀNH VIÊN MỚI</span>
+              </button>
             </div>
           </div>
 
@@ -2314,8 +2380,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           <td className="py-3 px-3.5 text-right">
                             <div className="flex items-center justify-end gap-1.5">
                               <button
+                                onClick={() => setEditingUser(u)}
+                                className="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:hover:bg-blue-900 dark:text-blue-300 rounded-xl transition cursor-pointer"
+                                title="Sửa thông tin tài khoản"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
+
+                              <button
                                 onClick={() => handleToggleBlockUser(u.id, !!isUserBlocked)}
-                                className={`px-2 py-1.5 rounded-xl font-bold transition text-[10px] flex items-center gap-1 ${
+                                className={`px-2 py-1.5 rounded-xl font-bold transition text-[10px] flex items-center gap-1 cursor-pointer ${
                                   isUserBlocked
                                     ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                                     : 'bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 border border-amber-500/30'
@@ -2328,7 +2402,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                               <button
                                 onClick={() => handleDeleteUser(u.id)}
-                                className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-xl transition"
+                                className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-xl transition cursor-pointer"
                                 title="Xóa người dùng"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -3245,6 +3319,236 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             fetchUsers();
           }}
         />
+      )}
+
+      {/* Add User Modal */}
+      {isAddingUser && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 max-w-lg w-full shadow-2xl space-y-5 text-xs">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <UserPlus className="w-5 h-5 text-amber-500" />
+                THÊM THÀNH VIÊN / TÀI KHOẢN MỚI
+              </h3>
+              <button
+                onClick={() => setIsAddingUser(false)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateUserSubmit} className="space-y-4">
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Họ & Tên thành viên *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ví dụ: Nguyễn Văn A"
+                  value={userFormData.name}
+                  onChange={(e) => setUserFormData(p => ({ ...p, name: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Email *</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="nguyenvana@gmail.com"
+                    value={userFormData.email}
+                    onChange={(e) => setUserFormData(p => ({ ...p, email: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số điện thoại / Zalo</label>
+                  <input
+                    type="text"
+                    placeholder="0868.499.929"
+                    value={userFormData.phone}
+                    onChange={(e) => setUserFormData(p => ({ ...p, phone: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Vai trò & Cấp bậc</label>
+                  <select
+                    value={userFormData.role}
+                    onChange={(e) => setUserFormData(p => ({ ...p, role: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                  >
+                    <option value="owner">🏠 Cư Dân / Chủ Nhà</option>
+                    <option value="sale">💼 Môi Giới / Sale BĐS</option>
+                    <option value="admin">👑 Quản Trị Viên (Admin)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mật khẩu ban đầu</label>
+                  <input
+                    type="text"
+                    placeholder="123456"
+                    value={userFormData.password}
+                    onChange={(e) => setUserFormData(p => ({ ...p, password: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Lượt Up-Tin tặng ban đầu</label>
+                  <input
+                    type="number"
+                    value={userFormData.upTinCredits}
+                    onChange={(e) => setUserFormData(p => ({ ...p, upTinCredits: Number(e.target.value) }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số dư Ví VNĐ (đ)</label>
+                  <input
+                    type="number"
+                    value={userFormData.balance}
+                    onChange={(e) => setUserFormData(p => ({ ...p, balance: Number(e.target.value) }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsAddingUser(false)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 transition cursor-pointer"
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition shadow-md cursor-pointer"
+                >
+                  TẠO THÀNH VIÊN
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {editingUser && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 max-w-lg w-full shadow-2xl space-y-5 text-xs">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <Edit3 className="w-5 h-5 text-blue-500" />
+                CẬP NHẬT THÔNG TIN THÀNH VIÊN
+              </h3>
+              <button
+                onClick={() => setEditingUser(null)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateUserSubmit} className="space-y-4">
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Họ & Tên</label>
+                <input
+                  type="text"
+                  required
+                  value={editingUser.name}
+                  onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={editingUser.email}
+                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số điện thoại / Zalo</label>
+                  <input
+                    type="text"
+                    value={editingUser.phone || ''}
+                    onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Vai trò & Cấp bậc</label>
+                  <select
+                    value={editingUser.role}
+                    onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value as any })}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  >
+                    <option value="owner">🏠 Cư Dân / Chủ Nhà</option>
+                    <option value="sale">💼 Môi Giới / Sale BĐS</option>
+                    <option value="admin">👑 Quản Trị Viên (Admin)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Lượt Up-Tin</label>
+                  <input
+                    type="number"
+                    value={editingUser.upTinCredits || 0}
+                    onChange={(e) => setEditingUser({ ...editingUser, upTinCredits: Number(e.target.value) })}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số dư Ví VNĐ (đ)</label>
+                <input
+                  type="number"
+                  value={editingUser.balance || 0}
+                  onChange={(e) => setEditingUser({ ...editingUser, balance: Number(e.target.value) })}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setEditingUser(null)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 transition cursor-pointer"
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl transition shadow-md cursor-pointer"
+                >
+                  LƯU THAY ĐỔI
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
     </div>

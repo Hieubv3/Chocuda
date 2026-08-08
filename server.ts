@@ -565,6 +565,38 @@ app.get("/api/auth/users", (req, res) => {
   res.json(safeUsers);
 });
 
+// Admin Create User Endpoint
+app.post("/api/auth/users", (req, res) => {
+  const { name, email, phone, role, upTinCredits, balance, password } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: "Họ tên và email là bắt buộc!" });
+  }
+
+  const existing = usersStore.find(u => u.email.toLowerCase() === String(email).toLowerCase());
+  if (existing) {
+    return res.status(400).json({ error: "Email này đã được đăng ký trên hệ thống!" });
+  }
+
+  const newUser = {
+    id: `usr-admin-created-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    name: String(name),
+    email: String(email).toLowerCase(),
+    phone: phone ? String(phone) : '0868499929',
+    role: (role as any) || 'owner',
+    registeredAt: new Date().toISOString().slice(0, 10),
+    upTinCredits: Number(upTinCredits) || 10,
+    balance: Number(balance) || 0,
+    socialPoints: 100,
+    totalTopup: Number(balance) || 0,
+    password: password ? String(password) : '123456',
+    provider: 'local'
+  };
+
+  usersStore.unshift(newUser as any);
+  const { password: _, ...safeUser } = newUser;
+  return res.status(201).json({ success: true, message: "Tạo tài khoản thành viên thành công!", user: safeUser });
+});
+
 // Update User (Role, UpTin credits, Phone, Name, Block status)
 app.patch("/api/auth/users/:id", (req, res) => {
   const { id } = req.params;
