@@ -241,23 +241,72 @@ let pricingConfigStore = {
   accountHolder: 'BUI VAN HIEU'
 };
 
+// Helper to clean phone numbers for comparison
+function normalizePhoneNumber(rawPhone?: string): string {
+  if (!rawPhone) return '';
+  return String(rawPhone).replace(/[^\d]/g, '');
+}
+
+// Check if user credentials already exist in usersStore
+function checkUserUniqueness(email?: string, phone?: string, name?: string): { isUnique: boolean; field?: string; message?: string } {
+  if (email) {
+    const normEmail = String(email).trim().toLowerCase();
+    const foundEmail = usersStore.find(u => u.email.toLowerCase() === normEmail);
+    if (foundEmail) {
+      return {
+        isUnique: false,
+        field: 'email',
+        message: `Địa chỉ Email "${normEmail}" đã được đăng ký tài khoản trước đó. Vui lòng chọn 'Đăng nhập' hoặc sử dụng Email khác!`
+      };
+    }
+  }
+
+  if (phone) {
+    const normPhone = normalizePhoneNumber(phone);
+    if (normPhone.length >= 8) {
+      const foundPhone = usersStore.find(u => u.phone && normalizePhoneNumber(u.phone) === normPhone);
+      if (foundPhone) {
+        return {
+          isUnique: false,
+          field: 'phone',
+          message: `Số điện thoại "${phone}" đã được sử dụng cho một tài khoản khác. Mỗi số điện thoại chỉ đăng ký được 1 tài khoản!`
+        };
+      }
+    }
+  }
+
+  if (name) {
+    const normName = String(name).trim().toLowerCase();
+    if (normName.length > 1) {
+      const foundName = usersStore.find(u => u.name && u.name.trim().toLowerCase() === normName);
+      if (foundName) {
+        return {
+          isUnique: false,
+          field: 'name',
+          message: `Họ và tên "${name}" đã được sử dụng trên hệ thống. Mỗi cá nhân chỉ được đăng ký 1 tài khoản duy nhất!`
+        };
+      }
+    }
+  }
+
+  return { isUnique: true };
+}
+
 // ------------------- AUTH API ROUTES -------------------
 
 // Send Email OTP API
 app.post("/api/auth/send-otp", async (req, res) => {
-  const { email } = req.body;
+  const { email, phone, name } = req.body;
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: "Địa chỉ Email không hợp lệ." });
   }
 
   const normalizedEmail = String(email).trim().toLowerCase();
 
-  // Check if user already registered
-  const existingUser = usersStore.find(u => u.email.toLowerCase() === normalizedEmail);
-  if (existingUser) {
-    return res.status(400).json({
-      error: "Địa chỉ Email này đã được đăng ký tài khoản trước đó. Vui lòng chọn 'Đăng nhập'!"
-    });
+  // Check if email, phone, or name is already registered
+  const uniqueness = checkUserUniqueness(normalizedEmail, phone, name);
+  if (!uniqueness.isUnique) {
+    return res.status(400).json({ error: uniqueness.message });
   }
 
   // Generate random 6 digit OTP
@@ -318,11 +367,10 @@ app.post("/api/auth/register", (req, res) => {
 
   const normalizedEmail = String(email).trim().toLowerCase();
 
-  const existingUser = usersStore.find(u => u.email.toLowerCase() === normalizedEmail);
-  if (existingUser) {
-    return res.status(400).json({ 
-      error: "Địa chỉ Email này đã được đăng ký tài khoản trước đó. Vui lòng chuyển sang tab 'Đăng nhập' hoặc sử dụng Email khác!" 
-    });
+  // Check uniqueness for Email, Phone, and Name
+  const uniqueness = checkUserUniqueness(normalizedEmail, phone, name);
+  if (!uniqueness.isUnique) {
+    return res.status(400).json({ error: uniqueness.message });
   }
 
   // If OTP code is provided, verify it

@@ -15,6 +15,7 @@ import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { UserDashboardPage } from './pages/UserDashboardPage';
 import { AdminLoginPage } from './pages/AdminLoginPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
 import { ResidentServicesPage } from './components/ResidentServicesPage';
 import { PropertyDetailModal } from './components/PropertyDetailModal';
 import { CompareModal } from './components/CompareModal';
@@ -273,6 +274,22 @@ export const App: React.FC = () => {
         search.includes('privacy=1')
       ) {
         setCurrentTab('privacy');
+        return;
+      }
+
+      if (
+        hash === '#terms' ||
+        hash === '#terms-of-service' ||
+        hash === '#dieu-khoan' ||
+        hash === '#dieu-khoan-su-dung' ||
+        hash === '#dieu-khoan-dich-vu' ||
+        pathname.endsWith('/terms') ||
+        pathname.endsWith('/dieu-khoan') ||
+        pathname.endsWith('/dieu-khoan-su-dung') ||
+        search.includes('page=terms') ||
+        search.includes('terms=1')
+      ) {
+        setCurrentTab('terms');
         return;
       }
 
@@ -681,6 +698,21 @@ export const App: React.FC = () => {
       case 'chinh-sach-bao-mat':
         return (
           <PrivacyPolicyPage
+            language={language}
+            onBackToHome={() => {
+              setCurrentTab('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        );
+
+      case 'terms':
+      case 'terms-of-service':
+      case 'dieu-khoan':
+      case 'dieu-khoan-su-dung':
+      case 'dieu-khoan-dich-vu':
+        return (
+          <TermsOfServicePage
             language={language}
             onBackToHome={() => {
               setCurrentTab('home');

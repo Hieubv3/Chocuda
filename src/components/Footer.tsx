@@ -342,7 +342,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
             <span>•</span>
             <button
               onClick={() => {
-                setCurrentTab('privacy');
+                setCurrentTab('terms');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="hover:text-amber-400 font-semibold transition cursor-pointer"

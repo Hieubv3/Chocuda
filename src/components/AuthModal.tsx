@@ -376,7 +376,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           const res = await fetch('/api/auth/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email.trim().toLowerCase() })
+            body: JSON.stringify({ 
+              name: name.trim(),
+              email: email.trim().toLowerCase(),
+              phone: phone.trim()
+            })
           });
           const data = await res.json();
           if (!res.ok) {
@@ -688,7 +692,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                 </div>
 
                 <div className="text-[11px] text-slate-400 leading-relaxed pt-3 border-t border-slate-100 dark:border-slate-800">
-                  Trước khi sử dụng <span className="font-semibold text-slate-700 dark:text-slate-300">chocudan24h.com</span>, bạn có thể xem <a href="#" onClick={(e) => e.preventDefault()} className="text-blue-600 hover:underline">Chính sách quyền riêng tư</a> và <a href="#" onClick={(e) => e.preventDefault()} className="text-blue-600 hover:underline">Điều khoản dịch vụ</a> của ứng dụng này.
+                  Trước khi sử dụng <span className="font-semibold text-slate-700 dark:text-slate-300">chocudan24h.com</span>, bạn có thể xem <a href="#privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Chính sách quyền riêng tư</a> và <a href="#terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Điều khoản dịch vụ</a> của ứng dụng này.
                 </div>
               </div>
             )}
@@ -916,7 +920,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                         const res = await fetch('/api/auth/send-otp', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ email: email.trim().toLowerCase() })
+                          body: JSON.stringify({ 
+                            name: name.trim(),
+                            email: email.trim().toLowerCase(),
+                            phone: phone.trim()
+                          })
                         });
                         const data = await res.json();
                         if (data.code) {

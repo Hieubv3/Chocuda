@@ -108,316 +108,348 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const tierInfo = getTierBadge();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 py-5 space-y-5">
       {/* Donate Mode Banner Notice */}
       {pricingConfig.paymentEnabled === false && (
-        <div className="bg-gradient-to-r from-amber-500/15 via-emerald-500/10 to-teal-500/15 border-2 border-amber-500/40 p-4 rounded-2xl flex items-center justify-between gap-4 text-xs">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-500 text-slate-950 font-black rounded-xl text-sm shrink-0">
+        <div className="bg-gradient-to-r from-amber-500/15 via-emerald-500/10 to-teal-500/15 border border-amber-500/40 px-4 py-3 rounded-2xl flex items-center justify-between gap-3 text-xs shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <span className="p-1.5 bg-amber-500 text-slate-950 font-black rounded-lg text-xs shrink-0">
               🎁
-            </div>
+            </span>
             <div>
-              <p className="font-extrabold text-slate-900 dark:text-white">
-                CHẾ ĐỘ UP TIN MIỄN PHÍ (DONATE TÙY TÂM) ĐANG BẬT!
+              <p className="font-extrabold text-slate-900 dark:text-white text-xs">
+                CHẾ ĐỘ UP TIN MIỄN PHÍ (DONATE TÙY TÂM) ĐANG BẬT
               </p>
-              <p className="text-slate-600 dark:text-slate-300 text-[11px] mt-0.5">
-                Admin đã tắt thu phí bắt buộc. Mọi thành viên có thể đẩy tin BĐS lên Top 1 hoàn toàn Miễn Phí.
+              <p className="text-slate-600 dark:text-slate-300 text-[11px]">
+                Admin đã mở đẩy tin BĐS lên Top 1 hoàn toàn Miễn Phí cho mọi thành viên.
               </p>
             </div>
           </div>
-          <span className="shrink-0 px-3 py-1 bg-emerald-600 text-white font-extrabold text-[10px] rounded-full uppercase">
+          <span className="shrink-0 px-2.5 py-0.5 bg-emerald-600 text-white font-black text-[10px] rounded-full uppercase">
             100% Free
           </span>
         </div>
       )}
 
-      {/* Profile Header & Summary */}
-      <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Main Profile Header Card */}
+      <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-lg border border-emerald-800/50 relative overflow-hidden space-y-5">
+        <div className="absolute right-0 top-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+          {/* User Info */}
+          <div className="flex items-center gap-3.5">
             <img
               src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'}
               alt={user.name}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-2 border-emerald-400 shadow-md object-cover"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-emerald-400/80 shadow-sm object-cover shrink-0"
             />
-            <div>
+            <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl sm:text-2xl font-black">{user.name}</h1>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/30 text-emerald-200 border border-emerald-400/30">
+                <h1 className="text-lg sm:text-xl font-black text-white">{user.name}</h1>
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
                   {user.role === 'admin' ? '👑 Admin Tổng' : user.role === 'sale' ? '💼 Môi Giới/Sale' : '🏠 Chủ Nhà'}
                 </span>
-                <span className={`px-3 py-0.5 rounded-full text-[11px] font-black shadow ${tierInfo.color}`}>
-                  <Crown className="w-3 h-3 inline mr-1" />
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs ${tierInfo.color}`}>
+                  <Crown className="w-3 h-3 inline mr-0.5" />
                   {tierInfo.name}
                 </span>
               </div>
-              <p className="text-xs text-emerald-200 mt-1">
-                SĐT: {user.phone || '0868.499.929'} | Email: {user.email}
-              </p>
-              <p className="text-xs text-emerald-300 font-semibold mt-1 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Quền lợi hạng: {tierInfo.vipLimit} | Số dư Up Tin: <strong className="text-amber-300 font-black text-sm ml-1">{upTinCredits} lượt</strong>
-              </p>
+
+              <div className="flex items-center gap-3 flex-wrap text-[11px] text-slate-300">
+                <span>📱 SĐT: <strong className="text-white">{user.phone || '0868.499.929'}</strong></span>
+                <span className="text-slate-600">|</span>
+                <span>✉️ Email: <strong className="text-white">{user.email}</strong></span>
+              </div>
+
+              <div className="flex items-center gap-2 text-[11px] text-emerald-300 pt-0.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>Quyền lợi: <strong className="text-slate-200">{tierInfo.vipLimit}</strong></span>
+                <span className="text-slate-600">|</span>
+                <span>Số dư Up Tin: <strong className="text-amber-300 font-black text-xs">{upTinCredits} lượt</strong></span>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2.5 w-full md:w-auto shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
             <button
               onClick={onPostNewProperty}
-              className="flex-1 sm:flex-initial px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-sm rounded-xl shadow-lg shadow-amber-950/40 flex items-center justify-center gap-2 transition"
+              className="flex-1 md:flex-none px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
             >
-              <Sparkles className="w-5 h-5 text-slate-950" />
-              <PlusCircle className="w-5 h-5" /> ĐĂNG TIN MỚI (CÓ AI VIẾT BÀI TỪ ẢNH)
+              <Sparkles className="w-4 h-4 text-slate-950" />
+              <span>ĐĂNG TIN MỚI (AI VIẾT BÀI TỪ ẢNH)</span>
             </button>
             {onLogout && (
               <button
                 onClick={onLogout}
-                className="px-4 py-3 bg-slate-900/80 hover:bg-slate-900 text-rose-400 hover:text-rose-300 border border-emerald-700/50 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                className="px-3.5 py-2.5 bg-slate-800/90 hover:bg-slate-800 text-rose-300 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 shrink-0 cursor-pointer"
                 title="Đăng xuất hoặc đổi tài khoản"
               >
-                <span>Đổi Tài Khoản</span>
+                <span>Đổi Tai Khoản</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 pt-6 border-t border-emerald-700/60 text-xs">
-          <div className="bg-emerald-950/40 p-3 rounded-2xl border border-emerald-700/40">
-            <span className="text-emerald-300 block mb-1">Tổng Tin Đăng:</span>
-            <span className="text-xl font-black text-white">{userProperties.length} căn</span>
+        {/* Quick Stats Grid - 4 Columns */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 pt-4 border-t border-emerald-800/40 text-xs">
+          <div className="bg-emerald-950/50 p-2.5 sm:p-3 rounded-xl border border-emerald-700/30 flex items-center justify-between">
+            <div>
+              <span className="text-slate-400 text-[11px] block">Tổng Tin Đăng</span>
+              <span className="text-lg font-black text-white mt-0.5 block">{userProperties.length} <span className="text-xs font-normal text-slate-400">căn</span></span>
+            </div>
+            <Zap className="w-5 h-5 text-emerald-400/80" />
           </div>
-          <div className="bg-emerald-950/40 p-3 rounded-2xl border border-emerald-700/40">
-            <span className="text-emerald-300 block mb-1">Đã Duyệt Đang Hiển Thị:</span>
-            <span className="text-xl font-black text-emerald-300">{approvedCount} căn</span>
+
+          <div className="bg-emerald-950/50 p-2.5 sm:p-3 rounded-xl border border-emerald-700/30 flex items-center justify-between">
+            <div>
+              <span className="text-slate-400 text-[11px] block">Đã Duyệt Hiển Thị</span>
+              <span className="text-lg font-black text-emerald-400 mt-0.5 block">{approvedCount} <span className="text-xs font-normal text-slate-400">căn</span></span>
+            </div>
+            <CheckCircle2 className="w-5 h-5 text-emerald-400/80" />
           </div>
-          <div className="bg-emerald-950/40 p-3 rounded-2xl border border-emerald-700/40">
-            <span className="text-emerald-300 block mb-1">Lượt Up Tin Còn Lại:</span>
-            <span className="text-xl font-black text-amber-300">{upTinCredits} lượt</span>
+
+          <div className="bg-emerald-950/50 p-2.5 sm:p-3 rounded-xl border border-emerald-700/30 flex items-center justify-between">
+            <div>
+              <span className="text-slate-400 text-[11px] block">Lượt Up Tin Còn Lại</span>
+              <span className="text-lg font-black text-amber-400 mt-0.5 block">{upTinCredits} <span className="text-xs font-normal text-slate-400">lượt</span></span>
+            </div>
+            <Sparkles className="w-5 h-5 text-amber-400/80" />
           </div>
-          <div className="bg-emerald-950/40 p-3 rounded-2xl border border-emerald-700/40">
-            <span className="text-emerald-300 block mb-1">Lượt Xem Tích Lũy:</span>
-            <span className="text-xl font-black text-white">{totalViews.toLocaleString('vi-VN')} lượt</span>
+
+          <div className="bg-emerald-950/50 p-2.5 sm:p-3 rounded-xl border border-emerald-700/30 flex items-center justify-between">
+            <div>
+              <span className="text-slate-400 text-[11px] block">Lượt Xem Tích Lũy</span>
+              <span className="text-lg font-black text-white mt-0.5 block">{totalViews.toLocaleString('vi-VN')} <span className="text-xs font-normal text-slate-400">lượt</span></span>
+            </div>
+            <Eye className="w-5 h-5 text-slate-400/80" />
           </div>
         </div>
       </div>
 
-      {/* KYC / NÚT XANH ĐỊNH DANH CƯ DÂN VINHOMES */}
-      <div className="bg-gradient-to-r from-emerald-950/80 via-slate-900 to-emerald-950/80 text-white rounded-3xl p-5 border-2 border-emerald-500/40 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <span className="p-3 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-2xl shrink-0">
-            <ShieldCheck className="w-7 h-7" />
-          </span>
+      {/* KYC Verification Banner */}
+      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 text-white rounded-2xl p-4 border border-emerald-500/30 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl shrink-0">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-sm sm:text-base font-black text-amber-400 uppercase tracking-wider">
+              <h3 className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-wide">
                 ĐỊNH DANH CƯ DÂN & NÚT XANH KYC VINHOMES
               </h3>
               {userState.kycStatus === 'verified' ? (
-                <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 text-[10px] font-black rounded-full flex items-center gap-1 shadow-sm">
+                <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 text-[10px] font-black rounded-full flex items-center gap-1 shadow-xs">
                   ✓ Đã Cấp Nút Xanh KYC
                 </span>
               ) : userState.kycStatus === 'pending_ai' ? (
-                <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-black rounded-full flex items-center gap-1 shadow-sm">
+                <span className="px-2 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-black rounded-full flex items-center gap-1 shadow-xs">
                   ⏳ Đang Chờ Kiểm Duyệt
                 </span>
               ) : (
-                <span className="px-2.5 py-0.5 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center gap-1 shadow-sm">
+                <span className="px-2 py-0.5 bg-rose-500/90 text-white text-[10px] font-black rounded-full flex items-center gap-1 shadow-xs">
                   ⚠️ Chưa Nhận Nút Xanh
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-300 mt-1">
-              Định danh cư dân & Nút Xanh KYC là một. Cập nhật CCCD, chứng chỉ ngành nghề/môi giới để được duyệt Huy Hiệu Cư Dân Chính Chủ trên gian hàng & các bài đăng.
+            <p className="text-[11px] text-slate-300 mt-0.5">
+              Cập nhật CCCD hoặc chứng chỉ ngành nghề/môi giới để nhận Huy Hiệu Cư Dân Chính Chủ trên gian hàng & các bài đăng.
             </p>
           </div>
         </div>
 
         <button
           onClick={() => setShowKycModal(true)}
-          className="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-md transition shrink-0 uppercase tracking-wider flex items-center gap-2 cursor-pointer active:scale-95"
+          className="w-full sm:w-auto px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-sm transition shrink-0 uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
         >
-          <ShieldCheck className="w-4 h-4" />
-          <span>{userState.kycStatus === 'verified' ? 'CẬP NHẬT ĐỊNH DANH / NÚT XANH' : 'ĐỊNH DANH & NHẬN NÚT XANH'}</span>
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>{userState.kycStatus === 'verified' ? 'CẬP NHẬT ĐỊNH DANH' : 'ĐỊNH DANH & NHẬN NÚT XANH'}</span>
         </button>
       </div>
 
-      {/* Social Reward Section (+5 to +10 Up Tin Free) */}
-      <div className="bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-emerald-500/10 border-2 border-amber-500/30 rounded-3xl p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-          <div>
-            <span className="bg-amber-500 text-slate-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              ĐỒNG HÀNH & KẾT NỐI KÊNH TRUYỀN THÔNG VIP (+5 ĐẾN +10 LƯỢT UP TIN)
+      {/* Compact Social Channel Reward Section */}
+      <div className="bg-slate-900 dark:bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-md">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 border-b border-slate-800 pb-2.5">
+          <div className="flex items-center gap-2">
+            <span className="bg-amber-500/20 border border-amber-500/40 text-amber-400 font-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">
+              NHẬN UP TIN MIỄN PHÍ
             </span>
-            <h3 className="text-base font-black text-slate-900 dark:text-white mt-1">
-              TĂNG TƯƠNG TÁC THÔNG TIN & NHẬN LƯỢT ĐẨY TIN BẤT ĐỘNG SẢN TOP 1
+            <h3 className="text-xs sm:text-sm font-black text-white">
+              Tương Tác Kênh Truyền Thông nhận +5 đến +10 Lượt Up Tin Top 1
             </h3>
           </div>
-          <div className="text-xs font-extrabold text-amber-600 dark:text-amber-400 shrink-0">
-            Số dư lượt Up Tin: <span className="text-base text-emerald-600 dark:text-emerald-400 font-black">{upTinCredits} lượt</span>
-          </div>
+          <span className="text-[11px] text-slate-400 font-bold">
+            Số dư hiện tại: <strong className="text-emerald-400">{upTinCredits} lượt</strong>
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <div className="space-y-0.5">
-              <span className="font-extrabold text-xs text-sky-600 block">Zalo Official Account</span>
-              <span className="text-[11px] text-slate-500">Quan tâm Zalo OA</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+          {/* Zalo */}
+          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+            <div className="truncate">
+              <span className="font-bold text-xs text-sky-400 block truncate">Zalo Official Account</span>
+              <span className="text-[10px] text-slate-400 block">Quan tâm Zalo OA</span>
             </div>
             <button
               onClick={() => handleClaimReward('zalo', 5, 'https://zalo.me/')}
               disabled={claimedSocial.zalo}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
                 claimedSocial.zalo
-                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                  : 'bg-sky-600 hover:bg-sky-700 text-white shadow'
+                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                  : 'bg-sky-600 hover:bg-sky-500 text-white shadow-xs'
               }`}
             >
-              {claimedSocial.zalo ? '✓ Đã Tặng +5' : '+5 Up Tin'}
+              {claimedSocial.zalo ? '✓ Đã Nhận' : '+5 Up Tin'}
             </button>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <div className="space-y-0.5">
-              <span className="font-extrabold text-xs text-blue-600 dark:text-blue-400 block">Facebook Chợ Cư Dân 24h</span>
-              <span className="text-[11px] text-slate-500">Like & Follow Fanpage</span>
+          {/* Facebook */}
+          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+            <div className="truncate">
+              <span className="font-bold text-xs text-blue-400 block truncate">Facebook Chợ Cư Dân 24h</span>
+              <span className="text-[10px] text-slate-400 block">Like & Follow Fanpage</span>
             </div>
             <button
               onClick={() => handleClaimReward('facebook', 5, 'https://www.facebook.com/chocudan24h')}
               disabled={claimedSocial.facebook}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
                 claimedSocial.facebook
-                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow'
+                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-500 text-white shadow-xs'
               }`}
             >
-              {claimedSocial.facebook ? '✓ Đã Tặng +5' : '+5 Up Tin'}
+              {claimedSocial.facebook ? '✓ Đã Nhận' : '+5 Up Tin'}
             </button>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <div className="space-y-0.5">
-              <span className="font-extrabold text-xs text-rose-600 dark:text-rose-400 block">YouTube Chợ Cư Dân 24h</span>
-              <span className="text-[11px] text-slate-500">Đăng ký kênh YouTube</span>
+          {/* YouTube */}
+          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+            <div className="truncate">
+              <span className="font-bold text-xs text-rose-400 block truncate">YouTube Chợ Cư Dân 24h</span>
+              <span className="text-[10px] text-slate-400 block">Đăng ký kênh YouTube</span>
             </div>
             <button
               onClick={() => handleClaimReward('youtube', 5, 'https://www.youtube.com/@chocudan24h')}
               disabled={claimedSocial.youtube}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
                 claimedSocial.youtube
-                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                  : 'bg-rose-600 hover:bg-rose-700 text-white shadow'
+                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                  : 'bg-rose-600 hover:bg-rose-500 text-white shadow-xs'
               }`}
             >
-              {claimedSocial.youtube ? '✓ Đã Tặng +5' : '+5 Up Tin'}
+              {claimedSocial.youtube ? '✓ Đã Nhận' : '+5 Up Tin'}
             </button>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <div className="space-y-0.5">
-              <span className="font-extrabold text-xs text-slate-900 dark:text-slate-100 block">TikTok Chợ Cư Dân 24h</span>
-              <span className="text-[11px] text-slate-500">Follow kênh TikTok</span>
+          {/* TikTok */}
+          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+            <div className="truncate">
+              <span className="font-bold text-xs text-slate-200 block truncate">TikTok Chợ Cư Dân 24h</span>
+              <span className="text-[10px] text-slate-400 block">Follow kênh TikTok</span>
             </div>
             <button
               onClick={() => handleClaimReward('tiktok', 5, 'https://www.tiktok.com/@chocudan24h')}
               disabled={claimedSocial.tiktok}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
                 claimedSocial.tiktok
-                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                  : 'bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white shadow'
+                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                  : 'bg-slate-100 text-slate-900 hover:bg-white shadow-xs'
               }`}
             >
-              {claimedSocial.tiktok ? '✓ Đã Tặng +5' : '+5 Up Tin'}
+              {claimedSocial.tiktok ? '✓ Đã Nhận' : '+5 Up Tin'}
             </button>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <div className="space-y-0.5">
-              <span className="font-extrabold text-xs text-amber-500 block">Google Maps Review</span>
-              <span className="text-[11px] text-slate-500">Đánh giá 5 sao Google</span>
+          {/* Google Maps */}
+          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+            <div className="truncate">
+              <span className="font-bold text-xs text-amber-400 block truncate">Google Maps Review</span>
+              <span className="text-[10px] text-slate-400 block">Đánh giá 5 sao Google</span>
             </div>
             <button
               onClick={() => handleClaimReward('google', 10, 'https://maps.google.com')}
               disabled={claimedSocial.google}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
                 claimedSocial.google
-                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                  : 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow'
+                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                  : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs'
               }`}
             >
-              {claimedSocial.google ? '✓ Đã Tặng +10' : '+10 Up Tin'}
+              {claimedSocial.google ? '✓ Đã Nhận' : '+10 Up Tin'}
             </button>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <div className="space-y-0.5">
-              <span className="font-extrabold text-xs text-indigo-600 block">Telegram Khách Hàng</span>
-              <span className="text-[11px] text-slate-500">Tham gia Group BĐS</span>
+          {/* Telegram */}
+          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+            <div className="truncate">
+              <span className="font-bold text-xs text-indigo-400 block truncate">Telegram Khách Hàng</span>
+              <span className="text-[10px] text-slate-400 block">Tham gia Group BĐS</span>
             </div>
             <button
               onClick={() => handleClaimReward('telegram', 5, 'https://t.me')}
               disabled={claimedSocial.telegram}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
                 claimedSocial.telegram
-                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow'
+                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                  : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs'
               }`}
             >
-              {claimedSocial.telegram ? '✓ Đã Tặng +5' : '+5 Up Tin'}
+              {claimedSocial.telegram ? '✓ Đã Nhận' : '+5 Up Tin'}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Tabs Header */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 space-x-4 sm:space-x-6 text-sm font-bold overflow-x-auto">
+      {/* Tabs Segment Control Header */}
+      <div className="bg-slate-200/60 dark:bg-slate-900/80 p-1 rounded-2xl flex items-center gap-1 overflow-x-auto text-xs font-bold border border-slate-300/60 dark:border-slate-800">
         <button
           onClick={() => setActiveTab('my_properties')}
-          className={`pb-3 flex items-center gap-2 border-b-2 transition shrink-0 ${
+          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'my_properties'
-              ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+              ? 'bg-emerald-600 text-white shadow-sm font-extrabold'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Zap className="w-4 h-4" /> Tin Đăng BĐS ({userProperties.length})
+          <Zap className="w-3.5 h-3.5" />
+          <span>Tin Đăng BĐS ({userProperties.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('my_store')}
-          className={`pb-3 flex items-center gap-1.5 border-b-2 transition shrink-0 font-bold ${
+          className={`flex-1 min-w-[150px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'my_store'
-              ? 'border-amber-500 text-amber-600 dark:text-amber-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+              ? 'bg-amber-500 text-slate-950 shadow-sm font-extrabold'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Crown className="w-4 h-4 text-amber-500" />
+          <Crown className="w-3.5 h-3.5" />
           <span>Gian Hàng & KiotViet</span>
-          <span className="px-1.5 py-0.5 bg-blue-600 text-white font-bold rounded-md text-[9px]">API</span>
+          <span className="px-1 py-0.2 bg-blue-600 text-white text-[9px] rounded font-mono">API</span>
         </button>
 
         <button
           onClick={() => setActiveTab('transactions')}
-          className={`pb-3 flex items-center gap-1.5 border-b-2 transition shrink-0 ${
+          className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'transactions'
-              ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+              ? 'bg-emerald-600 text-white shadow-sm font-extrabold'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Clock className="w-4 h-4" /> Lịch Sử Up Tin ({localTransactions.length})
+          <Clock className="w-3.5 h-3.5" />
+          <span>Lịch Sử Up Tin ({localTransactions.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('affiliate')}
-          className={`pb-3 flex items-center gap-1.5 border-b-2 transition shrink-0 font-bold ${
+          className={`flex-1 min-w-[160px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'affiliate'
-              ? 'border-amber-500 text-amber-600 dark:text-amber-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+              ? 'bg-amber-500 text-slate-950 shadow-sm font-extrabold'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Share2 className="w-4 h-4 text-amber-500" />
+          <Share2 className="w-3.5 h-3.5" />
           <span>Affiliate & Hoa Hồng</span>
-          <span className="px-1.5 py-0.5 bg-amber-500 text-slate-950 font-black rounded-md text-[9px]">15-20%</span>
+          <span className="px-1 py-0.2 bg-slate-900 text-amber-400 text-[9px] rounded font-black">15-20%</span>
         </button>
       </div>
 
@@ -536,6 +568,56 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
       {/* Tab: User Storefront & KiotViet POS Management */}
       {activeTab === 'my_store' && (
         <UserStorefrontManager user={user} />
+      )}
+
+      {/* Tab: Up-Tin Transactions History */}
+      {activeTab === 'transactions' && (
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+              <Clock className="w-4 h-4 text-emerald-500" />
+              LỊCH SỬ GIAO DỊCH & NẠP LƯỢT UP TIN
+            </h3>
+            <span className="text-xs text-slate-500">
+              Số dư Up Tin hiện tại: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{upTinCredits} lượt</strong>
+            </span>
+          </div>
+
+          {localTransactions.length === 0 ? (
+            <div className="text-center py-10 space-y-2">
+              <Clock className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
+              <p className="text-xs text-slate-500 dark:text-slate-400">Chưa ghi nhận lịch sử giao dịch nạp Up Tin.</p>
+              <p className="text-[11px] text-slate-400">Bấm nút "Tương tác kênh truyền thông" ở trên để nhận lượt Up Tin miễn phí!</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 font-bold uppercase text-[10px] bg-slate-50 dark:bg-slate-900/60">
+                    <th className="p-3">Thời Gian</th>
+                    <th className="p-3">Loại Giao Dịch</th>
+                    <th className="p-3">Nội Dung</th>
+                    <th className="p-3 text-right">Số Lượt</th>
+                    <th className="p-3 text-center">Trạng Thái</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                  {localTransactions.map((tx, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                      <td className="p-3 font-mono text-slate-500">{tx.createdAt}</td>
+                      <td className="p-3 font-bold text-slate-800 dark:text-slate-200">{tx.type}</td>
+                      <td className="p-3 text-slate-600 dark:text-slate-300">{tx.description}</td>
+                      <td className="p-3 text-right font-black text-emerald-600 dark:text-emerald-400">+{tx.credits}</td>
+                      <td className="p-3 text-center">
+                        <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold text-[10px] rounded">✓ Thành Công</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       )}
 
       {/* Tab 3: Affiliate & Referral Revenue Sharing */}
