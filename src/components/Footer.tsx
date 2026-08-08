@@ -1,5 +1,5 @@
-import React from 'react';
-import { Phone, Mail, MapPin, Globe, Facebook, Youtube, ShieldCheck, ExternalLink, Lock, Building2, Smartphone, Download, QrCode, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { Phone, Mail, MapPin, Globe, Facebook, Youtube, ShieldCheck, ExternalLink, Lock, Building2, Smartphone, Download, QrCode, Sparkles, X } from 'lucide-react';
 import { Language } from '../types';
 import { getTranslation } from '../lib/i18n';
 import { Logo } from './Logo';
@@ -15,6 +15,7 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenSecretAdmin, onOpenAndroidModal }) => {
   const t = getTranslation(language);
   const { views, zaloInteractions, onlineCount } = useVisitorStats();
+  const [isBannerDismissed, setIsBannerDismissed] = useState(false);
 
   return (
     <footer className="bg-slate-950 text-slate-300 pt-16 pb-12 border-t border-slate-800">
@@ -31,7 +32,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
 
             <div className="pt-2 flex items-center space-x-2 text-xs text-amber-400 font-semibold">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Nền Tảng Trao Đổi Thông Tin BĐS Vinhomes Uy Tín</span>
+              <span>Nền Tảng BĐS & Dịch Vụ Cư Dân Vinhomes Uy Tín</span>
             </div>
 
             {/* Social Links */}
@@ -192,56 +193,62 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
 
         </div>
 
-        {/* Android App Download Banner Section (Hiển thị nổi bật ở Chân trang Footer) */}
-        <div className="mt-10 p-6 bg-gradient-to-r from-slate-900 via-emerald-950/70 to-slate-900 border-2 border-emerald-500/50 rounded-3xl shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-          
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
-            {/* Left Column: Icon & Info */}
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-slate-950 shadow-xl shadow-emerald-500/30 shrink-0 group-hover:scale-105 transition">
-                <Smartphone className="w-8 h-8 stroke-[2.5]" />
-              </div>
-
-              <div className="space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full text-[10px] font-black uppercase tracking-wider">
-                    🤖 ỨNG DỤNG DI ĐỘNG CHÍNH THỨC (ANDROID NATIVE)
-                  </span>
-                  <span className="text-amber-400 text-xs font-bold">Siêu nhẹ 1.2 MB</span>
-                  <span className="text-emerald-400 text-xs font-semibold">• Cài Đặt 100% Mượt</span>
+        {/* Android App Download Banner Section (Gọn gàng, tối ưu diện tích) */}
+        {!isBannerDismissed && (
+          <div className="mt-6 p-3 sm:p-3.5 bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 border border-emerald-500/40 rounded-2xl shadow-lg relative overflow-hidden group">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10 text-xs">
+              
+              {/* Left Column: Icon & Info */}
+              <div className="flex items-center space-x-3 w-full sm:w-auto">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-slate-950 shadow-md shrink-0">
+                  <Smartphone className="w-5 h-5 stroke-[2.5]" />
                 </div>
 
-                <h3 className="text-base sm:text-lg font-black text-white">
-                  Tải & Cài Đặt App Chợ Cư Dân 24h Cho Điện Thoại Android
-                </h3>
-
-                <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-                  Cài đặt trực tiếp lên màn hình chính Android chỉ 2 giây — khởi động tức thì, mượt mà 100%, tiết kiệm bộ nhớ và không gặp lỗi tệp APK!
-                </p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-black text-white text-xs truncate">
+                      App Android Chợ Cư Dân 24h
+                    </span>
+                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-[10px] font-bold">
+                      1.2 MB • Cài Đặt 2s
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 hidden md:block truncate">
+                    Cài đặt trực tiếp lên màn hình chính Android, mượt mà 100%, không tốn dung lượng.
+                  </p>
+                </div>
               </div>
-            </div>
 
-            {/* Right Column: Download Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto shrink-0">
-              <button
-                onClick={onOpenAndroidModal}
-                className="w-full sm:w-auto px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-2xl shadow-xl shadow-emerald-500/30 transition active:scale-95 flex items-center justify-center gap-2 text-xs uppercase tracking-wide"
-              >
-                <Download className="w-4 h-4" />
-                <span>TẢI FILE APK NGAY (.APK)</span>
-              </button>
+              {/* Right Column: Download Action Buttons */}
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+                <button
+                  onClick={onOpenAndroidModal}
+                  className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl shadow-md transition active:scale-95 flex items-center gap-1.5 text-[11px] uppercase tracking-wide cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>TẢI FILE APK</span>
+                </button>
 
-              <button
-                onClick={onOpenAndroidModal}
-                className="w-full sm:w-auto px-5 py-3.5 bg-slate-800/90 hover:bg-slate-700 border border-emerald-500/40 text-emerald-300 font-extrabold rounded-2xl transition flex items-center justify-center gap-2 text-xs"
-              >
-                <QrCode className="w-4 h-4 text-emerald-400" />
-                <span>MÃ QR & HƯỚNG DẪN</span>
-              </button>
+                <button
+                  onClick={onOpenAndroidModal}
+                  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-emerald-500/30 text-emerald-300 font-bold rounded-xl transition flex items-center gap-1 text-[11px] cursor-pointer"
+                >
+                  <QrCode className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>MÃ QR</span>
+                </button>
+
+                <button
+                  onClick={() => setIsBannerDismissed(true)}
+                  title="Ẩn thông báo"
+                  className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition cursor-pointer ml-1"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
             </div>
           </div>
-        </div>
+        )}
 
         {/* Traffic & Online View Counter Widget */}
         <div className="mt-8 p-4 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">

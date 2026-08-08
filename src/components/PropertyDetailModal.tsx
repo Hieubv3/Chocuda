@@ -4,6 +4,7 @@ import { Property, Language } from '../types';
 import { getTranslation } from '../lib/i18n';
 import { SocialShareModal } from './SocialShareModal';
 import { recordZaloInteraction } from '../lib/visitorStats';
+import { dispatchCustomerLead } from '../lib/leadNotifier';
 
 interface PropertyDetailModalProps {
   property: Property;
@@ -29,9 +30,30 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   const [preferredTime, setPreferredTime] = useState('Cuối tuần');
   const [note, setNote] = useState('');
 
-  const handleBooking = (e: React.FormEvent) => {
+  const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName || !phone) return;
+
+    // Dispatch lead notification to Telegram Bot & Zalo
+    try {
+      await dispatchCustomerLead({
+        sourceType: 'property_viewing',
+        title: `[XEM NHÀ BĐS] ${property.title}`,
+        customerName: fullName,
+        customerPhone: phone,
+        project: property.project,
+        subdivision: property.subdivision,
+        note: `Thời gian muốn xem: ${preferredTime}. Ghi chú: ${note}`,
+        details: {
+          propertyId: property.id,
+          propertyPrice: property.priceDisplay,
+          sellerName: property.sellerName,
+          sellerPhone: property.sellerPhone
+        }
+      });
+    } catch (err) {
+      console.warn('Lead dispatch error:', err);
+    }
 
     fetch('/api/contacts', {
       method: 'POST',

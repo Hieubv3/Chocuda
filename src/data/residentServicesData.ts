@@ -44,16 +44,16 @@ export interface ResidentServiceItem {
 export const DEFAULT_INDUSTRY_KYC_RULES: IndustryKycRule[] = [
   {
     categoryId: 'thang-may-sua-nha',
-    categoryName: 'Lắp Thang Máy & Sửa Chữa Nhà Cửa',
+    categoryName: 'Thi Công Xây Lắp, Nội Thất & Thang Máy Gia Đình',
     iconName: 'ArrowUpRightSquare',
     requiredDocTypes: [
-      'Chứng chỉ An toàn lao động & Kiểm định thử tải thang máy',
-      'Giấy phép Đăng ký Kinh doanh (ĐKKD) Công ty / Hộ kinh doanh',
-      'CCCD / Thẻ căn cước Kỹ sư Thợ trưởng thi công'
+      'Chứng chỉ An toàn lao động & Kiểm định thử tải thang máy gia đình',
+      'Giấy phép Đăng ký Kinh doanh (ĐKKD) Công ty Xây dựng / Nội thất / Thang máy',
+      'CCCD / Thẻ căn cước Kỹ sư Thợ trưởng thi công & Bảng vẽ kĩ thuật'
     ],
     isStrictMandatory: true,
-    description: 'Yêu cầu kiểm định an toàn kỹ thuật nghiêm ngặt tránh sự cố đứt cáp/kẹt thang máy biệt thự.',
-    instructions: 'Chủ cơ sở/kỹ sư bắt buộc tải lên Giấy kiểm định thang máy, ĐKKD công ty và Căn cước công dân.'
+    description: 'Yêu cầu kiểm định an toàn kỹ thuật nghiêm ngặt tránh sự cố đứt cáp/kẹt thang máy biệt thự & chất lượng công trình xây lắp.',
+    instructions: 'Chủ cơ sở/kỹ sư bắt buộc tải lên Giấy kiểm định thang máy, ĐKKD công ty và Căn cước công dân Kỹ sư trưởng.'
   },
   {
     categoryId: 'dien-may-tinh-cong-nghe',
@@ -197,17 +197,17 @@ export const VIN_MAJOR_PROJECTS: { id: ProjectCategory; name: string; tag: strin
 export const RESIDENT_SERVICE_CATEGORIES: ResidentServiceCategory[] = [
   {
     id: 'thang-may-sua-nha',
-    name: 'Lắp Thang Máy & Sửa Chữa Nhà Cửa',
+    name: 'Thi Công Xây Lắp, Nội Thất & Thang Máy Gia Đình',
     iconName: 'ArrowUpRightSquare',
-    badge: 'Nhu cầu cao',
-    description: 'Tư vấn, thi công, bảo trì thang máy gia đình kính/homelift, sửa chữa nhà, thạch cao, nội thất, chống thấm.',
+    badge: 'Xây Lắp & Hoàn Thiện',
+    description: 'Tư vấn thiết kế & thi công xây dựng cải tạo biệt thự, shophouse, hoàn thiện nội thất trọn gói, lắp đặt & bảo trì thang máy gia đình, homelift kính 24/7.',
     subCategories: [
-      'Lắp đặt & Bảo trì Thang máy gia đình',
-      'Sửa chữa Điện - Nước 24/7',
-      'Thi công Nội thất & Thạch cao',
-      'Sơn sửa, Chống thấm & Ốp lát',
-      'Cửa nhôm kính & Khóa thông minh',
-      'Rèm cửa & Giàn phơi thông minh'
+      '🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình & Homelift Kính',
+      '🏗️ Thi Công Xây Lắp, Cải Tạo Biệt Thự & Shophouse',
+      '🛋️ Thiết Kế & Thi Công Nội Thất Trọn Gói (Gỗ An Cường)',
+      '⚡ Sửa Chữa Điện - Nước 24/7 & Khóa Thông Minh',
+      '🎨 Sơn Bả, Chống Thấm, Thạch Cao & Cửa Nhôm Kính',
+      '🪟 Rèm Cửa Tự Động & Giàn Phơi Thông Minh'
     ]
   },
   {
@@ -226,16 +226,16 @@ export const RESIDENT_SERVICE_CATEGORIES: ResidentServiceCategory[] = [
   },
   {
     id: 'van-chuyen-taxi',
-    name: 'Taxi Cư Dân & Vận Chuyển 24/7',
+    name: 'Taxi Cư Dân & Vận Tải 24/7 (Nội Khu & Ngoại Khu)',
     iconName: 'Car',
     badge: '24/7 Nhanh chóng',
-    description: 'Xe tiện chuyến Hà Nội - Sân bay - Tỉnh, xe điện VinFast, chuyển nhà trọn gói, cứu hộ ô tô xe máy.',
+    description: 'Bao gồm trọn gói Vận tải Nội khu (Xe điện, Taxi điện, Chuyển đồ nội khu) & Vận tải Ngoại khu (Taxi Sân bay Nội Bài, Xe đi tỉnh, Xe hợp đồng 4-45 chỗ).',
     subCategories: [
-      'Taxi & Xe tiện chuyến 24/7',
-      'Xe điện VinFast & VinBus',
-      'Chuyển nhà trọn gói cư dân',
-      'Thuê xe ô tô tự lái / Có tài',
-      'Cứu hộ Xe máy & Ô tô nội khu'
+      '⚡ Vận Tải Nội Khu (Xe điện Buggy, Taxi điện, Chuyển đồ)',
+      '✈️ Vận Tải Ngoại Khu (Taxi Sân Bay Nội Bài, Xe đi tỉnh)',
+      '🚐 Xe Hợp Đồng Du Lịch & Đưa Đón VIP (4-45 chỗ)',
+      '📦 Chuyển Nhà Trọn Gói & Vận Chuyển Hàng Hóa',
+      '🛠️ Cứu Hộ Ô Tô & Xe Máy Nội Khu 24/7'
     ]
   },
   {
@@ -339,7 +339,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     id: 'srv-thang-may-01',
     title: 'Thang Máy Gia Đình Vinhomes - Thi Công & Bảo Trì Kính Homelift',
     categoryId: 'thang-may-sua-nha',
-    subCategory: 'Lắp đặt & Bảo trì Thang máy gia đình',
+    subCategory: '🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình & Homelift Kính',
     project: 'ocean-park-2',
     subdivision: 'Phân khu Chà Là & San Hô',
     providerName: 'Kỹ sư Nguyễn Văn Đức (Cư dân Chà Là 6)',
@@ -501,10 +501,59 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     ]
   },
   {
-    id: 'srv-pending-taxi-10',
-    title: 'Đội Xe Điện VinFast VF9 Đưa Đón Vip Cư Dân Sân Bay Nội Bài',
+    id: 'srv-transport-noi-khu-01',
+    title: 'Xe Điện Buggy & Taxi Điện Nội Khu Đưa Đón Trẻ Em & Cư Dân 24/7',
     categoryId: 'van-chuyen-taxi',
-    subCategory: 'Taxi & Xe tiện chuyến 24/7',
+    subCategory: '⚡ Vận Tải Nội Khu (Xe điện Buggy, Taxi điện, Chuyển đồ)',
+    project: 'ocean-park-1',
+    subdivision: 'Phân khu Ngọc Trai & San Hô',
+    providerName: 'Đội Xe Điện Cư Dân Nội Khu Vinhomes',
+    providerPhone: '0868.499.929',
+    providerZalo: 'https://zalo.me/0868499929',
+    address: 'Sảnh S2.01 Vinhomes Ocean Park 1',
+    priceDisplay: 'Từ 20.000đ/lượt nội khu',
+    rating: 5.0,
+    reviewCount: 112,
+    images: [
+      'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80'
+    ],
+    description: 'Dịch vụ VẬN TẢI NỘI KHU chuyên nghiệp: Đưa đón con trẻ đi học Vinschool, đưa đón ông bà đi dạo/bể bơi/Vincom, di chuyển giữa các phân khu Ocean Park 1, 2, 3 & Smart City. Xe điện êm ái, an toàn 100%.',
+    verified: true,
+    legalCommitmentAccepted: true,
+    createdAt: '2026-08-01',
+    kycStatus: 'verified',
+    kycBadgeType: 'blue_verified'
+  },
+  {
+    id: 'srv-transport-noi-khu-02',
+    title: 'Xe Điện Ba Bánh & Tải Nhỏ Chuyển Đồ, Vận Chuyển Nội Thất Nội Khu',
+    categoryId: 'van-chuyen-taxi',
+    subCategory: '⚡ Vận Tải Nội Khu (Xe điện Buggy, Taxi điện, Chuyển đồ)',
+    project: 'smart-city',
+    subdivision: 'Sảnh Sapphire & Imperia',
+    providerName: 'Đội Vận Chuyển Chợ Cư Dân Smart City',
+    providerPhone: '0988.345.890',
+    providerZalo: 'https://zalo.me/0988345890',
+    address: 'S2.05 Vinhomes Smart City',
+    priceDisplay: 'Từ 100.000đ/chuyến chuyển đồ',
+    rating: 4.9,
+    reviewCount: 78,
+    images: [
+      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80'
+    ],
+    description: 'Chuyên chở đồ đạc cồng kềnh, chuyển đồ chuyển nhà giữa các tòa nhà nội khu Vinhomes. Hỗ trợ bốc xếp tận phòng, cẩn thận, không trầy xước thang máy.',
+    verified: true,
+    legalCommitmentAccepted: true,
+    createdAt: '2026-08-02',
+    kycStatus: 'verified',
+    kycBadgeType: 'blue_verified'
+  },
+  {
+    id: 'srv-pending-taxi-10',
+    title: 'Đội Xe Điện VinFast VF9 Đưa Đón Vip Cư Dân Sân Bay Nội Bài (Vận Tải Ngoại Khu)',
+    categoryId: 'van-chuyen-taxi',
+    subCategory: '✈️ Vận Tải Ngoại Khu (Taxi Sân Bay Nội Bài, Xe đi tỉnh)',
     project: 'smart-city',
     subdivision: 'Tonkin 1, Vinhomes Smart City',
     providerName: 'Tài xế Đỗ Quốc Khánh (Cư dân Tonkin)',
@@ -517,7 +566,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     images: [
       'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80'
     ],
-    description: 'Chuyên phục vụ các chuyến đưa đón VIP bằng xe điện 7 chỗ VF9 rộng rãi sang trọng. Đăng ký nộp hồ sơ bằng B2 và Cà vẹt xe để nhận Nút Xanh KYC.',
+    description: 'VẬN TẢI NGOẠI KHU: Chuyên phục vụ các chuyến đưa đón VIP bằng xe điện 7 chỗ VF9 rộng rãi sang trọng đi Sân bay Nội Bài, đi tỉnh, sân golf. Đặt lịch trước có ngay xe.',
     verified: false,
     legalCommitmentAccepted: true,
     createdAt: '2026-08-01',
@@ -545,9 +594,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
   },
   {
     id: 'srv-taxi-03',
-    title: 'Taxi Cư Dân Vin 7 Chỗ Tiện Chuyến Hà Nội - Sân Bay Nội Bài',
+    title: 'Taxi Cư Dân Vin 7 Chỗ Tiện Chuyến Hà Nội - Sân Bay Nội Bài & Đi Tỉnh',
     categoryId: 'van-chuyen-taxi',
-    subCategory: 'Taxi & Xe tiện chuyến 24/7',
+    subCategory: '✈️ Vận Tải Ngoại Khu (Taxi Sân Bay Nội Bài, Xe đi tỉnh)',
     project: 'smart-city',
     subdivision: 'Phân khu Sapphire & Tonkin',
     providerName: 'Tài xế Cư Dân Trần Minh Quân (Xe VF8 Sang Trọng)',
@@ -561,7 +610,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
       'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80'
     ],
-    description: 'Phục vụ cư dân 24/7 đưa đón Nội Bài, đi tỉnh, đám cưới, công tác. Xe điện VF8 êm ái, sạch sẽ, tài xế văn minh, lịch sự, chuẩn phong cách cư dân Vin.',
+    description: 'VẬN TẢI NGOẠI KHU 24/7: Phục vụ cư dân đưa đón Sân bay Nội Bài, tiện chuyến đi tỉnh Quảng Ninh, Hải Phòng, Nam Định, Ninh Bình, Thanh Hóa. Xe điện VF8 êm ái, lịch sự, đúng giờ.',
     verified: true,
     legalCommitmentAccepted: true,
     createdAt: '2026-07-18',
@@ -645,9 +694,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
   },
   {
     id: 'srv-noi-that-08',
-    title: 'Thi Công Nội Thất, Sửa Chữa Cải Tạo Shophouse & Biệt Thự Vin',
+    title: 'Thi Công Nội Thất Gỗ An Cường Trọn Gói - Cải Tạo Shophouse & Biệt Thự Vin',
     categoryId: 'thang-may-sua-nha',
-    subCategory: 'Thi công Nội thất & Thạch cao',
+    subCategory: '🛋️ Thiết Kế & Thi Công Nội Thất Trọn Gói (Gỗ An Cường)',
     project: 'ha-long-xanh',
     subdivision: 'Toàn dự án Hạ Long Xanh & Quảng Ninh',
     providerName: 'Xưởng Nội Thất Cư Dân Kiến Trúc Việt',
@@ -665,6 +714,31 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     verified: true,
     legalCommitmentAccepted: true,
     createdAt: '2026-07-30',
+    kycStatus: 'verified',
+    kycBadgeType: 'blue_verified'
+  },
+  {
+    id: 'srv-xay-lap-09',
+    title: 'Thi Công Xây Lắp & Cải Tạo Xây Dựng Biệt Thự / Shophouse Vinhomes',
+    categoryId: 'thang-may-sua-nha',
+    subCategory: '🏗️ Thi Công Xây Lắp, Cải Tạo Biệt Thự & Shophouse',
+    project: 'ocean-park-2',
+    subdivision: 'Phân khu Sao Biển & San Hô',
+    providerName: 'Công Ty CP Xây Dựng & Tổng Thầu VinCons',
+    providerPhone: '0868.499.929',
+    providerZalo: 'https://zalo.me/0868499929',
+    address: 'Sao Biển 1-89, Vinhomes Ocean Park 2',
+    priceDisplay: 'Khảo sát & Lập dự toán miễn phí tận nơi',
+    rating: 5.0,
+    reviewCount: 68,
+    images: [
+      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80'
+    ],
+    description: 'Tổng thầu thi công xây lắp trọn gói: Đập phá mở rộng không gian, đổ sàn bê tông, xây tường, trát sơn, thi công chống thấm hố thang máy, hoàn thiện kiến trúc & kết cấu biệt thự, shophouse cam kết bảo hành kết cấu 10 năm.',
+    verified: true,
+    legalCommitmentAccepted: true,
+    createdAt: '2026-08-01',
     kycStatus: 'verified',
     kycBadgeType: 'blue_verified'
   }

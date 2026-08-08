@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Share2, Send, Sparkles, MessageCircle, Mail, Bell, Facebook, Users, CheckCircle2, AlertCircle, Play, RefreshCw, ShieldCheck, Database, FileText, Check, Phone, Building2, Search } from 'lucide-react';
 import { Property, LeadContact } from '../types';
+import { getStoredTelegramConfig, saveTelegramConfig } from '../lib/leadNotifier';
 
 interface AdminMarketingCenterProps {
   properties: Property[];
@@ -55,7 +56,11 @@ export const AdminMarketingCenter: React.FC<AdminMarketingCenterProps> = ({
 
   // API Credentials Config State
   const [showConfigPanel, setShowConfigPanel] = useState(false);
+  const initialTele = getStoredTelegramConfig();
   const [apiConfig, setApiConfig] = useState({
+    telegramBotToken: initialTele.botToken || '',
+    telegramChatId: initialTele.chatId || '',
+    zaloWebhookUrl: initialTele.zaloWebhookUrl || '',
     n8nWebhookUrl: 'https://n8n.chocudan24h.com/webhook/send-bds-campaign',
     zaloOaAppId: '2830198429301928',
     zaloAccessToken: '',
@@ -273,6 +278,39 @@ export const AdminMarketingCenter: React.FC<AdminMarketingCenterProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
+              <label className="font-bold text-amber-300 block">✈️ Telegram Bot Token (Gửi Đơn Đặt Xe & Lead Nhu Cầu):</label>
+              <input
+                type="text"
+                value={apiConfig.telegramBotToken}
+                onChange={(e) => setApiConfig({ ...apiConfig, telegramBotToken: e.target.value })}
+                className="w-full p-2.5 bg-slate-950 border border-amber-500/50 rounded-xl text-xs font-mono text-amber-300"
+                placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ..."
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-amber-300 block">💬 Telegram Group / Chat ID (Nhận Thông Báo Nhóm):</label>
+              <input
+                type="text"
+                value={apiConfig.telegramChatId}
+                onChange={(e) => setApiConfig({ ...apiConfig, telegramChatId: e.target.value })}
+                className="w-full p-2.5 bg-slate-950 border border-amber-500/50 rounded-xl text-xs font-mono text-amber-300"
+                placeholder="-1001234567890"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-slate-300 block">🔗 Webhook Zalo / n8n Auto-Push (Optional):</label>
+              <input
+                type="text"
+                value={apiConfig.zaloWebhookUrl}
+                onChange={(e) => setApiConfig({ ...apiConfig, zaloWebhookUrl: e.target.value })}
+                className="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono text-blue-300"
+                placeholder="https://n8n.chocudan24h.com/webhook/zalo-leads"
+              />
+            </div>
+
+            <div className="space-y-1">
               <label className="font-bold text-slate-300 block">n8n / Make / Custom Webhook URL (POST Request):</label>
               <input
                 type="text"
@@ -304,25 +342,26 @@ export const AdminMarketingCenter: React.FC<AdminMarketingCenterProps> = ({
                 placeholder="EAAI..."
               />
             </div>
-
-            <div className="space-y-1">
-              <label className="font-bold text-slate-300 block">SMTP Host Email Sender (Gmail/SendGrid):</label>
-              <input
-                type="text"
-                value={apiConfig.smtpHost}
-                onChange={(e) => setApiConfig({ ...apiConfig, smtpHost: e.target.value })}
-                className="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono"
-                placeholder="smtp.gmail.com"
-              />
-            </div>
           </div>
 
           <div className="flex justify-end pt-2">
             <button
               type="button"
               disabled={isSavingConfig}
-              onClick={handleSaveApiConfig}
-              className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition flex items-center gap-1.5 shadow"
+              onClick={() => {
+                setIsSavingConfig(true);
+                saveTelegramConfig({
+                  botToken: apiConfig.telegramBotToken,
+                  chatId: apiConfig.telegramChatId,
+                  zaloWebhookUrl: apiConfig.zaloWebhookUrl,
+                  enabled: true
+                });
+                setTimeout(() => {
+                  setIsSavingConfig(false);
+                  alert('✅ Cấu hình Telegram Bot & Zalo Webhook đã được lưu thành công!');
+                }, 400);
+              }}
+              className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition flex items-center gap-1.5 shadow cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>{isSavingConfig ? 'Đang Lưu Cấu Hình...' : '💾 LƯU CẤU HÌNH CỔNG API THẬT'}</span>

@@ -5,7 +5,7 @@ import {
   Building2, ExternalLink, X, Info, Car, Utensils, Cpu, HeartHandshake, 
   GraduationCap, Hotel, Dog, ShoppingBag, ArrowUpRightSquare, Home, FileText, User,
   Award, ShieldAlert, Clock, FileCheck, Upload, Grid2x2, Grid3x3, List, LayoutGrid,
-  Compass, Navigation
+  Compass, Navigation, Hammer
 } from 'lucide-react';
 import { ProjectCategory, User as UserType, UserStorefront } from '../types';
 import { 
@@ -21,6 +21,7 @@ import { StoreLocatorMapModal } from './StoreLocatorMapModal';
 import { ServicePricingModal } from './ServicePricingModal';
 import { AllStorefrontsDirectoryModal } from './AllStorefrontsDirectoryModal';
 import { TripartiteAgreementModal } from './TripartiteAgreementModal';
+import { dispatchCustomerLead } from '../lib/leadNotifier';
 
 interface ResidentServicesPageProps {
   currentUser: UserType | null;
@@ -54,6 +55,32 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   const [isAllStoresDirectoryOpen, setIsAllStoresDirectoryOpen] = useState<boolean>(false);
   const [isTripartiteModalOpen, setIsTripartiteModalOpen] = useState<boolean>(false);
   const [stores, setStores] = useState<UserStorefront[]>(INITIAL_USER_STOREFRONTS);
+
+  // Dedicated Transport Booking Modal State (Vận Tải Nội Khu & Ngoại Khu 24/7)
+  const [isTransportModalOpen, setIsTransportModalOpen] = useState<boolean>(false);
+  const [transportTab, setTransportTab] = useState<'noi_khu' | 'ngoai_khu'>('noi_khu');
+  const [transportServiceType, setTransportServiceType] = useState<string>('⚡ Xe Điện Buggy & Taxi Điện Nội Khu');
+  const [transportPickup, setTransportPickup] = useState<string>('');
+  const [transportDropoff, setTransportDropoff] = useState<string>('');
+  const [transportTime, setTransportTime] = useState<string>('Đi ngay bây giờ');
+  const [transportName, setTransportName] = useState<string>(currentUser?.displayName || '');
+  const [transportPhone, setTransportPhone] = useState<string>(currentUser?.phone || '');
+  const [transportNote, setTransportNote] = useState<string>('');
+  const [isSubmittingTransport, setIsSubmittingTransport] = useState<boolean>(false);
+  const [transportSubmitResult, setTransportSubmitResult] = useState<string | null>(null);
+
+  // Dedicated Construction, Interior & Elevator Quote Modal State
+  const [isConstructionModalOpen, setIsConstructionModalOpen] = useState<boolean>(false);
+  const [constructionType, setConstructionType] = useState<string>('🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình Homelift Kính');
+  const [constructionProject, setConstructionProject] = useState<string>(selectedProject === 'all' ? 'Vinhomes Ocean Park 2' : selectedProject);
+  const [constructionRoom, setConstructionRoom] = useState<string>('');
+  const [constructionName, setConstructionName] = useState<string>(currentUser?.displayName || '');
+  const [constructionPhone, setConstructionPhone] = useState<string>(currentUser?.phone || '');
+  const [constructionBudget, setConstructionBudget] = useState<string>('Khảo sát chọn gói phù hợp');
+  const [constructionTimeline, setConstructionTimeline] = useState<string>('Cần khảo sát báo giá trong tuần');
+  const [constructionNote, setConstructionNote] = useState<string>('');
+  const [isSubmittingConstruction, setIsSubmittingConstruction] = useState<boolean>(false);
+  const [constructionSubmitResult, setConstructionSubmitResult] = useState<string | null>(null);
 
   // Reputation PR posts state for resident partners & stores
   const [reputationPosts, setReputationPosts] = useState<any[]>([
@@ -361,6 +388,59 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     setIsPostingModalOpen(false);
   };
 
+  const handleTransportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!transportPhone || !transportName) {
+      alert('Vui lòng điền họ tên và số điện thoại Zalo liên hệ!');
+      return;
+    }
+    setIsSubmittingTransport(true);
+    try {
+      const res = await dispatchCustomerLead({
+        sourceType: 'taxi_transport',
+        title: `[ĐẶT XE VẬN TẢI ${transportTab === 'noi_khu' ? 'NỘI KHU' : 'NGOẠI KHU'}] ${transportServiceType}`,
+        customerName: transportName,
+        customerPhone: transportPhone,
+        project: selectedProject === 'all' ? 'Vinhomes' : selectedProject,
+        note: transportNote,
+        pickupLocation: transportPickup,
+        dropoffLocation: transportDropoff,
+        pickupTime: transportTime,
+        transportType: transportTab === 'noi_khu' ? 'noi_khu' : 'ngoai_khu'
+      });
+      setTransportSubmitResult(res.message);
+    } catch (err) {
+      setTransportSubmitResult('Đã tiếp nhận yêu cầu! Đội ngũ tài xế cư dân 24/7 sẽ gọi lại ngay qua Zalo.');
+    } finally {
+      setIsSubmittingTransport(false);
+    }
+  };
+
+  const handleConstructionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!constructionPhone || !constructionName) {
+      alert('Vui lòng điền họ tên và số điện thoại Zalo liên hệ!');
+      return;
+    }
+    setIsSubmittingConstruction(true);
+    try {
+      const res = await dispatchCustomerLead({
+        sourceType: 'resident_service',
+        title: `[YÊU CẦU XÂY LẮP - NỘI THẤT - THANG MÁY] ${constructionType}`,
+        customerName: constructionName,
+        customerPhone: constructionPhone,
+        project: constructionProject || selectedProject,
+        subdivision: constructionRoom,
+        note: `Mục đích: ${constructionType} | Dự toán: ${constructionBudget} | Tiến độ: ${constructionTimeline} | Ghi chú: ${constructionNote}`
+      });
+      setConstructionSubmitResult(res.message);
+    } catch (err) {
+      setConstructionSubmitResult('Đã tiếp nhận hồ sơ khảo sát! Kỹ sư xây dựng & đội thợ thang máy cư dân sẽ liên hệ khảo sát tận nơi qua Zalo.');
+    } finally {
+      setIsSubmittingConstruction(false);
+    }
+  };
+
   const selectedCategoryObj = useMemo(() => {
     return RESIDENT_SERVICE_CATEGORIES.find(c => c.id === selectedCategory);
   }, [selectedCategory]);
@@ -421,6 +501,22 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               >
                 <Sparkles className="w-3 h-3 text-slate-950 fill-slate-950" />
                 <span>BẢNG GIÁ QUẢNG BÁ</span>
+              </button>
+
+              <button
+                onClick={() => setIsTransportModalOpen(true)}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md transition active:scale-95 cursor-pointer ring-1 ring-amber-400"
+              >
+                <Car className="w-3.5 h-3.5 text-slate-950 animate-pulse" />
+                <span>🚗 ĐẶT XE VẬN TẢI NỘI & NGOẠI KHU 24/7</span>
+              </button>
+
+              <button
+                onClick={() => setIsConstructionModalOpen(true)}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md transition active:scale-95 cursor-pointer ring-1 ring-blue-400"
+              >
+                <Hammer className="w-3.5 h-3.5 text-amber-300 animate-bounce" />
+                <span>🏗️ BÁO GIÁ XÂY LẮP, NỘI THẤT & THANG MÁY</span>
               </button>
 
               <button
@@ -1646,9 +1742,35 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">Miễn phí 100%</span>
                 </div>
 
-                <form onSubmit={(e) => {
+                <form onSubmit={async (e) => {
                   e.preventDefault();
-                  alert(`Đã gửi yêu cầu khảo sát tới ${selectedServiceModal.providerName}! Thợ sẽ gọi lại trong 15 phút.`);
+                  const target = e.target as HTMLFormElement;
+                  const nameInput = target.querySelector('input[type="text"]') as HTMLInputElement;
+                  const roomInput = target.querySelectorAll('input[type="text"]')[1] as HTMLInputElement;
+                  const phoneInput = target.querySelector('input[type="tel"]') as HTMLInputElement;
+                  const timeInput = target.querySelectorAll('input[type="text"]')[2] as HTMLInputElement;
+                  
+                  const cName = nameInput?.value || currentUser?.displayName || 'Cư dân';
+                  const cRoom = roomInput?.value || '';
+                  const cPhone = phoneInput?.value || '';
+                  const cTime = timeInput?.value || '';
+
+                  const res = await dispatchCustomerLead({
+                    sourceType: 'resident_service',
+                    title: `[YÊU CẦU BÁO GIÁ DỊCH VỤ] ${selectedServiceModal.title}`,
+                    customerName: cName,
+                    customerPhone: cPhone,
+                    project: selectedServiceModal.project || selectedProject,
+                    subdivision: selectedServiceModal.subdivision || cRoom,
+                    note: `Yêu cầu báo giá tới nhà cung cấp: ${selectedServiceModal.providerName}. Thời gian: ${cTime}`,
+                    details: {
+                      serviceId: selectedServiceModal.id,
+                      providerName: selectedServiceModal.providerName,
+                      providerPhone: selectedServiceModal.providerPhone
+                    }
+                  });
+
+                  alert(res.message);
                 }} className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">Tên cư dân:</label>
@@ -2429,6 +2551,424 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             setSelectedStoreModal(st);
           }}
         />
+      )}
+
+      {/* Quick Transport Booking Modal (Vận Tải Nội Khu & Ngoại Khu 24/7) */}
+      {isTransportModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => {
+                setIsTransportModalOpen(false);
+                setTransportSubmitResult(null);
+              }}
+              className="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-full transition cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header Title */}
+            <div className="space-y-1 pr-8">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-xs rounded-full border border-amber-500/30">
+                <Car className="w-4 h-4" />
+                <span>HỆ THỐNG VẬN TẢI NỘI KHU & NGOẠI KHU 24/7</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
+                ĐẶT XE NGHU CẦU & VẬN CHUYỂN CƯ DÂN
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Nhu cầu đặt xe sẽ được tự động đổ trực tiếp tới nhóm Telegram & Zalo tiếp nhận đơn tài xế cư dân 24/7!
+              </p>
+            </div>
+
+            {/* Success Result Alert */}
+            {transportSubmitResult ? (
+              <div className="bg-emerald-500/10 border-2 border-emerald-500/40 rounded-2xl p-5 space-y-3 text-center">
+                <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
+                <h3 className="text-base font-black text-emerald-800 dark:text-emerald-300">
+                  ĐÃ BẮT ĐẦU ĐỔ YÊU CẦU TỚI BỘ PHẬN ĐIỀU XE!
+                </h3>
+                <p className="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
+                  {transportSubmitResult}
+                </p>
+                <div className="pt-2 flex flex-col sm:flex-row gap-2">
+                  <a
+                    href="https://zalo.me/0868499929"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-black text-center transition flex items-center justify-center gap-1.5"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Chat Nhận Xe Zalo Ngay</span>
+                  </a>
+                  <button
+                    onClick={() => {
+                      setTransportSubmitResult(null);
+                      setIsTransportModalOpen(false);
+                    }}
+                    className="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold cursor-pointer"
+                  >
+                    Hoàn Tất
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleTransportSubmit} className="space-y-4 text-xs">
+                {/* 2 Main Transport Category Tabs */}
+                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTransportTab('noi_khu');
+                      setTransportServiceType('⚡ Xe Điện Buggy & Taxi Điện Nội Khu');
+                    }}
+                    className={`py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                      transportTab === 'noi_khu'
+                        ? 'bg-amber-500 text-slate-950 shadow-md ring-2 ring-amber-400'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <span>⚡ VẬN TẢI NỘI KHU</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTransportTab('ngoai_khu');
+                      setTransportServiceType('✈️ Taxi Sân Bay Nội Bài (Trọn gói)');
+                    }}
+                    className={`py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                      transportTab === 'ngoai_khu'
+                        ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <span>✈️ VẬN TẢI NGOẠI KHU</span>
+                  </button>
+                </div>
+
+                {/* Subcategory Specific Options */}
+                <div className="space-y-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300">
+                    Chọn loại xe / Dịch vụ cụ thể (*):
+                  </label>
+                  <select
+                    value={transportServiceType}
+                    onChange={(e) => setTransportServiceType(e.target.value)}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  >
+                    {transportTab === 'noi_khu' ? (
+                      <>
+                        <option value="⚡ Xe Điện Buggy & Taxi Điện Nội Khu">⚡ Xe Điện Buggy & Taxi Điện Nội Khu (Đi dạo, đi học, Vincom)</option>
+                        <option value="📦 Xe Ba Bánh & Chuyển Đồ Cồng Kềnh Nội Khu">📦 Xe Ba Bánh & Chuyển Đồ Cồng Kềnh Nội Khu</option>
+                        <option value="🛵 Shipper & Chở Hàng Nội Khu 24/7">🛵 Shipper & Chở Hàng Nội Khu 24/7</option>
+                        <option value="🛺 Xe Đưa Đón Trẻ Em Đi Học Vinschool">🛺 Xe Đưa Đón Trẻ Em Đi Học Vinschool Nội Khu</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="✈️ Taxi Sân Bay Nội Bài (Trọn gói 200k-350k)">✈️ Taxi Sân Bay Nội Bài (Trọn gói 200k-350k)</option>
+                        <option value="🚗 Xe Tiện Chuyến Đi Tỉnh (Hải Phòng, Quảng Ninh, Nam Định...)">🚗 Xe Tiện Chuyến Đi Tỉnh (Hải Phòng, Quảng Ninh, Nam Định...)</option>
+                        <option value="🚐 Xe Hợp Đồng Du Lịch & Sân Golf (4-45 chỗ)">🚐 Xe Hợp Đồng Du Lịch & Sân Golf (4 - 45 chỗ)</option>
+                        <option value="🚛 Chuyển Nhà Trọn Gói Liên Tỉnh">🚛 Chuyển Nhà Trọn Gói Liên Tỉnh</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+
+                {/* Pickup & Dropoff Inputs */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Điểm đón (*):</label>
+                    <input
+                      type="text"
+                      required
+                      value={transportPickup}
+                      onChange={(e) => setTransportPickup(e.target.value)}
+                      placeholder="VD: Sảnh S2.01 Ocean Park 1 / Tòa Tonkin Smart City"
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Điểm đến (*):</label>
+                    <input
+                      type="text"
+                      required
+                      value={transportDropoff}
+                      onChange={(e) => setTransportDropoff(e.target.value)}
+                      placeholder="VD: Sân bay Nội Bài / Phân khu Chà Là / Hải Phòng"
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Customer Contact info */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tên cư dân / Khách hàng (*):</label>
+                    <input
+                      type="text"
+                      required
+                      value={transportName}
+                      onChange={(e) => setTransportName(e.target.value)}
+                      placeholder="Nguyễn Văn A"
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Số điện thoại / Zalo nhận báo giá (*):</label>
+                    <input
+                      type="tel"
+                      required
+                      value={transportPhone}
+                      onChange={(e) => setTransportPhone(e.target.value)}
+                      placeholder="0988.xxx.xxx"
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Thời gian đón dự kiến:</label>
+                  <input
+                    type="text"
+                    value={transportTime}
+                    onChange={(e) => setTransportTime(e.target.value)}
+                    placeholder="VD: Đi ngay lập tức / 5h00 sáng mai 09/08"
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Ghi chú thêm (Hành lý, yêu cầu xe):</label>
+                  <textarea
+                    rows={2}
+                    value={transportNote}
+                    onChange={(e) => setTransportNote(e.target.value)}
+                    placeholder="Cần xe 7 chỗ VF8, mang theo 2 vali lớn..."
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmittingTransport}
+                    className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    {isSubmittingTransport ? (
+                      <span>Đang chuyển đơn tới Telegram / Zalo...</span>
+                    ) : (
+                      <>
+                        <Car className="w-5 h-5" />
+                        <span>🚀 GỬI YÊU CẦU ĐẶT XE (ĐỔ TỰ ĐỘNG TỚI TELE/ZALO)</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Quick Construction, Interior & Elevator Quote Modal */}
+      {isConstructionModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => {
+                setIsConstructionModalOpen(false);
+                setConstructionSubmitResult(null);
+              }}
+              className="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-full transition cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header Title */}
+            <div className="space-y-1 pr-8">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black text-xs rounded-full border border-blue-500/30">
+                <Hammer className="w-4 h-4 text-amber-500" />
+                <span>HỆ THỐNG BÁO GIÁ XÂY LẮP - NỘI THẤT - THANG MÁY VINHOMES</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
+                ĐĂNG KÝ KHẢO SÁT & BÁO GIÁ TẬN NƠI (MIỄN PHÍ 100%)
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Yêu cầu khảo sát sẽ được tự động đổ trực tiếp tới Kỹ sư trưởng & Tổng thầu Cư dân đã KYC Nút Xanh!
+              </p>
+            </div>
+
+            {/* Success Result Alert */}
+            {constructionSubmitResult ? (
+              <div className="bg-emerald-500/10 border-2 border-emerald-500/40 rounded-2xl p-5 space-y-3 text-center">
+                <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
+                <h3 className="text-base font-black text-emerald-800 dark:text-emerald-300">
+                  ĐÃ TỰ ĐỘNG ĐỔ DỮ LIỆU TỚI BỘ PHẬN KỸ SƯ THI CÔNG!
+                </h3>
+                <p className="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
+                  {constructionSubmitResult}
+                </p>
+                <div className="pt-2 flex flex-col sm:flex-row gap-2">
+                  <a
+                    href="https://zalo.me/0868499929"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-black text-center transition flex items-center justify-center gap-1.5"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Chat Trực Tiếp Kỹ Sư Qua Zalo</span>
+                  </a>
+                  <button
+                    onClick={() => {
+                      setConstructionSubmitResult(null);
+                      setIsConstructionModalOpen(false);
+                    }}
+                    className="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold cursor-pointer"
+                  >
+                    Hoàn Tất
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleConstructionSubmit} className="space-y-4 text-xs">
+                {/* Select Service Type */}
+                <div className="space-y-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300">
+                    Chọn hạng mục thi công / Dịch vụ (*):
+                  </label>
+                  <select
+                    value={constructionType}
+                    onChange={(e) => setConstructionType(e.target.value)}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  >
+                    <option value="🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình Homelift Kính">🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình Homelift Kính (450kg - 630kg Fuji/Mitsubishi)</option>
+                    <option value="🏗️ Thi Công Xây Lắp & Cải Tạo Xây Dựng Biệt Thự / Shophouse">🏗️ Thi Công Xây Lắp & Cải Tạo Xây Dựng Biệt Thự / Shophouse (Đổ sàn, đập phá, mở rộng)</option>
+                    <option value="🛋️ Thi Công Nội Thất Trọn Gói Gỗ An Cường">🛋️ Thi Công Nội Thất Trọn Gói Gỗ An Cường (Bếp, Khách, Phòng Ngủ)</option>
+                    <option value="🎨 Sơn Bả, Chống Thấm, Thạch Cao & Cửa Nhôm Kính">🎨 Sơn Bả, Chống Thấm Hố Thang Máy, Thạch Cao & Cửa Nhôm Kính Xingfa</option>
+                    <option value="⚡ Sửa Chữa Điện - Nước 24/7 & Khóa Thông Minh Smart Home">⚡ Sửa Chữa Điện - Nước 24/7 & Lắp Khóa Cửa Vân Tay Smart Home</option>
+                    <option value="🪟 Rèm Cửa Tự Động & Giàn Phơi Thông Minh">🪟 Rèm Cửa Tự Động, Giàn Phơi & Lưới An Toàn Ban Công</option>
+                  </select>
+                </div>
+
+                {/* Project & Address */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Khu đô thị Vinhomes (*):</label>
+                    <select
+                      value={constructionProject}
+                      onChange={(e) => setConstructionProject(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    >
+                      <option value="Vinhomes Ocean Park 2">Vinhomes Ocean Park 2</option>
+                      <option value="Vinhomes Ocean Park 3">Vinhomes Ocean Park 3</option>
+                      <option value="Vinhomes Ocean Park 1">Vinhomes Ocean Park 1</option>
+                      <option value="Vinhomes Smart City">Vinhomes Smart City</option>
+                      <option value="Vinhomes Grand Park">Vinhomes Grand Park</option>
+                      <option value="Vinhomes Hạ Long Xanh">Vinhomes Hạ Long Xanh</option>
+                      <option value="Vinhomes Royal Island">Vinhomes Royal Island (Vũ Yên)</option>
+                      <option value="Vinhomes Riverside">Vinhomes Riverside & Harmony</option>
+                      <option value="Khác">Khu đô thị khác</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Phân khu / Mã căn / Số phòng (*):</label>
+                    <input
+                      type="text"
+                      required
+                      value={constructionRoom}
+                      onChange={(e) => setConstructionRoom(e.target.value)}
+                      placeholder="VD: Chà Là 6-12 / Căn S2.12.1508"
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Contact details */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tên chủ nhà / Cư dân (*):</label>
+                    <input
+                      type="text"
+                      required
+                      value={constructionName}
+                      onChange={(e) => setConstructionName(e.target.value)}
+                      placeholder="Nguyễn Văn A"
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Số điện thoại / Zalo nhận báo giá (*):</label>
+                    <input
+                      type="tel"
+                      required
+                      value={constructionPhone}
+                      onChange={(e) => setConstructionPhone(e.target.value)}
+                      placeholder="0988.xxx.xxx"
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Dự toán ngân sách dự kiến:</label>
+                    <input
+                      type="text"
+                      value={constructionBudget}
+                      onChange={(e) => setConstructionBudget(e.target.value)}
+                      placeholder="VD: 200 - 500 Triệu / Khảo sát tư vấn"
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Thời gian muốn khảo sát:</label>
+                    <input
+                      type="text"
+                      value={constructionTimeline}
+                      onChange={(e) => setConstructionTimeline(e.target.value)}
+                      placeholder="VD: Sáng thứ 7 tuần này lúc 9h00"
+                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Ghi chú đặc biệt (Bản vẽ, thông số hố thang, yêu cầu vật liệu):</label>
+                  <textarea
+                    rows={2}
+                    value={constructionNote}
+                    onChange={(e) => setConstructionNote(e.target.value)}
+                    placeholder="Cần thi công hố thang máy kính khung thép hố 1500x1500mm, làm nội thất phòng bếp..."
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmittingConstruction}
+                    className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    {isSubmittingConstruction ? (
+                      <span>Đang gửi hồ sơ khảo sát...</span>
+                    ) : (
+                      <>
+                        <Hammer className="w-5 h-5 text-amber-300" />
+                        <span>🚀 GỬI YÊU CẦU BÁO GIÁ XÂY LẮP & THANG MÁY (TỰ ĐỘNG ĐỔ TELEGRAM/ZALO)</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
       )}
 
       {/* Tripartite Legal Agreement Modal */}

@@ -9,8 +9,8 @@ export const TRANSLATIONS = {
       home: 'Trang Chủ',
       profile: 'Về Chúng Tôi',
       projects: 'Dự Án Nổi Bật',
-      forSale: 'Bán Căn Nhà',
-      forRent: 'Cho Thuê',
+      forSale: 'Căn Bán',
+      forRent: 'Căn Cho Thuê',
       news: 'Tin Thị Trường',
       postProperty: 'Đăng Tin',
       mortgageCalc: 'Tính Vay Ngân Hàng',
@@ -21,8 +21,8 @@ export const TRANSLATIONS = {
       language: 'Ngôn Ngữ'
     },
     hero: {
-      title: 'NỀN TẢNG TRAO ĐỔI THÔNG TIN CHUYỂN NHƯỢNG, CHO THUÊ & KẾT NỐI CƯ DÂN VINHOMES',
-      subtitle: 'Nơi cư dân Vinhomes trực tiếp trao đổi thông tin chuyển nhượng, cho thuê và kết nối sản phẩm BĐS — Giúp kết nối minh bạch chính chủ, bỏ qua mọi rào cản bảo mật với môi giới/sale. (Tất cả hotline 0868.499.929 chuyên trách hỗ trợ cư dân đăng tin & vận hành nền tảng).',
+      title: 'NỀN TẢNG CHUYỂN NHƯỢNG, CHO THUÊ & DỊCH VỤ NỘI KHU KẾT NỐI CƯ DÂN VINHOMES',
+      subtitle: 'Nền tảng trực tiếp dành cho cư dân Vinhomes trao đổi thông tin mua bán, cho thuê BĐS và đăng tin dịch vụ tiện ích nội khu — Tối ưu kết nối minh bạch, hỗ trợ cư dân 24/7.',
       searchTabSale: 'Mua Bán Nhà',
       searchTabRent: 'Cho Thuê',
       projectPlaceholder: 'Chọn dự án',

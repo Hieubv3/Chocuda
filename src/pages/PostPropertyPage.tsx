@@ -3,6 +3,7 @@ import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertT
 import { PropertyType, ProjectCategory, PropertyCategory, Language, Property, User as UserType } from '../types';
 import { SoDoCensorEditor } from '../components/SoDoCensorEditor';
 import { addWatermarkToImage } from '../lib/watermark';
+import { dispatchCustomerLead } from '../lib/leadNotifier';
 
 interface PostPropertyPageProps {
   language: Language;
@@ -224,6 +225,17 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       });
       const data = await res.json();
       if (data.success) {
+        // Dispatch lead notification to Telegram Bot & Zalo
+        dispatchCustomerLead({
+          sourceType: 'post_property',
+          title: `[ĐĂNG TIN MỚI BĐS] ${title}`,
+          customerName: sellerName || 'Chủ nhà chính chủ',
+          customerPhone: sellerPhone || '0868.499.929',
+          project: project,
+          subdivision: subdivision,
+          note: `Loại: ${type === 'sale' ? 'Căn Bán' : 'Cho Thuê'} | Giá: ${type === 'sale' ? `${priceNum} Tỷ` : `${priceNum} Tr/tháng`} | Diện tích: ${areaNum}m² | Vai trò: ${sellerRole.toUpperCase()}`
+        }).catch(err => console.warn('Lead dispatch error:', err));
+
         setSubmitted(true);
         if (onPropertySubmitted) onPropertySubmitted();
       } else {

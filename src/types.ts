@@ -194,7 +194,7 @@ export interface User {
 
 export const BUSINESS_CATEGORIES = [
   { id: 'bds-vinhomes', name: 'Bất Động Sản & Cho Thuê Vinhomes', icon: '🏢' },
-  { id: 'thang-may-sua-nha', name: 'Lắp Thang Máy & Sửa Chữa Nhà Cửa', icon: '🛠️' },
+  { id: 'thang-may-sua-nha', name: 'Thi Công Xây Lắp, Nội Thất & Thang Máy Gia Đình', icon: '🏗️' },
   { id: 'dien-may-tinh-cong-nghe', name: 'Thiết Bị Điện, Máy Tính & Smarthome', icon: '💻' },
   { id: 'van-chuyen-taxi', name: 'Taxi Cư Dân & Vận Chuyển 24/7', icon: '🚗' },
   { id: 'dich-vu-gia-dinh-giat-la', name: 'Giặt Là & Dịch Vụ Gia Đình', icon: '🧺' },

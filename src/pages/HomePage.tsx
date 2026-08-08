@@ -93,15 +93,15 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="space-y-2 sm:space-y-3 max-w-4xl">
             <h1 className="tracking-tight text-white leading-tight">
               <span className="block text-slate-200 font-bold text-[11px] sm:text-sm md:text-base tracking-wide uppercase mb-0.5 opacity-90">
-                NỀN TẢNG TRAO ĐỔI THÔNG TIN CHUYỂN NHƯỢNG, CHO THUÊ
+                NỀN TẢNG TRAO ĐỔI THÔNG TIN CHUYỂN NHƯỢNG, CHO THUÊ & DỊCH VỤ NỘI KHU
               </span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 font-black text-lg sm:text-2xl md:text-3xl lg:text-4xl tracking-tight drop-shadow-md">
-                & KẾT NỐI CƯ DÂN VINHOMES
+                KẾT NỐI CƯ DÂN VINHOMES
               </span>
             </h1>
             <div className="bg-slate-900/80 backdrop-blur-md border border-amber-500/30 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl max-w-3xl space-y-1 text-left">
               <p className="text-[11px] sm:text-sm text-slate-200 font-medium leading-snug sm:leading-relaxed">
-                Nền tảng trao đổi thông tin chuyển nhượng, cho thuê và kết nối sản phẩm BĐS trực tiếp của cư dân Vinhomes để bỏ qua rào cản bảo mật với sale.
+                Nền tảng trực tiếp dành cho cư dân Vinhomes trao đổi thông tin mua bán, cho thuê BĐS và đăng tin dịch vụ tiện ích nội khu — Tối ưu kết nối minh bạch, hỗ trợ cư dân 24/7.
               </p>
               <p className="text-[10px] sm:text-[11px] text-amber-300 font-semibold flex items-center gap-1.5 pt-0.5">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>

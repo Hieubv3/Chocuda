@@ -32,8 +32,8 @@ export const Logo: React.FC<LogoProps> = ({
           <span className="font-black text-slate-900 dark:text-white text-xs sm:text-sm md:text-base uppercase tracking-tight leading-none group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
             CHỢ CƯ DÂN <span className="text-emerald-600 dark:text-emerald-400">24H</span>
           </span>
-          <span className="text-[8px] sm:text-[9px] font-bold text-slate-500 dark:text-slate-400 tracking-wider uppercase mt-0.5">
-            BĐS VINHOMES
+          <span className="text-[8px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 tracking-normal mt-0.5 whitespace-nowrap">
+            Nền tảng kết nối cư dân Vinhomes
           </span>
         </div>
       </div>
@@ -59,8 +59,8 @@ export const Logo: React.FC<LogoProps> = ({
           <span className="font-black text-white text-base sm:text-lg uppercase tracking-tight leading-none">
             CHỢ CƯ DÂN <span className="text-emerald-400">24H</span>
           </span>
-          <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mt-1">
-            Bất Động Sản Vinhomes
+          <span className="text-[10px] sm:text-xs font-semibold text-slate-400 tracking-normal mt-1">
+            Nền tảng kết nối cư dân Vinhomes
           </span>
         </div>
       </div>
