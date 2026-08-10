@@ -60,10 +60,31 @@ export const App: React.FC = () => {
     accountHolder: 'BUI VAN HIEU'
   });
 
-  // App Data
-  const [properties, setProperties] = useState<Property[]>(INITIAL_PROPERTIES);
-  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
-  const [news, setNews] = useState<NewsArticle[]>(INITIAL_NEWS);
+  // App Data with LocalStorage Persistence Fallback
+  const [properties, setProperties] = useState<Property[]>(() => {
+    try {
+      const saved = localStorage.getItem('hb_properties');
+      return saved ? JSON.parse(saved) : INITIAL_PROPERTIES;
+    } catch (e) {
+      return INITIAL_PROPERTIES;
+    }
+  });
+  const [projects, setProjects] = useState<Project[]>(() => {
+    try {
+      const saved = localStorage.getItem('hb_projects');
+      return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
+    } catch (e) {
+      return INITIAL_PROJECTS;
+    }
+  });
+  const [news, setNews] = useState<NewsArticle[]>(() => {
+    try {
+      const saved = localStorage.getItem('hb_news');
+      return saved ? JSON.parse(saved) : INITIAL_NEWS;
+    } catch (e) {
+      return INITIAL_NEWS;
+    }
+  });
   const [contacts, setContacts] = useState<LeadContact[]>([]);
 
   // Modals
@@ -90,21 +111,36 @@ export const App: React.FC = () => {
     }
   }, [theme]);
 
-  // Fetch initial data from server APIs
+  // Fetch initial data from server APIs & update localStorage
   const refreshServerData = () => {
     fetch('/api/properties')
       .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setProperties(data); })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setProperties(data);
+          localStorage.setItem('hb_properties', JSON.stringify(data));
+        }
+      })
       .catch(err => console.warn('Using initial properties fallback:', err));
 
     fetch('/api/projects')
       .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setProjects(data); })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setProjects(data);
+          localStorage.setItem('hb_projects', JSON.stringify(data));
+        }
+      })
       .catch(err => console.warn('Using initial projects fallback:', err));
 
     fetch('/api/news')
       .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setNews(data); })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setNews(data);
+          localStorage.setItem('hb_news', JSON.stringify(data));
+        }
+      })
       .catch(err => console.warn('Using initial news fallback:', err));
 
     fetch('/api/contacts')
@@ -362,17 +398,25 @@ export const App: React.FC = () => {
 
   // Property Admin approval handler
   const handleApproveProperty = async (id: string) => {
+    setProperties(prev => {
+      const updated = prev.map(p => p.id === id ? { ...p, approved: true, status: 'approved' } : p);
+      localStorage.setItem('hb_properties', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch(`/api/properties/${id}/approve`, { method: 'PUT' });
-      setProperties(prev => prev.map(p => p.id === id ? { ...p, approved: true, status: 'approved' } : p));
     } catch (e) {
-      setProperties(prev => prev.map(p => p.id === id ? { ...p, approved: true, status: 'approved' } : p));
+      console.warn('Approved property locally:', id);
     }
   };
 
   // Property Update handler
   const handleUpdateProperty = async (updatedProperty: Property) => {
-    setProperties(prev => prev.map(p => p.id === updatedProperty.id ? updatedProperty : p));
+    setProperties(prev => {
+      const updated = prev.map(p => p.id === updatedProperty.id ? updatedProperty : p);
+      localStorage.setItem('hb_properties', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch(`/api/properties/${updatedProperty.id}`, {
         method: 'PUT',
@@ -386,7 +430,11 @@ export const App: React.FC = () => {
 
   // Project Update & Add handlers
   const handleUpdateProject = async (updatedProject: Project) => {
-    setProjects(prev => prev.map(p => p.id === updatedProject.id ? updatedProject : p));
+    setProjects(prev => {
+      const updated = prev.map(p => p.id === updatedProject.id ? updatedProject : p);
+      localStorage.setItem('hb_projects', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch(`/api/projects/${updatedProject.id}`, {
         method: 'PUT',
@@ -399,7 +447,11 @@ export const App: React.FC = () => {
   };
 
   const handleAddProject = async (newProject: Project) => {
-    setProjects(prev => [newProject, ...prev]);
+    setProjects(prev => {
+      const updated = [newProject, ...prev];
+      localStorage.setItem('hb_projects', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch('/api/projects', {
         method: 'POST',
@@ -413,7 +465,11 @@ export const App: React.FC = () => {
 
   const handleDeleteProject = async (id: string) => {
     if (!confirm('Bạn có chắc chắn muốn xóa dự án này?')) return;
-    setProjects(prev => prev.filter(p => p.id !== id));
+    setProjects(prev => {
+      const updated = prev.filter(p => p.id !== id);
+      localStorage.setItem('hb_projects', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch(`/api/projects/${id}`, { method: 'DELETE' });
     } catch (e) {
@@ -423,7 +479,11 @@ export const App: React.FC = () => {
 
   // News Update handler
   const handleUpdateNews = async (updatedNews: NewsArticle) => {
-    setNews(prev => prev.map(n => n.id === updatedNews.id ? updatedNews : n));
+    setNews(prev => {
+      const updated = prev.map(n => n.id === updatedNews.id ? updatedNews : n);
+      localStorage.setItem('hb_news', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch(`/api/news/${updatedNews.id}`, {
         method: 'PUT',
@@ -437,7 +497,11 @@ export const App: React.FC = () => {
 
   // News Add handler
   const handleAddNews = async (newArticle: NewsArticle) => {
-    setNews(prev => [newArticle, ...prev]);
+    setNews(prev => {
+      const updated = [newArticle, ...prev];
+      localStorage.setItem('hb_news', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch('/api/news', {
         method: 'POST',
@@ -452,7 +516,11 @@ export const App: React.FC = () => {
   // News Delete handler
   const handleDeleteNews = async (id: string) => {
     if (!confirm('Bạn có chắc chắn muốn xóa bài viết này?')) return;
-    setNews(prev => prev.filter(n => n.id !== id));
+    setNews(prev => {
+      const updated = prev.filter(n => n.id !== id);
+      localStorage.setItem('hb_news', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch(`/api/news/${id}`, { method: 'DELETE' });
     } catch (e) {
@@ -463,11 +531,15 @@ export const App: React.FC = () => {
   // Property Delete handler
   const handleDeleteProperty = async (id: string) => {
     if (!confirm('Bạn có chắc chắn muốn xóa tin đăng này?')) return;
+    setProperties(prev => {
+      const updated = prev.filter(p => p.id !== id);
+      localStorage.setItem('hb_properties', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch(`/api/properties/${id}`, { method: 'DELETE' });
-      setProperties(prev => prev.filter(p => p.id !== id));
     } catch (e) {
-      setProperties(prev => prev.filter(p => p.id !== id));
+      console.warn('Deleted property locally:', id);
     }
   };
 

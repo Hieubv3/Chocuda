@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import nodemailer from "nodemailer";
@@ -240,6 +241,46 @@ let pricingConfigStore = {
   accountNumber: '3028031988',
   accountHolder: 'BUI VAN HIEU'
 };
+
+// Data Store File Persistence (Local JSON Database)
+const DATA_STORE_PATH = path.join(process.cwd(), "app_data_store.json");
+
+function loadDataStore() {
+  try {
+    if (fs.existsSync(DATA_STORE_PATH)) {
+      const raw = fs.readFileSync(DATA_STORE_PATH, "utf-8");
+      const data = JSON.parse(raw);
+      if (Array.isArray(data.properties) && data.properties.length > 0) propertiesStore = data.properties;
+      if (Array.isArray(data.projects) && data.projects.length > 0) projectsStore = data.projects;
+      if (Array.isArray(data.news) && data.news.length > 0) newsStore = data.news;
+      if (Array.isArray(data.users) && data.users.length > 0) usersStore = data.users;
+      if (Array.isArray(data.contacts) && data.contacts.length > 0) contactsStore = data.contacts;
+      if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
+      console.log(`[DataStore] Loaded persistent data: ${propertiesStore.length} properties, ${newsStore.length} news, ${projectsStore.length} projects.`);
+    }
+  } catch (err) {
+    console.warn("Could not read app_data_store.json, using defaults.", err);
+  }
+}
+
+function saveDataStore() {
+  try {
+    const payload = {
+      properties: propertiesStore,
+      projects: projectsStore,
+      news: newsStore,
+      users: usersStore,
+      contacts: contactsStore,
+      pricingConfig: pricingConfigStore
+    };
+    fs.writeFileSync(DATA_STORE_PATH, JSON.stringify(payload, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("Could not write app_data_store.json", err);
+  }
+}
+
+// Initial load on server start
+loadDataStore();
 
 // Helper to clean phone numbers for comparison
 function normalizePhoneNumber(rawPhone?: string): string {
@@ -830,14 +871,15 @@ app.get("/api/properties", (req, res) => {
 // Property POST (Submit new listing)
 app.post("/api/properties", (req, res) => {
   const data = req.body;
+  const isAutoApproved = Boolean(data.approved) || Boolean(data.isAdmin) || data.status === 'approved';
   const newProperty: Property = {
-    id: `prop-${Date.now()}`,
+    id: data.id || `prop-${Date.now()}`,
     title: data.title || "Bất động sản mới đăng",
     type: data.type || "sale",
     project: data.project || "ocean-park-2",
     category: data.category || "shophouse",
     price: Number(data.price) || 5.0,
-    priceDisplay: data.priceDisplay || `${data.price} Tỷ`,
+    priceDisplay: data.priceDisplay || (data.type === 'sale' ? `${data.price} Tỷ` : `${data.price} Tr/tháng`),
     area: Number(data.area) || 70,
     bedrooms: Number(data.bedrooms) || 2,
     bathrooms: Number(data.bathrooms) || 2,
@@ -849,16 +891,19 @@ app.post("/api/properties", (req, res) => {
     images: data.images && data.images.length > 0 ? data.images : [
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80"
     ],
-    featured: false,
-    status: data.isAdmin ? 'approved' : 'pending',
-    createdAt: new Date().toISOString().split('T')[0],
+    featured: Boolean(data.featured),
+    status: isAutoApproved ? 'approved' : 'pending',
+    approved: isAutoApproved,
+    createdAt: data.createdAt || new Date().toISOString().split('T')[0],
     sellerName: data.sellerName || "Khách đăng tin",
     sellerPhone: data.sellerPhone || "0868.499.929",
     sellerRole: data.sellerRole || "owner",
-    subdivision: data.subdivision || "Phân khu trung tâm"
+    subdivision: data.subdivision || "Phân khu trung tâm",
+    ...data
   };
 
   propertiesStore.unshift(newProperty);
+  saveDataStore();
   res.status(201).json({ message: "Đăng tin thành công!", property: newProperty });
 });
 
@@ -871,13 +916,32 @@ app.put("/api/properties/:id", (req, res) => {
   }
 
   propertiesStore[index] = { ...propertiesStore[index], ...req.body };
+  saveDataStore();
   res.json({ message: "Cập nhật thành công!", property: propertiesStore[index] });
+});
+
+// Dedicated Property Approve endpoint
+app.put("/api/properties/:id/approve", (req, res) => {
+  const { id } = req.params;
+  const index = propertiesStore.findIndex(p => p.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: "Không tìm thấy bất động sản" });
+  }
+
+  propertiesStore[index] = {
+    ...propertiesStore[index],
+    approved: true,
+    status: 'approved'
+  };
+  saveDataStore();
+  res.json({ message: "Đã duyệt và đồng bộ thành công!", property: propertiesStore[index] });
 });
 
 // Property DELETE
 app.delete("/api/properties/:id", (req, res) => {
   const { id } = req.params;
   propertiesStore = propertiesStore.filter(p => p.id !== id);
+  saveDataStore();
   res.json({ message: "Đã xóa bài đăng." });
 });
 
@@ -901,9 +965,11 @@ app.post("/api/projects", (req, res) => {
     priceRange: data.priceRange || "Liên hệ",
     status: data.status || "Đang mở bán",
     subdivisions: data.subdivisions || [],
-    amenities: data.amenities || []
+    amenities: data.amenities || [],
+    ...data
   };
   projectsStore.unshift(newProject);
+  saveDataStore();
   res.status(201).json({ message: "Thêm dự án thành công", project: newProject });
 });
 
@@ -912,12 +978,14 @@ app.put("/api/projects/:id", (req, res) => {
   const index = projectsStore.findIndex(p => p.id === id);
   if (index === -1) return res.status(404).json({ error: "Không tìm thấy dự án" });
   projectsStore[index] = { ...projectsStore[index], ...req.body };
+  saveDataStore();
   res.json({ message: "Đã cập nhật thông tin dự án", project: projectsStore[index] });
 });
 
 app.delete("/api/projects/:id", (req, res) => {
   const { id } = req.params;
   projectsStore = projectsStore.filter(p => p.id !== id);
+  saveDataStore();
   res.json({ message: "Đã xóa dự án thành công." });
 });
 
@@ -930,19 +998,21 @@ app.get("/api/news", (req, res) => {
 app.post("/api/news", (req, res) => {
   const data = req.body;
   const newArticle: NewsArticle = {
-    id: `news-${Date.now()}`,
+    id: data.id || `news-${Date.now()}`,
     title: data.title || "Bài viết tin tức BĐS mới",
     summary: data.summary || "Tóm tắt tin tức thị trường BĐS Vinhomes...",
     content: data.content || "Nội dung chi tiết bài viết...",
     category: data.category || "vinhomes",
     author: data.author || "Nhà đẹp Vinhomes",
     image: data.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-    publishedAt: new Date().toISOString().split('T')[0],
-    views: 1,
+    publishedAt: data.publishedAt || new Date().toISOString().split('T')[0],
+    views: data.views || 1,
     source: data.source || "manual",
-    status: "published"
+    status: data.status || "published",
+    ...data
   };
   newsStore.unshift(newArticle);
+  saveDataStore();
   res.status(201).json({ message: "Thêm bài viết tin tức thành công", news: newArticle });
 });
 
@@ -952,6 +1022,7 @@ app.put("/api/news/:id", (req, res) => {
   const index = newsStore.findIndex(n => n.id === id);
   if (index === -1) return res.status(404).json({ error: "Không tìm thấy bài viết" });
   newsStore[index] = { ...newsStore[index], ...req.body };
+  saveDataStore();
   res.json({ message: "Cập nhật bài viết thành công!", news: newsStore[index] });
 });
 
@@ -959,6 +1030,7 @@ app.put("/api/news/:id", (req, res) => {
 app.delete("/api/news/:id", (req, res) => {
   const { id } = req.params;
   newsStore = newsStore.filter(n => n.id !== id);
+  saveDataStore();
   res.json({ message: "Đã xóa bài viết thành công." });
 });
 
