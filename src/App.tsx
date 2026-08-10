@@ -25,6 +25,7 @@ import { OmnichannelBulkMarketingModal } from './components/OmnichannelBulkMarke
 import { AndroidApkModal } from './components/AndroidApkModal';
 import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig } from './types';
 import { INITIAL_PROPERTIES, INITIAL_PROJECTS, INITIAL_NEWS } from './data/initialData';
+import { safeLocalStorageGet, safeLocalStorageSet } from './lib/imageUtils';
 
 export const App: React.FC = () => {
   // Theme & Language
@@ -37,12 +38,7 @@ export const App: React.FC = () => {
 
   // User Auth - Restore session from local storage if existing
   const [user, setUser] = useState<User | null>(() => {
-    try {
-      const saved = localStorage.getItem('hb_user');
-      return saved ? JSON.parse(saved) : null;
-    } catch (e) {
-      return null;
-    }
+    return safeLocalStorageGet<User | null>('hb_user', null);
   });
 
   // Up-Tin & VietQR Pricing Config State
@@ -62,28 +58,16 @@ export const App: React.FC = () => {
 
   // App Data with LocalStorage Persistence Fallback
   const [properties, setProperties] = useState<Property[]>(() => {
-    try {
-      const saved = localStorage.getItem('hb_properties');
-      return saved ? JSON.parse(saved) : INITIAL_PROPERTIES;
-    } catch (e) {
-      return INITIAL_PROPERTIES;
-    }
+    const saved = safeLocalStorageGet<Property[]>('hb_properties', INITIAL_PROPERTIES);
+    return Array.isArray(saved) && saved.length > 0 ? saved : INITIAL_PROPERTIES;
   });
   const [projects, setProjects] = useState<Project[]>(() => {
-    try {
-      const saved = localStorage.getItem('hb_projects');
-      return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
-    } catch (e) {
-      return INITIAL_PROJECTS;
-    }
+    const saved = safeLocalStorageGet<Project[]>('hb_projects', INITIAL_PROJECTS);
+    return Array.isArray(saved) && saved.length > 0 ? saved : INITIAL_PROJECTS;
   });
   const [news, setNews] = useState<NewsArticle[]>(() => {
-    try {
-      const saved = localStorage.getItem('hb_news');
-      return saved ? JSON.parse(saved) : INITIAL_NEWS;
-    } catch (e) {
-      return INITIAL_NEWS;
-    }
+    const saved = safeLocalStorageGet<NewsArticle[]>('hb_news', INITIAL_NEWS);
+    return Array.isArray(saved) && saved.length > 0 ? saved : INITIAL_NEWS;
   });
   const [contacts, setContacts] = useState<LeadContact[]>([]);
 
@@ -97,8 +81,7 @@ export const App: React.FC = () => {
 
   // Favorites & Compare IDs
   const [savedIds, setSavedIds] = useState<string[]>(() => {
-    const local = localStorage.getItem('hb_saved_properties');
-    return local ? JSON.parse(local) : [];
+    return safeLocalStorageGet<string[]>('hb_saved_properties', []);
   });
   const [compareIds, setCompareIds] = useState<string[]>([]);
 
@@ -118,7 +101,7 @@ export const App: React.FC = () => {
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
           setProperties(data);
-          localStorage.setItem('hb_properties', JSON.stringify(data));
+          safeLocalStorageSet('hb_properties', data);
         }
       })
       .catch(err => console.warn('Using initial properties fallback:', err));
@@ -128,7 +111,7 @@ export const App: React.FC = () => {
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
           setProjects(data);
-          localStorage.setItem('hb_projects', JSON.stringify(data));
+          safeLocalStorageSet('hb_projects', data);
         }
       })
       .catch(err => console.warn('Using initial projects fallback:', err));
@@ -138,7 +121,7 @@ export const App: React.FC = () => {
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
           setNews(data);
-          localStorage.setItem('hb_news', JSON.stringify(data));
+          safeLocalStorageSet('hb_news', data);
         }
       })
       .catch(err => console.warn('Using initial news fallback:', err));
@@ -147,6 +130,7 @@ export const App: React.FC = () => {
       .then(res => res.json())
       .then(data => { if (Array.isArray(data)) setContacts(data); })
       .catch(err => console.warn('Using initial contacts fallback:', err));
+
 
     fetch('/api/admin/pricing')
       .then(res => res.json())
@@ -377,7 +361,7 @@ export const App: React.FC = () => {
       const next = prev.includes(property.id)
         ? prev.filter(id => id !== property.id)
         : [...prev, property.id];
-      localStorage.setItem('hb_saved_properties', JSON.stringify(next));
+      safeLocalStorageSet('hb_saved_properties', next);
       return next;
     });
   };
@@ -400,7 +384,7 @@ export const App: React.FC = () => {
   const handleApproveProperty = async (id: string) => {
     setProperties(prev => {
       const updated = prev.map(p => p.id === id ? { ...p, approved: true, status: 'approved' } : p);
-      localStorage.setItem('hb_properties', JSON.stringify(updated));
+      safeLocalStorageSet('hb_properties', updated);
       return updated;
     });
     try {
@@ -414,7 +398,7 @@ export const App: React.FC = () => {
   const handleUpdateProperty = async (updatedProperty: Property) => {
     setProperties(prev => {
       const updated = prev.map(p => p.id === updatedProperty.id ? updatedProperty : p);
-      localStorage.setItem('hb_properties', JSON.stringify(updated));
+      safeLocalStorageSet('hb_properties', updated);
       return updated;
     });
     try {
@@ -433,7 +417,7 @@ export const App: React.FC = () => {
     setProjects(prev => {
       const exists = prev.some(p => p.id === updatedProject.id);
       const updated = exists ? prev.map(p => p.id === updatedProject.id ? updatedProject : p) : [updatedProject, ...prev];
-      localStorage.setItem('hb_projects', JSON.stringify(updated));
+      safeLocalStorageSet('hb_projects', updated);
       return updated;
     });
     try {
@@ -446,7 +430,7 @@ export const App: React.FC = () => {
         const data = await res.json();
         if (data.projects && Array.isArray(data.projects)) {
           setProjects(data.projects);
-          localStorage.setItem('hb_projects', JSON.stringify(data.projects));
+          safeLocalStorageSet('hb_projects', data.projects);
         }
       }
     } catch (e) {
@@ -457,7 +441,7 @@ export const App: React.FC = () => {
   const handleAddProject = async (newProject: Project) => {
     setProjects(prev => {
       const updated = [newProject, ...prev];
-      localStorage.setItem('hb_projects', JSON.stringify(updated));
+      safeLocalStorageSet('hb_projects', updated);
       return updated;
     });
     try {
@@ -470,7 +454,7 @@ export const App: React.FC = () => {
         const data = await res.json();
         if (data.projects && Array.isArray(data.projects)) {
           setProjects(data.projects);
-          localStorage.setItem('hb_projects', JSON.stringify(data.projects));
+          safeLocalStorageSet('hb_projects', data.projects);
         }
       }
     } catch (e) {
@@ -482,7 +466,7 @@ export const App: React.FC = () => {
     if (!confirm('Bạn có chắc chắn muốn xóa dự án này?')) return;
     setProjects(prev => {
       const updated = prev.filter(p => p.id !== id);
-      localStorage.setItem('hb_projects', JSON.stringify(updated));
+      safeLocalStorageSet('hb_projects', updated);
       return updated;
     });
     try {
@@ -496,7 +480,7 @@ export const App: React.FC = () => {
   const handleUpdateNews = async (updatedNews: NewsArticle) => {
     setNews(prev => {
       const updated = prev.map(n => n.id === updatedNews.id ? updatedNews : n);
-      localStorage.setItem('hb_news', JSON.stringify(updated));
+      safeLocalStorageSet('hb_news', updated);
       return updated;
     });
     try {
@@ -514,7 +498,7 @@ export const App: React.FC = () => {
   const handleAddNews = async (newArticle: NewsArticle) => {
     setNews(prev => {
       const updated = [newArticle, ...prev];
-      localStorage.setItem('hb_news', JSON.stringify(updated));
+      safeLocalStorageSet('hb_news', updated);
       return updated;
     });
     try {
@@ -533,7 +517,7 @@ export const App: React.FC = () => {
     if (!confirm('Bạn có chắc chắn muốn xóa bài viết này?')) return;
     setNews(prev => {
       const updated = prev.filter(n => n.id !== id);
-      localStorage.setItem('hb_news', JSON.stringify(updated));
+      safeLocalStorageSet('hb_news', updated);
       return updated;
     });
     try {
@@ -548,7 +532,7 @@ export const App: React.FC = () => {
     if (!confirm('Bạn có chắc chắn muốn xóa tin đăng này?')) return;
     setProperties(prev => {
       const updated = prev.filter(p => p.id !== id);
-      localStorage.setItem('hb_properties', JSON.stringify(updated));
+      safeLocalStorageSet('hb_properties', updated);
       return updated;
     });
     try {
@@ -557,6 +541,7 @@ export const App: React.FC = () => {
       console.warn('Deleted property locally:', id);
     }
   };
+
 
   // Save Pricing Config
   const handleSavePricingConfig = async (newConfig: UpTinPricingConfig) => {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Property, Project, NewsArticle, ProjectCategory } from '../types';
 import { X, Save, Image as ImageIcon, Trash2, Plus, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield } from 'lucide-react';
 import { SoDoCensorEditor } from './SoDoCensorEditor';
+import { compressImageFile } from '../lib/imageUtils';
 
 // ==========================================
 // 1. EDIT PROPERTY MODAL (WITH FULL IMAGE MANAGER)
@@ -23,24 +24,25 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
   const [censorTargetIndex, setCensorTargetIndex] = useState<number | null>(null);
   const [showSoDoCensorAdmin, setShowSoDoCensorAdmin] = useState(false);
 
-  // Handle image upload from computer (convert to Data URL)
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle image upload from computer (convert & compress to Web Data URL)
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Kích thước ảnh tối đa là 5MB');
+      if (file.size > 15 * 1024 * 1024) {
+        alert('Kích thước ảnh tối đa là 15MB');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (reader.result) {
+      try {
+        const compressedDataUrl = await compressImageFile(file, 1200, 900, 0.82);
+        if (compressedDataUrl) {
           setFormData(prev => ({
             ...prev,
-            images: [reader.result as string, ...prev.images]
+            images: [compressedDataUrl, ...prev.images]
           }));
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Error compressing image file:', err);
+      }
     }
   };
 
@@ -496,37 +498,39 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
     }
   );
 
-  const handleMainBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMainBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Kích thước ảnh tối đa là 5MB');
+      if (file.size > 15 * 1024 * 1024) {
+        alert('Kích thước ảnh tối đa là 15MB');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (reader.result) {
-          setFormData(prev => ({ ...prev, image: reader.result as string }));
+      try {
+        const compressed = await compressImageFile(file, 1400, 1000, 0.82);
+        if (compressed) {
+          setFormData(prev => ({ ...prev, image: compressed }));
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Error compressing banner image:', err);
+      }
     }
   };
 
-  const handleMasterplanUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMasterplanUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Kích thước ảnh tối đa là 5MB');
+      if (file.size > 15 * 1024 * 1024) {
+        alert('Kích thước ảnh tối đa là 15MB');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (reader.result) {
-          setFormData(prev => ({ ...prev, masterplanUrl: reader.result as string }));
+      try {
+        const compressed = await compressImageFile(file, 1600, 1200, 0.82);
+        if (compressed) {
+          setFormData(prev => ({ ...prev, masterplanUrl: compressed }));
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Error compressing masterplan image:', err);
+      }
     }
   };
 
@@ -729,20 +733,21 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
     }
   );
 
-  const handleNewsImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNewsImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Kích thước ảnh tối đa là 5MB');
+      if (file.size > 15 * 1024 * 1024) {
+        alert('Kích thước ảnh tối đa là 15MB');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (reader.result) {
-          setFormData(prev => ({ ...prev, image: reader.result as string }));
+      try {
+        const compressed = await compressImageFile(file, 1200, 900, 0.82);
+        if (compressed) {
+          setFormData(prev => ({ ...prev, image: compressed }));
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Error compressing news image:', err);
+      }
     }
   };
 
