@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, ChevronRight, Sparkles, Building2, ShieldCheck, MapPin, Phone, ArrowRight, CheckCircle2, UserCheck, Star, Clock, KeyRound, Wrench } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, ChevronRight, ChevronDown, Sparkles, Building2, ShieldCheck, MapPin, Phone, ArrowRight, CheckCircle2, UserCheck, Star, Clock, KeyRound, Wrench } from 'lucide-react';
 import logoImg from '../assets/images/chocudan24h_custom_logo_1785384117746.jpg';
 import { Property, Project, NewsArticle, Language, PropertyType, ProjectCategory } from '../types';
 import { PropertyCard } from '../components/PropertyCard';
@@ -7,6 +7,9 @@ import { RealestateVideoChannelSection } from '../components/RealestateVideoChan
 import { MortgageCalculator } from '../components/MortgageCalculator';
 import { AdBannerWidget } from '../components/AdBannerWidget';
 import { ProjectFaqHub } from '../components/ProjectFaqHub';
+import { VinhomesProjectSelectModal } from '../components/VinhomesProjectSelectModal';
+import { PopularVinhomesLinksSection } from '../components/PopularVinhomesLinksSection';
+import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
 import { HIEU_BUI_PROFILE, INITIAL_ADS } from '../data/initialData';
 import { getTranslation } from '../lib/i18n';
 
@@ -57,8 +60,12 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [searchType, setSearchType] = React.useState<PropertyType>('sale');
   const [searchProject, setSearchProject] = React.useState<string>('all');
   const [searchCategory, setSearchCategory] = React.useState<string>('all');
+  const [isProjectModalOpen, setIsProjectModalOpen] = React.useState<boolean>(false);
 
   const handleHeroSearch = () => {
+    if (searchProject !== 'all') {
+      onSelectProject(searchProject as ProjectCategory);
+    }
     setCurrentTab(searchType);
   };
 
@@ -367,27 +374,21 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <div>
                 <label className="block text-slate-500 font-bold mb-1">Dự án chọn lọc</label>
-                <select
-                  value={searchProject}
-                  onChange={(e) => setSearchProject(e.target.value)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                <button
+                  type="button"
+                  onClick={() => setIsProjectModalOpen(true)}
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-slate-900 dark:text-white flex items-center justify-between text-left transition cursor-pointer shadow-xs"
                 >
-                  <option value="all">🏢 Tất cả dự án Vinhomes (Toàn quốc)</option>
-                  <option value="ocean-park-2">Vinhomes Ocean Park 2 (The Empire)</option>
-                  <option value="ocean-park-3">Vinhomes Ocean Park 3 (The Crown)</option>
-                  <option value="ocean-park-1">Vinhomes Ocean Park 1 (Gia Lâm)</option>
-                  <option value="smart-city">Vinhomes Smart City (Tây Mỗ)</option>
-                  <option value="grand-park">Vinhomes Grand Park (TP. Thủ Đức)</option>
-                  <option value="ha-long-xanh">Vinhomes Hạ Long Xanh (Quảng Ninh)</option>
-                  <option value="royal-island">Vinhomes Royal Island (Vũ Yên - Hải Phòng)</option>
-                  <option value="riverside">Vinhomes Riverside & Harmony (Long Biên)</option>
-                  <option value="golden-avenue">Vinhomes Golden Avenue (Móng Cái)</option>
-                  <option value="tan-my-hau-nghia">Vinhomes Tân Mỹ Hậu Nghĩa (Long An)</option>
-                  <option value="green-paradise-can-gio">Vinhomes Green Paradise Cần Giờ</option>
-                  <option value="green-city-hoc-mon">Vinhomes Green City Hóc Môn</option>
-                  <option value="lang-van-da-nang">Vinhomes Làng Vân Đà Nẵng</option>
-                  <option value="khac">Dự án Vinhomes khác</option>
-                </select>
+                  <span className="flex items-center gap-2 truncate">
+                    <Building2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="truncate">
+                      {searchProject === 'all'
+                        ? '🏢 Tất cả dự án Vinhomes (Toàn quốc)'
+                        : VIN_MAJOR_PROJECTS.find(p => p.id === searchProject)?.name || searchProject}
+                    </span>
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 ml-1" />
+                </button>
               </div>
 
               <div>
@@ -749,6 +750,20 @@ export const HomePage: React.FC<HomePageProps> = ({
           ))}
         </div>
       </section>
+
+      {/* SEO Popular Links Section at Bottom of HomePage */}
+      <PopularVinhomesLinksSection
+        setCurrentTab={setCurrentTab}
+        onSelectProject={onSelectProject}
+      />
+
+      {/* Modal Selection */}
+      <VinhomesProjectSelectModal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+        selectedProject={searchProject as ProjectCategory | 'all'}
+        onSelectProject={(p) => setSearchProject(p)}
+      />
 
     </div>
   );

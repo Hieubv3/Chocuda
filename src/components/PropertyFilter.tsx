@@ -1,7 +1,9 @@
-import React from 'react';
-import { Search, RotateCcw, SlidersHorizontal, Building2, Home, Store, Sparkles, Layers } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, RotateCcw, SlidersHorizontal, Building2, Home, Store, Sparkles, Layers, ChevronDown, MapPin } from 'lucide-react';
 import { PropertyType, ProjectCategory, PropertyCategory, HeightCategory, Language } from '../types';
 import { getTranslation } from '../lib/i18n';
+import { VinhomesProjectSelectModal } from './VinhomesProjectSelectModal';
+import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
 
 interface PropertyFilterProps {
   language: Language;
@@ -54,6 +56,9 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
 }) => {
   const t = getTranslation(language);
   const [advancedOpen, setAdvancedOpen] = React.useState(false);
+  const [isProjectModalOpen, setIsProjectModalOpen] = React.useState(false);
+
+  const selectedProjObj = VIN_MAJOR_PROJECTS.find(p => p.id === selectedProject);
 
   const handleFloatingQuickSelect = (type: PropertyType | 'all', height: HeightCategory) => {
     setSelectedType(type);
@@ -128,6 +133,25 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
             className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
           />
         </div>
+
+        {/* Rich Project Selector Button Trigger */}
+        <button
+          type="button"
+          onClick={() => setIsProjectModalOpen(true)}
+          className={`px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-1.5 shrink-0 transition border cursor-pointer ${
+            selectedProject !== 'all'
+              ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
+              : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 shadow-xs'
+          }`}
+        >
+          <Building2 className="w-3.5 h-3.5" />
+          <span className="truncate max-w-[140px] sm:max-w-[180px]">
+            {selectedProject === 'all'
+              ? '🏢 Chọn Dự Án Vinhomes'
+              : selectedProjObj?.name || selectedProject}
+          </span>
+          <ChevronDown className="w-3.5 h-3.5 opacity-80" />
+        </button>
 
         {/* Actions: Toggle Filter Dropdowns & Reset */}
         <div className="flex items-center gap-1.5 shrink-0 justify-end">
@@ -384,6 +408,14 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
 
         </div>
       )}
+
+      {/* Vinhomes Project Selection Modal */}
+      <VinhomesProjectSelectModal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+        selectedProject={selectedProject}
+        onSelectProject={(proj) => setSelectedProject(proj)}
+      />
 
     </div>
   );

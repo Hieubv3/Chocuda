@@ -54,6 +54,10 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
   }, [initialType]);
 
   useEffect(() => {
+    setSelectedProject(initialProject);
+  }, [initialProject]);
+
+  useEffect(() => {
     setSelectedHeightCategory(initialHeightCategory);
   }, [initialHeightCategory]);
 

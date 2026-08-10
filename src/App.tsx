@@ -24,6 +24,7 @@ import { AiWriterModal } from './components/AiWriterModal';
 import { OmnichannelBulkMarketingModal } from './components/OmnichannelBulkMarketingModal';
 import { AndroidApkModal } from './components/AndroidApkModal';
 import { AdBannerWidget } from './components/AdBannerWidget';
+import { PopularVinhomesLinksSection } from './components/PopularVinhomesLinksSection';
 import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig } from './types';
 import { INITIAL_PROPERTIES, INITIAL_PROJECTS, INITIAL_NEWS, INITIAL_ADS } from './data/initialData';
 import { safeLocalStorageGet, safeLocalStorageSet } from './lib/imageUtils';
@@ -665,6 +666,7 @@ export const App: React.FC = () => {
             properties={properties.filter(p => p.approved || p.status === 'approved')}
             language={language}
             initialType="sale"
+            initialProject={selectedProjectId}
             initialHeightCategory={propertiesHeightCategory}
             initialCategory={propertiesCategory}
             onSelectProperty={setSelectedPropertyModal}
@@ -681,6 +683,7 @@ export const App: React.FC = () => {
             properties={properties.filter(p => p.approved || p.status === 'approved')}
             language={language}
             initialType="rent"
+            initialProject={selectedProjectId}
             initialHeightCategory={propertiesHeightCategory}
             initialCategory={propertiesCategory}
             onSelectProperty={setSelectedPropertyModal}
@@ -896,6 +899,14 @@ export const App: React.FC = () => {
       <main className="flex-1 w-full overflow-x-hidden">
         {renderCurrentPage()}
       </main>
+
+      {/* Popular Links Section at Bottom of Site (When not on Home page which already includes it) */}
+      {currentTab !== 'home' && currentTab !== 'admin' && currentTab !== 'admin_login' && (
+        <PopularVinhomesLinksSection
+          setCurrentTab={setCurrentTab}
+          onSelectProject={(projId) => setSelectedProjectId(projId)}
+        />
+      )}
 
       {/* Footer */}
       <Footer
