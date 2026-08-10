@@ -881,9 +881,30 @@ app.delete("/api/properties/:id", (req, res) => {
   res.json({ message: "Đã xóa bài đăng." });
 });
 
-// Projects GET & PUT
+// Projects GET, POST, PUT & DELETE
 app.get("/api/projects", (req, res) => {
   res.json(projectsStore);
+});
+
+app.post("/api/projects", (req, res) => {
+  const data = req.body;
+  const newProject: Project = {
+    id: data.id || `proj-${Date.now()}`,
+    name: data.name || data.title || "Dự án mới",
+    title: data.title || data.name || "Dự án mới",
+    location: data.location || "Vinhomes",
+    description: data.description || "",
+    image: data.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+    masterplanUrl: data.masterplanUrl || "",
+    areaSize: data.areaSize || "Đang cập nhật",
+    totalUnits: data.totalUnits || "Đang cập nhật",
+    priceRange: data.priceRange || "Liên hệ",
+    status: data.status || "Đang mở bán",
+    subdivisions: data.subdivisions || [],
+    amenities: data.amenities || []
+  };
+  projectsStore.unshift(newProject);
+  res.status(201).json({ message: "Thêm dự án thành công", project: newProject });
 });
 
 app.put("/api/projects/:id", (req, res) => {
@@ -892,6 +913,12 @@ app.put("/api/projects/:id", (req, res) => {
   if (index === -1) return res.status(404).json({ error: "Không tìm thấy dự án" });
   projectsStore[index] = { ...projectsStore[index], ...req.body };
   res.json({ message: "Đã cập nhật thông tin dự án", project: projectsStore[index] });
+});
+
+app.delete("/api/projects/:id", (req, res) => {
+  const { id } = req.params;
+  projectsStore = projectsStore.filter(p => p.id !== id);
+  res.json({ message: "Đã xóa dự án thành công." });
 });
 
 // News GET

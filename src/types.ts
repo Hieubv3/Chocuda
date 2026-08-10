@@ -141,6 +141,7 @@ export interface ReputationPost {
 export interface Project {
   id: ProjectCategory;
   name: string;
+  title?: string;
   location: string;
   areaSize: string;
   totalUnits: string;

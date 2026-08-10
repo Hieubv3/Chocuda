@@ -411,6 +411,16 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleDeleteProject = async (id: string) => {
+    if (!confirm('Bạn có chắc chắn muốn xóa dự án này?')) return;
+    setProjects(prev => prev.filter(p => p.id !== id));
+    try {
+      await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+    } catch (e) {
+      console.warn('Deleted project locally:', id);
+    }
+  };
+
   // News Update handler
   const handleUpdateNews = async (updatedNews: NewsArticle) => {
     setNews(prev => prev.map(n => n.id === updatedNews.id ? updatedNews : n));
@@ -747,6 +757,7 @@ export const App: React.FC = () => {
             onDeleteProperty={handleDeleteProperty}
             onUpdateProject={handleUpdateProject}
             onAddProject={handleAddProject}
+            onDeleteProject={handleDeleteProject}
             onUpdateNews={handleUpdateNews}
             onAddNews={handleAddNews}
             onDeleteNews={handleDeleteNews}
