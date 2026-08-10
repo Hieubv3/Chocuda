@@ -251,13 +251,52 @@ function loadDataStore() {
     if (fs.existsSync(DATA_STORE_PATH)) {
       const raw = fs.readFileSync(DATA_STORE_PATH, "utf-8");
       const data = JSON.parse(raw);
-      if (Array.isArray(data.properties) && data.properties.length > 0) propertiesStore = data.properties;
-      if (Array.isArray(data.projects) && data.projects.length > 0) projectsStore = data.projects;
-      if (Array.isArray(data.news) && data.news.length > 0) newsStore = data.news;
-      if (Array.isArray(data.users) && data.users.length > 0) usersStore = data.users;
+      
+      if (Array.isArray(data.properties) && data.properties.length > 0) {
+        // Smart merge saved properties with initial properties
+        const savedMap = new Map(data.properties.map((p: any) => [p.id, p]));
+        INITIAL_PROPERTIES.forEach(ip => {
+          if (!savedMap.has(ip.id)) {
+            savedMap.set(ip.id, ip);
+          }
+        });
+        propertiesStore = Array.from(savedMap.values()) as Property[];
+      } else {
+        propertiesStore = [...INITIAL_PROPERTIES];
+      }
+
+      if (Array.isArray(data.projects) && data.projects.length > 0) {
+        const projMap = new Map(data.projects.map((p: any) => [p.id, p]));
+        INITIAL_PROJECTS.forEach(ip => {
+          if (!projMap.has(ip.id)) projMap.set(ip.id, ip);
+        });
+        projectsStore = Array.from(projMap.values()) as Project[];
+      }
+
+      if (Array.isArray(data.news) && data.news.length > 0) {
+        const newsMap = new Map(data.news.map((n: any) => [n.id, n]));
+        INITIAL_NEWS.forEach(inews => {
+          if (!newsMap.has(inews.id)) newsMap.set(inews.id, inews);
+        });
+        newsStore = Array.from(newsMap.values()) as NewsArticle[];
+      }
+
+      if (Array.isArray(data.users) && data.users.length > 0) {
+        const userMap = new Map(data.users.map((u: any) => [u.id, u]));
+        usersStore.forEach(u => {
+          if (!userMap.has(u.id)) userMap.set(u.id, u);
+        });
+        usersStore = Array.from(userMap.values()) as StoredUser[];
+      }
+
       if (Array.isArray(data.contacts) && data.contacts.length > 0) contactsStore = data.contacts;
       if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
-      console.log(`[DataStore] Loaded persistent data: ${propertiesStore.length} properties, ${newsStore.length} news, ${projectsStore.length} projects.`);
+      if (Array.isArray(data.residentServices) && data.residentServices.length > 0) residentServicesStore = data.residentServices;
+      if (Array.isArray(data.stores) && data.stores.length > 0) storesStore = data.stores;
+      if (Array.isArray(data.storeOrders) && data.storeOrders.length > 0) storeOrdersStore = data.storeOrders;
+      if (Array.isArray(data.reputationPosts) && data.reputationPosts.length > 0) reputationPostsStore = data.reputationPosts;
+
+      console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${newsStore.length} news, ${projectsStore.length} projects.`);
     } else {
       saveDataStore();
       console.log(`[DataStore] Initialized app_data_store.json file.`);
@@ -275,7 +314,11 @@ function saveDataStore() {
       news: newsStore,
       users: usersStore,
       contacts: contactsStore,
-      pricingConfig: pricingConfigStore
+      pricingConfig: pricingConfigStore,
+      residentServices: residentServicesStore,
+      stores: storesStore,
+      storeOrders: storeOrdersStore,
+      reputationPosts: reputationPostsStore
     };
     fs.writeFileSync(DATA_STORE_PATH, JSON.stringify(payload, null, 2), "utf-8");
   } catch (err) {

@@ -96,14 +96,36 @@ export const App: React.FC = () => {
     }
   }, [theme]);
 
-  // Fetch initial data from server APIs & update localStorage
+  // Fetch initial data from server APIs & update localStorage with double-safety merge
   const refreshServerData = () => {
-    fetch('/api/properties')
+    fetch('/api/properties?status=all')
       .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          setProperties(data);
-          safeLocalStorageSet('hb_properties', data);
+      .then((data: Property[]) => {
+        if (Array.isArray(data)) {
+          const localSaved = safeLocalStorageGet<Property[]>('hb_properties', []);
+          
+          // Merge server properties + local properties to ensure user additions are NEVER lost
+          const mergedMap = new Map<string, Property>();
+          
+          // 1. Add server properties
+          data.forEach(p => mergedMap.set(p.id, p));
+          
+          // 2. Add local properties if not on server yet & sync to server
+          localSaved.forEach(lp => {
+            if (!mergedMap.has(lp.id)) {
+              mergedMap.set(lp.id, lp);
+              // Sync missing local property back to server
+              fetch(`/api/properties/${lp.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(lp)
+              }).catch(() => {});
+            }
+          });
+
+          const finalProps = Array.from(mergedMap.values());
+          setProperties(finalProps);
+          safeLocalStorageSet('hb_properties', finalProps);
         }
       })
       .catch(err => console.warn('Using initial properties fallback:', err));
@@ -1082,9 +1104,8 @@ export const App: React.FC = () => {
         </button>
       </div>
 
-      {/* Global PC Floating Banners & Center Modal Popup Banner */}
+      {/* Global PC Floating Banners - Sticky Right Side Only as Requested */}
       <AdBannerWidget ads={INITIAL_ADS} position="float_right_pc" />
-      <AdBannerWidget ads={INITIAL_ADS} position="float_left_pc" />
       <AdBannerWidget ads={INITIAL_ADS} position="popup_modal" />
 
     </div>

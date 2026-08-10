@@ -461,7 +461,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newAdTitle, setNewAdTitle] = useState('');
   const [newAdImage, setNewAdImage] = useState('');
   const [newAdLink, setNewAdLink] = useState('');
-  const [newAdPos, setNewAdPos] = useState<'home_top' | 'sidebar' | 'detail_bottom' | 'home_middle' | 'home_sidebar' | 'header_top' | 'property_detail'>('home_top');
+  const [newAdPos, setNewAdPos] = useState<string>('float_right_pc');
+  const [newAdWidthSize, setNewAdWidthSize] = useState<'small' | 'medium' | 'large' | 'compact'>('medium');
+  const [newAdDisplayStyle, setNewAdDisplayStyle] = useState<'card_full' | 'image_only' | 'glowing_border' | 'minimal'>('glowing_border');
+  const [newAdBadgeText, setNewAdBadgeText] = useState('QC CẠNH PHẢI');
   const [editingAd, setEditingAd] = useState<AdBanner | null>(null);
 
   // Sync adsList to localStorage
@@ -479,7 +482,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewAdTitle(ad.title);
     setNewAdImage(ad.imageUrl);
     setNewAdLink(ad.linkUrl || ad.targetUrl || '');
-    setNewAdPos((ad.position as any) || 'home_top');
+    setNewAdPos(ad.position || 'float_right_pc');
+    setNewAdWidthSize(ad.widthSize || 'medium');
+    setNewAdDisplayStyle(ad.displayStyle || 'card_full');
+    setNewAdBadgeText(ad.badgeText || 'QC CẠNH PHẢI');
     
     // Scroll smoothly to form section
     window.scrollTo({ top: 120, behavior: 'smooth' });
@@ -490,7 +496,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewAdTitle('');
     setNewAdImage('');
     setNewAdLink('');
-    setNewAdPos('home_top');
+    setNewAdPos('float_right_pc');
+    setNewAdWidthSize('medium');
+    setNewAdDisplayStyle('card_full');
+    setNewAdBadgeText('QC CẠNH PHẢI');
   };
 
   const handleAdFileUpload = (e: React.ChangeEvent<HTMLInputElement>, targetAdId?: string) => {
@@ -537,6 +546,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         linkUrl: newAdLink || '/',
         targetUrl: newAdLink || '/',
         position: newAdPos,
+        widthSize: newAdWidthSize,
+        displayStyle: newAdDisplayStyle,
+        badgeText: newAdBadgeText,
         active: isAct,
         isActive: isAct
       } : a);
@@ -552,6 +564,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         linkUrl: newAdLink || '/',
         targetUrl: newAdLink || '/',
         position: newAdPos,
+        widthSize: newAdWidthSize,
+        displayStyle: newAdDisplayStyle,
+        badgeText: newAdBadgeText,
         active: true,
         isActive: true,
         clickCount: 0,
@@ -559,9 +574,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         createdAt: new Date().toISOString().split('T')[0]
       };
       setAdsList([newBanner, ...adsList]);
-      setNewAdTitle('');
-      setNewAdImage('');
-      setNewAdLink('');
+      handleCancelEditAd();
       alert('Thêm Banner Quảng Cáo mới thành công!');
     }
   };
@@ -1260,14 +1273,64 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       onChange={e => setNewAdPos(e.target.value as any)}
                       className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-amber-300 dark:border-slate-700 rounded-2xl text-amber-600 dark:text-amber-400 font-black text-xs focus:ring-2 focus:ring-amber-500 outline-none shadow-sm"
                     >
-                      <option value="header_top">📌 Thanh trên cùng Header (Top Banner Bar)</option>
                       <option value="float_right_pc">📌 Cạnh Phải Web Bám Đuổi trên PC (Sticky Float Right - Có nút tắt ❌)</option>
+                      <option value="header_top">📌 Thanh trên cùng Header (Top Banner Bar)</option>
                       <option value="float_left_pc">📌 Cạnh Trái Web Bám Đuổi trên PC (Sticky Float Left - Có nút tắt ❌)</option>
                       <option value="home_middle">📌 Giữa Trang Chủ (Nằm giữa danh sách tin)</option>
                       <option value="home_sidebar">📌 Cột Phải Trang Chủ (Sidebar Banner)</option>
                       <option value="property_detail">📌 Trang Chi Tiết BĐS (Detail Page Banner)</option>
                       <option value="popup_modal">📌 Pop-Up Nổi Trung Tâm Màn Hình (Center Popup - Có nút tắt ❌)</option>
                     </select>
+                  </div>
+
+                  {/* Quản Trị Kích Thước & Kiểu Hiển Thị Banner Cạnh Phải */}
+                  <div className="bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-3.5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-extrabold text-amber-600 dark:text-amber-400 text-xs flex items-center gap-1.5 uppercase">
+                        <Sparkles className="w-4 h-4 text-amber-500" /> TÙY CHỈNH KÍCH THƯỚC & KIỂU HIỂN THỊ CẠNH PHẢI:
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                      <div>
+                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">📐 Kích thước bề rộng (Size):</label>
+                        <select
+                          value={newAdWidthSize}
+                          onChange={(e) => setNewAdWidthSize(e.target.value as any)}
+                          className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                        >
+                          <option value="medium">Vừa (Medium - ~210px Chuẩn Web)</option>
+                          <option value="large">Rộng / Lớn (VIP Large - ~260px)</option>
+                          <option value="small">Nhỏ (Small - ~170px Tiết kiệm)</option>
+                          <option value="compact">Siêu Gọn (Compact - ~140px Mini)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">🎨 Kiểu hiển thị (Style):</label>
+                        <select
+                          value={newAdDisplayStyle}
+                          onChange={(e) => setNewAdDisplayStyle(e.target.value as any)}
+                          className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                        >
+                          <option value="glowing_border">✨ VIP Viền Phát Sáng Gold Glow (Gây chú ý)</option>
+                          <option value="card_full">Thẻ Đầy Đủ (Hình + Tiêu đề + Nút bấm)</option>
+                          <option value="image_only">🖼️ Chỉ Hình Ảnh Banner (Tràn viền + Nút tắt ❌)</option>
+                          <option value="minimal">⚪ Tối Giản Sáng (Clean Light Minimalist)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">🏷️ Nhãn Badge hiển thị:</label>
+                        <input
+                          type="text"
+                          value={newAdBadgeText}
+                          onChange={(e) => setNewAdBadgeText(e.target.value)}
+                          placeholder="Ví dụ: QUẢNG CÁO CẠNH PHẢI..."
+                          className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Interactive Visual Website Blueprint Setup Map */}

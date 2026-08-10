@@ -250,7 +250,10 @@ export interface AdBanner {
   imageUrl: string;
   linkUrl: string;
   targetUrl?: string;
-  position: string;
+  position: string; // 'header_top' | 'float_right_pc' | 'float_left_pc' | 'home_middle' | 'home_sidebar' | 'property_detail' | 'popup_modal'
+  widthSize?: 'small' | 'medium' | 'large' | 'compact'; // 'small' (170px), 'medium' (210px), 'large' (260px), 'compact' (140px)
+  displayStyle?: 'card_full' | 'image_only' | 'glowing_border' | 'minimal'; // 'card_full', 'image_only', 'glowing_border', 'minimal'
+  badgeText?: string;
   active: boolean;
   isActive?: boolean;
   clickCount: number;

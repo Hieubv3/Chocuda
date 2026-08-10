@@ -166,6 +166,9 @@ export const INITIAL_ADS: AdBanner[] = [
     imageUrl: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=600&q=80',
     linkUrl: 'https://zalo.me/0868499929',
     position: 'float_right_pc',
+    widthSize: 'medium',
+    displayStyle: 'glowing_border',
+    badgeText: 'HOT BÁM ĐUỔI',
     active: true,
     clickCount: 520,
     createdAt: '2026-07-25'

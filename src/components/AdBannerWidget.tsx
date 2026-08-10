@@ -96,48 +96,89 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
   // 2. BANNER CẠNH PHẢI WEB BÁM ĐUỔI TRÊN PC (Sticky Floating Right)
   if (position === 'float_right_pc') {
     return (
-      <div className={`hidden lg:flex fixed right-3 top-32 z-40 flex-col space-y-3 w-48 xl:w-52 ${className}`}>
-        {activeAds.map(ad => (
-          <div
-            key={ad.id}
-            className="group relative bg-slate-900/95 border-2 border-amber-500/80 rounded-2xl p-2 shadow-2xl backdrop-blur-md transition-all hover:scale-105 hover:border-amber-400"
-          >
-            {/* Close Button Nút Tắt */}
-            <button
-              onClick={(e) => handleDismiss(ad.id, e)}
-              className="absolute -top-2 -right-2 bg-rose-600 hover:bg-rose-500 text-white p-1 rounded-full shadow-lg z-20 border border-white cursor-pointer transition transform hover:scale-110"
-              title="Tắt quảng cáo bám đuổi"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
+      <div className={`hidden lg:flex fixed right-3 top-32 z-40 flex-col space-y-3 ${className}`}>
+        {activeAds.map(ad => {
+          // Width sizes
+          const widthClass = 
+            ad.widthSize === 'small' ? 'w-40 xl:w-44' :
+            ad.widthSize === 'large' ? 'w-60 xl:w-64' :
+            ad.widthSize === 'compact' ? 'w-36 xl:w-36' :
+            'w-48 xl:w-52'; // default 'medium'
 
-            <a
-              href={ad.linkUrl}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => handleAdClick(ad)}
-              className="block"
+          // Display Styles
+          const isGlowing = ad.displayStyle === 'glowing_border';
+          const isImageOnly = ad.displayStyle === 'image_only';
+          const isMinimal = ad.displayStyle === 'minimal';
+
+          const containerClasses = isGlowing
+            ? 'bg-slate-900/95 border-2 border-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.6)] animate-pulse hover:animate-none'
+            : isImageOnly
+            ? 'bg-slate-950 border-2 border-amber-500/60 shadow-2xl p-1'
+            : isMinimal
+            ? 'bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 shadow-xl p-2'
+            : 'bg-slate-900/95 border-2 border-amber-500/80 shadow-2xl backdrop-blur-md p-2';
+
+          const badgeLabel = ad.badgeText || 'QC CẠNH PHẢI';
+
+          return (
+            <div
+              key={ad.id}
+              className={`group relative rounded-2xl transition-all duration-300 hover:scale-105 ${widthClass} ${containerClasses}`}
             >
-              <div className="relative h-44 rounded-xl overflow-hidden mb-2 bg-slate-950">
-                <img
-                  src={ad.imageUrl}
-                  alt={ad.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <span className="absolute top-2 left-2 bg-amber-500 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm">
-                  QC CẠNH PHẢI
-                </span>
-              </div>
-              <p className="text-[11px] font-black text-amber-300 group-hover:text-white line-clamp-2 leading-tight">
-                {ad.title}
-              </p>
-              <div className="mt-2 text-[10px] font-bold text-center bg-amber-500 hover:bg-amber-400 text-slate-950 py-1 rounded-lg uppercase tracking-wider flex items-center justify-center gap-1">
-                <span>XEM CHI TIẾT</span>
-                <ExternalLink className="w-3 h-3" />
-              </div>
-            </a>
-          </div>
-        ))}
+              {/* Close Button Nút Tắt ❌ */}
+              <button
+                onClick={(e) => handleDismiss(ad.id, e)}
+                className="absolute -top-2.5 -right-2.5 bg-rose-600 hover:bg-rose-500 text-white p-1 rounded-full shadow-lg z-20 border-2 border-white cursor-pointer transition transform hover:scale-110"
+                title="Tắt quảng cáo bám đuổi"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+
+              <a
+                href={ad.linkUrl}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleAdClick(ad)}
+                className="block"
+              >
+                {/* Image Container */}
+                <div className={`relative rounded-xl overflow-hidden bg-slate-950 ${isImageOnly ? 'h-52 sm:h-60' : 'h-40 sm:h-44 mb-2'}`}>
+                  <img
+                    src={ad.imageUrl}
+                    alt={ad.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                  />
+                  <span className="absolute top-2 left-2 bg-amber-500 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded shadow-md tracking-wider">
+                    {badgeLabel}
+                  </span>
+
+                  {isImageOnly && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent flex flex-col justify-end p-2.5">
+                      <p className="text-[11px] font-black text-amber-300 line-clamp-2 leading-tight">
+                        {ad.title}
+                      </p>
+                      <span className="mt-1 text-[9px] font-extrabold text-slate-950 bg-amber-400 py-1 px-2 rounded-md text-center block uppercase tracking-wider">
+                        Bấm Xem Ngay ↗
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {!isImageOnly && (
+                  <>
+                    <p className={`text-[11px] font-black line-clamp-2 leading-tight ${isMinimal ? 'text-slate-900 dark:text-white group-hover:text-amber-500' : 'text-amber-300 group-hover:text-white'}`}>
+                      {ad.title}
+                    </p>
+                    <div className="mt-2 text-[10px] font-bold text-center bg-amber-500 hover:bg-amber-400 text-slate-950 py-1 rounded-lg uppercase tracking-wider flex items-center justify-center gap-1 shadow-sm">
+                      <span>XEM CHI TIẾT</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </div>
+                  </>
+                )}
+              </a>
+            </div>
+          );
+        })}
       </div>
     );
   }

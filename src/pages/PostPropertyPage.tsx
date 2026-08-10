@@ -230,8 +230,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       sellerRole,
       soDoImage: sellerRole === 'owner' ? soDoImage : undefined,
       soDoRedactedImage: sellerRole === 'owner' ? (soDoRedactedImage || soDoImage) : undefined,
-      approved: false, // Hidden until approved
-      approvalStatus: 'pending' // Tin chờ duyệt
+      approved: true, // Display live immediately on website
+      status: 'approved',
+      approvalStatus: 'approved'
     };
 
     try {
