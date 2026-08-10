@@ -890,173 +890,278 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       </div>
 
-      {/* Tabs Navigation */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 space-x-2 text-xs font-bold overflow-x-auto pb-1">
-        <button
-          onClick={() => setActiveTab('enterprise_core')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 font-black cursor-pointer ${
-            activeTab === 'enterprise_core'
-              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg ring-2 ring-purple-400/50'
-              : 'bg-purple-500/10 text-purple-600 dark:text-purple-300 hover:bg-purple-500/20 border border-purple-500/30'
-          }`}
-        >
-          <ShieldCheck className="w-4 h-4 text-amber-300" /> ⭐ QUẢN TRỊ ĐA CẤP & KPI THEO GIỜ (2.1 - 2.4)
-        </button>
+      {/* Vertical Left Sidebar Admin Navigation Layout */}
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        
+        {/* LEFT VERTICAL SIDEBAR MENU */}
+        <aside className="w-full lg:w-72 shrink-0 bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200 dark:border-slate-800 shadow-xl lg:sticky lg:top-20 z-10 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 px-1">
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></div>
+              <span className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-wider">
+                DANH MỤC QUẢN TRỊ
+              </span>
+            </div>
+            <span className="text-[10px] font-bold px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/20">
+              15 CHỨC NĂNG
+            </span>
+          </div>
 
-        <button
-          onClick={() => setActiveTab('properties')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 ${
-            activeTab === 'properties'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
-        >
-          <Layers className="w-4 h-4" /> BĐS & Hình Ảnh ({properties.length})
-        </button>
+          {/* Group 1: CORE & BĐS */}
+          <div className="space-y-1">
+            <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block pt-1">
+              Quản Trị Core & BĐS
+            </span>
 
-        <button
-          onClick={() => setActiveTab('projects')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 ${
-            activeTab === 'projects'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
-        >
-          <MapPin className="w-4 h-4 text-emerald-400" /> Dự Án & Sơ Đồ ({projects.length})
-        </button>
+            <button
+              onClick={() => setActiveTab('enterprise_core')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'enterprise_core'
+                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg ring-2 ring-purple-400/50'
+                  : 'text-purple-700 dark:text-purple-300 hover:bg-purple-500/10 border border-purple-500/20'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <ShieldCheck className="w-4 h-4 text-amber-300 shrink-0" />
+                <span className="truncate">⭐ KPI & Phân Quyền</span>
+              </div>
+            </button>
 
-        <button
-          onClick={() => setActiveTab('news')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 ${
-            activeTab === 'news'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
-        >
-          <FileText className="w-4 h-4 text-amber-400" /> Bài Viết & Tin Tức ({news.length})
-        </button>
+            <button
+              onClick={() => setActiveTab('properties')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'properties'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <Layers className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span className="truncate">BĐS & Hình Ảnh</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'properties' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'}`}>
+                {properties.length}
+              </span>
+            </button>
 
-        <button
-          onClick={() => setActiveTab('ads')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 ${
-            activeTab === 'ads'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
-        >
-          <Sparkles className="w-4 h-4 text-amber-400" /> Quảng Cáo Banner ({adsList.length})
-        </button>
+            <button
+              onClick={() => setActiveTab('projects')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'projects'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <MapPin className="w-4 h-4 text-teal-500 shrink-0" />
+                <span className="truncate">Dự Án & Sơ Đồ</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'projects' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
+                {projects.length}
+              </span>
+            </button>
 
-        <button
-          onClick={() => setActiveTab('pricing')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 ${
-            activeTab === 'pricing'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
-        >
-          <Settings className="w-4 h-4" /> ⚙️ Giá Up Tin & MSB VietQR
-        </button>
+            <button
+              onClick={() => setActiveTab('news')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'news'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <FileText className="w-4 h-4 text-amber-500 shrink-0" />
+                <span className="truncate">Bài Viết & Tin Tức</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'news' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400'}`}>
+                {news.length}
+              </span>
+            </button>
+          </div>
 
-        <button
-          onClick={() => setActiveTab('leads')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 ${
-            activeTab === 'leads'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
-        >
-          <Phone className="w-4 h-4" /> Khách Yêu Cầu ({contacts.length})
-        </button>
+          {/* Group 2: KHÁCH HÀNG & THÀNH VIÊN */}
+          <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block">
+              Khách Hàng & Nguồn Thu
+            </span>
 
-        <button
-          onClick={() => setActiveTab('users')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 font-extrabold ${
-            activeTab === 'users'
-              ? 'bg-amber-500 text-slate-950 shadow-md'
-              : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/30'
-          }`}
-        >
-          <UserCheck className="w-4 h-4 text-amber-500" /> 👥 Quản Lý Thành Viên ({registeredUsers.length})
-        </button>
+            <button
+              onClick={() => setActiveTab('leads')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'leads'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <Phone className="w-4 h-4 text-blue-500 shrink-0" />
+                <span className="truncate">Khách Yêu Cầu</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'leads' ? 'bg-white/20 text-white' : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'}`}>
+                {contacts.length}
+              </span>
+            </button>
 
-        <button
-          onClick={() => setActiveTab('analytics')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 font-extrabold ${
-            activeTab === 'analytics'
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 border border-blue-500/30'
-          }`}
-        >
-          <BarChart3 className="w-4 h-4 text-blue-500" /> 📊 Thống Kê Truy Cập & Traffic
-        </button>
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'users'
+                  ? 'bg-amber-500 text-slate-950 shadow-md'
+                  : 'text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <UserCheck className="w-4 h-4 text-amber-500 shrink-0" />
+                <span className="truncate">Quản Lý Thành Viên</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'users' ? 'bg-slate-950 text-amber-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-600'}`}>
+                {registeredUsers.length}
+              </span>
+            </button>
 
-        <button
-          onClick={() => setActiveTab('seo')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 font-black ${
-            activeTab === 'seo'
-              ? 'bg-amber-500 text-slate-950 shadow-md'
-              : 'text-amber-500 hover:text-amber-600 dark:hover:text-amber-400 bg-amber-500/10 border border-amber-500/30'
-          }`}
-        >
-          <Globe className="w-4 h-4 text-amber-500" /> 🌐 Chuyên SEO Web
-        </button>
+            <button
+              onClick={() => setActiveTab('pricing')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'pricing'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <Settings className="w-4 h-4 text-slate-500 shrink-0" />
+                <span className="truncate">Giá Up Tin & VietQR</span>
+              </div>
+            </button>
 
-        <button
-          onClick={() => setActiveTab('marketing')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 font-bold ${
-            activeTab === 'marketing'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-amber-500 hover:text-amber-600 dark:hover:text-amber-400 bg-amber-500/10 border border-amber-500/30'
-          }`}
-        >
-          <Share2 className="w-4 h-4 text-amber-400" /> 📢 Marketing Hàng Loạt
-        </button>
+            <button
+              onClick={() => setActiveTab('affiliate_mgmt')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'affiliate_mgmt'
+                  ? 'bg-amber-500 text-slate-950 shadow-md'
+                  : 'text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <Award className="w-4 h-4 text-amber-500 shrink-0" />
+                <span className="truncate">Affiliate & Thu Phí</span>
+              </div>
+            </button>
+          </div>
 
-        <button
-          onClick={() => setActiveTab('zalo')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 font-extrabold ${
-            activeTab === 'zalo'
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'text-blue-600 dark:text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30'
-          }`}
-        >
-          <MessageSquare className="w-4 h-4 text-sky-400" /> 💬 Zalo Group Cư Dân
-        </button>
+          {/* Group 3: MARKETING & TIẾP THỊ */}
+          <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block">
+              Marketing & SEO
+            </span>
 
-        <button
-          onClick={() => setActiveTab('affiliate_mgmt')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 font-black ${
-            activeTab === 'affiliate_mgmt'
-              ? 'bg-amber-500 text-slate-950 shadow-md'
-              : 'text-amber-500 hover:text-amber-600 bg-amber-500/10 border border-amber-500/40'
-          }`}
-        >
-          <Award className="w-4 h-4 text-amber-500" /> 🤝 Affiliate & Thu Phí Dịch Vụ
-        </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'analytics'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 border border-blue-500/20'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <BarChart3 className="w-4 h-4 text-blue-500 shrink-0" />
+                <span className="truncate">Thống Kê Traffic</span>
+              </div>
+            </button>
 
-        <button
-          onClick={() => setActiveTab('reputation')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 font-black ${
-            activeTab === 'reputation'
-              ? 'bg-purple-600 text-white shadow-md'
-              : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 border border-purple-500/30'
-          }`}
-        >
-          <Sparkles className="w-4 h-4 text-purple-400" /> 📰 Bảng Tin PR & Review YouTube ({adminReputationPosts.length})
-        </button>
+            <button
+              onClick={() => setActiveTab('seo')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'seo'
+                  ? 'bg-amber-500 text-slate-950 shadow-md'
+                  : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <Globe className="w-4 h-4 text-amber-500 shrink-0" />
+                <span className="truncate">Chuyên SEO Web</span>
+              </div>
+            </button>
 
-        <button
-          onClick={() => setActiveTab('n8n')}
-          className={`px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shrink-0 ${
-            activeTab === 'n8n'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
-        >
-          <Database className="w-4 h-4" /> Webhook n8n
-        </button>
-      </div>
+            <button
+              onClick={() => setActiveTab('marketing')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'marketing'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <Share2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span className="truncate">Marketing Hàng Loạt</span>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('zalo')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'zalo'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 border border-blue-500/20'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <MessageSquare className="w-4 h-4 text-sky-400 shrink-0" />
+                <span className="truncate">Zalo Group Cư Dân</span>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('ads')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'ads'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="truncate">Quảng Cáo Banner</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'ads' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
+                {adsList.length}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('reputation')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'reputation'
+                  ? 'bg-purple-600 text-white shadow-md'
+                  : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 border border-purple-500/20'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
+                <span className="truncate">PR & Review YouTube</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'reputation' ? 'bg-white/20 text-white' : 'bg-purple-100 dark:bg-purple-950 text-purple-600'}`}>
+                {adminReputationPosts.length}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('n8n')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                activeTab === 'n8n'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                <Database className="w-4 h-4 text-slate-500 shrink-0" />
+                <span className="truncate">Webhook n8n</span>
+              </div>
+            </button>
+          </div>
+        </aside>
+
+        {/* RIGHT MAIN CONTENT PANEL */}
+        <main className="flex-1 min-w-0 w-full space-y-6">
 
       {/* Tab: Zalo Groups Community Center */}
       {activeTab === 'zalo' && (
@@ -3871,6 +3976,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </div>
         </div>
       )}
+
+        </main>
+      </div>
 
       {/* Admin Tax Management Modal */}
       <AdminTaxManagementModal 
