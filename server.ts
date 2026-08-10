@@ -12,7 +12,8 @@ import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, Stor
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // In-Memory OTP Store
 const otpStore = new Map<string, { code: string; expiresAt: number }>();
@@ -907,12 +908,15 @@ app.post("/api/properties", (req, res) => {
   res.status(201).json({ message: "Đăng tin thành công!", property: newProperty });
 });
 
-// Property PUT (Approve / Edit)
+// Property PUT (Approve / Edit with Upsert fallback)
 app.put("/api/properties/:id", (req, res) => {
   const { id } = req.params;
   const index = propertiesStore.findIndex(p => p.id === id);
   if (index === -1) {
-    return res.status(404).json({ error: "Không tìm thấy bất động sản" });
+    const newProp = { id, ...req.body };
+    propertiesStore.unshift(newProp as any);
+    saveDataStore();
+    return res.json({ message: "Đã thêm mới và lưu thành công!", property: newProp });
   }
 
   propertiesStore[index] = { ...propertiesStore[index], ...req.body };
@@ -968,18 +972,43 @@ app.post("/api/projects", (req, res) => {
     amenities: data.amenities || [],
     ...data
   };
-  projectsStore.unshift(newProject);
+  const existingIndex = projectsStore.findIndex(p => p.id === newProject.id);
+  if (existingIndex !== -1) {
+    projectsStore[existingIndex] = newProject;
+  } else {
+    projectsStore.unshift(newProject);
+  }
   saveDataStore();
-  res.status(201).json({ message: "Thêm dự án thành công", project: newProject });
+  res.status(201).json({ message: "Thêm dự án thành công", project: newProject, projects: projectsStore });
 });
 
 app.put("/api/projects/:id", (req, res) => {
   const { id } = req.params;
   const index = projectsStore.findIndex(p => p.id === id);
-  if (index === -1) return res.status(404).json({ error: "Không tìm thấy dự án" });
+  if (index === -1) {
+    const newProj: Project = {
+      id: id || `proj-${Date.now()}`,
+      name: req.body.name || req.body.title || "Dự án mới",
+      title: req.body.title || req.body.name || "Dự án mới",
+      location: req.body.location || "Vinhomes",
+      description: req.body.description || "",
+      image: req.body.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+      masterplanUrl: req.body.masterplanUrl || "",
+      areaSize: req.body.areaSize || "Đang cập nhật",
+      totalUnits: req.body.totalUnits || "Đang cập nhật",
+      priceRange: req.body.priceRange || "Liên hệ",
+      status: req.body.status || "Đang mở bán",
+      subdivisions: req.body.subdivisions || [],
+      amenities: req.body.amenities || [],
+      ...req.body
+    };
+    projectsStore.unshift(newProj);
+    saveDataStore();
+    return res.json({ message: "Đã thêm dự án thành công", project: newProj, projects: projectsStore });
+  }
   projectsStore[index] = { ...projectsStore[index], ...req.body };
   saveDataStore();
-  res.json({ message: "Đã cập nhật thông tin dự án", project: projectsStore[index] });
+  res.json({ message: "Đã cập nhật thông tin dự án", project: projectsStore[index], projects: projectsStore });
 });
 
 app.delete("/api/projects/:id", (req, res) => {

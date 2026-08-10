@@ -431,16 +431,24 @@ export const App: React.FC = () => {
   // Project Update & Add handlers
   const handleUpdateProject = async (updatedProject: Project) => {
     setProjects(prev => {
-      const updated = prev.map(p => p.id === updatedProject.id ? updatedProject : p);
+      const exists = prev.some(p => p.id === updatedProject.id);
+      const updated = exists ? prev.map(p => p.id === updatedProject.id ? updatedProject : p) : [updatedProject, ...prev];
       localStorage.setItem('hb_projects', JSON.stringify(updated));
       return updated;
     });
     try {
-      await fetch(`/api/projects/${updatedProject.id}`, {
+      const res = await fetch(`/api/projects/${updatedProject.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedProject)
       });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.projects && Array.isArray(data.projects)) {
+          setProjects(data.projects);
+          localStorage.setItem('hb_projects', JSON.stringify(data.projects));
+        }
+      }
     } catch (e) {
       console.warn('Updated project locally:', updatedProject.id);
     }
@@ -453,11 +461,18 @@ export const App: React.FC = () => {
       return updated;
     });
     try {
-      await fetch('/api/projects', {
+      const res = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProject)
       });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.projects && Array.isArray(data.projects)) {
+          setProjects(data.projects);
+          localStorage.setItem('hb_projects', JSON.stringify(data.projects));
+        }
+      }
     } catch (e) {
       console.warn('Added project locally:', newProject.id);
     }

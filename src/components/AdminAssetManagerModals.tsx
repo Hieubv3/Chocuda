@@ -198,7 +198,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <label className="font-bold text-slate-700 dark:text-slate-300 block">Thêm Hình Ảnh Mới Cho BĐS:</label>
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
-                  type="url"
+                  type="text"
                   placeholder="Dán URL hình ảnh từ internet (https://...)"
                   value={newImageUrl}
                   onChange={(e) => setNewImageUrl(e.target.value)}
@@ -580,7 +580,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
                 <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh banner chính (*):</label>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input
-                    type="url"
+                    type="text"
                     required
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
@@ -607,7 +607,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
                 <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh sơ đồ quy hoạch:</label>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input
-                    type="url"
+                    type="text"
                     value={formData.masterplanUrl || ''}
                     onChange={(e) => setFormData({ ...formData, masterplanUrl: e.target.value })}
                     className="flex-1 p-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
@@ -796,7 +796,7 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
                 <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh đại diện bài viết (*):</label>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input
-                    type="url"
+                    type="text"
                     required
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
