@@ -1323,6 +1323,18 @@ app.post("/api/stores/:id/sync-kiotviet", (req, res) => {
   });
 });
 
+// Get ALL store orders across all stores (Admin)
+app.get("/api/store-orders", (req, res) => {
+  res.json(storeOrdersStore);
+});
+
+// Delete store
+app.delete("/api/stores/:id", (req, res) => {
+  const { id } = req.params;
+  storesStore = storesStore.filter(s => s.id !== id);
+  res.json({ message: "Đã xóa gian hàng cư dân." });
+});
+
 // Get store orders
 app.get("/api/stores/:id/orders", (req, res) => {
   const { id } = req.params;

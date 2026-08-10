@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project } from '../types';
-import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout } from 'lucide-react';
+import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES } from '../types';
+import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package } from 'lucide-react';
 
 interface ReputationPost {
   id: string;
@@ -68,8 +68,87 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   onRefreshData,
   onSeed1000Properties
 }) => {
-  const [activeTab, setActiveTab] = useState<'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core'>('properties');
+  // 2 Mảng Quản Trị Riêng Biệt (Sector 1: Bất Động Sản, Sector 2: Dịch Vụ Chợ Cư Dân)
+  const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
+  const [activeTab, setActiveTab] = useState<
+    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core'
+    | 'resident_services_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance'
+  >('properties');
+
   const [adminReputationPosts, setAdminReputationPosts] = useState<ReputationPost[]>([]);
+
+  // Resident Services & Marketplace State
+  const [adminResidentServices, setAdminResidentServices] = useState<ResidentServiceItem[]>([]);
+  const [adminStores, setAdminStores] = useState<UserStorefront[]>([]);
+  const [adminStoreOrders, setAdminStoreOrders] = useState<StoreOrder[]>([]);
+  const [resServiceCatFilter, setResServiceCatFilter] = useState<string>('all');
+  const [resServiceSearch, setResServiceSearch] = useState<string>('');
+  const [resServiceKycFilter, setResServiceKycFilter] = useState<string>('all');
+  const [showAddServiceModal, setShowAddServiceModal] = useState<boolean>(false);
+  const [editingService, setEditingService] = useState<ResidentServiceItem | null>(null);
+
+  // Form state for creating/editing Resident Services
+  const [newSrvTitle, setNewSrvTitle] = useState('');
+  const [newSrvCategory, setNewSrvCategory] = useState(BUSINESS_CATEGORIES[0].id);
+  const [newSrvSubCat, setNewSrvSubCat] = useState('');
+  const [newSrvProject, setNewSrvProject] = useState('Vinhomes Ocean Park 1');
+  const [newSrvProviderName, setNewSrvProviderName] = useState('');
+  const [newSrvProviderPhone, setNewSrvProviderPhone] = useState('0868499929');
+  const [newSrvProviderZalo, setNewSrvProviderZalo] = useState('0868499929');
+  const [newSrvAddress, setNewSrvAddress] = useState('');
+  const [newSrvPrice, setNewSrvPrice] = useState('Liên hệ báo giá');
+  const [newSrvImage, setNewSrvImage] = useState('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');
+  const [newSrvDesc, setNewSrvDesc] = useState('');
+
+  const resetNewSrvForm = () => {
+    setNewSrvTitle('');
+    setNewSrvCategory(BUSINESS_CATEGORIES[0].id);
+    setNewSrvSubCat('');
+    setNewSrvProject('Vinhomes Ocean Park 1');
+    setNewSrvProviderName('');
+    setNewSrvProviderPhone('0868499929');
+    setNewSrvProviderZalo('0868499929');
+    setNewSrvAddress('');
+    setNewSrvPrice('Liên hệ báo giá');
+    setNewSrvImage('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');
+    setNewSrvDesc('');
+  };
+
+  const fetchResidentServices = async () => {
+    try {
+      const res = await fetch('/api/resident-services');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) setAdminResidentServices(data);
+      }
+    } catch (e) {
+      console.error('Error fetching resident services:', e);
+    }
+  };
+
+  const fetchStores = async () => {
+    try {
+      const res = await fetch('/api/stores');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) setAdminStores(data);
+      }
+    } catch (e) {
+      console.error('Error fetching stores:', e);
+    }
+  };
+
+  const fetchStoreOrders = async () => {
+    try {
+      const res = await fetch('/api/store-orders');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) setAdminStoreOrders(data);
+      }
+    } catch (e) {
+      console.error('Error fetching store orders:', e);
+    }
+  };
 
   React.useEffect(() => {
     fetch('/api/reputation-posts')
@@ -78,7 +157,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         if (Array.isArray(data)) setAdminReputationPosts(data);
       })
       .catch(err => console.error(err));
-  }, []);
+
+    fetchResidentServices();
+    fetchStores();
+    fetchStoreOrders();
+  }, [activeTab, adminSector]);
   const [localConfig, setLocalConfig] = useState<UpTinPricingConfig>(pricingConfig);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [isSeeding, setIsSeeding] = useState(false);
@@ -695,6 +778,130 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     }, 600);
   };
 
+  // Resident Services & Store Handlers
+  const handleToggleServiceKyc = async (srv: ResidentServiceItem) => {
+    const isCurrentlyVerified = srv.kycStatus === 'verified' || srv.verified;
+    const newKycStatus = isCurrentlyVerified ? 'unverified' : 'verified';
+    const newBadgeType = isCurrentlyVerified ? 'none' : 'blue_verified';
+
+    try {
+      const updated = { ...srv, verified: !isCurrentlyVerified, kycStatus: newKycStatus as any, kycBadgeType: newBadgeType as any };
+      setAdminResidentServices(prev => prev.map(s => s.id === srv.id ? updated : s));
+      await fetch('/api/resident-services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      });
+      alert(isCurrentlyVerified ? `Đã gỡ Nút Xanh KYC của dịch vụ "${srv.title}"` : `🎉 Đã cấp NÚT XANH VERIFIED KYC cho dịch vụ "${srv.title}"!`);
+    } catch (e) {
+      console.error('Error toggling KYC:', e);
+    }
+  };
+
+  const handleDeleteService = async (id: string, title: string) => {
+    if (!confirm(`Bạn có chắc muốn xóa dịch vụ "${title}"?`)) return;
+    try {
+      setAdminResidentServices(prev => prev.filter(s => s.id !== id));
+      await fetch(`/api/resident-services/${id}`, { method: 'DELETE' });
+      alert('Đã xóa dịch vụ cư dân thành công!');
+    } catch (e) {
+      console.error('Error deleting service:', e);
+    }
+  };
+
+  const handleEditServiceClick = (srv: ResidentServiceItem) => {
+    setEditingService(srv);
+    setNewSrvTitle(srv.title);
+    setNewSrvCategory(srv.categoryId);
+    setNewSrvSubCat(srv.subCategory || '');
+    setNewSrvProject(srv.project || 'Vinhomes Ocean Park 1');
+    setNewSrvProviderName(srv.providerName || '');
+    setNewSrvProviderPhone(srv.providerPhone || '0868499929');
+    setNewSrvProviderZalo(srv.providerZalo || '0868499929');
+    setNewSrvAddress(srv.address || '');
+    setNewSrvPrice(srv.priceDisplay || 'Liên hệ báo giá');
+    setNewSrvImage(srv.images && srv.images.length > 0 ? srv.images[0] : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');
+    setNewSrvDesc(srv.description || '');
+    setShowAddServiceModal(true);
+  };
+
+  const handleSaveResidentServiceSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSrvTitle || !newSrvProviderPhone) {
+      alert('Vui lòng điền Tiêu đề dịch vụ và Số điện thoại liên hệ!');
+      return;
+    }
+
+    const payload: Partial<ResidentServiceItem> = {
+      id: editingService ? editingService.id : `srv-${Date.now()}`,
+      title: newSrvTitle,
+      categoryId: newSrvCategory,
+      subCategory: newSrvSubCat || 'Dịch vụ chính',
+      project: newSrvProject as any,
+      providerName: newSrvProviderName || 'Cư Dân Vinhomes',
+      providerPhone: newSrvProviderPhone,
+      providerZalo: newSrvProviderZalo || newSrvProviderPhone,
+      address: newSrvAddress || 'KĐT Vinhomes',
+      priceDisplay: newSrvPrice,
+      rating: editingService ? editingService.rating : 5.0,
+      reviewCount: editingService ? editingService.reviewCount : 1,
+      images: [newSrvImage],
+      description: newSrvDesc,
+      verified: true,
+      kycStatus: 'verified',
+      kycBadgeType: 'blue_verified',
+      legalCommitmentAccepted: true,
+      createdAt: editingService ? editingService.createdAt : new Date().toISOString().split('T')[0]
+    };
+
+    try {
+      const res = await fetch('/api/resident-services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        alert(editingService ? '🎉 Đã cập nhật Dịch Vụ Cư Dân!' : '🎉 Đã thêm Dịch Vụ Cư Dân mới thành công!');
+        setShowAddServiceModal(false);
+        setEditingService(null);
+        resetNewSrvForm();
+        fetchResidentServices();
+      }
+    } catch (e) {
+      console.error('Error saving resident service:', e);
+    }
+  };
+
+  const handleDeleteStore = async (id: string, storeName: string) => {
+    if (!confirm(`Bạn có chắc muốn xóa gian hàng cư dân "${storeName}"?`)) return;
+    try {
+      setAdminStores(prev => prev.filter(s => s.id !== id));
+      await fetch(`/api/stores/${id}`, { method: 'DELETE' });
+      alert('Đã xóa gian hàng thành công!');
+    } catch (e) {
+      console.error('Error deleting store:', e);
+    }
+  };
+
+  const handleUpdateStoreOrderStatus = async (orderId: string, newOrderStatus: string, newPaymentStatus?: string) => {
+    try {
+      setAdminStoreOrders(prev => prev.map(o => o.id === orderId ? {
+        ...o,
+        orderStatus: newOrderStatus as any,
+        ...(newPaymentStatus && { paymentStatus: newPaymentStatus as any })
+      } : o));
+
+      await fetch(`/api/stores/orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderStatus: newOrderStatus, ...(newPaymentStatus && { paymentStatus: newPaymentStatus }) })
+      });
+      alert('🎉 Đã cập nhật trạng thái đơn hàng chợ cư dân!');
+    } catch (e) {
+      console.error('Error updating order status:', e);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
@@ -706,14 +913,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               ADMIN TỔNG
             </span>
             <span className="text-xs text-emerald-300 font-bold bg-emerald-900/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-              Hệ Thống Chính Thức
+              Hệ Thống Phân Mảng Độc Lập
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-emerald-400 tracking-tight">
-            QUẢN TRỊ NHÀ ĐẸP VINHOMES & SETUP GIÁ UP TIN
+            QUẢN TRỊ TỔNG HỆ THỐNG NHÀ ĐẸP & CHỢ CƯ DÂN
           </h1>
           <p className="text-xs text-slate-300">
-            Quản lý duyệt 1,000 tin đăng, cấu hình giá đẩy tin VietQR & phân quyền quản lý
+            Hệ thống phân chia 2 mảng quản trị riêng biệt: Bất Động Sản & Dịch Vụ Cư Dân Vinhomes
           </p>
         </div>
 
@@ -731,7 +938,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow-lg transition transform active:scale-95 uppercase tracking-wider"
           >
             <Globe className="w-4 h-4 text-slate-950" />
-            <span>🌐 Theo Dõi Website & AI Biên Soạn</span>
+            <span>🌐 Theo Dõi Website & AI</span>
           </button>
 
           <button
@@ -740,7 +947,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             className="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-900/50 transition transform active:scale-95"
           >
             <Zap className="w-4 h-4 text-emerald-200" />
-            {isSeeding ? 'Đang tạo 1,000 tin...' : '⚡ Test 1,000 Tin Đăng'}
+            {isSeeding ? 'Đang tạo 1,000 tin...' : '⚡ Test 1,000 Tin BĐS'}
           </button>
 
           <button
@@ -757,6 +964,81 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             title="Làm mới dữ liệu"
           >
             <RefreshCw className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* SECTOR SWITCHER - BỘ CHUYỂN DỔI MẢNG QUẢN TRỊ ĐỘC LẬP */}
+      <div className="bg-slate-950 p-4 sm:p-5 rounded-3xl border-2 border-emerald-500/50 shadow-2xl space-y-3 text-white">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-emerald-400 rounded-full animate-ping"></div>
+            <span className="font-black text-xs sm:text-sm text-amber-400 uppercase tracking-wider">
+              ⚡ BỘ CHUYỂN MẢNG QUẢN TRỊ RIÊNG BỆT — TỐI ƯU HIỆU SUẤT VẬN HÀNH
+            </span>
+          </div>
+          <span className="text-[11px] text-slate-400 font-bold">
+            Bấm chọn để chuyển đổi bộ công cụ quản lý chuyên biệt
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            onClick={() => {
+              setAdminSector('bds');
+              setActiveTab('properties');
+            }}
+            className={`p-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-between transition duration-200 cursor-pointer shadow-xl ${
+              adminSector === 'bds'
+                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white ring-4 ring-emerald-400/50 scale-[1.01]'
+                : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`p-2.5 rounded-xl ${adminSector === 'bds' ? 'bg-white/20 text-white' : 'bg-emerald-950 text-emerald-400'}`}>
+                <Building2 className="w-6 h-6" />
+              </div>
+              <div className="text-left">
+                <div className="font-black text-base tracking-tight flex items-center gap-2">
+                  <span>🏢 MẢNG 1: QUẢN TRỊ BẤT ĐỘNG SẢN</span>
+                </div>
+                <div className="text-xs font-medium text-emerald-200/80 mt-0.5">
+                  1,000+ Căn BĐS, Sơ đồ Dự án, Khách Hàng, Giá Up Tin & Sale
+                </div>
+              </div>
+            </div>
+            <span className={`px-3 py-1 rounded-full text-xs font-black ${adminSector === 'bds' ? 'bg-white text-emerald-900' : 'bg-emerald-500/20 text-emerald-400'}`}>
+              {properties.length} Căn
+            </span>
+          </button>
+
+          <button
+            onClick={() => {
+              setAdminSector('resident_market');
+              setActiveTab('resident_services_mgmt');
+            }}
+            className={`p-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-between transition duration-200 cursor-pointer shadow-xl ${
+              adminSector === 'resident_market'
+                ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 ring-4 ring-amber-300 scale-[1.01]'
+                : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`p-2.5 rounded-xl ${adminSector === 'resident_market' ? 'bg-slate-950 text-amber-400' : 'bg-amber-950 text-amber-400'}`}>
+                <Store className="w-6 h-6" />
+              </div>
+              <div className="text-left">
+                <div className="font-black text-base tracking-tight flex items-center gap-2">
+                  <span>🛍️ MẢNG 2: QUẢN TRỊ CHỢ CƯ DÂN & DỊCH VỤ</span>
+                </div>
+                <div className="text-xs font-medium text-slate-900/80 mt-0.5">
+                  12 Ngành Dịch Vụ Cư Dân, Gian Hàng KiotViet, Đơn Hàng & Tài Chính
+                </div>
+              </div>
+            </div>
+            <span className={`px-3 py-1 rounded-full text-xs font-black ${adminSector === 'resident_market' ? 'bg-slate-950 text-amber-400' : 'bg-amber-500/20 text-amber-400'}`}>
+              {adminResidentServices.length} Dịch Vụ
+            </span>
           </button>
         </div>
       </div>
@@ -823,85 +1105,137 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </div>
 
           <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">Bài Viết & Tin Tức</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase block">Bài Viết & Dịch Vụ</span>
             <div className="text-lg font-black text-sky-400">
-              {news.filter(n => n.status === 'published').length} / {news.length} Bài
+              {adminResidentServices.length} Dịch Vụ Cư Dân
             </div>
-            <span className="text-[10px] text-sky-400 font-semibold block">✓ Chuẩn SEO Public</span>
+            <span className="text-[10px] text-sky-400 font-semibold block">✓ 12 Ngành Nghề Chợ</span>
           </div>
 
           <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">Dự Án Masterplan</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase block">Gian Hàng & KiotViet</span>
             <div className="text-lg font-black text-purple-300">
-              {projects.length} Dự Án
+              {adminStores.length} Gian Hàng
             </div>
-            <span className="text-[10px] text-purple-400 font-semibold block">✓ Sơ đồ & Bảng giá</span>
+            <span className="text-[10px] text-purple-400 font-semibold block">✓ KiotViet POS Synced</span>
           </div>
         </div>
       </div>
 
-      {/* Overview Stat Cards - Key Real Estate & Expiration Metrics */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 text-xs">
-        {/* Stat 1: Căn Đang Bán */}
-        <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-emerald-500/30 shadow-sm space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400 font-bold">Căn Đang Bán</span>
-            <span className="p-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-md">🏠</span>
+      {/* Overview Stat Cards - Dynamic Based on Selected Sector */}
+      {adminSector === 'bds' ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 text-xs">
+          <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-emerald-500/30 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500 dark:text-slate-400 font-bold">Căn Đang Bán</span>
+              <span className="p-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-md">🏠</span>
+            </div>
+            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 block">{saleProperties.length} căn</span>
+            <span className="text-[10px] text-emerald-600 font-bold block">✓ Trực tuyến</span>
           </div>
-          <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 block">{saleProperties.length} căn</span>
-          <span className="text-[10px] text-emerald-600 font-bold block">✓ Trực tuyến</span>
-        </div>
 
-        {/* Stat 2: Căn Cho Thuê */}
-        <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-teal-500/30 shadow-sm space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400 font-bold">Căn Cho Thuê</span>
-            <span className="p-1 bg-teal-100 dark:bg-teal-950 text-teal-600 rounded-md">🔑</span>
+          <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-teal-500/30 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500 dark:text-slate-400 font-bold">Căn Cho Thuê</span>
+              <span className="p-1 bg-teal-100 dark:bg-teal-950 text-teal-600 rounded-md">🔑</span>
+            </div>
+            <span className="text-2xl font-black text-teal-600 dark:text-teal-400 block">{rentProperties.length} căn</span>
+            <span className="text-[10px] text-teal-600 font-bold block">✓ Căn hộ & Shophouse</span>
           </div>
-          <span className="text-2xl font-black text-teal-600 dark:text-teal-400 block">{rentProperties.length} căn</span>
-          <span className="text-[10px] text-teal-600 font-bold block">✓ Căn hộ & Shophouse</span>
-        </div>
 
-        {/* Stat 3: Khách Yêu Cầu */}
-        <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-blue-500/30 shadow-sm space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400 font-bold">Số Lượng Khách</span>
-            <span className="p-1 bg-blue-100 dark:bg-blue-950 text-blue-600 rounded-md">📞</span>
+          <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-blue-500/30 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500 dark:text-slate-400 font-bold">Số Lượng Khách</span>
+              <span className="p-1 bg-blue-100 dark:bg-blue-950 text-blue-600 rounded-md">📞</span>
+            </div>
+            <span className="text-2xl font-black text-blue-600 dark:text-blue-400 block">{contacts.length} khách</span>
+            <span className="text-[10px] text-blue-600 font-bold block">Đã để lại SĐT</span>
           </div>
-          <span className="text-2xl font-black text-blue-600 dark:text-blue-400 block">{contacts.length} khách</span>
-          <span className="text-[10px] text-blue-600 font-bold block">Đã để lại SĐT</span>
-        </div>
 
-        {/* Stat 4: Sale / Môi Giới */}
-        <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-amber-500/30 shadow-sm space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400 font-bold">Số Lượng Sale</span>
-            <span className="p-1 bg-amber-100 dark:bg-amber-950 text-amber-600 rounded-md">💼</span>
+          <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-amber-500/30 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500 dark:text-slate-400 font-bold">Số Lượng Sale</span>
+              <span className="p-1 bg-amber-100 dark:bg-amber-950 text-amber-600 rounded-md">💼</span>
+            </div>
+            <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block">{totalSalesCount} nhân sự</span>
+            <span className="text-[10px] text-amber-600 font-bold block">Tài khoản môi giới</span>
           </div>
-          <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block">{totalSalesCount} nhân sự</span>
-          <span className="text-[10px] text-amber-600 font-bold block">Tài khoản môi giới</span>
-        </div>
 
-        {/* Stat 5: Lưu Trữ / Hết Hạn (15-25 Ngày, Giữ SĐT 1 Tháng) */}
-        <div className="p-4 bg-purple-50 dark:bg-purple-950/40 rounded-2xl border border-purple-200 dark:border-purple-800/60 shadow-sm space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-purple-900 dark:text-purple-300 font-bold">Kho Lưu Trữ</span>
-            <span className="p-1 bg-purple-200 dark:bg-purple-900 text-purple-700 rounded-md">📁</span>
+          <div className="p-4 bg-purple-50 dark:bg-purple-950/40 rounded-2xl border border-purple-200 dark:border-purple-800/60 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-purple-900 dark:text-purple-300 font-bold">Kho Lưu Trữ</span>
+              <span className="p-1 bg-purple-200 dark:bg-purple-900 text-purple-700 rounded-md">📁</span>
+            </div>
+            <span className="text-2xl font-black text-purple-700 dark:text-purple-300 block">{archivedProperties.length} căn</span>
+            <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold block">✓ Lưu 1 tháng (Giữ SĐT & Căn)</span>
           </div>
-          <span className="text-2xl font-black text-purple-700 dark:text-purple-300 block">{archivedProperties.length} căn</span>
-          <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold block">✓ Lưu 1 tháng (Giữ SĐT & Căn)</span>
-        </div>
 
-        {/* Stat 6: Tin Chờ Duyệt */}
-        <div className="p-4 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-300 dark:border-amber-800 shadow-sm space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-amber-900 dark:text-amber-300 font-bold">Tin Chờ Duyệt</span>
-            <span className="p-1 bg-amber-200 dark:bg-amber-900 text-amber-800 rounded-md">⏳</span>
+          <div className="p-4 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-300 dark:border-amber-800 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-amber-900 dark:text-amber-300 font-bold">Tin Chờ Duyệt</span>
+              <span className="p-1 bg-amber-200 dark:bg-amber-900 text-amber-800 rounded-md">⏳</span>
+            </div>
+            <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block">{pendingProperties.length} căn</span>
+            <span className="text-[10px] text-amber-600 font-bold block">Cần duyệt ngay</span>
           </div>
-          <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block">{pendingProperties.length} căn</span>
-          <span className="text-[10px] text-amber-600 font-bold block">Cần duyệt ngay</span>
         </div>
-      </div>
+      ) : (
+        /* Resident Market Sector Metrics */
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 text-xs">
+          <div className="p-4 bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:bg-slate-800/90 rounded-2xl border border-amber-500/40 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-amber-800 dark:text-amber-400 font-bold">Dịch Vụ Cư Dân</span>
+              <Wrench className="w-4 h-4 text-amber-500" />
+            </div>
+            <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block">{adminResidentServices.length} bài DV</span>
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">
+              ✓ {adminResidentServices.filter(s => s.verified || s.kycStatus === 'verified').length} Đã Cấp Nút Xanh KYC
+            </span>
+          </div>
+
+          <div className="p-4 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:bg-slate-800/90 rounded-2xl border border-emerald-500/40 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-emerald-800 dark:text-emerald-400 font-bold">Gian Hàng KiotViet</span>
+              <Store className="w-4 h-4 text-emerald-500" />
+            </div>
+            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 block">{adminStores.length} gian hàng</span>
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">
+              ✓ {adminStores.filter(s => s.kiotVietConfig?.syncStatus === 'connected').length} Đồng bộ API live
+            </span>
+          </div>
+
+          <div className="p-4 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 dark:bg-slate-800/90 rounded-2xl border border-blue-500/40 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-blue-800 dark:text-blue-400 font-bold">Đơn Hàng Chợ</span>
+              <ShoppingBag className="w-4 h-4 text-blue-500" />
+            </div>
+            <span className="text-2xl font-black text-blue-600 dark:text-blue-400 block">{adminStoreOrders.length} đơn</span>
+            <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold block">
+              {adminStoreOrders.filter(o => o.orderStatus === 'new').length} đơn mới cần duyệt
+            </span>
+          </div>
+
+          <div className="p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:bg-slate-800/90 rounded-2xl border border-purple-500/40 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-purple-800 dark:text-purple-400 font-bold">Bài PR & Uy Tín</span>
+              <Star className="w-4 h-4 text-purple-500" />
+            </div>
+            <span className="text-2xl font-black text-purple-600 dark:text-purple-400 block">{adminReputationPosts.length} bài</span>
+            <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold block">Review YouTube & Bóc phốt</span>
+          </div>
+
+          <div className="p-4 bg-gradient-to-br from-teal-500/10 to-emerald-500/10 dark:bg-slate-800/90 rounded-2xl border border-teal-500/40 shadow-sm space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-teal-800 dark:text-teal-400 font-bold">Doanh Thu Chợ</span>
+              <DollarSign className="w-4 h-4 text-teal-500" />
+            </div>
+            <span className="text-xl font-black text-teal-600 dark:text-teal-400 block">
+              {adminStoreOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0).toLocaleString('vi-VN')} đ
+            </span>
+            <span className="text-[10px] text-teal-600 dark:text-teal-400 font-bold block">Thanh toán VietQR & COD</span>
+          </div>
+        </div>
+      )}
 
       {/* Vertical Left Sidebar Admin Navigation Layout */}
       <div className="flex flex-col md:flex-row gap-6 items-start">
@@ -912,269 +1246,880 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></div>
               <span className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-wider">
-                DANH MỤC QUẢN TRỊ
+                {adminSector === 'bds' ? '🏢 DANH MỤC QUẢN TRỊ BĐS' : '🛍️ DANH MỤC CHỢ CƯ DÂN'}
               </span>
             </div>
-            <span className="text-[10px] font-bold px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/20">
-              15 CHỨC NĂNG
+            <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/20">
+              {adminSector === 'bds' ? 'MẢNG 1' : 'MẢNG 2'}
             </span>
           </div>
 
-          {/* Group 1: CORE & BĐS */}
-          <div className="space-y-1">
-            <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block pt-1">
-              Quản Trị Core & BĐS
-            </span>
+          {adminSector === 'bds' ? (
+            /* ==================== MẢNG 1: BẤT ĐỘNG SẢN MENU ==================== */
+            <>
+              {/* Group 1: CORE & BĐS */}
+              <div className="space-y-1">
+                <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block pt-1">
+                  Quản Trị Core & BĐS
+                </span>
 
-            <button
-              onClick={() => setActiveTab('enterprise_core')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'enterprise_core'
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg ring-2 ring-purple-400/50'
-                  : 'text-purple-700 dark:text-purple-300 hover:bg-purple-500/10 border border-purple-500/20'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <ShieldCheck className="w-4 h-4 text-amber-300 shrink-0" />
-                <span className="truncate">⭐ KPI & Phân Quyền</span>
-              </div>
-            </button>
+                <button
+                  onClick={() => setActiveTab('enterprise_core')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'enterprise_core'
+                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg ring-2 ring-purple-400/50'
+                      : 'text-purple-700 dark:text-purple-300 hover:bg-purple-500/10 border border-purple-500/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <ShieldCheck className="w-4 h-4 text-amber-300 shrink-0" />
+                    <span className="truncate">⭐ KPI & Phân Quyền</span>
+                  </div>
+                </button>
 
-            <button
-              onClick={() => setActiveTab('properties')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'properties'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <Layers className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span className="truncate">BĐS & Hình Ảnh</span>
+                <button
+                  onClick={() => setActiveTab('properties')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'properties'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Layers className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="truncate">BĐS & Hình Ảnh</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'properties' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'}`}>
+                    {properties.length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('projects')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'projects'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <MapPin className="w-4 h-4 text-teal-500 shrink-0" />
+                    <span className="truncate">Dự Án & Sơ Đồ</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'projects' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
+                    {projects.length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('news')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'news'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <FileText className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span className="truncate">Bài Viết & Tin Tức</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'news' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400'}`}>
+                    {news.length}
+                  </span>
+                </button>
               </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'properties' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'}`}>
-                {properties.length}
+
+              {/* Group 2: KHÁCH HÀNG & THÀNH VIÊN */}
+              <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block">
+                  Khách Hàng & Nguồn Thu
+                </span>
+
+                <button
+                  onClick={() => setActiveTab('leads')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'leads'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Phone className="w-4 h-4 text-blue-500 shrink-0" />
+                    <span className="truncate">Khách Yêu Cầu</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'leads' ? 'bg-white/20 text-white' : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'}`}>
+                    {contacts.length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('users')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'users'
+                      ? 'bg-amber-500 text-slate-950 shadow-md'
+                      : 'text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <UserCheck className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span className="truncate">Quản Lý Thành Viên</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'users' ? 'bg-slate-950 text-amber-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-600'}`}>
+                    {registeredUsers.length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('pricing')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'pricing'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Settings className="w-4 h-4 text-slate-500 shrink-0" />
+                    <span className="truncate">Giá Up Tin & VietQR</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('affiliate_mgmt')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'affiliate_mgmt'
+                      ? 'bg-amber-500 text-slate-950 shadow-md'
+                      : 'text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Award className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span className="truncate">Affiliate & Thu Phí</span>
+                  </div>
+                </button>
+              </div>
+
+              {/* Group 3: MARKETING & TIẾP THỊ */}
+              <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block">
+                  Marketing & SEO
+                </span>
+
+                <button
+                  onClick={() => setActiveTab('analytics')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'analytics'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 border border-blue-500/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <BarChart3 className="w-4 h-4 text-blue-500 shrink-0" />
+                    <span className="truncate">Thống Kê Traffic</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('seo')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'seo'
+                      ? 'bg-amber-500 text-slate-950 shadow-md'
+                      : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Globe className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span className="truncate">Chuyên SEO Web</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('marketing')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'marketing'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Share2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="truncate">Marketing Hàng Loạt</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('zalo')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'zalo'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 border border-blue-500/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <MessageSquare className="w-4 h-4 text-sky-400 shrink-0" />
+                    <span className="truncate">Zalo Group Cư Dân</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('ads')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'ads'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span className="truncate">Quảng Cáo Banner</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'ads' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
+                    {adsList.length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('reputation')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'reputation'
+                      ? 'bg-purple-600 text-white shadow-md'
+                      : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 border border-purple-500/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
+                    <span className="truncate">PR & Review YouTube</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'reputation' ? 'bg-white/20 text-white' : 'bg-purple-100 dark:bg-purple-950 text-purple-600'}`}>
+                    {adminReputationPosts.length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('n8n')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'n8n'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Database className="w-4 h-4 text-slate-500 shrink-0" />
+                    <span className="truncate">Webhook n8n</span>
+                  </div>
+                </button>
+              </div>
+            </>
+          ) : (
+            /* ==================== MẢNG 2: CHỢ CƯ DÂN & DỊCH VỤ MENU ==================== */
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-black uppercase text-amber-500 tracking-wider px-2 block pt-1">
+                Quản Lý Chợ & Dịch Vụ Cư Dân
               </span>
-            </button>
 
-            <button
-              onClick={() => setActiveTab('projects')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'projects'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <MapPin className="w-4 h-4 text-teal-500 shrink-0" />
-                <span className="truncate">Dự Án & Sơ Đồ</span>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'projects' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
-                {projects.length}
-              </span>
-            </button>
+              <button
+                onClick={() => setActiveTab('resident_services_mgmt')}
+                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                  activeTab === 'resident_services_mgmt'
+                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-lg font-black ring-2 ring-amber-300'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Wrench className="w-4 h-4 text-amber-500 shrink-0" />
+                  <span className="truncate">🛠️ Quản Lý Dịch Vụ Cư Dân</span>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'resident_services_mgmt' ? 'bg-slate-950 text-amber-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400'}`}>
+                  {adminResidentServices.length}
+                </span>
+              </button>
 
-            <button
-              onClick={() => setActiveTab('news')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'news'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <FileText className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="truncate">Bài Viết & Tin Tức</span>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'news' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400'}`}>
-                {news.length}
-              </span>
-            </button>
-          </div>
+              <button
+                onClick={() => setActiveTab('stores_mgmt')}
+                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                  activeTab === 'stores_mgmt'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg font-black ring-2 ring-emerald-300'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Store className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span className="truncate">🏪 Gian Hàng & KiotViet POS</span>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'stores_mgmt' ? 'bg-slate-950 text-emerald-400' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'}`}>
+                  {adminStores.length}
+                </span>
+              </button>
 
-          {/* Group 2: KHÁCH HÀNG & THÀNH VIÊN */}
-          <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block">
-              Khách Hàng & Nguồn Thu
-            </span>
+              <button
+                onClick={() => setActiveTab('orders_mgmt')}
+                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                  activeTab === 'orders_mgmt'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg font-black ring-2 ring-blue-300'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <ShoppingBag className="w-4 h-4 text-blue-500 shrink-0" />
+                  <span className="truncate">📦 Đơn Hàng & Giao Dịch Chợ</span>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'orders_mgmt' ? 'bg-white text-blue-900' : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'}`}>
+                  {adminStoreOrders.length}
+                </span>
+              </button>
 
-            <button
-              onClick={() => setActiveTab('leads')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'leads'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <Phone className="w-4 h-4 text-blue-500 shrink-0" />
-                <span className="truncate">Khách Yêu Cầu</span>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'leads' ? 'bg-white/20 text-white' : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'}`}>
-                {contacts.length}
-              </span>
-            </button>
+              <button
+                onClick={() => setActiveTab('partners_reputation')}
+                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                  activeTab === 'partners_reputation'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg font-black ring-2 ring-purple-300'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Star className="w-4 h-4 text-purple-500 shrink-0" />
+                  <span className="truncate">🌟 PR Đối Tác & Bài Uy Tín</span>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'partners_reputation' ? 'bg-white text-purple-900' : 'bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400'}`}>
+                  {adminReputationPosts.length}
+                </span>
+              </button>
 
-            <button
-              onClick={() => setActiveTab('users')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'users'
-                  ? 'bg-amber-500 text-slate-950 shadow-md'
-                  : 'text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <UserCheck className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="truncate">Quản Lý Thành Viên</span>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'users' ? 'bg-slate-950 text-amber-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-600'}`}>
-                {registeredUsers.length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('pricing')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'pricing'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <Settings className="w-4 h-4 text-slate-500 shrink-0" />
-                <span className="truncate">Giá Up Tin & VietQR</span>
-              </div>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('affiliate_mgmt')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'affiliate_mgmt'
-                  ? 'bg-amber-500 text-slate-950 shadow-md'
-                  : 'text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <Award className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="truncate">Affiliate & Thu Phí</span>
-              </div>
-            </button>
-          </div>
-
-          {/* Group 3: MARKETING & TIẾP THỊ */}
-          <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block">
-              Marketing & SEO
-            </span>
-
-            <button
-              onClick={() => setActiveTab('analytics')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'analytics'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 border border-blue-500/20'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <BarChart3 className="w-4 h-4 text-blue-500 shrink-0" />
-                <span className="truncate">Thống Kê Traffic</span>
-              </div>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('seo')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'seo'
-                  ? 'bg-amber-500 text-slate-950 shadow-md'
-                  : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <Globe className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="truncate">Chuyên SEO Web</span>
-              </div>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('marketing')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'marketing'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <Share2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span className="truncate">Marketing Hàng Loạt</span>
-              </div>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('zalo')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'zalo'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 border border-blue-500/20'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <MessageSquare className="w-4 h-4 text-sky-400 shrink-0" />
-                <span className="truncate">Zalo Group Cư Dân</span>
-              </div>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('ads')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'ads'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="truncate">Quảng Cáo Banner</span>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'ads' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
-                {adsList.length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('reputation')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'reputation'
-                  ? 'bg-purple-600 text-white shadow-md'
-                  : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 border border-purple-500/20'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
-                <span className="truncate">PR & Review YouTube</span>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'reputation' ? 'bg-white/20 text-white' : 'bg-purple-100 dark:bg-purple-950 text-purple-600'}`}>
-                {adminReputationPosts.length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('n8n')}
-              className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                activeTab === 'n8n'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <Database className="w-4 h-4 text-slate-500 shrink-0" />
-                <span className="truncate">Webhook n8n</span>
-              </div>
-            </button>
-          </div>
+              <button
+                onClick={() => setActiveTab('resident_finance')}
+                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                  activeTab === 'resident_finance'
+                    ? 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg font-black ring-2 ring-teal-300'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Wallet className="w-4 h-4 text-teal-500 shrink-0" />
+                  <span className="truncate">💰 Tài Chính & Chiết Khấu DV</span>
+                </div>
+              </button>
+            </div>
+          )}
         </aside>
 
         {/* RIGHT MAIN CONTENT PANEL */}
         <main className="flex-1 min-w-0 w-full space-y-6">
+
+      {/* ==================== MẢNG 2: TAB 1 - QUẢN LÝ DỊCH VỤ CƯ DÂN ==================== */}
+      {activeTab === 'resident_services_mgmt' && (
+        <div className="space-y-6">
+          {/* Header Banner */}
+          <div className="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 p-6 rounded-3xl border-2 border-amber-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                  MẢNG 2: CHỢ CƯ DÂN
+                </span>
+                <span className="px-2.5 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-500/40 font-bold text-[10px] rounded-full flex items-center gap-1">
+                  <BadgeCheck className="w-3 h-3 text-blue-400" /> BLUE VERIFIED KYC
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-amber-400 mt-1.5 flex items-center gap-2">
+                <Wrench className="w-6 h-6 text-amber-400" />
+                <span>QUẢN LÝ DỊCH VỤ CƯ DÂN & DUYỆT CẤP NÚT XANH VERIFIED KYC</span>
+              </h2>
+              <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                Quản lý 12 ngành nghề dịch vụ cư dân Vinhomes (Thang máy, Smarthome, Taxi, Giặt là, Spa, Pass đồ...). Duyệt Nút Xanh KYC để tạo niềm tin chính chủ cho cư dân.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                resetNewSrvForm();
+                setEditingService(null);
+                setShowAddServiceModal(true);
+              }}
+              className="px-5 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl flex items-center gap-2 border border-amber-300 cursor-pointer shrink-0"
+            >
+              <PlusCircle className="w-5 h-5 text-slate-950" />
+              <span>➕ Thêm Dịch Vụ Cư Dân Mới</span>
+            </button>
+          </div>
+
+          {/* Filter & Search Bar */}
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              {/* Search */}
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  placeholder="Tìm theo tên dịch vụ, số điện thoại, tên nhà cung cấp..."
+                  value={resServiceSearch}
+                  onChange={(e) => setResServiceSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-2xl border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-amber-500 outline-none"
+                />
+              </div>
+
+              {/* KYC Filter */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">Lọc KYC:</span>
+                <select
+                  value={resServiceKycFilter}
+                  onChange={(e) => setResServiceKycFilter(e.target.value)}
+                  className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-amber-500 outline-none"
+                >
+                  <option value="all">Tất cả KYC</option>
+                  <option value="verified">🔵 Đã Cấp Nút Xanh KYC</option>
+                  <option value="unverified">⚪ Chưa Cấp Nút Xanh</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Category Filter Chips */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              <button
+                onClick={() => setResServiceCatFilter('all')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition cursor-pointer shrink-0 ${
+                  resServiceCatFilter === 'all'
+                    ? 'bg-amber-500 text-slate-950 shadow-md'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                }`}
+              >
+                Tất Cả ({adminResidentServices.length})
+              </button>
+              {BUSINESS_CATEGORIES.map(cat => {
+                const count = adminResidentServices.filter(s => s.categoryId === cat.id).length;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setResServiceCatFilter(cat.id)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer shrink-0 flex items-center gap-1.5 ${
+                      resServiceCatFilter === cat.id
+                        ? 'bg-amber-500 text-slate-950 shadow-md'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                    }`}
+                  >
+                    <span>{cat.icon}</span>
+                    <span>{cat.name}</span>
+                    <span className="opacity-70 text-[10px]">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Resident Services Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {adminResidentServices
+              .filter(srv => {
+                if (resServiceCatFilter !== 'all' && srv.categoryId !== resServiceCatFilter) return false;
+                if (resServiceKycFilter === 'verified' && !srv.verified && srv.kycStatus !== 'verified') return false;
+                if (resServiceKycFilter === 'unverified' && (srv.verified || srv.kycStatus === 'verified')) return false;
+                if (resServiceSearch) {
+                  const query = resServiceSearch.toLowerCase();
+                  return (
+                    srv.title.toLowerCase().includes(query) ||
+                    (srv.providerName && srv.providerName.toLowerCase().includes(query)) ||
+                    (srv.providerPhone && srv.providerPhone.includes(query))
+                  );
+                }
+                return true;
+              })
+              .map(srv => {
+                const isVerified = srv.verified || srv.kycStatus === 'verified';
+                const categoryObj = BUSINESS_CATEGORIES.find(c => c.id === srv.categoryId);
+
+                return (
+                  <div
+                    key={srv.id}
+                    className={`bg-white dark:bg-slate-900 rounded-3xl p-5 border transition-all duration-200 shadow-xl space-y-4 flex flex-col justify-between ${
+                      isVerified
+                        ? 'border-blue-500/40 ring-1 ring-blue-500/20'
+                        : 'border-slate-200 dark:border-slate-800'
+                    }`}
+                  >
+                    <div className="space-y-3">
+                      {/* Image & Badges */}
+                      <div className="relative h-44 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
+                        <img
+                          src={srv.images && srv.images.length > 0 ? srv.images[0] : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80'}
+                          alt={srv.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
+                          <span className="px-2.5 py-1 bg-slate-950/80 backdrop-blur-md text-amber-400 font-extrabold text-[10px] rounded-lg border border-amber-500/30">
+                            {categoryObj ? `${categoryObj.icon} ${categoryObj.name}` : srv.categoryId}
+                          </span>
+                          <span className="px-2.5 py-1 bg-emerald-950/80 backdrop-blur-md text-emerald-300 font-extrabold text-[10px] rounded-lg border border-emerald-500/30">
+                            {srv.project || 'Vinhomes'}
+                          </span>
+                        </div>
+
+                        <div className="absolute bottom-2.5 right-2.5">
+                          {isVerified ? (
+                            <span className="px-3 py-1 bg-blue-600/90 backdrop-blur-md text-white font-black text-[11px] rounded-full border border-blue-300 shadow-lg flex items-center gap-1">
+                              <BadgeCheck className="w-3.5 h-3.5 text-white" />
+                              <span>VERIFIED KYC</span>
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 bg-slate-900/80 backdrop-blur-md text-slate-300 font-bold text-[10px] rounded-full border border-slate-700 flex items-center gap-1">
+                              <ShieldAlert className="w-3 h-3 text-amber-400" />
+                              <span>Chưa KYC</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Title & Info */}
+                      <div>
+                        <h3 className="font-black text-sm text-slate-900 dark:text-white line-clamp-2 leading-tight">
+                          {srv.title}
+                        </h3>
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                          <span className="font-black text-amber-600 dark:text-amber-400 text-sm">
+                            {srv.priceDisplay || 'Liên hệ báo giá'}
+                          </span>
+                          <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
+                            <Star className="w-3.5 h-3.5 fill-amber-400" />
+                            <span>{srv.rating || 5.0} ({srv.reviewCount || 1})</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Provider Contact Info */}
+                      <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl text-xs space-y-1.5 border border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center justify-between font-bold">
+                          <span className="text-slate-500 dark:text-slate-400">Nhà cung cấp:</span>
+                          <span className="text-slate-900 dark:text-white font-black">{srv.providerName || 'Cư Dân Vinhomes'}</span>
+                        </div>
+                        <div className="flex items-center justify-between font-bold">
+                          <span className="text-slate-500 dark:text-slate-400">Số Điện Thoại:</span>
+                          <a href={`tel:${srv.providerPhone}`} className="text-emerald-600 dark:text-emerald-400 font-black hover:underline flex items-center gap-1">
+                            <Phone className="w-3 h-3" />
+                            <span>{srv.providerPhone}</span>
+                          </a>
+                        </div>
+                        {srv.providerZalo && (
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="text-slate-500 dark:text-slate-400">Zalo Chính Chủ:</span>
+                            <span className="text-blue-600 dark:text-blue-400 font-bold">{srv.providerZalo}</span>
+                          </div>
+                        )}
+                        {srv.address && (
+                          <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-700">
+                            <MapPin className="w-3 h-3 shrink-0 text-red-500" />
+                            <span className="truncate">{srv.address}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Action Controls */}
+                    <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <button
+                        onClick={() => handleToggleServiceKyc(srv)}
+                        className={`w-full py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
+                          isVerified
+                            ? 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-red-500 hover:text-white'
+                            : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:brightness-110'
+                        }`}
+                      >
+                        <BadgeCheck className="w-4 h-4" />
+                        <span>{isVerified ? 'Gỡ Nút Xanh KYC' : '🔵 CẤP NÚT XANH VERIFIED KYC'}</span>
+                      </button>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => handleEditServiceClick(srv)}
+                          className="py-2 bg-slate-100 dark:bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition cursor-pointer"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>Chỉnh Sửa</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteService(srv.id, srv.title)}
+                          className="py-2 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Xóa Bỏ</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MẢNG 2: TAB 2 - GIAN HÀNG & KIOTVIET POS ==================== */}
+      {activeTab === 'stores_mgmt' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 p-6 rounded-3xl border-2 border-emerald-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                  QUẢN LÝ GIAN HÀNG
+                </span>
+                <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[10px] rounded-full">
+                  ● KIOTVIET POS INTEGRATED
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-emerald-400 mt-1.5 flex items-center gap-2">
+                <Store className="w-6 h-6 text-emerald-400" />
+                <span>QUẢN LÝ GIAN HÀNG CƯ DÂN & ĐỒNG BỘ KIOTVIET POS</span>
+              </h2>
+              <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                Quản lý tất cả gian hàng bán lẻ, tiệm cafe, siêu thị tạp hóa cư dân Vinhomes. Tự động kết nối tồn kho & giá bán realtime qua API KiotViet.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {adminStores.length === 0 ? (
+              <div className="col-span-2 text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500">
+                <Store className="w-12 h-12 text-slate-400 mx-auto mb-2" />
+                <p className="font-bold text-sm">Chưa có gian hàng cư dân nào được tạo.</p>
+              </div>
+            ) : (
+              adminStores.map(st => (
+                <div key={st.id} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-2xl flex items-center justify-center font-black text-lg">
+                        🏪
+                      </div>
+                      <div>
+                        <h3 className="font-black text-base text-slate-900 dark:text-white">{st.storeName}</h3>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">{st.project || 'Vinhomes'} • SĐT: {st.phone}</span>
+                      </div>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black ${
+                      st.kiotVietConfig?.syncStatus === 'connected'
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                        : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                    }`}>
+                      {st.kiotVietConfig?.syncStatus === 'connected' ? '✓ KiotViet Connected' : 'Chờ Kết Nối POS'}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{st.description}</p>
+
+                  <div className="grid grid-cols-3 gap-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl text-center text-xs">
+                    <div>
+                      <span className="text-slate-400 text-[10px] block">Sản phẩm</span>
+                      <span className="font-black text-slate-900 dark:text-white text-sm">{st.products?.length || 0}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 text-[10px] block">Đánh giá</span>
+                      <span className="font-black text-amber-500 text-sm">⭐ {st.rating || 5.0}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 text-[10px] block">Chủ gian hàng</span>
+                      <span className="font-black text-slate-900 dark:text-white text-xs truncate block">{st.ownerName}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <button
+                      onClick={() => handleDeleteStore(st.id, st.storeName)}
+                      className="px-3.5 py-2 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 font-bold rounded-xl text-xs flex items-center gap-1 transition cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Xóa Gian Hàng</span>
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MẢNG 2: TAB 3 - ĐƠN HÀNG CHỢ CƯ DÂN ==================== */}
+      {activeTab === 'orders_mgmt' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 rounded-3xl border-2 border-blue-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 bg-blue-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                  ĐƠN HÀNG & GIAO DỊCH
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-blue-400 mt-1.5 flex items-center gap-2">
+                <ShoppingBag className="w-6 h-6 text-blue-400" />
+                <span>QUẢN LÝ ĐƠN HÀNG & LỊCH SỬ GIAO DỊCH CHỢ CƯ DÂN</span>
+              </h2>
+              <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                Quản lý các đơn mua hàng đồ ăn, tạp hóa, nước uống, dịch vụ nội khu giữa các cư dân. Cập nhật trạng thái giao hàng & thanh toán VietQR.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 font-black uppercase tracking-wider">
+                    <th className="py-3 px-2">Mã Đơn</th>
+                    <th className="py-3 px-2">Khách Hàng</th>
+                    <th className="py-3 px-2">Gian Hàng</th>
+                    <th className="py-3 px-2">Tổng Tiền</th>
+                    <th className="py-3 px-2">Thanh Toán</th>
+                    <th className="py-3 px-2">Trạng Thái Đơn</th>
+                    <th className="py-3 px-2 text-right">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {adminStoreOrders.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-8 text-slate-500">
+                        Chưa có đơn hàng nào trên Chợ Cư Dân.
+                      </td>
+                    </tr>
+                  ) : (
+                    adminStoreOrders.map(order => (
+                      <tr key={order.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                        <td className="py-3 px-2 font-mono font-black text-slate-900 dark:text-white">#{order.id.slice(-6)}</td>
+                        <td className="py-3 px-2 font-bold">
+                          <div>{order.customerName}</div>
+                          <div className="text-[10px] text-slate-400">{order.customerPhone}</div>
+                        </td>
+                        <td className="py-3 px-2 font-bold text-emerald-600 dark:text-emerald-400">{order.storeName}</td>
+                        <td className="py-3 px-2 font-black text-amber-600 dark:text-amber-400">
+                          {order.totalAmount ? order.totalAmount.toLocaleString('vi-VN') : 0} đ
+                        </td>
+                        <td className="py-3 px-2 font-bold">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] ${
+                            order.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                          }`}>
+                            {order.paymentMethod === 'vietqr' ? 'VietQR' : 'COD'} • {order.paymentStatus === 'paid' ? 'Đã Thanh Toán' : 'Chưa Trả'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-2 font-bold">
+                          <select
+                            value={order.orderStatus}
+                            onChange={(e) => handleUpdateStoreOrderStatus(order.id, e.target.value)}
+                            className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 outline-none"
+                          >
+                            <option value="new">🆕 Đơn Mới</option>
+                            <option value="confirmed">✓ Đã Xác Nhận</option>
+                            <option value="delivering">🚚 Đang Giao Hàng</option>
+                            <option value="completed">🎉 Hoàn Thành</option>
+                            <option value="cancelled">❌ Đã Hủy</option>
+                          </select>
+                        </td>
+                        <td className="py-3 px-2 text-right">
+                          <button
+                            onClick={() => handleUpdateStoreOrderStatus(order.id, 'completed', 'paid')}
+                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] transition"
+                          >
+                            Duyệt Xong
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MẢNG 2: TAB 4 - BÀI VIẾT PR ĐỐI TÁC & UY TÍN ==================== */}
+      {activeTab === 'partners_reputation' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 p-6 rounded-3xl border-2 border-purple-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 bg-purple-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                  PR & UY TÍN ĐỐI TÁC
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-purple-400 mt-1.5 flex items-center gap-2">
+                <Star className="w-6 h-6 text-purple-400" />
+                <span>QUẢN LÝ ĐỐI TÁC & BÀI VIẾT ĐÁNH GIÁ UY TÍN / PR REVIEW</span>
+              </h2>
+              <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                Kiểm duyệt các bài bóc phốt, khen thưởng đối tác thi công nội thất, sửa chữa, giúp việc, homestay cư dân Vinhomes. Tích hợp video YouTube review thực tế.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {adminReputationPosts.length === 0 ? (
+              <div className="col-span-2 text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500">
+                <Sparkles className="w-12 h-12 text-slate-400 mx-auto mb-2" />
+                <p className="font-bold text-sm">Chưa có bài viết đánh giá uy tín đối tác nào.</p>
+              </div>
+            ) : (
+              adminReputationPosts.map(post => (
+                <div key={post.id} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-extrabold text-[10px] rounded-full">
+                      {post.category || 'Review Dịch Vụ'}
+                    </span>
+                    <span className="text-amber-500 font-black text-xs">⭐ {post.rating || 5.0} / 5</span>
+                  </div>
+
+                  <h3 className="font-black text-base text-slate-900 dark:text-white">{post.title}</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-3">{post.content}</p>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                    <span className="font-bold text-slate-500">Đối tác: <strong className="text-slate-900 dark:text-white">{post.partnerName}</strong></span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{post.authorName}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MẢNG 2: TAB 5 - TÀI CHÍNH & CHIẾT KHẤU CHỢ ==================== */}
+      {activeTab === 'resident_finance' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 p-6 rounded-3xl border-2 border-teal-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 bg-teal-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                  TÀI CHÍNH CHỢ CƯ DÂN
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-teal-400 mt-1.5 flex items-center gap-2">
+                <Wallet className="w-6 h-6 text-teal-400" />
+                <span>QUẢN LÝ TÀI CHÍNH & PHÍ CHIẾT KHẤU DỊCH VỤ CƯ DÂN</span>
+              </h2>
+              <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                Theo dõi tổng giao dịch chợ cư dân, doanh thu gói duy trì gian hàng chính chủ & đối soát VietQR tự động.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-2">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Doanh Thu Giao Dịch Chợ</span>
+              <div className="text-2xl font-black text-teal-600 dark:text-teal-400">
+                {adminStoreOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0).toLocaleString('vi-VN')} VNĐ
+              </div>
+              <span className="text-[10px] text-emerald-600 font-bold block">✓ Tổng đơn hàng trên hệ thống</span>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-2">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Gian Hàng Đã Thu Phí</span>
+              <div className="text-2xl font-black text-amber-500">
+                {(adminStores.length * 199000).toLocaleString('vi-VN')} VNĐ
+              </div>
+              <span className="text-[10px] text-amber-500 font-bold block">Gói 199k VNĐ/tháng</span>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-2">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Dịch Vụ KYC Đã Cấp</span>
+              <div className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                {adminResidentServices.filter(s => s.verified || s.kycStatus === 'verified').length} / {adminResidentServices.length} DV
+              </div>
+              <span className="text-[10px] text-blue-500 font-bold block">✓ Đã gắn Nút Xanh Chính Chủ</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tab: Zalo Groups Community Center */}
       {activeTab === 'zalo' && (
@@ -4161,6 +5106,198 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         isOpen={showTaxModal} 
         onClose={() => setShowTaxModal(false)} 
       />
+
+      {/* Add / Edit Resident Service Modal */}
+      {showAddServiceModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border-2 border-amber-500/50 shadow-2xl w-full max-w-2xl my-8 overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 p-5 text-white flex items-center justify-between border-b border-amber-500/30">
+              <div className="flex items-center gap-2">
+                <Wrench className="w-5 h-5 text-amber-400" />
+                <h3 className="font-black text-base text-amber-400">
+                  {editingService ? '✏️ CHỈNH SỬA DỊCH VỤ CƯ DÂN' : '➕ THÊM DỊCH VỤ CƯ DÂN MỚI'}
+                </h3>
+              </div>
+              <button
+                onClick={() => {
+                  setShowAddServiceModal(false);
+                  setEditingService(null);
+                }}
+                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold transition cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveResidentServiceSubmit} className="p-6 space-y-4 text-xs">
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                  Tên Dịch Vụ / Ngành Nghề Cư Dân (*):
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ví dụ: Sửa Chữa Thang Máy, Lắp Đặt Smarthome, Taxi Nội Khu..."
+                  value={newSrvTitle}
+                  onChange={(e) => setNewSrvTitle(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                    Danh Mục Ngành Nghề (*):
+                  </label>
+                  <select
+                    value={newSrvCategory}
+                    onChange={(e) => setNewSrvCategory(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer"
+                  >
+                    {BUSINESS_CATEGORIES.map(cat => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.icon} {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                    Khu Đô Thị / Dự Án (*):
+                  </label>
+                  <select
+                    value={newSrvProject}
+                    onChange={(e) => setNewSrvProject(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer"
+                  >
+                    <option value="Vinhomes Ocean Park 1">Vinhomes Ocean Park 1</option>
+                    <option value="Vinhomes Ocean Park 2">Vinhomes Ocean Park 2</option>
+                    <option value="Vinhomes Ocean Park 3">Vinhomes Ocean Park 3</option>
+                    <option value="Vinhomes Smart City">Vinhomes Smart City</option>
+                    <option value="Vinhomes Grand Park">Vinhomes Grand Park</option>
+                    <option value="Toàn Hệ Thống Vinhomes">Toàn Hệ Thống Vinhomes</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                    Họ Tên Nhà Cung Cấp / Cư Dân:
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nguyễn Văn A"
+                    value={newSrvProviderName}
+                    onChange={(e) => setNewSrvProviderName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                    Số Điện Thoại (*):
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="0987654321"
+                    value={newSrvProviderPhone}
+                    onChange={(e) => setNewSrvProviderPhone(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                    Link/SĐT Zalo Chính Chủ:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="0987654321 hoặc link Zalo"
+                    value={newSrvProviderZalo}
+                    onChange={(e) => setNewSrvProviderZalo(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                  Giá Hiển Thị (Ví dụ: 150.000đ/giờ, Báo giá theo khối lượng...):
+                </label>
+                <input
+                  type="text"
+                  placeholder="Thỏa thuận / 200.000đ"
+                  value={newSrvPrice}
+                  onChange={(e) => setNewSrvPrice(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                  Địa Chỉ / Căn Hộ / Tòa Nhà:
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ví dụ: Tòa S2.01, Ocean Park 1"
+                  value={newSrvAddress}
+                  onChange={(e) => setNewSrvAddress(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                  Mô Tả Chi Tiết Dịch Vụ:
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Mô tả năng lực, trang thiết bị, thời gian phục vụ, cam kết chất lượng..."
+                  value={newSrvDesc}
+                  onChange={(e) => setNewSrvDesc(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                  URL Hình Ảnh Dịch Vụ:
+                </label>
+                <input
+                  type="text"
+                  placeholder="https://images.unsplash.com/..."
+                  value={newSrvImage}
+                  onChange={(e) => setNewSrvImage(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                />
+              </div>
+
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddServiceModal(false);
+                    setEditingService(null);
+                  }}
+                  className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 transition cursor-pointer"
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black rounded-xl transition shadow-lg hover:brightness-110 cursor-pointer"
+                >
+                  {editingService ? 'LƯU CẬP NHẬT' : '➕ THÊM DỊCH VỤ MỚI'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );
