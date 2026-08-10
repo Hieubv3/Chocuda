@@ -25,6 +25,7 @@ import { AdminZaloGroupCenter } from '../components/AdminZaloGroupCenter';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
+import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
 
 interface AdminDashboardPageProps {
   properties: Property[];
@@ -299,6 +300,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   // Asset Modals State
+  const [showTaxModal, setShowTaxModal] = useState<boolean>(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isAddingProject, setIsAddingProject] = useState(false);
@@ -651,6 +653,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 z-10">
+          <button
+            onClick={() => setShowTaxModal(true)}
+            className="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-slate-900 hover:from-indigo-500 hover:to-slate-800 text-white font-black rounded-xl text-xs flex items-center gap-1.5 shadow-lg transition transform active:scale-95 uppercase tracking-wider border border-indigo-400/40"
+          >
+            <Shield className="w-4 h-4 text-indigo-300 animate-pulse" />
+            <span>🏛️ Khai Báo Thuế TMĐT Quốc Gia</span>
+          </button>
+
           <button
             onClick={() => setShowAiUrlTracker(true)}
             className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow-lg transition transform active:scale-95 uppercase tracking-wider"
@@ -3550,6 +3560,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </div>
         </div>
       )}
+
+      {/* Admin Tax Management Modal */}
+      <AdminTaxManagementModal 
+        isOpen={showTaxModal} 
+        onClose={() => setShowTaxModal(false)} 
+      />
 
     </div>
   );

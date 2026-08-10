@@ -184,6 +184,28 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             </div>
           </div>
 
+          {/* Tình Trạng Hoàn Thiện & Nội Thất Chi Tiết */}
+          <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-2 text-xs">
+            <span className="text-amber-600 dark:text-amber-400 font-extrabold uppercase tracking-wider block text-[11px]">
+              🏛️ TÌNH TRẠNG HOÀN THIỆN & ĐỒ ĐẠC
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-3 py-1 bg-amber-500 text-slate-950 font-black rounded-lg uppercase">
+                {property.completionStatus || (property.furniture === 'raw' ? 'Bàn giao thô' : property.furniture === 'basic' ? 'Nội thất cơ bản CĐT' : 'Full nội thất cao cấp')}
+              </span>
+              {property.furnitureDetail && (
+                <span className="px-3 py-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-lg">
+                  Đồ đạc: {property.furnitureDetail}
+                </span>
+              )}
+            </div>
+            {property.completionDetail && (
+              <p className="text-slate-700 dark:text-slate-300 font-medium bg-white/60 dark:bg-slate-900/60 p-2.5 rounded-xl border border-amber-500/20 text-xs mt-1">
+                📌 <strong>Ghi chú chi tiết:</strong> {property.completionDetail}
+              </p>
+            )}
+          </div>
+
           {/* Full Description & Amenities */}
           <div className="space-y-3">
             <h3 className="text-base font-bold text-slate-900 dark:text-white uppercase tracking-wider text-amber-500">

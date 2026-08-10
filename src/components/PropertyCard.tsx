@@ -368,6 +368,16 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         </div>
 
         {/* Key Specs Matrix - Compact 1-line strip */}
+        {(property.completionStatus || property.furnitureDetail || property.completionDetail) && (
+          <div className="flex items-center gap-1 text-[9px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-800/60 px-1.5 py-0.5 rounded-md truncate">
+            <span className="truncate">
+              🏠 {property.completionStatus ? property.completionStatus.toUpperCase() : ''} 
+              {property.furnitureDetail ? ` • ${property.furnitureDetail}` : ''}
+              {property.completionDetail ? ` (${property.completionDetail})` : ''}
+            </span>
+          </div>
+        )}
+
         <div className="grid grid-cols-3 gap-0.5 py-1 px-1.5 bg-slate-50 dark:bg-slate-900/60 rounded-lg text-[10px] sm:text-xs text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-800 text-center items-center">
           <div className="flex items-center justify-center gap-0.5 min-w-0">
             <span className="font-extrabold text-slate-900 dark:text-white truncate">{property.area}</span>

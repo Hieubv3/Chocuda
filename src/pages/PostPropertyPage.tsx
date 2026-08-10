@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield } from 'lucide-react';
-import { PropertyType, ProjectCategory, PropertyCategory, Language, Property, User as UserType } from '../types';
+import { 
+  PropertyType, 
+  ProjectCategory, 
+  PropertyCategory, 
+  Language, 
+  Property, 
+  User as UserType,
+  LOW_RISE_CATEGORIES,
+  LOW_RISE_COMPLETION_OPTIONS,
+  LOW_RISE_FURNITURE_OPTIONS,
+  HIGH_RISE_COMPLETION_FURNITURE_OPTIONS
+} from '../types';
 import { SoDoCensorEditor } from '../components/SoDoCensorEditor';
 import { addWatermarkToImage } from '../lib/watermark';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
@@ -37,6 +48,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const [bathrooms, setBathrooms] = useState('4');
   const [direction, setDirection] = useState('Đông Nam');
   const [furniture, setFurniture] = useState<'raw' | 'basic' | 'full'>('full');
+  const [completionStatus, setCompletionStatus] = useState<string>('hoàn thiện 3 tầng');
+  const [furnitureDetail, setFurnitureDetail] = useState<string>('full đồ');
+  const [completionDetail, setCompletionDetail] = useState<string>('');
   const [legal, setLegal] = useState<'red-book' | 'contract' | 'waiting'>('red-book');
   const [address, setAddress] = useState('Phân khu Chà Là, Vinhomes Ocean Park 2');
   const [description, setDescription] = useState('');
@@ -204,6 +218,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       bathrooms: parseInt(bathrooms) || 1,
       direction,
       furniture,
+      completionStatus,
+      completionDetail,
+      furnitureDetail,
       legal,
       address,
       description: description || `Bất động sản vị trí đẹp tại ${project.toUpperCase()}, phù hợp để ở hoặc đầu tư kinh doanh.`,
@@ -568,33 +585,129 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block mb-1">Trạng thái nội thất</label>
-                <select
-                  value={furniture}
-                  onChange={(e) => setFurniture(e.target.value as any)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
-                >
-                  <option value="full">Đầy đủ nội thất cao cấp</option>
-                  <option value="basic">Nội thất cơ bản CĐT</option>
-                  <option value="raw">Bàn giao thô nguyên bản</option>
-                </select>
-              </div>
+            {/* Tình trạng hoàn thiện & đồ đạc linh hoạt (Phân biệt Thấp Tầng & Cao Tầng) */}
+            {LOW_RISE_CATEGORIES.includes(category) ? (
+              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-black text-xs uppercase">
+                  <Home className="w-4 h-4" />
+                  <span>TÌNH TRẠNG BẤT ĐỘNG SẢN THẤP TẦNG (BIỆT THỰ / LIỀN KỀ / SHOPHOUSE)</span>
+                </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block mb-1 font-bold">Mức độ hoàn thiện (*)</label>
+                    <select
+                      value={completionStatus}
+                      onChange={(e) => {
+                        setCompletionStatus(e.target.value);
+                        if (e.target.value.includes('thô')) setFurniture('raw');
+                        else setFurniture('full');
+                      }}
+                      className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white"
+                    >
+                      {LOW_RISE_COMPLETION_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-bold">Tình trạng đồ đạc (*)</label>
+                    <select
+                      value={furnitureDetail}
+                      onChange={(e) => setFurnitureDetail(e.target.value)}
+                      className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white"
+                    >
+                      {LOW_RISE_FURNITURE_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                    Ghi chú chi tiết hoàn thiện / Đồ đạc (Tự nhập nếu có yêu cầu khác)
+                  </label>
+                  <input
+                    type="text"
+                    value={completionDetail}
+                    onChange={(e) => setCompletionDetail(e.target.value)}
+                    placeholder="VD: Hoàn thiện Tầng 1-2 kinh doanh, Tầng 3-4 thô; Có thang máy; Full điều hòa Daikin..."
+                    className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 bg-sky-500/10 border border-sky-500/30 rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-sky-600 dark:text-sky-400 font-black text-xs uppercase">
+                  <Building2 className="w-4 h-4" />
+                  <span>TÌNH TRẠNG CĂN HỘ CAO TẦNG (STUDIO / 1PN / 2PN / 3PN)</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block mb-1 font-bold">Trạng thái hoàn thiện & Nội thất (*)</label>
+                    <select
+                      value={completionStatus}
+                      onChange={(e) => {
+                        setCompletionStatus(e.target.value);
+                        if (e.target.value.includes('nguyên bản') || e.target.value.includes('thô')) setFurniture('raw');
+                        else if (e.target.value.includes('cơ bản')) setFurniture('basic');
+                        else setFurniture('full');
+                      }}
+                      className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white"
+                    >
+                      {HIGH_RISE_COMPLETION_FURNITURE_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-bold">Tình trạng pháp lý (*)</label>
+                    <select
+                      value={legal}
+                      onChange={(e) => setLegal(e.target.value as any)}
+                      className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white"
+                    >
+                      <option value="red-book">Sổ đỏ chính chủ sẵn sàng</option>
+                      <option value="contract">Hợp đồng mua bán (HĐMB)</option>
+                      <option value="waiting">Đang chờ cấp sổ</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                    Ghi chú chi tiết nội thất / Bàn giao (Tự nhập nếu có yêu cầu khác)
+                  </label>
+                  <input
+                    type="text"
+                    value={completionDetail}
+                    onChange={(e) => setCompletionDetail(e.target.value)}
+                    placeholder="VD: CĐT bàn giao nguyên bản + Đã lắp sẵn 3 điều hòa & tủ bếp gỗ công nghiệp..."
+                    className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Legal Status if Low-rise */}
+            {LOW_RISE_CATEGORIES.includes(category) && (
               <div>
-                <label className="block mb-1">Tình trạng pháp lý</label>
+                <label className="block mb-1 font-bold">Tình trạng pháp lý (*)</label>
                 <select
                   value={legal}
                   onChange={(e) => setLegal(e.target.value as any)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold"
                 >
                   <option value="red-book">Sổ đỏ chính chủ sẵn sàng</option>
                   <option value="contract">Hợp đồng mua bán (HĐMB)</option>
                   <option value="waiting">Đang chờ cấp sổ</option>
                 </select>
               </div>
-            </div>
+            )}
 
             <div>
               <label className="block mb-1">Mô tả đầy đủ bất động sản</label>

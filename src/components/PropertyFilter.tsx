@@ -358,16 +358,27 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Nội thất</label>
+            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Hoàn thiện & Nội thất</label>
             <select
               value={furniture}
               onChange={(e) => setFurniture(e.target.value)}
-              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs"
+              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs font-medium"
             >
-              <option value="">Tất cả nội thất</option>
-              <option value="full">Đầy đủ nội thất</option>
-              <option value="basic">Nội thất cơ bản</option>
-              <option value="raw">Bàn giao thô</option>
+              <option value="">Tất cả hoàn thiện & nội thất</option>
+              <optgroup label="🏡 THẤP TẦNG (SỐ TẦNG HOÀN THIỆN)">
+                <option value="hoàn thiện 1 tầng">Hoàn thiện 1 tầng</option>
+                <option value="hoàn thiện 2 tầng">Hoàn thiện 2 tầng</option>
+                <option value="hoàn thiện 3 tầng">Hoàn thiện 3 tầng</option>
+                <option value="hoàn thiện 4 tầng">Hoàn thiện 4 tầng</option>
+                <option value="hoàn thiện 5 tầng">Hoàn thiện 5 tầng (Cả nhà)</option>
+                <option value="thô">Xây thô hoàn thiện mặt ngoài</option>
+              </optgroup>
+              <optgroup label="🏢 CAO TẦNG & ĐỒ ĐẠC">
+                <option value="nguyên bản cđt">Nguyên bản CĐT (Bàn giao thô/cơ bản)</option>
+                <option value="basic">Nội thất cơ bản gắn tường</option>
+                <option value="full">Full đồ nội thất (Đầy đủ đồ)</option>
+                <option value="không đồ">Không đồ (Nhà/căn hộ trống)</option>
+              </optgroup>
             </select>
           </div>
 

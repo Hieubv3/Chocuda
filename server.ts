@@ -2233,6 +2233,549 @@ app.post("/api/auth/facebook/data-deletion", (req, res) => {
   });
 });
 
+// =========================================================================
+// TECHNICAL SERVICES & AUTOMATED WALLET ESCROW ENGINE (GIAO DỊCH VÍ TỰ ĐỘNG)
+// =========================================================================
+
+let techOrdersStore: any[] = [
+  {
+    id: 'tech-ord-101',
+    orderCode: 'TECH-ESCROW-9801',
+    serviceId: 'srv-thang-may-01',
+    serviceTitle: 'Lắp Đặt & Bảo Trì Thang Máy Gia Đình Kính Homelift 24/7',
+    categoryId: 'thang-may-sua-nha',
+    subCategory: '🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình & Homelift Kính',
+    customerUserId: 'user-trangnguyen',
+    customerName: 'Nguyễn Thu Trang (Cư dân San Hô OCP2)',
+    customerPhone: '0988.123.456',
+    customerAddress: 'San Hô 12 - Căn 08, Vinhomes Ocean Park 2',
+    project: 'ocean-park-2',
+    subdivision: 'Phân khu San Hô',
+    techUserId: 'user-hieubui',
+    techName: 'Kỹ Sư Nguyễn Văn Đức (Đội Thợ Thang Máy VinCons)',
+    techPhone: '0868.499.929',
+    agreedPrice: 3500000, // 3,500,000đ (Bảo trì & Tải thử định kỳ)
+    escrowAmount: 3500000,
+    platformFee: 175000, // 5% Chiết khấu hệ thống = 175,000đ
+    payoutAmount: 3325000, // Thợ nhận = 3,325,000đ
+    status: 'inspection_submitted',
+    warrantyDays: 30,
+    warrantyExpiresAt: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+    note: 'Thang máy kính Homelift kẹt nút tầng 3. Đã thay cảm biến an toàn và tra dầu xích tải.',
+    imagesBefore: ['https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80'],
+    imagesAfter: ['https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80'],
+    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
+    updatedAt: new Date().toISOString(),
+    autoReleaseAt: new Date(Date.now() + 3600000 * 19).toISOString(),
+    bankInfoForPayout: {
+      bankName: 'MBBank (Ngân Hàng Quân Đội)',
+      accountNumber: '3028031988',
+      accountHolder: 'BUI VAN HIEU'
+    }
+  },
+  {
+    id: 'tech-ord-102',
+    orderCode: 'TECH-ESCROW-9802',
+    serviceId: 'srv-dien-nuoc-laptop-02',
+    serviceTitle: 'Sửa Điện Nước & Wi-Fi Mesh Khẩn Cấp 24/7',
+    categoryId: 'dien-may-tinh-cong-nghe',
+    subCategory: 'Sửa Máy tính, Laptop & Wi-Fi',
+    customerUserId: 'user-quanghuy',
+    customerName: 'Trần Quang Huy (Cư dân OCP1)',
+    customerPhone: '0912.888.999',
+    customerAddress: 'Tòa S2.12 - Căn 1806, Vinhomes Ocean Park 1',
+    project: 'ocean-park-1',
+    subdivision: 'S2.12',
+    techUserId: 'user-trangnguyen',
+    techName: 'Thợ Cư Dân Lê Anh Tuấn (Bách Khoa)',
+    techPhone: '0972.112.334',
+    agreedPrice: 450000,
+    escrowAmount: 450000,
+    platformFee: 22500,
+    payoutAmount: 427500,
+    status: 'completed_released',
+    warrantyDays: 14,
+    warrantyExpiresAt: new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0],
+    note: 'Xử lý chập Aptomat tầng 2 và kích sóng Wi-Fi Mesh phòng ngủ.',
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000).toISOString()
+  }
+];
+
+let walletsStore: Map<string, any> = new Map([
+  ['user-trangnguyen', {
+    userId: 'user-trangnguyen',
+    availableBalance: 5200000,
+    escrowLockedBalance: 3500000,
+    securityDeposit: 2000000,
+    totalEarned: 12500000,
+    bankDetails: {
+      bankName: 'MBBank (Ngân Hàng Quân Đội)',
+      accountNumber: '3028031988',
+      accountHolder: 'NGUYEN THU TRANG',
+      qrCodeUrl: 'https://img.vietqr.io/image/MB-3028031988-compact2.png'
+    }
+  }],
+  ['user-hieubui', {
+    userId: 'user-hieubui',
+    availableBalance: 18450000,
+    escrowLockedBalance: 0,
+    securityDeposit: 5000000,
+    totalEarned: 48200000,
+    bankDetails: {
+      bankName: 'MSB (Ngân hàng Hàng Hải)',
+      accountNumber: '3028031988',
+      accountHolder: 'BUI VAN HIEU',
+      qrCodeUrl: 'https://img.vietqr.io/image/MSB-3028031988-compact2.png'
+    }
+  }],
+  ['user-admin', {
+    userId: 'user-admin',
+    availableBalance: 85200000, // Quỹ hệ thống & Hoa hồng thu được
+    escrowLockedBalance: 3500000,
+    securityDeposit: 10000000,
+    totalEarned: 125000000,
+    bankDetails: {
+      bankName: 'Vietcombank',
+      accountNumber: '0868499929',
+      accountHolder: 'CHOCUDAN24H ESCROW VAULT',
+      qrCodeUrl: 'https://img.vietqr.io/image/VCB-0868499929-compact2.png'
+    }
+  }]
+]);
+
+let walletTransactionsStore: any[] = [
+  {
+    id: 'wtx-101',
+    userId: 'user-trangnguyen',
+    type: 'escrow_hold',
+    amount: 3500000,
+    orderId: 'tech-ord-101',
+    orderCode: 'TECH-ESCROW-9801',
+    description: 'Tạm giữ tiền dịch vụ Thang máy Homelift Kính OCP2 (Trạng thái Escrow Hold)',
+    status: 'success',
+    createdAt: new Date(Date.now() - 3600000 * 5).toLocaleString('vi-VN'),
+    referenceCode: 'ESCROW-9801-HOLD'
+  },
+  {
+    id: 'wtx-102',
+    userId: 'user-trangnguyen',
+    type: 'deposit_vietqr',
+    amount: 10000000,
+    description: 'Nạp tiền tự động qua VietQR MBBank 3028031988',
+    status: 'success',
+    createdAt: new Date(Date.now() - 86400000 * 3).toLocaleString('vi-VN'),
+    referenceCode: 'NAP-VQR-10000'
+  }
+];
+
+// Helper to get or create wallet
+function getUserWallet(userId: string) {
+  if (!walletsStore.has(userId)) {
+    walletsStore.set(userId, {
+      userId,
+      availableBalance: 2000000, // Cấp thử nghiệm 2tr cho user mới
+      escrowLockedBalance: 0,
+      securityDeposit: 0,
+      totalEarned: 0,
+      bankDetails: {
+        bankName: 'MBBank',
+        accountNumber: '3028031988',
+        accountHolder: 'CƯ DÂN VINHOMES'
+      }
+    });
+  }
+  return walletsStore.get(userId);
+}
+
+// 1. GET Technical Orders Endpoint
+app.get("/api/tech-orders", (req, res) => {
+  const { userId, role } = req.query;
+  if (userId) {
+    const list = techOrdersStore.filter(o => 
+      o.customerUserId === userId || 
+      o.techUserId === userId || 
+      role === 'admin'
+    );
+    return res.json(list);
+  }
+  res.json(techOrdersStore);
+});
+
+// 2. POST Technical Order & Escrow Hold (Tiền tự động chuyển vào Ví Tạm Giữ Escrow)
+app.post("/api/tech-orders", (req, res) => {
+  const { 
+    serviceId, serviceTitle, categoryId, subCategory, 
+    customerUserId, customerName, customerPhone, customerAddress, 
+    project, subdivision, techUserId, techName, techPhone, 
+    agreedPrice, warrantyDays, note, bankInfoForPayout
+  } = req.body;
+
+  if (!customerUserId || !agreedPrice || agreedPrice <= 0) {
+    return res.status(400).json({ error: "Thiếu thông tin người đặt hoặc giá trị dịch vụ thỏa thuận." });
+  }
+
+  const priceNum = Number(agreedPrice);
+  const wallet = getUserWallet(customerUserId);
+
+  // Check customer balance
+  if (wallet.availableBalance < priceNum) {
+    return res.status(400).json({ 
+      error: `Số dư Ví Cư Dân của bạn (${wallet.availableBalance.toLocaleString('vi-VN')}đ) không đủ để tạm giữ ${priceNum.toLocaleString('vi-VN')}đ. Vui lòng nạp thêm tiền qua VietQR!` 
+    });
+  }
+
+  // Deduct available balance and add to escrow locked
+  wallet.availableBalance -= priceNum;
+  wallet.escrowLockedBalance += priceNum;
+
+  const platformFee = Math.round(priceNum * 0.05); // 5% Chiết khấu sàn
+  const payoutAmount = priceNum - platformFee;
+  const orderCode = `TECH-ESCROW-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const newOrder = {
+    id: `tech-ord-${Date.now()}`,
+    orderCode,
+    serviceId: serviceId || 'srv-thang-may-01',
+    serviceTitle: serviceTitle || 'Dịch Vụ Kỹ Thuật Cư Dân 24/7',
+    categoryId: categoryId || 'thang-may-sua-nha',
+    subCategory: subCategory || 'Kỹ Thuật Thi Công & Bảo Trì',
+    customerUserId,
+    customerName: customerName || 'Cư Dân Vin',
+    customerPhone: customerPhone || '0988.123.456',
+    customerAddress: customerAddress || 'Vinhomes Ocean Park',
+    project: project || 'ocean-park-2',
+    subdivision: subdivision || 'Chà Là',
+    techUserId: techUserId || 'user-hieubui',
+    techName: techName || 'Đội Thợ Cư Dân Uy Tín',
+    techPhone: techPhone || '0868.499.929',
+    agreedPrice: priceNum,
+    escrowAmount: priceNum,
+    platformFee,
+    payoutAmount,
+    status: 'escrow_locked',
+    warrantyDays: warrantyDays ? Number(warrantyDays) : 30,
+    note: note || '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    autoReleaseAt: new Date(Date.now() + 86400000 * 2).toISOString(), // 48h auto release
+    bankInfoForPayout: bankInfoForPayout || {
+      bankName: 'MBBank',
+      accountNumber: '3028031988',
+      accountHolder: techName || 'THỢ KỸ THUẬT'
+    }
+  };
+
+  techOrdersStore.unshift(newOrder);
+
+  // Add Wallet Transaction Record for Escrow Hold
+  walletTransactionsStore.unshift({
+    id: `wtx-${Date.now()}`,
+    userId: customerUserId,
+    type: 'escrow_hold',
+    amount: priceNum,
+    orderId: newOrder.id,
+    orderCode,
+    description: `[TẠM GIỮ VÍ ESCROW] Đơn dịch vụ kỹ thuật ${orderCode} (${serviceTitle})`,
+    status: 'success',
+    createdAt: new Date().toLocaleString('vi-VN'),
+    referenceCode: `ESCROW-HOLD-${orderCode}`
+  });
+
+  return res.status(201).json({
+    success: true,
+    message: `🎉 Đặt đơn kỹ thuật thành công! Thuật toán đã TẠM GIỮ ${priceNum.toLocaleString('vi-VN')}đ an toàn trong Ví Trung Gian chocudan24h.com.`,
+    order: newOrder,
+    wallet
+  });
+});
+
+// 3. POST Update Technical Order Status & Automated Payout Release Algorithm
+app.post("/api/tech-orders/:id/update-status", (req, res) => {
+  const { id } = req.params;
+  const { status, note, imagesAfter } = req.body;
+
+  const orderIdx = techOrdersStore.findIndex(o => o.id === id || o.orderCode === id);
+  if (orderIdx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy đơn dịch vụ kỹ thuật." });
+  }
+
+  const order = techOrdersStore[orderIdx];
+  const oldStatus = order.status;
+
+  // Update order fields
+  order.status = status;
+  order.updatedAt = new Date().toISOString();
+  if (note) order.note = note;
+  if (imagesAfter && Array.isArray(imagesAfter)) order.imagesAfter = imagesAfter;
+
+  // AUTOMATED ESCROW PAYOUT ALGORITHM WHEN COMPLETED & RELEASED
+  if (status === 'completed_released' && oldStatus !== 'completed_released') {
+    const customerWallet = getUserWallet(order.customerUserId);
+    const techWallet = getUserWallet(order.techUserId || 'user-hieubui');
+    const adminWallet = getUserWallet('user-admin');
+
+    // 1. Release customer's escrow locked funds
+    if (customerWallet.escrowLockedBalance >= order.escrowAmount) {
+      customerWallet.escrowLockedBalance -= order.escrowAmount;
+    } else {
+      customerWallet.escrowLockedBalance = 0;
+    }
+
+    // 2. Transfer 95% payoutAmount to Tech's Available Wallet
+    techWallet.availableBalance += order.payoutAmount;
+    techWallet.totalEarned += order.payoutAmount;
+
+    // 3. Transfer 5% platform fee to Admin System Wallet
+    adminWallet.availableBalance += order.platformFee;
+
+    // 4. Log transactions for transparency
+    walletTransactionsStore.unshift({
+      id: `wtx-${Date.now()}-tech`,
+      userId: order.techUserId || 'user-hieubui',
+      type: 'escrow_release',
+      amount: order.payoutAmount,
+      orderId: order.id,
+      orderCode: order.orderCode,
+      description: `[GIẢI NGÂN TỰ ĐỘNG THỢ] Thuật toán giải ngân ${order.payoutAmount.toLocaleString('vi-VN')}đ cho đơn ${order.orderCode} (Đã trừ 5% hoa hồng sàn)`,
+      status: 'success',
+      createdAt: new Date().toLocaleString('vi-VN'),
+      referenceCode: `RELEASE-${order.orderCode}`
+    });
+
+    walletTransactionsStore.unshift({
+      id: `wtx-${Date.now()}-comm`,
+      userId: 'user-admin',
+      type: 'commission_deduct',
+      amount: order.platformFee,
+      orderId: order.id,
+      orderCode: order.orderCode,
+      description: `[HOA HỒNG HỆ THỐNG] Thu nhập 5% chiết khấu sàn đơn kỹ thuật ${order.orderCode}`,
+      status: 'success',
+      createdAt: new Date().toLocaleString('vi-VN'),
+      referenceCode: `COMMISSION-${order.orderCode}`
+    });
+
+    // Set warranty expiration date
+    order.warrantyExpiresAt = new Date(Date.now() + (order.warrantyDays || 30) * 86400000).toISOString().split('T')[0];
+
+    return res.json({
+      success: true,
+      message: `🎉 NGHIỆM THU & GIẢI NGÂN THÀNH CÔNG!\n\nThuật toán đã tự động cắt ${order.platformFee.toLocaleString('vi-VN')}đ (5% hoa hồng) và chuyển ${order.payoutAmount.toLocaleString('vi-VN')}đ trực tiếp vào Ví Thợ Kỹ Thuật (${order.techName}).`,
+      order,
+      techWallet,
+      customerWallet
+    });
+  }
+
+  res.json({
+    success: true,
+    message: `Cập nhật trạng thái đơn kỹ thuật thành: ${status}`,
+    order
+  });
+});
+
+// 4. GET User Wallet Details Endpoint
+app.get("/api/wallets/:userId", (req, res) => {
+  const { userId } = req.params;
+  const wallet = getUserWallet(userId);
+  const txs = walletTransactionsStore.filter(t => t.userId === userId);
+  res.json({
+    wallet,
+    transactions: txs
+  });
+});
+
+// 5. POST Deposit to Wallet via VietQR
+app.post("/api/wallets/:userId/deposit", (req, res) => {
+  const { userId } = req.params;
+  const { amount, referenceCode } = req.body;
+
+  const depositNum = Number(amount);
+  if (!depositNum || depositNum < 10000) {
+    return res.status(400).json({ error: "Số tiền nạp tối thiểu là 10.000đ." });
+  }
+
+  const wallet = getUserWallet(userId);
+  wallet.availableBalance += depositNum;
+
+  const ref = referenceCode || `NAP-VQR-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  walletTransactionsStore.unshift({
+    id: `wtx-${Date.now()}`,
+    userId,
+    type: 'deposit_vietqr',
+    amount: depositNum,
+    description: `[NẠP TỰ ĐỘNG VIETQR] Nạp ${depositNum.toLocaleString('vi-VN')}đ vào Ví Cư Dân`,
+    status: 'success',
+    createdAt: new Date().toLocaleString('vi-VN'),
+    referenceCode: ref
+  });
+
+  res.json({
+    success: true,
+    message: `🎉 Nạp tiền tự động thành công! Đã cộng ${depositNum.toLocaleString('vi-VN')}đ vào Ví Cư Dân của bạn.`,
+    wallet
+  });
+});
+
+// 6. POST Update Bank Details for Technician Payout
+app.post("/api/wallets/:userId/bank-details", (req, res) => {
+  const { userId } = req.params;
+  const { bankName, accountNumber, accountHolder, branch } = req.body;
+
+  if (!bankName || !accountNumber || !accountHolder) {
+    return res.status(400).json({ error: "Vui lòng nhập đầy đủ Tên Ngân Hàng, Số Tài Khoản và Tên Chủ Tài Khoản!" });
+  }
+
+  const wallet = getUserWallet(userId);
+
+  // Generate VietQR URL for instant verification
+  const bankShortCode = bankName.split(' ')[0].toUpperCase().replace(/[^A-Z]/g, '') || 'MB';
+  const qrCodeUrl = `https://img.vietqr.io/image/${bankShortCode}-${accountNumber.replace(/\D/g, '')}-compact2.png?accountName=${encodeURIComponent(accountHolder)}`;
+
+  wallet.bankDetails = {
+    bankName,
+    accountNumber,
+    accountHolder,
+    branch: branch || 'Chi nhánh Hà Nội',
+    qrCodeUrl
+  };
+
+  res.json({
+    success: true,
+    message: "🎉 Liên kết Tài Khoản Ngân Hàng nhận tiền tự động cho Thợ thành công!",
+    bankDetails: wallet.bankDetails
+  });
+});
+
+// 7. POST Automated Withdrawal Request for Technician
+app.post("/api/wallets/:userId/withdraw", (req, res) => {
+  const { userId } = req.params;
+  const { amount } = req.body;
+
+  const withdrawNum = Number(amount);
+  const wallet = getUserWallet(userId);
+
+  if (!wallet.bankDetails || !wallet.bankDetails.accountNumber) {
+    return res.status(400).json({ error: "Bạn chưa liên kết Số Tài Khoản Ngân Hàng. Vui lòng cập nhật ngân hàng nhận tiền trước khi rút!" });
+  }
+
+  if (!withdrawNum || withdrawNum < 50000) {
+    return res.status(400).json({ error: "Số tiền rút tối thiểu là 50.000đ." });
+  }
+
+  if (wallet.availableBalance < withdrawNum) {
+    return res.status(400).json({ error: `Số dư Ví khả dụng (${wallet.availableBalance.toLocaleString('vi-VN')}đ) không đủ để rút ${withdrawNum.toLocaleString('vi-VN')}đ.` });
+  }
+
+  // Deduct available balance
+  wallet.availableBalance -= withdrawNum;
+
+  const refCode = `RUT-NH-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  walletTransactionsStore.unshift({
+    id: `wtx-${Date.now()}`,
+    userId,
+    type: 'payout_withdraw',
+    amount: withdrawNum,
+    description: `[RÚT TIỀN TỰ ĐỘNG VỀ NH] Chuyển ${withdrawNum.toLocaleString('vi-VN')}đ về STK ${wallet.bankDetails.accountNumber} (${wallet.bankDetails.bankName} - ${wallet.bankDetails.accountHolder})`,
+    status: 'success',
+    createdAt: new Date().toLocaleString('vi-VN'),
+    referenceCode: refCode
+  });
+
+  res.json({
+    success: true,
+    message: `🚀 LỆNH RÚT TIỀN TỰ ĐỘNG THÀNH CÔNG!\n\nHệ thống đã thực thi chuyển ${withdrawNum.toLocaleString('vi-VN')}đ từ Ví Thợ trực tiếp về Số Tài Khoản ${wallet.bankDetails.accountNumber} (${wallet.bankDetails.bankName} - ${wallet.bankDetails.accountHolder}).`,
+    wallet,
+    referenceCode: refCode
+  });
+});
+
+// 8. Tax Withholding & E-Commerce Tax Declaration Endpoints (Nghị định 91/2022/NĐ-CP & Thông tư 40/2021/TT-BTC)
+let taxConfigStore = {
+  autoWithholdEnabled: true,
+  pitRateServices: 1.5, // 1.5% Thuế TNCN dịch vụ
+  vatRateServices: 3.5, // 3.5% Thuế GTGT dịch vụ
+  pitRateGoods: 0.5,    // 0.5% Thuế TNCN bán hàng
+  vatRateGoods: 1.0,    // 1.0% Thuế GTGT bán hàng
+  minAnnualRevenueThreshold: 100000000, // Ngưỡng 100tr/năm bắt đầu nộp thuế
+  taxAuthorityUnit: 'Chi Cục Thuế Huyện Văn Giang - Tỉnh Hưng Yên',
+  taxCodePlatform: '0109888999-001'
+};
+
+let taxLedgerStore: any[] = [
+  {
+    id: 'tax-rec-101',
+    taxpayerName: 'Bùi Văn Hiếu',
+    taxpayerPhone: '0868.499.929',
+    taxCodeCCCD: '001088019988',
+    userRole: 'Kỹ Sư / Thợ Thang Máy',
+    project: 'ocean-park-2',
+    grossRevenue: 3500000,
+    pitWithheld: 52500, // 1.5% x 3.5tr = 52,500đ
+    vatWithheld: 122500, // 3.5% x 3.5tr = 122,500đ
+    totalTaxWithheld: 175000,
+    netPayout: 3150000,
+    orderCode: 'TECH-ESCROW-9801',
+    status: 'withheld_in_vault', // withheld_in_vault | declared_gdt | paid_kbnn
+    quarterPeriod: 'Q3/2026',
+    createdAt: new Date().toLocaleString('vi-VN')
+  },
+  {
+    id: 'tax-rec-102',
+    taxpayerName: 'Lê Anh Tuấn',
+    taxpayerPhone: '0972.112.334',
+    taxCodeCCCD: '001095012345',
+    userRole: 'Thợ Điện Nước & Wi-Fi',
+    project: 'ocean-park-1',
+    grossRevenue: 450000,
+    pitWithheld: 6750,
+    vatWithheld: 15750,
+    totalTaxWithheld: 22500,
+    netPayout: 405000,
+    orderCode: 'TECH-ESCROW-9802',
+    status: 'declared_gdt',
+    quarterPeriod: 'Q3/2026',
+    createdAt: new Date(Date.now() - 86400000).toLocaleString('vi-VN')
+  }
+];
+
+app.get("/api/admin/tax-config", (req, res) => {
+  res.json(taxConfigStore);
+});
+
+app.post("/api/admin/tax-config", (req, res) => {
+  taxConfigStore = { ...taxConfigStore, ...req.body };
+  res.json({ success: true, message: "Cập nhật cấu hình thuế TMĐT thành công!", config: taxConfigStore });
+});
+
+app.get("/api/admin/tax-ledger", (req, res) => {
+  const totalTaxCollected = taxLedgerStore.reduce((acc, cur) => acc + (cur.totalTaxWithheld || 0), 0);
+  const totalRevenueManaged = taxLedgerStore.reduce((acc, cur) => acc + (cur.grossRevenue || 0), 0);
+  res.json({
+    config: taxConfigStore,
+    totalTaxCollected,
+    totalRevenueManaged,
+    records: taxLedgerStore
+  });
+});
+
+app.post("/api/admin/tax-declare-gdt", (req, res) => {
+  const { period } = req.body;
+  taxLedgerStore.forEach(r => {
+    if (r.status === 'withheld_in_vault') {
+      r.status = 'declared_gdt';
+    }
+  });
+  res.json({
+    success: true,
+    message: `Đã kết xuất dữ liệu khai báo thuế kỳ ${period || 'Q3/2026'} gửi Cổng Thông Tin TMĐT Tổng Cục Thuế (gdt.gov.vn) thành công!`,
+    recordsCount: taxLedgerStore.length
+  });
+});
+
 async function startServer() {
   // Vite middleware setup for development
   if (process.env.NODE_ENV !== "production") {

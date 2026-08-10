@@ -100,7 +100,21 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
       list = list.filter(p => p.category === selectedCategory);
     }
     if (furniture) {
-      list = list.filter(p => p.furniture === furniture);
+      if (furniture === 'full') {
+        list = list.filter(p => p.furniture === 'full' || (p.completionStatus && p.completionStatus.toLowerCase().includes('full')) || (p.furnitureDetail && p.furnitureDetail.toLowerCase().includes('full')));
+      } else if (furniture === 'basic') {
+        list = list.filter(p => p.furniture === 'basic' || (p.completionStatus && p.completionStatus.toLowerCase().includes('cơ bản')));
+      } else if (furniture === 'raw') {
+        list = list.filter(p => p.furniture === 'raw' || (p.completionStatus && (p.completionStatus.toLowerCase().includes('thô') || p.completionStatus.toLowerCase().includes('nguyên bản'))));
+      } else {
+        const target = furniture.toLowerCase();
+        list = list.filter(p =>
+          p.furniture === target ||
+          (p.completionStatus && p.completionStatus.toLowerCase().includes(target)) ||
+          (p.furnitureDetail && p.furnitureDetail.toLowerCase().includes(target)) ||
+          (p.completionDetail && p.completionDetail.toLowerCase().includes(target))
+        );
+      }
     }
     if (bedrooms) {
       list = list.filter(p => p.bedrooms >= Number(bedrooms));

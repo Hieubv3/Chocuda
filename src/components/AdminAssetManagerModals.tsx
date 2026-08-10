@@ -491,6 +491,40 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
     }
   );
 
+  const handleMainBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Kích thước ảnh tối đa là 5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setFormData(prev => ({ ...prev, image: reader.result as string }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMasterplanUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Kích thước ảnh tối đa là 5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setFormData(prev => ({ ...prev, masterplanUrl: reader.result as string }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title) {
@@ -537,15 +571,22 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             </h4>
             <div className="flex flex-col sm:flex-row gap-4 items-center">
               <img src={formData.image} alt="Project Main" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
-              <div className="flex-1 w-full space-y-1">
-                <label className="text-[10px] text-slate-400 block font-bold">URL Ảnh Banner Chính:</label>
-                <input
-                  type="url"
-                  required
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
-                />
+              <div className="flex-1 w-full space-y-2">
+                <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh banner chính (*):</label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="url"
+                    required
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    className="flex-1 p-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
+                    placeholder="https://..."
+                  />
+                  <label className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shrink-0 transition shadow">
+                    <Upload className="w-4 h-4" /> Tải Ảnh Từ Thiết Bị
+                    <input type="file" accept="image/*" onChange={handleMainBannerUpload} className="hidden" />
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -557,15 +598,21 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             </h4>
             <div className="flex flex-col sm:flex-row gap-4 items-center">
               <img src={formData.masterplanUrl || formData.image} alt="Masterplan" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
-              <div className="flex-1 w-full space-y-1">
-                <label className="text-[10px] text-slate-400 block font-bold">URL Ảnh Sơ Đồ Quy Hoạch:</label>
-                <input
-                  type="url"
-                  value={formData.masterplanUrl || ''}
-                  onChange={(e) => setFormData({ ...formData, masterplanUrl: e.target.value })}
-                  className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
-                  placeholder="https://images.unsplash.com/..."
-                />
+              <div className="flex-1 w-full space-y-2">
+                <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh sơ đồ quy hoạch:</label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="url"
+                    value={formData.masterplanUrl || ''}
+                    onChange={(e) => setFormData({ ...formData, masterplanUrl: e.target.value })}
+                    className="flex-1 p-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
+                    placeholder="https://images.unsplash.com/..."
+                  />
+                  <label className="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shrink-0 transition shadow">
+                    <Upload className="w-4 h-4" /> Tải Ảnh Từ Thiết Bị
+                    <input type="file" accept="image/*" onChange={handleMasterplanUpload} className="hidden" />
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -677,6 +724,23 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
     }
   );
 
+  const handleNewsImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Kích thước ảnh tối đa là 5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setFormData(prev => ({ ...prev, image: reader.result as string }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.content) {
@@ -715,19 +779,26 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
           {/* Featured Image Section */}
           <div className="p-4 bg-slate-50 dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
             <h4 className="font-extrabold text-xs text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-              <ImageIcon className="w-4 h-4 text-amber-500" /> Hình Ảnh Minh Họa Bài Viết (Thay Ảnh Demo)
+              <ImageIcon className="w-4 h-4 text-amber-500" /> Hình Ảnh Minh Họa Bài Viết (Tải Ảnh Từ Thiết Bị)
             </h4>
             <div className="flex flex-col sm:flex-row gap-4 items-center">
               <img src={formData.image} alt="News Featured" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
-              <div className="flex-1 w-full space-y-1">
-                <label className="text-[10px] text-slate-400 block font-bold">URL Hình Ảnh đại diện bài viết (*):</label>
-                <input
-                  type="url"
-                  required
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
-                />
+              <div className="flex-1 w-full space-y-2">
+                <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh đại diện bài viết (*):</label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="url"
+                    required
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    className="flex-1 p-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
+                    placeholder="https://..."
+                  />
+                  <label className="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shrink-0 transition shadow">
+                    <Upload className="w-4 h-4" /> Tải Ảnh Từ Thiết Bị
+                    <input type="file" accept="image/*" onChange={handleNewsImageUpload} className="hidden" />
+                  </label>
+                </div>
               </div>
             </div>
           </div>

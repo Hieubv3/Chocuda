@@ -42,6 +42,33 @@ export type LegalStatus = 'so-do' | 'hop-dong-mua-ban' | 'dang-cho-so';
 
 export type VipLevel = 'normal' | 'silver' | 'gold' | 'diamond';
 
+// Dynamic Completion & Furniture Options for Low-rise & High-rise
+export const LOW_RISE_COMPLETION_OPTIONS = [
+  { value: 'thô', label: 'Bàn giao thô (Xây thô hoàn thiện mặt ngoài)' },
+  { value: 'hoàn thiện 1 tầng', label: 'Hoàn thiện 1 tầng (Các tầng trên xây thô)' },
+  { value: 'hoàn thiện 2 tầng', label: 'Hoàn thiện 2 tầng' },
+  { value: 'hoàn thiện 3 tầng', label: 'Hoàn thiện 3 tầng' },
+  { value: 'hoàn thiện 4 tầng', label: 'Hoàn thiện 4 tầng' },
+  { value: 'hoàn thiện 5 tầng', label: 'Hoàn thiện 5 tầng (Hoàn thiện toàn nhà / tất cả tầng)' },
+  { value: 'khác', label: 'Khác / Tự nhập số tầng hoàn thiện' }
+];
+
+export const LOW_RISE_FURNITURE_OPTIONS = [
+  { value: 'không đồ', label: 'Không đồ (Nhà trống)' },
+  { value: 'đồ cơ bản', label: 'Nội thất cơ bản (Đồ gắn tường, vách ngăn, WC)' },
+  { value: 'full đồ', label: 'Full nội thất cao cấp (Đầy đủ đồ, xách vali vào ở)' },
+  { value: 'khác', label: 'Khác / Tự nhập chi tiết' }
+];
+
+export const HIGH_RISE_COMPLETION_FURNITURE_OPTIONS = [
+  { value: 'nguyên bản cđt', label: 'Nguyên bản Chủ đầu tư (Bàn giao thô/cơ bản CĐT)' },
+  { value: 'hoàn thiện cơ bản', label: 'Hoàn thiện cơ bản + Đồ gắn tường (Điều hòa, tủ bếp)' },
+  { value: 'full đồ', label: 'Full đồ nội thất (Sẵn vali xách vào ở ngay)' },
+  { value: 'nội thất cao cấp', label: 'Nội thất cao cấp nhập khẩu' },
+  { value: 'không đồ', label: 'Không đồ (Căn hộ trống)' },
+  { value: 'khác', label: 'Khác / Tự nhập chi tiết' }
+];
+
 export interface Property {
   id: string;
   title: string;
@@ -68,6 +95,11 @@ export interface Property {
   sellerPhone: string;
   sellerRole: 'admin' | 'sale' | 'owner';
   subdivision?: string; // Ví dụ: Chà Là, San Hô, Hải Tăng...
+  
+  // Tình Trạng Hoàn Thiện Tầng & Nội Thất Chi Tiết (Thấp Tầng vs Cao Tầng)
+  completionStatus?: string; // e.g. "Hoàn thiện 1 tầng", "Hoàn thiện 3 tầng", "Xây thô", "Nguyên bản CĐT"
+  completionDetail?: string; // e.g. "Tầng 1-2 kinh doanh, tầng 3-4 thô", "CĐT bàn giao kèm điều hòa"
+  furnitureDetail?: string;  // e.g. "Full đồ gỗ sồi cao cấp", "Không đồ", "Đồ gắn tường"
   
   // Sổ Đỏ Pháp Lý & Che Thông Tin
   soDoImage?: string;
@@ -567,6 +599,87 @@ export interface ServiceJobDispatch {
   completedAt?: string;
   ratingByCustomer?: number;
   createdAt: string;
+}
+
+// ==========================================
+// TECHNICAL SERVICES & AUTOMATED ESCROW WALLET
+// ==========================================
+
+export type TechOrderStatus = 
+  | 'created' 
+  | 'escrow_locked' 
+  | 'tech_assigned' 
+  | 'in_progress' 
+  | 'inspection_submitted' 
+  | 'completed_released' 
+  | 'disputed' 
+  | 'refunded' 
+  | 'cancelled';
+
+export interface TechnicalServiceOrder {
+  id: string;
+  orderCode: string;
+  serviceId: string;
+  serviceTitle: string;
+  categoryId: string;
+  subCategory: string;
+  customerUserId: string;
+  customerName: string;
+  customerPhone: string;
+  customerAddress: string;
+  project: ProjectCategory;
+  subdivision?: string;
+  techUserId?: string;
+  techName: string;
+  techPhone: string;
+  agreedPrice: number; // VNĐ
+  escrowAmount: number; // VNĐ
+  platformFee: number; // VNĐ (% chiết khấu sàn)
+  payoutAmount: number; // VNĐ (Tiền thợ thực nhận)
+  status: TechOrderStatus;
+  warrantyDays: number;
+  warrantyExpiresAt?: string;
+  note: string;
+  imagesBefore?: string[];
+  imagesAfter?: string[];
+  createdAt: string;
+  updatedAt: string;
+  autoReleaseAt?: string;
+  bankInfoForPayout?: {
+    bankName: string;
+    accountNumber: string;
+    accountHolder: string;
+  };
+}
+
+export interface UserBankDetails {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+  branch?: string;
+  qrCodeUrl?: string;
+}
+
+export interface UserWallet {
+  userId: string;
+  availableBalance: number;
+  escrowLockedBalance: number;
+  securityDeposit: number; // Tiền cọc cam kết bảo hành thợ
+  totalEarned: number;
+  bankDetails?: UserBankDetails;
+}
+
+export interface WalletTransaction {
+  id: string;
+  userId: string;
+  type: 'deposit_vietqr' | 'escrow_hold' | 'escrow_release' | 'commission_deduct' | 'payout_withdraw' | 'refund';
+  amount: number;
+  orderId?: string;
+  orderCode?: string;
+  description: string;
+  status: 'pending' | 'success' | 'failed';
+  createdAt: string;
+  referenceCode?: string;
 }
 
 export const isAdminProperty = (property: Property): boolean => {
