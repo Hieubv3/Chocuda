@@ -891,10 +891,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       </div>
 
       {/* Vertical Left Sidebar Admin Navigation Layout */}
-      <div className="flex flex-col lg:flex-row gap-6 items-start">
+      <div className="flex flex-col md:flex-row gap-6 items-start">
         
         {/* LEFT VERTICAL SIDEBAR MENU */}
-        <aside className="w-full lg:w-72 shrink-0 bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200 dark:border-slate-800 shadow-xl lg:sticky lg:top-20 z-10 space-y-4">
+        <aside className="w-full md:w-64 lg:w-72 shrink-0 bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200 dark:border-slate-800 shadow-xl md:sticky md:top-20 z-10 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 px-1">
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></div>
