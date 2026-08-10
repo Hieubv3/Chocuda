@@ -87,8 +87,13 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
-    alert('Đã lưu cập nhật bất động sản & hình ảnh thành công!');
+    const approvedProperty: Property = {
+      ...formData,
+      approved: true,
+      status: 'approved'
+    };
+    onSave(approvedProperty);
+    alert('✅ Đã lưu cập nhật bất động sản & đồng bộ trực tiếp lên Public Website thành công!');
     onClose();
   };
 
@@ -747,8 +752,12 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
       alert('Vui lòng điền đầy đủ tiêu đề và nội dung bài viết');
       return;
     }
-    onSave(formData);
-    alert('Đã lưu bài viết tin tức thành công!');
+    const publishedArticle: NewsArticle = {
+      ...formData,
+      status: 'published'
+    };
+    onSave(publishedArticle);
+    alert('✅ Đã lưu bài viết tin tức & xuất bản công khai lên Public Website!');
     onClose();
   };
 

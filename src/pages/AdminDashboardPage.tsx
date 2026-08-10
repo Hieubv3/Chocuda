@@ -102,6 +102,55 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   ]);
 
   // Leads filter & local sync state
+  // Multi-level approval & Public Synchronization state
+  const [isSyncingPublic, setIsSyncingPublic] = useState(false);
+
+  const handleSyncToPublicWeb = async () => {
+    setIsSyncingPublic(true);
+
+    let newlyApprovedProperties = 0;
+    for (const p of properties) {
+      if (!p.approved && p.status !== 'approved') {
+        try {
+          await onApproveProperty(p.id);
+          newlyApprovedProperties++;
+        } catch (e) {
+          console.warn('Auto approve property error:', e);
+        }
+      }
+    }
+
+    let newlyPublishedNews = 0;
+    for (const n of news) {
+      if (n.status === 'draft' && onUpdateNews) {
+        onUpdateNews({ ...n, status: 'published' });
+        newlyPublishedNews++;
+      }
+    }
+
+    if (onRefreshData) {
+      onRefreshData();
+    }
+
+    setTimeout(() => {
+      setIsSyncingPublic(false);
+      alert(
+        `✅ ĐÃ ĐỒNG BỘ NỘI DUNG LÊN PUBLIC WEBSITE THÀNH CÔNG!\n\n` +
+        `• Đã phê duyệt mới: ${newlyApprovedProperties} tin BĐS chờ duyệt, ${newlyPublishedNews} bài viết tin tức.\n` +
+        `• Tổng dữ liệu hiển thị public: ${properties.length} tin BĐS, ${news.length} tin tức, ${projects.length} sơ đồ dự án.\n` +
+        `• Toàn bộ Admin cấp dưới & Khách hàng đã có thể xem dữ liệu mới nhất trên giao diện Web Public.`
+      );
+    }, 600);
+  };
+
+  const handleUnapproveProperty = (p: Property) => {
+    if (confirm(`Bạn có chắc muốn trả tin "${p.title}" về trạng thái Chờ Duyệt (Sub-admin)?`)) {
+      if (onUpdateProperty) {
+        onUpdateProperty({ ...p, approved: false, status: 'pending' });
+      }
+    }
+  };
+
   const [analyticsTimeFrame, setAnalyticsTimeFrame] = useState<'today' | '7d' | '30d' | 'all'>('30d');
   const [leadSearch, setLeadSearch] = useState('');
   const [leadStatusFilter, setLeadStatusFilter] = useState<string>('all');
@@ -696,6 +745,85 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           >
             <RefreshCw className="w-4 h-4" />
           </button>
+        </div>
+      </div>
+
+      {/* BỘ PHÊ DUYỆT CẤP QUẢN TRỊ & ĐỒNG BỘ WEB PUBLIC */}
+      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-indigo-950 p-5 rounded-3xl border-2 border-emerald-500/50 shadow-2xl text-white space-y-4">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                CHẾ ĐỘ CẤP QUẢN TRỊ & PHÊ DUYỆT SUB-ADMIN
+              </span>
+              <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold text-[10px] rounded-full">
+                ● REALTIME SYNC ACTIVE
+              </span>
+            </div>
+            <h3 className="text-base sm:text-lg font-black text-white mt-1 flex items-center gap-2">
+              <span>🔄 BỘ ĐỒNG BỘ NỘI DUNG LÊN PUBLIC WEBSITE & CHẾ ĐỘ CẤP CHỜ DUYỆT</span>
+            </h3>
+            <p className="text-xs text-slate-300 mt-0.5 max-w-3xl">
+              Các bài đăng do Admin cấp dưới hoặc Môi giới/Chủ nhà tải lên sẽ ở trạng thái <strong className="text-amber-400">🟡 Chờ Duyệt</strong>. Khi Admin cấp cao bấm nút <strong>"Phê duyệt & Đồng bộ Public"</strong>, toàn bộ nội dung chuẩn hóa sẽ lập tức xuất bản trực tiếp lên giao diện Web công khai.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+            <button
+              onClick={handleSyncToPublicWeb}
+              disabled={isSyncingPublic}
+              className="px-5 py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:brightness-110 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl flex items-center gap-2 border border-emerald-300 transform active:scale-95 cursor-pointer"
+            >
+              <RefreshCw className={`w-4 h-4 text-slate-950 ${isSyncingPublic ? 'animate-spin' : ''}`} />
+              <span>{isSyncingPublic ? 'Đang đồng bộ Public...' : '🔄 NÚT ĐỒNG BỘ LÊN WEB PUBLIC'}</span>
+            </button>
+
+            {pendingProperties.length > 0 && (
+              <button
+                onClick={handleSyncToPublicWeb}
+                className="px-4 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-1.5 cursor-pointer"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Duyệt Nhanh {pendingProperties.length} Tin Chờ</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Status breakdown metrics */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-800 text-xs">
+          <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
+            <span className="text-[10px] text-slate-400 font-bold uppercase block">Chờ Cấp Phê Duyệt</span>
+            <div className="text-lg font-black text-amber-400 flex items-center gap-1.5">
+              <span>{pendingProperties.length} Tin BĐS</span>
+              <span className="w-2 h-2 bg-amber-500 rounded-full animate-ping"></span>
+            </div>
+            <span className="text-[10px] text-slate-400 block">Sub-admin / Môi giới gửi</span>
+          </div>
+
+          <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
+            <span className="text-[10px] text-slate-400 font-bold uppercase block">Đã Đồng Bộ Public</span>
+            <div className="text-lg font-black text-emerald-400">
+              {properties.filter(p => p.approved || p.status === 'approved').length} / {properties.length} Căn
+            </div>
+            <span className="text-[10px] text-emerald-400 font-semibold block">✓ Đang công khai trên Web</span>
+          </div>
+
+          <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
+            <span className="text-[10px] text-slate-400 font-bold uppercase block">Bài Viết & Tin Tức</span>
+            <div className="text-lg font-black text-sky-400">
+              {news.filter(n => n.status === 'published').length} / {news.length} Bài
+            </div>
+            <span className="text-[10px] text-sky-400 font-semibold block">✓ Chuẩn SEO Public</span>
+          </div>
+
+          <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
+            <span className="text-[10px] text-slate-400 font-bold uppercase block">Dự Án Masterplan</span>
+            <div className="text-lg font-black text-purple-300">
+              {projects.length} Dự Án
+            </div>
+            <span className="text-[10px] text-purple-400 font-semibold block">✓ Sơ đồ & Bảng giá</span>
+          </div>
         </div>
       </div>
 
@@ -1498,13 +1626,21 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             </button>
 
                             {/* Approve if pending */}
-                            {(!p.approved && p.status !== 'approved') && (
+                            {(!p.approved && p.status !== 'approved') ? (
                               <button
                                 onClick={() => onApproveProperty(p.id)}
-                                className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition"
-                                title="Duyệt tin này ngay"
+                                className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg text-[10px] transition shadow flex items-center gap-1"
+                                title="Phê duyệt tin này và đồng bộ lên Web Public"
                               >
-                                <Check className="w-3.5 h-3.5" />
+                                <Check className="w-3.5 h-3.5" /> Duyệt & Đồng Bộ Public
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleUnapproveProperty(p)}
+                                className="px-2 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg text-[10px] transition flex items-center gap-1"
+                                title="Trả tin này về trạng thái Chờ Duyệt (Dành cho Sub-admin kiểm duyệt lại)"
+                              >
+                                🟡 Trả Chờ Duyệt
                               </button>
                             )}
 
@@ -1635,8 +1771,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <th className="p-3 font-bold text-slate-500">Ảnh bìa</th>
                   <th className="p-3 font-bold text-slate-500">Tiêu đề bài viết</th>
                   <th className="p-3 font-bold text-slate-500">Chuyên mục</th>
+                  <th className="p-3 font-bold text-slate-500">Trạng Thái Duyệt</th>
                   <th className="p-3 font-bold text-slate-500">Tác giả & Ngày đăng</th>
-                  <th className="p-3 font-bold text-slate-500">Thao tác</th>
+                  <th className="p-3 font-bold text-slate-500">Thao tác Phê Duyệt</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -1654,12 +1791,41 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         {item.category.toUpperCase()}
                       </span>
                     </td>
+                    <td className="p-3">
+                      {item.status === 'published' ? (
+                        <span className="px-2 py-1 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-lg text-[10px] inline-flex items-center gap-1">
+                          🟢 Đã Đồng Bộ Public
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-extrabold rounded-lg text-[10px] inline-flex items-center gap-1">
+                          🟡 Chờ Duyệt (Nháp)
+                        </span>
+                      )}
+                    </td>
                     <td className="p-3 text-[11px] text-slate-500">
                       <div>{item.author}</div>
                       <div className="text-[10px] text-slate-400">{item.publishedAt}</div>
                     </td>
                     <td className="p-3">
-                      <div className="flex space-x-1.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {item.status === 'published' ? (
+                          <button
+                            onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'draft' })}
+                            className="px-2 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg transition text-[10px]"
+                            title="Chuyển bài này về trạng thái Chờ Duyệt (Sub-admin kiểm duyệt lại)"
+                          >
+                            🟡 Trả Chờ Duyệt
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'published' })}
+                            className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg transition shadow text-[10px]"
+                            title="Phê duyệt bài viết và xuất bản lên Web Public"
+                          >
+                            🟢 Duyệt & Đăng Public
+                          </button>
+                        )}
+
                         <button
                           onClick={() => setEditingNews(item)}
                           className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[10px]"

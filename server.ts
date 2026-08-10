@@ -810,7 +810,7 @@ app.get("/api/properties", (req, res) => {
   } else {
     // By default for non-admin viewers, return approved properties
     if (req.query.isAdmin !== 'true') {
-      filtered = filtered.filter(p => p.status === 'approved');
+      filtered = filtered.filter(p => p.status === 'approved' || p.approved === true);
     }
   }
 

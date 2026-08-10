@@ -572,7 +572,7 @@ export const App: React.FC = () => {
             language={language}
             projects={projects}
             properties={properties.filter(p => p.approved || p.status === 'approved')}
-            news={news}
+            news={news.filter(n => n.status !== 'draft')}
             setCurrentTab={setCurrentTab}
             onSelectProperty={setSelectedPropertyModal}
             savedIds={savedIds}
@@ -628,7 +628,7 @@ export const App: React.FC = () => {
               setSelectedProjectId(projId);
               setCurrentTab('sale');
             }}
-            properties={properties}
+            properties={properties.filter(p => p.approved || p.status === 'approved')}
             onSelectProperty={setSelectedPropertyModal}
             savedIds={savedIds}
             onToggleSave={handleToggleSave}
@@ -648,7 +648,7 @@ export const App: React.FC = () => {
         );
 
       case 'news':
-        return <NewsPage news={news} language={language} currentUser={user} />;
+        return <NewsPage news={news.filter(n => n.status !== 'draft')} language={language} currentUser={user} />;
 
       case 'post':
         return (
