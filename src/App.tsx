@@ -23,8 +23,9 @@ import { AuthModal } from './components/AuthModal';
 import { AiWriterModal } from './components/AiWriterModal';
 import { OmnichannelBulkMarketingModal } from './components/OmnichannelBulkMarketingModal';
 import { AndroidApkModal } from './components/AndroidApkModal';
+import { AdBannerWidget } from './components/AdBannerWidget';
 import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig } from './types';
-import { INITIAL_PROPERTIES, INITIAL_PROJECTS, INITIAL_NEWS } from './data/initialData';
+import { INITIAL_PROPERTIES, INITIAL_PROJECTS, INITIAL_NEWS, INITIAL_ADS } from './data/initialData';
 import { safeLocalStorageGet, safeLocalStorageSet } from './lib/imageUtils';
 
 export const App: React.FC = () => {
@@ -863,6 +864,9 @@ export const App: React.FC = () => {
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300 pb-16 md:pb-0">
       
+      {/* Top Banner (If active) */}
+      <AdBannerWidget ads={INITIAL_ADS} position="header_top" />
+
       {/* Navigation Header */}
       <Header
         language={language}
@@ -1066,6 +1070,11 @@ export const App: React.FC = () => {
           <span className="text-[10px] mt-0.5 font-medium">Cá Nhân</span>
         </button>
       </div>
+
+      {/* Global PC Floating Banners & Center Modal Popup Banner */}
+      <AdBannerWidget ads={INITIAL_ADS} position="float_right_pc" />
+      <AdBannerWidget ads={INITIAL_ADS} position="float_left_pc" />
+      <AdBannerWidget ads={INITIAL_ADS} position="popup_modal" />
 
     </div>
   );

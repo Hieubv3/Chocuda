@@ -159,6 +159,26 @@ export const INITIAL_ADS: AdBanner[] = [
     active: true,
     clickCount: 2310,
     createdAt: '2026-07-24'
+  },
+  {
+    id: 'ad-04',
+    title: '⚡ BẤM XEM NGAY: Quỹ Căn Biệt Thự - Shophouse Đã Có Sổ Đỏ Lâu Dài',
+    imageUrl: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=600&q=80',
+    linkUrl: 'https://zalo.me/0868499929',
+    position: 'float_right_pc',
+    active: true,
+    clickCount: 520,
+    createdAt: '2026-07-25'
+  },
+  {
+    id: 'ad-05',
+    title: '🚕 Dịch Vụ Taxi & Chuyển Nhà Cư Dân Vinhomes 24/7 - Hotline: 0868.499.929',
+    imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80',
+    linkUrl: 'tel:0868499929',
+    position: 'float_left_pc',
+    active: true,
+    clickCount: 380,
+    createdAt: '2026-07-26'
   }
 ];
 

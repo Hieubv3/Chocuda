@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project } from '../types';
-import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet } from 'lucide-react';
+import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout } from 'lucide-react';
 
 interface ReputationPost {
   id: string;
@@ -1260,11 +1260,121 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       onChange={e => setNewAdPos(e.target.value as any)}
                       className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-amber-300 dark:border-slate-700 rounded-2xl text-amber-600 dark:text-amber-400 font-black text-xs focus:ring-2 focus:ring-amber-500 outline-none shadow-sm"
                     >
-                      <option value="header_top">Thanh trên cùng Header (Top Banner)</option>
-                      <option value="home_middle">Giữa Trang Chủ (Middle Banner)</option>
-                      <option value="home_sidebar">Cột Bên Trang Chủ (Sidebar Banner)</option>
-                      <option value="property_detail">Trang Chi Tiết Căn (Detail Banner)</option>
+                      <option value="header_top">📌 Thanh trên cùng Header (Top Banner Bar)</option>
+                      <option value="float_right_pc">📌 Cạnh Phải Web Bám Đuổi trên PC (Sticky Float Right - Có nút tắt ❌)</option>
+                      <option value="float_left_pc">📌 Cạnh Trái Web Bám Đuổi trên PC (Sticky Float Left - Có nút tắt ❌)</option>
+                      <option value="home_middle">📌 Giữa Trang Chủ (Nằm giữa danh sách tin)</option>
+                      <option value="home_sidebar">📌 Cột Phải Trang Chủ (Sidebar Banner)</option>
+                      <option value="property_detail">📌 Trang Chi Tiết BĐS (Detail Page Banner)</option>
+                      <option value="popup_modal">📌 Pop-Up Nổi Trung Tâm Màn Hình (Center Popup - Có nút tắt ❌)</option>
                     </select>
+                  </div>
+
+                  {/* Interactive Visual Website Blueprint Setup Map */}
+                  <div className="bg-slate-900 border-2 border-amber-500/40 rounded-2xl p-3 space-y-2 text-white">
+                    <div className="flex items-center justify-between">
+                      <span className="font-extrabold text-amber-400 text-[11px] uppercase flex items-center gap-1">
+                        <Layout className="w-3.5 h-3.5" /> SƠ ĐỒ VỊ TRÍ TRỰC QUAN (BẤM VÀO ĐỂ CHỌN):
+                      </span>
+                      <span className="text-[10px] text-emerald-400 font-bold uppercase">
+                        {newAdPos === 'header_top' && 'Top Header'}
+                        {newAdPos === 'float_right_pc' && 'Cạnh Phải PC (Bám đuổi)'}
+                        {newAdPos === 'float_left_pc' && 'Cạnh Trái PC (Bám đuổi)'}
+                        {newAdPos === 'home_middle' && 'Giữa Trang Chủ'}
+                        {newAdPos === 'home_sidebar' && 'Sidebar Cột Phải'}
+                        {newAdPos === 'property_detail' && 'Trang Chi Tiết'}
+                        {newAdPos === 'popup_modal' && 'Pop-Up Nổi'}
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-700 bg-slate-950 rounded-xl p-2 space-y-1.5 text-[10px] font-bold">
+                      {/* Top Header */}
+                      <div
+                        onClick={() => setNewAdPos('header_top')}
+                        className={`p-1.5 rounded text-center cursor-pointer transition border flex items-center justify-between ${
+                          newAdPos === 'header_top'
+                            ? 'bg-amber-500 text-slate-950 border-white font-black shadow-md'
+                            : 'bg-slate-800 text-amber-300 border-amber-500/30 hover:bg-slate-750'
+                        }`}
+                      >
+                        <span>📌 Thanh Trên Cùng Header</span>
+                        <span className="text-[9px] opacity-80">({adsList.filter(a => a.position === 'header_top').length})</span>
+                      </div>
+
+                      {/* Main Grid */}
+                      <div className="grid grid-cols-12 gap-1.5">
+                        <div
+                          onClick={() => setNewAdPos('float_left_pc')}
+                          className={`col-span-3 p-1.5 rounded text-center cursor-pointer transition border flex flex-col justify-center ${
+                            newAdPos === 'float_left_pc'
+                              ? 'bg-emerald-600 text-white border-white font-black shadow'
+                              : 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30 hover:bg-emerald-900/40'
+                          }`}
+                        >
+                          <span className="text-[9px]">📌 Cạnh Trái (PC)</span>
+                          <span className="text-[8px] text-emerald-200">Bám đuổi ❌</span>
+                        </div>
+
+                        <div className="col-span-6 space-y-1">
+                          <div
+                            onClick={() => setNewAdPos('home_middle')}
+                            className={`p-1.5 rounded text-center cursor-pointer transition border ${
+                              newAdPos === 'home_middle'
+                                ? 'bg-amber-500 text-slate-950 border-white font-black shadow'
+                                : 'bg-amber-950/40 text-amber-300 border-amber-500/30 hover:bg-amber-900/40'
+                            }`}
+                          >
+                            <span>📌 Giữa Trang Chủ</span>
+                          </div>
+                          <div
+                            onClick={() => setNewAdPos('property_detail')}
+                            className={`p-1 rounded text-center cursor-pointer transition border ${
+                              newAdPos === 'property_detail'
+                                ? 'bg-purple-600 text-white border-white font-black shadow'
+                                : 'bg-purple-950/40 text-purple-300 border-purple-500/30 hover:bg-purple-900/40'
+                            }`}
+                          >
+                            <span className="text-[9px]">📌 Trang Chi Tiết BĐS</span>
+                          </div>
+                        </div>
+
+                        <div className="col-span-3 space-y-1">
+                          <div
+                            onClick={() => setNewAdPos('home_sidebar')}
+                            className={`p-1 rounded text-center cursor-pointer transition border ${
+                              newAdPos === 'home_sidebar'
+                                ? 'bg-blue-600 text-white border-white font-black shadow'
+                                : 'bg-blue-950/40 text-blue-300 border-blue-500/30 hover:bg-blue-900/40'
+                            }`}
+                          >
+                            <span className="text-[9px]">📌 Sidebar Cột Phải</span>
+                          </div>
+                          <div
+                            onClick={() => setNewAdPos('float_right_pc')}
+                            className={`p-1 rounded text-center cursor-pointer transition border ${
+                              newAdPos === 'float_right_pc'
+                                ? 'bg-amber-500 text-slate-950 border-white font-black shadow'
+                                : 'bg-amber-950/40 text-amber-300 border-amber-500/30 hover:bg-amber-900/40'
+                            }`}
+                          >
+                            <span className="text-[9px]">📌 Cạnh Phải (PC) ❌</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Popup Modal */}
+                      <div
+                        onClick={() => setNewAdPos('popup_modal')}
+                        className={`p-1.5 rounded text-center cursor-pointer transition border flex items-center justify-between ${
+                          newAdPos === 'popup_modal'
+                            ? 'bg-rose-600 text-white border-white font-black shadow'
+                            : 'bg-rose-950/40 text-rose-300 border-rose-500/30 hover:bg-rose-900/40'
+                        }`}
+                      >
+                        <span>📌 Pop-Up Nổi Trung Tâm (Center Popup Modal)</span>
+                        <span className="text-[9px] opacity-80">({adsList.filter(a => a.position === 'popup_modal').length})</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -1407,11 +1517,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           </a>
                         </td>
                         <td className="p-3 font-extrabold text-amber-600 dark:text-amber-400">
-                          {ad.position === 'header_top' && 'Top Header'}
-                          {ad.position === 'home_middle' && 'Giữa Trang Chủ'}
-                          {ad.position === 'home_sidebar' && 'Cột Trang Chủ'}
-                          {ad.position === 'property_detail' && 'Chi Tiết BĐS'}
-                          {!['header_top','home_middle','home_sidebar','property_detail'].includes(ad.position) && ad.position}
+                          {ad.position === 'header_top' && '📌 Top Header'}
+                          {ad.position === 'float_right_pc' && '📌 Cạnh Phải PC (Bám đuổi ❌)'}
+                          {ad.position === 'float_left_pc' && '📌 Cạnh Trái PC (Bám đuổi ❌)'}
+                          {ad.position === 'home_middle' && '📌 Giữa Trang Chủ'}
+                          {ad.position === 'home_sidebar' && '📌 Sidebar Cột Phải'}
+                          {ad.position === 'property_detail' && '📌 Chi Tiết BĐS'}
+                          {ad.position === 'popup_modal' && '📌 Pop-Up Nổi (Modal ❌)'}
+                          {!['header_top','float_right_pc','float_left_pc','home_middle','home_sidebar','property_detail','popup_modal'].includes(ad.position) && ad.position}
                         </td>
                         <td className="p-3 font-black text-emerald-600">{(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} lượt</td>
                         <td className="p-3">

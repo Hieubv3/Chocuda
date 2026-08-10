@@ -258,6 +258,9 @@ function loadDataStore() {
       if (Array.isArray(data.contacts) && data.contacts.length > 0) contactsStore = data.contacts;
       if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
       console.log(`[DataStore] Loaded persistent data: ${propertiesStore.length} properties, ${newsStore.length} news, ${projectsStore.length} projects.`);
+    } else {
+      saveDataStore();
+      console.log(`[DataStore] Initialized app_data_store.json file.`);
     }
   } catch (err) {
     console.warn("Could not read app_data_store.json, using defaults.", err);
@@ -1061,6 +1064,37 @@ app.delete("/api/news/:id", (req, res) => {
   newsStore = newsStore.filter(n => n.id !== id);
   saveDataStore();
   res.json({ message: "Đã xóa bài viết thành công." });
+});
+
+// Admin Data Backup & Restore Endpoints
+app.get("/api/admin/export-data-store", (req, res) => {
+  res.setHeader("Content-Disposition", 'attachment; filename="chocudan24h_backup.json"');
+  res.setHeader("Content-Type", "application/json");
+  res.send(JSON.stringify({
+    properties: propertiesStore,
+    projects: projectsStore,
+    news: newsStore,
+    users: usersStore,
+    contacts: contactsStore,
+    pricingConfig: pricingConfigStore,
+    exportedAt: new Date().toISOString()
+  }, null, 2));
+});
+
+app.post("/api/admin/import-data-store", (req, res) => {
+  try {
+    const data = req.body;
+    if (Array.isArray(data.properties)) propertiesStore = data.properties;
+    if (Array.isArray(data.projects)) projectsStore = data.projects;
+    if (Array.isArray(data.news)) newsStore = data.news;
+    if (Array.isArray(data.users)) usersStore = data.users;
+    if (Array.isArray(data.contacts)) contactsStore = data.contacts;
+    if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
+    saveDataStore();
+    res.json({ message: "Khôi phục dữ liệu sao lưu thành công!", countProperties: propertiesStore.length });
+  } catch (err: any) {
+    res.status(500).json({ error: "Lỗi khôi phục dữ liệu: " + err.message });
+  }
 });
 
 // Resident Services Endpoints (Dịch Vụ Cư Dân)
