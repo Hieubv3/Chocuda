@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   Store, RefreshCw, CheckCircle2, AlertCircle, Plus, Edit2, Trash2, 
   ExternalLink, ShoppingBag, Eye, Phone, MessageSquare, MapPin, Sparkles, 
-  Clock, ShieldCheck, Database, Key, Globe, Check, ArrowUpRight, Award, Zap, X
+  Clock, ShieldCheck, Database, Key, Globe, Check, ArrowUpRight, Award, Zap, X,
+  DollarSign, TrendingUp, XCircle, Filter, Search
 } from 'lucide-react';
 import { UserStorefront, StoreProduct, StoreOrder, User } from '../types';
 import { UserStorefrontModal } from './UserStorefrontModal';
@@ -61,8 +62,44 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
     { id: 'ocr-3', name: 'Bún Cát Hải Sản Đầy Đủ', price: 55000, unit: 'bát', category: 'Món Nước', status: 'pending' }
   ]);
 
-  // Order Invoice Export State
+  // Order Invoice Export & Filter State
   const [exportedInvoices, setExportedInvoices] = useState<Record<string, { invoiceCode: string; exportedAt: string }>>({});
+  const [orderSearchTerm, setOrderSearchTerm] = useState<string>('');
+  const [orderStatusFilter, setOrderStatusFilter] = useState<string>('all');
+
+  const handleUpdateOrderStatus = async (orderId: string, newOrderStatus: string, newPaymentStatus?: string) => {
+    try {
+      const res = await fetch(`/api/stores/orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderStatus: newOrderStatus,
+          ...(newPaymentStatus && { paymentStatus: newPaymentStatus })
+        })
+      });
+      if (res.ok) {
+        setOrders(prev => prev.map(o => o.id === orderId ? { 
+          ...o, 
+          orderStatus: newOrderStatus as any,
+          ...(newPaymentStatus && { paymentStatus: newPaymentStatus as any })
+        } : o));
+      } else {
+        // Fallback local update
+        setOrders(prev => prev.map(o => o.id === orderId ? { 
+          ...o, 
+          orderStatus: newOrderStatus as any,
+          ...(newPaymentStatus && { paymentStatus: newPaymentStatus as any })
+        } : o));
+      }
+    } catch (err) {
+      // Fallback local update
+      setOrders(prev => prev.map(o => o.id === orderId ? { 
+        ...o, 
+        orderStatus: newOrderStatus as any,
+        ...(newPaymentStatus && { paymentStatus: newPaymentStatus as any })
+      } : o));
+    }
+  };
 
   // Fetch Store & Orders
   useEffect(() => {
@@ -758,114 +795,251 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
         </div>
       </div>
 
-      {/* Section D: Order Management & KiotViet VAT Invoice Export */}
-      <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-md">
+      {/* Section D: Order Management, Revenue Statistics & KiotViet VAT Invoice Export */}
+      <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-6 shadow-md">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700 pb-4">
           <div>
-            <span className="px-2.5 py-0.5 bg-blue-500/10 text-blue-500 font-bold text-[10px] rounded uppercase">
-              XUẤT HÓA ĐƠN ĐIỆN TỬ KIOTVIET / MISA
+            <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] rounded uppercase tracking-wider">
+              BÁO CÁO DOANH THU & ĐƠN HÀNG CÁ NHÂN
             </span>
             <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2 mt-1">
-              <Database className="w-5 h-5 text-blue-500" />
-              QUẢN LÝ ĐƠN HÀNG CƯ DÂN & XUẤT HÓA ĐƠN VAT ({orders.length})
+              <TrendingUp className="w-5 h-5 text-emerald-500" />
+              QUẢN LÝ LỊCH SỬ ĐƠN HÀNG & DOANH THU GIAN HÀNG ({orders.length})
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Tự động tiếp nhận đơn hàng, đồng bộ KiotViet POS & xuất Hóa Đơn Điện Tử khi cư dân yêu cầu.
+              Theo dõi doanh thu bán hàng thực tế, cập nhật tiến độ giao hàng, thanh toán VietQR và xuất Hóa Đơn VAT.
             </p>
           </div>
         </div>
 
-        {orders.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 text-xs font-bold space-y-2">
-            <ShoppingBag className="w-10 h-10 mx-auto text-slate-500 stroke-1" />
-            <p>Hiện chưa có đơn hàng mới từ cư dân.</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {orders.map((ord) => {
-              const invoice = exportedInvoices[ord.id];
-              const vatReq = (ord as any).vatInvoiceRequest;
+        {/* REVENUE STATS DASHBOARD GRID */}
+        {(() => {
+          const totalRevenue = orders
+            .filter(o => o.orderStatus === 'completed' || o.paymentStatus === 'paid')
+            .reduce((acc, o) => acc + (o.totalAmount || 0), 0);
+          const completedCount = orders.filter(o => o.orderStatus === 'completed').length;
+          const activeCount = orders.filter(o => o.orderStatus === 'new' || o.orderStatus === 'confirmed' || o.orderStatus === 'delivering').length;
+          const cancelledCount = orders.filter(o => o.orderStatus === 'cancelled').length;
 
-              return (
-                <div 
-                  key={ord.id}
-                  className="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs border-b border-slate-200 dark:border-slate-800 pb-2">
-                    <div>
-                      <span className="font-black text-amber-500 text-sm">{ord.orderCode}</span>
-                      <span className="ml-2 font-bold text-slate-900 dark:text-white">| Khách: {ord.customerName} ({ord.customerPhone})</span>
-                      <span className="block text-[11px] text-slate-400">📍 Địa chỉ: {ord.customerAddress}</span>
-                    </div>
-
-                    <div className="text-right">
-                      <span className="font-black text-emerald-500 text-sm">{ord.totalAmount.toLocaleString('vi-VN')} VNĐ</span>
-                      <span className="block text-[10px] text-slate-400 uppercase font-bold">
-                        {ord.paymentMethod === 'vietqr' ? '💳 VietQR' : '💵 COD'} ({ord.paymentStatus === 'paid' ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'})
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Order Items */}
-                  <div className="text-xs text-slate-600 dark:text-slate-300 space-y-1">
-                    <span className="font-bold text-[11px] text-slate-400">Sản phẩm đặt:</span>
-                    <div className="flex flex-wrap gap-2">
-                      {ord.items.map((it, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium">
-                          {it.productName} (x{it.quantity})
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* VAT Invoice Request details & Export action button */}
-                  <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-                    {vatReq ? (
-                      <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-600 dark:text-amber-400 space-y-0.5">
-                        <span className="font-black flex items-center gap-1">
-                          📄 Khách hàng yêu cầu xuất HĐ Điện Tử VAT:
-                        </span>
-                        <div className="text-[11px] font-bold">
-                          • Cty: {vatReq.companyName} | MST: {vatReq.taxCode}
-                        </div>
-                        <div className="text-[10px]">
-                          • Email nhận: {vatReq.email}
-                        </div>
-                      </div>
-                    ) : (
-                      <span className="text-[11px] text-slate-400">
-                        Khách không yêu cầu xuất hóa đơn VAT công ty.
-                      </span>
-                    )}
-
-                    {/* Invoice status button */}
-                    {invoice ? (
-                      <div className="px-3.5 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-extrabold text-xs rounded-xl flex items-center gap-1.5 shrink-0">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        <span>Đã Xuất HĐĐT: <strong>{invoice.invoiceCode}</strong></span>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          const code = `HD-KV-${Math.floor(Math.random() * 899999) + 100000}`;
-                          setExportedInvoices(prev => ({
-                            ...prev,
-                            [ord.id]: { invoiceCode: code, exportedAt: new Date().toLocaleString('vi-VN') }
-                          }));
-                          alert(`🎉 Đã truyền dữ liệu & xuất thành công Hóa Đơn Điện Tử KiotViet/MISA!\nMã hóa đơn: ${code}`);
-                        }}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs rounded-xl shadow transition flex items-center gap-1.5 shrink-0"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        <span>📄 Xuất Hóa Đơn VAT KiotViet / MISA</span>
-                      </button>
-                    )}
-                  </div>
+          return (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-4 rounded-2xl shadow-md space-y-1">
+                <div className="flex items-center justify-between opacity-90 text-xs font-bold">
+                  <span>TỔNG DOANH THU</span>
+                  <DollarSign className="w-4 h-4" />
                 </div>
-              );
-            })}
+                <div className="text-xl font-black">{totalRevenue.toLocaleString('vi-VN')} VNĐ</div>
+                <div className="text-[10px] opacity-80 font-medium">Doanh thu từ đơn thành công/đã trả</div>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl space-y-1">
+                <div className="flex items-center justify-between text-slate-500 text-xs font-bold">
+                  <span>TỔNG ĐƠN HÀNG</span>
+                  <ShoppingBag className="w-4 h-4 text-blue-500" />
+                </div>
+                <div className="text-xl font-black text-slate-900 dark:text-white">{orders.length} đơn</div>
+                <div className="text-[10px] text-slate-400 font-medium">Đơn hàng cư dân đặt mua</div>
+              </div>
+
+              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-4 rounded-2xl space-y-1">
+                <div className="flex items-center justify-between text-amber-600 dark:text-amber-400 text-xs font-bold">
+                  <span>ĐANG XỬ LÝ / GIAO</span>
+                  <Clock className="w-4 h-4 text-amber-500" />
+                </div>
+                <div className="text-xl font-black text-amber-600 dark:text-amber-400">{activeCount} đơn</div>
+                <div className="text-[10px] text-amber-700 dark:text-amber-300 font-medium">Cần xác nhận & giao hàng</div>
+              </div>
+
+              <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 p-4 rounded-2xl space-y-1">
+                <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 text-xs font-bold">
+                  <span>ĐƠN HOÀN THÀNH</span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                </div>
+                <div className="text-xl font-black text-emerald-600 dark:text-emerald-400">{completedCount} đơn</div>
+                <div className="text-[10px] text-emerald-700 dark:text-emerald-300 font-medium">Khách đã nhận hàng thành công</div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* SEARCH & FILTER CONTROLS */}
+        <div className="flex flex-col sm:flex-row gap-3 items-center justify-between text-xs pt-2">
+          <div className="relative w-full sm:w-72">
+            <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo mã đơn, tên, SĐT khách..."
+              value={orderSearchTerm}
+              onChange={(e) => setOrderSearchTerm(e.target.value)}
+              className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-medium outline-none focus:ring-2 focus:ring-emerald-500"
+            />
           </div>
-        )}
+
+          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+            {[
+              { id: 'all', label: 'Tất Cả' },
+              { id: 'new', label: '🆕 Mới' },
+              { id: 'confirmed', label: '✓ Xác Nhận' },
+              { id: 'delivering', label: '🚚 Đang Giao' },
+              { id: 'completed', label: '🎉 Hoàn Thành' },
+              { id: 'cancelled', label: '❌ Đã Hủy' }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setOrderStatusFilter(tab.id)}
+                className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
+                  orderStatusFilter === tab.id
+                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow'
+                    : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ORDER LIST & ACTION ITEMS */}
+        {(() => {
+          const filteredOrders = orders.filter(ord => {
+            const matchesStatus = orderStatusFilter === 'all' ? true : ord.orderStatus === orderStatusFilter;
+            const matchesSearch = !orderSearchTerm.trim() ? true : (
+              ord.orderCode.toLowerCase().includes(orderSearchTerm.toLowerCase()) ||
+              ord.customerName.toLowerCase().includes(orderSearchTerm.toLowerCase()) ||
+              ord.customerPhone.includes(orderSearchTerm)
+            );
+            return matchesStatus && matchesSearch;
+          });
+
+          if (filteredOrders.length === 0) {
+            return (
+              <div className="p-8 text-center text-slate-400 text-xs font-bold space-y-2 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+                <ShoppingBag className="w-10 h-10 mx-auto text-slate-500 stroke-1" />
+                <p>Không tìm thấy đơn hàng phù hợp với bộ lọc.</p>
+              </div>
+            );
+          }
+
+          return (
+            <div className="space-y-3">
+              {filteredOrders.map((ord) => {
+                const invoice = exportedInvoices[ord.id];
+                const vatReq = (ord as any).vatInvoiceRequest;
+
+                return (
+                  <div 
+                    key={ord.id}
+                    className="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 shadow-xs"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs border-b border-slate-200 dark:border-slate-800 pb-2">
+                      <div>
+                        <span className="font-black text-amber-500 text-sm">{ord.orderCode}</span>
+                        <span className="ml-2 font-bold text-slate-900 dark:text-white">| Khách: {ord.customerName} ({ord.customerPhone})</span>
+                        <span className="block text-[11px] text-slate-400">📍 Địa chỉ: {ord.customerAddress} • {ord.createdAt}</span>
+                      </div>
+
+                      <div className="text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-start">
+                        <span className="font-black text-emerald-500 text-sm">{ord.totalAmount.toLocaleString('vi-VN')} VNĐ</span>
+                        <span className="block text-[10px] text-slate-400 uppercase font-bold">
+                          {ord.paymentMethod === 'vietqr' ? '💳 VietQR' : '💵 COD'} ({ord.paymentStatus === 'paid' ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'})
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Order Items */}
+                    <div className="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                      <span className="font-bold text-[11px] text-slate-400">Sản phẩm khách mua:</span>
+                      <div className="flex flex-wrap gap-2">
+                        {ord.items.map((it, idx) => (
+                          <span key={idx} className="px-2.5 py-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-800 dark:text-slate-200">
+                            {it.productName} (x{it.quantity}) - {(it.price * it.quantity).toLocaleString('vi-VN')}đ
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Order Controls: Change Status & Payment */}
+                    <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-500 text-[11px]">Trạng Thái Đơn:</span>
+                        <select
+                          value={ord.orderStatus}
+                          onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
+                          className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-lg font-bold border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none cursor-pointer"
+                        >
+                          <option value="new">🆕 Đơn Mới</option>
+                          <option value="confirmed">✓ Đã Xác Nhận</option>
+                          <option value="delivering">🚚 Đang Giao Hàng</option>
+                          <option value="completed">🎉 Hoàn Thành</option>
+                          <option value="cancelled">❌ Hủy Đơn</option>
+                        </select>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-500 text-[11px]">Thanh Toán:</span>
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateOrderStatus(ord.id, ord.orderStatus, ord.paymentStatus === 'paid' ? 'pending' : 'paid')}
+                          className={`px-3 py-1.5 rounded-lg font-extrabold text-[11px] transition cursor-pointer ${
+                            ord.paymentStatus === 'paid'
+                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                              : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                          }`}
+                        >
+                          {ord.paymentStatus === 'paid' ? '✓ Đã Thanh Toán' : '⏳ Chưa Thanh Toán (Bấm Đổi)'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* VAT Invoice Request details & Export action button */}
+                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                      {vatReq ? (
+                        <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-600 dark:text-amber-400 space-y-0.5">
+                          <span className="font-black flex items-center gap-1">
+                            📄 Khách hàng yêu cầu xuất HĐ Điện Tử VAT:
+                          </span>
+                          <div className="text-[11px] font-bold">
+                            • Cty: {vatReq.companyName} | MST: {vatReq.taxCode}
+                          </div>
+                          <div className="text-[10px]">
+                            • Email nhận: {vatReq.email}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-[11px] text-slate-400">
+                          Khách không yêu cầu xuất hóa đơn VAT công ty.
+                        </span>
+                      )}
+
+                      {/* Invoice status button */}
+                      {invoice ? (
+                        <div className="px-3.5 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-extrabold text-xs rounded-xl flex items-center gap-1.5 shrink-0">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                          <span>Đã Xuất HĐĐT: <strong>{invoice.invoiceCode}</strong></span>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            const code = `HD-KV-${Math.floor(Math.random() * 899999) + 100000}`;
+                            setExportedInvoices(prev => ({
+                              ...prev,
+                              [ord.id]: { invoiceCode: code, exportedAt: new Date().toLocaleString('vi-VN') }
+                            }));
+                            alert(`🎉 Đã truyền dữ liệu & xuất thành công Hóa Đơn Điện Tử KiotViet/MISA!\nMã hóa đơn: ${code}`);
+                          }}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs rounded-xl shadow transition flex items-center gap-1.5 shrink-0 cursor-pointer"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                          <span>📄 Xuất Hóa Đơn VAT KiotViet / MISA</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
 
       {/* Add / Edit Product Modal */}

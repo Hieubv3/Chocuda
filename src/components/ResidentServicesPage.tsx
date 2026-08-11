@@ -495,6 +495,25 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               </p>
             </div>
 
+            {/* Direct Connect & Legal Notice Banner */}
+            <div className="w-full bg-emerald-950/80 border border-emerald-500/40 rounded-xl p-2.5 text-xs text-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-inner">
+              <div className="flex items-center gap-2">
+                <span className="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded text-[10px] border border-emerald-500/30 uppercase shrink-0">
+                  ⚡ PHÍ SÀN 0% - KẾT NỐI TRỰC TIẾP
+                </span>
+                <span className="text-[11px] font-medium text-emerald-100">
+                  Khách hàng &amp; Nhà cung cấp/Thợ liên hệ và thanh toán trực tiếp. Đơn hàng dùng để <strong>Lưu Nhật Ký Lịch Sử</strong>.
+                </span>
+              </div>
+              <button 
+                onClick={() => setShowLegalDisclaimer(true)}
+                className="text-[10px] text-amber-300 underline hover:text-amber-200 font-bold shrink-0 flex items-center gap-1"
+              >
+                <AlertTriangle className="w-3 h-3 text-amber-400" />
+                <span>Quy định Pháp lý &amp; Trách nhiệm cá nhân</span>
+              </button>
+            </div>
+
             {/* Action Buttons - Compact Row */}
             <div className="flex flex-wrap items-center gap-1.5 shrink-0">
               <button
@@ -2996,6 +3015,70 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
         onOpenAuth={onOpenAuth}
       />
 
+      {/* Legal Disclaimer & Direct Connection Responsibility Modal */}
+      {showLegalDisclaimer && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            <button
+              onClick={() => setShowLegalDisclaimer(false)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full bg-slate-100 dark:bg-slate-800 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4 text-amber-600 dark:text-amber-400">
+              <ShieldAlert className="w-8 h-8 shrink-0" />
+              <div>
+                <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
+                  Quy Định Kết Nối Trực Tiếp &amp; Miễn Trừ Trách Nhiệm Pháp Lý
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                  Nền Tảng Cầu Nối chocudan24h.com
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+              <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl p-4">
+                <h4 className="font-extrabold text-emerald-900 dark:text-emerald-200 text-sm mb-1">
+                  1. Mô Hình Kết Nối Trực Tiếp 0% Phí Sàn
+                </h4>
+                <p>
+                  Sàn chocudan24h.com hoạt động theo mô hình mở. Sàn <strong>KHÔNG THU BẤT KỲ % PHÍ GIAO DỊCH / CHIẾT KHẨU</strong> nào từ đơn hàng của khách hàng hay thu nhập của thợ/nhà cung cấp. Khách hàng và đối tác liên hệ, báo giá và thanh toán trực tiếp cho nhau.
+                </p>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 rounded-2xl p-4">
+                <h4 className="font-extrabold text-blue-900 dark:text-blue-200 text-sm mb-1">
+                  2. Mục Đích Của Đơn Hàng / Nhật Ký Đặt Lịch
+                </h4>
+                <p>
+                  Việc bấm "Đặt Hàng", "Gửi Khảo Sát" hay "Tạo Đơn" trên hệ thống có mục đích duy nhất là <strong>LƯU LỊCH SỬ NHẬT KÝ KẾT NỐI</strong> để khách hàng và gian hàng dễ dàng tra cứu lại thông tin giao dịch cá nhân.
+                </p>
+              </div>
+
+              <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-2xl p-4">
+                <h4 className="font-extrabold text-rose-900 dark:text-rose-200 text-sm mb-1">
+                  3. Trách Nhiệm Pháp Lý Độc Lập
+                </h4>
+                <ul className="list-disc pl-4 space-y-1">
+                  <li><strong>Khách hàng và Nhà cung cấp/Thợ</strong> tự hoàn toàn chịu trách nhiệm pháp lý trước pháp luật về hợp đồng dân sự, chất lượng hàng hóa/dịch vụ, an toàn lao động và bảo hành.</li>
+                  <li>Sàn chocudan24h.com hoàn toàn <strong>KHÔNG LIÊN QUAN VÀ KHÔNG CHỊU TRÁCH NHIỆM PHÁP LÝ</strong> hoặc bồi thường đối với bất kỳ khiếu nại, tranh chấp tài chính hay sự cố thi công phát sinh giữa các bên.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <button
+                onClick={() => setShowLegalDisclaimer(false)}
+                className="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white font-extrabold rounded-2xl text-sm transition shadow-md cursor-pointer"
+              >
+                TÔI ĐÃ HIỂU VÀ ĐỒNG Ý
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

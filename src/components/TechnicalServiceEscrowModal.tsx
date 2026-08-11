@@ -304,21 +304,30 @@ export const TechnicalServiceEscrowModal: React.FC<TechnicalServiceEscrowModalPr
           </button>
         </div>
 
-        {/* Real-time Flow Banner */}
-        <div className="bg-emerald-950/90 text-emerald-100 p-3 sm:p-4 text-xs sm:text-sm border-b border-emerald-800/40">
-          <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-emerald-300 font-semibold">
-              <RefreshCw className="w-4 h-4 animate-spin" />
-              <span>Sơ Đồ Dòng Tiền Tự Động Thuật Toán:</span>
+        {/* Real-time Flow Banner & Legal Disclaimer */}
+        <div className="bg-slate-900 text-slate-100 p-3 sm:p-4 text-xs border-b border-slate-800">
+          <div className="max-w-4xl mx-auto space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>MÔ HÌNH KẾT NỐI TRỰC TIẾP (0% PHÍ SÀN):</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5 text-xs font-medium">
+                <span className="bg-emerald-900/60 text-emerald-200 px-2 py-0.5 rounded border border-emerald-700/50">1. Đặt lịch / Yêu cầu</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500 hidden sm:inline" />
+                <span className="bg-emerald-900/60 text-emerald-200 px-2 py-0.5 rounded border border-emerald-700/50">2. Kết nối trực tiếp</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500 hidden sm:inline" />
+                <span className="bg-emerald-900/60 text-emerald-200 px-2 py-0.5 rounded border border-emerald-700/50">3. Lưu Nhật Ký Lịch Sử</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500 hidden sm:inline" />
+                <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/40 font-bold">4. Giải ngân 100% (Phí Sàn 0%)</span>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2 font-medium">
-              <span className="bg-emerald-900/60 text-emerald-200 px-2 py-1 rounded border border-emerald-700/50">1. Cư dân nạp Ví VietQR</span>
-              <ChevronRight className="w-3.5 h-3.5 text-emerald-400 hidden sm:inline" />
-              <span className="bg-emerald-900/60 text-emerald-200 px-2 py-1 rounded border border-emerald-700/50">2. Lock 100% tiền Escrow</span>
-              <ChevronRight className="w-3.5 h-3.5 text-emerald-400 hidden sm:inline" />
-              <span className="bg-emerald-900/60 text-emerald-200 px-2 py-1 rounded border border-emerald-700/50">3. Thợ làm &amp; gửi ảnh</span>
-              <ChevronRight className="w-3.5 h-3.5 text-emerald-400 hidden sm:inline" />
-              <span className="bg-amber-500/20 text-amber-200 px-2 py-1 rounded border border-amber-500/40 font-bold">4. Tự động cắt 5% &amp; chuyển 95% Ví Thợ</span>
+
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-2.5 text-amber-200 text-xs flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <strong>⚖️ Thông báo Pháp lý & Miễn trừ Trách nhiệm:</strong> Sàn chocudan24h.com là nền tảng kết nối thông tin trực tiếp giữa Khách hàng và Đơn vị dịch vụ/Thợ kỹ thuật. Sàn <u>KHÔNG thu % phí giao dịch</u> và <u>KHÔNG chịu trách nhiệm pháp lý</u> đối với chất lượng thi công, hợp đồng cá nhân hay thỏa thuận thanh toán giữa các bên. Đơn đặt hàng trên hệ thống chỉ phục vụ lưu trữ nhật ký lịch sử kết nối.
+              </div>
             </div>
           </div>
         </div>

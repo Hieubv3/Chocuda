@@ -185,7 +185,24 @@ export interface LeadContact {
   createdAt: string;
 }
 
-export type UserRole = 'admin' | 'manager' | 'sale' | 'owner' | 'visitor';
+export type UserRole = 
+  | 'admin'               // Super Admin - Toàn quyền cấu hình & phân bổ
+  | 'manager_bds'         // Manager BĐS - Quản lý tin đăng, Sổ đỏ, duyệt VIP
+  | 'manager_market'      // Manager Chợ Cư Dân - Quản lý danh mục & hỗ trợ shop
+  | 'manager_tech'        // Manager Thợ Kỹ Thuật - Giám sát Escrow & thợ
+  | 'manager_content'     // Manager Nội Dung & SEO - Quản lý bài viết, Zalo, Marketing
+  | 'manager'             // General Manager
+  | 'sale' 
+  | 'owner' 
+  | 'visitor';
+
+export type SubBranchPermission = 
+  | 'bds_realestate'      // Đầu nhánh Bất Động Sản & Dự Án
+  | 'resident_market'     // Đầu nhánh Chợ Cư Dân & Gian Hàng
+  | 'technical_escrow'    // Đầu nhánh Dịch Vụ Thợ & Tạm Giữ Escrow
+  | 'content_marketing'   // Đầu nhánh Bài Viết Nội Dung & SEO Marketing
+  | 'user_kyc_finance';   // Đầu nhánh Duyệt KYC & Cấu Hình Tài Chính Nạp Điểm
+
 export type UserTier = 'thuong' | 'bac' | 'vang' | 'kim-cuong';
 
 export interface User {
@@ -194,6 +211,8 @@ export interface User {
   email: string;
   phone?: string;
   role: UserRole;
+  departmentPermissions?: SubBranchPermission[]; // Quyền phân tầng đầu nhánh
+  subBranchTitle?: string; // Chức danh chuyên trách (Ví dụ: Trưởng Ban BĐS, Trưởng Ban Dịch Vụ Thợ...)
   avatar?: string;
   provider: 'local' | 'google' | 'facebook' | 'zalo';
   balance?: number; // Số dư tài khoản đăng tin (VNĐ)
@@ -241,6 +260,46 @@ export const BUSINESS_CATEGORIES = [
   { id: 'nganh-nghe-khac', name: 'Ngành Nghề / Dịch Vụ Khác', icon: '✨' }
 ] as const;
 
+// Dynamic Store & Resident Service Packages (Quản Lý Gói Dịch Vụ Gian Hàng & Dịch Vụ Cư Dân)
+export interface StorePackage {
+  id: string;
+  name: string;
+  priceDisplay: string;
+  priceValue: number;
+  unit: string;
+  popular?: boolean;
+  color: string;
+  badge?: string;
+  description: string;
+  features: string[];
+  buttonText: string;
+  buttonVariant: 'primary' | 'success' | 'warning' | 'purple' | 'outline';
+  active: boolean;
+  categoryGroup?: 'identity' | 'advertising' | 'pr'; // Phân nhóm: Gói Định Danh / Quảng Cáo / Bài PR
+  priorityOrder?: number;
+  badgeColor?: string;
+}
+
+export interface StorePackageOrder {
+  id: string;
+  orderCode: string;
+  packageId: string;
+  packageName: string;
+  packagePrice: number;
+  unit: string;
+  userId: string;
+  userName: string;
+  userPhone: string;
+  storeId?: string;
+  storeName?: string;
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled';
+  note?: string;
+  adminNote?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Dynamic Store & Resident Service Packages
 export type Language = 'vi' | 'en' | 'zh';
 
 // Quảng Cáo & Banner Ad System

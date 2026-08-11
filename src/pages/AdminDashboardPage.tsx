@@ -1932,23 +1932,31 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ==================== MẢNG 2: TAB 3 - ĐƠN HÀNG CHỢ CƯ DÂN ==================== */}
+      {/* ==================== MẢNG 2: TAB 3 - TỔNG QUAN ĐƠN HÀNG ĐỐI TÁC (ĐỐI TÁC TỰ QUẢN LÝ) ==================== */}
       {activeTab === 'orders_mgmt' && (
         <div className="space-y-6">
           <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 rounded-3xl border-2 border-blue-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 bg-blue-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                  ĐƠN HÀNG & GIAO DỊCH
+                <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                  MÔ HÌNH PHÂN QUYỀN ĐỐI TÁC TỰ QUẢN LÝ
                 </span>
               </div>
               <h2 className="text-xl font-black text-blue-400 mt-1.5 flex items-center gap-2">
                 <ShoppingBag className="w-6 h-6 text-blue-400" />
-                <span>QUẢN LÝ ĐƠN HÀNG & LỊCH SỬ GIAO DỊCH CHỢ CƯ DÂN</span>
+                <span>TỔNG QUAN ĐƠN HÀNG CHỢ CƯ DÂN (ĐỐI TÁC TỰ QUẢN LÝ)</span>
               </h2>
               <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                Quản lý các đơn mua hàng đồ ăn, tạp hóa, nước uống, dịch vụ nội khu giữa các cư dân. Cập nhật trạng thái giao hàng & thanh toán VietQR.
+                Hệ thống tuân thủ quy trình phân quyền: Admin không trực tiếp quản lý hay can thiệp đơn hàng của từng đối tác. Mỗi cư dân/chủ gian hàng tự quản lý đơn hàng, xem lịch sử giao dịch & doanh thu riêng trong trang Quản Lý Gian Hàng của mình.
               </p>
+            </div>
+          </div>
+
+          <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl text-xs text-amber-700 dark:text-amber-300 font-medium flex items-start gap-3">
+            <span className="text-xl">💡</span>
+            <div>
+              <strong className="font-extrabold block text-slate-900 dark:text-white mb-0.5">Lưu ý phân quyền Quản trị:</strong>
+              Mỗi đối tác/chủ cửa hàng có không gian làm việc độc lập. Họ theo dõi doanh thu bán hàng thực tế, cập nhật tiến độ giao hàng, thanh toán VietQR và tự động xuất hóa đơn VAT KiotViet / MISA trong trang <code className="bg-amber-500/20 px-1.5 py-0.5 rounded font-mono font-bold text-amber-600 dark:text-amber-400">UserStorefrontManager</code>.
             </div>
           </div>
 
@@ -1963,7 +1971,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <th className="py-3 px-2">Tổng Tiền</th>
                     <th className="py-3 px-2">Thanh Toán</th>
                     <th className="py-3 px-2">Trạng Thái Đơn</th>
-                    <th className="py-3 px-2 text-right">Thao Tác</th>
+                    <th className="py-3 px-2 text-right">Quyền Quản Lý</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -1993,25 +2001,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           </span>
                         </td>
                         <td className="py-3 px-2 font-bold">
-                          <select
-                            value={order.orderStatus}
-                            onChange={(e) => handleUpdateStoreOrderStatus(order.id, e.target.value)}
-                            className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 outline-none"
-                          >
-                            <option value="new">🆕 Đơn Mới</option>
-                            <option value="confirmed">✓ Đã Xác Nhận</option>
-                            <option value="delivering">🚚 Đang Giao Hàng</option>
-                            <option value="completed">🎉 Hoàn Thành</option>
-                            <option value="cancelled">❌ Đã Hủy</option>
-                          </select>
+                          <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700">
+                            {order.orderStatus === 'new' && '🆕 Đơn Mới'}
+                            {order.orderStatus === 'confirmed' && '✓ Đã Xác Nhận'}
+                            {order.orderStatus === 'delivering' && '🚚 Đang Giao Hàng'}
+                            {order.orderStatus === 'completed' && '🎉 Hoàn Thành'}
+                            {order.orderStatus === 'cancelled' && '❌ Đã Hủy'}
+                          </span>
                         </td>
                         <td className="py-3 px-2 text-right">
-                          <button
-                            onClick={() => handleUpdateStoreOrderStatus(order.id, 'completed', 'paid')}
-                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] transition"
-                          >
-                            Duyệt Xong
-                          </button>
+                          <span className="px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold rounded-lg text-[10px]">
+                            👤 Đối tác tự xử lý
+                          </span>
                         </td>
                       </tr>
                     ))

@@ -231,6 +231,154 @@ let contactsStore: LeadContact[] = [
   }
 ];
 
+// Dynamic Store Packages Initial Data (Gói Dịch Vụ Cửa Hàng & Dịch Vụ Cư Dân Độc Quyền)
+const INITIAL_STORE_PACKAGES: any[] = [
+  {
+    id: 'basic-cu-dan',
+    name: 'GÓI CƯ DÂN KHỞI TẠO',
+    priceDisplay: '0đ',
+    priceValue: 0,
+    unit: '/ vĩnh viễn',
+    color: 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900',
+    description: 'Gian hàng tiêu chuẩn cho cư dân nội khu khởi tạo kinh doanh',
+    categoryGroup: 'identity',
+    badge: 'CƯ DÂN NỘI KHU',
+    priorityOrder: 1,
+    active: true,
+    features: [
+      'Khởi tạo Hồ sơ Gian hàng / Dịch vụ miễn phí',
+      'Cập nhật Hotline, Zalo & Địa chỉ căn hộ',
+      'Đăng tối đa 10 sản phẩm/món ăn cơ bản',
+      'Xuất hiện trên công cụ Tìm Kiếm Cư Dân 24h',
+      'Nhận phản hồi & Đánh giá sao từ xóm giềng'
+    ],
+    buttonText: 'Đăng Ký Miễn Phí',
+    buttonVariant: 'outline'
+  },
+  {
+    id: 'shop-xac-thuc-24h',
+    name: 'GÓI CHỦ SHOP XÁC THỰC 24H',
+    priceDisplay: '680.000đ',
+    priceValue: 680000,
+    unit: '/ năm',
+    badge: 'XÁC THỰC UY TÍN 24H',
+    badgeColor: 'bg-emerald-600 text-white',
+    color: 'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20',
+    description: 'Xác minh KYC chính chủ, tạo dựng niềm tin tuyệt đối với cư dân',
+    categoryGroup: 'identity',
+    priorityOrder: 2,
+    active: true,
+    features: [
+      'Bao gồm toàn bộ quyền lợi Gói Khởi Tạo',
+      'Cấp Huy hiệu KHIÊN XANH XÁC THỰC (KYC CCCD + SĐT)',
+      'Hỗ trợ đăng không giới hạn Sản phẩm & Menu dịch vụ',
+      'Ưu tiên xếp hạng cao trong tìm kiếm danh mục',
+      'Tặng 20 lượt Up-Tin tự động mỗi tháng',
+      'Hỗ trợ cập nhật thông tin gian hàng 24/7'
+    ],
+    buttonText: 'Kích Hoạt Ngay',
+    buttonVariant: 'success'
+  },
+  {
+    id: 'doi-tac-kim-cuong-24h',
+    name: 'GÓI ĐỐI TÁC KIM CƯƠNG VIP',
+    priceDisplay: '1.880.000đ',
+    priceValue: 1880000,
+    unit: '/ năm',
+    popular: true,
+    badge: 'ĐỐI TÁC VIP KIM CƯƠNG',
+    badgeColor: 'bg-amber-500 text-slate-950',
+    color: 'border-amber-500 bg-amber-50/40 dark:bg-amber-950/20 ring-2 ring-amber-500',
+    description: 'Giải pháp thương hiệu toàn diện cho Gian Hàng & Doanh Nghiệp uy tín',
+    categoryGroup: 'identity',
+    priorityOrder: 3,
+    active: true,
+    features: [
+      'Tích hợp toàn bộ đặc quyền Gói Xác Thực 24h',
+      'Huy hiệu VƯƠNG MIỆN VÀNG KIM CƯƠNG nổi bật nhất',
+      'Ghim Top 1 ưu tiên trong danh mục ngành hàng',
+      'Hỗ trợ chụp ảnh & biên tập giao diện chuẩn thương hiệu',
+      'Tặng 12 Bài Viết Truyền Thông PR Doanh Nghiệp / năm',
+      'Báo cáo thống kê lượt xem & tương tác khách hàng theo tuần',
+      'Đội ngũ Admin hỗ trợ riêng 1-on-1 qua Zalo'
+    ],
+    buttonText: 'Đăng Ký Gói VIP',
+    buttonVariant: 'warning'
+  },
+  {
+    id: 'top-banner-danh-muc',
+    name: 'QUẢNG CÁO TOP BANNER DANH MỤC',
+    priceDisplay: '890.000đ',
+    priceValue: 890000,
+    unit: '/ tháng',
+    badge: 'VỊ TRÍ VÀNG NGÀNH HÀNG',
+    badgeColor: 'bg-purple-600 text-white',
+    color: 'border-purple-500 bg-purple-50/40 dark:bg-purple-950/20',
+    description: 'Sở hữu Banner vị trí độc tôn ngay đầu trang danh mục ngành hàng',
+    categoryGroup: 'advertising',
+    priorityOrder: 4,
+    active: true,
+    features: [
+      'Hiển thị Banner kích thước lớn ngay đầu Danh mục',
+      'Hỗ trợ thiết kế Banner tĩnh & động miễn phí',
+      'Tích hợp nút Gọi Điện & Chat Zalo trực tiếp 1-Touch',
+      'Tiếp cận 100% cư dân truy cập vào nhóm ngành liên quan',
+      'Báo cáo số lượt hiển thị (Impressions) & Lượt Click hàng tuần'
+    ],
+    buttonText: 'Đặt Banner Ngay',
+    buttonVariant: 'purple'
+  },
+  {
+    id: 'sponsor-home-slider',
+    name: 'QUẢNG CÁO SLIDER VIP TRANG CHỦ',
+    priceDisplay: '2.680.000đ',
+    priceValue: 2680000,
+    unit: '/ tháng',
+    badge: 'VỊ TRÍ ĐỘC TÔN TRANG CHỦ',
+    badgeColor: 'bg-rose-600 text-white',
+    color: 'border-rose-500 bg-rose-50/40 dark:bg-rose-950/20',
+    description: 'Tiếp cận toàn bộ hàng vạn cư dân ngay khi mở app & truy cập trang chủ',
+    categoryGroup: 'advertising',
+    priorityOrder: 5,
+    active: true,
+    features: [
+      'Banner Hero lớn ở vị trí đầu tiên Slider Trang Chủ',
+      'Hiển thị Popup chào mừng cư dân mới đăng nhập',
+      'Tối ưu hiển thị đa nền tảng (Web PC, Mobile App, Tablet)',
+      'Hỗ trợ quay chụp & sản xuất Banner truyền thông cao cấp',
+      'Ưu tiên giới thiệu trong các bản tin cư dân tuần'
+    ],
+    buttonText: 'Liên Hệ Đặt Vị Trí',
+    buttonVariant: 'primary'
+  },
+  {
+    id: 'article-pr-review',
+    name: 'BÀI REVIEW PR THƯƠNG HIỆU CƯ DÂN',
+    priceDisplay: '1.280.000đ',
+    priceValue: 1280000,
+    unit: '/ bài',
+    badge: 'PR THƯƠNG HIỆU & SEO TOP',
+    badgeColor: 'bg-blue-600 text-white',
+    color: 'border-blue-500 bg-blue-50/40 dark:bg-blue-950/20',
+    description: 'Bài viết trải nghiệm chân thực góc nhìn cư dân, phủ Top Google SEO',
+    categoryGroup: 'pr',
+    priorityOrder: 6,
+    active: true,
+    features: [
+      'Biên tập bài viết chuyên sâu & chụp ảnh thực tế tận nơi',
+      'Đăng tải trên Chuyên Mục Doanh Nghiệp Cư Dân 24h',
+      'Đẩy SEO Google từ khóa thương hiệu & dịch vụ nội khu',
+      'Lan tỏa bài viết đến hệ sinh thái Group Zalo & Fanpage Cư Dân',
+      'Lưu trữ bài viết vĩnh viễn trên hệ thống'
+    ],
+    buttonText: 'Đăng Bài Review',
+    buttonVariant: 'primary'
+  }
+];
+
+let storePackagesStore: any[] = [...INITIAL_STORE_PACKAGES];
+let packageOrdersStore: any[] = [];
+
 // Up-Tin & Banking Settings Store
 let pricingConfigStore = {
   singlePushPrice: 20000,
@@ -245,15 +393,21 @@ let pricingConfigStore = {
 
 // Data Store File Persistence (Local JSON Database)
 const DATA_STORE_PATH = path.join(process.cwd(), "app_data_store.json");
+const DATA_STORE_BACKUP_PATH = path.join(process.cwd(), "app_data_store.backup.json");
 
 function loadDataStore() {
   try {
-    if (fs.existsSync(DATA_STORE_PATH)) {
-      const raw = fs.readFileSync(DATA_STORE_PATH, "utf-8");
+    let targetPath = DATA_STORE_PATH;
+    if (!fs.existsSync(DATA_STORE_PATH) && fs.existsSync(DATA_STORE_BACKUP_PATH)) {
+      targetPath = DATA_STORE_BACKUP_PATH;
+    }
+
+    if (fs.existsSync(targetPath)) {
+      const raw = fs.readFileSync(targetPath, "utf-8");
       const data = JSON.parse(raw);
       
       if (Array.isArray(data.properties) && data.properties.length > 0) {
-        // Smart merge saved properties with initial properties
+        // Preserved saved properties from disk as primary truth
         const savedMap = new Map(data.properties.map((p: any) => [p.id, p]));
         INITIAL_PROPERTIES.forEach(ip => {
           if (!savedMap.has(ip.id)) {
@@ -302,7 +456,22 @@ function loadDataStore() {
       console.log(`[DataStore] Initialized app_data_store.json file.`);
     }
   } catch (err) {
-    console.warn("Could not read app_data_store.json, using defaults.", err);
+    console.warn("Could not read app_data_store.json, attempting backup...", err);
+    if (fs.existsSync(DATA_STORE_BACKUP_PATH)) {
+      try {
+        const raw = fs.readFileSync(DATA_STORE_BACKUP_PATH, "utf-8");
+        const data = JSON.parse(raw);
+        if (Array.isArray(data.properties)) propertiesStore = data.properties;
+        if (Array.isArray(data.news)) newsStore = data.news;
+        if (Array.isArray(data.projects)) projectsStore = data.projects;
+        if (Array.isArray(data.users)) usersStore = data.users;
+        if (Array.isArray(data.stores)) storesStore = data.stores;
+        if (Array.isArray(data.storeOrders)) storeOrdersStore = data.storeOrders;
+        console.log(`[DataStore] Successfully recovered data from backup store.`);
+      } catch (backupErr) {
+        console.error("Failed to load backup data store:", backupErr);
+      }
+    }
   }
 }
 
@@ -320,7 +489,10 @@ function saveDataStore() {
       storeOrders: storeOrdersStore,
       reputationPosts: reputationPostsStore
     };
-    fs.writeFileSync(DATA_STORE_PATH, JSON.stringify(payload, null, 2), "utf-8");
+    const jsonStr = JSON.stringify(payload, null, 2);
+    fs.writeFileSync(DATA_STORE_PATH, jsonStr, "utf-8");
+    // Also update backup file synchronously
+    fs.writeFileSync(DATA_STORE_BACKUP_PATH, jsonStr, "utf-8");
   } catch (err) {
     console.warn("Could not write app_data_store.json", err);
   }
@@ -328,6 +500,23 @@ function saveDataStore() {
 
 // Initial load on server start
 loadDataStore();
+
+// Process exit signal handlers to ensure data is saved during server restarts / code edits
+process.on('SIGTERM', () => {
+  console.log('[Server] SIGTERM received. Saving data store before exit...');
+  saveDataStore();
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('[Server] SIGINT received. Saving data store before exit...');
+  saveDataStore();
+  process.exit(0);
+});
+
+process.on('beforeExit', () => {
+  saveDataStore();
+});
 
 // Helper to clean phone numbers for comparison
 function normalizePhoneNumber(rawPhone?: string): string {
@@ -2646,9 +2835,9 @@ app.post("/api/tech-orders", (req, res) => {
   wallet.availableBalance -= priceNum;
   wallet.escrowLockedBalance += priceNum;
 
-  const platformFee = Math.round(priceNum * 0.05); // 5% Chiết khấu sàn
-  const payoutAmount = priceNum - platformFee;
-  const orderCode = `TECH-ESCROW-${Math.floor(1000 + Math.random() * 9000)}`;
+  const platformFee = 0; // 0% Chiết khấu sàn - Kết nối trực tiếp miễn phí
+  const payoutAmount = priceNum;
+  const orderCode = `TECH-DIRECT-${Math.floor(1000 + Math.random() * 9000)}`;
 
   const newOrder = {
     id: `tech-ord-${Date.now()}`,
@@ -2668,8 +2857,8 @@ app.post("/api/tech-orders", (req, res) => {
     techPhone: techPhone || '0868.499.929',
     agreedPrice: priceNum,
     escrowAmount: priceNum,
-    platformFee,
-    payoutAmount,
+    platformFee: 0,
+    payoutAmount: priceNum,
     status: 'escrow_locked',
     warrantyDays: warrantyDays ? Number(warrantyDays) : 30,
     note: note || '',
@@ -2693,15 +2882,15 @@ app.post("/api/tech-orders", (req, res) => {
     amount: priceNum,
     orderId: newOrder.id,
     orderCode,
-    description: `[TẠM GIỮ VÍ ESCROW] Đơn dịch vụ kỹ thuật ${orderCode} (${serviceTitle})`,
+    description: `[GHI NHẬN LỊCH SỬ KẾT NỐI] Đơn kết nối trực tiếp ${orderCode} (${serviceTitle}) - Phí sàn 0%. Hai bên tự chịu 100% trách nhiệm pháp lý.`,
     status: 'success',
     createdAt: new Date().toLocaleString('vi-VN'),
-    referenceCode: `ESCROW-HOLD-${orderCode}`
+    referenceCode: `DIRECT-HOLD-${orderCode}`
   });
 
   return res.status(201).json({
     success: true,
-    message: `🎉 Đặt đơn kỹ thuật thành công! Thuật toán đã TẠM GIỮ ${priceNum.toLocaleString('vi-VN')}đ an toàn trong Ví Trung Gian chocudan24h.com.`,
+    message: `🎉 Đã ghi nhận lịch sử đơn hàng ${orderCode}! Hệ thống không thu % phí sàn. Khách hàng và Thợ/Nhà cung cấp liên hệ kết nối trực tiếp.`,
     order: newOrder,
     wallet
   });
@@ -2739,14 +2928,11 @@ app.post("/api/tech-orders/:id/update-status", (req, res) => {
       customerWallet.escrowLockedBalance = 0;
     }
 
-    // 2. Transfer 95% payoutAmount to Tech's Available Wallet
+    // 2. Transfer 100% payoutAmount to Tech's Available Wallet (0% fee)
     techWallet.availableBalance += order.payoutAmount;
     techWallet.totalEarned += order.payoutAmount;
 
-    // 3. Transfer 5% platform fee to Admin System Wallet
-    adminWallet.availableBalance += order.platformFee;
-
-    // 4. Log transactions for transparency
+    // 3. Log transactions for transparency (0% platform fee)
     walletTransactionsStore.unshift({
       id: `wtx-${Date.now()}-tech`,
       userId: order.techUserId || 'user-hieubui',
@@ -2754,23 +2940,10 @@ app.post("/api/tech-orders/:id/update-status", (req, res) => {
       amount: order.payoutAmount,
       orderId: order.id,
       orderCode: order.orderCode,
-      description: `[GIẢI NGÂN TỰ ĐỘNG THỢ] Thuật toán giải ngân ${order.payoutAmount.toLocaleString('vi-VN')}đ cho đơn ${order.orderCode} (Đã trừ 5% hoa hồng sàn)`,
+      description: `[GIẢI NGÂN TRỰC TIẾP THỢ] Chuyển 100% (${order.payoutAmount.toLocaleString('vi-VN')}đ) cho đơn ${order.orderCode} (Phí sàn 0%).`,
       status: 'success',
       createdAt: new Date().toLocaleString('vi-VN'),
       referenceCode: `RELEASE-${order.orderCode}`
-    });
-
-    walletTransactionsStore.unshift({
-      id: `wtx-${Date.now()}-comm`,
-      userId: 'user-admin',
-      type: 'commission_deduct',
-      amount: order.platformFee,
-      orderId: order.id,
-      orderCode: order.orderCode,
-      description: `[HOA HỒNG HỆ THỐNG] Thu nhập 5% chiết khấu sàn đơn kỹ thuật ${order.orderCode}`,
-      status: 'success',
-      createdAt: new Date().toLocaleString('vi-VN'),
-      referenceCode: `COMMISSION-${order.orderCode}`
     });
 
     // Set warranty expiration date
@@ -2778,7 +2951,7 @@ app.post("/api/tech-orders/:id/update-status", (req, res) => {
 
     return res.json({
       success: true,
-      message: `🎉 NGHIỆM THU & GIẢI NGÂN THÀNH CÔNG!\n\nThuật toán đã tự động cắt ${order.platformFee.toLocaleString('vi-VN')}đ (5% hoa hồng) và chuyển ${order.payoutAmount.toLocaleString('vi-VN')}đ trực tiếp vào Ví Thợ Kỹ Thuật (${order.techName}).`,
+      message: `🎉 NGHIỆM THU & HOÀN TẤT LỊCH SỬ ĐƠN!\n\nĐã ghi nhận hoàn tất và chuyển 100% (${order.payoutAmount.toLocaleString('vi-VN')}đ) cho Đơn vị / Thợ kỹ thuật (${order.techName}). Sàn không thu % phí.`,
       order,
       techWallet,
       customerWallet

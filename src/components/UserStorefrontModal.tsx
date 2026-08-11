@@ -585,13 +585,13 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
               <div>
                 <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 font-black text-[10px] rounded-full uppercase">
-                  ĐẶT HÀNG THÀNH CÔNG
+                  ĐÃ LƯU NHẬT KÝ LỊCH SỬ ĐƠN HÀNG (0% PHÍ SÀN)
                 </span>
                 <h2 className="text-xl font-black text-slate-900 dark:text-white mt-1">
                   Mã Đơn: <span className="text-amber-500 font-mono">{placedOrder.orderCode}</span>
                 </h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  Đơn hàng đã được tự động truyền tới Gian Hàng & Hệ Thống KiotViet POS của chủ cửa hàng!
+                <p className="text-xs text-slate-300 mt-2 bg-slate-800/80 p-2.5 rounded-xl border border-slate-700 leading-relaxed text-left">
+                  ⚡ <strong>Kết Nối Trực Tiếp:</strong> Đơn hàng đã lưu vào lịch sử hệ thống. Sàn không thu % phí. Khách hàng và Chủ gian hàng ({store.storeName}) liên hệ &amp; thanh toán trực tiếp. Hai bên tự chịu 100% trách nhiệm pháp lý phát sinh.
                 </p>
               </div>
 
