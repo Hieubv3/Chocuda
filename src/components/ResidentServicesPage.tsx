@@ -475,11 +475,12 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
       
       {/* 1. HERO BANNER & HEADER SECTION */}
-      <section className="bg-slate-900 text-white relative py-3.5 px-3 sm:px-6 lg:px-8 border-b border-slate-800 z-20">
+      <section className="bg-slate-900 text-white relative py-4 px-3 sm:px-6 lg:px-8 border-b border-slate-800 z-20">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none overflow-hidden"></div>
         
-        <div className="max-w-7xl mx-auto relative z-20 space-y-3">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2.5">
+        <div className="max-w-7xl mx-auto relative z-20 space-y-3.5">
+          {/* Row 1: Title & Store Verification Button */}
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pb-1 border-b border-slate-800/60">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-xs">
@@ -487,97 +488,97 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   <span>CỬA HÀNG ĐÃ XÁC MINH CƯ DÂN</span>
                 </span>
               </div>
-              <h1 className="text-base sm:text-lg font-black tracking-tight text-white leading-snug">
+              <h1 className="text-lg sm:text-xl font-black tracking-tight text-white leading-snug">
                 CHỢ DỊCH VỤ & THỢ CƯ DÂN <span className="text-emerald-400">VINHOMES</span>
               </h1>
-              <p className="text-slate-300 text-[11px] sm:text-xs mt-0.5 max-w-xl line-clamp-1">
+              <p className="text-slate-300 text-xs mt-0.5 max-w-2xl">
                 Lắp thang máy, sửa điện máy tính, taxi 24/7, ẩm thực ATVSTP, y tế gia đình & spa — Cửa hàng đã xác minh chính chủ!
               </p>
             </div>
 
-            {/* Direct Connect & Legal Notice Banner */}
-            <div className="w-full bg-emerald-950/80 border border-emerald-500/40 rounded-xl p-2.5 text-xs text-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-inner">
-              <div className="flex items-center gap-2">
-                <span className="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded text-[10px] border border-emerald-500/30 uppercase shrink-0">
-                  ⚡ PHÍ SÀN 0% - KẾT NỐI TRỰC TIẾP
-                </span>
-                <span className="text-[11px] font-medium text-emerald-100">
-                  Khách hàng &amp; Nhà cung cấp/Thợ liên hệ và thanh toán trực tiếp. Đơn hàng dùng để <strong>Lưu Nhật Ký Lịch Sử</strong>.
-                </span>
-              </div>
-              <button 
-                onClick={() => setShowLegalDisclaimer(true)}
-                className="text-[10px] text-amber-300 underline hover:text-amber-200 font-bold shrink-0 flex items-center gap-1"
-              >
-                <AlertTriangle className="w-3 h-3 text-amber-400" />
-                <span>Quy định Pháp lý &amp; Trách nhiệm cá nhân</span>
-              </button>
+            <button
+              onClick={() => {
+                if (!currentUser) {
+                  onOpenAuth();
+                } else {
+                  window.location.hash = '#user-dashboard';
+                }
+              }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition active:scale-95 cursor-pointer shrink-0"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-300" />
+              <span>+ XÁC MINH CỬA HÀNG</span>
+            </button>
+          </div>
+
+          {/* Row 2: Direct Connect & Legal Notice Banner (Full Width Block) */}
+          <div className="w-full bg-emerald-950/70 border border-emerald-500/40 rounded-xl p-2.5 text-xs text-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-inner">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="bg-emerald-500/20 text-emerald-300 font-black px-2 py-0.5 rounded text-[10px] border border-emerald-500/30 uppercase shrink-0">
+                ⚡ PHÍ SÀN 0% - KẾT NỐI TRỰC TIẾP
+              </span>
+              <span className="text-[11px] font-medium text-emerald-100">
+                Khách hàng &amp; Thợ/Nhà cung cấp liên hệ, thanh toán trực tiếp. Đơn hàng dùng để <strong>Lưu Nhật Ký Lịch Sử</strong>.
+              </span>
             </div>
+            <button 
+              onClick={() => setShowLegalDisclaimer(true)}
+              className="text-[10px] text-amber-300 underline hover:text-amber-200 font-bold shrink-0 flex items-center gap-1"
+            >
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+              <span>Quy định Pháp lý &amp; Trách nhiệm</span>
+            </button>
+          </div>
 
-            {/* Action Buttons - Compact Row */}
-            <div className="flex flex-wrap items-center gap-1.5 shrink-0">
-              <button
-                onClick={() => setIsPricingModalOpen(true)}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 shadow-xs transition active:scale-95 cursor-pointer"
-              >
-                <Sparkles className="w-3 h-3 text-slate-950 fill-slate-950" />
-                <span>BẢNG GIÁ QUẢNG BÁ</span>
-              </button>
+          {/* Row 3: Action Buttons Bar */}
+          <div className="flex flex-wrap items-center gap-2 pt-0.5">
+            <button
+              onClick={() => setIsPricingModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 shadow-xs transition active:scale-95 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-slate-950 fill-slate-950" />
+              <span>BẢNG GIÁ QUẢNG BÁ</span>
+            </button>
 
-              <button
-                onClick={() => setIsEscrowModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-slate-900 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md transition active:scale-95 cursor-pointer ring-2 ring-emerald-400/50"
-              >
-                <Wallet className="w-3.5 h-3.5 text-emerald-300 animate-pulse" />
-                <span>💳 VÍ TỰ ĐỘNG &amp; ESCROW THỢ KĨ THUẬT</span>
-              </button>
+            <button
+              onClick={() => setIsEscrowModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-slate-900 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md transition active:scale-95 cursor-pointer ring-1 ring-emerald-400/50"
+            >
+              <Wallet className="w-3.5 h-3.5 text-emerald-300" />
+              <span>VÍ TỰ ĐỘNG &amp; ESCROW THỢ KĨ THUẬT</span>
+            </button>
 
-              <button
-                onClick={() => setIsTransportModalOpen(true)}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md transition active:scale-95 cursor-pointer ring-1 ring-amber-400"
-              >
-                <Car className="w-3.5 h-3.5 text-slate-950 animate-pulse" />
-                <span>🚗 ĐẶT XE VẬN TẢI NỘI & NGOẠI KHU 24/7</span>
-              </button>
+            <button
+              onClick={() => setIsTransportModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md transition active:scale-95 cursor-pointer ring-1 ring-amber-400"
+            >
+              <Car className="w-3.5 h-3.5 text-slate-950" />
+              <span>ĐẶT XE VẬN TẢI NỘI & NGOẠI KHU 24/7</span>
+            </button>
 
-              <button
-                onClick={() => setIsConstructionModalOpen(true)}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md transition active:scale-95 cursor-pointer ring-1 ring-blue-400"
-              >
-                <Hammer className="w-3.5 h-3.5 text-amber-300 animate-bounce" />
-                <span>🏗️ BÁO GIÁ XÂY LẮP, NỘI THẤT & THANG MÁY</span>
-              </button>
+            <button
+              onClick={() => setIsConstructionModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md transition active:scale-95 cursor-pointer ring-1 ring-blue-400"
+            >
+              <Hammer className="w-3.5 h-3.5 text-amber-300" />
+              <span>BÁO GIÁ XÂY LẮP, NỘI THẤT & THANG MÁY</span>
+            </button>
 
-              <button
-                onClick={() => setIsTripartiteModalOpen(true)}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 shadow-xs transition active:scale-95 cursor-pointer"
-              >
-                <FileText className="w-3 h-3 text-amber-400" />
-                <span>THỎA THUẬN 3 BÊN</span>
-              </button>
+            <button
+              onClick={() => setIsTripartiteModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 shadow-xs transition active:scale-95 cursor-pointer"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-400" />
+              <span>THỎA THUẬN 3 BÊN</span>
+            </button>
 
-              <button
-                onClick={() => setIsMapModalOpen(true)}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs transition active:scale-95 cursor-pointer"
-              >
-                <Compass className="w-3 h-3 text-slate-950" />
-                <span>BẢN ĐỒ ĐỊNH VỊ</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  if (!currentUser) {
-                    onOpenAuth();
-                  } else {
-                    window.location.hash = '#user-dashboard';
-                  }
-                }}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition active:scale-95 cursor-pointer"
-              >
-                <ShieldCheck className="w-3 h-3 text-emerald-300" />
-                <span>+ XÁC MINH CỬA HÀNG</span>
-              </button>
-            </div>
+            <button
+              onClick={() => setIsMapModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs transition active:scale-95 cursor-pointer"
+            >
+              <Compass className="w-3.5 h-3.5 text-slate-950" />
+              <span>BẢN ĐỒ ĐỊNH VỊ</span>
+            </button>
           </div>
 
           {/* Combined Search Box & Project Dropdown Selector */}

@@ -449,8 +449,10 @@ function loadDataStore() {
       if (Array.isArray(data.stores) && data.stores.length > 0) storesStore = data.stores;
       if (Array.isArray(data.storeOrders) && data.storeOrders.length > 0) storeOrdersStore = data.storeOrders;
       if (Array.isArray(data.reputationPosts) && data.reputationPosts.length > 0) reputationPostsStore = data.reputationPosts;
+      if (Array.isArray(data.storePackages) && data.storePackages.length > 0) storePackagesStore = data.storePackages;
+      if (Array.isArray(data.packageOrders) && data.packageOrders.length > 0) packageOrdersStore = data.packageOrders;
 
-      console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${newsStore.length} news, ${projectsStore.length} projects.`);
+      console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${newsStore.length} news, ${projectsStore.length} projects, ${storePackagesStore.length} packages.`);
     } else {
       saveDataStore();
       console.log(`[DataStore] Initialized app_data_store.json file.`);
@@ -467,6 +469,8 @@ function loadDataStore() {
         if (Array.isArray(data.users)) usersStore = data.users;
         if (Array.isArray(data.stores)) storesStore = data.stores;
         if (Array.isArray(data.storeOrders)) storeOrdersStore = data.storeOrders;
+        if (Array.isArray(data.storePackages)) storePackagesStore = data.storePackages;
+        if (Array.isArray(data.packageOrders)) packageOrdersStore = data.packageOrders;
         console.log(`[DataStore] Successfully recovered data from backup store.`);
       } catch (backupErr) {
         console.error("Failed to load backup data store:", backupErr);
@@ -487,7 +491,9 @@ function saveDataStore() {
       residentServices: residentServicesStore,
       stores: storesStore,
       storeOrders: storeOrdersStore,
-      reputationPosts: reputationPostsStore
+      reputationPosts: reputationPostsStore,
+      storePackages: storePackagesStore,
+      packageOrders: packageOrdersStore
     };
     const jsonStr = JSON.stringify(payload, null, 2);
     fs.writeFileSync(DATA_STORE_PATH, jsonStr, "utf-8");
@@ -1572,7 +1578,113 @@ app.put("/api/stores/orders/:orderId", (req, res) => {
     ...(paymentStatus && { paymentStatus })
   };
 
+  saveDataStore();
   res.json({ message: "Cập nhật trạng thái đơn hàng thành công!", order: storeOrdersStore[orderIdx] });
+});
+
+// ------------------- QUẢN LÝ GÓI DỊCH VỤ & BÁO GIÁ GIAN HÀNG CƯ DÂN -------------------
+// 1. Get all store packages
+app.get("/api/store-packages", (req, res) => {
+  res.json(storePackagesStore);
+});
+
+// 2. Create a new store package (Admin)
+app.post("/api/admin/store-packages", (req, res) => {
+  const pkgData = req.body;
+  if (!pkgData || !pkgData.name || !pkgData.priceDisplay) {
+    return res.status(400).json({ error: "Tên gói và giá hiển thị là bắt buộc." });
+  }
+
+  const newPkg = {
+    ...pkgData,
+    id: pkgData.id || `pkg-${Date.now()}`,
+    priceValue: Number(pkgData.priceValue) || 0,
+    active: pkgData.active !== undefined ? Boolean(pkgData.active) : true,
+    features: Array.isArray(pkgData.features) ? pkgData.features : (pkgData.features ? pkgData.features.split('\n').filter(Boolean) : [])
+  };
+
+  storePackagesStore.push(newPkg);
+  saveDataStore();
+  res.status(201).json({ success: true, message: "Đã tạo gói dịch vụ gian hàng mới!", package: newPkg });
+});
+
+// 3. Update existing store package (Admin)
+app.put("/api/admin/store-packages/:id", (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  const pkgIdx = storePackagesStore.findIndex(p => p.id === id);
+  if (pkgIdx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy gói dịch vụ." });
+  }
+
+  storePackagesStore[pkgIdx] = {
+    ...storePackagesStore[pkgIdx],
+    ...updateData,
+    priceValue: updateData.priceValue !== undefined ? Number(updateData.priceValue) : storePackagesStore[pkgIdx].priceValue,
+    features: Array.isArray(updateData.features) ? updateData.features : storePackagesStore[pkgIdx].features
+  };
+
+  saveDataStore();
+  res.json({ success: true, message: "Cập nhật thông tin gói dịch vụ thành công!", package: storePackagesStore[pkgIdx] });
+});
+
+// 4. Delete store package (Admin)
+app.delete("/api/admin/store-packages/:id", (req, res) => {
+  const { id } = req.params;
+  storePackagesStore = storePackagesStore.filter(p => p.id !== id);
+  saveDataStore();
+  res.json({ success: true, message: "Đã xóa gói dịch vụ." });
+});
+
+// 5. Get Package Subscription Orders (Admin)
+app.get("/api/admin/package-orders", (req, res) => {
+  res.json(packageOrdersStore);
+});
+
+// 6. User submits Package Subscription Order
+app.post("/api/package-orders", (req, res) => {
+  const orderData = req.body;
+  if (!orderData || !orderData.packageId || !orderData.userName || !orderData.userPhone) {
+    return res.status(400).json({ error: "Thắc mắc/Yêu cầu đăng ký thiếu Họ tên hoặc SĐT liên hệ." });
+  }
+
+  const newOrder = {
+    ...orderData,
+    id: `pkg-ord-${Date.now()}`,
+    orderCode: `PKG-${Math.floor(1000 + Math.random() * 9000)}`,
+    status: 'pending',
+    createdAt: new Date().toLocaleString('vi-VN')
+  };
+
+  packageOrdersStore.unshift(newOrder);
+  saveDataStore();
+  res.status(201).json({
+    success: true,
+    message: `🎉 Đã gửi đăng ký Gói Dịch Vụ thành công! Admin Chợ Cư Dân 24h sẽ liên hệ kiểm tra & kích hoạt trong 5-15 phút.`,
+    order: newOrder
+  });
+});
+
+// 7. Admin update package order status
+app.put("/api/admin/package-orders/:id", (req, res) => {
+  const { id } = req.params;
+  const { status, adminNote } = req.body;
+
+  const orderIdx = packageOrdersStore.findIndex(o => o.id === id);
+  if (orderIdx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy yêu cầu đăng ký." });
+  }
+
+  packageOrdersStore[orderIdx] = {
+    ...packageOrdersStore[orderIdx],
+    ...(status && { status }),
+    ...(adminNote && { adminNote }),
+    updatedAt: new Date().toLocaleString('vi-VN')
+  };
+
+  saveDataStore();
+  res.json({ success: true, message: "Cập nhật trạng thái đăng ký thành công!", order: packageOrdersStore[orderIdx] });
 });
 
 

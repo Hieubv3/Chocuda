@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES } from '../types';
+import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package } from 'lucide-react';
 
 interface ReputationPost {
@@ -72,7 +72,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
     | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core'
-    | 'resident_services_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance'
+    | 'resident_services_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
   >('properties');
 
   const [adminReputationPosts, setAdminReputationPosts] = useState<ReputationPost[]>([]);
@@ -81,11 +81,137 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [adminResidentServices, setAdminResidentServices] = useState<ResidentServiceItem[]>([]);
   const [adminStores, setAdminStores] = useState<UserStorefront[]>([]);
   const [adminStoreOrders, setAdminStoreOrders] = useState<StoreOrder[]>([]);
+  const [adminStorePackages, setAdminStorePackages] = useState<StorePackage[]>([]);
+  const [adminPackageOrders, setAdminPackageOrders] = useState<StorePackageOrder[]>([]);
   const [resServiceCatFilter, setResServiceCatFilter] = useState<string>('all');
   const [resServiceSearch, setResServiceSearch] = useState<string>('');
   const [resServiceKycFilter, setResServiceKycFilter] = useState<string>('all');
   const [showAddServiceModal, setShowAddServiceModal] = useState<boolean>(false);
   const [editingService, setEditingService] = useState<ResidentServiceItem | null>(null);
+
+  // Package Management State
+  const [editingPkgModal, setEditingPkgModal] = useState<StorePackage | null>(null);
+  const [showAddPkgModal, setShowAddPkgModal] = useState<boolean>(false);
+  const [pkgFormData, setPkgFormData] = useState({
+    name: '',
+    priceDisplay: '',
+    priceValue: 0,
+    unit: '/ năm',
+    badge: '',
+    description: '',
+    featuresStr: '',
+    buttonText: 'Đăng Ký Ngay',
+    buttonVariant: 'success' as 'primary' | 'success' | 'warning' | 'purple' | 'outline',
+    popular: false
+  });
+
+  const handleOpenAddPkgModal = () => {
+    setEditingPkgModal(null);
+    setPkgFormData({
+      name: '',
+      priceDisplay: '',
+      priceValue: 0,
+      unit: '/ năm',
+      badge: '',
+      description: '',
+      featuresStr: '',
+      buttonText: 'Đăng Ký Ngay',
+      buttonVariant: 'success',
+      popular: false
+    });
+    setShowAddPkgModal(true);
+  };
+
+  const handleOpenEditPkgModal = (pkg: StorePackage) => {
+    setEditingPkgModal(pkg);
+    setPkgFormData({
+      name: pkg.name || '',
+      priceDisplay: pkg.priceDisplay || '',
+      priceValue: pkg.priceValue || 0,
+      unit: pkg.unit || '/ năm',
+      badge: pkg.badge || '',
+      description: pkg.description || '',
+      featuresStr: Array.isArray(pkg.features) ? pkg.features.join('\n') : '',
+      buttonText: pkg.buttonText || 'Đăng Ký Ngay',
+      buttonVariant: (pkg.buttonVariant as any) || 'success',
+      popular: Boolean(pkg.popular)
+    });
+    setShowAddPkgModal(true);
+  };
+
+  const handleSavePackageSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pkgFormData.name || !pkgFormData.priceDisplay) {
+      alert('Vui lòng điền Tên gói dịch vụ và Giá hiển thị!');
+      return;
+    }
+
+    const payload = {
+      name: pkgFormData.name,
+      priceDisplay: pkgFormData.priceDisplay,
+      priceValue: Number(pkgFormData.priceValue) || 0,
+      unit: pkgFormData.unit,
+      badge: pkgFormData.badge,
+      description: pkgFormData.description,
+      features: pkgFormData.featuresStr.split('\n').map(s => s.trim()).filter(Boolean),
+      buttonText: pkgFormData.buttonText,
+      buttonVariant: pkgFormData.buttonVariant,
+      popular: pkgFormData.popular,
+      color: pkgFormData.popular 
+        ? 'border-amber-500 bg-amber-50/30 dark:bg-amber-950/20 ring-2 ring-amber-500'
+        : 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20'
+    };
+
+    try {
+      const url = editingPkgModal ? `/api/admin/store-packages/${editingPkgModal.id}` : '/api/admin/store-packages';
+      const method = editingPkgModal ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert(editingPkgModal ? '🎉 Đã cập nhật gói dịch vụ thành công!' : '🎉 Đã tạo gói dịch vụ mới!');
+        setShowAddPkgModal(false);
+        setEditingPkgModal(null);
+        fetchStorePackages();
+      } else {
+        alert('Có lỗi xảy ra khi lưu gói dịch vụ.');
+      }
+    } catch (err) {
+      console.error('Error saving package:', err);
+    }
+  };
+
+  const handleDeletePackageClick = async (pkgId: string, pkgName: string) => {
+    if (!confirm(`Bạn có chắc muốn xóa gói dịch vụ "${pkgName}"?`)) return;
+    try {
+      const res = await fetch(`/api/admin/store-packages/${pkgId}`, { method: 'DELETE' });
+      if (res.ok) {
+        alert('Đã xóa gói dịch vụ!');
+        fetchStorePackages();
+      }
+    } catch (err) {
+      console.error('Error deleting package:', err);
+    }
+  };
+
+  const handleUpdatePackageOrderStatus = async (orderId: string, status: 'approved' | 'rejected') => {
+    try {
+      const res = await fetch(`/api/admin/package-orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (res.ok) {
+        alert(status === 'approved' ? '🎉 Đã phê duyệt & kích hoạt Gói Dịch Vụ cho khách hàng!' : 'Đã chuyển đơn đăng ký sang trạng thái Từ chối.');
+        fetchPackageOrders();
+      }
+    } catch (err) {
+      console.error('Error updating package order status:', err);
+    }
+  };
 
   // Form state for creating/editing Resident Services
   const [newSrvTitle, setNewSrvTitle] = useState('');
@@ -150,6 +276,30 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     }
   };
 
+  const fetchStorePackages = async () => {
+    try {
+      const res = await fetch('/api/store-packages');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) setAdminStorePackages(data);
+      }
+    } catch (e) {
+      console.error('Error fetching store packages:', e);
+    }
+  };
+
+  const fetchPackageOrders = async () => {
+    try {
+      const res = await fetch('/api/admin/package-orders');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) setAdminPackageOrders(data);
+      }
+    } catch (e) {
+      console.error('Error fetching package orders:', e);
+    }
+  };
+
   React.useEffect(() => {
     fetch('/api/reputation-posts')
       .then(res => res.json())
@@ -161,6 +311,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     fetchResidentServices();
     fetchStores();
     fetchStoreOrders();
+    fetchStorePackages();
+    fetchPackageOrders();
   }, [activeTab, adminSector]);
   const [localConfig, setLocalConfig] = useState<UpTinPricingConfig>(pricingConfig);
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -1597,6 +1749,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <span className="truncate">💰 Tài Chính & Chiết Khấu DV</span>
                 </div>
               </button>
+
+              <button
+                onClick={() => setActiveTab('package_orders_mgmt')}
+                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                  activeTab === 'package_orders_mgmt'
+                    ? 'bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-slate-950 shadow-lg font-black ring-2 ring-amber-300'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Package className="w-4 h-4 text-amber-500 shrink-0" />
+                  <span className="truncate">💎 Quản Lý 6 Gói Dịch Vụ & Đơn Đăng Ký</span>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'package_orders_mgmt' ? 'bg-slate-950 text-amber-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400'}`}>
+                  {adminPackageOrders.filter(o => o.status === 'pending').length > 0 ? `🟡 ${adminPackageOrders.filter(o => o.status === 'pending').length}` : adminStorePackages.length}
+                </span>
+              </button>
             </div>
           )}
         </aside>
@@ -2117,6 +2286,223 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 {adminResidentServices.filter(s => s.verified || s.kycStatus === 'verified').length} / {adminResidentServices.length} DV
               </div>
               <span className="text-[10px] text-blue-500 font-bold block">✓ Đã gắn Nút Xanh Chính Chủ</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MẢNG 2: TAB 6 - QUẢN LÝ GÓI DỊCH VỤ & ĐƠN ĐĂNG KÝ ==================== */}
+      {activeTab === 'package_orders_mgmt' && (
+        <div className="space-y-6">
+          {/* Header Banner */}
+          <div className="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 p-6 rounded-3xl border-2 border-amber-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                  QUẢN TRỊ BÁO GIÁ & GÓI CỬA HÀNG 24H
+                </span>
+                <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 font-bold text-[10px] rounded-full border border-emerald-500/30">
+                  ● ACTIVE STORE PACKAGES
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-amber-400 mt-1.5 flex items-center gap-2">
+                <Package className="w-6 h-6 text-amber-400" />
+                <span>QUẢN LÝ 6 GÓI DỊCH VỤ & ĐƠN ĐĂNG KÝ TỪ CỬA HÀNG CƯ DÂN</span>
+              </h2>
+              <p className="text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed">
+                Hệ thống báo giá linh hoạt. Cư dân & Nhà cung cấp dịch vụ kết nối trực tiếp không chiết khấu sàn. Admin quản lý các gói hiển thị &amp; phê duyệt các đơn đăng ký dịch vụ nhanh chóng.
+              </p>
+            </div>
+
+            <button
+              onClick={handleOpenAddPkgModal}
+              className="px-5 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:brightness-110 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2 shrink-0 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>TẠO GÓI DỊCH VỤ MỚI</span>
+            </button>
+          </div>
+
+          {/* Section 1: Customer Package Subscription Orders */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-amber-500 rounded-full animate-ping"></div>
+                <h3 className="font-extrabold text-base text-slate-900 dark:text-white uppercase">
+                  📦 ĐƠN ĐĂNG KÝ GÓI CẦN DUYỆT ({adminPackageOrders.length})
+                </h3>
+              </div>
+              <span className="text-xs text-slate-500 font-bold">
+                Chờ duyệt: <strong className="text-amber-500 font-black">{adminPackageOrders.filter(o => o.status === 'pending').length} đơn</strong>
+              </span>
+            </div>
+
+            {adminPackageOrders.length === 0 ? (
+              <div className="text-center py-8 text-slate-500 text-xs">
+                Chưa có đơn đăng ký gói dịch vụ nào. Khách hàng gửi yêu cầu sẽ xuất hiện ở đây.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-extrabold uppercase border-b border-slate-200 dark:border-slate-700">
+                      <th className="p-3">Mã & Ngày</th>
+                      <th className="p-3">Khách Hàng / SĐT</th>
+                      <th className="p-3">Gian Hàng / Căn Hộ</th>
+                      <th className="p-3">Gói Dịch Vụ & Giá</th>
+                      <th className="p-3">Ghi Chú Yêu Cầu</th>
+                      <th className="p-3">Trạng Thái</th>
+                      <th className="p-3 text-right">Thao Tác Admin</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+                    {adminPackageOrders.map((ord) => (
+                      <tr key={ord.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition">
+                        <td className="p-3">
+                          <span className="font-black text-amber-500 block">{ord.orderCode}</span>
+                          <span className="text-[10px] text-slate-400">{ord.createdAt}</span>
+                        </td>
+                        <td className="p-3">
+                          <span className="font-bold text-slate-900 dark:text-white block">{ord.userName}</span>
+                          <a href={`tel:${ord.userPhone}`} className="text-emerald-600 dark:text-emerald-400 font-extrabold hover:underline flex items-center gap-1">
+                            <Phone className="w-3 h-3" />
+                            <span>{ord.userPhone}</span>
+                          </a>
+                        </td>
+                        <td className="p-3">
+                          <span className="font-bold text-slate-800 dark:text-slate-200">{ord.storeName || 'Cư dân nội khu'}</span>
+                        </td>
+                        <td className="p-3">
+                          <span className="font-extrabold text-slate-900 dark:text-white uppercase block">{ord.packageName}</span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-black">
+                            {(ord.packagePrice || 0).toLocaleString('vi-VN')}đ {ord.unit}
+                          </span>
+                        </td>
+                        <td className="p-3 max-w-xs text-slate-600 dark:text-slate-300 truncate">
+                          {ord.note || 'Không có ghi chú'}
+                        </td>
+                        <td className="p-3">
+                          {ord.status === 'pending' && (
+                            <span className="px-2.5 py-1 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[10px] font-black rounded-full uppercase border border-amber-300">
+                              🟡 CHỜ DUYỆT
+                            </span>
+                          )}
+                          {ord.status === 'approved' && (
+                            <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 text-[10px] font-black rounded-full uppercase border border-emerald-300">
+                              🟢 ĐÃ KÍCH HOẠT
+                            </span>
+                          )}
+                          {ord.status === 'rejected' && (
+                            <span className="px-2.5 py-1 bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 text-[10px] font-black rounded-full uppercase border border-rose-300">
+                              🔴 TỪ CHỐI
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-3 text-right">
+                          {ord.status === 'pending' ? (
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                onClick={() => handleUpdatePackageOrderStatus(ord.id, 'approved')}
+                                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[11px] transition cursor-pointer flex items-center gap-1"
+                              >
+                                <Check className="w-3.5 h-3.5" />
+                                <span>DUYỆT</span>
+                              </button>
+                              <button
+                                onClick={() => handleUpdatePackageOrderStatus(ord.id, 'rejected')}
+                                className="px-2.5 py-1.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-500 hover:text-white font-bold rounded-lg text-[11px] transition cursor-pointer"
+                              >
+                                Từ Chối
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 font-bold">Đã xử lý</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Section 2: Manage 6 Store Packages List */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-extrabold text-base text-slate-900 dark:text-white uppercase flex items-center gap-2">
+                <Star className="w-5 h-5 text-amber-500" />
+                CẤU HÌNH DANH SÁCH GÓI DỊCH VỤ HIỂN THỊ ({adminStorePackages.length} Gói)
+              </h3>
+              <button
+                onClick={handleOpenAddPkgModal}
+                className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition flex items-center gap-1"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Thêm Gói Mới</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {adminStorePackages.map((pkg) => (
+                <div
+                  key={pkg.id}
+                  className={`rounded-2xl p-5 border flex flex-col justify-between space-y-4 bg-slate-50 dark:bg-slate-800/60 ${
+                    pkg.popular ? 'border-amber-500 ring-2 ring-amber-500/20' : 'border-slate-200 dark:border-slate-700'
+                  }`}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-500">
+                        {pkg.badge || 'GÓI CHUẨN'}
+                      </span>
+                      {pkg.popular && (
+                        <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-amber-500 text-slate-950 rounded-full">
+                          🔥 POPULAR
+                        </span>
+                      )}
+                    </div>
+
+                    <h4 className="font-black text-base text-slate-900 dark:text-white uppercase">
+                      {pkg.name}
+                    </h4>
+
+                    <div className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+                      {pkg.priceDisplay} <span className="text-xs font-bold text-slate-400">{pkg.unit}</span>
+                    </div>
+
+                    <p className="text-xs text-slate-600 dark:text-slate-300 font-medium line-clamp-2">
+                      {pkg.description}
+                    </p>
+
+                    <ul className="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-700 text-xs">
+                      {pkg.features.map((f, i) => (
+                        <li key={i} className="flex items-start gap-1.5 text-slate-700 dark:text-slate-300">
+                          <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                          <span className="line-clamp-1">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
+                    <button
+                      onClick={() => handleOpenEditPkgModal(pkg)}
+                      className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-bold rounded-lg text-xs transition cursor-pointer flex items-center gap-1"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>Sửa Gói</span>
+                    </button>
+                    <button
+                      onClick={() => handleDeletePackageClick(pkg.id, pkg.name)}
+                      className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition cursor-pointer"
+                      title="Xóa gói"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -5293,6 +5679,140 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black rounded-xl transition shadow-lg hover:brightness-110 cursor-pointer"
                 >
                   {editingService ? 'LƯU CẬP NHẬT' : '➕ THÊM DỊCH VỤ MỚI'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create / Edit Package Modal */}
+      {showAddPkgModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 max-w-lg w-full shadow-2xl space-y-4 text-xs max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <Package className="w-5 h-5 text-amber-500" />
+                {editingPkgModal ? `SỬA GÓI: ${editingPkgModal.name}` : 'THÊM GÓI DỊCH VỤ MỚI'}
+              </h3>
+              <button
+                onClick={() => setShowAddPkgModal(false)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePackageSubmit} className="space-y-3">
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tên Gói Dịch Vụ *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ví dụ: GÓI CỬA HÀNG ĐẢM BẢO"
+                  value={pkgFormData.name}
+                  onChange={(e) => setPkgFormData(p => ({ ...p, name: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Giá Hiển Thị *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="1.990.000đ"
+                    value={pkgFormData.priceDisplay}
+                    onChange={(e) => setPkgFormData(p => ({ ...p, priceDisplay: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số Tiền Số (đ)</label>
+                  <input
+                    type="number"
+                    placeholder="1990000"
+                    value={pkgFormData.priceValue}
+                    onChange={(e) => setPkgFormData(p => ({ ...p, priceValue: Number(e.target.value) }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Đơn Vị Tính</label>
+                  <input
+                    type="text"
+                    placeholder="/ năm, / tháng, / bài"
+                    value={pkgFormData.unit}
+                    onChange={(e) => setPkgFormData(p => ({ ...p, unit: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Nhãn Huy Hiệu (Badge)</label>
+                  <input
+                    type="text"
+                    placeholder="🔥 NỔI BẬT NHẤT"
+                    value={pkgFormData.badge}
+                    onChange={(e) => setPkgFormData(p => ({ ...p, badge: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mô Tả Ngắn</label>
+                <input
+                  type="text"
+                  placeholder="Mô tả công dụng gói..."
+                  value={pkgFormData.description}
+                  onChange={(e) => setPkgFormData(p => ({ ...p, description: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tính Năng Bao Gồm (Mỗi dòng 1 tính năng)</label>
+                <textarea
+                  rows={4}
+                  placeholder="Bao gồm toàn bộ gói Tick Xanh&#10;Huy hiệu Cửa Hàng Đảm Bảo&#10;Ưu tiên hỗ trợ từ Admin"
+                  value={pkgFormData.featuresStr}
+                  onChange={(e) => setPkgFormData(p => ({ ...p, featuresStr: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="chk-popular"
+                  checked={pkgFormData.popular}
+                  onChange={(e) => setPkgFormData(p => ({ ...p, popular: e.target.checked }))}
+                  className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500"
+                />
+                <label htmlFor="chk-popular" className="font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                  Đánh dấu Gói ĐƯỢC CHỌN NHIỀU NHẤT (Nổi bật)
+                </label>
+              </div>
+
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddPkgModal(false)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
+                >
+                  LƯU GÓI DỊCH VỤ
                 </button>
               </div>
             </form>
