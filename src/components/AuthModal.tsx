@@ -139,7 +139,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
     }
   };
 
-  // Initialize GSI if client id or global script exists
+  // Initialize GSI if client id or global script exists & listen for popup OAuth message
   useEffect(() => {
     const googleClientId = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID || localStorage.getItem('VITE_GOOGLE_CLIENT_ID') || DEFAULT_GOOGLE_CLIENT_ID;
     if ((window as any).google?.accounts?.id && googleClientId) {
@@ -154,14 +154,41 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
         // Safe catch for iframe security policies
       }
     }
+
+    const handleMessageEvent = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'GOOGLE_OAUTH_SUCCESS' && event.data.user) {
+        setSuccessMsg('Đăng nhập Google thành công!');
+        setTimeout(() => {
+          onLoginSuccess(event.data.user);
+        }, 300);
+      }
+    };
+
+    window.addEventListener('message', handleMessageEvent);
+    return () => {
+      window.removeEventListener('message', handleMessageEvent);
+    };
   }, []);
 
   const handleGoogleAuth = () => {
     setErrorMsg('');
     setSuccessMsg('');
     
-    // Perform instant 1-click Google authentication with primary email hieubui1133@gmail.com
-    submitGoogleLoginWithEmail('hieubui1133@gmail.com', 'Hiếu Bùi');
+    // Trigger Google Identity Services One-Tap or Google OAuth Popup
+    if ((window as any).google?.accounts?.id) {
+      try {
+        (window as any).google.accounts.id.prompt((notification: any) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment() || notification.isDismissedMoment()) {
+            openRawGoogleOAuthPopup();
+          }
+        });
+        return;
+      } catch (e) {
+        // Fallback to popup
+      }
+    }
+
+    openRawGoogleOAuthPopup();
   };
 
   const openRawGoogleOAuthPopup = () => {
@@ -178,10 +205,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
         nonce: nonce
       }).toString();
 
-      const popup = window.open(googleAuthUrl, 'google_oauth_popup', 'width=500,height=600');
+      const popup = window.open(googleAuthUrl, 'google_oauth_popup', 'width=520,height=620');
       if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-        window.open(googleAuthUrl, '_blank');
+        // If popup is blocked by browser/iframe policy, open Google chooser prompt
+        setGoogleStep('chooser');
+        setShowGooglePrompt(true);
       }
+    } else {
+      setGoogleStep('chooser');
+      setShowGooglePrompt(true);
     }
   };
 
