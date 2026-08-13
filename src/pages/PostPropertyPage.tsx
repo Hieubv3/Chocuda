@@ -112,6 +112,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const [brokerCertImage, setBrokerCertImage] = useState<string>('');
   const [showSoDoEditor, setShowSoDoEditor] = useState(false);
 
+  // Image Upload Processing State
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+
   // AI Assistant State (Viết bài từ ảnh & tự động điền form)
   const aiFileInputRef = React.useRef<HTMLInputElement>(null);
   const [aiImageBase64, setAiImageBase64] = useState<string>('');
@@ -120,16 +123,20 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const [isAiAnalyzing, setIsAiAnalyzing] = useState<boolean>(false);
   const [aiSuccessMessage, setAiSuccessMessage] = useState<string | null>(null);
 
-  const handleAiImageSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAiImageSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      setAiImageBase64(base64);
-      setAiImagePreviewUrl(base64);
-    };
-    reader.readAsDataURL(file);
+    setIsAiAnalyzing(true);
+    try {
+      const watermarked = await addWatermarkToImage(file);
+      setAiImageBase64(watermarked);
+      setAiImagePreviewUrl(watermarked);
+    } catch (err) {
+      console.error('Error reading AI image:', err);
+    } finally {
+      setIsAiAnalyzing(false);
+      e.target.value = '';
+    }
   };
 
   const handleRunAiPostWriter = async () => {
@@ -281,8 +288,15 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      const data = await res.json();
-      if (data.success) {
+
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        data = {};
+      }
+
+      if (res.ok || data.success || data.property) {
         // Dispatch lead notification to Telegram Bot & Zalo
         dispatchCustomerLead({
           sourceType: 'post_property',
@@ -294,10 +308,25 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           note: `Loại: ${type === 'sale' ? 'Căn Bán' : 'Cho Thuê'} | Giá: ${type === 'sale' ? `${priceNum} Tỷ` : `${priceNum} Tr/tháng`} | Diện tích: ${areaNum}m² | Vai trò: ${sellerRole.toUpperCase()}`
         }).catch(err => console.warn('Lead dispatch error:', err));
 
+        // Auto sync new post row to Google Sheets & Drive
+        try {
+          const wsLocal = localStorage.getItem('chocudan24h_workspace_config');
+          if (wsLocal) {
+            const wsCfg = JSON.parse(wsLocal);
+            if (wsCfg && wsCfg.spreadsheetId) {
+              fetch('/api/workspace/sync-all', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ spreadsheetId: wsCfg.spreadsheetId, newPost: payload })
+              }).catch(() => {});
+            }
+          }
+        } catch (e) {}
+
         setSubmitted(true);
         if (onPropertySubmitted) onPropertySubmitted();
       } else {
-        alert(data.error || 'Lỗi khi gửi thông tin đăng tin.');
+        alert(data.error || data.message || `Lỗi khi gửi thông tin đăng tin (HTTP ${res.status}). Vui lòng thử lại!`);
       }
     } catch (err: any) {
       alert('Không thể kết nối máy chủ: ' + err.message);
@@ -677,15 +706,39 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
             <div>
               <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
-                Link Ảnh Sản Phẩm / Bảng Giá / Cửa Hàng
+                Ảnh Sản Phẩm / Bảng Giá / Cửa Hàng
               </label>
-              <input
-                type="url"
-                value={serviceImg}
-                onChange={(e) => setServiceImg(e.target.value)}
-                placeholder="https://..."
-                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-xs text-slate-900 dark:text-white"
-              />
+              <div className="flex flex-col sm:flex-row gap-2">
+                <label className="px-4 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition shrink-0">
+                  <Upload className="w-4 h-4 stroke-[2.5]" />
+                  <span>📸 CHỌN / CHỤP ẢNH</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        try {
+                          const watermarked = await addWatermarkToImage(file);
+                          if (watermarked) setServiceImg(watermarked);
+                        } catch (err) {
+                          console.error('Lỗi khi tải ảnh dịch vụ:', err);
+                        } finally {
+                          e.target.value = '';
+                        }
+                      }
+                    }}
+                  />
+                </label>
+                <input
+                  type="url"
+                  value={serviceImg}
+                  onChange={(e) => setServiceImg(e.target.value)}
+                  placeholder="Hoặc dán link ảnh Web https://..."
+                  className="flex-1 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-xs text-slate-900 dark:text-white"
+                />
+              </div>
               {serviceImg && (
                 <div className="w-32 h-24 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 mt-2">
                   <img src={serviceImg} alt="Preview" className="w-full h-full object-cover" />
@@ -1467,18 +1520,30 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   {/* Native File / Camera Upload Button */}
                   <label className="px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-2xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-500/20 transition active:scale-95">
                     <Upload className="w-4 h-4 stroke-[2.5]" />
-                    <span>📸 CHỌN / CHỤP ẢNH</span>
+                    <span>{isUploadingImages ? '⏳ ĐANG NÉN & ĐÓNG DẤU ẢNH...' : '📸 CHỌN / CHỤP ẢNH'}</span>
                     <input
                       type="file"
                       accept="image/*"
                       multiple
+                      disabled={isUploadingImages}
                       className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        files.forEach(async (file: File) => {
-                          const watermarked = await addWatermarkToImage(file);
-                          setImagesList(prev => [...prev, watermarked]);
-                        });
+                      onChange={async (e) => {
+                        const files: File[] = Array.from(e.target.files || []);
+                        if (files.length === 0) return;
+                        setIsUploadingImages(true);
+                        try {
+                          const watermarkedList: string[] = [];
+                          for (const file of files) {
+                            const res = await addWatermarkToImage(file);
+                            if (res) watermarkedList.push(res);
+                          }
+                          setImagesList(prev => [...prev, ...watermarkedList]);
+                        } catch (err) {
+                          console.error('Lỗi khi nén ảnh:', err);
+                        } finally {
+                          setIsUploadingImages(false);
+                          e.target.value = '';
+                        }
                       }}
                     />
                   </label>
@@ -1576,7 +1641,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   <div className="flex flex-col sm:flex-row gap-2">
                     <label className="px-3.5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
                       <Upload className="w-4 h-4" />
-                      <span>📁 CHỌN SỔ ĐỎ TỪ PC</span>
+                      <span>📁 CHỌN SỔ ĐỎ TỪ ĐIỆN THOẠI / PC</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1584,9 +1649,17 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            const watermarked = await addWatermarkToImage(file);
-                            setSoDoImage(watermarked);
-                            setSoDoRedactedImage(watermarked);
+                            try {
+                              const watermarked = await addWatermarkToImage(file);
+                              if (watermarked) {
+                                setSoDoImage(watermarked);
+                                setSoDoRedactedImage(watermarked);
+                              }
+                            } catch (err) {
+                              console.error('Lỗi khi tải Sổ đỏ:', err);
+                            } finally {
+                              e.target.value = '';
+                            }
                           }
                         }}
                       />
@@ -1624,7 +1697,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   <div className="flex flex-col sm:flex-row gap-2">
                     <label className="px-3.5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
                       <Upload className="w-4 h-4" />
-                      <span>📁 CHỌN GIẤY TỜ TỪ PC</span>
+                      <span>📁 CHỌN GIẤY TỜ TỪ ĐIỆN THOẠI / PC</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1632,8 +1705,14 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            const watermarked = await addWatermarkToImage(file);
-                            setBrokerCertImage(watermarked);
+                            try {
+                              const watermarked = await addWatermarkToImage(file);
+                              if (watermarked) setBrokerCertImage(watermarked);
+                            } catch (err) {
+                              console.error('Lỗi tải giấy tờ môi giới:', err);
+                            } finally {
+                              e.target.value = '';
+                            }
                           }
                         }}
                       />

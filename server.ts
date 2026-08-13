@@ -12,8 +12,26 @@ import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, Stor
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ limit: "100mb", extended: true }));
+
+// Express JSON Body Parser & Payload Error Middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (err) {
+    console.error('[Server Request Error]', err);
+    if (err.type === 'entity.too.large' || err.status === 413) {
+      return res.status(413).json({
+        success: false,
+        error: 'Kích thước dữ liệu hoặc hình ảnh đăng tải quá lớn. Vui lòng giảm bớt hoặc chọn hình ảnh khác!'
+      });
+    }
+    return res.status(err.status || 500).json({
+      success: false,
+      error: err.message || 'Lỗi xử lý yêu cầu từ máy chủ.'
+    });
+  }
+  next();
+});
 
 // In-Memory OTP Store
 const otpStore = new Map<string, { code: string; expiresAt: number }>();
@@ -1111,6 +1129,33 @@ app.get("/api/properties", (req, res) => {
 });
 
 // Property POST (Submit new listing)
+let workspaceConfigStore = {
+  spreadsheetId: '',
+  spreadsheetUrl: '',
+  folderId: '',
+  folderUrl: '',
+  autoSync: true,
+  lastSyncedAt: ''
+};
+
+app.get("/api/workspace/config", (req, res) => {
+  res.json(workspaceConfigStore);
+});
+
+app.post("/api/workspace/config", (req, res) => {
+  workspaceConfigStore = { ...workspaceConfigStore, ...req.body };
+  saveDataStore();
+  res.json({ success: true, config: workspaceConfigStore });
+});
+
+app.post("/api/workspace/sync-all", (req, res) => {
+  const { spreadsheetId, propertiesCount, residentServicesCount } = req.body;
+  workspaceConfigStore.lastSyncedAt = new Date().toLocaleString('vi-VN');
+  if (spreadsheetId) workspaceConfigStore.spreadsheetId = spreadsheetId;
+  saveDataStore();
+  res.json({ success: true, message: `Đã đồng bộ ${propertiesCount || propertiesStore.length} bài đăng lên Google Sheets!` });
+});
+
 app.post("/api/properties", (req, res) => {
   const data = req.body;
   const isAutoApproved = Boolean(data.approved) || Boolean(data.isAdmin) || data.status === 'approved';
@@ -1146,7 +1191,7 @@ app.post("/api/properties", (req, res) => {
 
   propertiesStore.unshift(newProperty);
   saveDataStore();
-  res.status(201).json({ message: "Đăng tin thành công!", property: newProperty });
+  res.status(201).json({ success: true, message: "Đăng tin thành công!", property: newProperty });
 });
 
 // Property PUT (Approve / Edit with Upsert fallback)

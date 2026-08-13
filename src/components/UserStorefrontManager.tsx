@@ -565,7 +565,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                 </label>
                 <div className="flex gap-2">
                   <label className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shrink-0 shadow">
-                    <span>📁 Chọn PC</span>
+                    <span>📁 Chọn Ảnh</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -573,8 +573,14 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          const watermarked = await addWatermarkToImage(file);
-                          setLogoUrl(watermarked);
+                          try {
+                            const watermarked = await addWatermarkToImage(file);
+                            if (watermarked) setLogoUrl(watermarked);
+                          } catch (err) {
+                            console.error('Lỗi tải logo:', err);
+                          } finally {
+                            e.target.value = '';
+                          }
                         }
                       }}
                     />

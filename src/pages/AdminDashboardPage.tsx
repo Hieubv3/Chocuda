@@ -26,6 +26,7 @@ import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
+import { GoogleWorkspaceCenter } from '../components/GoogleWorkspaceCenter';
 
 interface AdminDashboardPageProps {
   properties: Property[];
@@ -71,7 +72,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // 2 Mảng Quản Trị Riêng Biệt (Sector 1: Bất Động Sản, Sector 2: Dịch Vụ Chợ Cư Dân)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
-    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core'
+    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync'
     | 'resident_services_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
   >('properties');
 
@@ -1679,6 +1680,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <Database className="w-4 h-4 text-slate-500 shrink-0" />
                     <span className="truncate">Webhook n8n</span>
                   </div>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('workspace_sync')}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                    activeTab === 'workspace_sync'
+                      ? 'bg-emerald-600 text-white shadow-md font-extrabold ring-2 ring-emerald-400'
+                      : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/30'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <FileSpreadsheet className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="truncate">📊 Google Drive & Sheets</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500 text-white">
+                    HOT
+                  </span>
                 </button>
               </div>
             </>
@@ -4642,6 +4660,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         <EnterpriseAdminCore
           currentUser={registeredUsers[0] || null}
           users={registeredUsers}
+        />
+      )}
+
+      {/* Tab Google Drive & Sheets Workspace Sync */}
+      {activeTab === 'workspace_sync' && (
+        <GoogleWorkspaceCenter
+          properties={properties}
+          residentServices={adminResidentServices}
         />
       )}
 

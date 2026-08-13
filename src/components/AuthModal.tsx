@@ -142,7 +142,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
   // Initialize GSI if client id or global script exists & listen for popup OAuth message
   useEffect(() => {
     const googleClientId = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID || localStorage.getItem('VITE_GOOGLE_CLIENT_ID') || DEFAULT_GOOGLE_CLIENT_ID;
-    if ((window as any).google?.accounts?.id && googleClientId) {
+    const isInIframe = window.self !== window.top;
+
+    if (!isInIframe && (window as any).google?.accounts?.id && googleClientId) {
       try {
         (window as any).google.accounts.id.initialize({
           client_id: googleClientId,
@@ -174,8 +176,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
     setErrorMsg('');
     setSuccessMsg('');
     
-    // Trigger Google Identity Services One-Tap or Google OAuth Popup
-    if ((window as any).google?.accounts?.id) {
+    const isInIframe = window.self !== window.top;
+
+    // Trigger Google Identity Services One-Tap on top-level window, or Google OAuth Popup in iframe
+    if (!isInIframe && (window as any).google?.accounts?.id) {
       try {
         (window as any).google.accounts.id.prompt((notification: any) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment() || notification.isDismissedMoment()) {

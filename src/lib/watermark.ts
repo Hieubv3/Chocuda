@@ -17,12 +17,23 @@ export async function addWatermarkToImage(source: File | string): Promise<string
           return;
         }
 
-        // Set canvas dimensions to match image
-        canvas.width = img.naturalWidth || img.width || 1200;
-        canvas.height = img.naturalHeight || img.height || 800;
+        // Set canvas dimensions with max limit (1280px) for mobile & desktop speed + payload safety
+        const MAX_DIM = 1280;
+        let width = img.naturalWidth || img.width || 1200;
+        let height = img.naturalHeight || img.height || 800;
 
-        const width = canvas.width;
-        const height = canvas.height;
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width >= height) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          } else {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
 
         // 1. Draw original image
         ctx.drawImage(img, 0, 0, width, height);
@@ -104,8 +115,8 @@ export async function addWatermarkToImage(source: File | string): Promise<string
 
         ctx.restore();
 
-        // Convert canvas back to base64 Data URL
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        // Convert canvas back to base64 Data URL (0.82 JPEG quality for optimal size)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
         resolve(dataUrl);
       } catch (err) {
         console.error('Watermark canvas error:', err);
