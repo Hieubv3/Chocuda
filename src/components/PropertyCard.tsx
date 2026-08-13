@@ -338,11 +338,11 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
         {/* Bottom Image Overlay Badges - Micro semi-transparent tags */}
         <div className="absolute bottom-1.5 left-1.5 right-1.5 flex justify-between items-center text-white text-xs font-semibold pointer-events-none">
-          <span className="bg-black/40 backdrop-blur-xs px-1 py-0.2 rounded text-[8px] text-slate-200 border border-white/10 truncate max-w-[55%]">
-            {categoryNames[property.category] || property.category}
+          <span className="bg-black/60 backdrop-blur-xs px-1.5 py-0.5 rounded text-[8px] text-amber-300 font-black border border-amber-500/30 flex items-center gap-1 shadow-xs">
+            <span>🛡️ CHỢ CƯ DÂN 24H</span>
           </span>
           {property.subdivision && (
-            <span className="text-[8px] text-emerald-300 font-bold bg-black/40 backdrop-blur-xs px-1 py-0.2 rounded border border-emerald-500/20 truncate max-w-[40%]">
+            <span className="text-[8px] text-emerald-300 font-bold bg-black/60 backdrop-blur-xs px-1.5 py-0.5 rounded border border-emerald-500/30 truncate max-w-[40%]">
               PK {property.subdivision}
             </span>
           )}

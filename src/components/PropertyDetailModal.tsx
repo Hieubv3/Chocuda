@@ -100,6 +100,11 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               alt={property.title}
               className="w-full h-full object-cover"
             />
+            {/* Watermark Official Badge Tag */}
+            <div className="absolute bottom-3 right-3 bg-slate-900/85 backdrop-blur-md text-amber-400 border border-amber-500/40 px-3 py-1 rounded-xl text-[10px] font-black uppercase flex items-center gap-1.5 shadow-lg pointer-events-none">
+              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+              <span>🛡️ CHỢ CƯ DÂN 24H • ĐÃ ĐÓNG DẤU CHÍNH CHỦ</span>
+            </div>
           </div>
 
           {/* Thumbnails Bar */}
