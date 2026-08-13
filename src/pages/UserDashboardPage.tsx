@@ -55,9 +55,9 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
   // Filter properties belonging to logged in user or uploaded in demo
   const userProperties = properties.filter(p => 
-    p.userId === user.id || 
-    p.sellerName.toLowerCase().includes(user.name.toLowerCase()) || 
-    p.sellerRole === user.role ||
+    (user.id && p.userId === user.id) || 
+    (user.phone && (p.sellerPhone === user.phone || p.userPhone === user.phone)) ||
+    (user.name && p.sellerName && user.name.length > 2 && p.sellerName.toLowerCase().includes(user.name.toLowerCase())) ||
     user.role === 'admin'
   );
 

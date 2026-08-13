@@ -1106,9 +1106,9 @@ app.get("/api/properties", (req, res) => {
   if (maxPrice) {
     filtered = filtered.filter(p => p.price <= Number(maxPrice));
   }
-  if (status) {
+  if (status && status !== 'all') {
     filtered = filtered.filter(p => p.status === status);
-  } else {
+  } else if (!status) {
     // By default for non-admin viewers, return approved properties
     if (req.query.isAdmin !== 'true') {
       filtered = filtered.filter(p => p.status === 'approved' || p.approved === true);

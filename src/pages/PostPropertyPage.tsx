@@ -253,6 +253,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
     }
 
     const payload = {
+      userId: user?.id || `usr-${Date.now()}`,
+      userPhone: user?.phone || sellerPhone,
+      userEmail: user?.email,
       title,
       type,
       project,
@@ -272,8 +275,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       address,
       description: description || `Bất động sản vị trí đẹp tại ${project.toUpperCase()}, phù hợp để ở hoặc đầu tư kinh doanh.`,
       images: imagesList.length > 0 ? imagesList : ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'],
-      sellerName: sellerName || 'Chủ nhà chính chủ',
-      sellerPhone: sellerPhone || '0868.499.929',
+      sellerName: sellerName || user?.name || 'Chủ nhà chính chủ',
+      sellerPhone: sellerPhone || user?.phone || '0868.499.929',
       sellerRole,
       soDoImage: sellerRole === 'owner' ? soDoImage : undefined,
       soDoRedactedImage: sellerRole === 'owner' ? (soDoRedactedImage || soDoImage) : undefined,
@@ -297,12 +300,21 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       }
 
       if (res.ok || data.success || data.property) {
+        const createdProp = data.property || payload;
+        
+        // Update client local storage
+        try {
+          const localProps = JSON.parse(localStorage.getItem('hb_properties') || '[]');
+          const updatedLocal = [createdProp, ...localProps.filter((p: any) => p.id !== createdProp.id)];
+          localStorage.setItem('hb_properties', JSON.stringify(updatedLocal));
+        } catch (e) {}
+
         // Dispatch lead notification to Telegram Bot & Zalo
         dispatchCustomerLead({
           sourceType: 'post_property',
           title: `[ĐĂNG TIN MỚI BĐS] ${title}`,
-          customerName: sellerName || 'Chủ nhà chính chủ',
-          customerPhone: sellerPhone || '0868.499.929',
+          customerName: sellerName || user?.name || 'Chủ nhà chính chủ',
+          customerPhone: sellerPhone || user?.phone || '0868.499.929',
           project: project,
           subdivision: subdivision,
           note: `Loại: ${type === 'sale' ? 'Căn Bán' : 'Cho Thuê'} | Giá: ${type === 'sale' ? `${priceNum} Tỷ` : `${priceNum} Tr/tháng`} | Diện tích: ${areaNum}m² | Vai trò: ${sellerRole.toUpperCase()}`
@@ -356,7 +368,44 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
     setServiceLoading(true);
 
+    const servicePayload = {
+      id: `srv-${Date.now()}`,
+      title: serviceTitle,
+      category: serviceCategory,
+      project: serviceProject,
+      price: servicePrice || 'Liên hệ',
+      image: serviceImg || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+      description: serviceDesc || 'Dịch vụ cư dân chất lượng cao.',
+      contactName: serviceContactName || user.name || 'Cư dân Vinhomes',
+      contactPhone: servicePhoneInput || user.phone || '0868.499.929',
+      userId: user.id || `usr-${Date.now()}`,
+      status: 'approved',
+      approved: true,
+      verified: true,
+      rating: 5.0,
+      reviewCount: 1,
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+
     try {
+      const res = await fetch('/api/resident-services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(servicePayload)
+      });
+      
+      let resData: any = {};
+      try { resData = await res.json(); } catch (e) { resData = {}; }
+      const createdSrv = resData.service || resData || servicePayload;
+
+      // Save to localStorage
+      try {
+        const savedSrvs = JSON.parse(localStorage.getItem('hb_resident_services') || '[]');
+        const updatedSrvs = [createdSrv, ...savedSrvs.filter((s: any) => s.id !== createdSrv.id)];
+        localStorage.setItem('hb_resident_services', JSON.stringify(updatedSrvs));
+      } catch (e) {}
+
+      // Dispatch lead notification
       await dispatchCustomerLead({
         sourceType: 'post_property',
         title: `[SẢN PHẨM & DỊCH VỤ CƯ DÂN] ${serviceTitle}`,
@@ -364,11 +413,12 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         customerPhone: servicePhoneInput || user.phone || '0868.499.929',
         project: serviceProject,
         note: `Danh mục: ${serviceCategory} | Giá: ${servicePrice} | Chi tiết: ${serviceDesc}`
-      });
+      }).catch(err => console.warn('Lead dispatch error:', err));
 
       setServiceSubmitted(true);
+      if (onPropertySubmitted) onPropertySubmitted();
     } catch (err: any) {
-      alert('Lỗi khi gửi bài: ' + err.message);
+      alert('Lỗi khi gửi bài Sản phẩm & Dịch vụ: ' + err.message);
     } finally {
       setServiceLoading(false);
     }
