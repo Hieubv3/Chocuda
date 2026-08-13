@@ -22,6 +22,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
   const [orders, setOrders] = useState<StoreOrder[]>([]);
 
   // Form states
+  const [autoUseProfileInfo, setAutoUseProfileInfo] = useState<boolean>(true);
   const [storeName, setStoreName] = useState<string>('');
   const [category, setCategory] = useState<string>('Thực Phẩm & Ăn Uống');
   const [address, setAddress] = useState<string>('');
@@ -418,6 +419,41 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
             <Store className="w-5 h-5 text-amber-500" />
             THÔNG TIN THƯƠNG HIỆU GIAN HÀNG
           </h3>
+
+          {/* Auto-fill interactive checkbox banner */}
+          <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
+            <label className="flex items-start gap-3 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={autoUseProfileInfo}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setAutoUseProfileInfo(checked);
+                  if (checked && user) {
+                    if (user.phone) {
+                      setOwnerPhone(user.phone);
+                      setOwnerZalo(user.phone);
+                    }
+                    if (user.name) {
+                      setStoreName(`Gian Hàng Cư Dân ${user.name}`);
+                    }
+                    setAddress('Căn hộ phân khu Vinhomes Ocean Park');
+                  }
+                }}
+                className="w-5 h-5 rounded border-amber-500 text-amber-500 focus:ring-amber-500 mt-0.5 shrink-0"
+              />
+              <div>
+                <span className="font-extrabold text-xs text-amber-600 dark:text-amber-400 block uppercase">
+                  ☑ Tự động lấy thông tin cá nhân từ tài khoản (Họ tên, SĐT, Căn hộ)
+                </span>
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium mt-0.5">
+                  {autoUseProfileInfo 
+                    ? `Đã tích chọn (Đồng ý): Tự động dùng thông tin tài khoản (${user.name || 'Cư dân'} - ${user.phone || '0868.499.929'}).` 
+                    : 'Bỏ tích chọn (Không đồng ý): Bạn có thể tự do nhập Tên thương hiệu, SĐT Zalo & Địa chỉ hiển thị mới bên dưới.'}
+                </p>
+              </div>
+            </label>
+          </div>
 
           <div className="space-y-3 text-xs">
             <div>

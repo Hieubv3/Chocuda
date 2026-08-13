@@ -4,6 +4,8 @@ import { PlusCircle, Zap, Crown, Eye, MessageSquare, Edit3, Trash2, ShieldCheck,
 import { UpTinPaymentModal } from '../components/UpTinPaymentModal';
 import { KycVerificationModal } from '../components/KycVerificationModal';
 import { UserStorefrontManager } from '../components/UserStorefrontManager';
+import { InteractionProofChatModal } from '../components/InteractionProofChatModal';
+import { playMessageRingtone } from '../lib/audioRingtone';
 
 interface UserDashboardPageProps {
 
@@ -70,6 +72,11 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   };
 
   const [upTinCredits, setUpTinCredits] = useState(user.upTinCredits || 12);
+  const [showInteractionChatModal, setShowInteractionChatModal] = useState<boolean>(false);
+
+  // Per-user storage key so every user can only claim social channels ONCE
+  const userSocialKey = `claimed_social_user_${user.id || user.phone || 'guest'}`;
+
   const [claimedSocial, setClaimedSocial] = useState<{
     facebook?: boolean;
     youtube?: boolean;
@@ -77,24 +84,41 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
     zalo?: boolean;
     google?: boolean;
     telegram?: boolean;
-  }>({
-    facebook: false,
-    youtube: false,
-    tiktok: false,
-    zalo: false,
-    google: false,
-    telegram: false
+  }>(() => {
+    try {
+      const saved = localStorage.getItem(userSocialKey);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      // ignore
+    }
+    return {
+      facebook: false,
+      youtube: false,
+      tiktok: false,
+      zalo: false,
+      google: false,
+      telegram: false
+    };
   });
 
   const handleClaimReward = (platform: 'facebook' | 'youtube' | 'tiktok' | 'zalo' | 'google' | 'telegram', points: number, url: string) => {
-    window.open(url, '_blank');
-    if (!claimedSocial[platform]) {
-      setClaimedSocial(prev => ({ ...prev, [platform]: true }));
-      setUpTinCredits(prev => prev + points);
-      alert(`🎉 CHÚC MỪNG! Bạn vừa nhận thêm +${points} Lượt Up Tin miễn phí nhờ tương tác kênh ${platform.toUpperCase()} của Nhà đẹp Vinhomes!`);
-    } else {
-      alert(`Bạn đã nhận phần thưởng lượt Up Tin từ kênh ${platform.toUpperCase()} rồi!`);
+    if (claimedSocial[platform]) {
+      alert(`⚠️ Mỗi tài khoản cư dân chỉ được dùng 1 LẦN DUY NHẤT cho kênh ${platform.toUpperCase()}! Bạn đã nhận lượt Up Tin từ kênh này rồi.`);
+      return;
     }
+
+    window.open(url, '_blank');
+    const updatedClaimed = { ...claimedSocial, [platform]: true };
+    setClaimedSocial(updatedClaimed);
+    try {
+      localStorage.setItem(userSocialKey, JSON.stringify(updatedClaimed));
+    } catch (e) {
+      // ignore
+    }
+
+    setUpTinCredits(prev => prev + points);
+    playMessageRingtone();
+    alert(`🎉 CHÚC MỪNG! Tài khoản [${user.name}] vừa nhận thêm +${points} Lượt Up Tin miễn phí từ kênh ${platform.toUpperCase()}!`);
   };
 
   const getTierBadge = () => {
@@ -131,22 +155,23 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
         </div>
       )}
 
-      {/* Main Profile Header Card */}
-      <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-lg border border-emerald-800/50 relative overflow-hidden space-y-5">
+      {/* UNIFIED ALL-IN-ONE DASHBOARD CONTAINER */}
+      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-emerald-800/60 relative overflow-hidden space-y-5">
         <div className="absolute right-0 top-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+        {/* SECTION 1: USER PROFILE HEADER */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10 pb-4 border-b border-emerald-800/40">
           {/* User Info */}
           <div className="flex items-center gap-3.5">
             <img
               src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'}
               alt={user.name}
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-emerald-400/80 shadow-sm object-cover shrink-0"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-emerald-400/80 shadow-md object-cover shrink-0"
             />
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-lg sm:text-xl font-black text-white">{user.name}</h1>
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
                   {user.role === 'admin' ? '👑 Admin Tổng' : user.role === 'sale' ? '💼 Môi Giới/Sale' : '🏠 Chủ Nhà'}
                 </span>
                 <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs ${tierInfo.color}`}>
@@ -171,10 +196,10 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2.5 w-full md:w-auto shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
+          <div className="flex items-center gap-2.5 w-full md:w-auto shrink-0 pt-2 md:pt-0">
             <button
               onClick={onPostNewProperty}
-              className="flex-1 md:flex-none px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
+              className="flex-1 md:flex-none px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-lg flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-slate-950" />
               <span>ĐĂNG TIN MỚI (AI VIẾT BÀI TỪ ẢNH)</span>
@@ -185,15 +210,15 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                 className="px-3.5 py-2.5 bg-slate-800/90 hover:bg-slate-800 text-rose-300 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 shrink-0 cursor-pointer"
                 title="Đăng xuất hoặc đổi tài khoản"
               >
-                <span>Đổi Tai Khoản</span>
+                <span>Đổi Tài Khoản</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* Quick Stats Grid - 4 Columns */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 pt-4 border-t border-emerald-800/40 text-xs">
-          <div className="bg-emerald-950/50 p-2.5 sm:p-3 rounded-xl border border-emerald-700/30 flex items-center justify-between">
+        {/* SECTION 2: QUICK STATS GRID - 4 COLUMNS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
+          <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-800/40 flex items-center justify-between">
             <div>
               <span className="text-slate-400 text-[11px] block">Tổng Tin Đăng</span>
               <span className="text-lg font-black text-white mt-0.5 block">{userProperties.length} <span className="text-xs font-normal text-slate-400">căn</span></span>
@@ -201,7 +226,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             <Zap className="w-5 h-5 text-emerald-400/80" />
           </div>
 
-          <div className="bg-emerald-950/50 p-2.5 sm:p-3 rounded-xl border border-emerald-700/30 flex items-center justify-between">
+          <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-800/40 flex items-center justify-between">
             <div>
               <span className="text-slate-400 text-[11px] block">Đã Duyệt Hiển Thị</span>
               <span className="text-lg font-black text-emerald-400 mt-0.5 block">{approvedCount} <span className="text-xs font-normal text-slate-400">căn</span></span>
@@ -209,7 +234,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             <CheckCircle2 className="w-5 h-5 text-emerald-400/80" />
           </div>
 
-          <div className="bg-emerald-950/50 p-2.5 sm:p-3 rounded-xl border border-emerald-700/30 flex items-center justify-between">
+          <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-800/40 flex items-center justify-between">
             <div>
               <span className="text-slate-400 text-[11px] block">Lượt Up Tin Còn Lại</span>
               <span className="text-lg font-black text-amber-400 mt-0.5 block">{upTinCredits} <span className="text-xs font-normal text-slate-400">lượt</span></span>
@@ -217,7 +242,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             <Sparkles className="w-5 h-5 text-amber-400/80" />
           </div>
 
-          <div className="bg-emerald-950/50 p-2.5 sm:p-3 rounded-xl border border-emerald-700/30 flex items-center justify-between">
+          <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-800/40 flex items-center justify-between">
             <div>
               <span className="text-slate-400 text-[11px] block">Lượt Xem Tích Lũy</span>
               <span className="text-lg font-black text-white mt-0.5 block">{totalViews.toLocaleString('vi-VN')} <span className="text-xs font-normal text-slate-400">lượt</span></span>
@@ -225,177 +250,202 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             <Eye className="w-5 h-5 text-slate-400/80" />
           </div>
         </div>
-      </div>
 
-      {/* KYC Verification Banner */}
-      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 text-white rounded-2xl p-4 border border-emerald-500/30 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl shrink-0">
-            <ShieldCheck className="w-5 h-5" />
+        {/* SECTION 3: KYC VERIFICATION BAR INTEGRATED */}
+        <div className="bg-emerald-950/60 p-3.5 rounded-2xl border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-wide">
+                  ĐỊNH DANH CƯ DÂN & NÚT XANH KYC VINHOMES
+                </h3>
+                {userState.kycStatus === 'verified' ? (
+                  <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 text-[10px] font-black rounded-full flex items-center gap-1 shadow-xs">
+                    ✓ Đã Cấp Nút Xanh KYC
+                  </span>
+                ) : userState.kycStatus === 'pending_ai' ? (
+                  <span className="px-2 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-black rounded-full flex items-center gap-1 shadow-xs">
+                    ⏳ Đang Chờ Kiểm Duyệt
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 bg-rose-500/90 text-white text-[10px] font-black rounded-full flex items-center gap-1 shadow-xs">
+                    ⚠️ Chưa Nhận Nút Xanh
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-slate-300 mt-0.5">
+                Cập nhật CCCD hoặc chứng chỉ ngành nghề/môi giới để nhận Huy Hiệu Cư Dân Chính Chủ trên gian hàng & các bài đăng.
+              </p>
+            </div>
           </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-wide">
-                ĐỊNH DANH CƯ DÂN & NÚT XANH KYC VINHOMES
+
+          <button
+            onClick={() => setShowKycModal(true)}
+            className="w-full sm:w-auto px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-sm transition shrink-0 uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>{userState.kycStatus === 'verified' ? 'CẬP NHẬT ĐỊNH DANH' : 'ĐỊNH DANH & NHẬN NÚT XANH'}</span>
+          </button>
+        </div>
+
+        {/* SECTION 4: SOCIAL CHANNEL REWARDS BAR INTEGRATED */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 border-b border-slate-800 pb-2.5">
+            <div className="flex items-center gap-2">
+              <span className="bg-amber-500/20 border border-amber-500/40 text-amber-400 font-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">
+                NHẬN UP TIN MIỄN PHÍ
+              </span>
+              <h3 className="text-xs sm:text-sm font-black text-white">
+                Tương Tác Kênh Truyền Thông nhận +5 đến +10 Lượt Up Tin Top 1
               </h3>
-              {userState.kycStatus === 'verified' ? (
-                <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 text-[10px] font-black rounded-full flex items-center gap-1 shadow-xs">
-                  ✓ Đã Cấp Nút Xanh KYC
-                </span>
-              ) : userState.kycStatus === 'pending_ai' ? (
-                <span className="px-2 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-black rounded-full flex items-center gap-1 shadow-xs">
-                  ⏳ Đang Chờ Kiểm Duyệt
-                </span>
-              ) : (
-                <span className="px-2 py-0.5 bg-rose-500/90 text-white text-[10px] font-black rounded-full flex items-center gap-1 shadow-xs">
-                  ⚠️ Chưa Nhận Nút Xanh
-                </span>
-              )}
             </div>
-            <p className="text-[11px] text-slate-300 mt-0.5">
-              Cập nhật CCCD hoặc chứng chỉ ngành nghề/môi giới để nhận Huy Hiệu Cư Dân Chính Chủ trên gian hàng & các bài đăng.
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => setShowKycModal(true)}
-          className="w-full sm:w-auto px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-sm transition shrink-0 uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-        >
-          <ShieldCheck className="w-3.5 h-3.5" />
-          <span>{userState.kycStatus === 'verified' ? 'CẬP NHẬT ĐỊNH DANH' : 'ĐỊNH DANH & NHẬN NÚT XANH'}</span>
-        </button>
-      </div>
-
-      {/* Compact Social Channel Reward Section */}
-      <div className="bg-slate-900 dark:bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-md">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 border-b border-slate-800 pb-2.5">
-          <div className="flex items-center gap-2">
-            <span className="bg-amber-500/20 border border-amber-500/40 text-amber-400 font-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">
-              NHẬN UP TIN MIỄN PHÍ
+            <span className="text-[11px] text-slate-400 font-bold">
+              Số dư hiện tại: <strong className="text-emerald-400">{upTinCredits} lượt</strong>
             </span>
-            <h3 className="text-xs sm:text-sm font-black text-white">
-              Tương Tác Kênh Truyền Thông nhận +5 đến +10 Lượt Up Tin Top 1
-            </h3>
-          </div>
-          <span className="text-[11px] text-slate-400 font-bold">
-            Số dư hiện tại: <strong className="text-emerald-400">{upTinCredits} lượt</strong>
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-          {/* Zalo */}
-          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
-            <div className="truncate">
-              <span className="font-bold text-xs text-sky-400 block truncate">Zalo Official Account</span>
-              <span className="text-[10px] text-slate-400 block">Quan tâm Zalo OA</span>
-            </div>
-            <button
-              onClick={() => handleClaimReward('zalo', 5, 'https://zalo.me/')}
-              disabled={claimedSocial.zalo}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
-                claimedSocial.zalo
-                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                  : 'bg-sky-600 hover:bg-sky-500 text-white shadow-xs'
-              }`}
-            >
-              {claimedSocial.zalo ? '✓ Đã Nhận' : '+5 Up Tin'}
-            </button>
           </div>
 
-          {/* Facebook */}
-          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
-            <div className="truncate">
-              <span className="font-bold text-xs text-blue-400 block truncate">Facebook Chợ Cư Dân 24h</span>
-              <span className="text-[10px] text-slate-400 block">Like & Follow Fanpage</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {/* Zalo */}
+            <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+              <div className="truncate">
+                <span className="font-bold text-xs text-sky-400 block truncate">Zalo Official Account</span>
+                <span className="text-[10px] text-slate-400 block">Quan tâm Zalo OA (1 Lần/User)</span>
+              </div>
+              <button
+                onClick={() => handleClaimReward('zalo', 5, 'https://zalo.me/')}
+                disabled={claimedSocial.zalo}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+                  claimedSocial.zalo
+                    ? 'bg-slate-700/90 text-slate-400 cursor-not-allowed border border-slate-600'
+                    : 'bg-sky-600 hover:bg-sky-500 text-white shadow-xs cursor-pointer'
+                }`}
+              >
+                {claimedSocial.zalo ? '✓ Đã Nhận (1 Lần/User)' : '+5 Up Tin'}
+              </button>
             </div>
-            <button
-              onClick={() => handleClaimReward('facebook', 5, 'https://www.facebook.com/chocudan24h')}
-              disabled={claimedSocial.facebook}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
-                claimedSocial.facebook
-                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-500 text-white shadow-xs'
-              }`}
-            >
-              {claimedSocial.facebook ? '✓ Đã Nhận' : '+5 Up Tin'}
-            </button>
+
+            {/* Facebook */}
+            <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+              <div className="truncate">
+                <span className="font-bold text-xs text-blue-400 block truncate">Facebook Chợ Cư Dân 24h</span>
+                <span className="text-[10px] text-slate-400 block">Like & Follow Fanpage (1 Lần/User)</span>
+              </div>
+              <button
+                onClick={() => handleClaimReward('facebook', 5, 'https://www.facebook.com/chocudan24h')}
+                disabled={claimedSocial.facebook}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+                  claimedSocial.facebook
+                    ? 'bg-slate-700/90 text-slate-400 cursor-not-allowed border border-slate-600'
+                    : 'bg-blue-600 hover:bg-blue-500 text-white shadow-xs cursor-pointer'
+                }`}
+              >
+                {claimedSocial.facebook ? '✓ Đã Nhận (1 Lần/User)' : '+5 Up Tin'}
+              </button>
+            </div>
+
+            {/* YouTube */}
+            <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+              <div className="truncate">
+                <span className="font-bold text-xs text-rose-400 block truncate">YouTube Chợ Cư Dân 24h</span>
+                <span className="text-[10px] text-slate-400 block">Đăng ký kênh YouTube (1 Lần/User)</span>
+              </div>
+              <button
+                onClick={() => handleClaimReward('youtube', 5, 'https://www.youtube.com/@chocudan24h')}
+                disabled={claimedSocial.youtube}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+                  claimedSocial.youtube
+                    ? 'bg-slate-700/90 text-slate-400 cursor-not-allowed border border-slate-600'
+                    : 'bg-rose-600 hover:bg-rose-500 text-white shadow-xs cursor-pointer'
+                }`}
+              >
+                {claimedSocial.youtube ? '✓ Đã Nhận (1 Lần/User)' : '+5 Up Tin'}
+              </button>
+            </div>
+
+            {/* TikTok */}
+            <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+              <div className="truncate">
+                <span className="font-bold text-xs text-slate-200 block truncate">TikTok Chợ Cư Dân 24h</span>
+                <span className="text-[10px] text-slate-400 block">Follow kênh TikTok (1 Lần/User)</span>
+              </div>
+              <button
+                onClick={() => handleClaimReward('tiktok', 5, 'https://www.tiktok.com/@chocudan24h')}
+                disabled={claimedSocial.tiktok}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+                  claimedSocial.tiktok
+                    ? 'bg-slate-700/90 text-slate-400 cursor-not-allowed border border-slate-600'
+                    : 'bg-slate-100 text-slate-900 hover:bg-white shadow-xs cursor-pointer'
+                }`}
+              >
+                {claimedSocial.tiktok ? '✓ Đã Nhận (1 Lần/User)' : '+5 Up Tin'}
+              </button>
+            </div>
+
+            {/* Google Maps */}
+            <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+              <div className="truncate">
+                <span className="font-bold text-xs text-amber-400 block truncate">Google Maps Review</span>
+                <span className="text-[10px] text-slate-400 block">Đánh giá 5 sao Google (1 Lần/User)</span>
+              </div>
+              <button
+                onClick={() => handleClaimReward('google', 10, 'https://maps.google.com')}
+                disabled={claimedSocial.google}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+                  claimedSocial.google
+                    ? 'bg-slate-700/90 text-slate-400 cursor-not-allowed border border-slate-600'
+                    : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs cursor-pointer'
+                }`}
+              >
+                {claimedSocial.google ? '✓ Đã Nhận (1 Lần/User)' : '+10 Up Tin'}
+              </button>
+            </div>
+
+            {/* Telegram */}
+            <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
+              <div className="truncate">
+                <span className="font-bold text-xs text-indigo-400 block truncate">Telegram Khách Hàng</span>
+                <span className="text-[10px] text-slate-400 block">Tham gia Group BĐS (1 Lần/User)</span>
+              </div>
+              <button
+                onClick={() => handleClaimReward('telegram', 5, 'https://t.me/')}
+                disabled={claimedSocial.telegram}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+                  claimedSocial.telegram
+                    ? 'bg-slate-700/90 text-slate-400 cursor-not-allowed border border-slate-600'
+                    : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs cursor-pointer'
+                }`}
+              >
+                {claimedSocial.telegram ? '✓ Đã Nhận (1 Lần/User)' : '+5 Up Tin'}
+              </button>
+            </div>
           </div>
 
-          {/* YouTube */}
-          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
-            <div className="truncate">
-              <span className="font-bold text-xs text-rose-400 block truncate">YouTube Chợ Cư Dân 24h</span>
-              <span className="text-[10px] text-slate-400 block">Đăng ký kênh YouTube</span>
-            </div>
-            <button
-              onClick={() => handleClaimReward('youtube', 5, 'https://www.youtube.com/@chocudan24h')}
-              disabled={claimedSocial.youtube}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
-                claimedSocial.youtube
-                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                  : 'bg-rose-600 hover:bg-rose-500 text-white shadow-xs'
-              }`}
-            >
-              {claimedSocial.youtube ? '✓ Đã Nhận' : '+5 Up Tin'}
-            </button>
-          </div>
+          {/* EXTRA REWARDS FOR MAIN PAGE INTERACTIONS */}
+          <div className="mt-3 pt-3 border-t border-slate-800 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-indigo-500/10 p-3.5 rounded-xl border border-amber-500/30 space-y-2.5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <div>
+                <span className="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[9px] rounded uppercase tracking-wider">
+                  🔥 TƯƠNG TÁC SÔI NỔ TRANG CHÍNH CHỢ CƯ DÂN
+                </span>
+                <h4 className="text-xs font-black text-white mt-1">
+                  Đổi Lượt Up Bài Từ Hoạt Động Like, Share, Bình Luận Tích Cực
+                </h4>
+                <p className="text-[11px] text-slate-300">
+                  Tương tác nhiệt tình trên trang chính Chợ Cư Dân (thả tim bài BĐS, gửi bình luận hữu ích, share link) rồi gửi bằng chứng qua Chat App tới Admin để nhận ngay +5 đến +20 Lượt Up Bài!
+                </p>
+              </div>
 
-          {/* TikTok */}
-          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
-            <div className="truncate">
-              <span className="font-bold text-xs text-slate-200 block truncate">TikTok Chợ Cư Dân 24h</span>
-              <span className="text-[10px] text-slate-400 block">Follow kênh TikTok</span>
+              <button
+                onClick={() => setShowInteractionChatModal(true)}
+                className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-slate-950 font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5 shrink-0 cursor-pointer active:scale-95"
+              >
+                <MessageSquare className="w-4 h-4 fill-slate-950 text-slate-950" />
+                <span>💬 GỬI BẰNG CHỨNG TỚI ADMIN CHAT ĐỔI LƯỢT UP</span>
+              </button>
             </div>
-            <button
-              onClick={() => handleClaimReward('tiktok', 5, 'https://www.tiktok.com/@chocudan24h')}
-              disabled={claimedSocial.tiktok}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
-                claimedSocial.tiktok
-                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                  : 'bg-slate-100 text-slate-900 hover:bg-white shadow-xs'
-              }`}
-            >
-              {claimedSocial.tiktok ? '✓ Đã Nhận' : '+5 Up Tin'}
-            </button>
-          </div>
-
-          {/* Google Maps */}
-          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
-            <div className="truncate">
-              <span className="font-bold text-xs text-amber-400 block truncate">Google Maps Review</span>
-              <span className="text-[10px] text-slate-400 block">Đánh giá 5 sao Google</span>
-            </div>
-            <button
-              onClick={() => handleClaimReward('google', 10, 'https://maps.google.com')}
-              disabled={claimedSocial.google}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
-                claimedSocial.google
-                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                  : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs'
-              }`}
-            >
-              {claimedSocial.google ? '✓ Đã Nhận' : '+10 Up Tin'}
-            </button>
-          </div>
-
-          {/* Telegram */}
-          <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-2">
-            <div className="truncate">
-              <span className="font-bold text-xs text-indigo-400 block truncate">Telegram Khách Hàng</span>
-              <span className="text-[10px] text-slate-400 block">Tham gia Group BĐS</span>
-            </div>
-            <button
-              onClick={() => handleClaimReward('telegram', 5, 'https://t.me')}
-              disabled={claimedSocial.telegram}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
-                claimedSocial.telegram
-                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs'
-              }`}
-            >
-              {claimedSocial.telegram ? '✓ Đã Nhận' : '+5 Up Tin'}
-            </button>
           </div>
         </div>
       </div>
@@ -498,13 +548,25 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                     />
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                          prop.status === 'approved' || prop.approved
-                            ? 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300'
-                            : 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300'
-                        }`}>
-                          {prop.status === 'approved' || prop.approved ? '✓ Đã Duyệt' : '⏳ Chờ Duyệt'}
-                        </span>
+                        {(() => {
+                          const isApproved = prop.status === 'approved' || prop.approved || prop.approvalStatus === 'approved';
+                          const isRejected = prop.status === 'rejected' || prop.approvalStatus === 'rejected';
+                          const isPending = !isApproved && !isRejected;
+
+                          return (
+                            <span className={`text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1 ${
+                              isApproved
+                                ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30'
+                                : isRejected
+                                ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-500/30 animate-pulse'
+                                : 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-500/30'
+                            }`}>
+                              {isApproved && '🟢 Đang hiển thị'}
+                              {isRejected && '🔴 Bị từ chối'}
+                              {isPending && '🟡 Đang chờ duyệt'}
+                            </span>
+                          );
+                        })()}
 
                         {prop.vipLevel && prop.vipLevel !== 'normal' && (
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
@@ -529,6 +591,18 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                       <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xl">
                         {prop.address} • {prop.area}m² • Ngày đăng: {prop.createdAt}
                       </p>
+
+                      {(prop.status === 'rejected' || prop.approvalStatus === 'rejected' || prop.rejectionReason || prop.adminNote) && (
+                        <div className="mt-2 p-2.5 bg-rose-50 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-800 rounded-xl text-xs text-rose-900 dark:text-rose-200 space-y-1">
+                          <div className="flex items-center gap-1.5 font-black text-rose-700 dark:text-rose-300">
+                            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                            <span>⚠️ THÔNG BÁO TỪ QUẢN TRỊ VIÊN (ADMIN):</span>
+                          </div>
+                          <p className="text-[11px] font-semibold text-rose-800 dark:text-rose-200">
+                            {prop.rejectionReason || prop.adminNote || 'Bài đăng chưa đạt tiêu chuẩn nội dung. Vui lòng kiểm tra và cập nhật lại thông tin.'}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -960,6 +1034,17 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           onClose={() => setShowKycModal(false)}
           onKycSubmitted={(updatedUser) => {
             setUserState(prev => ({ ...prev, ...updatedUser }));
+          }}
+        />
+      )}
+
+      {/* Interaction Proof Chat Modal */}
+      {showInteractionChatModal && (
+        <InteractionProofChatModal
+          user={user}
+          onClose={() => setShowInteractionChatModal(false)}
+          onGrantPoints={(points, activityName) => {
+            setUpTinCredits(prev => prev + points);
           }}
         />
       )}

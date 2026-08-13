@@ -88,7 +88,7 @@ export interface Property {
   description: string;
   images: string[];
   featured?: boolean;
-  status: 'approved' | 'pending' | 'sold';
+  status: 'approved' | 'pending' | 'sold' | 'rejected';
   approved?: boolean;
   createdAt: string;
   sellerName: string;
@@ -107,6 +107,8 @@ export interface Property {
   
   // Duyệt Tin & Trạng Thái Hiển Thị
   approvalStatus?: 'pending' | 'approved' | 'rejected';
+  rejectionReason?: string;
+  adminNote?: string;
   
   // Up-Tin & VIP Status (Up Thường / Up Kim Cương)
   vipLevel?: VipLevel;

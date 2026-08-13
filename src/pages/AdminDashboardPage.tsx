@@ -379,9 +379,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleUnapproveProperty = (p: Property) => {
-    if (confirm(`Bạn có chắc muốn trả tin "${p.title}" về trạng thái Chờ Duyệt (Sub-admin)?`)) {
+    if (confirm(`Bạn có chắc muốn trả tin "${p.title}" về trạng thái Chờ Duyệt?`)) {
       if (onUpdateProperty) {
-        onUpdateProperty({ ...p, approved: false, status: 'pending' });
+        onUpdateProperty({ ...p, approved: false, status: 'pending', approvalStatus: 'pending', rejectionReason: undefined, adminNote: undefined });
       }
     }
   };
@@ -912,6 +912,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         ? `🟢 Đã phục hồi tin "${property.title}" ra danh sách hiển thị!`
         : `📁 Đã chuyển căn "${property.title}" vào Kho Lưu Trữ (vẫn bảo lưu 100% Thông tin Người đăng & Căn BĐS)!`
       );
+    }
+  };
+
+  const handleRejectProperty = (property: Property) => {
+    const reason = window.prompt(
+      `Nhập lý do từ chối bài đăng "${property.title}":`,
+      'Hình ảnh hoặc thông tin bài đăng chưa đạt tiêu chuẩn kiểm duyệt.'
+    );
+    if (reason === null) return;
+
+    const updated: Property = {
+      ...property,
+      approved: false,
+      status: 'rejected',
+      approvalStatus: 'rejected',
+      rejectionReason: reason || 'Hình ảnh hoặc thông tin bài đăng chưa đạt tiêu chuẩn kiểm duyệt.',
+      adminNote: reason || 'Hình ảnh hoặc thông tin bài đăng chưa đạt tiêu chuẩn kiểm duyệt.'
+    };
+    if (onUpdateProperty) {
+      onUpdateProperty(updated);
+      alert(`🔴 Đã từ chối bài đăng "${property.title}". Lý do đã được lưu và gửi tới người đăng.`);
     }
   };
 
@@ -3078,6 +3099,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <th className="p-3">Tiêu đề & Dự án</th>
                   <th className="p-3">Thông Tin Người Đăng</th>
                   <th className="p-3">Loại & Mức giá</th>
+                  <th className="p-3">Trạng Thái Admin</th>
                   <th className="p-3">Hạn Hiển Thị (15–25 Ngày)</th>
                   <th className="p-3 text-center">Thao Tác Quản Lý</th>
                 </tr>
@@ -3091,7 +3113,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     if (propertySubFilter === 'pushed') return !!p.pushedAt;
                     if (propertySubFilter === 'expiring') return !expiryInfo.isExpired && expiryInfo.daysRemaining <= 5;
                     if (propertySubFilter === 'archived') return expiryInfo.isExpired || p.status === 'sold';
-                    if (propertySubFilter === 'pending') return !p.approved && p.status !== 'approved';
+                    if (propertySubFilter === 'pending') return (!p.approved && p.status !== 'approved' && p.status !== 'rejected');
                     return true;
                   })
                   .slice(0, 150)
@@ -3099,6 +3121,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     const expiryInfo = getPropertyExpiryInfo(p);
                     const sellerPhoneFormatted = p.sellerPhone || '0868.499.929';
                     const sellerNameFormatted = p.sellerName || 'Chủ Hộ / Sale BĐS';
+                    const isApproved = p.status === 'approved' || p.approved || p.approvalStatus === 'approved';
+                    const isRejected = p.status === 'rejected' || p.approvalStatus === 'rejected';
 
                     return (
                       <tr key={p.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-900/60 transition">
@@ -3159,7 +3183,28 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           </span>
                         </td>
 
-                        <td className="p-3 max-w-[200px]">
+                        <td className="p-3">
+                          <div className="space-y-1">
+                            <span className={`text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1 ${
+                              isApproved
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-500/30'
+                                : isRejected
+                                ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-500/30'
+                                : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-500/30'
+                            }`}>
+                              {isApproved && '🟢 Đang hiển thị'}
+                              {isRejected && '🔴 Bị từ chối'}
+                              {!isApproved && !isRejected && '🟡 Đang chờ duyệt'}
+                            </span>
+                            {p.rejectionReason && (
+                              <div className="text-[10px] text-rose-600 dark:text-rose-400 font-medium line-clamp-2 max-w-[130px]" title={p.rejectionReason}>
+                                Lý do: {p.rejectionReason}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+
+                        <td className="p-3 max-w-[180px]">
                           <div className="space-y-1">
                             <div className="text-[10px] text-slate-500 font-medium">
                               🗓️ Đăng: <span className="font-bold text-slate-700 dark:text-slate-300">{expiryInfo.postDateFormatted}</span>
@@ -3238,22 +3283,36 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               <Edit3 className="w-3.5 h-3.5" />
                             </button>
 
-                            {/* Approve if pending */}
-                            {(!p.approved && p.status !== 'approved') ? (
+                            {/* Approve Button */}
+                            {!isApproved && (
                               <button
                                 onClick={() => onApproveProperty(p.id)}
                                 className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg text-[10px] transition shadow flex items-center gap-1"
                                 title="Phê duyệt tin này và đồng bộ lên Web Public"
                               >
-                                <Check className="w-3.5 h-3.5" /> Duyệt & Đồng Bộ Public
+                                <Check className="w-3.5 h-3.5" /> Duyệt
                               </button>
-                            ) : (
+                            )}
+
+                            {/* Reject Button */}
+                            {!isRejected && (
+                              <button
+                                onClick={() => handleRejectProperty(p)}
+                                className="px-2 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-lg text-[10px] transition shadow flex items-center gap-1"
+                                title="Từ chối tin này và ghi lý do gửi tới người đăng"
+                              >
+                                🔴 Từ Chối
+                              </button>
+                            )}
+
+                            {/* Pending/Unapprove Button */}
+                            {(isApproved || isRejected) && (
                               <button
                                 onClick={() => handleUnapproveProperty(p)}
                                 className="px-2 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg text-[10px] transition flex items-center gap-1"
-                                title="Trả tin này về trạng thái Chờ Duyệt (Dành cho Sub-admin kiểm duyệt lại)"
+                                title="Trả tin này về trạng thái Chờ Duyệt"
                               >
-                                🟡 Trả Chờ Duyệt
+                                🟡 Chờ Duyệt
                               </button>
                             )}
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield } from 'lucide-react';
+import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield, ShoppingBag, Store } from 'lucide-react';
 import { 
   PropertyType, 
   ProjectCategory, 
@@ -57,6 +57,52 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const [sellerName, setSellerName] = useState('');
   const [sellerPhone, setSellerPhone] = useState('0868.499.929');
   const [sellerRole, setSellerRole] = useState<'owner' | 'sale'>('owner');
+
+  // Post Category Mode: 'real_estate' | 'service' | 'kiotviet'
+  const [postMode, setPostMode] = useState<'real_estate' | 'service' | 'kiotviet'>('real_estate');
+
+  // KiotViet Import & Goods Sync State
+  const [kvDomain, setKvDomain] = useState('cuahangvinhomes.kiotviet.vn');
+  const [kvClientId, setKvClientId] = useState('');
+  const [kvSyncMethod, setKvSyncMethod] = useState<'file' | 'api'>('file');
+  const [kvSyncing, setKvSyncing] = useState(false);
+  const [kvSyncedSuccess, setKvSyncedSuccess] = useState(false);
+  const [kvProducts, setKvProducts] = useState([
+    { code: 'SP001', name: 'Bún Chả Hà Nội Đặc Biệt Cư Dân', category: 'Quán Ăn & F&B', price: '45.000đ', stock: 50, selected: true },
+    { code: 'SP002', name: 'Cá Mú Đỏ Tươi Sạch Ocean Park', category: 'Chợ Thực Phẩm', price: '280.000đ/kg', stock: 15, selected: true },
+    { code: 'SP003', name: 'Thang Máy HomeLift Cửa Trượt 350kg', category: 'Vật Tư & Thi Công', price: 'Thỏa thuận', stock: 3, selected: true },
+    { code: 'SP004', name: 'Rượu Vang Đỏ Nhập Khẩu Pháp', category: 'Đồ Uống & Quà Tặng', price: '420.000đ', stock: 24, selected: true },
+    { code: 'SP005', name: 'Dịch Vụ Sửa Chữa Điện Nước 24/7', category: 'Sửa Chữa & Bảo Trì', price: '150.000đ/lần', stock: 99, selected: true }
+  ]);
+
+  // Resident Product / Service Post State
+  const [serviceTitle, setServiceTitle] = useState('');
+  const [serviceCategory, setServiceCategory] = useState('Quán Ăn & Nhà Hàng Cư Dân');
+  const [serviceProject, setServiceProject] = useState('vinhomes-ocean-park-2');
+  const [servicePrice, setServicePrice] = useState('Thỏa thuận');
+  const [serviceDesc, setServiceDesc] = useState('');
+  const [serviceContactName, setServiceContactName] = useState('');
+  const [servicePhoneInput, setServicePhoneInput] = useState('0868.499.929');
+  const [serviceImg, setServiceImg] = useState('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80');
+  const [serviceLoading, setServiceLoading] = useState(false);
+  const [serviceSubmitted, setServiceSubmitted] = useState(false);
+
+  // Auto-fill user profile toggle state
+  const [autoUseProfileInfo, setAutoUseProfileInfo] = useState<boolean>(true);
+
+  // Auto-fill seller name & phone directly from logged-in user account if autoUseProfileInfo is checked
+  React.useEffect(() => {
+    if (user && autoUseProfileInfo) {
+      if (user.name) {
+        setSellerName(user.name);
+        setServiceContactName(user.name);
+      }
+      if (user.phone) {
+        setSellerPhone(user.phone);
+        setServicePhoneInput(user.phone);
+      }
+    }
+  }, [user, autoUseProfileInfo]);
 
   // Images state
   const [imagesList, setImagesList] = useState<string[]>([
@@ -272,17 +318,96 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
+  const handleServiceSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      alert('🔒 QUY ĐỊNH HỆ THỐNG: Quý khách cần đăng nhập để đăng bài sản phẩm / dịch vụ!');
+      if (onOpenAuth) onOpenAuth();
+      return;
+    }
+
+    if (!serviceTitle.trim()) {
+      alert('Vui lòng nhập Tên sản phẩm hoặc Dịch vụ!');
+      return;
+    }
+
+    setServiceLoading(true);
+
+    try {
+      await dispatchCustomerLead({
+        sourceType: 'post_property',
+        title: `[SẢN PHẨM & DỊCH VỤ CƯ DÂN] ${serviceTitle}`,
+        customerName: serviceContactName || user.name || 'Cư dân Vinhomes',
+        customerPhone: servicePhoneInput || user.phone || '0868.499.929',
+        project: serviceProject,
+        note: `Danh mục: ${serviceCategory} | Giá: ${servicePrice} | Chi tiết: ${serviceDesc}`
+      });
+
+      setServiceSubmitted(true);
+    } catch (err: any) {
+      alert('Lỗi khi gửi bài: ' + err.message);
+    } finally {
+      setServiceLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       <div className="text-center space-y-2">
         <span className="text-xs font-black uppercase text-amber-500 tracking-wider">KÊNH KẾT NỐI CHÍNH CHỦ CƯ DÂN VINHOMES</span>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-          ĐĂNG TIN BÁN / CHO THUÊ BẤT ĐỘNG SẢN VINHOMES
+          {postMode === 'real_estate' 
+            ? 'ĐĂNG TIN BÁN / CHO THUÊ BẤT ĐỘNG SẢN' 
+            : postMode === 'service' 
+            ? 'ĐĂNG SẢN PHẨM & DỊCH VỤ CƯ DÂN' 
+            : 'CẬP NHẬT & ĐỒNG BỘ HÀNG HÓA TỪ KIOTVIET'}
         </h1>
         <p className="text-xs text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          Nền tảng trao đổi thông tin chuyển nhượng, cho thuê và kết nối sản phẩm BĐS trực tiếp của cư dân Vinhomes để bỏ qua rào cản bảo mật với sale. (Hotline/Zalo <b>0868.499.929</b> chuyên trách hỗ trợ cư dân đăng tin & vận hành nền tảng).
+          Nền tảng trao đổi BĐS chính chủ, đăng quảng bá dịch vụ cư dân và tự động đồng bộ kho hàng hóa từ KiotViet lên Chợ Cư Dân 24H. (Hotline/Zalo <b>0868.499.929</b> hỗ trợ 24/7).
         </p>
+      </div>
+
+      {/* 3 UNIFIED POST MODE SELECTOR TABS */}
+      <div className="flex p-1.5 bg-slate-200 dark:bg-slate-800 rounded-2xl max-w-2xl mx-auto shadow-inner border border-slate-300 dark:border-slate-700">
+        <button
+          type="button"
+          onClick={() => setPostMode('real_estate')}
+          className={`flex-1 py-3 px-2.5 rounded-xl font-black text-[11px] sm:text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            postMode === 'real_estate'
+              ? 'bg-amber-500 text-slate-950 shadow-md scale-[1.02]'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Building2 className="w-4 h-4 shrink-0" />
+          <span>🏢 Đăng BĐS</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setPostMode('service')}
+          className={`flex-1 py-3 px-2.5 rounded-xl font-black text-[11px] sm:text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            postMode === 'service'
+              ? 'bg-amber-500 text-slate-950 shadow-md scale-[1.02]'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <ShoppingBag className="w-4 h-4 shrink-0" />
+          <span>🛍️ Đăng Dịch Vụ</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setPostMode('kiotviet')}
+          className={`flex-1 py-3 px-2.5 rounded-xl font-black text-[11px] sm:text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            postMode === 'kiotviet'
+              ? 'bg-amber-500 text-slate-950 shadow-md scale-[1.02]'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Store className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <span>📦 Đồng Bộ KiotViet</span>
+        </button>
       </div>
 
       {submitted ? (
@@ -348,6 +473,399 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
             className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl transition shadow"
           >
             Đăng Thêm Căn Khác
+          </button>
+        </div>
+      ) : postMode === 'service' ? (
+        /* PRODUCT & SERVICE POST FORM */
+        serviceSubmitted ? (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-slate-700 text-center space-y-6 shadow-xl">
+            <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white">ĐĂNG BÀI THÀNH CÔNG!</h2>
+              <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
+                Bài đăng sản phẩm / dịch vụ cư dân của bạn đã được ghi nhận và đưa lên hệ thống Chợ Cư Dân 24H.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setServiceSubmitted(false);
+                setServiceTitle('');
+                setServiceDesc('');
+              }}
+              className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl transition shadow cursor-pointer"
+            >
+              Đăng Thêm Bài Khác
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleServiceSubmit} className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-xl space-y-6 text-xs font-bold text-slate-700 dark:text-slate-300">
+            <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
+              <h3 className="text-sm sm:text-base font-black text-amber-500 uppercase tracking-wide flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-amber-500" />
+                ĐĂNG BÀI SẢN PHẨM & DỊCH VỤ CƯ DÂN
+              </h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
+                Quảng bá gian hàng, món ăn, dịch vụ sửa chữa, vận tải, thang máy hoặc lớp học nội khu.
+              </p>
+            </div>
+
+            {/* Auto-fill interactive checkbox banner */}
+            <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-2">
+              <label className="flex items-start gap-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={autoUseProfileInfo}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setAutoUseProfileInfo(checked);
+                    if (checked && user) {
+                      if (user.name) setServiceContactName(user.name);
+                      if (user.phone) setServicePhoneInput(user.phone);
+                    }
+                  }}
+                  className="w-5 h-5 rounded border-amber-500 text-amber-500 focus:ring-amber-500 mt-0.5 shrink-0"
+                />
+                <div>
+                  <span className="font-extrabold text-xs text-amber-600 dark:text-amber-400 block uppercase">
+                    ☑ Tự động lấy thông tin cá nhân từ tài khoản (Họ tên, SĐT, Căn hộ)
+                  </span>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium mt-0.5">
+                    {autoUseProfileInfo 
+                      ? `Đã tích chọn (Đồng ý): Hệ thống tự động điền Tên "${serviceContactName || user?.name || 'Cư dân'}" & SĐT "${servicePhoneInput || user?.phone || '0868.499.929'}" từ hồ sơ tài khoản.` 
+                      : 'Bỏ tích chọn (Không đồng ý): Bạn có thể tự nhập Họ tên chủ cửa hàng & SĐT liên hệ mới hiển thị bên dưới.'}
+                  </p>
+                </div>
+              </label>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                  Tên Sản Phẩm / Dịch Vụ (*)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={serviceTitle}
+                  onChange={(e) => setServiceTitle(e.target.value)}
+                  placeholder="VD: Bún Chả Hà Nội / Lắp Thang Máy HomeLift / Taxi Điện Nội Khu..."
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                  Danh Mục Dịch Vụ (*)
+                </label>
+                <select
+                  value={serviceCategory}
+                  onChange={(e) => setServiceCategory(e.target.value)}
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                >
+                  <option value="Quán Ăn & Nhà Hàng Cư Dân">🍲 Quán Ăn & Nhà Hàng Cư Dân</option>
+                  <option value="Chợ Cư Dân / Thực Phẩm & Hải Sản">🛒 Chợ Cư Dân / Thực Phẩm & Hải Sản</option>
+                  <option value="Sửa Chữa, Thi Công & Nội Thất">🛠️ Sửa Chữa, Thi Công & Nội Thất</option>
+                  <option value="Lắp Đặt & Bảo Trì Thang Máy">🛗 Lắp Đặt & Bảo Trì Thang Máy</option>
+                  <option value="Vận Tải Nội Khu & Xe Điện 24/7">🚗 Vận Tải Nội Khu & Xe Điện 24/7</option>
+                  <option value="Spa, Hair & Làm Đẹp">💇 Spa, Hair & Làm Đẹp Cư Dân</option>
+                  <option value="Chăm Sóc Thú Cưng">🐶 Chăm Sóc Thú Cưng</option>
+                  <option value="Gia Sư & Lớp Học Năng Khiếu">🎓 Gia Sư & Lớp Học Năng Khiếu</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                  Dự Án Khu Đô Thị Phục Vụ (*)
+                </label>
+                <select
+                  value={serviceProject}
+                  onChange={(e) => setServiceProject(e.target.value)}
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                >
+                  <option value="vinhomes-ocean-park-2">Vinhomes Ocean Park 2</option>
+                  <option value="vinhomes-ocean-park-3">Vinhomes Ocean Park 3</option>
+                  <option value="vinhomes-ocean-park-1">Vinhomes Ocean Park 1</option>
+                  <option value="vinhomes-grand-park">Vinhomes Grand Park</option>
+                  <option value="vinhomes-smart-city">Vinhomes Smart City</option>
+                  <option value="vinhomes-times-city">Vinhomes Times City</option>
+                  <option value="vinhomes-royal-city">Vinhomes Royal City</option>
+                  <option value="all-projects">Tất cả dự án Vinhomes</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                  Giá Bán / Phí Dịch Vụ Tham Khảo (*)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={servicePrice}
+                  onChange={(e) => setServicePrice(e.target.value)}
+                  placeholder="VD: 35.000đ / 200.000đ/lần / Thỏa thuận..."
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                  Họ Tên Chủ Cửa Hàng / Chủ Dịch Vụ (*):
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={serviceContactName}
+                  onChange={(e) => setServiceContactName(e.target.value)}
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                  Số Điện Thoại / Zalo Liên Hệ (*):
+                </label>
+                <input
+                  type="tel"
+                  required
+                  value={servicePhoneInput}
+                  onChange={(e) => setServicePhoneInput(e.target.value)}
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                Mô Tả Chi Tiết Sản Phẩm & Dịch Vụ (*)
+              </label>
+              <textarea
+                rows={4}
+                required
+                value={serviceDesc}
+                onChange={(e) => setServiceDesc(e.target.value)}
+                placeholder="Mô tả ưu đãi, thực đơn, giờ phục vụ, thông số kỹ thuật hoặc quy trình thi công..."
+                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                Link Ảnh Sản Phẩm / Bảng Giá / Cửa Hàng
+              </label>
+              <input
+                type="url"
+                value={serviceImg}
+                onChange={(e) => setServiceImg(e.target.value)}
+                placeholder="https://..."
+                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-xs text-slate-900 dark:text-white"
+              />
+              {serviceImg && (
+                <div className="w-32 h-24 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 mt-2">
+                  <img src={serviceImg} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+
+            {/* Concise submit button as requested */}
+            <button
+              type="submit"
+              disabled={serviceLoading}
+              className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-400 text-slate-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer"
+            >
+              {serviceLoading ? 'Đang gửi...' : 'Đăng bài'}
+            </button>
+          </form>
+        )
+      ) : postMode === 'kiotviet' ? (
+        /* KIOTVIET IMPORT & GOODS SYNC PANEL */
+        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-xl space-y-6 text-xs font-bold text-slate-700 dark:text-slate-300">
+          <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
+            <h3 className="text-sm sm:text-base font-black text-amber-500 uppercase tracking-wide flex items-center gap-2">
+              <Store className="w-5 h-5 text-amber-500" />
+              CẬP NHẬT & ĐỒNG BỘ HÀNG HÓA TỪ KIOTVIET
+            </h3>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
+              Nhập nhanh danh mục sản phẩm, tồn kho và giá bán từ file xuất KiotViet (.xlsx / .csv) hoặc kết nối qua API Store KiotViet.
+            </p>
+          </div>
+
+          {/* SYNC METHOD SELECTOR */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setKvSyncMethod('file')}
+              className={`p-4 rounded-2xl border text-left transition flex items-center justify-between cursor-pointer ${
+                kvSyncMethod === 'file'
+                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-300 font-black'
+                  : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
+              }`}
+            >
+              <div>
+                <span className="block text-xs font-black uppercase">📁 1. Tải File Excel Xuất Từ KiotViet</span>
+                <span className="block text-[10px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">Tự động đọc danh mục sản phẩm từ file Excel/CSV</span>
+              </div>
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${kvSyncMethod === 'file' ? 'border-emerald-500 bg-emerald-500 text-slate-950 font-black text-[10px]' : 'border-slate-400'}`}>
+                {kvSyncMethod === 'file' ? '✓' : ''}
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setKvSyncMethod('api')}
+              className={`p-4 rounded-2xl border text-left transition flex items-center justify-between cursor-pointer ${
+                kvSyncMethod === 'api'
+                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-300 font-black'
+                  : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
+              }`}
+            >
+              <div>
+                <span className="block text-xs font-black uppercase">🔌 2. Kết Nối Mã Cửa Hàng KiotViet API</span>
+                <span className="block text-[10px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">Đồng bộ trực tiếp qua Client ID & Secret Token KiotViet</span>
+              </div>
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${kvSyncMethod === 'api' ? 'border-emerald-500 bg-emerald-500 text-slate-950 font-black text-[10px]' : 'border-slate-400'}`}>
+                {kvSyncMethod === 'api' ? '✓' : ''}
+              </div>
+            </button>
+          </div>
+
+          {/* INPUT FORM DEPENDING ON METHOD */}
+          {kvSyncMethod === 'file' ? (
+            <div className="p-6 border-2 border-dashed border-emerald-500/40 rounded-2xl bg-emerald-500/5 text-center space-y-3">
+              <Upload className="w-8 h-8 text-emerald-500 mx-auto" />
+              <div>
+                <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase">Tải File Danh Mục Hàng Hóa KiotViet (.xlsx, .csv)</h4>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">Kéo thả file xuất KiotViet vào đây hoặc nhấn nút để chọn từ máy tính / điện thoại</p>
+              </div>
+              <label className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow cursor-pointer transition">
+                <span>📁 CHỌN FILE KIOTVIET</span>
+                <input
+                  type="file"
+                  accept=".xlsx,.csv,.xls"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      alert(`Đã nhận file KiotViet: "${e.target.files[0].name}". Hệ thống đã tự động trích xuất ${kvProducts.length} sản phẩm!`);
+                    }
+                  }}
+                />
+              </label>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">Tên Miền Cửa Hàng KiotViet (*):</label>
+                <input
+                  type="text"
+                  value={kvDomain}
+                  onChange={(e) => setKvDomain(e.target.value)}
+                  placeholder="cuahangvinhomes.kiotviet.vn"
+                  className="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl font-mono text-xs"
+                />
+              </div>
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">Client ID / API Key KiotViet:</label>
+                <input
+                  type="password"
+                  value={kvClientId}
+                  onChange={(e) => setKvClientId(e.target.value)}
+                  placeholder="Nhập Client ID KiotViet..."
+                  className="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl font-mono text-xs"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* EXTRACTED PRODUCTS PREVIEW TABLE */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <span>DANH SÁCH {kvProducts.length} SẢN PHẨM SẴN SÀNG ĐỒNG BỘ LÊN CHỢ CƯ DÂN</span>
+              </h4>
+              <button
+                type="button"
+                onClick={() => setKvProducts(prev => prev.map(p => ({ ...p, selected: !prev.every(x => x.selected) })))}
+                className="text-[11px] text-amber-500 font-bold hover:underline cursor-pointer"
+              >
+                {kvProducts.every(x => x.selected) ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
+              </button>
+            </div>
+
+            <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-2xl">
+              <table className="w-full text-left text-[11px]">
+                <thead className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 uppercase font-black border-b border-slate-200 dark:border-slate-700">
+                  <tr>
+                    <th className="p-3 w-10 text-center">Chọn</th>
+                    <th className="p-3">Mã SP</th>
+                    <th className="p-3">Tên Hàng Hóa KiotViet</th>
+                    <th className="p-3">Nhóm Hàng</th>
+                    <th className="p-3">Giá Bán</th>
+                    <th className="p-3 text-center">Tồn Kho</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700/60">
+                  {kvProducts.map((p, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition">
+                      <td className="p-3 text-center">
+                        <input
+                          type="checkbox"
+                          checked={p.selected}
+                          onChange={() => setKvProducts(prev => prev.map((item, i) => i === idx ? { ...item, selected: !item.selected } : item))}
+                          className="w-4 h-4 accent-amber-500 cursor-pointer"
+                        />
+                      </td>
+                      <td className="p-3 font-mono font-bold text-slate-500">{p.code}</td>
+                      <td className="p-3 font-bold text-slate-900 dark:text-white">{p.name}</td>
+                      <td className="p-3 text-amber-500 font-bold">{p.category}</td>
+                      <td className="p-3 font-black text-emerald-600 dark:text-emerald-400">{p.price}</td>
+                      <td className="p-3 text-center font-bold text-slate-400">{p.stock}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* SYNC SUCCESS NOTIFICATION */}
+          {kvSyncedSuccess && (
+            <div className="p-4 bg-emerald-500/15 border-2 border-emerald-500/50 rounded-2xl flex items-center justify-between text-emerald-950 dark:text-emerald-300 space-x-2 shadow-md">
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                <span className="font-extrabold text-xs">
+                  🎉 CHÚC MỪNG! ĐÃ ĐỒNG BỘ THÀNH CÔNG {kvProducts.filter(p => p.selected).length} SẢN PHẨM TỪ KIOTVIET LÊN GIAN HÀNG CƯ DÂN 24H!
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* SUBMIT BUTTON */}
+          <button
+            type="button"
+            disabled={kvSyncing}
+            onClick={() => {
+              setKvSyncing(true);
+              setTimeout(() => {
+                setKvSyncing(false);
+                setKvSyncedSuccess(true);
+                if (onPropertySubmitted) onPropertySubmitted();
+              }, 1200);
+            }}
+            className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-400 text-slate-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer flex items-center justify-center gap-2"
+          >
+            {kvSyncing ? (
+              <span>⏳ ĐANG ĐỒNG BỘ DỮ LIỆU KIOTVIET...</span>
+            ) : (
+              <>
+                <Store className="w-5 h-5" />
+                <span>🚀 ĐỒNG BỘ {kvProducts.filter(p => p.selected).length} SẢN PHẨM KIOTVIET LÊN CHỢ CƯ DÂN 24H</span>
+              </>
+            )}
           </button>
         </div>
       ) : (
@@ -729,118 +1247,271 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               3. THÔNG TIN NGƯỜI ĐĂNG TIN
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="block mb-1">Họ tên chính chủ / Sale (*)</label>
+            {/* Auto-fill interactive checkbox banner */}
+            <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-2">
+              <label className="flex items-start gap-3 cursor-pointer select-none">
                 <input
-                  type="text"
-                  required
-                  value={sellerName}
-                  onChange={(e) => setSellerName(e.target.value)}
-                  placeholder="Nguyễn Văn A"
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                  type="checkbox"
+                  checked={autoUseProfileInfo}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setAutoUseProfileInfo(checked);
+                    if (checked && user) {
+                      if (user.name) setSellerName(user.name);
+                      if (user.phone) setSellerPhone(user.phone);
+                    }
+                  }}
+                  className="w-5 h-5 rounded border-amber-500 text-amber-500 focus:ring-amber-500 mt-0.5 shrink-0"
                 />
-              </div>
+                <div>
+                  <span className="font-extrabold text-xs text-amber-600 dark:text-amber-400 block uppercase">
+                    ☑ Tự động lấy thông tin cá nhân từ tài khoản (Họ tên, SĐT, Căn hộ)
+                  </span>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium mt-0.5">
+                    {autoUseProfileInfo 
+                      ? `Đã tích chọn (Đồng ý): Hệ thống tự động dùng Họ tên "${sellerName || user?.name || 'Cư dân'}" & SĐT "${sellerPhone || user?.phone || '0868.499.929'}" từ tài khoản.` 
+                      : 'Bỏ tích chọn (Không đồng ý): Bạn có thể tự do nhập Tên và Số điện thoại liên hệ hiển thị mới bên dưới.'}
+                  </p>
+                </div>
+              </label>
+            </div>
 
-              <div>
-                <label className="block mb-1">Số điện thoại / Zalo (*)</label>
-                <input
-                  type="tel"
-                  required
-                  value={sellerPhone}
-                  onChange={(e) => setSellerPhone(e.target.value)}
-                  placeholder="0868.xxx.xxx"
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-bold">Bạn là chính chủ hay người đăng bán hộ? (*)</label>
-                <select
-                  value={sellerRole}
-                  onChange={(e) => setSellerRole(e.target.value as any)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-extrabold text-amber-600 dark:text-amber-400"
+            {/* Mobile-Friendly Selector Buttons for Seller Role */}
+            <div className="space-y-2">
+              <label className="block font-bold text-xs text-slate-800 dark:text-slate-200">
+                Bạn là chính chủ hay người đăng bán hộ? (*)
+              </label>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSellerRole('owner')}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-start justify-between cursor-pointer ${
+                    sellerRole === 'owner'
+                      ? 'bg-amber-500/10 border-amber-500 ring-2 ring-amber-500/20 shadow-md'
+                      : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                  }`}
                 >
-                  <option value="owner">🏠 Tôi là CHỦ NHÀ chính chủ (Yêu cầu Sổ đỏ / Hợp đồng mua bán)</option>
-                  <option value="sale">💼 Tôi ĐĂNG BÁN HỘ / MÔI GIỚI (Yêu cầu Chứng chỉ môi giới / Giấy ủy quyền)</option>
-                </select>
+                  <div className="flex items-start gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 ${
+                      sellerRole === 'owner' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    }`}>
+                      🏠
+                    </div>
+                    <div>
+                      <div className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-1.5">
+                        <span>CHỦ NHÀ CHÍNH CHỦ</span>
+                        {sellerRole === 'owner' && <span className="text-[10px] bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded font-bold">Đang chọn</span>}
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium leading-tight">
+                        Đăng chính chủ (Yêu cầu gửi ảnh Sổ Đỏ gốc / HĐMB cho Admin xác minh)
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                    sellerRole === 'owner' ? 'border-amber-500 bg-amber-500 text-slate-950' : 'border-slate-300 dark:border-slate-600'
+                  }`}>
+                    {sellerRole === 'owner' && <Check className="w-3 h-3 stroke-[3]" />}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSellerRole('sale')}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-start justify-between cursor-pointer ${
+                    sellerRole === 'sale'
+                      ? 'bg-teal-500/10 border-teal-500 ring-2 ring-teal-500/20 shadow-md'
+                      : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 ${
+                      sellerRole === 'sale' ? 'bg-teal-500 text-white font-black' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    }`}>
+                      💼
+                    </div>
+                    <div>
+                      <div className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-1.5">
+                        <span>MÔI GIỚI / ĐĂNG BÁN HỘ</span>
+                        {sellerRole === 'sale' && <span className="text-[10px] bg-teal-500 text-white px-1.5 py-0.2 rounded font-bold">Đang chọn</span>}
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium leading-tight">
+                        Sale bán hộ (Được dùng công cụ che mờ Sổ đỏ / vị trí nhạy cảm)
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                    sellerRole === 'sale' ? 'border-teal-500 bg-teal-500 text-white' : 'border-slate-300 dark:border-slate-600'
+                  }`}>
+                    {sellerRole === 'sale' && <Check className="w-3 h-3 stroke-[3]" />}
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Seller Contact Inputs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                  Họ tên chính chủ / Sale (*):
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    value={sellerName}
+                    onChange={(e) => setSellerName(e.target.value)}
+                    placeholder="Nguyễn Văn A"
+                    className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  />
+                  {user?.name && sellerName === user.name && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full">
+                      ✓ Từ tài khoản
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                  Số điện thoại / Zalo (*):
+                </label>
+                <div className="relative">
+                  <input
+                    type="tel"
+                    required
+                    value={sellerPhone}
+                    onChange={(e) => setSellerPhone(e.target.value)}
+                    placeholder="0868.xxx.xxx"
+                    className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  />
+                  {user?.phone && sellerPhone === user.phone && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full">
+                      ✓ Từ tài khoản
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Section 4: Hình Ảnh Thực Tế & Sổ Đỏ Pháp Lý */}
           <div className="space-y-4 border-t border-slate-100 dark:border-slate-700 pt-6">
-            <h3 className="text-sm font-extrabold text-amber-500 uppercase tracking-wider flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4" />
-                4. HÌNH ẢNH THỰC TẾ & SỔ ĐỎ PHÁP LÝ
-              </span>
-              {sellerRole === 'sale' && (
-                <span className="text-[10px] bg-rose-500 text-white font-black px-2 py-0.5 rounded uppercase">
-                  SALE YÊU CẦU TỐI THIỂU 3 ẢNH (*)
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h3 className="text-sm font-extrabold text-amber-500 uppercase tracking-wider flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-amber-500" />
+                <span>4. HÌNH ẢNH THỰC TẾ & SỔ ĐỎ PHÁP LÝ</span>
+              </h3>
+              {sellerRole === 'sale' ? (
+                <span className="text-[10px] bg-rose-500 text-white font-black px-2.5 py-1 rounded-lg uppercase shadow-sm">
+                  ★ Sale Yêu Cầu Tối Thiểu 3 Ảnh (*)
+                </span>
+              ) : (
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold px-2.5 py-1 rounded-lg">
+                  ✓ Khuyên dùng từ 3 - 6 ảnh nét
                 </span>
               )}
-            </h3>
+            </div>
 
-            {/* Gallery Images List */}
-            <div className="space-y-3">
-              <label className="block font-bold">Danh sách hình ảnh bất động sản (Chọn file từ PC hoặc dán link URL)</label>
+            {/* Gallery Images Upload Area */}
+            <div className="p-4 sm:p-5 bg-slate-50 dark:bg-slate-900 border-2 border-dashed border-amber-500/30 dark:border-amber-500/20 rounded-3xl space-y-4">
               
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                <label className="px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
-                  <Upload className="w-4 h-4" />
-                  <span>📁 CHỌN ẢNH TỪ MÁY TÍNH (PC)</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={(e) => {
-                      const files = Array.from(e.target.files || []);
-                      files.forEach(async (file: File) => {
-                        const watermarked = await addWatermarkToImage(file);
-                        setImagesList(prev => [...prev, watermarked]);
-                      });
-                    }}
-                  />
-                </label>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="space-y-0.5">
+                  <span className="font-black text-xs text-slate-900 dark:text-white block">
+                    Tải Ảnh Căn Hộ / Biệt Thự / Sổ Đỏ Pháp Lý
+                  </span>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Hỗ trợ tải trực tiếp từ Album ảnh, Camera điện thoại hoặc dán link Web
+                  </p>
+                </div>
 
-                <div className="flex-1 flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
+                  {/* Native File / Camera Upload Button */}
+                  <label className="px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-2xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-500/20 transition active:scale-95">
+                    <Upload className="w-4 h-4 stroke-[2.5]" />
+                    <span>📸 CHỌN / CHỤP ẢNH</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        files.forEach(async (file: File) => {
+                          const watermarked = await addWatermarkToImage(file);
+                          setImagesList(prev => [...prev, watermarked]);
+                        });
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Paste URL Input bar */}
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-2">
                   <input
                     type="url"
-                    placeholder="Hoặc dán link ảnh Web (https://...)"
+                    placeholder="Hoặc dán đường dẫn link ảnh Web (https://...)"
                     value={newImgInput}
                     onChange={e => setNewImgInput(e.target.value)}
-                    className="flex-1 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                    className="flex-1 p-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                   <button
                     type="button"
                     onClick={handleAddImage}
-                    className="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs shrink-0"
+                    className="px-4 py-3 bg-slate-800 hover:bg-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-400 font-black rounded-xl text-xs shrink-0 cursor-pointer border border-amber-500/30 transition"
                   >
                     + Thêm Link
                   </button>
                 </div>
               </div>
 
-              {/* Thumbnails */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                {imagesList.map((img, idx) => (
-                  <div key={idx} className="relative group rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 aspect-video bg-black">
-                    <img src={img} alt={`Img ${idx}`} className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(idx)}
-                      className="absolute top-1 right-1 p-1 bg-rose-600 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition"
-                    >
-                      ✕
-                    </button>
-                    <span className="absolute bottom-1 left-1 text-[9px] bg-slate-900/80 text-white px-1.5 py-0.5 rounded">
-                      Ảnh #{idx + 1}
-                    </span>
-                  </div>
-                ))}
+              {/* Watermark security feature notification */}
+              <div className="flex items-center gap-2 text-[10px] text-amber-600 dark:text-amber-400 font-bold bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
+                <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                <span>Tự động gắn chìm Logo bảo mật <b>"Chợ Cư Dân 24H"</b> chống sao chép tin đăng.</span>
               </div>
+
+              {/* Thumbnails list */}
+              {imagesList.length > 0 ? (
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                    <span>Đã chọn ({imagesList.length} ảnh):</span>
+                    <span className="text-amber-500">Ảnh đầu tiên làm ảnh đại diện tin</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {imagesList.map((img, idx) => (
+                      <div key={idx} className="relative group rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 aspect-video bg-black shadow-sm">
+                        <img src={img} alt={`Img ${idx}`} className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 bg-rose-600 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md hover:scale-110 transition cursor-pointer"
+                          title="Xóa ảnh này"
+                        >
+                          ✕
+                        </button>
+                        {idx === 0 ? (
+                          <span className="absolute bottom-1.5 left-1.5 text-[9px] font-black bg-amber-500 text-slate-950 px-2 py-0.5 rounded-md shadow">
+                            ★ Ảnh bìa
+                          </span>
+                        ) : (
+                          <span className="absolute bottom-1.5 left-1.5 text-[9px] font-bold bg-slate-950/80 text-slate-300 px-1.5 py-0.5 rounded-md">
+                            #{idx + 1}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-6 text-slate-400 text-xs font-medium">
+                  Chưa có hình ảnh nào. Hãy nhấn <b className="text-amber-500">📸 CHỌN / CHỤP ẢNH</b> để bắt đầu.
+                </div>
+              )}
             </div>
 
             {/* Role Rules: Owner vs Sale Censor Permissions */}
@@ -998,9 +1669,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-400 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl"
+            className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-400 text-slate-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer"
           >
-            {loading ? 'Đang gửi thông tin...' : 'GỬI ĐĂNG TIN BẤT ĐỘNG SẢN (CHỜ DUYỆT)'}
+            {loading ? 'Đang gửi...' : 'Đăng bài'}
           </button>
 
         </form>

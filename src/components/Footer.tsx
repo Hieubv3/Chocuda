@@ -76,43 +76,43 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
             </div>
           </div>
 
-          {/* Col 2: Key Projects */}
+          {/* Col 2: Key Projects & Resident Groups */}
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider text-amber-400 border-b border-slate-800 pb-2">
-              DỰ ÁN PHÂN PHỐI CHÍNH
+              GROUP CƯ DÂN & DỰ ÁN
             </h3>
             <ul className="space-y-2.5 text-xs text-slate-300">
               <li>
                 <button
                   onClick={() => setCurrentTab('projects')}
-                  className="hover:text-amber-400 flex items-center transition"
+                  className="hover:text-amber-400 flex items-center transition cursor-pointer"
                 >
                   <ExternalLink className="w-3 h-3 mr-1.5 text-amber-500" />
-                  Vinhomes Ocean Park 2 - The Empire
+                  Cư Dân Ocean Park 2 - The Empire
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setCurrentTab('projects')}
-                  className="hover:text-amber-400 flex items-center transition"
+                  className="hover:text-amber-400 flex items-center transition cursor-pointer"
                 >
                   <ExternalLink className="w-3 h-3 mr-1.5 text-amber-500" />
-                  Vinhomes Ocean Park 3 - Grand Park
+                  Cư Dân Ocean Park 3 - Grand Park
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setCurrentTab('projects')}
-                  className="hover:text-amber-400 flex items-center transition"
+                  className="hover:text-amber-400 flex items-center transition cursor-pointer"
                 >
                   <ExternalLink className="w-3 h-3 mr-1.5 text-amber-500" />
-                  Siêu dự án Vinhomes Hạ Long Xanh
+                  Cư Dân Ocean Park 1 & Smart City
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setCurrentTab('sale')}
-                  className="hover:text-amber-400 flex items-center transition"
+                  className="hover:text-amber-400 flex items-center transition cursor-pointer"
                 >
                   <ExternalLink className="w-3 h-3 mr-1.5 text-amber-500" />
                   Quỹ Shophouse Chà Là & San Hô Cắt Lỗ
@@ -120,40 +120,45 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentTab('rent')}
-                  className="hover:text-amber-400 flex items-center transition"
+                  onClick={() => setCurrentTab('services')}
+                  className="hover:text-amber-400 flex items-center transition cursor-pointer"
                 >
                   <ExternalLink className="w-3 h-3 mr-1.5 text-amber-500" />
-                  Căn Hộ & Biệt Thự Cho Thuê Giá Tốt
+                  Chợ Cư Dân & Gian Hàng Dịch Vụ 24/7
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Quick Navigation */}
+          {/* Col 3: Quick Navigation & Topics */}
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider text-amber-400 border-b border-slate-800 pb-2">
-              LIÊN KẾT NHANH
+              CHỦ ĐỀ & LIÊN KẾT NHANH
             </h3>
             <ul className="space-y-2.5 text-xs text-slate-300">
               <li>
-                <button onClick={() => setCurrentTab('profile')} className="hover:text-amber-400 transition">
-                  Giới thiệu Nhà đẹp Vinhomes
+                <button onClick={() => setCurrentTab('services')} className="hover:text-amber-400 transition cursor-pointer">
+                  🍲 Dịch Vụ Cư Dân & Thực Phẩm Nội Khu
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentTab('news')} className="hover:text-amber-400 transition">
-                  Tin tức & Quy hoạch BĐS mới nhất
+                <button onClick={() => setCurrentTab('post-property')} className="hover:text-amber-400 transition cursor-pointer">
+                  ✍️ Đăng tin bài bán / Cho thuê nhà đất
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentTab('mortgage')} className="hover:text-amber-400 transition">
-                  Công cụ tính lãi suất vay ngân hàng
+                <button onClick={() => setCurrentTab('news')} className="hover:text-amber-400 transition cursor-pointer">
+                  📰 Tin tức & Quy hoạch BĐS mới nhất
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentTab('post-property')} className="hover:text-amber-400 transition">
-                  Đăng tin bán / cho thuê nhà đất
+                <button onClick={() => setCurrentTab('mortgage')} className="hover:text-amber-400 transition cursor-pointer">
+                  💰 Công cụ tính lãi suất vay ngân hàng
+                </button>
+              </li>
+              <li>
+                <button onClick={() => setCurrentTab('profile')} className="hover:text-amber-400 transition cursor-pointer">
+                  ℹ️ Giới thiệu hệ thống Chợ Cư Dân 24H
                 </button>
               </li>
             </ul>
@@ -193,13 +198,15 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
 
         </div>
 
-        {/* Android App Download Banner Section (Gọn gàng, tối ưu diện tích) */}
-        {!isBannerDismissed && (
-          <div className="mt-6 p-3 sm:p-3.5 bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 border border-emerald-500/40 rounded-2xl shadow-lg relative overflow-hidden group">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10 text-xs">
+        {/* Combined Unified Box: Android App Download + Real-Time Website Traffic Counter */}
+        <div className="mt-8 p-4 bg-slate-900 border border-slate-800 hover:border-emerald-500/30 rounded-2xl shadow-xl transition-all space-y-3.5 divide-y divide-slate-800/80">
+          
+          {/* Row 1: Android App Download Banner */}
+          {!isBannerDismissed && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs pb-1">
               
               {/* Left Column: Icon & Info */}
-              <div className="flex items-center space-x-3 w-full sm:w-auto">
+              <div className="flex items-center space-x-3 w-full sm:w-auto min-w-0">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-slate-950 shadow-md shrink-0">
                   <Smartphone className="w-5 h-5 stroke-[2.5]" />
                 </div>
@@ -213,7 +220,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
                       1.2 MB • Cài Đặt 2s
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400 hidden md:block truncate">
+                  <p className="text-[11px] text-slate-400 truncate mt-0.5">
                     Cài đặt trực tiếp lên màn hình chính Android, mượt mà 100%, không tốn dung lượng.
                   </p>
                 </div>
@@ -239,7 +246,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
 
                 <button
                   onClick={() => setIsBannerDismissed(true)}
-                  title="Ẩn thông báo"
+                  title="Ẩn thông báo app"
                   className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition cursor-pointer ml-1"
                 >
                   <X className="w-4 h-4" />
@@ -247,38 +254,39 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
               </div>
 
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Traffic & Online View Counter Widget */}
-        <div className="mt-8 p-4 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-          <div className="flex items-center space-x-3">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-            </span>
-            <div>
-              <span className="text-white font-black text-sm">BỘ ĐẾM LƯỢT TRUY CẬP WEBSITE CHỢ CƯ DÂN 24H</span>
-              <p className="text-[11px] text-slate-400">Được cập nhật tự động thời gian thực theo lượt xem & tương tác cư dân</p>
+          {/* Row 2: Website Access & Real-Time Traffic Counter */}
+          <div className={`flex flex-col sm:flex-row items-center justify-between gap-3.5 text-xs ${!isBannerDismissed ? 'pt-3.5' : ''}`}>
+            <div className="flex items-center space-x-3 w-full sm:w-auto">
+              <span className="relative flex h-3 w-3 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+              <div>
+                <span className="text-white font-black text-xs sm:text-sm tracking-wide block">BỘ ĐẾM LƯỢT TRUY CẬP WEBSITE CHỢ CƯ DÂN 24H</span>
+                <p className="text-[11px] text-slate-400">Được cập nhật tự động thời gian thực theo lượt xem & tương tác cư dân</p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto justify-start sm:justify-end shrink-0">
+              <div className="px-3 py-1.5 bg-slate-800/90 rounded-xl border border-slate-700/80 flex items-center gap-2 shadow-xs">
+                <span className="text-emerald-400 font-extrabold text-xs sm:text-sm">🟢 {onlineCount}</span>
+                <span className="text-slate-300 text-[11px] font-semibold">Đang Online</span>
+              </div>
+
+              <div className="px-3 py-1.5 bg-slate-800/90 rounded-xl border border-slate-700/80 flex items-center gap-2 shadow-xs">
+                <span className="text-amber-400 font-extrabold text-xs sm:text-sm">👁️ {views.toLocaleString('vi-VN')}</span>
+                <span className="text-slate-300 text-[11px] font-semibold">Tổng lượt xem</span>
+              </div>
+
+              <div className="px-3 py-1.5 bg-slate-800/90 rounded-xl border border-slate-700/80 flex items-center gap-2 shadow-xs">
+                <span className="text-blue-400 font-extrabold text-xs sm:text-sm">💬 {zaloInteractions.toLocaleString('vi-VN')}</span>
+                <span className="text-slate-300 text-[11px] font-semibold">Tương tác Zalo</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="px-3.5 py-2 bg-slate-800/80 rounded-xl border border-slate-700/80 flex items-center gap-2">
-              <span className="text-emerald-400 font-extrabold text-sm">🟢 {onlineCount}</span>
-              <span className="text-slate-300 text-[11px] font-semibold">Đang Online</span>
-            </div>
-
-            <div className="px-3.5 py-2 bg-slate-800/80 rounded-xl border border-slate-700/80 flex items-center gap-2">
-              <span className="text-amber-400 font-extrabold text-sm">👁️ {views.toLocaleString('vi-VN')}</span>
-              <span className="text-slate-300 text-[11px] font-semibold">Tổng lượt xem</span>
-            </div>
-
-            <div className="px-3.5 py-2 bg-slate-800/80 rounded-xl border border-slate-700/80 flex items-center gap-2">
-              <span className="text-blue-400 font-extrabold text-sm">💬 {zaloInteractions.toLocaleString('vi-VN')}</span>
-              <span className="text-slate-300 text-[11px] font-semibold">Tương tác Zalo</span>
-            </div>
-          </div>
         </div>
 
         {/* Bộ Công Thương License & Registration Certificate Section */}
