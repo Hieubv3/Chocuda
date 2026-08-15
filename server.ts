@@ -4,10 +4,10 @@ import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import nodemailer from "nodemailer";
-import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS } from "./src/data/initialData.ts";
+import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS, INITIAL_ADS } from "./src/data/initialData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
-import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct } from "./src/types.ts";
+import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner } from "./src/types.ts";
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
@@ -173,6 +173,7 @@ let newsStore: NewsArticle[] = [...INITIAL_NEWS];
 let residentServicesStore = [...INITIAL_RESIDENT_SERVICES];
 let storesStore: UserStorefront[] = [...INITIAL_USER_STOREFRONTS];
 let storeOrdersStore: StoreOrder[] = [...INITIAL_STORE_ORDERS];
+let adsStore: AdBanner[] = [...INITIAL_ADS];
 
 let reputationPostsStore: any[] = [
   {
@@ -424,19 +425,18 @@ function loadDataStore() {
       const raw = fs.readFileSync(targetPath, "utf-8");
       const data = JSON.parse(raw);
       
+      // 1. Properties
       if (Array.isArray(data.properties) && data.properties.length > 0) {
-        // Preserved saved properties from disk as primary truth
         const savedMap = new Map(data.properties.map((p: any) => [p.id, p]));
         INITIAL_PROPERTIES.forEach(ip => {
-          if (!savedMap.has(ip.id)) {
-            savedMap.set(ip.id, ip);
-          }
+          if (!savedMap.has(ip.id)) savedMap.set(ip.id, ip);
         });
         propertiesStore = Array.from(savedMap.values()) as Property[];
       } else {
         propertiesStore = [...INITIAL_PROPERTIES];
       }
 
+      // 2. Projects
       if (Array.isArray(data.projects) && data.projects.length > 0) {
         const projMap = new Map(data.projects.map((p: any) => [p.id, p]));
         INITIAL_PROJECTS.forEach(ip => {
@@ -445,6 +445,7 @@ function loadDataStore() {
         projectsStore = Array.from(projMap.values()) as Project[];
       }
 
+      // 3. News
       if (Array.isArray(data.news) && data.news.length > 0) {
         const newsMap = new Map(data.news.map((n: any) => [n.id, n]));
         INITIAL_NEWS.forEach(inews => {
@@ -453,6 +454,34 @@ function loadDataStore() {
         newsStore = Array.from(newsMap.values()) as NewsArticle[];
       }
 
+      // 4. Resident Services
+      if (Array.isArray(data.residentServices) && data.residentServices.length > 0) {
+        const servMap = new Map(data.residentServices.map((s: any) => [s.id, s]));
+        INITIAL_RESIDENT_SERVICES.forEach(iserv => {
+          if (!servMap.has(iserv.id)) servMap.set(iserv.id, iserv);
+        });
+        residentServicesStore = Array.from(servMap.values());
+      }
+
+      // 5. Stores
+      if (Array.isArray(data.stores) && data.stores.length > 0) {
+        const storeMap = new Map(data.stores.map((st: any) => [st.id, st]));
+        INITIAL_USER_STOREFRONTS.forEach(istore => {
+          if (!storeMap.has(istore.id)) storeMap.set(istore.id, istore);
+        });
+        storesStore = Array.from(storeMap.values());
+      }
+
+      // 6. Ads / Banners
+      if (Array.isArray(data.ads) && data.ads.length > 0) {
+        const adsMap = new Map(data.ads.map((a: any) => [a.id, a]));
+        INITIAL_ADS.forEach(iad => {
+          if (!adsMap.has(iad.id)) adsMap.set(iad.id, iad);
+        });
+        adsStore = Array.from(adsMap.values());
+      }
+
+      // 7. Users
       if (Array.isArray(data.users) && data.users.length > 0) {
         const userMap = new Map(data.users.map((u: any) => [u.id, u]));
         usersStore.forEach(u => {
@@ -463,14 +492,16 @@ function loadDataStore() {
 
       if (Array.isArray(data.contacts) && data.contacts.length > 0) contactsStore = data.contacts;
       if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
-      if (Array.isArray(data.residentServices) && data.residentServices.length > 0) residentServicesStore = data.residentServices;
-      if (Array.isArray(data.stores) && data.stores.length > 0) storesStore = data.stores;
       if (Array.isArray(data.storeOrders) && data.storeOrders.length > 0) storeOrdersStore = data.storeOrders;
       if (Array.isArray(data.reputationPosts) && data.reputationPosts.length > 0) reputationPostsStore = data.reputationPosts;
       if (Array.isArray(data.storePackages) && data.storePackages.length > 0) storePackagesStore = data.storePackages;
       if (Array.isArray(data.packageOrders) && data.packageOrders.length > 0) packageOrdersStore = data.packageOrders;
+      if (Array.isArray(data.techOrders) && data.techOrders.length > 0) techOrdersStore = data.techOrders;
+      if (Array.isArray(data.walletTransactions) && data.walletTransactions.length > 0) walletTransactionsStore = data.walletTransactions;
+      if (data.taxConfig) taxConfigStore = data.taxConfig;
+      if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
 
-      console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${newsStore.length} news, ${projectsStore.length} projects, ${storePackagesStore.length} packages.`);
+      console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${residentServicesStore.length} services, ${storesStore.length} stores, ${adsStore.length} ads, ${newsStore.length} news.`);
     } else {
       saveDataStore();
       console.log(`[DataStore] Initialized app_data_store.json file.`);
@@ -485,7 +516,9 @@ function loadDataStore() {
         if (Array.isArray(data.news)) newsStore = data.news;
         if (Array.isArray(data.projects)) projectsStore = data.projects;
         if (Array.isArray(data.users)) usersStore = data.users;
+        if (Array.isArray(data.residentServices)) residentServicesStore = data.residentServices;
         if (Array.isArray(data.stores)) storesStore = data.stores;
+        if (Array.isArray(data.ads)) adsStore = data.ads;
         if (Array.isArray(data.storeOrders)) storeOrdersStore = data.storeOrders;
         if (Array.isArray(data.storePackages)) storePackagesStore = data.storePackages;
         if (Array.isArray(data.packageOrders)) packageOrdersStore = data.packageOrders;
@@ -511,7 +544,13 @@ function saveDataStore() {
       storeOrders: storeOrdersStore,
       reputationPosts: reputationPostsStore,
       storePackages: storePackagesStore,
-      packageOrders: packageOrdersStore
+      packageOrders: packageOrdersStore,
+      ads: adsStore,
+      techOrders: techOrdersStore,
+      walletTransactions: walletTransactionsStore,
+      taxConfig: taxConfigStore,
+      taxLedger: taxLedgerStore,
+      savedAt: new Date().toISOString()
     };
     const jsonStr = JSON.stringify(payload, null, 2);
     fs.writeFileSync(DATA_STORE_PATH, jsonStr, "utf-8");
@@ -524,6 +563,11 @@ function saveDataStore() {
 
 // Initial load on server start
 loadDataStore();
+
+// Interval auto-save every 30 seconds as bulletproof background backup
+setInterval(() => {
+  saveDataStore();
+}, 30000);
 
 // Process exit signal handlers to ensure data is saved during server restarts / code edits
 process.on('SIGTERM', () => {
@@ -701,6 +745,7 @@ app.post("/api/auth/register", (req, res) => {
   };
 
   usersStore.push(newUser);
+  saveDataStore();
 
   const { password: _, ...userWithoutPassword } = newUser;
   return res.status(201).json({
@@ -777,6 +822,8 @@ app.post("/api/auth/google", (req, res) => {
     user.provider = 'google';
   }
 
+  saveDataStore();
+
   const { password: _, ...userWithoutPassword } = user;
   return res.json({
     message: "Đăng nhập bằng tài khoản Google thành công!",
@@ -816,6 +863,8 @@ app.post("/api/auth/facebook", (req, res) => {
     user.provider = 'facebook';
   }
 
+  saveDataStore();
+
   const { password: _, ...userWithoutPassword } = user;
   return res.json({
     message: "Đăng nhập bằng tài khoản Facebook thành công!",
@@ -852,6 +901,8 @@ app.post("/api/auth/zalo", (req, res) => {
     if (avatar) user.avatar = String(avatar);
     user.provider = 'zalo';
   }
+
+  saveDataStore();
 
   const { password: _, ...userWithoutPassword } = user;
   return res.json({
@@ -894,6 +945,7 @@ app.post("/api/auth/users", (req, res) => {
   };
 
   usersStore.unshift(newUser as any);
+  saveDataStore();
   const { password: _, ...safeUser } = newUser;
   return res.status(201).json({ success: true, message: "Tạo tài khoản thành viên thành công!", user: safeUser });
 });
@@ -918,6 +970,7 @@ app.patch("/api/auth/users/:id", (req, res) => {
   if (businessCategories !== undefined && Array.isArray(businessCategories)) usersStore[userIndex].businessCategories = businessCategories;
   if (isBlocked !== undefined) (usersStore[userIndex] as any).isBlocked = Boolean(isBlocked);
 
+  saveDataStore();
   const { password, ...safeUser } = usersStore[userIndex];
   return res.json({ success: true, message: "Cập nhật tài khoản thành công!", user: safeUser });
 });
@@ -930,6 +983,7 @@ app.delete("/api/auth/users/:id", (req, res) => {
   if (usersStore.length === initialLen) {
     return res.status(404).json({ error: "Thành viên không tồn tại" });
   }
+  saveDataStore();
   return res.json({ success: true, message: "Đã xóa tài khoản thành công!" });
 });
 
@@ -1349,17 +1403,29 @@ app.delete("/api/news/:id", (req, res) => {
   res.json({ message: "Đã xóa bài viết thành công." });
 });
 
-// Admin Data Backup & Restore Endpoints
+// Admin Data Backup & Restore Endpoints (Comprehensive Multi-Collection Backup)
 app.get("/api/admin/export-data-store", (req, res) => {
-  res.setHeader("Content-Disposition", 'attachment; filename="chocudan24h_backup.json"');
+  res.setHeader("Content-Disposition", 'attachment; filename="chocudan24h_full_backup.json"');
   res.setHeader("Content-Type", "application/json");
   res.send(JSON.stringify({
     properties: propertiesStore,
+    residentServices: residentServicesStore,
+    stores: storesStore,
+    storeOrders: storeOrdersStore,
+    reputationPosts: reputationPostsStore,
+    storePackages: storePackagesStore,
+    packageOrders: packageOrdersStore,
+    ads: adsStore,
     projects: projectsStore,
     news: newsStore,
     users: usersStore,
     contacts: contactsStore,
     pricingConfig: pricingConfigStore,
+    techOrders: techOrdersStore,
+    walletTransactions: walletTransactionsStore,
+    taxConfig: taxConfigStore,
+    taxLedger: taxLedgerStore,
+    workspaceConfig: workspaceConfigStore,
     exportedAt: new Date().toISOString()
   }, null, 2));
 });
@@ -1368,16 +1434,152 @@ app.post("/api/admin/import-data-store", (req, res) => {
   try {
     const data = req.body;
     if (Array.isArray(data.properties)) propertiesStore = data.properties;
+    if (Array.isArray(data.residentServices)) residentServicesStore = data.residentServices;
+    if (Array.isArray(data.stores)) storesStore = data.stores;
+    if (Array.isArray(data.storeOrders)) storeOrdersStore = data.storeOrders;
+    if (Array.isArray(data.reputationPosts)) reputationPostsStore = data.reputationPosts;
+    if (Array.isArray(data.storePackages)) storePackagesStore = data.storePackages;
+    if (Array.isArray(data.packageOrders)) packageOrdersStore = data.packageOrders;
+    if (Array.isArray(data.ads)) adsStore = data.ads;
     if (Array.isArray(data.projects)) projectsStore = data.projects;
     if (Array.isArray(data.news)) newsStore = data.news;
     if (Array.isArray(data.users)) usersStore = data.users;
     if (Array.isArray(data.contacts)) contactsStore = data.contacts;
     if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
+    if (Array.isArray(data.techOrders)) techOrdersStore = data.techOrders;
+    if (Array.isArray(data.walletTransactions)) walletTransactionsStore = data.walletTransactions;
+    if (data.taxConfig) taxConfigStore = data.taxConfig;
+    if (Array.isArray(data.taxLedger)) taxLedgerStore = data.taxLedger;
+    if (data.workspaceConfig) workspaceConfigStore = data.workspaceConfig;
+
     saveDataStore();
-    res.json({ message: "Khôi phục dữ liệu sao lưu thành công!", countProperties: propertiesStore.length });
+    res.json({
+      message: "Khôi phục toàn bộ dữ liệu thành công!",
+      countProperties: propertiesStore.length,
+      countServices: residentServicesStore.length,
+      countStores: storesStore.length,
+      countAds: adsStore.length
+    });
   } catch (err: any) {
     res.status(500).json({ error: "Lỗi khôi phục dữ liệu: " + err.message });
   }
+});
+
+// ------------------- BATCH SYNC ROUTES (2-WAY RESILIENT SYNC) -------------------
+app.post("/api/sync-batch/properties", (req, res) => {
+  const { items } = req.body;
+  if (Array.isArray(items)) {
+    const existingMap = new Map(propertiesStore.map(p => [p.id, p]));
+    items.forEach((item: Property) => {
+      if (item && item.id) {
+        if (!existingMap.has(item.id)) {
+          propertiesStore.unshift(item);
+          existingMap.set(item.id, item);
+        }
+      }
+    });
+    saveDataStore();
+  }
+  res.json({ success: true, count: propertiesStore.length, properties: propertiesStore });
+});
+
+app.post("/api/sync-batch/resident-services", (req, res) => {
+  const { items } = req.body;
+  if (Array.isArray(items)) {
+    const existingMap = new Map(residentServicesStore.map(s => [s.id, s]));
+    items.forEach((item: any) => {
+      if (item && item.id) {
+        if (!existingMap.has(item.id)) {
+          residentServicesStore.unshift(item);
+          existingMap.set(item.id, item);
+        }
+      }
+    });
+    saveDataStore();
+  }
+  res.json({ success: true, count: residentServicesStore.length, services: residentServicesStore });
+});
+
+app.post("/api/sync-batch/stores", (req, res) => {
+  const { items } = req.body;
+  if (Array.isArray(items)) {
+    const existingMap = new Map(storesStore.map(s => [s.id, s]));
+    items.forEach((item: UserStorefront) => {
+      if (item && item.id) {
+        if (!existingMap.has(item.id)) {
+          storesStore.unshift(item);
+          existingMap.set(item.id, item);
+        }
+      }
+    });
+    saveDataStore();
+  }
+  res.json({ success: true, count: storesStore.length, stores: storesStore });
+});
+
+// ------------------- ADS & BANNER MANAGEMENT ENDPOINTS -------------------
+app.get("/api/ads", (req, res) => {
+  res.json(adsStore);
+});
+
+app.post("/api/ads", (req, res) => {
+  const adData = req.body;
+  if (!adData || !adData.title) {
+    return res.status(400).json({ error: "Tiêu đề banner quảng cáo không hợp lệ." });
+  }
+
+  const newAd: AdBanner = {
+    id: adData.id || `ad-${Date.now()}`,
+    title: adData.title,
+    imageUrl: adData.imageUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
+    linkUrl: adData.linkUrl || 'https://zalo.me/0868499929',
+    position: adData.position || 'home_middle',
+    widthSize: adData.widthSize || 'medium',
+    displayStyle: adData.displayStyle || 'standard',
+    badgeText: adData.badgeText,
+    active: adData.active ?? true,
+    clickCount: Number(adData.clickCount) || 0,
+    createdAt: adData.createdAt || new Date().toISOString().split('T')[0]
+  };
+
+  const existingIdx = adsStore.findIndex(a => a.id === newAd.id);
+  if (existingIdx !== -1) {
+    adsStore[existingIdx] = { ...adsStore[existingIdx], ...newAd };
+  } else {
+    adsStore.unshift(newAd);
+  }
+
+  saveDataStore();
+  res.status(201).json({ success: true, message: "Đã lưu banner quảng cáo thành công!", ad: newAd, ads: adsStore });
+});
+
+app.put("/api/ads/:id", (req, res) => {
+  const { id } = req.params;
+  const idx = adsStore.findIndex(a => a.id === id);
+  if (idx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy banner quảng cáo." });
+  }
+
+  adsStore[idx] = { ...adsStore[idx], ...req.body };
+  saveDataStore();
+  res.json({ success: true, message: "Cập nhật banner quảng cáo thành công!", ad: adsStore[idx], ads: adsStore });
+});
+
+app.delete("/api/ads/:id", (req, res) => {
+  const { id } = req.params;
+  adsStore = adsStore.filter(a => a.id !== id);
+  saveDataStore();
+  res.json({ success: true, message: "Đã xóa banner quảng cáo.", ads: adsStore });
+});
+
+app.post("/api/ads/click", (req, res) => {
+  const { id } = req.body;
+  const ad = adsStore.find(a => a.id === id);
+  if (ad) {
+    ad.clickCount = (ad.clickCount || 0) + 1;
+    saveDataStore();
+  }
+  res.json({ success: true });
 });
 
 // Resident Services Endpoints (Dịch Vụ Cư Dân)
@@ -1408,19 +1610,23 @@ app.post("/api/resident-services", (req, res) => {
   const newService = {
     ...item,
     id: item.id || `srv-${Date.now()}`,
-    status: item.status || 'pending', // Default to pending moderation
-    approved: item.approved ?? false,
+    status: item.status || 'approved',
+    approved: item.approved ?? true,
     createdAt: item.createdAt || new Date().toISOString().split('T')[0]
   };
   residentServicesStore.unshift(newService);
-  res.status(201).json({ message: "Đã gửi dịch vụ cư dân thành công! Đang chờ Admin duyệt.", item: newService, service: newService });
+  saveDataStore();
+  res.status(201).json({ message: "Đã đăng bài dịch vụ cư dân thành công!", item: newService, service: newService });
 });
 
 app.put("/api/resident-services/:id", (req, res) => {
   const { id } = req.params;
   const idx = residentServicesStore.findIndex(s => s.id === id);
   if (idx === -1) {
-    return res.status(404).json({ error: "Không tìm thấy bài dịch vụ cư dân." });
+    const newService = { id, ...req.body };
+    residentServicesStore.unshift(newService);
+    saveDataStore();
+    return res.json({ message: "Đã thêm mới và lưu dịch vụ thành công!", item: newService, service: newService });
   }
   const updated = {
     ...residentServicesStore[idx],
@@ -1428,6 +1634,7 @@ app.put("/api/resident-services/:id", (req, res) => {
     ...(req.body.status === 'approved' ? { approved: true } : req.body.status === 'pending' ? { approved: false } : {})
   };
   residentServicesStore[idx] = updated;
+  saveDataStore();
   res.json({ message: "Cập nhật dịch vụ cư dân thành công!", item: updated, service: updated });
 });
 
@@ -1439,12 +1646,14 @@ app.put("/api/resident-services/:id/approve", (req, res) => {
   }
   residentServicesStore[idx].status = 'approved';
   residentServicesStore[idx].approved = true;
+  saveDataStore();
   res.json({ success: true, message: "🎉 Đã duyệt và cho phép hiển thị dịch vụ trên website!", service: residentServicesStore[idx] });
 });
 
 app.delete("/api/resident-services/:id", (req, res) => {
   const { id } = req.params;
   residentServicesStore = residentServicesStore.filter(s => s.id !== id);
+  saveDataStore();
   res.json({ message: "Đã xóa bài dịch vụ cư dân." });
 });
 
@@ -1466,6 +1675,7 @@ app.post("/api/reputation-posts", (req, res) => {
     createdAt: post.createdAt || 'Vừa xong'
   };
   reputationPostsStore.unshift(newPost);
+  saveDataStore();
   res.status(201).json({ message: "Đăng bài viết cư dân thành công!", item: newPost });
 });
 
@@ -1476,12 +1686,14 @@ app.put("/api/reputation-posts/:id", (req, res) => {
     return res.status(404).json({ error: "Không tìm thấy bài viết." });
   }
   reputationPostsStore[index] = { ...reputationPostsStore[index], ...req.body };
+  saveDataStore();
   res.json({ message: "Cập nhật bài viết thành công!", item: reputationPostsStore[index] });
 });
 
 app.delete("/api/reputation-posts/:id", (req, res) => {
   const { id } = req.params;
   reputationPostsStore = reputationPostsStore.filter(p => p.id !== id);
+  saveDataStore();
   res.json({ message: "Đã xóa bài viết thành công." });
 });
 
@@ -1509,6 +1721,7 @@ app.post("/api/stores", (req, res) => {
   const existingIdx = storesStore.findIndex(s => s.id === storeData.id || s.userId === storeData.userId);
   if (existingIdx !== -1) {
     storesStore[existingIdx] = { ...storesStore[existingIdx], ...storeData };
+    saveDataStore();
     return res.json({ message: "Cập nhật thông tin gian hàng thành công!", store: storesStore[existingIdx] });
   } else {
     const newStore: UserStorefront = {
@@ -1521,6 +1734,7 @@ app.post("/api/stores", (req, res) => {
       products: storeData.products || []
     };
     storesStore.unshift(newStore);
+    saveDataStore();
     return res.status(201).json({ message: "Tạo gian hàng cư dân thành công!", store: newStore });
   }
 });
@@ -1599,6 +1813,8 @@ app.post("/api/stores/:id/sync-kiotviet", (req, res) => {
     products: mergedProducts
   };
 
+  saveDataStore();
+
   res.json({
     success: true,
     message: `🎉 Đã kết nối thành công KiotViet API! Đồng bộ ${mergedProducts.length} sản phẩm & tồn kho kho hàng.`,
@@ -1614,7 +1830,8 @@ app.get("/api/store-orders", (req, res) => {
 // Delete store
 app.delete("/api/stores/:id", (req, res) => {
   const { id } = req.params;
-  storesStore = storesStore.filter(s => s.id !== id);
+  storesStore = storesStore.filter(s => s.id !== id && s.userId !== id);
+  saveDataStore();
   res.json({ message: "Đã xóa gian hàng cư dân." });
 });
 
@@ -1644,6 +1861,7 @@ app.post("/api/stores/:id/orders", (req, res) => {
   };
 
   storeOrdersStore.unshift(newOrder);
+  saveDataStore();
   res.status(201).json({
     message: "🎉 Đặt hàng thành công! Đơn hàng đã được truyền tự động tới gian hàng cư dân & phần mềm KiotViet.",
     order: newOrder
@@ -2676,6 +2894,7 @@ app.put("/api/stores/:id", (req, res) => {
     ...storesStore[storeIdx],
     ...req.body
   };
+  saveDataStore();
   res.json({ success: true, message: "Đã cập nhật thông tin gian hàng thành công!", store: storesStore[storeIdx] });
 });
 
@@ -2686,6 +2905,7 @@ app.delete("/api/stores/:id", (req, res) => {
   if (storesStore.length === initLen) {
     return res.status(404).json({ error: "Không tìm thấy gian hàng để xóa." });
   }
+  saveDataStore();
   res.json({ success: true, message: "Admin đã xóa gian hàng cư dân khỏi hệ thống!" });
 });
 
@@ -2725,6 +2945,7 @@ app.post("/api/stores/:storeId/products", (req, res) => {
   }
 
   storesStore[storeIdx].products = existingProds;
+  saveDataStore();
   res.json({ success: true, message: "Đã lưu sản phẩm vào gian hàng thành công!", product: newProd, store: storesStore[storeIdx] });
 });
 
@@ -2742,6 +2963,7 @@ app.put("/api/stores/:storeId/products/:productId", (req, res) => {
   }
   prods[pIdx] = { ...prods[pIdx], ...req.body };
   storesStore[storeIdx].products = prods;
+  saveDataStore();
   res.json({ success: true, message: "Đã cập nhật sản phẩm thành công!", product: prods[pIdx], store: storesStore[storeIdx] });
 });
 
@@ -2755,6 +2977,7 @@ app.delete("/api/stores/:storeId/products/:productId", (req, res) => {
 
   const filteredProds = (storesStore[storeIdx].products || []).filter(p => p.id !== productId);
   storesStore[storeIdx].products = filteredProds;
+  saveDataStore();
   res.json({ success: true, message: "Đã xóa sản phẩm khỏi gian hàng!" });
 });
 
@@ -3119,6 +3342,8 @@ app.post("/api/tech-orders", (req, res) => {
     referenceCode: `DIRECT-HOLD-${orderCode}`
   });
 
+  saveDataStore();
+
   return res.status(201).json({
     success: true,
     message: `🎉 Đã ghi nhận lịch sử đơn hàng ${orderCode}! Hệ thống không thu % phí sàn. Khách hàng và Thợ/Nhà cung cấp liên hệ kết nối trực tiếp.`,
@@ -3180,6 +3405,8 @@ app.post("/api/tech-orders/:id/update-status", (req, res) => {
     // Set warranty expiration date
     order.warrantyExpiresAt = new Date(Date.now() + (order.warrantyDays || 30) * 86400000).toISOString().split('T')[0];
 
+    saveDataStore();
+
     return res.json({
       success: true,
       message: `🎉 NGHIỆM THU & HOÀN TẤT LỊCH SỬ ĐƠN!\n\nĐã ghi nhận hoàn tất và chuyển 100% (${order.payoutAmount.toLocaleString('vi-VN')}đ) cho Đơn vị / Thợ kỹ thuật (${order.techName}). Sàn không thu % phí.`,
@@ -3188,6 +3415,8 @@ app.post("/api/tech-orders/:id/update-status", (req, res) => {
       customerWallet
     });
   }
+
+  saveDataStore();
 
   res.json({
     success: true,
@@ -3233,6 +3462,8 @@ app.post("/api/wallets/:userId/deposit", (req, res) => {
     referenceCode: ref
   });
 
+  saveDataStore();
+
   res.json({
     success: true,
     message: `🎉 Nạp tiền tự động thành công! Đã cộng ${depositNum.toLocaleString('vi-VN')}đ vào Ví Cư Dân của bạn.`,
@@ -3262,6 +3493,8 @@ app.post("/api/wallets/:userId/bank-details", (req, res) => {
     branch: branch || 'Chi nhánh Hà Nội',
     qrCodeUrl
   };
+
+  saveDataStore();
 
   res.json({
     success: true,
@@ -3305,6 +3538,8 @@ app.post("/api/wallets/:userId/withdraw", (req, res) => {
     createdAt: new Date().toLocaleString('vi-VN'),
     referenceCode: refCode
   });
+
+  saveDataStore();
 
   res.json({
     success: true,
@@ -3369,6 +3604,7 @@ app.get("/api/admin/tax-config", (req, res) => {
 
 app.post("/api/admin/tax-config", (req, res) => {
   taxConfigStore = { ...taxConfigStore, ...req.body };
+  saveDataStore();
   res.json({ success: true, message: "Cập nhật cấu hình thuế TMĐT thành công!", config: taxConfigStore });
 });
 
@@ -3390,6 +3626,7 @@ app.post("/api/admin/tax-declare-gdt", (req, res) => {
       r.status = 'declared_gdt';
     }
   });
+  saveDataStore();
   res.json({
     success: true,
     message: `Đã kết xuất dữ liệu khai báo thuế kỳ ${period || 'Q3/2026'} gửi Cổng Thông Tin TMĐT Tổng Cục Thuế (gdt.gov.vn) thành công!`,
