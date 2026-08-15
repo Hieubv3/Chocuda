@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield, ShoppingBag, Store } from 'lucide-react';
+import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield, ShoppingBag, Store, Zap, Loader2 } from 'lucide-react';
 import { 
   PropertyType, 
   ProjectCategory, 
@@ -13,7 +13,7 @@ import {
   HIGH_RISE_COMPLETION_FURNITURE_OPTIONS
 } from '../types';
 import { SoDoCensorEditor } from '../components/SoDoCensorEditor';
-import { addWatermarkToImage } from '../lib/watermark';
+import { addWatermarkToImage, compressAndWatermarkImagesParallel, validateImageSize, createInstantPreview } from '../lib/watermark';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
 
 interface PostPropertyPageProps {
@@ -114,6 +114,69 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
   // Image Upload Processing State
   const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ completed: number; total: number } | null>(null);
+
+  // Instant upload and background auto-compression handler
+  const handleImagesSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawFiles: File[] = Array.from(e.target.files || []);
+    if (rawFiles.length === 0) return;
+
+    // 1. Validate size limit (under 10MB)
+    const validFiles: File[] = [];
+    const oversized: string[] = [];
+
+    for (const file of rawFiles) {
+      const check = validateImageSize(file);
+      if (!check.valid) {
+        oversized.push(check.message || file.name);
+      } else {
+        validFiles.push(file);
+      }
+    }
+
+    if (oversized.length > 0) {
+      alert(oversized.join('\n'));
+    }
+
+    if (validFiles.length === 0) {
+      e.target.value = '';
+      return;
+    }
+
+    // 2. Instant preview: display immediately on screen (0ms delay)
+    const instantPreviews = validFiles.map(f => createInstantPreview(f));
+    setImagesList(prev => [...prev, ...instantPreviews]);
+
+    // 3. Background fast parallel compression & watermarking (<10MB -> ~150KB)
+    setIsUploadingImages(true);
+    setUploadProgress({ completed: 0, total: validFiles.length });
+
+    try {
+      const compressedList = await compressAndWatermarkImagesParallel(
+        validFiles,
+        (completed, total) => setUploadProgress({ completed, total })
+      );
+
+      // Silently replace temporary previews with final lightweight compressed base64 images
+      setImagesList(prev => {
+        const nextList = [...prev];
+        let compIdx = 0;
+        for (let i = 0; i < nextList.length; i++) {
+          if (instantPreviews.includes(nextList[i]) && compressedList[compIdx]) {
+            nextList[i] = compressedList[compIdx];
+            compIdx++;
+          }
+        }
+        return nextList;
+      });
+    } catch (err) {
+      console.error('Lỗi khi nén ảnh:', err);
+    } finally {
+      setIsUploadingImages(false);
+      setUploadProgress(null);
+      e.target.value = '';
+    }
+  };
 
   // AI Assistant State (Viết bài từ ảnh & tự động điền form)
   const aiFileInputRef = React.useRef<HTMLInputElement>(null);
@@ -761,7 +824,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               <div className="flex flex-col sm:flex-row gap-2">
                 <label className="px-4 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition shrink-0">
                   <Upload className="w-4 h-4 stroke-[2.5]" />
-                  <span>📸 CHỌN / CHỤP ẢNH</span>
+                  <span>📸 CHỌN / CHỤP ẢNH (DƯỚI 10MB)</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -769,6 +832,13 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (file) {
+                        const check = validateImageSize(file);
+                        if (!check.valid) {
+                          alert(check.message);
+                          e.target.value = '';
+                          return;
+                        }
+                        setServiceImg(createInstantPreview(file));
                         try {
                           const watermarked = await addWatermarkToImage(file);
                           if (watermarked) setServiceImg(watermarked);
@@ -1569,32 +1639,22 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 <div className="flex items-center gap-2 shrink-0">
                   {/* Native File / Camera Upload Button */}
                   <label className="px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-2xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-500/20 transition active:scale-95">
-                    <Upload className="w-4 h-4 stroke-[2.5]" />
-                    <span>{isUploadingImages ? '⏳ ĐANG NÉN & ĐÓNG DẤU ẢNH...' : '📸 CHỌN / CHỤP ẢNH'}</span>
+                    {isUploadingImages ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+                    ) : (
+                      <Upload className="w-4 h-4 stroke-[2.5]" />
+                    )}
+                    <span>
+                      {uploadProgress 
+                        ? `⚡ ĐANG NÉN NHẸ & ĐÓNG DẤU (${uploadProgress.completed}/${uploadProgress.total})...`
+                        : '📸 CHỌN / CHỤP ẢNH (DƯỚI 10MB)'}
+                    </span>
                     <input
                       type="file"
                       accept="image/*"
                       multiple
-                      disabled={isUploadingImages}
                       className="hidden"
-                      onChange={async (e) => {
-                        const files: File[] = Array.from(e.target.files || []);
-                        if (files.length === 0) return;
-                        setIsUploadingImages(true);
-                        try {
-                          const watermarkedList: string[] = [];
-                          for (const file of files) {
-                            const res = await addWatermarkToImage(file);
-                            if (res) watermarkedList.push(res);
-                          }
-                          setImagesList(prev => [...prev, ...watermarkedList]);
-                        } catch (err) {
-                          console.error('Lỗi khi nén ảnh:', err);
-                        } finally {
-                          setIsUploadingImages(false);
-                          e.target.value = '';
-                        }
-                      }}
+                      onChange={handleImagesSelected}
                     />
                   </label>
                 </div>
@@ -1621,9 +1681,14 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               </div>
 
               {/* Watermark security feature notification */}
-              <div className="flex items-center gap-2 text-[10px] text-amber-600 dark:text-amber-400 font-bold bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
-                <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                <span>Tự động gắn chìm Logo bảo mật <b>"Chợ Cư Dân 24H"</b> chống sao chép tin đăng.</span>
+              <div className="flex items-center justify-between flex-wrap gap-2 text-[10px] text-amber-600 dark:text-amber-400 font-bold bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                  <span>Ảnh hiển thị tức thì, hệ thống tự động nén nhẹ xuống ~150KB & gắn chìm Logo <b>"Chợ Cư Dân 24H"</b>.</span>
+                </div>
+                <span className="text-[9px] bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded-md font-extrabold">
+                  ⚡ Hỗ trợ ảnh dưới 10MB
+                </span>
               </div>
 
               {/* Thumbnails list */}
@@ -1691,7 +1756,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   <div className="flex flex-col sm:flex-row gap-2">
                     <label className="px-3.5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
                       <Upload className="w-4 h-4" />
-                      <span>📁 CHỌN SỔ ĐỎ TỪ ĐIỆN THOẠI / PC</span>
+                      <span>📁 CHỌN SỔ ĐỎ (DƯỚI 10MB)</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1699,6 +1764,15 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
+                            const check = validateImageSize(file);
+                            if (!check.valid) {
+                              alert(check.message);
+                              e.target.value = '';
+                              return;
+                            }
+                            const instant = createInstantPreview(file);
+                            setSoDoImage(instant);
+                            setSoDoRedactedImage(instant);
                             try {
                               const watermarked = await addWatermarkToImage(file);
                               if (watermarked) {
@@ -1742,12 +1816,12 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     XÁC MINH MÔI GIỚI: TẢI CHỨNG CHỈ HÀNH NGHỀ / GIẤY ỦY QUYỀN BÁN HỘ
                   </h4>
                   <p className="text-slate-600 dark:text-slate-300 text-[11px]">
-                    Môi giới bán hộ cần tải lên <strong>Chứng chỉ hành nghề BĐS</strong> hoặc <strong>Giấy ủy quyền / Thỏa thuận môi giới</strong> từ Chủ nhà để được xác minh uy tín.
+                    Môi giới bán hộ cần tải lên <strong>Chứng chỉ hành nghề BĐS</strong> hoặc <strong>Giấy ủy quyền / Thỏa thuận môi giới</strong> từ Chủ nhà để được xác minh uy tín (Hỗ trợ ảnh dưới 10MB).
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <label className="px-3.5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
                       <Upload className="w-4 h-4" />
-                      <span>📁 CHỌN GIẤY TỜ TỪ ĐIỆN THOẠI / PC</span>
+                      <span>📁 CHỌN GIẤY TỜ (DƯỚI 10MB)</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1755,6 +1829,13 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
+                            const check = validateImageSize(file);
+                            if (!check.valid) {
+                              alert(check.message);
+                              e.target.value = '';
+                              return;
+                            }
+                            setBrokerCertImage(createInstantPreview(file));
                             try {
                               const watermarked = await addWatermarkToImage(file);
                               if (watermarked) setBrokerCertImage(watermarked);

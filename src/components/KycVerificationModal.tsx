@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import { ShieldCheck, Upload, CheckCircle2, AlertTriangle, Sparkles, X, FileText, UserCheck, Lock } from 'lucide-react';
-import { addWatermarkToImage } from '../lib/watermark';
+import { addWatermarkToImage, validateImageSize, createInstantPreview } from '../lib/watermark';
 
 interface KycVerificationModalProps {
   user: User;
@@ -159,7 +159,7 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
               <img src={idCardFrontUrl} alt="CCCD Front" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
               <label className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1.5 cursor-pointer shadow transition">
                 <Upload className="w-3.5 h-3.5" />
-                <span>📁 CHỌN TỪ PC</span>
+                <span>📁 CHỌN ẢNH (DƯỚI 10MB)</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -167,8 +167,21 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                   onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      const watermarked = await addWatermarkToImage(file);
-                      setIdCardFrontUrl(watermarked);
+                      const check = validateImageSize(file);
+                      if (!check.valid) {
+                        alert(check.message);
+                        e.target.value = '';
+                        return;
+                      }
+                      setIdCardFrontUrl(createInstantPreview(file));
+                      try {
+                        const watermarked = await addWatermarkToImage(file);
+                        if (watermarked) setIdCardFrontUrl(watermarked);
+                      } catch (err) {
+                        console.error('Lỗi tải CCCD trước:', err);
+                      } finally {
+                        e.target.value = '';
+                      }
                     }
                   }}
                 />
@@ -182,7 +195,7 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
               <img src={idCardBackUrl} alt="CCCD Back" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
               <label className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1.5 cursor-pointer shadow transition">
                 <Upload className="w-3.5 h-3.5" />
-                <span>📁 CHỌN TỪ PC</span>
+                <span>📁 CHỌN ẢNH (DƯỚI 10MB)</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -190,8 +203,21 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                   onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      const watermarked = await addWatermarkToImage(file);
-                      setIdCardBackUrl(watermarked);
+                      const check = validateImageSize(file);
+                      if (!check.valid) {
+                        alert(check.message);
+                        e.target.value = '';
+                        return;
+                      }
+                      setIdCardBackUrl(createInstantPreview(file));
+                      try {
+                        const watermarked = await addWatermarkToImage(file);
+                        if (watermarked) setIdCardBackUrl(watermarked);
+                      } catch (err) {
+                        console.error('Lỗi tải CCCD sau:', err);
+                      } finally {
+                        e.target.value = '';
+                      }
                     }
                   }}
                 />
@@ -212,7 +238,7 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                 <img src={brokerLicenseUrl} alt="Broker License" className="w-full h-32 object-cover rounded-xl border border-amber-500/30" />
                 <label className="w-full py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition">
                   <Upload className="w-4 h-4" />
-                  <span>📁 CHỌN CHỨNG CHỈ TỪ MÁY TÍNH (PC)</span>
+                  <span>📁 CHỌN CHỨNG CHỈ (DƯỚI 10MB)</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -220,8 +246,21 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        const watermarked = await addWatermarkToImage(file);
-                        setBrokerLicenseUrl(watermarked);
+                        const check = validateImageSize(file);
+                        if (!check.valid) {
+                          alert(check.message);
+                          e.target.value = '';
+                          return;
+                        }
+                        setBrokerLicenseUrl(createInstantPreview(file));
+                        try {
+                          const watermarked = await addWatermarkToImage(file);
+                          if (watermarked) setBrokerLicenseUrl(watermarked);
+                        } catch (err) {
+                          console.error('Lỗi tải chứng chỉ:', err);
+                        } finally {
+                          e.target.value = '';
+                        }
                       }
                     }}
                   />

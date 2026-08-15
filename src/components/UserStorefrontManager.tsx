@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { UserStorefront, StoreProduct, StoreOrder, User } from '../types';
 import { UserStorefrontModal } from './UserStorefrontModal';
-import { addWatermarkToImage } from '../lib/watermark';
+import { addWatermarkToImage, validateImageSize, createInstantPreview } from '../lib/watermark';
 
 interface UserStorefrontManagerProps {
   user: User;
@@ -565,7 +565,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                 </label>
                 <div className="flex gap-2">
                   <label className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shrink-0 shadow">
-                    <span>📁 Chọn Ảnh</span>
+                    <span>📁 Chọn Ảnh (Dưới 10MB)</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -573,6 +573,13 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
+                          const check = validateImageSize(file);
+                          if (!check.valid) {
+                            alert(check.message);
+                            e.target.value = '';
+                            return;
+                          }
+                          setLogoUrl(createInstantPreview(file));
                           try {
                             const watermarked = await addWatermarkToImage(file);
                             if (watermarked) setLogoUrl(watermarked);
@@ -600,7 +607,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                 </label>
                 <div className="flex gap-2">
                   <label className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shrink-0 shadow">
-                    <span>📁 Chọn PC</span>
+                    <span>📁 Chọn Banner (Dưới 10MB)</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -608,8 +615,21 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          const watermarked = await addWatermarkToImage(file);
-                          setBannerUrl(watermarked);
+                          const check = validateImageSize(file);
+                          if (!check.valid) {
+                            alert(check.message);
+                            e.target.value = '';
+                            return;
+                          }
+                          setBannerUrl(createInstantPreview(file));
+                          try {
+                            const watermarked = await addWatermarkToImage(file);
+                            if (watermarked) setBannerUrl(watermarked);
+                          } catch (err) {
+                            console.error('Lỗi tải banner:', err);
+                          } finally {
+                            e.target.value = '';
+                          }
                         }
                       }}
                     />
@@ -1167,33 +1187,46 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
               </div>
             </div>
 
-            <div>
-              <label className="block font-bold mb-1 text-slate-700 dark:text-slate-300">Ảnh Sản Phẩm (Chọn từ PC hoặc dán Link URL):</label>
-              <div className="flex gap-2">
-                <label className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shrink-0 shadow">
-                  <span>📁 Chọn Ảnh Từ PC</span>
+              <div>
+                <label className="block font-bold mb-1 text-slate-700 dark:text-slate-300">Ảnh Sản Phẩm (Chọn từ PC hoặc dán Link URL):</label>
+                <div className="flex gap-2">
+                  <label className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shrink-0 shadow">
+                    <span>📁 Chọn Ảnh (Dưới 10MB)</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const check = validateImageSize(file);
+                          if (!check.valid) {
+                            alert(check.message);
+                            e.target.value = '';
+                            return;
+                          }
+                          setNewProdImage(createInstantPreview(file));
+                          try {
+                            const watermarked = await addWatermarkToImage(file);
+                            if (watermarked) setNewProdImage(watermarked);
+                          } catch (err) {
+                            console.error('Lỗi tải ảnh sản phẩm:', err);
+                          } finally {
+                            e.target.value = '';
+                          }
+                        }
+                      }}
+                    />
+                  </label>
                   <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const watermarked = await addWatermarkToImage(file);
-                        setNewProdImage(watermarked);
-                      }
-                    }}
+                    type="text"
+                    value={newProdImage}
+                    onChange={(e) => setNewProdImage(e.target.value)}
+                    placeholder="https://..."
+                    className="flex-1 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
                   />
-                </label>
-                <input
-                  type="text"
-                  value={newProdImage}
-                  onChange={(e) => setNewProdImage(e.target.value)}
-                  placeholder="https://..."
-                  className="flex-1 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
-                />
+                </div>
               </div>
-            </div>
 
             {/* AI SEO Description Generator Button */}
             <div className="space-y-1.5 pt-1">
@@ -1277,7 +1310,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
               <label className="block font-bold text-slate-300">Ảnh Menu Giấy Đã Chụp (Tải từ PC hoặc dán Link Web):</label>
               <div className="flex flex-col sm:flex-row gap-2">
                 <label className="px-3.5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow">
-                  <span>📁 CHỌN ẢNH MENU TỪ PC</span>
+                  <span>📁 CHỌN ẢNH MENU (DƯỚI 10MB)</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -1285,8 +1318,21 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        const watermarked = await addWatermarkToImage(file);
-                        setPhotoMenuUrl(watermarked);
+                        const check = validateImageSize(file);
+                        if (!check.valid) {
+                          alert(check.message);
+                          e.target.value = '';
+                          return;
+                        }
+                        setPhotoMenuUrl(createInstantPreview(file));
+                        try {
+                          const watermarked = await addWatermarkToImage(file);
+                          if (watermarked) setPhotoMenuUrl(watermarked);
+                        } catch (err) {
+                          console.error('Lỗi tải ảnh menu:', err);
+                        } finally {
+                          e.target.value = '';
+                        }
                       }
                     }}
                   />
