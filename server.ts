@@ -16,6 +16,19 @@ app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
 
 // Express JSON Body Parser & Payload Error Middleware
+app.use((req, res, next) => {
+  const host = req.headers.host;
+
+  // Kiểm tra nếu truy cập từ subdomain quantri.chocudan24h.com
+  if (host && host.includes('quantri.chocudan24h.com')) {
+    // Nếu truy cập trang gốc (/), chuyển hướng sang /#admin
+    if (req.path === '/') {
+      return res.redirect('/#admin');
+    }
+  }
+
+  next();
+});
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (err) {
     console.error('[Server Request Error]', err);
