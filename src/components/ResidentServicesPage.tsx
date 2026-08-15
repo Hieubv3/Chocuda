@@ -22,6 +22,7 @@ import { ServicePricingModal } from './ServicePricingModal';
 import { AllStorefrontsDirectoryModal } from './AllStorefrontsDirectoryModal';
 import { TripartiteAgreementModal } from './TripartiteAgreementModal';
 import { TechnicalServiceEscrowModal } from './TechnicalServiceEscrowModal';
+import { AiMenuScannerModal, AiMenuScanResult, ScannedMenuItem } from './AiMenuScannerModal';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
 import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
 
@@ -191,6 +192,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   }, []);
 
   // Post new service form state
+  const [isAiMenuScannerOpen, setIsAiMenuScannerOpen] = useState<boolean>(false);
   const [postForm, setPostForm] = useState({
     title: '',
     categoryId: 'thang-may-sua-nha',
@@ -212,6 +214,26 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     docNameInput: '',
     docUrlInput: ''
   });
+
+  // Handler to auto-fill post form from AI Scanner
+  const handleApplyScannedMenuToForm = (scannedData: AiMenuScanResult, rawImage?: string) => {
+    setPostForm(prev => ({
+      ...prev,
+      title: scannedData.title || prev.title,
+      categoryId: scannedData.categoryId || prev.categoryId,
+      subCategory: scannedData.subCategory || prev.subCategory,
+      project: (scannedData.project as ProjectCategory) || prev.project,
+      priceDisplay: scannedData.priceDisplay || prev.priceDisplay,
+      description: scannedData.suggestedDescription || prev.description,
+      providerName: scannedData.providerName || prev.providerName || currentUser?.name || '',
+      providerPhone: scannedData.providerPhone || prev.providerPhone || currentUser?.phone || '',
+      providerZalo: scannedData.providerZalo || prev.providerZalo || '',
+      address: scannedData.address || prev.address || '',
+      subdivision: scannedData.subdivision || prev.subdivision || '',
+      imagesText: rawImage ? (prev.imagesText ? `${rawImage}\n${prev.imagesText}` : rawImage) : prev.imagesText
+    }));
+    setIsPostingModalOpen(true);
+  };
 
   // Active Industry Rule for chosen Category
   const activePostCategoryObj = RESIDENT_SERVICE_CATEGORIES.find(c => c.id === postForm.categoryId);
@@ -559,6 +581,14 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
 
           {/* Row 3: Action Buttons Bar */}
           <div className="flex flex-wrap items-center gap-2 pt-0.5">
+            <button
+              onClick={() => setIsAiMenuScannerOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 shadow-md transition active:scale-95 cursor-pointer ring-2 ring-amber-300 animate-pulse"
+            >
+              <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950" />
+              <span>🤖 AI QUÉT MENU & BÁO GIÁ (1 CLICK ĐĂNG BÀI)</span>
+            </button>
+
             <button
               onClick={() => setIsPricingModalOpen(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 shadow-xs transition active:scale-95 cursor-pointer"
@@ -1934,6 +1964,31 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             {/* Post Form */}
             <form onSubmit={handlePostServiceSubmit} className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
               
+              {/* AI Quick Scan Banner */}
+              <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent border border-amber-500/40 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-inner">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-500 shrink-0">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-extrabold text-xs text-amber-700 dark:text-amber-300 block">
+                      ⚡ Bạn có sẵn ảnh Menu, Tờ rơi hoặc Báo giá Zalo?
+                    </span>
+                    <span className="text-[11px] text-slate-600 dark:text-slate-400">
+                      AI sẽ tự động đọc món, điền đơn giá và viết bài mô tả hoàn chỉnh vào form này!
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAiMenuScannerOpen(true)}
+                  className="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-xs shrink-0 flex items-center gap-1.5 transition cursor-pointer self-end sm:self-center"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Quét Bằng AI</span>
+                </button>
+              </div>
+
               {/* Category & Subcategory */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -3148,6 +3203,16 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
           </div>
         </div>
       )}
+
+      {/* AI Menu & Price List Scanner Modal */}
+      <AiMenuScannerModal
+        isOpen={isAiMenuScannerOpen}
+        onClose={() => setIsAiMenuScannerOpen(false)}
+        onApplyToServiceForm={handleApplyScannedMenuToForm}
+        defaultProject={selectedProject !== 'all' ? selectedProject : 'ocean-park-2'}
+        currentUserPhone={currentUser?.phone || ''}
+        currentUserName={currentUser?.name || ''}
+      />
     </div>
   );
 };

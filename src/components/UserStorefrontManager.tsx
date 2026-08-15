@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { UserStorefront, StoreProduct, StoreOrder, User } from '../types';
 import { UserStorefrontModal } from './UserStorefrontModal';
+import { AiMenuScannerModal, AiMenuScanResult, ScannedMenuItem } from './AiMenuScannerModal';
 import { addWatermarkToImage, validateImageSize, createInstantPreview } from '../lib/watermark';
 
 interface UserStorefrontManagerProps {
@@ -55,6 +56,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
 
   // Physical Photo Menu Digitizer & Admin Approval state
   const [showPhotoMenuModal, setShowPhotoMenuModal] = useState<boolean>(false);
+  const [showAiScannerModal, setShowAiScannerModal] = useState<boolean>(false);
   const [photoMenuUrl, setPhotoMenuUrl] = useState<string>('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80');
   const [isAnalyzingPhoto, setIsAnalyzingPhoto] = useState<boolean>(false);
   const [extractedDishes, setExtractedDishes] = useState<{ id: string; name: string; price: number; unit: string; category: string; status: 'pending' | 'approved' }[]>([
@@ -62,6 +64,43 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
     { id: 'ocr-2', name: 'Trà Chanh Giã Tay Tây Bắc', price: 25000, unit: 'cốc', category: 'Đồ Uống', status: 'pending' },
     { id: 'ocr-3', name: 'Bún Cát Hải Sản Đầy Đủ', price: 55000, unit: 'bát', category: 'Món Nước', status: 'pending' }
   ]);
+
+  // Batch add products from AI Menu Scanner
+  const handleBatchAddScannedProducts = (scannedData: AiMenuScanResult) => {
+    if (!scannedData.items || scannedData.items.length === 0) {
+      alert('Không tìm thấy danh sách món nào trong kết quả quét.');
+      return;
+    }
+    const isUserAdmin = user.role === 'admin';
+    const newProducts: StoreProduct[] = scannedData.items.map((item, idx) => ({
+      id: `p-scan-${Date.now()}-${idx}`,
+      storeId: store?.id || `store-${user.id}`,
+      code: `SCAN-${Math.floor(Math.random() * 9000) + 1000}`,
+      name: item.name,
+      category: item.category || category || 'Món Ăn & Đồ Uống',
+      price: Number(item.price) || 50000,
+      unit: item.unit || 'suất',
+      stockQuantity: 50,
+      images: ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
+      description: item.description || `Món ngon niêm yết chính xác từ Menu: ${item.name} (${item.unit || 'suất'})`,
+      isAvailable: true,
+      status: isUserAdmin ? 'approved' : 'pending',
+      approved: isUserAdmin,
+      soldCount: 0
+    }));
+
+    const updatedProducts = [...newProducts, ...(store?.products || [])];
+    const updatedStore = { ...store!, products: updatedProducts };
+    setStore(updatedStore as UserStorefront);
+
+    fetch('/api/stores', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedStore)
+    });
+
+    alert(`🎉 Đã tự động thêm ${newProducts.length} món/sản phẩm từ Menu vào gian hàng thành công!`);
+  };
 
   // Order Invoice Export & Filter State
   const [exportedInvoices, setExportedInvoices] = useState<Record<string, { invoiceCode: string; exportedAt: string }>>({});
@@ -784,11 +823,11 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
 
           <div className="flex flex-wrap items-center gap-2">
             <button
-              onClick={() => setShowPhotoMenuModal(true)}
-              className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs rounded-xl shadow transition flex items-center gap-1.5 shrink-0"
+              onClick={() => setShowAiScannerModal(true)}
+              className="px-3.5 py-2 bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs rounded-xl shadow-md transition flex items-center gap-1.5 shrink-0 ring-1 ring-amber-300 animate-pulse cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>📸 Chụp / Tải Ảnh Menu Niêm Yết</span>
+              <Sparkles className="w-4 h-4 text-slate-950" />
+              <span>🤖 AI Quét Menu & Tự Động Thêm Món Vào Gian Hàng</span>
             </button>
 
             <button
@@ -1371,17 +1410,45 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                 
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
+                    if (!photoMenuUrl) {
+                      alert('Vui lòng chọn ảnh hoặc dán link ảnh trước.');
+                      return;
+                    }
                     setIsAnalyzingPhoto(true);
-                    setTimeout(() => {
+                    try {
+                      const res = await fetch('/api/ai/scan-menu-pricelist', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          imageBase64: photoMenuUrl,
+                          providerName: storeName || user.name
+                        })
+                      });
+                      const data = await res.json();
+                      if (data.success && data.result?.items && data.result.items.length > 0) {
+                        setExtractedDishes(data.result.items.map((it: any, idx: number) => ({
+                          id: `ocr-${Date.now()}-${idx}`,
+                          name: it.name,
+                          price: Number(it.price) || 0,
+                          unit: it.unit || 'suất',
+                          category: it.category || 'Món Ăn',
+                          status: 'pending'
+                        })));
+                        alert(`✨ Gemini AI đã nhận diện thành công ${data.result.items.length} món & giá niêm yết từ ảnh Menu!`);
+                      } else {
+                        alert('Không nhận diện được món tự động. Đã chuyển sang chế độ nhập thủ công.');
+                      }
+                    } catch (e) {
+                      alert('Lỗi kết nối máy chủ AI khi quét ảnh.');
+                    } finally {
                       setIsAnalyzingPhoto(false);
-                      alert('✨ Đã AI nhận diện thành công các món & giá niêm yết từ ảnh Menu!');
-                    }, 1200);
+                    }
                   }}
-                  className="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl shrink-0 flex items-center justify-center gap-1.5"
+                  className="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl shrink-0 flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Sparkles className={`w-4 h-4 ${isAnalyzingPhoto ? 'animate-spin' : ''}`} />
-                  <span>{isAnalyzingPhoto ? 'Đang Quét...' : 'Quét Lại Ảnh'}</span>
+                  <span>{isAnalyzingPhoto ? 'Đang Quét AI...' : 'Quét Lại Ảnh Bằng AI'}</span>
                 </button>
               </div>
 
@@ -1437,6 +1504,16 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
           </div>
         </div>
       )}
+
+      {/* AI Menu & Price List Scanner Modal for Storefront */}
+      <AiMenuScannerModal
+        isOpen={showAiScannerModal}
+        onClose={() => setShowAiScannerModal(false)}
+        onApplyToStoreProducts={handleBatchAddScannedProducts}
+        defaultProject="ocean-park-2"
+        currentUserPhone={user.phone || ''}
+        currentUserName={user.name || storeName || ''}
+      />
 
       {/* Preview Store Front Modal */}
       {showPreviewModal && store && (
