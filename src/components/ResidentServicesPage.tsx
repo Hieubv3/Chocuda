@@ -23,6 +23,7 @@ import { AllStorefrontsDirectoryModal } from './AllStorefrontsDirectoryModal';
 import { TripartiteAgreementModal } from './TripartiteAgreementModal';
 import { TechnicalServiceEscrowModal } from './TechnicalServiceEscrowModal';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
+import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
 
 interface ResidentServicesPageProps {
   currentUser: UserType | null;
@@ -219,6 +220,19 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   // Filtered Services list
   const filteredServices = useMemo(() => {
     return services.filter(item => {
+      // Moderation Filter: Only show approved services on public website,
+      // UNLESS the service belongs to the current resident or the viewer is Admin
+      const isOwner = currentUser && (
+        (item.userId && item.userId === currentUser.id) ||
+        (item.providerPhone && currentUser.phone && item.providerPhone.replace(/\D/g, '') === currentUser.phone.replace(/\D/g, ''))
+      );
+      const isAdmin = currentUser?.role === 'admin';
+      const isApproved = (item.status === 'approved' || item.approved === true || item.status === undefined);
+
+      if (!isApproved && !isOwner && !isAdmin) {
+        return false;
+      }
+
       if (selectedProject !== 'all' && item.project !== selectedProject) return false;
       if (selectedCategory !== 'all' && item.categoryId !== selectedCategory) return false;
       if (selectedSubCategory !== 'all' && item.subCategory !== selectedSubCategory) return false;
@@ -233,7 +247,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       }
       return true;
     });
-  }, [services, selectedProject, selectedCategory, selectedSubCategory, searchQuery]);
+  }, [services, selectedProject, selectedCategory, selectedSubCategory, searchQuery, currentUser]);
 
   // Tab for store & service verification status: 'verified' (Đã định danh) | 'pending' (Chờ định danh)
   const [storeVerificationTab, setStoreVerificationTab] = useState<'verified' | 'pending'>('verified');
@@ -344,6 +358,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       });
     }
 
+    const isUserAdmin = currentUser?.role === 'admin';
     const newService: ResidentServiceItem = {
       id: `srv-${Date.now()}`,
       title: postForm.title,
@@ -351,7 +366,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       subCategory: postForm.subCategory,
       project: postForm.project,
       subdivision: postForm.subdivision || 'Nội Khu Dự Án',
-      providerName: postForm.providerName || 'Thợ Cư Dân Vin',
+      providerName: postForm.providerName || currentUser?.name || 'Thợ Cư Dân Vin',
       providerPhone: postForm.providerPhone,
       providerZalo: postForm.providerZalo || `https://zalo.me/${postForm.providerPhone.replace(/\D/g, '')}`,
       address: postForm.address,
@@ -363,6 +378,9 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       verified: false,
       legalCommitmentAccepted: true,
       createdAt: new Date().toISOString().split('T')[0],
+      status: isUserAdmin ? 'approved' : 'pending',
+      approved: isUserAdmin,
+      userId: currentUser?.id || undefined,
       kycStatus: postForm.applyKycNow ? 'pending' : 'unverified',
       kycBadgeType: 'none',
       businessLicenseNo: postForm.businessLicenseNo,
@@ -391,7 +409,11 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     const updated = [newService, ...services];
     localStorage.setItem('hb_resident_services', JSON.stringify(updated));
 
-    alert('🚀 Đăng bài dịch vụ & gửi hồ sơ Định Danh Nút Xanh KYC thành công! Ban Quản Trị sẽ kiểm duyệt chứng chỉ ngành nghề trong vòng 24h.');
+    if (isUserAdmin) {
+      alert('🎉 Đã đăng bài dịch vụ cư dân thành công và hiển thị công khai trên website!');
+    } else {
+      alert('🚀 Gửi bài dịch vụ thành công! Bài viết đang ở trạng thái ⏳ Chờ Admin duyệt. Bài viết sẽ xuất hiện trên Website sau khi được Ban Quản Trị phê duyệt.');
+    }
     setIsPostingModalOpen(false);
   };
 
@@ -2140,16 +2162,57 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                 )}
               </div>
 
-              {/* Images URLs */}
+              {/* Images URLs & Instant File Upload */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  URL Hình ảnh minh họa (Mỗi đường dẫn 1 dòng)
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Hình ảnh minh họa dịch vụ (Tối đa 10MB/ảnh)
+                  </label>
+                  <label className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
+                    <Upload className="w-3 h-3" />
+                    <span>📁 Tải Ảnh Từ Máy</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={async (e) => {
+                        const files: File[] = Array.from(e.target.files || []);
+                        if (files.length === 0) return;
+                        
+                        for (const file of files) {
+                          const check = validateImageSize(file);
+                          if (!check.valid) {
+                            alert(check.message);
+                            continue;
+                          }
+                          // Instant preview URL (0ms)
+                          const previewUrl = createInstantPreview(file);
+                          setPostForm(prev => ({
+                            ...prev,
+                            imagesText: prev.imagesText ? `${prev.imagesText}\n${previewUrl}` : previewUrl
+                          }));
+
+                          // Asynchronous background compression & watermarking
+                          addWatermarkToImage(file).then(compressedUrl => {
+                            if (compressedUrl) {
+                              setPostForm(prev => ({
+                                ...prev,
+                                imagesText: prev.imagesText.replace(previewUrl, compressedUrl)
+                              }));
+                            }
+                          }).catch(err => console.error('Error background compressing image:', err));
+                        }
+                        e.target.value = '';
+                      }}
+                    />
+                  </label>
+                </div>
                 <textarea
                   rows={2}
                   value={postForm.imagesText}
                   onChange={(e) => setPostForm({ ...postForm, imagesText: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
+                  placeholder="Chọn ảnh từ máy hoặc nhập URL hình ảnh minh họa..."
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono"
                 />
               </div>

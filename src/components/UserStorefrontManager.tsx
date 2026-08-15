@@ -317,6 +317,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
     e.preventDefault();
     if (!newProdName.trim()) return;
 
+    const isUserAdmin = user.role === 'admin';
     const prodPayload: StoreProduct = {
       id: editingProductId || `p-man-${Date.now()}`,
       storeId: store?.id || `store-${user.id}`,
@@ -329,12 +330,15 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
       images: [newProdImage],
       description: newProdDesc || 'Sản phẩm phục vụ cư dân Vinhomes chuẩn SEO',
       isAvailable: true,
+      status: isUserAdmin ? 'approved' : 'pending',
+      approved: isUserAdmin,
       soldCount: 0
     };
 
     let updatedProducts = store?.products || [];
     if (editingProductId) {
-      updatedProducts = updatedProducts.map(p => p.id === editingProductId ? { ...p, ...prodPayload } : p);
+      const existing = updatedProducts.find(p => p.id === editingProductId);
+      updatedProducts = updatedProducts.map(p => p.id === editingProductId ? { ...p, ...prodPayload, status: existing?.status || prodPayload.status } : p);
     } else {
       updatedProducts = [prodPayload, ...updatedProducts];
     }
@@ -350,6 +354,10 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedStore)
     });
+
+    if (!isUserAdmin && !editingProductId) {
+      alert('🎉 Đã thêm sản phẩm thành công! Sản phẩm đang ở trạng thái ⏳ Chờ Admin duyệt trước khi xuất hiện trên Website.');
+    }
   };
 
   if (isLoading) {
@@ -807,7 +815,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                   className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700"
                 />
                 <div className="flex-1 min-w-0 space-y-1 text-xs">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center justify-between gap-1.5">
                     <span className="font-bold text-slate-900 dark:text-white truncate">{prod.name}</span>
                   </div>
                   <div className="flex items-center gap-2 text-[11px]">
@@ -815,11 +823,26 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                     {prod.unit && <span className="text-slate-400">/ {prod.unit}</span>}
                     <span className="text-slate-400">(Tồn: {prod.stockQuantity})</span>
                   </div>
-                  {prod.kiotVietId && (
-                    <span className="inline-block px-2 py-0.5 bg-blue-500/10 text-blue-500 font-mono font-bold text-[9px] rounded">
-                      ⚡ {prod.code || prod.kiotVietId}
-                    </span>
-                  )}
+                  <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                    {prod.status === 'pending' ? (
+                      <span className="px-2 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-extrabold text-[9px] rounded-md border border-amber-500/30">
+                        ⏳ Chờ duyệt
+                      </span>
+                    ) : prod.status === 'rejected' ? (
+                      <span className="px-2 py-0.5 bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold text-[9px] rounded-md border border-red-500/30">
+                        ❌ Tạm ẩn
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-[9px] rounded-md border border-emerald-500/30">
+                        ✓ Đã duyệt • Hiện trên Web
+                      </span>
+                    )}
+                    {prod.kiotVietId && (
+                      <span className="inline-block px-1.5 py-0.5 bg-blue-500/10 text-blue-500 font-mono font-bold text-[9px] rounded">
+                        ⚡ {prod.code || prod.kiotVietId}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 

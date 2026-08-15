@@ -435,15 +435,21 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       id: `srv-${Date.now()}`,
       title: serviceTitle,
       category: serviceCategory,
+      categoryId: serviceCategory,
       project: serviceProject,
       price: servicePrice || 'Liên hệ',
+      priceDisplay: servicePrice || 'Liên hệ báo giá',
       image: serviceImg || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+      images: [serviceImg || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80'],
       description: serviceDesc || 'Dịch vụ cư dân chất lượng cao.',
+      providerName: serviceContactName || user.name || 'Cư dân Vinhomes',
+      providerPhone: servicePhoneInput || user.phone || '0868.499.929',
+      providerZalo: servicePhoneInput || user.phone || '0868.499.929',
       contactName: serviceContactName || user.name || 'Cư dân Vinhomes',
       contactPhone: servicePhoneInput || user.phone || '0868.499.929',
       userId: user.id || `usr-${Date.now()}`,
-      status: 'approved',
-      approved: true,
+      status: user.role === 'admin' ? 'approved' : 'pending',
+      approved: user.role === 'admin',
       verified: true,
       rating: 5.0,
       reviewCount: 1,
@@ -642,13 +648,16 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         /* PRODUCT & SERVICE POST FORM */
         serviceSubmitted ? (
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-slate-700 text-center space-y-6 shadow-xl">
-            <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 bg-amber-100 dark:bg-amber-950 text-amber-500 rounded-full flex items-center justify-center mx-auto ring-8 ring-amber-500/10">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <div className="space-y-2">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white">ĐĂNG BÀI THÀNH CÔNG!</h2>
+            <div className="space-y-2.5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-xs font-black">
+                <span>⏳ ĐANG CHỜ ADMIN PHÊ DUYỆT</span>
+              </div>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white">ĐÃ GỬI BÀI THÀNH CÔNG!</h2>
               <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
-                Bài đăng sản phẩm / dịch vụ cư dân của bạn đã được ghi nhận và đưa lên hệ thống Chợ Cư Dân 24H.
+                Bài đăng sản phẩm / dịch vụ cư dân của bạn đã được lưu vào Gian Hàng của bạn. Bài viết sẽ chính thức xuất hiện công khai trên toàn bộ hệ thống Chợ Cư Dân 24H ngay sau khi Ban Quản Trị duyệt nội dung.
               </p>
             </div>
             <button

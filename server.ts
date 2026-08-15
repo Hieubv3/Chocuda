@@ -1382,7 +1382,22 @@ app.post("/api/admin/import-data-store", (req, res) => {
 
 // Resident Services Endpoints (Dịch Vụ Cư Dân)
 app.get("/api/resident-services", (req, res) => {
-  res.json(residentServicesStore);
+  const { status, userId, isAdmin } = req.query;
+  if (status === 'all' || isAdmin === 'true') {
+    return res.json(residentServicesStore);
+  }
+  if (status) {
+    const filtered = residentServicesStore.filter(s => (s.status || 'approved') === status);
+    return res.json(filtered);
+  }
+  // Default behavior: return approved services PLUS services posted by this userId (if provided)
+  const results = residentServicesStore.filter(s => {
+    const isApproved = (s.status === 'approved' || s.approved === true || s.status === undefined);
+    if (isApproved) return true;
+    if (userId && (s.userId === userId || s.providerPhone === userId)) return true;
+    return false;
+  });
+  res.json(results);
 });
 
 app.post("/api/resident-services", (req, res) => {
@@ -1393,10 +1408,38 @@ app.post("/api/resident-services", (req, res) => {
   const newService = {
     ...item,
     id: item.id || `srv-${Date.now()}`,
+    status: item.status || 'pending', // Default to pending moderation
+    approved: item.approved ?? false,
     createdAt: item.createdAt || new Date().toISOString().split('T')[0]
   };
   residentServicesStore.unshift(newService);
-  res.status(201).json({ message: "Đã đăng dịch vụ cư dân thành công!", item: newService });
+  res.status(201).json({ message: "Đã gửi dịch vụ cư dân thành công! Đang chờ Admin duyệt.", item: newService, service: newService });
+});
+
+app.put("/api/resident-services/:id", (req, res) => {
+  const { id } = req.params;
+  const idx = residentServicesStore.findIndex(s => s.id === id);
+  if (idx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy bài dịch vụ cư dân." });
+  }
+  const updated = {
+    ...residentServicesStore[idx],
+    ...req.body,
+    ...(req.body.status === 'approved' ? { approved: true } : req.body.status === 'pending' ? { approved: false } : {})
+  };
+  residentServicesStore[idx] = updated;
+  res.json({ message: "Cập nhật dịch vụ cư dân thành công!", item: updated, service: updated });
+});
+
+app.put("/api/resident-services/:id/approve", (req, res) => {
+  const { id } = req.params;
+  const idx = residentServicesStore.findIndex(s => s.id === id);
+  if (idx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy bài dịch vụ cư dân." });
+  }
+  residentServicesStore[idx].status = 'approved';
+  residentServicesStore[idx].approved = true;
+  res.json({ success: true, message: "🎉 Đã duyệt và cho phép hiển thị dịch vụ trên website!", service: residentServicesStore[idx] });
 });
 
 app.delete("/api/resident-services/:id", (req, res) => {
@@ -2623,6 +2666,19 @@ app.post("/api/broadcast-notifications", (req, res) => {
 });
 
 // ADMIN STORE & PRODUCT OVERRIDE ENDPOINTS (Delete store, edit store, manage store products)
+app.put("/api/stores/:id", (req, res) => {
+  const { id } = req.params;
+  const storeIdx = storesStore.findIndex(s => s.id === id || s.userId === id);
+  if (storeIdx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy gian hàng để cập nhật." });
+  }
+  storesStore[storeIdx] = {
+    ...storesStore[storeIdx],
+    ...req.body
+  };
+  res.json({ success: true, message: "Đã cập nhật thông tin gian hàng thành công!", store: storesStore[storeIdx] });
+});
+
 app.delete("/api/stores/:id", (req, res) => {
   const { id } = req.params;
   const initLen = storesStore.length;
@@ -2655,6 +2711,7 @@ app.post("/api/stores/:storeId/products", (req, res) => {
     images: productData.images && productData.images.length > 0 ? productData.images : ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
     description: productData.description || 'Mô tả sản phẩm chuẩn SEO AI',
     isAvailable: productData.isAvailable ?? true,
+    status: productData.status || 'approved',
     soldCount: productData.soldCount || 0
   };
 
@@ -2669,6 +2726,23 @@ app.post("/api/stores/:storeId/products", (req, res) => {
 
   storesStore[storeIdx].products = existingProds;
   res.json({ success: true, message: "Đã lưu sản phẩm vào gian hàng thành công!", product: newProd, store: storesStore[storeIdx] });
+});
+
+// Admin Update single product in ANY store
+app.put("/api/stores/:storeId/products/:productId", (req, res) => {
+  const { storeId, productId } = req.params;
+  const storeIdx = storesStore.findIndex(s => s.id === storeId || s.userId === storeId);
+  if (storeIdx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy gian hàng." });
+  }
+  const prods = storesStore[storeIdx].products || [];
+  const pIdx = prods.findIndex(p => p.id === productId);
+  if (pIdx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy sản phẩm." });
+  }
+  prods[pIdx] = { ...prods[pIdx], ...req.body };
+  storesStore[storeIdx].products = prods;
+  res.json({ success: true, message: "Đã cập nhật sản phẩm thành công!", product: prods[pIdx], store: storesStore[storeIdx] });
 });
 
 // Admin Delete product from ANY store

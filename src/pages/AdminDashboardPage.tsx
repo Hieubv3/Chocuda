@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
-import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package } from 'lucide-react';
+import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon } from 'lucide-react';
 
 interface ReputationPost {
   id: string;
@@ -18,6 +18,7 @@ interface ReputationPost {
   zaloContact?: string;
 }
 import { AiUrlTrackerModal } from '../components/AiUrlTrackerModal';
+import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
 import { EditPropertyModal, EditProjectModal, EditNewsModal } from '../components/AdminAssetManagerModals';
 import { AdminMarketingCenter } from '../components/AdminMarketingCenter';
 import { AdminSeoCenter } from '../components/AdminSeoCenter';
@@ -89,6 +90,49 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [resServiceKycFilter, setResServiceKycFilter] = useState<string>('all');
   const [showAddServiceModal, setShowAddServiceModal] = useState<boolean>(false);
   const [editingService, setEditingService] = useState<ResidentServiceItem | null>(null);
+
+  // Dedicated Store Management & Moderation State
+  const [selectedAdminStore, setSelectedAdminStore] = useState<UserStorefront | null>(null);
+  const [storeSearchQuery, setStoreSearchQuery] = useState<string>('');
+  const [storeProjectFilter, setStoreProjectFilter] = useState<string>('all');
+  const [storeModerationFilter, setStoreModerationFilter] = useState<'all' | 'pending' | 'approved' | 'kiotviet'>('all');
+  const [storeDetailActiveTab, setStoreDetailActiveTab] = useState<'products' | 'services' | 'info'>('products');
+
+  // Store Create / Edit Form Modal
+  const [showStoreFormModal, setShowStoreFormModal] = useState<boolean>(false);
+  const [editingStoreItem, setEditingStoreItem] = useState<UserStorefront | null>(null);
+  const [storeFormData, setStoreFormData] = useState({
+    storeName: '',
+    ownerName: '',
+    ownerPhone: '',
+    ownerZalo: '',
+    category: 'Thực Phẩm & Ăn Uống',
+    project: 'ocean-park-2' as any,
+    subdivision: 'Phân Khu Kinh Đô Ánh Sáng',
+    address: 'Vinhomes Ocean Park 2, Hưng Yên',
+    description: '',
+    logoUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80',
+    status: 'approved' as 'approved' | 'pending' | 'rejected',
+    verified: true
+  });
+
+  // Store Product Add / Edit Modal
+  const [showStoreProductModal, setShowStoreProductModal] = useState<boolean>(false);
+  const [editingStoreProduct, setEditingStoreProduct] = useState<StoreProduct | null>(null);
+  const [storeProductForm, setStoreProductForm] = useState({
+    id: '',
+    name: '',
+    code: '',
+    category: 'Món Ăn & Đồ Uống',
+    price: 50000,
+    unit: 'suất',
+    stockQuantity: 50,
+    images: ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
+    description: '',
+    status: 'approved' as 'approved' | 'pending' | 'rejected',
+    isAvailable: true
+  });
 
   // Package Management State
   const [editingPkgModal, setEditingPkgModal] = useState<StorePackage | null>(null);
@@ -1050,11 +1094,310 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (!confirm(`Bạn có chắc muốn xóa gian hàng cư dân "${storeName}"?`)) return;
     try {
       setAdminStores(prev => prev.filter(s => s.id !== id));
+      if (selectedAdminStore?.id === id) setSelectedAdminStore(null);
       await fetch(`/api/stores/${id}`, { method: 'DELETE' });
       alert('Đã xóa gian hàng thành công!');
     } catch (e) {
       console.error('Error deleting store:', e);
     }
+  };
+
+  // STORE CRUD HANDLERS
+  const handleOpenCreateStore = () => {
+    setEditingStoreItem(null);
+    setStoreFormData({
+      storeName: '',
+      ownerName: '',
+      ownerPhone: '',
+      ownerZalo: '',
+      category: 'Thực Phẩm & Ăn Uống',
+      project: 'ocean-park-2',
+      subdivision: 'Phân Khu Kinh Đô Ánh Sáng',
+      address: 'Vinhomes Ocean Park 2, Hưng Yên',
+      description: '',
+      logoUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80',
+      bannerUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80',
+      status: 'approved',
+      verified: true
+    });
+    setShowStoreFormModal(true);
+  };
+
+  const handleOpenEditStore = (store: UserStorefront) => {
+    setEditingStoreItem(store);
+    setStoreFormData({
+      storeName: store.storeName || '',
+      ownerName: store.ownerName || '',
+      ownerPhone: store.ownerPhone || '',
+      ownerZalo: store.ownerZalo || '',
+      category: store.category || 'Thực Phẩm & Ăn Uống',
+      project: (store.project as any) || 'ocean-park-2',
+      subdivision: store.subdivision || 'Nội khu',
+      address: store.address || '',
+      description: store.description || '',
+      logoUrl: store.logoUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80',
+      bannerUrl: store.bannerUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80',
+      status: store.status || 'approved',
+      verified: Boolean(store.verified)
+    });
+    setShowStoreFormModal(true);
+  };
+
+  const handleSaveStoreFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!storeFormData.storeName.trim() || !storeFormData.ownerPhone.trim()) {
+      alert('Vui lòng nhập Tên gian hàng và Số điện thoại!');
+      return;
+    }
+
+    const payload: UserStorefront = {
+      id: editingStoreItem ? editingStoreItem.id : `store-${Date.now()}`,
+      userId: editingStoreItem ? editingStoreItem.userId : `usr-${Date.now()}`,
+      ownerName: storeFormData.ownerName || 'Cư dân Vinhomes',
+      ownerPhone: storeFormData.ownerPhone,
+      ownerZalo: storeFormData.ownerZalo || storeFormData.ownerPhone,
+      storeName: storeFormData.storeName,
+      slug: storeFormData.storeName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      logoUrl: storeFormData.logoUrl,
+      bannerUrl: storeFormData.bannerUrl,
+      category: storeFormData.category,
+      project: storeFormData.project,
+      subdivision: storeFormData.subdivision,
+      address: storeFormData.address,
+      description: storeFormData.description || 'Gian hàng cư dân phục vụ nội khu chuẩn chất lượng.',
+      verified: storeFormData.verified,
+      status: storeFormData.status,
+      rating: editingStoreItem?.rating || 5.0,
+      reviewCount: editingStoreItem?.reviewCount || 1,
+      products: editingStoreItem?.products || [],
+      createdAt: editingStoreItem?.createdAt || new Date().toISOString().split('T')[0]
+    };
+
+    try {
+      if (editingStoreItem) {
+        setAdminStores(prev => prev.map(s => s.id === payload.id ? payload : s));
+        if (selectedAdminStore?.id === payload.id) setSelectedAdminStore(payload);
+        await fetch(`/api/stores/${payload.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        alert('🎉 Đã cập nhật thông tin gian hàng thành công!');
+      } else {
+        setAdminStores(prev => [payload, ...prev]);
+        await fetch('/api/stores', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        alert('🎉 Đã tạo gian hàng cư dân mới thành công!');
+      }
+      setShowStoreFormModal(false);
+      setEditingStoreItem(null);
+    } catch (err) {
+      console.error('Error saving store:', err);
+    }
+  };
+
+  const handleToggleStoreStatus = async (store: UserStorefront) => {
+    const nextStatus = (store.status === 'approved' || store.status === undefined) ? 'pending' : 'approved';
+    const updated = { ...store, status: nextStatus as any, approved: nextStatus === 'approved' };
+    setAdminStores(prev => prev.map(s => s.id === store.id ? updated : s));
+    if (selectedAdminStore?.id === store.id) setSelectedAdminStore(updated);
+    try {
+      await fetch(`/api/stores/${store.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      });
+      alert(nextStatus === 'approved' ? '✓ Đã duyệt gian hàng và hiển thị công khai trên website!' : '⏳ Đã chuyển gian hàng về trạng thái Chờ duyệt / Ẩn.');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // PRODUCT CRUD & MODERATION HANDLERS
+  const handleOpenAddProduct = (storeId: string) => {
+    setEditingStoreProduct(null);
+    setStoreProductForm({
+      id: '',
+      name: '',
+      code: `SKU-${Math.floor(Math.random() * 800) + 100}`,
+      category: 'Món Ăn & Đồ Uống',
+      price: 45000,
+      unit: 'suất',
+      stockQuantity: 50,
+      images: ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
+      description: 'Sản phẩm tươi ngon, chuẩn vị, phục vụ tận căn hộ cho cư dân.',
+      status: 'approved',
+      isAvailable: true
+    });
+    setShowStoreProductModal(true);
+  };
+
+  const handleOpenEditProduct = (prod: StoreProduct) => {
+    setEditingStoreProduct(prod);
+    setStoreProductForm({
+      id: prod.id,
+      name: prod.name,
+      code: prod.code || '',
+      category: prod.category || 'Món Ăn & Đồ Uống',
+      price: prod.price || 0,
+      unit: prod.unit || 'suất',
+      stockQuantity: prod.stockQuantity || 0,
+      images: prod.images && prod.images.length > 0 ? prod.images : ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
+      description: prod.description || '',
+      status: prod.status || 'approved',
+      isAvailable: prod.isAvailable ?? true
+    });
+    setShowStoreProductModal(true);
+  };
+
+  const handleSaveStoreProductSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedAdminStore) return;
+    if (!storeProductForm.name.trim()) {
+      alert('Vui lòng nhập tên sản phẩm!');
+      return;
+    }
+
+    const prodPayload: StoreProduct = {
+      id: editingStoreProduct ? editingStoreProduct.id : `p-${Date.now()}`,
+      storeId: selectedAdminStore.id,
+      code: storeProductForm.code || `SKU-${Math.floor(Math.random() * 800) + 100}`,
+      name: storeProductForm.name,
+      category: storeProductForm.category,
+      price: Number(storeProductForm.price) || 0,
+      unit: storeProductForm.unit || 'suất',
+      stockQuantity: Number(storeProductForm.stockQuantity) || 0,
+      images: storeProductForm.images,
+      description: storeProductForm.description,
+      isAvailable: storeProductForm.isAvailable,
+      status: storeProductForm.status,
+      approved: storeProductForm.status === 'approved',
+      soldCount: editingStoreProduct?.soldCount || 0
+    };
+
+    let updatedProds = selectedAdminStore.products || [];
+    if (editingStoreProduct) {
+      updatedProds = updatedProds.map(p => p.id === prodPayload.id ? prodPayload : p);
+    } else {
+      updatedProds = [prodPayload, ...updatedProds];
+    }
+
+    const updatedStore = { ...selectedAdminStore, products: updatedProds };
+    setSelectedAdminStore(updatedStore);
+    setAdminStores(prev => prev.map(s => s.id === updatedStore.id ? updatedStore : s));
+    setShowStoreProductModal(false);
+    setEditingStoreProduct(null);
+
+    try {
+      await fetch(`/api/stores/${selectedAdminStore.id}/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(prodPayload)
+      });
+      alert(editingStoreProduct ? '🎉 Đã cập nhật sản phẩm thành công!' : '🎉 Đã thêm sản phẩm mới vào gian hàng!');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleToggleProductApproval = async (storeId: string, prodId: string) => {
+    if (!selectedAdminStore) return;
+    const prod = selectedAdminStore.products?.find(p => p.id === prodId);
+    if (!prod) return;
+
+    const nextStatus = (prod.status === 'approved' || prod.status === undefined) ? 'pending' : 'approved';
+    const updatedProd: StoreProduct = {
+      ...prod,
+      status: nextStatus as any,
+      approved: nextStatus === 'approved'
+    };
+
+    const updatedProds = (selectedAdminStore.products || []).map(p => p.id === prodId ? updatedProd : p);
+    const updatedStore = { ...selectedAdminStore, products: updatedProds };
+    setSelectedAdminStore(updatedStore);
+    setAdminStores(prev => prev.map(s => s.id === storeId ? updatedStore : s));
+
+    try {
+      await fetch(`/api/stores/${storeId}/products/${prodId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedProd)
+      });
+      alert(nextStatus === 'approved' ? '✓ Đã DUYỆT sản phẩm! Sản phẩm hiện đã xuất hiện trên website Chợ Cư Dân 24H.' : '⏳ Đã chuyển sản phẩm về trạng thái CHỜ DUYỆT (Ẩn khỏi website công khai).');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleDeleteStoreProduct = async (storeId: string, prodId: string) => {
+    if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi gian hàng?')) return;
+    if (!selectedAdminStore) return;
+
+    const updatedProds = (selectedAdminStore.products || []).filter(p => p.id !== prodId);
+    const updatedStore = { ...selectedAdminStore, products: updatedProds };
+    setSelectedAdminStore(updatedStore);
+    setAdminStores(prev => prev.map(s => s.id === storeId ? updatedStore : s));
+
+    try {
+      await fetch(`/api/stores/${storeId}/products/${prodId}`, { method: 'DELETE' });
+      alert('Đã xóa sản phẩm thành công!');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // RESIDENT SERVICE MODERATION & CRUD HANDLERS
+  const handleQuickApproveService = async (serviceId: string) => {
+    try {
+      setAdminResidentServices(prev => prev.map(s => s.id === serviceId ? { ...s, status: 'approved', approved: true } : s));
+      const res = await fetch(`/api/resident-services/${serviceId}/approve`, { method: 'PUT' });
+      if (res.ok) {
+        alert('🎉 ĐÃ PHÊ DUYỆT! Dịch vụ cư dân hiện đã xuất hiện công khai trên Website.');
+        fetchResidentServices();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleToggleServiceStatus = async (serviceId: string, currentStatus?: string) => {
+    const nextStatus = (currentStatus === 'approved' || currentStatus === undefined) ? 'pending' : 'approved';
+    try {
+      setAdminResidentServices(prev => prev.map(s => s.id === serviceId ? { ...s, status: nextStatus as any, approved: nextStatus === 'approved' } : s));
+      const res = await fetch(`/api/resident-services/${serviceId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: nextStatus, approved: nextStatus === 'approved' })
+      });
+      if (res.ok) {
+        alert(nextStatus === 'approved' ? '✓ ĐÃ DUYỆT! Dịch vụ đã hiển thị lên Website.' : '⏳ Đã chuyển dịch vụ về trạng thái Chờ Duyệt (Chỉ cư dân thấy).');
+        fetchResidentServices();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleDeleteResidentService = async (serviceId: string) => {
+    if (!confirm('Bạn có chắc muốn xóa bài dịch vụ cư dân này khỏi hệ thống?')) return;
+    try {
+      setAdminResidentServices(prev => prev.filter(s => s.id !== serviceId));
+      await fetch(`/api/resident-services/${serviceId}`, { method: 'DELETE' });
+      alert('Đã xóa dịch vụ thành công!');
+      fetchResidentServices();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // GLOBAL SYSTEM SYNC BUTTON
+  const handleSyncAllToWebsite = () => {
+    fetchResidentServices();
+    fetchStores();
+    alert('⚡ HỆ THỐNG ĐÃ ĐỒNG BỘ THÀNH CÔNG!\nTất cả dữ liệu Gian Hàng, Dịch Vụ Cư Dân, Sản Phẩm đã được cập nhật trực tiếp lên hệ thống website chocudan24h.com');
   };
 
   const handleUpdateStoreOrderStatus = async (orderId: string, newOrderStatus: string, newPaymentStatus?: string) => {
@@ -2056,89 +2399,405 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ==================== MẢNG 2: TAB 2 - GIAN HÀNG & KIOTVIET POS ==================== */}
-      {activeTab === 'stores_mgmt' && (
-        <div className="space-y-6">
-          <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 p-6 rounded-3xl border-2 border-emerald-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                  QUẢN LÝ GIAN HÀNG
-                </span>
-                <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[10px] rounded-full">
-                  ● KIOTVIET POS INTEGRATED
-                </span>
+      {/* ==================== MẢNG 2: TAB 2 - GIAN HÀNG & DỊCH VỤ CƯ DÂN ==================== */}
+      {activeTab === 'stores_mgmt' && (() => {
+        // Calculate dynamic stats
+        const allStoreProds = adminStores.flatMap(s => s.products || []);
+        const totalProds = allStoreProds.length;
+        const totalServs = adminResidentServices.length;
+        const pendingProds = allStoreProds.filter(p => p.status === 'pending').length;
+        const pendingServs = adminResidentServices.filter(s => s.status === 'pending').length;
+        const totalPendingModeration = pendingProds + pendingServs;
+        const connectedStores = adminStores.filter(s => s.kiotVietConfig?.syncStatus === 'connected').length;
+
+        // Filter stores
+        const filteredAdminStores = adminStores.filter(st => {
+          if (storeProjectFilter !== 'all' && st.project !== storeProjectFilter) return false;
+          if (storeSearchQuery.trim()) {
+            const q = storeSearchQuery.toLowerCase().trim();
+            const matchName = (st.storeName || '').toLowerCase().includes(q);
+            const matchOwner = (st.ownerName || '').toLowerCase().includes(q);
+            const matchPhone = (st.ownerPhone || (st as any).phone || '').toLowerCase().includes(q);
+            const matchCat = (st.category || '').toLowerCase().includes(q);
+            const matchSubdiv = (st.subdivision || '').toLowerCase().includes(q);
+            if (!matchName && !matchOwner && !matchPhone && !matchCat && !matchSubdiv) return false;
+          }
+          if (storeModerationFilter === 'pending') {
+            const hasPendingProds = (st.products || []).some(p => p.status === 'pending');
+            const hasPendingServs = adminResidentServices.some(s => 
+              (s.providerPhone && s.providerPhone.replace(/\D/g, '') === (st.ownerPhone || (st as any).phone || '').replace(/\D/g, '')) && s.status === 'pending'
+            );
+            const isStorePending = st.status === 'pending';
+            return hasPendingProds || hasPendingServs || isStorePending;
+          }
+          if (storeModerationFilter === 'approved') {
+            return st.status === 'approved' || st.status === undefined;
+          }
+          if (storeModerationFilter === 'kiotviet') {
+            return st.kiotVietConfig?.syncStatus === 'connected';
+          }
+          return true;
+        });
+
+        return (
+          <div className="space-y-6">
+            {/* Header Banner */}
+            <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 p-6 rounded-3xl border-2 border-emerald-500/40 shadow-2xl text-white flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                    QUẢN LÝ GIAN HÀNG & DỊCH VỤ CƯ DÂN
+                  </span>
+                  <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[10px] rounded-full">
+                    ● BỘ LỌC DUYỆT ĐĂNG WEBSITE 24H
+                  </span>
+                  {totalPendingModeration > 0 && (
+                    <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full animate-pulse flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {totalPendingModeration} MỤC CHỜ DUYỆT
+                    </span>
+                  )}
+                </div>
+                <h2 className="text-xl font-black text-emerald-400 mt-1.5 flex items-center gap-2">
+                  <Store className="w-6 h-6 text-emerald-400" />
+                  <span>HỆ THỐNG GIAN HÀNG CƯ DÂN & KIỂM DUYỆT DỊCH VỤ</span>
+                </h2>
+                <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                  Quản lý toàn bộ danh mục sản phẩm & dịch vụ cư dân cung cấp. Admin có thể thêm, sửa, xóa, duyệt đăng hoặc tạm ẩn từng sản phẩm/dịch vụ để hiển thị lên Website.
+                </p>
               </div>
-              <h2 className="text-xl font-black text-emerald-400 mt-1.5 flex items-center gap-2">
-                <Store className="w-6 h-6 text-emerald-400" />
-                <span>QUẢN LÝ GIAN HÀNG CƯ DÂN & ĐỒNG BỘ KIOTVIET POS</span>
-              </h2>
-              <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                Quản lý tất cả gian hàng bán lẻ, tiệm cafe, siêu thị tạp hóa cư dân Vinhomes. Tự động kết nối tồn kho & giá bán realtime qua API KiotViet.
-              </p>
+
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  onClick={handleSyncAllToWebsite}
+                  className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow transition cursor-pointer"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Đồng Bộ Lên Web</span>
+                </button>
+                <button
+                  onClick={handleOpenCreateStore}
+                  className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-black text-xs flex items-center gap-1.5 shadow-lg hover:shadow-emerald-500/25 transition cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>➕ Tạo Gian Hàng Mới</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Metrics Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+                  <Store className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-400 font-bold block">Tổng Gian Hàng</span>
+                  <span className="text-lg font-black text-slate-900 dark:text-white">{adminStores.length}</span>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+                  <ShoppingBag className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-400 font-bold block">Sản Phẩm & Dịch Vụ</span>
+                  <span className="text-lg font-black text-slate-900 dark:text-white">{totalProds + totalServs}</span>
+                </div>
+              </div>
+
+              <div className={`p-4 rounded-2xl border shadow-xs flex items-center gap-3 ${
+                totalPendingModeration > 0 
+                  ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-700/50' 
+                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
+              }`}>
+                <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[11px] text-amber-700 dark:text-amber-300 font-bold block">Chờ Duyệt Lên Web</span>
+                  <span className="text-lg font-black text-amber-600 dark:text-amber-400">{totalPendingModeration} mục</span>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-400 font-bold block">KiotViet POS Live</span>
+                  <span className="text-lg font-black text-purple-600 dark:text-purple-400">{connectedStores} gian hàng</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Filter & Search Controls */}
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+              <div className="flex flex-col md:flex-row items-center gap-3">
+                <div className="relative flex-1 w-full">
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Tìm theo tên gian hàng, tên chủ shop, số điện thoại, phân khu..."
+                    value={storeSearchQuery}
+                    onChange={(e) => setStoreSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  {storeSearchQuery && (
+                    <button
+                      onClick={() => setStoreSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs font-bold"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                <div className="w-full md:w-56 shrink-0">
+                  <select
+                    value={storeProjectFilter}
+                    onChange={(e) => setStoreProjectFilter(e.target.value)}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-bold"
+                  >
+                    <option value="all">🏢 Tất Cả Dự Án Vinhomes</option>
+                    <option value="ocean-park-1">Ocean Park 1 (Gia Lâm)</option>
+                    <option value="ocean-park-2">Ocean Park 2 (The Empire)</option>
+                    <option value="ocean-park-3">Ocean Park 3 (The Crown)</option>
+                    <option value="smart-city">Smart City (Tây Mỗ)</option>
+                    <option value="grand-park">Grand Park (TP. Thủ Đức)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Status Tabs */}
+              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <span className="text-[11px] font-bold text-slate-400 mr-1 flex items-center gap-1">
+                  <Filter className="w-3.5 h-3.5" /> Lọc trạng thái:
+                </span>
+                <button
+                  onClick={() => setStoreModerationFilter('all')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                    storeModerationFilter === 'all'
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                  }`}
+                >
+                  Tất cả ({adminStores.length})
+                </button>
+                <button
+                  onClick={() => setStoreModerationFilter('pending')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1 ${
+                    storeModerationFilter === 'pending'
+                      ? 'bg-amber-500 text-slate-950 shadow'
+                      : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
+                  }`}
+                >
+                  <Clock className="w-3 h-3" />
+                  <span>Có bài chờ duyệt ({totalPendingModeration})</span>
+                </button>
+                <button
+                  onClick={() => setStoreModerationFilter('approved')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1 ${
+                    storeModerationFilter === 'approved'
+                      ? 'bg-emerald-600 text-white shadow'
+                      : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
+                  }`}
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  <span>Đã duyệt hiển thị Web</span>
+                </button>
+                <button
+                  onClick={() => setStoreModerationFilter('kiotviet')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1 ${
+                    storeModerationFilter === 'kiotviet'
+                      ? 'bg-purple-600 text-white shadow'
+                      : 'bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20'
+                  }`}
+                >
+                  <Zap className="w-3 h-3" />
+                  <span>KiotViet Connected ({connectedStores})</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Stores List Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {filteredAdminStores.length === 0 ? (
+                <div className="col-span-2 text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500 space-y-3">
+                  <Store className="w-12 h-12 text-slate-400 mx-auto" />
+                  <p className="font-bold text-sm">Không tìm thấy gian hàng nào phù hợp với bộ lọc.</p>
+                  <button
+                    onClick={() => { setStoreSearchQuery(''); setStoreProjectFilter('all'); setStoreModerationFilter('all'); }}
+                    className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-200"
+                  >
+                    Xóa Bộ Lọc
+                  </button>
+                </div>
+              ) : (
+                filteredAdminStores.map(st => {
+                  const storeProds = st.products || [];
+                  const storePhone = st.ownerPhone || (st as any).phone || '';
+                  const matchingServs = adminResidentServices.filter(s => 
+                    (s.providerPhone && s.providerPhone.replace(/\D/g, '') === storePhone.replace(/\D/g, '')) ||
+                    (s.userId && s.userId === st.userId) ||
+                    (s.storefrontId && s.storefrontId === st.id)
+                  );
+                  const storePendingProds = storeProds.filter(p => p.status === 'pending').length;
+                  const storePendingServs = matchingServs.filter(s => s.status === 'pending').length;
+                  const storeTotalPending = storePendingProds + storePendingServs;
+                  const isStoreApproved = st.status === 'approved' || st.status === undefined;
+
+                  return (
+                    <div 
+                      key={st.id} 
+                      className={`bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border shadow-xl flex flex-col justify-between gap-4 transition hover:shadow-2xl ${
+                        storeTotalPending > 0
+                          ? 'border-amber-400 dark:border-amber-600/70 ring-2 ring-amber-400/20'
+                          : 'border-slate-200 dark:border-slate-800'
+                      }`}
+                    >
+                      {/* Top Zone: Avatar + Info + Badges */}
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={st.logoUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80'}
+                              alt={st.storeName}
+                              className="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shadow-sm shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <h3 className="font-black text-base text-slate-900 dark:text-white truncate">
+                                  {st.storeName}
+                                </h3>
+                              </div>
+                              <div className="text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2 mt-0.5">
+                                <span className="font-bold text-emerald-600 dark:text-emerald-400">{st.category || 'Gian hàng cư dân'}</span>
+                                <span>•</span>
+                                <span>{st.project?.toUpperCase() || 'VINHOMES'}</span>
+                              </div>
+                              <div className="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-1.5 mt-1">
+                                <UserIcon className="w-3.5 h-3.5 text-slate-400" />
+                                <span className="font-bold">{st.ownerName || 'Cư dân'}</span>
+                                {storePhone && (
+                                  <a 
+                                    href={`tel:${storePhone}`}
+                                    className="text-amber-600 dark:text-amber-400 hover:underline font-mono font-bold flex items-center gap-0.5 ml-1"
+                                  >
+                                    <Phone className="w-3 h-3" /> {storePhone}
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Status Tag */}
+                          <div className="flex flex-col items-end gap-1.5 shrink-0">
+                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-black ${
+                              isStoreApproved
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                            }`}>
+                              {isStoreApproved ? '✓ Đã Duyệt Web' : '⏳ Chờ Duyệt'}
+                            </span>
+                            {st.kiotVietConfig?.syncStatus === 'connected' && (
+                              <span className="px-2 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 text-[9px] font-bold rounded-md">
+                                ⚡ KiotViet POS
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                          {st.description || 'Gian hàng sản phẩm & dịch vụ phục vụ cư dân nội khu đô thị.'}
+                        </p>
+
+                        {/* Pending Alert if has pending items */}
+                        {storeTotalPending > 0 && (
+                          <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-between text-xs text-amber-700 dark:text-amber-300">
+                            <div className="flex items-center gap-1.5 font-black">
+                              <span className="inline-block w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                              <span>🔔 CÓ {storeTotalPending} MỤC ĐANG CHỜ ADMIN DUYỆT!</span>
+                            </div>
+                            <span className="text-[10px] font-bold underline cursor-pointer" onClick={() => setSelectedAdminStore(st)}>
+                              Duyệt ngay →
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Metrics Bar */}
+                        <div className="grid grid-cols-3 gap-2 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl text-center text-xs">
+                          <div>
+                            <span className="text-slate-400 text-[10px] block font-bold">Sản phẩm</span>
+                            <span className="font-black text-slate-900 dark:text-white text-sm">
+                              {storeProds.length} <span className="text-[10px] text-slate-400 font-normal">món</span>
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 text-[10px] block font-bold">Dịch vụ cung cấp</span>
+                            <span className="font-black text-blue-600 dark:text-blue-400 text-sm">
+                              {matchingServs.length} <span className="text-[10px] text-slate-400 font-normal">dịch vụ</span>
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 text-[10px] block font-bold">Đánh giá</span>
+                            <span className="font-black text-amber-500 text-sm">⭐ {st.rating || 5.0}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Bottom Controls */}
+                      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                        <button
+                          onClick={() => {
+                            setSelectedAdminStore(st);
+                            setStoreDetailActiveTab('products');
+                          }}
+                          className="w-full sm:w-auto flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-md hover:shadow-emerald-500/25 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <Eye className="w-4 h-4" />
+                          <span>XEM & QUẢN LÝ TẤT CẢ DỊCH VỤ / SẢN PHẨM ({storeProds.length + matchingServs.length})</span>
+                        </button>
+
+                        <div className="flex items-center gap-1.5 w-full sm:w-auto justify-end">
+                          <button
+                            onClick={() => handleToggleStoreStatus(st)}
+                            title={isStoreApproved ? "Tạm ẩn gian hàng khỏi website" : "Duyệt gian hàng lên website"}
+                            className={`p-2.5 rounded-xl font-bold text-xs transition cursor-pointer flex items-center gap-1 ${
+                              isStoreApproved
+                                ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 hover:bg-amber-500 hover:text-white'
+                                : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 hover:bg-emerald-600 hover:text-white'
+                            }`}
+                          >
+                            <CheckCircle2 className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => handleOpenEditStore(st)}
+                            title="Chỉnh sửa thông tin gian hàng"
+                            className="p-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-bold text-xs transition cursor-pointer"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteStore(st.id, st.storeName)}
+                            title="Xóa gian hàng khỏi hệ thống"
+                            className="p-2.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 font-bold rounded-xl text-xs transition cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {adminStores.length === 0 ? (
-              <div className="col-span-2 text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500">
-                <Store className="w-12 h-12 text-slate-400 mx-auto mb-2" />
-                <p className="font-bold text-sm">Chưa có gian hàng cư dân nào được tạo.</p>
-              </div>
-            ) : (
-              adminStores.map(st => (
-                <div key={st.id} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-2xl flex items-center justify-center font-black text-lg">
-                        🏪
-                      </div>
-                      <div>
-                        <h3 className="font-black text-base text-slate-900 dark:text-white">{st.storeName}</h3>
-                        <span className="text-xs text-slate-500 dark:text-slate-400">{st.project || 'Vinhomes'} • SĐT: {st.phone}</span>
-                      </div>
-                    </div>
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black ${
-                      st.kiotVietConfig?.syncStatus === 'connected'
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                        : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                    }`}>
-                      {st.kiotVietConfig?.syncStatus === 'connected' ? '✓ KiotViet Connected' : 'Chờ Kết Nối POS'}
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{st.description}</p>
-
-                  <div className="grid grid-cols-3 gap-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl text-center text-xs">
-                    <div>
-                      <span className="text-slate-400 text-[10px] block">Sản phẩm</span>
-                      <span className="font-black text-slate-900 dark:text-white text-sm">{st.products?.length || 0}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 text-[10px] block">Đánh giá</span>
-                      <span className="font-black text-amber-500 text-sm">⭐ {st.rating || 5.0}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 text-[10px] block">Chủ gian hàng</span>
-                      <span className="font-black text-slate-900 dark:text-white text-xs truncate block">{st.ownerName}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <button
-                      onClick={() => handleDeleteStore(st.id, st.storeName)}
-                      className="px-3.5 py-2 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 font-bold rounded-xl text-xs flex items-center gap-1 transition cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Xóa Gian Hàng</span>
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ==================== MẢNG 2: TAB 3 - TỔNG QUAN ĐƠN HÀNG ĐỐI TÁC (ĐỐI TÁC TỰ QUẢN LÝ) ==================== */}
       {activeTab === 'orders_mgmt' && (
@@ -5898,6 +6557,888 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
                 >
                   LƯU GÓI DỊCH VỤ
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MODAL: QUẢN TRỊ CHI TIẾT GIAN HÀNG & DỊCH VỤ CƯ DÂN ==================== */}
+      {selectedAdminStore && (() => {
+        const storeProds = selectedAdminStore.products || [];
+        const storePhone = selectedAdminStore.ownerPhone || (selectedAdminStore as any).phone || '';
+        const matchingServs = adminResidentServices.filter(s => 
+          (s.providerPhone && s.providerPhone.replace(/\D/g, '') === storePhone.replace(/\D/g, '')) ||
+          (s.userId && s.userId === selectedAdminStore.userId) ||
+          (s.storefrontId && s.storefrontId === selectedAdminStore.id)
+        );
+        const pendingProdsCount = storeProds.filter(p => p.status === 'pending').length;
+        const pendingServsCount = matchingServs.filter(s => s.status === 'pending').length;
+
+        return (
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-5xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+              
+              {/* Modal Top Header */}
+              <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white p-5 sm:p-6 flex items-start justify-between gap-4 border-b border-emerald-500/30">
+                <div className="flex items-center gap-4">
+                  <img
+                    src={selectedAdminStore.logoUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80'}
+                    alt={selectedAdminStore.storeName}
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-400 shadow-md shrink-0"
+                  />
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full uppercase">
+                        {selectedAdminStore.category || 'Gian Hàng Cư Dân'}
+                      </span>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                        selectedAdminStore.status === 'approved' || selectedAdminStore.status === undefined
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                      }`}>
+                        {selectedAdminStore.status === 'approved' || selectedAdminStore.status === undefined ? '✓ Đang Hiển Thị Web' : '⏳ Chờ Duyệt / Tạm Ẩn'}
+                      </span>
+                    </div>
+                    <h2 className="text-lg sm:text-xl font-black text-emerald-400 mt-1">
+                      {selectedAdminStore.storeName}
+                    </h2>
+                    <div className="text-xs text-slate-300 flex flex-wrap items-center gap-3 mt-1 font-medium">
+                      <span>👤 Chủ shop: <strong>{selectedAdminStore.ownerName}</strong></span>
+                      {storePhone && (
+                        <span>📞 SĐT: <a href={`tel:${storePhone}`} className="text-amber-400 hover:underline font-mono font-bold">{storePhone}</a></span>
+                      )}
+                      <span>📍 Dự án: <strong>{selectedAdminStore.project?.toUpperCase() || 'VINHOMES'}</strong></span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setSelectedAdminStore(null)}
+                  className="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold text-base transition cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Sub-Navigation Tabs */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setStoreDetailActiveTab('products')}
+                    className={`px-4 py-2 rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1.5 ${
+                      storeDetailActiveTab === 'products'
+                        ? 'bg-emerald-600 text-white shadow-md'
+                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
+                    }`}
+                  >
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    <span>Sản Phẩm Gian Hàng ({storeProds.length})</span>
+                    {pendingProdsCount > 0 && (
+                      <span className="px-1.5 py-0.2 bg-amber-400 text-slate-950 text-[10px] font-black rounded-full">
+                        {pendingProdsCount} chờ
+                      </span>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => setStoreDetailActiveTab('services')}
+                    className={`px-4 py-2 rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1.5 ${
+                      storeDetailActiveTab === 'services'
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Wrench className="w-3.5 h-3.5" />
+                    <span>Dịch Vụ Cư Dân Cung Cấp ({matchingServs.length})</span>
+                    {pendingServsCount > 0 && (
+                      <span className="px-1.5 py-0.2 bg-amber-400 text-slate-950 text-[10px] font-black rounded-full">
+                        {pendingServsCount} chờ
+                      </span>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => setStoreDetailActiveTab('info')}
+                    className={`px-4 py-2 rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1.5 ${
+                      storeDetailActiveTab === 'info'
+                        ? 'bg-purple-600 text-white shadow-md'
+                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Settings className="w-3.5 h-3.5" />
+                    <span>Thông Tin & KiotViet POS</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {storeDetailActiveTab === 'products' && (
+                    <button
+                      onClick={() => handleOpenAddProduct(selectedAdminStore.id)}
+                      className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Thêm Sản Phẩm Mới</span>
+                    </button>
+                  )}
+                  {storeDetailActiveTab === 'services' && (
+                    <button
+                      onClick={() => {
+                        setEditingService(null);
+                        resetNewSrvForm();
+                        setNewSrvProviderName(selectedAdminStore.ownerName);
+                        setNewSrvProviderPhone(storePhone);
+                        setNewSrvProviderZalo(selectedAdminStore.ownerZalo || storePhone);
+                        setNewSrvAddress(selectedAdminStore.address);
+                        setNewSrvProject(selectedAdminStore.project as any);
+                        setShowAddServiceModal(true);
+                      }}
+                      className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Thêm Dịch Vụ Mới</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Modal Body Content */}
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
+                
+                {/* TAB 1: SẢN PHẨM GIAN HÀNG */}
+                {storeDetailActiveTab === 'products' && (
+                  <div className="space-y-4">
+                    {storeProds.length === 0 ? (
+                      <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 space-y-3">
+                        <ShoppingBag className="w-10 h-10 text-slate-400 mx-auto" />
+                        <p className="font-bold text-sm text-slate-600 dark:text-slate-400">
+                          Gian hàng này chưa có sản phẩm nào.
+                        </p>
+                        <button
+                          onClick={() => handleOpenAddProduct(selectedAdminStore.id)}
+                          className="px-4 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow hover:bg-emerald-500"
+                        >
+                          ➕ Thêm Sản Phẩm Đầu Tiên
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {storeProds.map(prod => {
+                          const isApproved = prod.status === 'approved' || prod.status === undefined;
+                          const isPending = prod.status === 'pending';
+
+                          return (
+                            <div
+                              key={prod.id}
+                              className={`bg-white dark:bg-slate-800 rounded-2xl border p-4 shadow-sm flex flex-col justify-between gap-3 transition ${
+                                isPending
+                                  ? 'border-amber-400 dark:border-amber-600 ring-2 ring-amber-400/20 bg-amber-50/20 dark:bg-amber-950/10'
+                                  : 'border-slate-200 dark:border-slate-700'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <img
+                                  src={prod.images?.[0] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'}
+                                  alt={prod.name}
+                                  className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                                />
+                                <div className="min-w-0 flex-1 space-y-1">
+                                  <h4 className="font-extrabold text-xs text-slate-900 dark:text-white line-clamp-1">
+                                    {prod.name}
+                                  </h4>
+                                  <div className="flex items-center gap-1.5 text-xs">
+                                    <span className="font-black text-amber-500">
+                                      {prod.price.toLocaleString('vi-VN')}đ
+                                    </span>
+                                    {prod.unit && <span className="text-slate-400 text-[10px]">/ {prod.unit}</span>}
+                                  </div>
+                                  <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                                    <span>Tồn: <strong>{prod.stockQuantity}</strong></span>
+                                    <span>•</span>
+                                    <span>{prod.category}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Moderation Status Tag */}
+                              <div className="pt-2 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2">
+                                <div>
+                                  {isPending ? (
+                                    <span className="px-2 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold text-[10px] rounded-md border border-amber-500/30 flex items-center gap-1">
+                                      ⏳ Chờ duyệt (Chỉ cư dân thấy)
+                                    </span>
+                                  ) : isApproved ? (
+                                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-md border border-emerald-500/30 flex items-center gap-1">
+                                      ✓ Đã duyệt • Hiện trên Web
+                                    </span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 bg-red-500/20 text-red-600 dark:text-red-400 font-extrabold text-[10px] rounded-md border border-red-500/30 flex items-center gap-1">
+                                      ❌ Tạm ẩn
+                                    </span>
+                                  )}
+                                </div>
+
+                                {prod.code && (
+                                  <span className="text-[9px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
+                                    {prod.code}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Admin Action Buttons */}
+                              <div className="grid grid-cols-3 gap-1.5 pt-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleProductApproval(selectedAdminStore.id, prod.id)}
+                                  title={isApproved ? "Chuyển về Chờ duyệt / Tạm ẩn" : "Duyệt hiển thị lên Website"}
+                                  className={`py-1.5 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                                    isApproved
+                                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white'
+                                      : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'
+                                  }`}
+                                >
+                                  {isApproved ? 'Ẩn web' : '✓ Duyệt'}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditProduct(prod)}
+                                  className="py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Edit3 className="w-3 h-3 text-blue-500" />
+                                  <span>Sửa</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteStoreProduct(selectedAdminStore.id, prod.id)}
+                                  className="py-1.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                  <span>Xóa</span>
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 2: DỊCH VỤ CƯ DÂN LIÊN QUAN */}
+                {storeDetailActiveTab === 'services' && (
+                  <div className="space-y-4">
+                    {matchingServs.length === 0 ? (
+                      <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 space-y-3">
+                        <Wrench className="w-10 h-10 text-slate-400 mx-auto" />
+                        <p className="font-bold text-sm text-slate-600 dark:text-slate-400">
+                          Chưa có bài dịch vụ cư dân nào được liên kết với số điện thoại này.
+                        </p>
+                        <button
+                          onClick={() => {
+                            setEditingService(null);
+                            resetNewSrvForm();
+                            setNewSrvProviderName(selectedAdminStore.ownerName);
+                            setNewSrvProviderPhone(storePhone);
+                            setNewSrvProviderZalo(selectedAdminStore.ownerZalo || storePhone);
+                            setNewSrvAddress(selectedAdminStore.address);
+                            setNewSrvProject(selectedAdminStore.project as any);
+                            setShowAddServiceModal(true);
+                          }}
+                          className="px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow hover:bg-blue-500"
+                        >
+                          ➕ Thêm Dịch Vụ Mới
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {matchingServs.map(srv => {
+                          const isApproved = srv.status === 'approved' || srv.approved === true || srv.status === undefined;
+                          const isVerified = srv.verified || srv.kycStatus === 'verified';
+
+                          return (
+                            <div
+                              key={srv.id}
+                              className={`bg-white dark:bg-slate-800 rounded-2xl border p-4 shadow-sm flex flex-col justify-between gap-3 ${
+                                !isApproved
+                                  ? 'border-amber-400 dark:border-amber-600 ring-2 ring-amber-400/20 bg-amber-50/20 dark:bg-amber-950/10'
+                                  : 'border-slate-200 dark:border-slate-700'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <img
+                                  src={srv.images?.[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
+                                  alt={srv.title}
+                                  className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                                />
+                                <div className="min-w-0 flex-1 space-y-1">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-extrabold rounded">
+                                      {srv.subCategory || srv.categoryId}
+                                    </span>
+                                    {isVerified && (
+                                      <span className="px-1.5 py-0.2 bg-blue-600 text-white text-[9px] font-black rounded flex items-center gap-0.5">
+                                        <BadgeCheck className="w-2.5 h-2.5" /> KYC
+                                      </span>
+                                    )}
+                                  </div>
+                                  <h4 className="font-extrabold text-xs text-slate-900 dark:text-white line-clamp-2">
+                                    {srv.title}
+                                  </h4>
+                                  <div className="text-[11px] font-black text-amber-500">
+                                    {srv.priceDisplay || srv.price || 'Thỏa thuận'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Status Tag */}
+                              <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                                <div>
+                                  {isApproved ? (
+                                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-md border border-emerald-500/30 flex items-center gap-1">
+                                      ✓ Đã duyệt • Hiện trên Web
+                                    </span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold text-[10px] rounded-md border border-amber-500/30 flex items-center gap-1">
+                                      ⏳ Chờ duyệt (Chỉ cư dân thấy)
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-[10px] text-slate-400 font-medium">
+                                  {srv.createdAt || 'Mới đăng'}
+                                </span>
+                              </div>
+
+                              {/* Actions */}
+                              <div className="grid grid-cols-3 gap-1.5 pt-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleServiceStatus(srv.id, srv.status)}
+                                  className={`py-1.5 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                                    isApproved
+                                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white'
+                                      : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'
+                                  }`}
+                                >
+                                  {isApproved ? 'Ẩn web' : '✓ Duyệt'}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditServiceClick(srv)}
+                                  className="py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Edit3 className="w-3 h-3 text-blue-500" />
+                                  <span>Sửa</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteResidentService(srv.id)}
+                                  className="py-1.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                  <span>Xóa</span>
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 3: THÔNG TIN GIAN HÀNG & KIOTVIET POS */}
+                {storeDetailActiveTab === 'info' && (
+                  <div className="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                      <div>
+                        <span className="text-slate-400 font-bold block mb-1">Tên Gian Hàng:</span>
+                        <p className="font-black text-slate-900 dark:text-white text-sm">{selectedAdminStore.storeName}</p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 font-bold block mb-1">Chủ Sở Hữu & SĐT:</span>
+                        <p className="font-black text-slate-900 dark:text-white text-sm">
+                          {selectedAdminStore.ownerName} • {storePhone}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 font-bold block mb-1">Địa Chỉ Phục Vụ:</span>
+                        <p className="font-medium text-slate-700 dark:text-slate-300">{selectedAdminStore.address}</p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 font-bold block mb-1">Dự Án & Phân Khu:</span>
+                        <p className="font-medium text-slate-700 dark:text-slate-300">
+                          {selectedAdminStore.project?.toUpperCase()} • {selectedAdminStore.subdivision || 'Nội khu'}
+                        </p>
+                      </div>
+                      <div className="md:col-span-2">
+                        <span className="text-slate-400 font-bold block mb-1">Mô Tả Gian Hàng:</span>
+                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{selectedAdminStore.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-black ${
+                          selectedAdminStore.kiotVietConfig?.syncStatus === 'connected'
+                            ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
+                            : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
+                        }`}>
+                          {selectedAdminStore.kiotVietConfig?.syncStatus === 'connected' ? '⚡ KiotViet POS Live Connected' : 'Chưa kết nối API POS KiotViet'}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleOpenEditStore(selectedAdminStore)}
+                        className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs rounded-xl hover:opacity-90 transition cursor-pointer"
+                      >
+                        Chỉnh Sửa Thông Tin Gian Hàng
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Bottom Footer */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <span>Mọi thay đổi được tự động cập nhật ngay trên hệ thống Chợ Cư Dân 24H.</span>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <button
+                    onClick={() => setSelectedAdminStore(null)}
+                    className="px-4 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl hover:bg-slate-300 cursor-pointer"
+                  >
+                    Đóng
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleSyncAllToWebsite();
+                      setSelectedAdminStore(null);
+                    }}
+                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg hover:shadow-emerald-500/25 transition cursor-pointer flex items-center gap-1.5"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    <span>CẬP NHẬT & ĐỒNG BỘ LÊN WEBSITE</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ==================== MODAL: THÊM / SỬA SẢN PHẨM GIAN HÀNG ==================== */}
+      {showStoreProductModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-emerald-500" />
+                <span>{editingStoreProduct ? 'CHỈNH SỬA SẢN PHẨM' : 'THÊM SẢN PHẨM MỚI'}</span>
+              </h3>
+              <button
+                onClick={() => setShowStoreProductModal(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStoreProductSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tên Sản Phẩm (*)</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ví dụ: Cơm Gà Xối Mỡ Sốt Chua Ngọt"
+                  value={storeProductForm.name}
+                  onChange={(e) => setStoreProductForm(p => ({ ...p, name: e.target.value }))}
+                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mã SKU</label>
+                  <input
+                    type="text"
+                    value={storeProductForm.code}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, code: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Danh Mục</label>
+                  <select
+                    value={storeProductForm.category}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, category: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  >
+                    <option value="Món Ăn & Đồ Uống">Món Ăn & Đồ Uống</option>
+                    <option value="Thực Phẩm Tươi Sống">Thực Phẩm Tươi Sống</option>
+                    <option value="Hàng Tiêu Dùng & Tạp Hóa">Hàng Tiêu Dùng & Tạp Hóa</option>
+                    <option value="Đồ Gia Dụng & Nội Thất">Đồ Gia Dụng & Nội Thất</option>
+                    <option value="Dịch Vụ Cư Dân">Dịch Vụ Cư Dân</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div className="col-span-1">
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Giá Bán (VNĐ) (*)</label>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    step="1000"
+                    value={storeProductForm.price}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, price: Number(e.target.value) }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-amber-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Đơn Vị</label>
+                  <input
+                    type="text"
+                    placeholder="suất, hộp, cái..."
+                    value={storeProductForm.unit}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, unit: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tồn Kho</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={storeProductForm.stockQuantity}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, stockQuantity: Number(e.target.value) }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">Hình Ảnh Sản Phẩm (Dưới 10MB)</label>
+                  <label className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
+                    <Upload className="w-3 h-3" />
+                    <span>📁 Tải Từ Máy</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const check = validateImageSize(file);
+                          if (!check.valid) {
+                            alert(check.message);
+                            return;
+                          }
+                          const previewUrl = createInstantPreview(file);
+                          setStoreProductForm(p => ({ ...p, images: [previewUrl] }));
+
+                          addWatermarkToImage(file).then(compressed => {
+                            if (compressed) {
+                              setStoreProductForm(p => ({ ...p, images: [compressed] }));
+                            }
+                          }).catch(console.error);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={storeProductForm.images[0] || ''}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, images: [e.target.value] }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-mono"
+                  />
+                  {storeProductForm.images[0] && (
+                    <img
+                      src={storeProductForm.images[0]}
+                      alt="Preview"
+                      className="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mô Tả Sản Phẩm</label>
+                <textarea
+                  rows={2}
+                  placeholder="Mô tả sản phẩm, thành phần, cam kết vệ sinh an toàn..."
+                  value={storeProductForm.description}
+                  onChange={(e) => setStoreProductForm(p => ({ ...p, description: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                />
+              </div>
+
+              {/* Moderation Status selector */}
+              <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300">
+                  Phê Duyệt Hiển Thị Website:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setStoreProductForm(p => ({ ...p, status: 'approved' }))}
+                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
+                      storeProductForm.status === 'approved'
+                        ? 'bg-emerald-600 text-white shadow'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>✓ Đã Duyệt (Hiện Web)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setStoreProductForm(p => ({ ...p, status: 'pending' }))}
+                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
+                      storeProductForm.status === 'pending'
+                        ? 'bg-amber-500 text-slate-950 shadow'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>⏳ Chờ Duyệt (Ẩn Web)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowStoreProductModal(false)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
+                >
+                  LƯU SẢN PHẨM
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MODAL: THÊM / SỬA GIAN HÀNG CƯ DÂN ==================== */}
+      {showStoreFormModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <Store className="w-5 h-5 text-emerald-500" />
+                <span>{editingStoreItem ? 'CHỈNH SỬA GIAN HÀNG CƯ DÂN' : 'TẠO GIAN HÀNG MỚI'}</span>
+              </h3>
+              <button
+                onClick={() => setShowStoreFormModal(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStoreFormSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tên Gian Hàng (*)</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ví dụ: Bếp Cư Dân Vin - Cơm Niêu Singapore"
+                  value={storeFormData.storeName}
+                  onChange={(e) => setStoreFormData(p => ({ ...p, storeName: e.target.value }))}
+                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tên Chủ Shop</label>
+                  <input
+                    type="text"
+                    placeholder="Nguyễn Văn A"
+                    value={storeFormData.ownerName}
+                    onChange={(e) => setStoreFormData(p => ({ ...p, ownerName: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số Điện Thoại (*)</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="0868.499.929"
+                    value={storeFormData.ownerPhone}
+                    onChange={(e) => setStoreFormData(p => ({ ...p, ownerPhone: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-mono font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Dự Án Vinhomes</label>
+                  <select
+                    value={storeFormData.project}
+                    onChange={(e) => setStoreFormData(p => ({ ...p, project: e.target.value as any }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  >
+                    <option value="ocean-park-1">Ocean Park 1 (Gia Lâm)</option>
+                    <option value="ocean-park-2">Ocean Park 2 (The Empire)</option>
+                    <option value="ocean-park-3">Ocean Park 3 (The Crown)</option>
+                    <option value="smart-city">Smart City (Tây Mỗ)</option>
+                    <option value="grand-park">Grand Park (TP. Thủ Đức)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Ngành Hàng</label>
+                  <select
+                    value={storeFormData.category}
+                    onChange={(e) => setStoreFormData(p => ({ ...p, category: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  >
+                    <option value="Thực Phẩm & Ăn Uống">Thực Phẩm & Ăn Uống</option>
+                    <option value="Nội Thất & Gia Dụng">Nội Thất & Gia Dụng</option>
+                    <option value="Bảo Trì & Sửa Chữa">Bảo Trì & Sửa Chữa</option>
+                    <option value="Chăm Sóc & Làm Đẹp">Chăm Sóc & Làm Đẹp</option>
+                    <option value="Vận Tải & Chuyển Nhà">Vận Tải & Chuyển Nhà</option>
+                    <option value="Giáo Dục & Rèn Luyện">Giáo Dục & Rèn Luyện</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Địa Chỉ Phục Vụ</label>
+                <input
+                  type="text"
+                  placeholder="Ví dụ: Shophouse Sao Biển 12-34, Vinhomes Ocean Park 2"
+                  value={storeFormData.address}
+                  onChange={(e) => setStoreFormData(p => ({ ...p, address: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">Logo Gian Hàng (Dưới 10MB)</label>
+                  <label className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
+                    <Upload className="w-3 h-3" />
+                    <span>📁 Tải Logo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const check = validateImageSize(file);
+                          if (!check.valid) {
+                            alert(check.message);
+                            return;
+                          }
+                          const previewUrl = createInstantPreview(file);
+                          setStoreFormData(p => ({ ...p, logoUrl: previewUrl }));
+
+                          addWatermarkToImage(file, { skipWatermark: true, maxDim: 600 }).then(compressed => {
+                            if (compressed) {
+                              setStoreFormData(p => ({ ...p, logoUrl: compressed }));
+                            }
+                          }).catch(console.error);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+                <input
+                  type="url"
+                  placeholder="https://..."
+                  value={storeFormData.logoUrl}
+                  onChange={(e) => setStoreFormData(p => ({ ...p, logoUrl: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mô Tả Gian Hàng</label>
+                <textarea
+                  rows={2}
+                  placeholder="Mô tả phong cách, sản phẩm chính, uy tín..."
+                  value={storeFormData.description}
+                  onChange={(e) => setStoreFormData(p => ({ ...p, description: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                />
+              </div>
+
+              {/* Status toggle */}
+              <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300">
+                  Trạng Thái Phê Duyệt Gian Hàng:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setStoreFormData(p => ({ ...p, status: 'approved' }))}
+                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
+                      storeFormData.status === 'approved'
+                        ? 'bg-emerald-600 text-white shadow'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>✓ Đã Duyệt (Hiện Web)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setStoreFormData(p => ({ ...p, status: 'pending' }))}
+                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
+                      storeFormData.status === 'pending'
+                        ? 'bg-amber-500 text-slate-950 shadow'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>⏳ Chờ Duyệt (Tạm Ẩn)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowStoreFormModal(false)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
+                >
+                  LƯU GIAN HÀNG
                 </button>
               </div>
             </form>

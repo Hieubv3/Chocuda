@@ -28,6 +28,10 @@ export interface ResidentServiceItem {
   verified: boolean;
   legalCommitmentAccepted: boolean;
   createdAt: string;
+  status?: 'pending' | 'approved' | 'rejected';
+  approved?: boolean;
+  userId?: string;
+  storefrontId?: string;
   // Dynamic Nút Xanh KYC & Industry Verification properties
   kycStatus?: 'unverified' | 'pending' | 'verified' | 'rejected';
   kycBadgeType?: 'gold_certified' | 'blue_verified' | 'resident_checked' | 'none';

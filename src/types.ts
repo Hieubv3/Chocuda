@@ -455,6 +455,11 @@ export interface ResidentServiceItem {
   verified: boolean;
   legalCommitmentAccepted: boolean;
   createdAt: string;
+  status?: 'pending' | 'approved' | 'rejected';
+  approved?: boolean;
+  userId?: string;
+  contactName?: string;
+  contactPhone?: string;
   // Dynamic Nút Xanh KYC & Industry Verification properties
   kycStatus?: 'unverified' | 'pending' | 'verified' | 'rejected';
   kycBadgeType?: 'gold_certified' | 'blue_verified' | 'resident_checked' | 'none';
@@ -499,6 +504,8 @@ export interface StoreProduct {
   images: string[];
   description: string;
   isAvailable: boolean;
+  status?: 'pending' | 'approved' | 'rejected';
+  approved?: boolean;
   rating?: number;
   soldCount?: number;
 }
@@ -521,6 +528,8 @@ export interface UserStorefront {
   description: string;
   operatingHours?: string;
   verified: boolean;
+  status?: 'pending' | 'approved' | 'rejected';
+  approved?: boolean;
   kiotVietConfig?: KiotVietConfig;
   rating: number;
   reviewCount: number;
