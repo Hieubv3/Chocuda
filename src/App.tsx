@@ -33,7 +33,14 @@ export const App: React.FC = () => {
   // Theme & Language
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [language, setLanguage] = useState<Language>('vi');
-
+// Tự động chuyển tab admin khi vào bằng domain quantri
+  useEffect(() => {
+    if (window.location.hostname.includes('quantri')) {
+      if (!window.location.hash.includes('admin')) {
+        window.location.hash = '#admin';
+      }
+    }
+  }, []);
   // Navigation
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [selectedProjectId, setSelectedProjectId] = useState<ProjectCategory>('ocean-park-2');
