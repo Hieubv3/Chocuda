@@ -19,14 +19,6 @@ app.use(express.urlencoded({ limit: "100mb", extended: true }));
 app.use((req, res, next) => {
   const host = req.headers.host;
 
-  // Kiểm tra nếu truy cập từ subdomain quantri.chocudan24h.com
-  if (host && host.includes('quantri.chocudan24h.com')) {
-    // Nếu truy cập trang gốc (/), chuyển hướng sang /#admin
-    if (req.path === '/') {
-      return res.redirect('/#admin');
-    }
-  }
-
   next();
 });
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
