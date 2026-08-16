@@ -2089,22 +2089,6 @@ app.delete("/api/contacts/:id", (req, res) => {
   res.json({ message: "Xóa yêu cầu thành công" });
 });
 
-// Gemini AI Client Helper
-function getGeminiClient(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.warn("[Gemini API] GEMINI_API_KEY is not set in environment.");
-    return null;
-  }
-  return new GoogleGenAI({
-    apiKey,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build'
-      }
-    }
-  });
-}
 
 // Fallback Mock OCR & Structuring Engine for Resilient Offline Usage
 function generateMockMenuScanResult(rawText?: string, manualCategory?: string, userNotes?: string) {
