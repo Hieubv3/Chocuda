@@ -16,9 +16,14 @@ app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
 
 // Express JSON Body Parser & Payload Error Middleware
+// Chặn hoặc chuyển hướng các đường dẫn quản trị trên domain cũ
 app.use((req, res, next) => {
-  const host = req.headers.host;
-
+  const host = req.headers.host || '';
+  const path = req.path;
+  
+  if (host.includes('chocudan24h.com') && (path.startsWith('/admin') || path.startsWith('/quantri'))) {
+    return res.status(404).send('Not Found'); // Hoặc trả về lỗi 404 để bỏ hẳn
+  }
   next();
 });
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
