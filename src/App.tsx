@@ -686,23 +686,28 @@ export const App: React.FC = () => {
   const renderCurrentPage = () => {
     switch (currentTab) {
       case 'home':
-        return (
-          <HomePage
-            language={language}
-            projects={projects}
-            properties={properties.filter(p => p.approved || p.status === 'approved')}
-            news={news.filter(n => n.status !== 'draft')}
-            setCurrentTab={setCurrentTab}
-            onSelectProperty={setSelectedPropertyModal}
-            savedIds={savedIds}
-            onToggleSave={handleToggleSave}
-            compareIds={compareIds}
-            onToggleCompare={handleToggleCompare}
-            onSelectProject={(projId) => {
-              setSelectedProjectId(projId);
-            }}
-          />
-        );
+      return (
+        <HomePage 
+          language={language} 
+          projects={projects} 
+          properties={properties.filter(p => p.approved || p.status === 'approved')} 
+          news={news.filter(n => n.status !== 'draft')} 
+          setCurrentTab={setCurrentTab} 
+          onSelectProperty={setSelectedPropertyModal} 
+          savedIds={savedIds} 
+          onToggleSave={handleToggleSave} 
+          compareIds={compareIds} 
+          onToggleCompare={handleToggleCompare} 
+          onSelectProject={(projId) => { setSelectedProjectId(projId); }} 
+        />
+      );
+    case 'tuyendung':
+      return (
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100 mb-4">Việc Làm & Tuyển Dụng Cư Dân</h2>
+          <p className="text-slate-600 dark:text-slate-300">Danh sách tin tuyển dụng, việc làm nội khu...</p>
+        </div>
+      );
 
       case 'properties':
       case 'sale':
