@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Phone, Heart, Scale, User, ShieldCheck, Globe, Menu, X, PlusCircle, Sparkles, Sun, Moon, Zap, KeyRound, Share2, ChevronDown, Home, Store, Wrench, Smartphone, Download } from 'lucide-react';
+import { Building2, Phone, Heart, Scale, User, ShieldCheck, Globe, Menu, X, PlusCircle, Sparkles, Sun, Moon, Zap, KeyRound, Share2, ChevronDown, Home, Store, Wrench, Smartphone, Download, Briefcase } from 'lucide-react';
 import { Language, User as UserType, HeightCategory, PropertyCategory } from '../types';
 import { getTranslation } from '../lib/i18n';
 import { Logo } from './Logo';
@@ -66,6 +66,8 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'home', label: t.nav.home },
     { id: 'profile', label: t.nav.profile },
     { id: 'projects', label: t.nav.projects },
+    { id: 'services', label: 'Dịch Vụ Cư Dân' },
+    { id: 'recruitment', label: 'Tuyển Dụng' },
     { id: 'sale', label: t.nav.forSale },
     { id: 'rent', label: t.nav.forRent },
     { id: 'news', label: t.nav.news },
@@ -173,12 +175,19 @@ export const Header: React.FC<HeaderProps> = ({
               <Wrench className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Dịch Vụ Cư Dân</span>
             </button>
-<button 
-  onClick={() => setCurrentTab('tuyendung')} 
-  className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-semibold whitespace-nowrap flex items-center gap-1 transition-all duration-150 ${currentTab === 'tuyendung' ? 'bg-emerald-50/80 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 font-bold border border-emerald-200/60 dark:border-emerald-800/50' : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'}`}
->
-  <span>Tuyển Dụng</span>
-</button>
+
+            <button
+              onClick={() => setCurrentTab('recruitment')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-extrabold whitespace-nowrap flex items-center gap-1 transition-all duration-150 ${
+                currentTab === 'recruitment'
+                  ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                  : 'text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/50 bg-teal-50/60 dark:bg-teal-950/30 border border-teal-200/60 dark:border-teal-800/50'
+              }`}
+            >
+              <Briefcase className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              <span>Tuyển Dụng</span>
+            </button>
+
             {/* MUA BÁN DROPDOWN (FLOATING SUB-MENU) */}
             <div
               className="relative group"
@@ -533,12 +542,12 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* 3 Sub-Tabs Bar - 3 ô chữ nhật gọn gàng: Mua bán, Cho thuê BĐS, Dịch vụ cư dân */}
+      {/* 4 Sub-Tabs Bar - 4 ô chữ nhật gọn gàng: Mua bán, Cho thuê BĐS, Dịch vụ cư dân, Tuyển Dụng */}
       <div className="bg-slate-100/90 dark:bg-slate-950/90 border-t border-slate-200/80 dark:border-slate-800/80 py-1.5 px-2 sm:px-3">
-        <div className="max-w-3xl mx-auto grid grid-cols-3 gap-1 sm:gap-3">
+        <div className="max-w-4xl mx-auto grid grid-cols-4 gap-1 sm:gap-2.5">
           <button
             onClick={() => handleNavFilter('sale', 'all')}
-            className={`py-1.5 px-1 sm:px-3 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1.5 border shadow-2xs ${
+            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
               currentTab === 'sale'
                 ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-xs'
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:text-amber-600'
@@ -550,7 +559,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => handleNavFilter('rent', 'all')}
-            className={`py-1.5 px-1 sm:px-3 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1.5 border shadow-2xs ${
+            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
               currentTab === 'rent'
                 ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-xs'
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:text-amber-600'
@@ -562,7 +571,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setCurrentTab('services')}
-            className={`py-1.5 px-1 sm:px-3 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1.5 border shadow-2xs ${
+            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
               currentTab === 'services'
                 ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-xs'
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:text-amber-600'
@@ -570,6 +579,18 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Wrench className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span className="truncate">Dịch Vụ Cư Dân</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentTab('recruitment')}
+            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
+              currentTab === 'recruitment'
+                ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-xs'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:text-amber-600'
+            }`}
+          >
+            <Briefcase className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+            <span className="truncate">Tuyển Dụng</span>
           </button>
         </div>
       </div>

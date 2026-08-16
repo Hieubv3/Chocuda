@@ -67,12 +67,13 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
 
   // Batch add products from AI Menu Scanner
   const handleBatchAddScannedProducts = (scannedData: AiMenuScanResult) => {
-    if (!scannedData.items || scannedData.items.length === 0) {
+    const itemsList = scannedData.menuItems || (scannedData as any).items || [];
+    if (!itemsList || itemsList.length === 0) {
       alert('Không tìm thấy danh sách món nào trong kết quả quét.');
       return;
     }
     const isUserAdmin = user.role === 'admin';
-    const newProducts: StoreProduct[] = scannedData.items.map((item, idx) => ({
+    const newProducts: StoreProduct[] = itemsList.map((item: any, idx: number) => ({
       id: `p-scan-${Date.now()}-${idx}`,
       storeId: store?.id || `store-${user.id}`,
       code: `SCAN-${Math.floor(Math.random() * 9000) + 1000}`,

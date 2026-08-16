@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
-import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon } from 'lucide-react';
+import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase } from 'lucide-react';
+import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 
 interface ReputationPost {
   id: string;
@@ -74,7 +75,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
     | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync'
-    | 'resident_services_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
+    | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
   >('properties');
 
   const [adminReputationPosts, setAdminReputationPosts] = useState<ReputationPost[]>([]);
@@ -2068,6 +2069,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
 
               <button
+                onClick={() => setActiveTab('recruitment_mgmt')}
+                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
+                  activeTab === 'recruitment_mgmt'
+                    ? 'bg-gradient-to-r from-teal-500 to-emerald-600 text-slate-950 shadow-lg font-black ring-2 ring-teal-300'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-teal-500/20'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Briefcase className="w-4 h-4 text-teal-500 shrink-0" />
+                  <span className="truncate">💼 Quản Trị Việc Làm & Tuyển Dụng</span>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-teal-500/20 text-teal-700 dark:text-teal-400 border border-teal-500/30">
+                  HOT
+                </span>
+              </button>
+
+              <button
                 onClick={() => setActiveTab('stores_mgmt')}
                 className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
                   activeTab === 'stores_mgmt'
@@ -2397,6 +2415,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               })}
           </div>
         </div>
+      )}
+
+      {/* ==================== MẢNG 2: TAB TUYỂN DỤNG & VIỆC LÀM CƯ DÂN ==================== */}
+      {activeTab === 'recruitment_mgmt' && (
+        <AdminRecruitmentManager onRefresh={onRefreshData} />
       )}
 
       {/* ==================== MẢNG 2: TAB 2 - GIAN HÀNG & DỊCH VỤ CƯ DÂN ==================== */}
@@ -3204,6 +3227,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* ==================== MẢNG 2: TAB QUẢN TRỊ TUYỂN DỤNG & VIỆC LÀM ==================== */}
+      {activeTab === 'recruitment_mgmt' && (
+        <AdminRecruitmentManager onRefresh={onRefreshData} />
       )}
 
       {/* Tab: Zalo Groups Community Center */}

@@ -7,7 +7,8 @@ import nodemailer from "nodemailer";
 import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS, INITIAL_ADS } from "./src/data/initialData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
-import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner } from "./src/types.ts";
+import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES } from "./src/data/recruitmentData.ts";
+import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord } from "./src/types.ts";
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
@@ -16,16 +17,6 @@ app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
 
 // Express JSON Body Parser & Payload Error Middleware
-// Chặn hoặc chuyển hướng các đường dẫn quản trị trên domain cũ
-app.use((req, res, next) => {
-  const host = req.headers.host || '';
-  const path = req.path;
-  
-  if (host.includes('chocudan24h.com') && (path.startsWith('/admin') || path.startsWith('/quantri'))) {
-    return res.status(404).send('Not Found'); // Hoặc trả về lỗi 404 để bỏ hẳn
-  }
-  next();
-});
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (err) {
     console.error('[Server Request Error]', err);
@@ -408,6 +399,12 @@ const INITIAL_STORE_PACKAGES: any[] = [
 let storePackagesStore: any[] = [...INITIAL_STORE_PACKAGES];
 let packageOrdersStore: any[] = [];
 
+// Recruitment & Candidate CV Stores
+let recruitmentJobsStore: RecruitmentJob[] = [...INITIAL_RECRUITMENT_JOBS];
+let candidateProfilesStore: CandidateProfile[] = [...INITIAL_CANDIDATE_PROFILES];
+let jobApplicationsStore: JobApplication[] = [];
+let cvUnlocksStore: CvUnlockRecord[] = [];
+
 // Up-Tin & Banking Settings Store
 let pricingConfigStore = {
   singlePushPrice: 20000,
@@ -470,7 +467,7 @@ function loadDataStore() {
         INITIAL_RESIDENT_SERVICES.forEach(iserv => {
           if (!servMap.has(iserv.id)) servMap.set(iserv.id, iserv);
         });
-        residentServicesStore = Array.from(servMap.values());
+        residentServicesStore = Array.from(servMap.values()) as any;
       }
 
       // 5. Stores
@@ -479,7 +476,7 @@ function loadDataStore() {
         INITIAL_USER_STOREFRONTS.forEach(istore => {
           if (!storeMap.has(istore.id)) storeMap.set(istore.id, istore);
         });
-        storesStore = Array.from(storeMap.values());
+        storesStore = Array.from(storeMap.values()) as any;
       }
 
       // 6. Ads / Banners
@@ -488,7 +485,7 @@ function loadDataStore() {
         INITIAL_ADS.forEach(iad => {
           if (!adsMap.has(iad.id)) adsMap.set(iad.id, iad);
         });
-        adsStore = Array.from(adsMap.values());
+        adsStore = Array.from(adsMap.values()) as any;
       }
 
       // 7. Users
@@ -511,7 +508,28 @@ function loadDataStore() {
       if (data.taxConfig) taxConfigStore = data.taxConfig;
       if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
 
-      console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${residentServicesStore.length} services, ${storesStore.length} stores, ${adsStore.length} ads, ${newsStore.length} news.`);
+      // 8. Recruitment Jobs
+      if (Array.isArray(data.recruitmentJobs) && data.recruitmentJobs.length > 0) {
+        const jobMap = new Map(data.recruitmentJobs.map((j: any) => [j.id, j]));
+        INITIAL_RECRUITMENT_JOBS.forEach(ijob => {
+          if (!jobMap.has(ijob.id)) jobMap.set(ijob.id, ijob);
+        });
+        recruitmentJobsStore = Array.from(jobMap.values()) as RecruitmentJob[];
+      }
+
+      // 9. Candidate Profiles
+      if (Array.isArray(data.candidateProfiles) && data.candidateProfiles.length > 0) {
+        const candMap = new Map(data.candidateProfiles.map((c: any) => [c.id, c]));
+        INITIAL_CANDIDATE_PROFILES.forEach(icand => {
+          if (!candMap.has(icand.id)) candMap.set(icand.id, icand);
+        });
+        candidateProfilesStore = Array.from(candMap.values()) as CandidateProfile[];
+      }
+
+      if (Array.isArray(data.jobApplications) && data.jobApplications.length > 0) jobApplicationsStore = data.jobApplications;
+      if (Array.isArray(data.cvUnlocks) && data.cvUnlocks.length > 0) cvUnlocksStore = data.cvUnlocks;
+
+      console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${residentServicesStore.length} services, ${recruitmentJobsStore.length} jobs, ${candidateProfilesStore.length} candidates, ${storesStore.length} stores.`);
     } else {
       saveDataStore();
       console.log(`[DataStore] Initialized app_data_store.json file.`);
@@ -560,6 +578,10 @@ function saveDataStore() {
       walletTransactions: walletTransactionsStore,
       taxConfig: taxConfigStore,
       taxLedger: taxLedgerStore,
+      recruitmentJobs: recruitmentJobsStore,
+      candidateProfiles: candidateProfilesStore,
+      jobApplications: jobApplicationsStore,
+      cvUnlocks: cvUnlocksStore,
       savedAt: new Date().toISOString()
     };
     const jsonStr = JSON.stringify(payload, null, 2);
@@ -1098,22 +1120,6 @@ app.post("/api/seed-1000", (req, res) => {
     properties: propertiesStore
   });
 });
-const getGeminiClient = () => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.warn("GEMINI_API_KEY is not set yet. AI features will fallback gracefully.");
-    return null;
-  }
-  return new GoogleGenAI({
-    apiKey,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
-      }
-    }
-  });
-};
-
 // ------------------- API ROUTES -------------------
 
 // Healthcheck
@@ -2086,6 +2092,22 @@ app.delete("/api/contacts/:id", (req, res) => {
   res.json({ message: "Xóa yêu cầu thành công" });
 });
 
+// Gemini AI Client Helper
+function getGeminiClient(): GoogleGenAI | null {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn("[Gemini API] GEMINI_API_KEY is not set in environment.");
+    return null;
+  }
+  return new GoogleGenAI({
+    apiKey,
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build'
+      }
+    }
+  });
+}
 
 // Fallback Mock OCR & Structuring Engine for Resilient Offline Usage
 function generateMockMenuScanResult(rawText?: string, manualCategory?: string, userNotes?: string) {
@@ -3936,6 +3958,716 @@ app.post("/api/admin/tax-declare-gdt", (req, res) => {
     recordsCount: taxLedgerStore.length
   });
 });
+
+// =========================================================================
+// ------------------- RECRUITMENT & RESIDENT CV APIS ----------------------
+// =========================================================================
+
+// Mask contact information for recruiters who haven't unlocked yet
+function maskCandidateData(cand: CandidateProfile, requesterUserId?: string, isAdmin?: boolean): CandidateProfile & { isUnlocked: boolean } {
+  const isOwner = requesterUserId && cand.userId && cand.userId === requesterUserId;
+  const isUnlocked = Boolean(
+    isAdmin ||
+    isOwner ||
+    (requesterUserId && Array.isArray(cand.unlockedByUserIds) && cand.unlockedByUserIds.includes(requesterUserId))
+  );
+
+  if (isUnlocked) {
+    return {
+      ...cand,
+      isUnlocked: true
+    };
+  }
+
+  // Mask Phone: e.g. "0987654321" -> "098***321"
+  let maskedPhone = "09********";
+  if (cand.phone && cand.phone.length >= 7) {
+    maskedPhone = `${cand.phone.substring(0, 3)}***${cand.phone.substring(cand.phone.length - 3)}`;
+  }
+
+  // Mask Email: e.g. "minh.nguyen@gmail.com" -> "mi***@gmail.com"
+  let maskedEmail = "cv***@chocudan24h.com";
+  if (cand.email && cand.email.includes('@')) {
+    const [userPart, domainPart] = cand.email.split('@');
+    const visiblePrefix = userPart.length > 2 ? userPart.substring(0, 2) : userPart.substring(0, 1);
+    maskedEmail = `${visiblePrefix}***@${domainPart}`;
+  }
+
+  return {
+    ...cand,
+    phone: maskedPhone,
+    email: maskedEmail,
+    zalo: cand.zalo ? `${maskedPhone} (Khóa)` : undefined,
+    currentAddress: cand.currentAddress ? cand.currentAddress.replace(/\b(Căn\s+\w+|Số\s+\d+)/gi, 'Căn hộ [Đã ẩn]') : undefined,
+    attachedCvUrl: undefined, // Hide direct file download until unlocked
+    isUnlocked: false
+  };
+}
+
+// 1. GET Recruitment Jobs (Filter by Industry, Project, JobType, Search)
+app.get("/api/recruitment/jobs", (req, res) => {
+  const { industry, project, jobType, q, employerUserId, status } = req.query;
+
+  let result = [...recruitmentJobsStore];
+
+  if (status && status !== 'all') {
+    result = result.filter(j => j.status === status);
+  } else if (!employerUserId) {
+    result = result.filter(j => j.status === 'active' || !j.status);
+  }
+
+  if (industry && industry !== 'all') {
+    result = result.filter(j => j.industry === industry);
+  }
+
+  if (project && project !== 'all') {
+    result = result.filter(j => j.project === project || j.project === 'all');
+  }
+
+  if (jobType && jobType !== 'all') {
+    result = result.filter(j => j.jobType === jobType);
+  }
+
+  if (employerUserId) {
+    result = result.filter(j => j.employerUserId === employerUserId);
+  }
+
+  if (q && typeof q === 'string' && q.trim()) {
+    const term = q.toLowerCase().trim();
+    result = result.filter(j => 
+      j.title.toLowerCase().includes(term) ||
+      j.companyName.toLowerCase().includes(term) ||
+      (j.description && j.description.toLowerCase().includes(term)) ||
+      (j.location && j.location.toLowerCase().includes(term))
+    );
+  }
+
+  // Sort VIP & Urgent jobs first, then latest
+  result.sort((a, b) => {
+    if (a.isVip && !b.isVip) return -1;
+    if (!a.isVip && b.isVip) return 1;
+    if (a.isUrgent && !b.isUrgent) return -1;
+    if (!a.isUrgent && b.isUrgent) return 1;
+    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+  });
+
+  res.json(result);
+});
+
+// 2. GET Single Job by ID
+app.get("/api/recruitment/jobs/:id", (req, res) => {
+  const { id } = req.params;
+  const job = recruitmentJobsStore.find(j => j.id === id);
+  if (!job) {
+    return res.status(404).json({ error: "Không tìm thấy tin tuyển dụng này!" });
+  }
+
+  job.viewsCount = (job.viewsCount || 0) + 1;
+  saveDataStore();
+
+  res.json(job);
+});
+
+// ------------------- ADMIN TOKEN INJECTION (BƠM TOKEN CƯ DÂN & HOA HỒNG AFFILIATE) -------------------
+app.post("/api/admin/pump-tokens", (req, res) => {
+  const { userId, tokenAmount, affiliatePointsAmount, reason, adminName } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Thiếu userId của cư dân cần bơm Token/Điểm!" });
+  }
+
+  const user = usersStore.find(u => u.id === userId);
+  if (!user) {
+    return res.status(404).json({ error: "Không tìm thấy người dùng trong hệ thống!" });
+  }
+
+  const tokensToAdd = Number(tokenAmount) || 0;
+  const affiliateToAdd = Number(affiliatePointsAmount) || 0;
+
+  if (tokensToAdd <= 0 && affiliateToAdd <= 0) {
+    return res.status(400).json({ error: "Số lượng Token hoặc Điểm Affiliate cộng phải lớn hơn 0!" });
+  }
+
+  // Update user's token balance (Non-withdrawable)
+  if (tokensToAdd > 0) {
+    user.balance = (user.balance || 0) + tokensToAdd;
+    user.tokenBalance = (user.tokenBalance || 0) + tokensToAdd;
+    user.totalTokensPumped = (user.totalTokensPumped || 0) + tokensToAdd;
+
+    walletTransactionsStore.unshift({
+      id: `wtx-pump-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      userId: user.id,
+      type: 'admin_pump_tokens' as any,
+      amount: tokensToAdd,
+      description: `[BƠM TOKEN ADMIN] Tặng +${tokensToAdd.toLocaleString('vi-VN')} Token Cư Dân (Xu Tiêu Dùng - Không Thể Rút) - Lý do: ${reason || 'Khuyến mãi / Trợ giá cư dân'}`,
+      status: 'success',
+      createdAt: new Date().toLocaleString('vi-VN'),
+      referenceCode: `PUMP-TOKEN-${user.id}`
+    });
+  }
+
+  // Update user's affiliate points (Withdrawable)
+  if (affiliateToAdd > 0) {
+    user.affiliatePoints = (user.affiliatePoints || 0) + affiliateToAdd;
+    user.totalAffiliateEarned = (user.totalAffiliateEarned || 0) + affiliateToAdd;
+
+    walletTransactionsStore.unshift({
+      id: `wtx-aff-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      userId: user.id,
+      type: 'affiliate_commission' as any,
+      amount: affiliateToAdd,
+      description: `[CỘNG ĐIỂM HOA HỒNG] Thưởng +${affiliateToAdd.toLocaleString('vi-VN')} Điểm Affiliate (ĐƯỢC RÚT VỀ NGÂN HÀNG) - Lý do: ${reason || 'Hoa hồng giới thiệu / Đối tác'}`,
+      status: 'success',
+      createdAt: new Date().toLocaleString('vi-VN'),
+      referenceCode: `AFF-POINTS-${user.id}`
+    });
+  }
+
+  saveDataStore();
+
+  const { password: _, ...safeUser } = user;
+  res.json({
+    success: true,
+    message: `🎉 Đã bơm thành công cho cư dân "${user.name}"!\n• +${tokensToAdd.toLocaleString('vi-VN')} Token (Không thể rút)\n• +${affiliateToAdd.toLocaleString('vi-VN')} Điểm Affiliate (Được rút về ngân hàng)`,
+    user: safeUser
+  });
+});
+
+// 3. POST Create New Recruitment Job (Cư dân đăng tin cần chi phí Token, Admin miễn phí)
+app.post("/api/recruitment/jobs", (req, res) => {
+  const data = req.body;
+
+  if (!data.title || !data.companyName || !data.contactPhone || !data.contactName) {
+    return res.status(400).json({ error: "Vui lòng điền đầy đủ Tiêu đề, Tên công ty/Cửa hàng, Người liên hệ và Số điện thoại!" });
+  }
+
+  const employerUserId = data.employerUserId || 'guest';
+  const employerUser = usersStore.find(u => u.id === employerUserId);
+  const isAdmin = employerUser?.role === 'admin' || employerUserId === 'admin' || employerUserId === 'user-admin';
+
+  // Determine required token cost based on package
+  let requiredTokens = 20000; // Standard 30-day listing: 20k tokens
+  if (data.isVip) {
+    requiredTokens = 50000; // VIP Diamond listing: 50k tokens
+  } else if (data.isUrgent) {
+    requiredTokens = 35000; // Urgent hiring listing: 35k tokens
+  }
+
+  // Token payment enforcement for resident users
+  if (!isAdmin && employerUserId !== 'guest') {
+    if (!employerUser) {
+      return res.status(400).json({ error: "Vui lòng đăng nhập tài khoản cư dân để đăng tin tuyển dụng!" });
+    }
+
+    const availableTokens = (employerUser.balance || 0);
+    if (availableTokens < requiredTokens) {
+      return res.status(400).json({
+        error: `Số dư Token Cư Dân không đủ để đăng tin tuyển dụng (Cần ${requiredTokens.toLocaleString('vi-VN')} Token, Hiện có: ${availableTokens.toLocaleString('vi-VN')} Token). Vui lòng nạp thêm Token hoặc liên hệ Admin để được cấp Token!`,
+        requiredTokens,
+        availableTokens
+      });
+    }
+
+    // Deduct tokens
+    employerUser.balance = availableTokens - requiredTokens;
+    if (employerUser.tokenBalance !== undefined) {
+      employerUser.tokenBalance = Math.max(0, (employerUser.tokenBalance || 0) - requiredTokens);
+    }
+
+    // Record wallet deduction transaction
+    walletTransactionsStore.unshift({
+      id: `wtx-rec-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      userId: employerUser.id,
+      type: 'recruitment_posting_fee' as any,
+      amount: requiredTokens,
+      description: `[ĐĂNG TIN TUYỂN DỤNG] Thanh toán phí đăng tin "${data.title}" (${data.isVip ? 'Gói VIP Kim Cương' : data.isUrgent ? 'Gói Tuyển Gấp' : 'Gói Tiêu Chuẩn'})`,
+      status: 'success',
+      createdAt: new Date().toLocaleString('vi-VN'),
+      referenceCode: `JOB-POST-${Date.now()}`
+    });
+  }
+
+  const newJob: RecruitmentJob = {
+    id: `job-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    title: data.title.trim(),
+    companyName: data.companyName.trim(),
+    companyLogo: data.companyLogo || '',
+    industry: data.industry || 'khac',
+    project: data.project || 'ocean-park-2',
+    projectName: data.projectName || 'Vinhomes Ocean Park 2',
+    location: data.location || '',
+    jobType: data.jobType || 'full-time',
+    salaryType: data.salaryType || 'range',
+    salaryDisplay: data.salaryDisplay || 'Thỏa thuận',
+    minSalary: data.minSalary ? Number(data.minSalary) : undefined,
+    maxSalary: data.maxSalary ? Number(data.maxSalary) : undefined,
+    experience: data.experience || 'none',
+    experienceDisplay: data.experienceDisplay || 'Không yêu cầu kinh nghiệm',
+    description: data.description || '',
+    requirements: Array.isArray(data.requirements) ? data.requirements : (data.requirements ? [data.requirements] : []),
+    benefits: Array.isArray(data.benefits) ? data.benefits : (data.benefits ? [data.benefits] : []),
+    contactName: data.contactName.trim(),
+    contactPhone: data.contactPhone.trim(),
+    contactZalo: data.contactZalo || data.contactPhone.trim(),
+    contactEmail: data.contactEmail || '',
+    employerUserId: employerUserId,
+    status: 'active',
+    isVip: Boolean(data.isVip),
+    isUrgent: Boolean(data.isUrgent),
+    viewsCount: 1,
+    applicationsCount: 0,
+    deadline: data.deadline || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+    createdAt: new Date().toISOString()
+  };
+
+  recruitmentJobsStore.unshift(newJob);
+  saveDataStore();
+
+  res.status(201).json({
+    success: true,
+    message: isAdmin 
+      ? "🎉 Đăng tin tuyển dụng thành công (Miễn phí cho Admin)! Tin đã xuất hiện trên Cổng Việc Làm Cư Dân."
+      : `🎉 Đăng tin tuyển dụng thành công! Đã trừ ${requiredTokens.toLocaleString('vi-VN')} Token vào số dư tài khoản.`,
+    job: newJob,
+    remainingBalance: employerUser?.balance
+  });
+});
+
+// 4. PUT Update Recruitment Job
+app.put("/api/recruitment/jobs/:id", (req, res) => {
+  const { id } = req.params;
+  const index = recruitmentJobsStore.findIndex(j => j.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Không tìm thấy tin tuyển dụng để cập nhật!" });
+  }
+
+  recruitmentJobsStore[index] = {
+    ...recruitmentJobsStore[index],
+    ...req.body,
+    id // Ensure ID remains immutable
+  };
+
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: "Cập nhật tin tuyển dụng thành công!",
+    job: recruitmentJobsStore[index]
+  });
+});
+
+// 5. DELETE Recruitment Job
+app.delete("/api/recruitment/jobs/:id", (req, res) => {
+  const { id } = req.params;
+  const index = recruitmentJobsStore.findIndex(j => j.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Không tìm thấy tin tuyển dụng để xóa!" });
+  }
+
+  recruitmentJobsStore.splice(index, 1);
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: "Đã xóa tin tuyển dụng thành công!"
+  });
+});
+
+// 6. GET Candidate Profiles (Kho Hồ Sơ CV Cư Dân - With Masking & Filters)
+app.get("/api/recruitment/candidates", (req, res) => {
+  const { industry, project, experience, q, userId, requesterUserId, isAdmin, lookingOnly } = req.query;
+
+  let list = [...candidateProfilesStore];
+
+  if (userId) {
+    list = list.filter(c => c.userId === userId);
+  }
+
+  if (lookingOnly === 'true' && !userId) {
+    list = list.filter(c => c.isLookingForJob !== false);
+  }
+
+  if (industry && industry !== 'all') {
+    list = list.filter(c => 
+      c.primaryIndustry === industry || 
+      (Array.isArray(c.subIndustries) && c.subIndustries.includes(industry as string))
+    );
+  }
+
+  if (project && project !== 'all') {
+    list = list.filter(c => c.currentProject === project || c.currentProject === 'all');
+  }
+
+  if (experience && experience !== 'all') {
+    list = list.filter(c => c.experienceLevel === experience);
+  }
+
+  if (q && typeof q === 'string' && q.trim()) {
+    const term = q.toLowerCase().trim();
+    list = list.filter(c => 
+      c.fullName.toLowerCase().includes(term) ||
+      c.targetJobTitle.toLowerCase().includes(term) ||
+      (c.introduction && c.introduction.toLowerCase().includes(term)) ||
+      (Array.isArray(c.skills) && c.skills.some(s => s.toLowerCase().includes(term)))
+    );
+  }
+
+  // Sort candidates actively looking for jobs first, then latest
+  list.sort((a, b) => {
+    if (a.isImmediate && !b.isImmediate) return -1;
+    if (!a.isImmediate && b.isImmediate) return 1;
+    return new Date(b.updatedAt || b.createdAt || 0).getTime() - new Date(a.updatedAt || a.createdAt || 0).getTime();
+  });
+
+  const maskedList = list.map(c => 
+    maskCandidateData(c, typeof requesterUserId === 'string' ? requesterUserId : undefined, isAdmin === 'true')
+  );
+
+  res.json(maskedList);
+});
+
+// 7. GET Single Candidate Profile by ID
+app.get("/api/recruitment/candidates/:id", (req, res) => {
+  const { id } = req.params;
+  const { requesterUserId, isAdmin } = req.query;
+
+  const candidate = candidateProfilesStore.find(c => c.id === id);
+  if (!candidate) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ ứng viên này!" });
+  }
+
+  candidate.viewsCount = (candidate.viewsCount || 0) + 1;
+  saveDataStore();
+
+  const masked = maskCandidateData(candidate, typeof requesterUserId === 'string' ? requesterUserId : undefined, isAdmin === 'true');
+  res.json(masked);
+});
+
+// 8. POST Create or Update Candidate CV Profile
+app.post("/api/recruitment/candidates", (req, res) => {
+  const data = req.body;
+
+  if (!data.fullName || !data.phone || !data.targetJobTitle || !data.primaryIndustry) {
+    return res.status(400).json({ error: "Vui lòng nhập đầy đủ Họ Tên, Số Điện Thoại, Vị Trí Ứng Tuyển và Ngành Nghề Chính!" });
+  }
+
+  // Check if candidate profile already exists for this user
+  let existingIndex = -1;
+  if (data.id) {
+    existingIndex = candidateProfilesStore.findIndex(c => c.id === data.id);
+  } else if (data.userId) {
+    existingIndex = candidateProfilesStore.findIndex(c => c.userId === data.userId);
+  }
+
+  const nowIso = new Date().toISOString();
+
+  if (existingIndex >= 0) {
+    const existing = candidateProfilesStore[existingIndex];
+    candidateProfilesStore[existingIndex] = {
+      ...existing,
+      ...data,
+      id: existing.id, // preserve ID
+      unlockedByUserIds: existing.unlockedByUserIds || [],
+      viewsCount: existing.viewsCount || 0,
+      updatedAt: nowIso
+    };
+
+    saveDataStore();
+
+    return res.json({
+      success: true,
+      message: "🎉 Cập nhật hồ sơ CV trực tuyến thành công!",
+      candidate: candidateProfilesStore[existingIndex]
+    });
+  }
+
+  // Create new profile
+  const newCandidate: CandidateProfile = {
+    id: `cand-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    userId: data.userId || `u-guest-${Date.now()}`,
+    fullName: data.fullName.trim(),
+    avatarUrl: data.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    birthYear: data.birthYear || 2000,
+    gender: data.gender || 'khac',
+    phone: data.phone.trim(),
+    email: data.email ? data.email.trim() : `${data.phone.trim()}@cudan.chocudan24h.com`,
+    zalo: data.zalo || data.phone.trim(),
+    currentProject: data.currentProject || 'ocean-park-2',
+    projectName: data.projectName || 'Vinhomes Ocean Park 2',
+    currentAddress: data.currentAddress || '',
+    targetJobTitle: data.targetJobTitle.trim(),
+    primaryIndustry: data.primaryIndustry,
+    subIndustries: Array.isArray(data.subIndustries) ? data.subIndustries : [],
+    workTypePreference: Array.isArray(data.workTypePreference) && data.workTypePreference.length > 0 ? data.workTypePreference : ['full-time'],
+    expectedSalary: data.expectedSalary || 'Thỏa thuận',
+    experienceLevel: data.experienceLevel || 'none',
+    yearsOfExp: data.yearsOfExp ? Number(data.yearsOfExp) : 0,
+    introduction: data.introduction || '',
+    skills: Array.isArray(data.skills) ? data.skills : (data.skills ? [data.skills] : []),
+    workExperience: Array.isArray(data.workExperience) ? data.workExperience : [],
+    education: Array.isArray(data.education) ? data.education : [],
+    certificates: Array.isArray(data.certificates) ? data.certificates : [],
+    attachedCvUrl: data.attachedCvUrl || '',
+    isLookingForJob: data.isLookingForJob !== false,
+    isImmediate: Boolean(data.isImmediate),
+    unlockPriceVnd: data.unlockPriceVnd ? Number(data.unlockPriceVnd) : 50000,
+    unlockedByUserIds: [],
+    viewsCount: 1,
+    createdAt: nowIso,
+    updatedAt: nowIso
+  };
+
+  candidateProfilesStore.unshift(newCandidate);
+  saveDataStore();
+
+  res.status(201).json({
+    success: true,
+    message: "🎉 Tạo hồ sơ CV trực tuyến thành công! Các Nhà tuyển dụng nội khu có thể tìm thấy và liên hệ bạn ngay.",
+    candidate: newCandidate
+  });
+});
+
+// 9. POST Unlock Candidate CV Contact Details (Nhà tuyển dụng trả phí mở khóa CV)
+app.post("/api/recruitment/candidates/:id/unlock", (req, res) => {
+  const { id } = req.params;
+  const { recruiterUserId, recruiterName, recruiterPhone, paymentMethod, amountVnd } = req.body;
+
+  if (!recruiterUserId) {
+    return res.status(400).json({ error: "Vui lòng đăng nhập tài khoản Nhà Tuyển Dụng để mở khóa CV!" });
+  }
+
+  const candidate = candidateProfilesStore.find(c => c.id === id);
+  if (!candidate) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ ứng viên cần mở khóa!" });
+  }
+
+  if (!Array.isArray(candidate.unlockedByUserIds)) {
+    candidate.unlockedByUserIds = [];
+  }
+
+  const unlockAmount = amountVnd || candidate.unlockPriceVnd || 50000;
+  const user = usersStore.find(u => u.id === recruiterUserId);
+  const isAdmin = recruiterUserId === 'user-admin' || user?.role === 'admin';
+
+  // If already unlocked, simply return candidate
+  if (candidate.unlockedByUserIds.includes(recruiterUserId)) {
+    return res.json({
+      success: true,
+      message: `Hồ sơ ${candidate.fullName} đã được mở khóa trước đó.`,
+      candidate: {
+        ...candidate,
+        isUnlocked: true
+      }
+    });
+  }
+
+  // Token deduction if not admin
+  if (!isAdmin) {
+    const userBalance = user?.balance || 0;
+    if (userBalance < unlockAmount) {
+      return res.status(400).json({
+        error: `Số dư Token Cư Dân không đủ để mở khóa CV (Cần ${unlockAmount.toLocaleString('vi-VN')} Token, Hiện có: ${userBalance.toLocaleString('vi-VN')} Token). Vui lòng nạp Token hoặc liên hệ Admin!`,
+        requiredTokens: unlockAmount,
+        availableTokens: userBalance
+      });
+    }
+
+    if (user) {
+      user.balance = userBalance - unlockAmount;
+      if (user.tokenBalance !== undefined) {
+        user.tokenBalance = Math.max(0, (user.tokenBalance || 0) - unlockAmount);
+      }
+    }
+
+    walletTransactionsStore.unshift({
+      id: `wtx-cv-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      userId: recruiterUserId,
+      type: 'recruitment_posting_fee' as any,
+      amount: unlockAmount,
+      description: `[MỞ KHÓA CV] Mở khóa hồ sơ ứng viên ${candidate.fullName} (${candidate.targetJobTitle})`,
+      status: 'success',
+      createdAt: new Date().toLocaleString('vi-VN'),
+      referenceCode: `UNLOCK-CV-${candidate.id}`
+    });
+  }
+
+  candidate.unlockedByUserIds.push(recruiterUserId);
+
+  const unlockRecord: CvUnlockRecord = {
+    id: `unlock-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    recruiterUserId,
+    recruiterName: recruiterName || user?.name || 'Nhà Tuyển Dụng Cư Dân',
+    recruiterPhone: recruiterPhone || user?.phone || '',
+    candidateId: candidate.id,
+    candidateName: candidate.fullName,
+    amountVnd: unlockAmount,
+    paymentMethod: paymentMethod || 'token_balance',
+    status: 'completed',
+    createdAt: new Date().toLocaleString('vi-VN')
+  };
+
+  cvUnlocksStore.unshift(unlockRecord);
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: isAdmin
+      ? `🎉 Mở khóa thông tin ứng viên ${candidate.fullName} thành công (Miễn phí cho Admin)!`
+      : `🎉 Mở khóa thông tin ứng viên ${candidate.fullName} thành công! Đã trừ ${unlockAmount.toLocaleString('vi-VN')} Token.`,
+    candidate: {
+      ...candidate,
+      isUnlocked: true
+    },
+    unlockRecord,
+    remainingBalance: user?.balance
+  });
+});
+
+// 10. POST Apply for Job (Ứng tuyển việc làm)
+app.post("/api/recruitment/applications", (req, res) => {
+  const { jobId, candidateId, candidateName, candidatePhone, candidateEmail, message, expectedSalary, targetJobTitle, candidateAvatar } = req.body;
+
+  if (!jobId || !candidateName || !candidatePhone) {
+    return res.status(400).json({ error: "Vui lòng nhập đầy đủ Họ Tên và Số Điện Thoại để nộp hồ sơ!" });
+  }
+
+  const job = recruitmentJobsStore.find(j => j.id === jobId);
+  if (!job) {
+    return res.status(404).json({ error: "Công việc này không còn tồn tại hoặc đã hết hạn!" });
+  }
+
+  const newApp: JobApplication = {
+    id: `app-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    jobId,
+    jobTitle: job.title,
+    companyName: job.companyName,
+    candidateId: candidateId || `cand-${Date.now()}`,
+    candidateName: candidateName.trim(),
+    candidatePhone: candidatePhone.trim(),
+    candidateEmail: candidateEmail || '',
+    candidateAvatar: candidateAvatar || '',
+    expectedSalary: expectedSalary || '',
+    targetJobTitle: targetJobTitle || job.title,
+    message: message || '',
+    employerUserId: job.employerUserId,
+    status: 'applied',
+    createdAt: new Date().toLocaleString('vi-VN')
+  };
+
+  jobApplicationsStore.unshift(newApp);
+  job.applicationsCount = (job.applicationsCount || 0) + 1;
+
+  saveDataStore();
+
+  res.status(201).json({
+    success: true,
+    message: `🎉 Nộp hồ sơ ứng tuyển thành công!\n\nThông tin của bạn đã được gửi trực tiếp đến Nhà tuyển dụng (${job.companyName} - ${job.contactName}).`,
+    application: newApp
+  });
+});
+
+// 11. GET Job Applications (Xem danh sách ứng tuyển)
+app.get("/api/recruitment/applications", (req, res) => {
+  const { employerUserId, candidatePhone, candidateId, jobId } = req.query;
+
+  let list = [...jobApplicationsStore];
+
+  if (employerUserId) {
+    list = list.filter(a => a.employerUserId === employerUserId);
+  }
+
+  if (jobId) {
+    list = list.filter(a => a.jobId === jobId);
+  }
+
+  if (candidateId) {
+    list = list.filter(a => a.candidateId === candidateId);
+  } else if (candidatePhone) {
+    list = list.filter(a => a.candidatePhone === candidatePhone);
+  }
+
+  res.json(list);
+});
+
+// 12. PUT Update Job Application Status
+app.put("/api/recruitment/applications/:id/status", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const appItem = jobApplicationsStore.find(a => a.id === id);
+  if (!appItem) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ ứng tuyển!" });
+  }
+
+  appItem.status = status;
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: `Đã cập nhật trạng thái hồ sơ ứng tuyển thành: ${status}`,
+    application: appItem
+  });
+});
+
+// 13. GET Unlocked CVs List for Recruiter
+app.get("/api/recruitment/unlocked-candidates", (req, res) => {
+  const { recruiterUserId } = req.query;
+
+  if (!recruiterUserId || typeof recruiterUserId !== 'string') {
+    return res.status(400).json({ error: "Thiếu thông tin recruiterUserId!" });
+  }
+
+  const unlockedCands = candidateProfilesStore.filter(c => 
+    Array.isArray(c.unlockedByUserIds) && c.unlockedByUserIds.includes(recruiterUserId)
+  ).map(c => ({
+    ...c,
+    isUnlocked: true
+  }));
+
+  res.json(unlockedCands);
+});
+
+// 14. GET All CV Unlock Logs (Admin)
+app.get("/api/recruitment/unlock-logs", (req, res) => {
+  res.json(cvUnlocksStore);
+});
+
+// 15. DELETE Candidate Profile (Admin)
+app.delete("/api/recruitment/candidates/:id", (req, res) => {
+  const { id } = req.params;
+  const index = candidateProfilesStore.findIndex(c => c.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ ứng viên để xóa!" });
+  }
+
+  candidateProfilesStore.splice(index, 1);
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: "Đã xóa hồ sơ ứng viên thành công!"
+  });
+});
+
+// 16. DELETE Job Application (Admin)
+app.delete("/api/recruitment/applications/:id", (req, res) => {
+  const { id } = req.params;
+  const index = jobApplicationsStore.findIndex(a => a.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ ứng tuyển để xóa!" });
+  }
+
+  jobApplicationsStore.splice(index, 1);
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: "Đã xóa lượt ứng tuyển thành công!"
+  });
+});
+
 
 async function startServer() {
   // Vite middleware setup for development

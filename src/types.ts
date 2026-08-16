@@ -217,7 +217,11 @@ export interface User {
   subBranchTitle?: string; // Chức danh chuyên trách (Ví dụ: Trưởng Ban BĐS, Trưởng Ban Dịch Vụ Thợ...)
   avatar?: string;
   provider: 'local' | 'google' | 'facebook' | 'zalo';
-  balance?: number; // Số dư tài khoản đăng tin (VNĐ)
+  balance?: number; // Số dư tài khoản / Xu Tiêu Dùng Token (VNĐ) - Dùng thanh toán dịch vụ/đăng tin/mở khóa CV (KHÔNG THỂ RÚT)
+  tokenBalance?: number; // Số dư Token cư dân (1 Token = 1 VNĐ - Non-withdrawable)
+  affiliatePoints?: number; // Điểm hoa hồng Affiliate khả dụng (ĐƯỢC PHÉP RÚT VỀ NGÂN HÀNG)
+  totalAffiliateEarned?: number; // Tổng hoa hồng Affiliate đã tích lũy
+  totalTokensPumped?: number; // Tổng Token được Admin bơm/tặng
   tier?: UserTier; // Hạng nạp tiền (Thường, Bạc, Vàng, Kim Cương)
   totalTopup?: number; // Tổng nạp
   upTinCredits?: number; // Lượt Up tin khả dụng
@@ -774,6 +778,122 @@ export const isAdminProperty = (property: Property): boolean => {
   }
   return false;
 };
+
+// ------------------- RECRUITMENT & RESIDENT CV TYPES -------------------
+
+export interface RecruitmentJob {
+  id: string;
+  title: string;
+  companyName: string;
+  companyLogo?: string;
+  industry: string;
+  project: ProjectCategory | string;
+  projectName?: string;
+  location: string;
+  jobType: 'full-time' | 'part-time' | 'freelance' | 'shift' | 'internship';
+  salaryType: 'range' | 'fixed' | 'hourly' | 'deal' | 'commission';
+  salaryDisplay: string;
+  minSalary?: number;
+  maxSalary?: number;
+  experience: 'none' | 'under-1y' | '1-3y' | '3-5y' | 'above-5y';
+  experienceDisplay: string;
+  description: string;
+  requirements: string[];
+  benefits: string[];
+  contactName: string;
+  contactPhone: string;
+  contactZalo?: string;
+  contactEmail?: string;
+  employerUserId?: string;
+  status: 'active' | 'closed' | 'pending';
+  isVip?: boolean;
+  isUrgent?: boolean;
+  viewsCount: number;
+  applicationsCount: number;
+  deadline: string;
+  createdAt: string;
+}
+
+export interface CandidateWorkExperience {
+  company: string;
+  role: string;
+  period: string;
+  description: string;
+}
+
+export interface CandidateEducation {
+  school: string;
+  major: string;
+  period: string;
+  degree?: string;
+}
+
+export interface CandidateProfile {
+  id: string;
+  userId?: string;
+  fullName: string;
+  avatarUrl?: string;
+  birthYear?: number | string;
+  gender?: 'nam' | 'nu' | 'khac';
+  phone: string;
+  email: string;
+  zalo?: string;
+  currentProject: ProjectCategory | string;
+  projectName?: string;
+  currentAddress?: string;
+  targetJobTitle: string;
+  primaryIndustry: string;
+  subIndustries?: string[];
+  workTypePreference: ('full-time' | 'part-time' | 'freelance' | 'shift' | 'remote')[];
+  expectedSalary: string;
+  experienceLevel: 'none' | 'under-1y' | '1-3y' | '3-5y' | 'above-5y';
+  yearsOfExp?: number;
+  introduction: string;
+  skills: string[];
+  workExperience: CandidateWorkExperience[];
+  education: CandidateEducation[];
+  certificates?: string[];
+  attachedCvUrl?: string;
+  isLookingForJob: boolean;
+  isImmediate: boolean;
+  unlockPriceVnd: number;
+  unlockedByUserIds: string[];
+  viewsCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface JobApplication {
+  id: string;
+  jobId: string;
+  jobTitle: string;
+  companyName: string;
+  candidateId: string;
+  candidateName: string;
+  candidatePhone: string;
+  candidateEmail: string;
+  candidateAvatar?: string;
+  expectedSalary?: string;
+  targetJobTitle?: string;
+  message?: string;
+  employerUserId?: string;
+  status: 'applied' | 'reviewing' | 'interview_scheduled' | 'accepted' | 'rejected';
+  createdAt: string;
+}
+
+export interface CvUnlockRecord {
+  id: string;
+  recruiterUserId: string;
+  recruiterName: string;
+  recruiterPhone: string;
+  candidateId: string;
+  candidateName: string;
+  amountVnd: number;
+  paymentMethod: 'vietqr' | 'wallet_balance' | 'free_credit';
+  status: 'completed' | 'pending';
+  createdAt: string;
+}
+
 
 
 
