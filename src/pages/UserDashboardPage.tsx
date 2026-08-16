@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Property, User, Language, UpTinPricingConfig, UpTinTransaction } from '../types';
-import { PlusCircle, Zap, Crown, Eye, MessageSquare, Edit3, Trash2, ShieldCheck, CheckCircle2, Clock, Sparkles, AlertCircle, ArrowUpRight, UserCheck, Shield, Lock, Users, Share2, DollarSign, Gift, Wallet, Copy, Check, ExternalLink, Award, ArrowRight } from 'lucide-react';
+import { PlusCircle, Zap, Crown, Eye, MessageSquare, Edit3, Trash2, ShieldCheck, CheckCircle2, Clock, Sparkles, AlertCircle, ArrowUpRight, UserCheck, Shield, Lock, Users, Share2, DollarSign, Gift, Wallet, Copy, Check, ExternalLink, Award, ArrowRight, RefreshCw } from 'lucide-react';
+import { calculateExpiryInfo } from '../lib/expiration';
 import { UpTinPaymentModal } from '../components/UpTinPaymentModal';
 import { KycVerificationModal } from '../components/KycVerificationModal';
 import { UserStorefrontManager } from '../components/UserStorefrontManager';
@@ -69,6 +70,31 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
     setSelectedPropertyForUpTin(null);
     setLocalTransactions(prev => [newTx, ...prev]);
     onRefreshData();
+  };
+
+  const [isRenewingId, setIsRenewingId] = useState<string | null>(null);
+
+  const handleRenewProperty = async (propId: string) => {
+    setIsRenewingId(propId);
+    try {
+      const res = await fetch(`/api/properties/${propId}/renew`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ days: 30 })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message || '🎉 Đã gia hạn hiển thị tin thành công thêm 30 ngày!');
+        onRefreshData();
+      } else {
+        alert(data.error || 'Có lỗi xảy ra khi gia hạn tin.');
+      }
+    } catch (e) {
+      console.error('Error renewing property:', e);
+      alert('Không thể kết nối đến máy chủ.');
+    } finally {
+      setIsRenewingId(null);
+    }
   };
 
   const [upTinCredits, setUpTinCredits] = useState(user.upTinCredits || 12);
@@ -533,10 +559,22 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
-              {userProperties.map((prop) => (
+              {userProperties.map((prop) => {
+                const expiry = calculateExpiryInfo(prop, 30);
+                const isApproved = prop.status === 'approved' || prop.approved || prop.approvalStatus === 'approved';
+                const isRejected = prop.status === 'rejected' || prop.approvalStatus === 'rejected';
+                const isPending = !isApproved && !isRejected;
+
+                return (
                 <div
                   key={prop.id}
-                  className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm hover:border-emerald-500/50 transition"
+                  className={`bg-white dark:bg-slate-800/90 rounded-2xl border p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm transition ${
+                    expiry.isExpired 
+                      ? 'border-rose-400 dark:border-rose-800/80 bg-rose-50/20' 
+                      : expiry.statusBadge === 'expiring_soon'
+                      ? 'border-amber-400 dark:border-amber-700/80'
+                      : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500/50'
+                  }`}
                 >
                   {/* Property Info */}
                   <div className="flex items-start gap-4 flex-1">
@@ -548,25 +586,38 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                     />
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        {(() => {
-                          const isApproved = prop.status === 'approved' || prop.approved || prop.approvalStatus === 'approved';
-                          const isRejected = prop.status === 'rejected' || prop.approvalStatus === 'rejected';
-                          const isPending = !isApproved && !isRejected;
+                        {isApproved && !expiry.isExpired && (
+                          <span className="text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30">
+                            🟢 Đang hiển thị
+                          </span>
+                        )}
+                        {isApproved && expiry.isExpired && (
+                          <span className="text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-500/30">
+                            🛑 Đã tự động ẩn (Quá 30 ngày)
+                          </span>
+                        )}
+                        {isRejected && (
+                          <span className="text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-500/30 animate-pulse">
+                            🔴 Bị từ chối
+                          </span>
+                        )}
+                        {isPending && (
+                          <span className="text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-500/30">
+                            🟡 Đang chờ duyệt
+                          </span>
+                        )}
 
-                          return (
-                            <span className={`text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1 ${
-                              isApproved
-                                ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30'
-                                : isRejected
-                                ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-500/30 animate-pulse'
-                                : 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-500/30'
-                            }`}>
-                              {isApproved && '🟢 Đang hiển thị'}
-                              {isRejected && '🔴 Bị từ chối'}
-                              {isPending && '🟡 Đang chờ duyệt'}
-                            </span>
-                          );
-                        })()}
+                        {/* PRIVATE EXPIRY BADGE (Only visible in user owner dashboard & admin) */}
+                        {isApproved && !expiry.isExpired && (
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${
+                            expiry.statusBadge === 'expiring_soon'
+                              ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-400 animate-pulse font-extrabold'
+                              : 'bg-slate-100 text-slate-700 dark:bg-slate-700/80 dark:text-slate-300'
+                          }`} title="Chỉ bạn và Quản trị viên nhìn thấy thời gian đếm ngược này (Không hiển thị ra ngoài Public)">
+                            <Clock className="w-3 h-3" />
+                            <span>Còn {expiry.daysRemaining} ngày hiển thị</span>
+                          </span>
+                        )}
 
                         {prop.vipLevel && prop.vipLevel !== 'normal' && (
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
@@ -589,8 +640,39 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                       </h3>
 
                       <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xl">
-                        {prop.address} • {prop.area}m² • Ngày đăng: {prop.createdAt}
+                        {prop.address} • {prop.area}m² • Ngày đăng: {expiry.postDateFormatted} • Tự động ẩn: {expiry.expiresAtFormatted}
                       </p>
+
+                      {/* Expiration warning banner for expired or expiring posts */}
+                      {expiry.isExpired ? (
+                        <div className="p-2 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/60 rounded-xl text-xs text-rose-800 dark:text-rose-200 flex items-center justify-between gap-2">
+                          <span className="font-semibold text-[11px]">
+                            ⚠️ Tin đã quá hạn 30 ngày và tạm ẩn khỏi trang chủ. Bạn có thể bấm <strong>"Gia hạn hiển thị"</strong> để bài đăng hiển thị lại ngay!
+                          </span>
+                          <button
+                            onClick={() => handleRenewProperty(prop.id)}
+                            disabled={isRenewingId === prop.id}
+                            className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-black text-[11px] rounded-lg transition shrink-0 flex items-center gap-1 cursor-pointer"
+                          >
+                            <RefreshCw className={`w-3 h-3 ${isRenewingId === prop.id ? 'animate-spin' : ''}`} />
+                            <span>Gia Hạn Ngay</span>
+                          </button>
+                        </div>
+                      ) : expiry.statusBadge === 'expiring_soon' ? (
+                        <div className="p-2 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 rounded-xl text-xs text-amber-800 dark:text-amber-200 flex items-center justify-between gap-2">
+                          <span className="font-semibold text-[11px]">
+                            ⏰ Tin sắp tự động ẩn sau <strong>{expiry.daysRemaining} ngày</strong>. Gia hạn thêm 30 ngày để tiếp tục nhận khách hàng.
+                          </span>
+                          <button
+                            onClick={() => handleRenewProperty(prop.id)}
+                            disabled={isRenewingId === prop.id}
+                            className="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-[11px] rounded-lg transition shrink-0 flex items-center gap-1 cursor-pointer"
+                          >
+                            <RefreshCw className={`w-3 h-3 ${isRenewingId === prop.id ? 'animate-spin' : ''}`} />
+                            <span>Gia Hạn +30 Ngày</span>
+                          </button>
+                        </div>
+                      ) : null}
 
                       {(prop.status === 'rejected' || prop.approvalStatus === 'rejected' || prop.rejectionReason || prop.adminNote) && (
                         <div className="mt-2 p-2.5 bg-rose-50 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-800 rounded-xl text-xs text-rose-900 dark:text-rose-200 space-y-1">
@@ -608,6 +690,16 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
                   {/* Actions & Up-Tin Buttons */}
                   <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-700/80">
+                    <button
+                      onClick={() => handleRenewProperty(prop.id)}
+                      disabled={isRenewingId === prop.id}
+                      className="px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-emerald-50 text-slate-700 dark:text-slate-200 hover:text-emerald-700 font-bold text-xs rounded-xl border border-slate-200 dark:border-slate-600 transition flex items-center gap-1"
+                      title="Gia hạn thêm 30 ngày hiển thị"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isRenewingId === prop.id ? 'animate-spin' : ''}`} />
+                      <span>Gia Hạn</span>
+                    </button>
+
                     <button
                       onClick={() => setSelectedPropertyForUpTin(prop)}
                       className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition transform active:scale-95"
@@ -633,7 +725,8 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                     </button>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           )}
         </div>

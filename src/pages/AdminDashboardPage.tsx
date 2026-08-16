@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
+import { calculateExpiryInfo } from '../lib/expiration';
 
 interface ReputationPost {
   id: string;
@@ -89,6 +90,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [resServiceCatFilter, setResServiceCatFilter] = useState<string>('all');
   const [resServiceSearch, setResServiceSearch] = useState<string>('');
   const [resServiceKycFilter, setResServiceKycFilter] = useState<string>('all');
+  const [resServiceExpiryFilter, setResServiceExpiryFilter] = useState<'all' | 'active' | 'expiring' | 'expired'>('all');
   const [showAddServiceModal, setShowAddServiceModal] = useState<boolean>(false);
   const [editingService, setEditingService] = useState<ResidentServiceItem | null>(null);
 
@@ -295,6 +297,26 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       }
     } catch (e) {
       console.error('Error fetching resident services:', e);
+    }
+  };
+
+  const handleRenewResidentService = async (srvId: string, title?: string) => {
+    try {
+      const res = await fetch(`/api/resident-services/${srvId}/renew`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ days: 30 })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(`🎉 Đã gia hạn bài dịch vụ "${title || 'Cư dân'}" thành công thêm 30 ngày!`);
+        fetchResidentServices();
+      } else {
+        alert(data.error || 'Có lỗi khi gia hạn dịch vụ.');
+      }
+    } catch (e) {
+      console.error('Error renewing resident service:', e);
+      alert('Không thể kết nối đến máy chủ.');
     }
   };
 
@@ -2224,9 +2246,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 />
               </div>
 
-              {/* KYC Filter */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">Lọc KYC:</span>
+              {/* KYC & Expiry Filter */}
+              <div className="flex flex-wrap items-center gap-2">
                 <select
                   value={resServiceKycFilter}
                   onChange={(e) => setResServiceKycFilter(e.target.value)}
@@ -2235,6 +2256,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <option value="all">Tất cả KYC</option>
                   <option value="verified">🔵 Đã Cấp Nút Xanh KYC</option>
                   <option value="unverified">⚪ Chưa Cấp Nút Xanh</option>
+                </select>
+
+                <select
+                  value={resServiceExpiryFilter}
+                  onChange={(e) => setResServiceExpiryFilter(e.target.value as any)}
+                  className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-amber-500 outline-none"
+                >
+                  <option value="all">Tất cả thời hạn</option>
+                  <option value="active">🟢 Đang hiển thị</option>
+                  <option value="expiring">⏰ Sắp hết hạn (≤ 5 ngày)</option>
+                  <option value="expired">🛑 Đã ẩn tự động (&gt; 30 ngày)</option>
                 </select>
               </div>
             </div>
@@ -2276,6 +2308,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {adminResidentServices
               .filter(srv => {
+                const expiry = calculateExpiryInfo(srv, 30);
+                if (resServiceExpiryFilter === 'active' && expiry.isExpired) return false;
+                if (resServiceExpiryFilter === 'expiring' && (expiry.isExpired || expiry.daysRemaining > 5)) return false;
+                if (resServiceExpiryFilter === 'expired' && !expiry.isExpired) return false;
+
                 if (resServiceCatFilter !== 'all' && srv.categoryId !== resServiceCatFilter) return false;
                 if (resServiceKycFilter === 'verified' && !srv.verified && srv.kycStatus !== 'verified') return false;
                 if (resServiceKycFilter === 'unverified' && (srv.verified || srv.kycStatus === 'verified')) return false;
@@ -2292,12 +2329,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               .map(srv => {
                 const isVerified = srv.verified || srv.kycStatus === 'verified';
                 const categoryObj = BUSINESS_CATEGORIES.find(c => c.id === srv.categoryId);
+                const expiry = calculateExpiryInfo(srv, 30);
 
                 return (
                   <div
                     key={srv.id}
                     className={`bg-white dark:bg-slate-900 rounded-3xl p-5 border transition-all duration-200 shadow-xl space-y-4 flex flex-col justify-between ${
-                      isVerified
+                      expiry.isExpired
+                        ? 'border-rose-400/80 bg-rose-50/10'
+                        : isVerified
                         ? 'border-blue-500/40 ring-1 ring-blue-500/20'
                         : 'border-slate-200 dark:border-slate-800'
                     }`}
@@ -2319,7 +2359,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           </span>
                         </div>
 
-                        <div className="absolute bottom-2.5 right-2.5">
+                        <div className="absolute bottom-2.5 right-2.5 flex items-center gap-1.5">
                           {isVerified ? (
                             <span className="px-3 py-1 bg-blue-600/90 backdrop-blur-md text-white font-black text-[11px] rounded-full border border-blue-300 shadow-lg flex items-center gap-1">
                               <BadgeCheck className="w-3.5 h-3.5 text-white" />
@@ -2334,8 +2374,24 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         </div>
                       </div>
 
-                      {/* Title & Info */}
+                      {/* Title & Expiry info */}
                       <div>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          {expiry.isExpired ? (
+                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-400">
+                              🛑 Đã ẩn sau 30 ngày
+                            </span>
+                          ) : expiry.statusBadge === 'expiring_soon' ? (
+                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-400 animate-pulse">
+                              ⏰ Sắp hết hạn (Còn {expiry.daysRemaining} ngày)
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-400">
+                              🟢 Hiển thị: Còn {expiry.daysRemaining} ngày
+                            </span>
+                          )}
+                        </div>
+
                         <h3 className="font-black text-sm text-slate-900 dark:text-white line-clamp-2 leading-tight">
                           {srv.title}
                         </h3>
@@ -2363,6 +2419,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             <span>{srv.providerPhone}</span>
                           </a>
                         </div>
+                        <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
+                          <span>Đăng: {expiry.postDateFormatted}</span>
+                          <span>Hết hạn: {expiry.expiresAtFormatted}</span>
+                        </div>
                         {srv.providerZalo && (
                           <div className="flex items-center justify-between font-bold">
                             <span className="text-slate-500 dark:text-slate-400">Zalo Chính Chủ:</span>
@@ -2380,17 +2440,28 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                     {/* Action Controls */}
                     <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                      <button
-                        onClick={() => handleToggleServiceKyc(srv)}
-                        className={`w-full py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
-                          isVerified
-                            ? 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-red-500 hover:text-white'
-                            : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:brightness-110'
-                        }`}
-                      >
-                        <BadgeCheck className="w-4 h-4" />
-                        <span>{isVerified ? 'Gỡ Nút Xanh KYC' : '🔵 CẤP NÚT XANH VERIFIED KYC'}</span>
-                      </button>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => handleToggleServiceKyc(srv)}
+                          className={`py-2.5 rounded-xl font-black text-[11px] transition flex items-center justify-center gap-1 shadow-md cursor-pointer ${
+                            isVerified
+                              ? 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-red-500 hover:text-white'
+                              : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:brightness-110'
+                          }`}
+                        >
+                          <BadgeCheck className="w-3.5 h-3.5" />
+                          <span>{isVerified ? 'Gỡ KYC' : 'Cấp KYC'}</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleRenewResidentService(srv.id, srv.title)}
+                          className="py-2.5 rounded-xl font-black text-[11px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 transition flex items-center justify-center gap-1 shadow-md cursor-pointer"
+                          title="Gia hạn thêm 30 ngày hiển thị"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          <span>Gia Hạn +30 Ngày</span>
+                        </button>
+                      </div>
 
                       <div className="grid grid-cols-2 gap-2">
                         <button

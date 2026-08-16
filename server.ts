@@ -1149,9 +1149,35 @@ app.get(["/api/download/apk", "/downloads/ChoCuDan24h_v2.8.apk"], (req, res) => 
   res.send(apkHeader);
 });
 
+// Server-side expiration checker (Default 30 days auto-hide for public visibility)
+function checkServerPostExpiry(item: any, defaultDays = 30) {
+  const duration = Number(item.durationDays) || defaultDays;
+  const now = Date.now();
+  let expiryTime: number;
+
+  if (item.expiresAt) {
+    expiryTime = new Date(item.expiresAt).getTime();
+  } else if (item.pushedAt) {
+    expiryTime = new Date(item.pushedAt).getTime() + duration * 24 * 60 * 60 * 1000;
+  } else if (item.createdAt) {
+    expiryTime = new Date(item.createdAt).getTime() + duration * 24 * 60 * 60 * 1000;
+  } else {
+    expiryTime = now + duration * 24 * 60 * 60 * 1000;
+  }
+
+  if (isNaN(expiryTime)) {
+    expiryTime = now + duration * 24 * 60 * 60 * 1000;
+  }
+
+  const isExpired = now > expiryTime;
+  const daysRemaining = Math.max(0, Math.ceil((expiryTime - now) / (1000 * 60 * 60 * 24)));
+
+  return { isExpired, daysRemaining, expiresAt: new Date(expiryTime).toISOString() };
+}
+
 // Properties GET with filters
 app.get("/api/properties", (req, res) => {
-  const { type, project, category, minPrice, maxPrice, bedrooms, furniture, search, status } = req.query;
+  const { type, project, category, minPrice, maxPrice, bedrooms, furniture, search, status, userId, isAdmin } = req.query;
 
   let filtered = [...propertiesStore];
 
@@ -1176,13 +1202,24 @@ app.get("/api/properties", (req, res) => {
   if (maxPrice) {
     filtered = filtered.filter(p => p.price <= Number(maxPrice));
   }
-  if (status && status !== 'all') {
-    filtered = filtered.filter(p => p.status === status);
-  } else if (!status) {
-    // By default for non-admin viewers, return approved properties
-    if (req.query.isAdmin !== 'true') {
-      filtered = filtered.filter(p => p.status === 'approved' || p.approved === true);
+
+  // Handle Admin vs Public / Owner visibility & 30-day auto-hide expiration
+  if (isAdmin === 'true') {
+    if (status && status !== 'all') {
+      filtered = filtered.filter(p => p.status === status);
     }
+  } else {
+    // For non-admin (public viewers & owners)
+    filtered = filtered.filter(p => {
+      // If user is the owner of the post, they can see their own post in dashboard
+      const isOwner = Boolean(userId && (p.userId === userId || p.sellerPhone === userId));
+      if (isOwner) return true;
+
+      // Public users: must be approved AND not expired (30-day auto-hide)
+      const isApproved = p.status === 'approved' || p.approved === true;
+      const expiry = checkServerPostExpiry(p, 30);
+      return isApproved && !expiry.isExpired;
+    });
   }
 
   if (search) {
@@ -1196,6 +1233,28 @@ app.get("/api/properties", (req, res) => {
   }
 
   res.json(filtered);
+});
+
+// Property Renew / Extend Expiry Endpoint
+app.post("/api/properties/:id/renew", (req, res) => {
+  const { id } = req.params;
+  const { days = 30 } = req.body || {};
+  const prop = propertiesStore.find(p => p.id === id);
+  if (!prop) {
+    return res.status(404).json({ error: "Không tìm thấy bất động sản." });
+  }
+  const now = new Date();
+  const newExpiresAt = new Date(now.getTime() + Number(days) * 24 * 60 * 60 * 1000).toISOString();
+  prop.expiresAt = newExpiresAt;
+  prop.pushedAt = now.toISOString();
+  prop.status = 'approved';
+  prop.approved = true;
+  saveDataStore();
+  res.json({
+    message: `Đã gia hạn hiển thị thành công thêm ${days} ngày!`,
+    property: prop,
+    expiresAt: newExpiresAt
+  });
 });
 
 // Property POST (Submit new listing)
@@ -1601,21 +1660,50 @@ app.post("/api/ads/click", (req, res) => {
 // Resident Services Endpoints (Dịch Vụ Cư Dân)
 app.get("/api/resident-services", (req, res) => {
   const { status, userId, isAdmin } = req.query;
-  if (status === 'all' || isAdmin === 'true') {
+
+  // Admin sees all
+  if (isAdmin === 'true') {
+    if (status && status !== 'all') {
+      return res.json(residentServicesStore.filter(s => s.status === status));
+    }
     return res.json(residentServicesStore);
   }
-  if (status) {
-    const filtered = residentServicesStore.filter(s => (s.status || 'approved') === status);
-    return res.json(filtered);
-  }
-  // Default behavior: return approved services PLUS services posted by this userId (if provided)
+
+  // Non-admin / Public requests:
   const results = residentServicesStore.filter(s => {
+    // If owner: can view their own services
+    const isOwner = Boolean(userId && (s.userId === userId || s.providerPhone === userId));
+    if (isOwner) return true;
+
+    // Public users: must be approved AND not expired (30-day auto-hide)
     const isApproved = (s.status === 'approved' || s.approved === true || s.status === undefined);
-    if (isApproved) return true;
-    if (userId && (s.userId === userId || s.providerPhone === userId)) return true;
-    return false;
+    const expiry = checkServerPostExpiry(s, 30);
+    return isApproved && !expiry.isExpired;
   });
+
   res.json(results);
+});
+
+// Resident Service Renew / Extend Expiry Endpoint
+app.post("/api/resident-services/:id/renew", (req, res) => {
+  const { id } = req.params;
+  const { days = 30 } = req.body || {};
+  const srv = residentServicesStore.find(s => s.id === id);
+  if (!srv) {
+    return res.status(404).json({ error: "Không tìm thấy dịch vụ cư dân." });
+  }
+  const now = new Date();
+  const newExpiresAt = new Date(now.getTime() + Number(days) * 24 * 60 * 60 * 1000).toISOString();
+  srv.expiresAt = newExpiresAt;
+  srv.pushedAt = now.toISOString();
+  srv.status = 'approved';
+  srv.approved = true;
+  saveDataStore();
+  res.json({
+    message: `Đã gia hạn dịch vụ cư dân thành công thêm ${days} ngày!`,
+    service: srv,
+    expiresAt: newExpiresAt
+  });
 });
 
 app.post("/api/resident-services", (req, res) => {

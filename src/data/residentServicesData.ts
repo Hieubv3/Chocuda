@@ -42,6 +42,10 @@ export interface ResidentServiceItem {
   kycNote?: string;
   businessLicenseNo?: string;
   taxCode?: string;
+  pushedAt?: string;
+  expiresAt?: string;
+  durationDays?: number;
+  isExpired?: boolean;
 }
 
 // Full Matrix of Mandatory & Required Licenses per Industry Category

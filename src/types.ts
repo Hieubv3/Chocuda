@@ -118,6 +118,9 @@ export interface Property {
   pushedCount?: number;
   viewsCount?: number;
   userId?: string;
+  expiresAt?: string; // ISO timestamp when post expires / auto-hides
+  durationDays?: number; // Duration of active post (default 30 days)
+  isExpired?: boolean;
 }
 
 export interface ReputationPost {
@@ -477,6 +480,10 @@ export interface ResidentServiceItem {
   storefrontId?: string; // Id gian hàng KiotViet tương ứng
   lat?: number;
   lng?: number;
+  pushedAt?: string;
+  expiresAt?: string; // Ngày hết hạn bài đăng dịch vụ cư dân (30 ngày mặc định)
+  durationDays?: number;
+  isExpired?: boolean;
 }
 
 // Cấu hình Kết Nối KiotViet POS API
@@ -539,6 +546,10 @@ export interface UserStorefront {
   reviewCount: number;
   products: StoreProduct[];
   createdAt: string;
+  pushedAt?: string;
+  expiresAt?: string;
+  durationDays?: number;
+  isExpired?: boolean;
   lat?: number;
   lng?: number;
 }
