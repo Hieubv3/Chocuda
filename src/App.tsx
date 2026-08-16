@@ -33,37 +33,29 @@ export const App: React.FC = () => {
   // Theme & Language
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [language, setLanguage] = useState<Language>('vi');
-// Tự động chuyển tab admin khi vào bằng domain quantri HOẶC chặn tên miền lạ
+// Tự động điều hướng và chặn truy cập Admin sai tên miền
   useEffect(() => {
-    const host = window.location.hostname;
-    const hash = window.location.hash;
+    const host = window.location.hostname.toLowerCase();
+    const pathname = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
 
-    // 1. Vào bằng domain quantri -> tự thêm đuôi admin (để vào thẳng trang quản trị)
-    if (host.includes('quantri')) {
+    const isQuantriDomain = host === 'quantri.chocudan24h.com';
+
+    if (isQuantriDomain) {
       if (!hash.includes('admin')) {
         window.location.hash = '#admin';
       }
-    } 
-      useEffect(() => {
-  const isQuantriDomain = window.location.hostname === 'quantri.chocudan24h.com';
-  const hasAdminHash = window.location.hash === '#admin';
+    } else {
+      const isTryingToAccessAdmin = 
+        pathname.includes('admin') || 
+        pathname.includes('quantri') || 
+        hash.includes('admin');
 
-  // Nếu đang ở domain chính (không phải quantri) mà cố tình gõ #admin -> đá văng về trang chủ và xóa hash
-  if (!isQuantriDomain && hasAdminHash) {
-    window.location.hash = '';
-    window.location.href = window.location.origin; // Hoặc hiện thông báo / chuyển hướng trang 404
-  }
-
-  // Ngược lại, nếu đang ở domain quantri mà chưa có #admin -> tự động thêm vào
-  if (isQuantriDomain && !hasAdminHash) {
-    window.location.hash = '#admin';
-  }
-}, []);
-    // 2. Chặn cửa: Vào web bằng tên miền thường mà đòi gõ #admin -> đá về trang chủ luôn
-    else if (!host.includes('localhost') && hash.includes('admin')) {
-      window.location.href = '/'; 
+      if (isTryingToAccessAdmin) {
+        window.location.hash = '';
+        window.location.replace('/');
+      }
     }
-  }, []); // Cứ để mảng rỗng [] thế này để nó check ngay lúc web vừa load xong
   }, []);
   // Navigation
   const [currentTab, setCurrentTab] = useState<string>('home');
