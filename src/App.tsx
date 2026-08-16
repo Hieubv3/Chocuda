@@ -701,14 +701,86 @@ export const App: React.FC = () => {
           onSelectProject={(projId) => { setSelectedProjectId(projId); }} 
         />
       );
-    case 'tuyendung':
+   case 'tuyendung':
       return (
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100 mb-4">Việc Làm & Tuyển Dụng Cư Dân</h2>
-          <p className="text-slate-600 dark:text-slate-300">Danh sách tin tuyển dụng, việc làm nội khu...</p>
+        <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-emerald-50 dark:bg-emerald-950/40 p-6 rounded-2xl border border-emerald-200 dark:border-emerald-800">
+            <div>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100">Việc Làm & Tuyển Dụng Nội Khu</h2>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">Kết nối việc làm, tìm thợ, tìm nhân sự uy tín ngay trong khu đô thị.</p>
+            </div>
+            <button 
+              onClick={() => { if(!user) { setAuthModalOpen(true); } else { setCurrentTab('post'); } }}
+              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow transition flex items-center gap-2"
+            >
+              <span>+ Đăng Tin Tuyển Dụng</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {properties.filter(p => p.category === 'tuyendung' || p.type === 'tuyendung').length > 0 ? (
+              properties.filter(p => p.category === 'tuyendung' || p.type === 'tuyendung').map(job => (
+                <div key={job.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                  <div>
+                    <span className="inline-block px-2.5 py-1 bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-[10px] font-black rounded-lg mb-2 uppercase">Việc làm nội khu</span>
+                    <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base mb-1 line-clamp-2">{job.title}</h3>
+                    <p className="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm mb-3">{job.priceDisplay || (job.price ? `${job.price} đ` : 'Thỏa thuận')}</p>
+                    <p className="text-slate-600 dark:text-slate-300 text-xs line-clamp-3 mb-4">{job.description}</p>
+                  </div>
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <span className="text-[11px] text-slate-400">LH: {job.sellerPhone || 'Cư dân'}</span>
+                    <a href={`tel:${job.sellerPhone}`} className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold text-xs rounded-lg hover:bg-emerald-100 transition">Gọi ngay</a>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full py-16 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Chưa có tin tuyển dụng nào. Hãy bấm nút "Đăng Tin Tuyển Dụng" phía trên để tạo tin mới!</p>
+              </div>
+            )}
+          </div>
         </div>
       );
+        {/* Khu vực danh sách Ứng viên tìm việc & Nộp CV */}
+          <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <div>
+                <h3 className="text-xl font-black text-slate-900 dark:text-slate-100">Hồ Sơ Ứng Viên & Người Tìm Việc</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300">Các chủ shop, công ty cần tuyển nhân sự có thể xem hồ sơ và liên hệ.</p>
+              </div>
+              <button 
+                onClick={() => { if(!user) { setAuthModalOpen(true); } else { setCurrentTab('post-cv'); } }}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm shadow transition flex items-center gap-2"
+              >
+                <span>📄 Tạo Hồ Sơ / Đăng CV Tìm Việc</span>
+              </button>
+            </div>
 
+            {/* Danh sách ứng viên mẫu / thực tế */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-bold rounded-full flex items-center justify-center text-lg">NV</div>
+                    <div>
+                      <h4 className="font-bold text-slate-900 dark:text-slate-100">Nguyễn Văn A</h4>
+                      <p className="text-xs text-slate-500">Thợ Điện Nước / Kỹ Thuật</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mb-4">Kinh nghiệm 5 năm sửa chữa điện nước dân dụng tại khu đô thị. Trung thực, nhanh nhẹn.</p>
+                </div>
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  <span className="text-[11px] text-amber-600 font-bold">🔒 Hồ sơ bảo mật (Cần mở khóa)</span>
+                  <button 
+                    onClick={() => alert('Tính năng xem liên hệ ứng viên mất phí (50.000đ/lượt hoặc trừ xu tài khoản công ty).')}
+                    className="px-3 py-1.5 bg-blue-600 text-white font-bold text-xs rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Xem CV & Liên hệ
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
       case 'properties':
       case 'sale':
         return (
