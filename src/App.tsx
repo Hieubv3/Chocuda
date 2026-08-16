@@ -44,6 +44,21 @@ export const App: React.FC = () => {
         window.location.hash = '#admin';
       }
     } 
+      useEffect(() => {
+  const isQuantriDomain = window.location.hostname === 'quantri.chocudan24h.com';
+  const hasAdminHash = window.location.hash === '#admin';
+
+  // Nếu đang ở domain chính (không phải quantri) mà cố tình gõ #admin -> đá văng về trang chủ và xóa hash
+  if (!isQuantriDomain && hasAdminHash) {
+    window.location.hash = '';
+    window.location.href = window.location.origin; // Hoặc hiện thông báo / chuyển hướng trang 404
+  }
+
+  // Ngược lại, nếu đang ở domain quantri mà chưa có #admin -> tự động thêm vào
+  if (isQuantriDomain && !hasAdminHash) {
+    window.location.hash = '#admin';
+  }
+}, []);
     // 2. Chặn cửa: Vào web bằng tên miền thường mà đòi gõ #admin -> đá về trang chủ luôn
     else if (!host.includes('localhost') && hash.includes('admin')) {
       window.location.href = '/'; 
