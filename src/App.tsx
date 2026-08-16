@@ -701,6 +701,51 @@ export const App: React.FC = () => {
           onSelectProject={(projId) => { setSelectedProjectId(projId); }} 
         />
       );
+        case 'create-cv':
+      return (
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+            <div>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100">Tạo Hồ Sơ / CV Tìm Việc</h2>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">Điền thông tin bên dưới để tạo CV chuyên nghiệp ứng tuyển việc làm nội khu.</p>
+            </div>
+
+            <form onSubmit={(e) => { e.preventDefault(); alert('Đã lưu và đăng CV thành công! Các công ty/shop có thể tìm thấy hồ sơ của bạn.'); setCurrentTab('tuyendung'); }} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Họ và tên</label>
+                  <input type="text" required placeholder="Ví dụ: Nguyễn Văn A" className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent text-sm" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Vị trí muốn ứng tuyển / Nghề nghiệp</label>
+                  <input type="text" required placeholder="Ví dụ: Thợ điện nước, Nhân viên bán hàng..." className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent text-sm" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Số điện thoại / Zalo liên hệ</label>
+                  <input type="tel" required placeholder="0912345xxx" className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent text-sm" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Mức lương mong muốn</label>
+                  <input type="text" placeholder="Ví dụ: 8 - 10 triệu hoặc Thỏa thuận" className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent text-sm" />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Kinh nghiệm làm việc & Giới thiệu bản thân</label>
+                <textarea rows={4} required placeholder="Mô tả ngắn gọn kinh nghiệm, kỹ năng và thời gian có thể bắt đầu làm việc..." className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent text-sm"></textarea>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onClick={() => setCurrentTab('tuyendung')} className="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-sm">Hủy</button>
+                <button type="submit" className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow">Lưu & Đăng CV</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
    case 'tuyendung':
       return (
         <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
