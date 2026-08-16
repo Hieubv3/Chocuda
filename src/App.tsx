@@ -33,13 +33,22 @@ export const App: React.FC = () => {
   // Theme & Language
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [language, setLanguage] = useState<Language>('vi');
-// Tự động chuyển tab admin khi vào bằng domain quantri
+// Tự động chuyển tab admin khi vào bằng domain quantri HOẶC chặn tên miền lạ
   useEffect(() => {
-    if (window.location.hostname.includes('quantri')) {
-      if (!window.location.hash.includes('admin')) {
+    const host = window.location.hostname;
+    const hash = window.location.hash;
+
+    // 1. Vào bằng domain quantri -> tự thêm đuôi admin (để vào thẳng trang quản trị)
+    if (host.includes('quantri')) {
+      if (!hash.includes('admin')) {
         window.location.hash = '#admin';
       }
+    } 
+    // 2. Chặn cửa: Vào web bằng tên miền thường mà đòi gõ #admin -> đá về trang chủ luôn
+    else if (!host.includes('localhost') && hash.includes('admin')) {
+      window.location.href = '/'; 
     }
+  }, []); // Cứ để mảng rỗng [] thế này để nó check ngay lúc web vừa load xong
   }, []);
   // Navigation
   const [currentTab, setCurrentTab] = useState<string>('home');
