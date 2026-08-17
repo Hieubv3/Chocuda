@@ -51,7 +51,10 @@ export const App: React.FC = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<ProjectCategory>('ocean-park-2');
 
   // Check if current hostname is the dedicated admin portal
-  const isAdminDomain = typeof window !== 'undefined' && window.location.hostname === 'quantri.chocudan24h.com';
+  const isAdminDomain = typeof window !== 'undefined' && (
+    window.location.hostname === 'quantri.chocudan24h.com' ||
+    window.location.hostname.startsWith('quantri.')
+  );
 
   // User Auth - Restore session from local storage if existing
   const [user, setUser] = useState<User | null>(() => {
