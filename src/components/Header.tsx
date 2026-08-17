@@ -67,7 +67,6 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'profile', label: t.nav.profile },
     { id: 'projects', label: t.nav.projects },
     { id: 'services', label: 'Dịch Vụ Cư Dân' },
-    { id: 'recruitment', label: 'Tuyển Dụng' },
     { id: 'sale', label: t.nav.forSale },
     { id: 'rent', label: t.nav.forRent },
     { id: 'news', label: t.nav.news },
@@ -174,18 +173,6 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Wrench className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Dịch Vụ Cư Dân</span>
-            </button>
-
-            <button
-              onClick={() => setCurrentTab('recruitment')}
-              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-extrabold whitespace-nowrap flex items-center gap-1 transition-all duration-150 ${
-                currentTab === 'recruitment'
-                  ? 'bg-emerald-600 text-white font-bold shadow-xs'
-                  : 'text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/50 bg-teal-50/60 dark:bg-teal-950/30 border border-teal-200/60 dark:border-teal-800/50'
-              }`}
-            >
-              <Briefcase className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-              <span>Tuyển Dụng</span>
             </button>
 
             {/* MUA BÁN DROPDOWN (FLOATING SUB-MENU) */}

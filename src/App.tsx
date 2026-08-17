@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon } from 'lucide-react';
 import { Header } from './components/Header';
 import { RealTimeMarketTicker } from './components/RealTimeMarketTicker';
 import { StraightLineAiChatbot } from './components/StraightLineAiChatbot';
 import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
+import { ScrollToTop } from './components/ScrollToTop';
 import { HomePage } from './pages/HomePage';
 import { PropertiesPage } from './pages/PropertiesPage';
+import { PropertyDetailPage } from './pages/PropertyDetailPage';
 import { ProjectsPage } from './pages/ProjectsPage';
+import { ProjectDetailPage } from './pages/ProjectDetailPage';
 import { NewsPage } from './pages/NewsPage';
+import { NewsArticleDetailPage } from './pages/NewsArticleDetailPage';
 import { PostPropertyPage } from './pages/PostPropertyPage';
 import { HieuBuiProfilePage } from './pages/HieuBuiProfilePage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
@@ -17,6 +22,9 @@ import { AdminLoginPage } from './pages/AdminLoginPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsOfServicePage } from './pages/TermsOfServicePage';
 import { ResidentServicesPage } from './components/ResidentServicesPage';
+import { ResidentServiceDetailPage } from './pages/ResidentServiceDetailPage';
+import { CommunityGroupsPage } from './pages/CommunityGroupsPage';
+import { MortgageCalculatorPage } from './pages/MortgageCalculatorPage';
 import { RecruitmentCenterPage } from './components/RecruitmentCenterPage';
 import { PropertyDetailModal } from './components/PropertyDetailModal';
 import { CompareModal } from './components/CompareModal';
@@ -29,15 +37,21 @@ import { PopularVinhomesLinksSection } from './components/PopularVinhomesLinksSe
 import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig } from './types';
 import { INITIAL_PROPERTIES, INITIAL_PROJECTS, INITIAL_NEWS, INITIAL_ADS } from './data/initialData';
 import { safeLocalStorageGet, safeLocalStorageSet } from './lib/imageUtils';
+import { getProjectSlug } from './lib/slugs';
 
 export const App: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // Theme & Language
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [language, setLanguage] = useState<Language>('vi');
 
-  // Navigation
-  const [currentTab, setCurrentTab] = useState<string>('home');
+  // Navigation compatibility state
   const [selectedProjectId, setSelectedProjectId] = useState<ProjectCategory>('ocean-park-2');
+
+  // Check if current hostname is the dedicated admin portal
+  const isAdminDomain = typeof window !== 'undefined' && window.location.hostname === 'quantri.chocudan24h.com';
 
   // User Auth - Restore session from local storage if existing
   const [user, setUser] = useState<User | null>(() => {
@@ -115,7 +129,6 @@ export const App: React.FC = () => {
           localSaved.forEach(lp => {
             if (!mergedMap.has(lp.id)) {
               mergedMap.set(lp.id, lp);
-              // Sync missing local property back to server
               fetch(`/api/properties/${lp.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -153,232 +166,139 @@ export const App: React.FC = () => {
 
     fetch('/api/contacts')
       .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setContacts(data); })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setContacts(data);
+        }
+      })
       .catch(err => console.warn('Using initial contacts fallback:', err));
 
-
-    fetch('/api/admin/pricing')
+    fetch('/api/system/pricing-config')
       .then(res => res.json())
-      .then(data => { if (data && data.singlePushPrice) setPricingConfig(data); })
+      .then(data => {
+        if (data && data.bankName) {
+          setPricingConfig(data);
+        }
+      })
       .catch(() => {});
   };
 
   useEffect(() => {
     refreshServerData();
+  }, []);
 
-    // Check for Google OAuth callback in URL hash or pathname
-    const handleOAuthCallback = async () => {
-      const hash = window.location.hash;
-      const search = window.location.search;
-      const pathname = window.location.pathname;
-
-      if (
-        pathname === '/auth/callback' ||
-        hash.includes('id_token=') ||
-        hash.includes('access_token=') ||
-        search.includes('code=')
-      ) {
-        let email = '';
-        let name = '';
-        let picture = '';
-        let googleId = '';
-
-        const params = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
-        const idToken = params.get('id_token');
-
-        if (idToken) {
-          try {
-            const payloadBase64 = idToken.split('.')[1];
-            if (payloadBase64) {
-              const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
-              const jsonPayload = decodeURIComponent(
-                atob(base64)
-                  .split('')
-                  .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-                  .join('')
-              );
-              const parsed = JSON.parse(jsonPayload);
-              email = parsed.email || '';
-              name = parsed.name || '';
-              picture = parsed.picture || '';
-              googleId = parsed.sub || '';
-            }
-          } catch (e) {
-            console.error('Error parsing ID token:', e);
-          }
-        }
-
-        if (!email) {
-          const accessToken = params.get('access_token');
-          if (accessToken) {
-            try {
-              // Try Google userinfo
-              const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                headers: { Authorization: `Bearer ${accessToken}` }
-              });
-              if (userInfoRes.ok) {
-                const userInfo = await userInfoRes.json();
-                email = userInfo.email || '';
-                name = userInfo.name || '';
-                picture = userInfo.picture || '';
-                googleId = userInfo.sub || '';
-              }
-            } catch (e) {
-              console.error('Error fetching Google userinfo:', e);
-            }
-
-            // Try Facebook userinfo if Google failed
-            if (!email) {
-              try {
-                const fbRes = await fetch(`https://graph.facebook.com/v18.0/me?fields=id,name,email,picture.type(large)&access_token=${accessToken}`);
-                if (fbRes.ok) {
-                  const fbUser = await fbRes.json();
-                  email = fbUser.email || `fb_${fbUser.id}@chocudan24h.com`;
-                  name = fbUser.name || 'Thành viên Facebook';
-                  picture = fbUser.picture?.data?.url || '';
-                  googleId = fbUser.id || '';
-
-                  // Call Facebook auth endpoint
-                  const res = await fetch('/api/auth/facebook', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      email,
-                      name,
-                      avatar: picture,
-                      facebookId: fbUser.id
-                    })
-                  });
-                  const data = await res.json();
-                  if (data && data.user) {
-                    setUser(data.user);
-                    localStorage.setItem('hb_user', JSON.stringify(data.user));
-
-                    if (window.opener && window.opener !== window) {
-                      window.opener.postMessage({ type: 'FACEBOOK_OAUTH_SUCCESS', user: data.user }, '*');
-                      window.close();
-                      return;
-                    }
-                  }
-                }
-              } catch (e) {
-                console.error('Error fetching Facebook userinfo:', e);
-              }
-            }
-          }
-        }
-
-        if (email) {
-          try {
-            const res = await fetch('/api/auth/google', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email,
-                name: name || email.split('@')[0],
-                avatar: picture,
-                googleId
-              })
-            });
-            const data = await res.json();
-            if (data && data.user) {
-              setUser(data.user);
-              localStorage.setItem('hb_user', JSON.stringify(data.user));
-
-              if (window.opener && window.opener !== window) {
-                window.opener.postMessage({ type: 'GOOGLE_OAUTH_SUCCESS', user: data.user }, '*');
-                window.close();
-                return;
-              }
-            }
-          } catch (e) {
-            console.error('Error authenticating Google user on server:', e);
-          }
-        }
-
-        window.history.replaceState({}, document.title, '/');
-        setCurrentTab('home');
-      }
-    };
-
-    handleOAuthCallback();
-
-    const handleHashAndSearch = () => {
+  // Strict Admin Redirection Rule:
+  // On non-admin domains, strip #admin / #quantri hash and redirect to home
+  useEffect(() => {
+    if (!isAdminDomain) {
       const hash = window.location.hash.toLowerCase();
-      const search = window.location.search.toLowerCase();
-      const pathname = window.location.pathname.toLowerCase();
       if (
-        hash === '#privacy' ||
-        hash === '#privacy-policy' ||
-        hash === '#chinh-sach-bao-mat text-amber-500' ||
-        hash === '#chinh-sach-bao-mat' ||
-        pathname.endsWith('/privacy') ||
-        pathname.endsWith('/privacy-policy') ||
-        pathname.endsWith('/chinh-sach-bao-mat') ||
-        search.includes('page=privacy') ||
-        search.includes('privacy=1')
-      ) {
-        setCurrentTab('privacy');
-        return;
-      }
-
-      if (
-        hash === '#terms' ||
-        hash === '#terms-of-service' ||
-        hash === '#dieu-khoan' ||
-        hash === '#dieu-khoan-su-dung' ||
-        hash === '#dieu-khoan-dich-vu' ||
-        pathname.endsWith('/terms') ||
-        pathname.endsWith('/dieu-khoan') ||
-        pathname.endsWith('/dieu-khoan-su-dung') ||
-        search.includes('page=terms') ||
-        search.includes('terms=1')
-      ) {
-        setCurrentTab('terms');
-        return;
-      }
-
-      if (
-        hash === '#quantri' ||
         hash === '#admin' ||
+        hash === '#quantri' ||
         hash === '#admin-secret' ||
-        hash === '#quantri24h' ||
-        pathname.endsWith('/admin') ||
-        pathname.endsWith('/quantri') ||
-        pathname.endsWith('/admin-login') ||
-        search.includes('admin=1') ||
-        search.includes('admin=true') ||
-        search.includes('mode=admin') ||
-        search.includes('quantri=1') ||
-        search.includes('page=admin')
+        hash === '#quantri24h'
       ) {
-        if (user?.role === 'admin') {
-          setCurrentTab('admin');
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        navigate('/', { replace: true });
+      }
+    }
+  }, [location, isAdminDomain, navigate]);
+
+  // Handle tab switching helper for Header/Footer compatibility
+  const handleTabSwitch = (tab: string) => {
+    switch (tab) {
+      case 'home':
+        navigate('/');
+        break;
+      case 'properties':
+      case 'bat-dong-san':
+        navigate('/bat-dong-san');
+        break;
+      case 'sale':
+      case 'mua-ban':
+        navigate('/mua-ban');
+        break;
+      case 'rent':
+      case 'cho-thue':
+        navigate('/cho-thue');
+        break;
+      case 'projects':
+      case 'du-an':
+        navigate('/du-an');
+        break;
+      case 'services':
+      case 'resident_services':
+      case 'dich-vu-cu-dan':
+        navigate('/dich-vu-cu-dan');
+        break;
+      case 'recruitment':
+      case 'tuyen-dung':
+        navigate('/tuyen-dung');
+        break;
+      case 'news':
+      case 'tin-tuc':
+        navigate('/tin-tuc');
+        break;
+      case 'post':
+      case 'post-property':
+      case 'dang-tin':
+        navigate('/dang-tin');
+        break;
+      case 'profile':
+      case 've-chung-toi':
+        navigate('/ve-chung-toi');
+        break;
+      case 'mortgage':
+      case 'tinh-lai-vay':
+        navigate('/tinh-lai-vay');
+        break;
+      case 'community':
+      case 'cong-dong':
+        navigate('/cong-dong');
+        break;
+      case 'user_dashboard':
+      case 'tai-khoan':
+        navigate('/tai-khoan');
+        break;
+      case 'privacy':
+        navigate('/chinh-sach-bao-mat');
+        break;
+      case 'terms':
+        navigate('/dieu-khoan-su-dung');
+        break;
+      case 'admin':
+      case 'admin_login':
+        if (isAdminDomain) {
+          navigate('/');
         } else {
-          setCurrentTab('admin_login');
+          navigate('/', { replace: true });
         }
-      }
-    };
+        break;
+      default:
+        navigate('/');
+    }
+  };
 
-    handleHashAndSearch();
-
-    const handlePopupMessage = (event: MessageEvent) => {
-      if (event.data && event.data.type === 'GOOGLE_OAUTH_SUCCESS' && event.data.user) {
-        setUser(event.data.user);
-        localStorage.setItem('hb_user', JSON.stringify(event.data.user));
-      }
-    };
-
-    window.addEventListener('popstate', handleHashAndSearch);
-    window.addEventListener('hashchange', handleHashAndSearch);
-    window.addEventListener('message', handlePopupMessage);
-
-    return () => {
-      window.removeEventListener('popstate', handleHashAndSearch);
-      window.removeEventListener('hashchange', handleHashAndSearch);
-      window.removeEventListener('message', handlePopupMessage);
-    };
-  }, [user]);
+  // Determine active tab name from current pathname
+  const getCurrentTabName = (): string => {
+    const path = location.pathname;
+    if (path === '/') return 'home';
+    if (path.startsWith('/du-an')) return 'projects';
+    if (path.startsWith('/mua-ban') || path.startsWith('/ban')) return 'sale';
+    if (path.startsWith('/cho-thue') || path.startsWith('/thue')) return 'rent';
+    if (path.startsWith('/bat-dong-san')) return 'properties';
+    if (path.startsWith('/dich-vu-cu-dan')) return 'services';
+    if (path.startsWith('/tuyen-dung')) return 'recruitment';
+    if (path.startsWith('/tin-tuc')) return 'news';
+    if (path.startsWith('/dang-tin')) return 'post-property';
+    if (path.startsWith('/ve-chung-toi') || path.startsWith('/gioi-thieu')) return 'profile';
+    if (path.startsWith('/cong-dong')) return 'community';
+    if (path.startsWith('/tinh-lai-vay')) return 'mortgage';
+    if (path.startsWith('/tai-khoan')) return 'user_dashboard';
+    if (path.startsWith('/chinh-sach-bao-mat') || path.startsWith('/privacy')) return 'privacy';
+    if (path.startsWith('/dieu-khoan-su-dung') || path.startsWith('/terms')) return 'terms';
+    return 'home';
+  };
 
   // Save favorites to local storage
   const handleToggleSave = (property: Property) => {
@@ -552,9 +472,9 @@ export const App: React.FC = () => {
     }
   };
 
-  // Property Delete handler
+  // Delete Property handler
   const handleDeleteProperty = async (id: string) => {
-    if (!confirm('Bạn có chắc chắn muốn xóa tin đăng này?')) return;
+    if (!confirm('Bạn có chắc chắn muốn xóa tin đăng BĐS này?')) return;
     setProperties(prev => {
       const updated = prev.filter(p => p.id !== id);
       safeLocalStorageSet('hb_properties', updated);
@@ -567,295 +487,43 @@ export const App: React.FC = () => {
     }
   };
 
-
-  // Save Pricing Config
   const handleSavePricingConfig = async (newConfig: UpTinPricingConfig) => {
     setPricingConfig(newConfig);
     try {
-      await fetch('/api/admin/pricing', {
+      await fetch('/api/system/pricing-config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newConfig)
       });
     } catch (e) {
-      console.warn('Saved local pricing config');
+      console.warn('Updated pricing config locally');
     }
   };
 
-  const [propertiesHeightCategory, setPropertiesHeightCategory] = useState<HeightCategory>('all');
-  const [propertiesCategory, setPropertiesCategory] = useState<PropertyCategory | 'all'>('all');
-
-  const handleNavigateWithFilter = (type: 'sale' | 'rent', heightCategory: HeightCategory = 'all', category: PropertyCategory | 'all' = 'all') => {
-    setPropertiesHeightCategory(heightCategory);
-    setPropertiesCategory(category);
-    setCurrentTab(type);
-  };
-  const handleSeed1000Properties = async () => {
-    try {
-      const res = await fetch('/api/seed-1000', { method: 'POST' });
-      const data = await res.json();
-      if (data && data.properties) {
-        setProperties(data.properties);
-      }
-    } catch (e) {
-      // Fallback local 1000 items generator for extreme speed
-      const new1000: Property[] = Array.from({ length: 1000 }, (_, i) => {
-        const idNum = i + 1;
-        const projectTypes: ProjectCategory[] = ['ocean-park-2', 'ocean-park-3', 'ha-long-xanh'];
-        const pType = projectTypes[i % 3];
-        const isRent = i % 2 === 0;
-        const price = isRent ? Math.floor(Math.random() * 25) + 8 : (Math.floor(Math.random() * 200) + 30) / 10;
-        const priceDisplay = isRent ? `${price} Triệu/tháng` : `${price.toFixed(1)} Tỷ`;
-
-        return {
-          id: `seed-1000-prop-${idNum}`,
-          title: `${isRent ? 'Cho Thuê' : 'Bán'} Căn Căn Hộ/Biệt Thự Shophouse Vị Trí VIP #${idNum}`,
-          type: isRent ? 'rent' : 'sale',
-          project: pType,
-          category: i % 4 === 0 ? 'biet-thu-don-lap' : i % 3 === 0 ? 'shophouse' : '2pn',
-          price: price * (isRent ? 1000000 : 1000000000),
-          priceDisplay: priceDisplay,
-          area: Math.floor(Math.random() * 180) + 45,
-          bedrooms: (i % 3) + 1,
-          bathrooms: (i % 2) + 1,
-          direction: 'Đông Nam',
-          furniture: 'full',
-          legal: 'so-do',
-          address: `Phân khu Chà Là / San Hô #${idNum}, Vinhomes`,
-          description: `Bất động sản vị trí đắc địa tại ${pType.toUpperCase()}, phân khu VIP.`,
-          images: [
-            `https://images.unsplash.com/photo-${1545324418 + (i % 10)}?auto=format&fit=crop&w=800&q=80`
-          ],
-          sellerName: `Chủ Nhà/Sale #${(i % 50) + 1}`,
-          sellerPhone: `0868.499.${100 + (i % 800)}`,
-          sellerRole: i % 2 === 0 ? 'owner' : 'sale',
-          status: 'approved',
-          approved: true,
-          vipLevel: i < 20 ? 'diamond' : i < 60 ? 'gold' : 'normal',
-          createdAt: 'Hôm nay'
-        };
-      });
-      setProperties(new1000);
-    }
-  };
-
-  // Add news generated by AI Writer
-  const handlePublishNewsFromAi = (newsData: Partial<NewsArticle>) => {
-    const newArticle: NewsArticle = {
-      id: `news-${Date.now()}`,
-      title: newsData.title || 'Tin tức mới',
-      summary: newsData.summary || '',
-      content: newsData.content || '',
-      category: newsData.category || 'vinhomes',
-      author: newsData.author || 'Gemini AI',
-      publishedAt: 'Hôm nay',
-      source: 'ai',
-      image: newsData.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
-      views: 1,
-      status: 'published'
-    };
-
-    setNews(prev => [newArticle, ...prev]);
+  const handlePublishNewsFromAi = (article: NewsArticle) => {
+    handleAddNews(article);
     setAiWriterModalOpen(false);
-    setCurrentTab('news');
   };
 
-  // Render Page Body
-  const renderCurrentPage = () => {
-    switch (currentTab) {
-      case 'home':
-        return (
-          <HomePage
-            language={language}
-            projects={projects}
-            properties={properties.filter(p => p.approved || p.status === 'approved')}
-            news={news.filter(n => n.status !== 'draft')}
-            setCurrentTab={setCurrentTab}
-            onSelectProperty={setSelectedPropertyModal}
-            savedIds={savedIds}
-            onToggleSave={handleToggleSave}
-            compareIds={compareIds}
-            onToggleCompare={handleToggleCompare}
-            onSelectProject={(projId) => {
-              setSelectedProjectId(projId);
-            }}
-          />
-        );
+  const handleSeed1000Properties = () => {
+    refreshServerData();
+  };
 
-      case 'properties':
-      case 'sale':
-        return (
-          <PropertiesPage
-            properties={properties.filter(p => p.approved || p.status === 'approved')}
-            language={language}
-            initialType="sale"
-            initialProject={selectedProjectId}
-            initialHeightCategory={propertiesHeightCategory}
-            initialCategory={propertiesCategory}
-            onSelectProperty={setSelectedPropertyModal}
-            savedIds={savedIds}
-            onToggleSave={handleToggleSave}
-            compareIds={compareIds}
-            onToggleCompare={handleToggleCompare}
-          />
-        );
+  const handleNavigateWithFilter = (type: 'sale' | 'rent', heightCategory?: HeightCategory, category?: PropertyCategory | 'all') => {
+    const query = new URLSearchParams();
+    if (heightCategory && heightCategory !== 'all') query.set('height', heightCategory);
+    if (category && category !== 'all') query.set('category', category);
+    const queryString = query.toString() ? `?${query.toString()}` : '';
+    navigate(`/${type === 'sale' ? 'mua-ban' : 'cho-thue'}${queryString}`);
+  };
 
-      case 'rent':
-        return (
-          <PropertiesPage
-            properties={properties.filter(p => p.approved || p.status === 'approved')}
-            language={language}
-            initialType="rent"
-            initialProject={selectedProjectId}
-            initialHeightCategory={propertiesHeightCategory}
-            initialCategory={propertiesCategory}
-            onSelectProperty={setSelectedPropertyModal}
-            savedIds={savedIds}
-            onToggleSave={handleToggleSave}
-            compareIds={compareIds}
-            onToggleCompare={handleToggleCompare}
-          />
-        );
-
-      case 'projects':
-        return (
-          <ProjectsPage
-            projects={projects}
-            language={language}
-            selectedProjectId={selectedProjectId}
-            onFilterPropertiesByProject={(projId) => {
-              setSelectedProjectId(projId);
-              setCurrentTab('sale');
-            }}
-            properties={properties.filter(p => p.approved || p.status === 'approved')}
-            onSelectProperty={setSelectedPropertyModal}
-            savedIds={savedIds}
-            onToggleSave={handleToggleSave}
-            compareIds={compareIds}
-            onToggleCompare={handleToggleCompare}
-          />
-        );
-
-      case 'services':
-      case 'resident_services':
-      case 'resident-services':
-        return (
-          <ResidentServicesPage
-            currentUser={user}
-            onOpenAuth={() => setAuthModalOpen(true)}
-          />
-        );
-
-      case 'recruitment':
-      case 'recruitment_center':
-      case 'jobs':
-      case 'tuyen_dung':
-        return (
-          <RecruitmentCenterPage
-            currentUser={user}
-            onOpenAuth={() => setAuthModalOpen(true)}
-            initialProject={selectedProjectId}
-          />
-        );
-
-      case 'news':
-        return <NewsPage news={news.filter(n => n.status !== 'draft')} language={language} currentUser={user} />;
-
-      case 'post':
-        return (
-          <PostPropertyPage
-            language={language}
-            user={user}
-            onOpenAuth={() => setAuthModalOpen(true)}
-            existingProperties={properties}
-            onPropertySubmitted={() => {
-              refreshServerData();
-              if (user) {
-                setCurrentTab('user_dashboard');
-              }
-            }}
-          />
-        );
-
-      case 'profile':
-        return <HieuBuiProfilePage language={language} />;
-
-      case 'user_dashboard':
-        return user ? (
-          <UserDashboardPage
-            user={user}
-            properties={properties}
-            language={language}
-            pricingConfig={pricingConfig}
-            onPostNewProperty={() => setCurrentTab('post')}
-            onSelectProperty={setSelectedPropertyModal}
-            onDeleteProperty={handleDeleteProperty}
-            onRefreshData={refreshServerData}
-            onLogout={() => {
-              setUser(null);
-              setAuthModalOpen(true);
-            }}
-          />
-        ) : (
-          <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4 shadow-xl">
-            <div className="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-950 font-black text-xl mx-auto shadow-md">
-              HB
-            </div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white">BẠN CHƯA ĐĂNG NHẬP</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Vui lòng đăng nhập tài khoản Chủ nhà, Sale hoặc Khách hàng để quản lý tin đăng & sử dụng tính năng Up Tin.
-            </p>
-            <button
-              onClick={() => setAuthModalOpen(true)}
-              className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md"
-            >
-              🔑 ĐĂNG NHẬP / ĐĂNG KÝ NGAY
-            </button>
-          </div>
-        );
-
-      case 'privacy':
-      case 'privacy-policy':
-      case 'chinh-sach-bao-mat':
-        return (
-          <PrivacyPolicyPage
-            language={language}
-            onBackToHome={() => {
-              setCurrentTab('home');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          />
-        );
-
-      case 'terms':
-      case 'terms-of-service':
-      case 'dieu-khoan':
-      case 'dieu-khoan-su-dung':
-      case 'dieu-khoan-dich-vu':
-        return (
-          <TermsOfServicePage
-            language={language}
-            onBackToHome={() => {
-              setCurrentTab('home');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          />
-        );
-
-      case 'admin_login':
-        return (
-          <AdminLoginPage
-            language={language}
-            onLoginSuccess={(u) => {
-              setUser(u);
-              setCurrentTab(u.role === 'admin' ? 'admin' : 'user_dashboard');
-            }}
-            onBackToHome={() => setCurrentTab('home')}
-          />
-        );
-
-      case 'admin':
-        return (
+  // ==================== SPECIAL ADMIN DOMAIN MODE ====================
+  // If user visits on quantri.chocudan24h.com, render Admin Dashboard / Admin Login
+  if (isAdminDomain) {
+    return (
+      <div className="min-h-screen w-full bg-slate-950 text-slate-100 font-sans">
+        <ScrollToTop />
+        {user?.role === 'admin' ? (
           <AdminDashboardPage
             properties={properties}
             projects={projects}
@@ -876,32 +544,27 @@ export const App: React.FC = () => {
             onRefreshData={refreshServerData}
             onSeed1000Properties={handleSeed1000Properties}
           />
-        );
-
-      default:
-        return (
-          <HomePage
+        ) : (
+          <AdminLoginPage
             language={language}
-            projects={projects}
-            properties={properties.filter(p => p.approved || p.status === 'approved')}
-            news={news}
-            setCurrentTab={setCurrentTab}
-            onSelectProperty={setSelectedPropertyModal}
-            savedIds={savedIds}
-            onToggleSave={handleToggleSave}
-            compareIds={compareIds}
-            onToggleCompare={handleToggleCompare}
-            onSelectProject={(projId) => {
-              setSelectedProjectId(projId);
+            onLoginSuccess={(u) => {
+              setUser(u);
+              safeLocalStorageSet('hb_user', u);
+            }}
+            onBackToHome={() => {
+              window.location.href = 'https://chocudan24h.com';
             }}
           />
-        );
-    }
-  };
+        )}
+      </div>
+    );
+  }
 
+  // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300 pb-16 md:pb-0">
-      
+      <ScrollToTop />
+
       {/* Top Banner (If active) */}
       <AdBannerWidget ads={INITIAL_ADS} position="header_top" />
 
@@ -911,18 +574,18 @@ export const App: React.FC = () => {
         setLanguage={setLanguage}
         darkMode={theme === 'dark'}
         setDarkMode={(val) => setTheme(val ? 'dark' : 'light')}
-        currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
+        currentTab={getCurrentTabName()}
+        setCurrentTab={handleTabSwitch}
         currentUser={user}
         onOpenAuth={() => setAuthModalOpen(true)}
         onLogout={() => {
           setUser(null);
           localStorage.removeItem('hb_user');
-          setCurrentTab('home');
+          navigate('/');
         }}
         savedCount={savedIds.length}
         compareCount={compareIds.length}
-        onOpenSaved={() => setCurrentTab('sale')}
+        onOpenSaved={() => navigate('/mua-ban')}
         onOpenCompare={() => setCompareModalOpen(true)}
         onOpenAiWriter={() => setAiWriterModalOpen(true)}
         onOpenMarketingModal={() => setMarketingModalOpen(true)}
@@ -930,24 +593,438 @@ export const App: React.FC = () => {
         onNavigateWithFilter={handleNavigateWithFilter}
       />
 
-      {/* Main Page Render */}
+      {/* Main Page Render via React Router */}
       <main className="flex-1 w-full overflow-x-hidden">
-        {renderCurrentPage()}
+        <Routes>
+          {/* 1. Trang Chủ */}
+          <Route
+            path="/"
+            element={
+              <HomePage
+                language={language}
+                projects={projects}
+                properties={properties.filter(p => p.approved || p.status === 'approved')}
+                news={news}
+                setCurrentTab={handleTabSwitch}
+                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+                onSelectProject={(projId) => {
+                  setSelectedProjectId(projId);
+                  navigate(`/du-an/${getProjectSlug(projId)}`);
+                }}
+              />
+            }
+          />
+
+          {/* 2. Dự Án & Quỹ Căn */}
+          <Route
+            path="/du-an"
+            element={
+              <ProjectsPage
+                projects={projects}
+                properties={properties}
+                language={language}
+                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+          <Route
+            path="/du-an/:projectSlug"
+            element={
+              <ProjectDetailPage
+                projects={projects}
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+
+          {/* 3. Bất Động Sản (Mua Bán / Cho Thuê) */}
+          <Route
+            path="/bat-dong-san"
+            element={
+              <PropertiesPage
+                properties={properties}
+                projects={projects}
+                language={language}
+                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+                onOpenAuth={() => setAuthModalOpen(true)}
+                currentUser={user}
+              />
+            }
+          />
+          <Route
+            path="/mua-ban"
+            element={
+              <PropertiesPage
+                initialType="sale"
+                properties={properties}
+                projects={projects}
+                language={language}
+                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+                onOpenAuth={() => setAuthModalOpen(true)}
+                currentUser={user}
+              />
+            }
+          />
+          <Route
+            path="/ban"
+            element={
+              <PropertiesPage
+                initialType="sale"
+                properties={properties}
+                projects={projects}
+                language={language}
+                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+                onOpenAuth={() => setAuthModalOpen(true)}
+                currentUser={user}
+              />
+            }
+          />
+          <Route
+            path="/cho-thue"
+            element={
+              <PropertiesPage
+                initialType="rent"
+                properties={properties}
+                projects={projects}
+                language={language}
+                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+                onOpenAuth={() => setAuthModalOpen(true)}
+                currentUser={user}
+              />
+            }
+          />
+          <Route
+            path="/thue"
+            element={
+              <PropertiesPage
+                initialType="rent"
+                properties={properties}
+                projects={projects}
+                language={language}
+                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+                onOpenAuth={() => setAuthModalOpen(true)}
+                currentUser={user}
+              />
+            }
+          />
+
+          {/* 4. Chi Tiết Căn Hộ / BĐS */}
+          <Route
+            path="/bat-dong-san/:id"
+            element={
+              <PropertyDetailPage
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+          <Route
+            path="/:projectSlug/:id"
+            element={
+              <PropertyDetailPage
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+
+          {/* 5. Chuyên Mục Tin Tức & Cẩm Nang */}
+          <Route
+            path="/tin-tuc"
+            element={
+              <NewsPage
+                news={news}
+                language={language}
+                onSelectArticle={(art) => navigate(`/tin-tuc/${art.category || 'chung'}/${art.id}`)}
+              />
+            }
+          />
+          <Route
+            path="/tin-tuc/:categorySlug"
+            element={
+              <NewsPage
+                news={news}
+                language={language}
+                onSelectArticle={(art) => navigate(`/tin-tuc/${art.category || 'chung'}/${art.id}`)}
+              />
+            }
+          />
+          <Route
+            path="/tin-tuc/:categorySlug/:postSlug"
+            element={
+              <NewsArticleDetailPage
+                news={news}
+                language={language}
+              />
+            }
+          />
+          <Route
+            path="/tin-tuc/bai-viet/:postSlug"
+            element={
+              <NewsArticleDetailPage
+                news={news}
+                language={language}
+              />
+            }
+          />
+
+          {/* 6. Dịch Vụ Cư Dân & Chi Tiết Dịch Vụ */}
+          <Route
+            path="/dich-vu-cu-dan"
+            element={
+              <ResidentServicesPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/dich-vu-cu-dan/:serviceSlug"
+            element={
+              <ResidentServiceDetailPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+
+          {/* 7. Group Cư Dân & Cộng Đồng */}
+          <Route
+            path="/cong-dong"
+            element={<CommunityGroupsPage />}
+          />
+          <Route
+            path="/cong-dong/:groupSlug"
+            element={<CommunityGroupsPage />}
+          />
+
+          {/* 8. Việc Làm & Tuyển Dụng Cư Dân */}
+          <Route
+            path="/tuyen-dung"
+            element={
+              <RecruitmentCenterPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+
+          {/* 9. Đăng Tin BĐS */}
+          <Route
+            path="/dang-tin"
+            element={
+              user ? (
+                <PostPropertyPage
+                  language={language}
+                  currentUser={user}
+                  pricingConfig={pricingConfig}
+                  onAddProperty={(prop) => {
+                    setProperties(prev => [prop, ...prev]);
+                    navigate('/tai-khoan');
+                  }}
+                  onCancel={() => navigate('/')}
+                />
+              ) : (
+                <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4 shadow-xl">
+                  <div className="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-950 font-black text-xl mx-auto shadow-md">
+                    HB
+                  </div>
+                  <h2 className="text-xl font-black text-slate-900 dark:text-white">BẠN CHƯA ĐĂNG NHẬP</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Vui lòng đăng nhập tài khoản Chủ nhà, Sale hoặc Khách hàng để đăng tin BĐS và dịch vụ cư dân.
+                  </p>
+                  <button
+                    onClick={() => setAuthModalOpen(true)}
+                    className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
+                  >
+                    🔑 ĐĂNG NHẬP / ĐĂNG KÝ NGAY
+                  </button>
+                </div>
+              )
+            }
+          />
+
+          {/* 10. Tính Lãi Suất Vay */}
+          <Route
+            path="/tinh-lai-vay"
+            element={<MortgageCalculatorPage />}
+          />
+
+          {/* 11. Giới Thiệu / Về Chúng Tôi */}
+          <Route
+            path="/ve-chung-toi"
+            element={
+              <HieuBuiProfilePage
+                language={language}
+                onSelectProject={(projId) => {
+                  setSelectedProjectId(projId);
+                  navigate(`/du-an/${getProjectSlug(projId)}`);
+                }}
+              />
+            }
+          />
+          <Route
+            path="/gioi-thieu"
+            element={
+              <HieuBuiProfilePage
+                language={language}
+                onSelectProject={(projId) => {
+                  setSelectedProjectId(projId);
+                  navigate(`/du-an/${getProjectSlug(projId)}`);
+                }}
+              />
+            }
+          />
+          <Route
+            path="/chuyen-gia"
+            element={
+              <HieuBuiProfilePage
+                language={language}
+                onSelectProject={(projId) => {
+                  setSelectedProjectId(projId);
+                  navigate(`/du-an/${getProjectSlug(projId)}`);
+                }}
+              />
+            }
+          />
+
+          {/* 12. Quản Lý Tài Khoản Cá Nhân */}
+          <Route
+            path="/tai-khoan"
+            element={
+              user ? (
+                <UserDashboardPage
+                  currentUser={user}
+                  properties={properties}
+                  language={language}
+                  pricingConfig={pricingConfig}
+                  onUpdateProperty={handleUpdateProperty}
+                  onDeleteProperty={handleDeleteProperty}
+                  onOpenPostProperty={() => navigate('/dang-tin')}
+                  onOpenAiWriter={() => setAiWriterModalOpen(true)}
+                  onRefreshData={refreshServerData}
+                />
+              ) : (
+                <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4 shadow-xl">
+                  <div className="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-950 font-black text-xl mx-auto shadow-md">
+                    HB
+                  </div>
+                  <h2 className="text-xl font-black text-slate-900 dark:text-white">BẠN CHƯA ĐĂNG NHẬP</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Vui lòng đăng nhập để quản lý tin đăng & số dư tài khoản của bạn.
+                  </p>
+                  <button
+                    onClick={() => setAuthModalOpen(true)}
+                    className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
+                  >
+                    🔑 ĐĂNG NHẬP / ĐĂNG KÝ NGAY
+                  </button>
+                </div>
+              )
+            }
+          />
+
+          {/* 13. Chính Sách Bảo Mật & Điều Khoản */}
+          <Route
+            path="/chinh-sach-bao-mat"
+            element={<PrivacyPolicyPage language={language} onBackToHome={() => navigate('/')} />}
+          />
+          <Route
+            path="/privacy"
+            element={<PrivacyPolicyPage language={language} onBackToHome={() => navigate('/')} />}
+          />
+          <Route
+            path="/privacy-policy"
+            element={<PrivacyPolicyPage language={language} onBackToHome={() => navigate('/')} />}
+          />
+
+          <Route
+            path="/dieu-khoan-su-dung"
+            element={<TermsOfServicePage language={language} onBackToHome={() => navigate('/')} />}
+          />
+          <Route
+            path="/terms"
+            element={<TermsOfServicePage language={language} onBackToHome={() => navigate('/')} />}
+          />
+          <Route
+            path="/terms-of-service"
+            element={<TermsOfServicePage language={language} onBackToHome={() => navigate('/')} />}
+          />
+
+          {/* Strict Admin Route Shield: Non-admin host -> Redirect to Home */}
+          <Route path="/admin" element={<Navigate to="/" replace />} />
+          <Route path="/quantri" element={<Navigate to="/" replace />} />
+          <Route path="/admin-login" element={<Navigate to="/" replace />} />
+          <Route path="/quantri24h" element={<Navigate to="/" replace />} />
+
+          {/* Catch-all Wildcard Route -> Redirect Home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
 
       {/* Popular Links Section at Bottom of Site (When not on Home page which already includes it) */}
-      {currentTab !== 'home' && currentTab !== 'admin' && currentTab !== 'admin_login' && (
+      {location.pathname !== '/' && (
         <PopularVinhomesLinksSection
-          setCurrentTab={setCurrentTab}
-          onSelectProject={(projId) => setSelectedProjectId(projId)}
+          setCurrentTab={handleTabSwitch}
+          onSelectProject={(projId) => {
+            setSelectedProjectId(projId);
+            navigate(`/du-an/${getProjectSlug(projId)}`);
+          }}
         />
       )}
 
       {/* Footer */}
       <Footer
         language={language}
-        setCurrentTab={setCurrentTab}
-        onOpenSecretAdmin={() => setCurrentTab('admin_login')}
+        setCurrentTab={handleTabSwitch}
+        onOpenSecretAdmin={() => {
+          if (isAdminDomain) {
+            navigate('/');
+          } else {
+            navigate('/');
+          }
+        }}
         onOpenAndroidModal={() => setAndroidModalOpen(true)}
       />
 
@@ -961,8 +1038,7 @@ export const App: React.FC = () => {
           language={language}
           onClose={() => setSelectedPropertyModal(null)}
           onOpenMortgageWithPrice={() => {
-            setCurrentTab('home');
-            window.scrollTo({ top: 1200, behavior: 'smooth' });
+            navigate('/tinh-lai-vay');
           }}
         />
       )}
@@ -976,7 +1052,7 @@ export const App: React.FC = () => {
           onRemove={(id) => setCompareIds(prev => prev.filter(i => i !== id))}
           onSelectProperty={(p) => {
             setCompareModalOpen(false);
-            setSelectedPropertyModal(p);
+            navigate(`/${getProjectSlug(p.project)}/${p.id}`);
           }}
         />
       )}
@@ -991,10 +1067,10 @@ export const App: React.FC = () => {
               localStorage.setItem('hb_user', JSON.stringify(u));
             } catch (e) {}
             setAuthModalOpen(false);
-            if (u.role === 'admin') {
-              setCurrentTab('admin');
+            if (u.role === 'admin' && isAdminDomain) {
+              navigate('/');
             } else {
-              setCurrentTab('user_dashboard');
+              navigate('/tai-khoan');
             }
           }}
         />
@@ -1006,7 +1082,7 @@ export const App: React.FC = () => {
         projects={projects}
         news={news}
         onOpenConsultation={() => setAuthModalOpen(true)}
-        onOpenUpTin={() => setCurrentTab('up_tin')}
+        onOpenUpTin={() => navigate('/tai-khoan')}
       />
 
       {/* Gemini AI Writer Studio Modal */}
@@ -1033,12 +1109,9 @@ export const App: React.FC = () => {
       {/* Mobile Bottom Navigation Bar - Standard Chợ Tốt / Nhà Tốt App Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1.5 py-1 flex items-center justify-around shadow-2xl">
         <button
-          onClick={() => {
-            setCurrentTab('home');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
+          onClick={() => navigate('/')}
           className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
-            currentTab === 'home'
+            location.pathname === '/'
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
@@ -1048,12 +1121,9 @@ export const App: React.FC = () => {
         </button>
 
         <button
-          onClick={() => {
-            setCurrentTab('properties');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
+          onClick={() => navigate('/bat-dong-san')}
           className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
-            currentTab === 'properties' || currentTab === 'sale' || currentTab === 'rent'
+            location.pathname.startsWith('/bat-dong-san') || location.pathname.startsWith('/mua-ban') || location.pathname.startsWith('/cho-thue')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
@@ -1068,9 +1138,8 @@ export const App: React.FC = () => {
             if (!user) {
               setAuthModalOpen(true);
             } else {
-              setCurrentTab('post');
+              navigate('/dang-tin');
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           className="flex flex-col items-center -mt-4 group shrink-0"
         >
@@ -1081,12 +1150,9 @@ export const App: React.FC = () => {
         </button>
 
         <button
-          onClick={() => {
-            setCurrentTab('resident_services');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
+          onClick={() => navigate('/dich-vu-cu-dan')}
           className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
-            currentTab === 'resident_services' || currentTab === 'services'
+            location.pathname.startsWith('/dich-vu-cu-dan')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
@@ -1099,15 +1165,12 @@ export const App: React.FC = () => {
           onClick={() => {
             if (!user) {
               setAuthModalOpen(true);
-            } else if (user.role === 'admin') {
-              setCurrentTab('admin');
             } else {
-              setCurrentTab('user_dashboard');
+              navigate('/tai-khoan');
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
-            currentTab === 'user_dashboard' || currentTab === 'admin'
+            location.pathname.startsWith('/tai-khoan')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
@@ -1117,7 +1180,7 @@ export const App: React.FC = () => {
         </button>
       </div>
 
-      {/* Global PC Floating Banners - Sticky Right Side Only as Requested */}
+      {/* Global PC Floating Banners */}
       <AdBannerWidget ads={INITIAL_ADS} position="float_right_pc" />
       <AdBannerWidget ads={INITIAL_ADS} position="popup_modal" />
 

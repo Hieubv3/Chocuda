@@ -142,6 +142,12 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
                 </button>
               </li>
               <li>
+                <button onClick={() => setCurrentTab('recruitment')} className="hover:text-amber-400 text-teal-400 font-bold flex items-center gap-1.5 transition cursor-pointer">
+                  💼 Làm Việc Tại Chợ Cư Dân (Tuyển Dụng)
+                  <span className="px-1.5 py-0.2 bg-teal-500/20 text-teal-300 text-[10px] rounded-sm font-black">HOT</span>
+                </button>
+              </li>
+              <li>
                 <button onClick={() => setCurrentTab('post-property')} className="hover:text-amber-400 transition cursor-pointer">
                   ✍️ Đăng tin bài bán / Cho thuê nhà đất
                 </button>
