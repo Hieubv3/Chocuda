@@ -472,16 +472,16 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   onClick={() => setCurrentTab('user_dashboard')}
                   className="px-2 sm:px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-200 rounded-xl text-xs font-bold flex items-center space-x-1 transition border border-emerald-200 dark:border-emerald-800 shrink-0"
-                  title={currentUser.name}
+                  title={currentUser?.name || 'Tài khoản cá nhân'}
                 >
                   <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span className="hidden xs:inline sm:inline">Cá Nhân</span>
+                  <span className="hidden xs:inline sm:inline">{currentUser?.name || 'Cá Nhân'}</span>
                 </button>
                 <div className="absolute right-0 top-full pt-1.5 w-52 hidden group-hover:block z-50 text-xs font-bold">
                   <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 py-1">
                     <div className="px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
-                      <p className="text-slate-900 dark:text-white font-extrabold truncate">{currentUser.name}</p>
-                      <p className="text-[10px] text-slate-400 font-normal truncate">{currentUser.email}</p>
+                      <p className="text-slate-900 dark:text-white font-extrabold truncate">{currentUser?.name || 'Cư Dân'}</p>
+                      <p className="text-[10px] text-slate-400 font-normal truncate">{currentUser?.email || ''}</p>
                     </div>
                     <button
                       onClick={() => setCurrentTab('user_dashboard')}
@@ -591,18 +591,18 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="p-3 bg-emerald-50 dark:bg-emerald-950/80 rounded-2xl border border-emerald-200 dark:border-emerald-800 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">
-                  {currentUser.name.charAt(0)}
+                  {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : currentUser?.email ? currentUser.email.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div>
-                  <p className="text-xs font-extrabold text-slate-900 dark:text-white">{currentUser.name}</p>
+                  <p className="text-xs font-extrabold text-slate-900 dark:text-white">{currentUser?.name || currentUser?.email || 'Cư Dân'}</p>
                   <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                    {currentUser.role === 'admin' ? '👑 Admin' : currentUser.role === 'sale' ? '💼 Môi Giới' : '🏠 Chủ Nhà'}
+                    {currentUser?.role === 'admin' ? '👑 Admin' : currentUser?.role === 'sale' ? '💼 Môi Giới' : '🏠 Chủ Nhà'}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => {
-                  setCurrentTab(currentUser.role === 'admin' ? 'admin' : 'user_dashboard');
+                  setCurrentTab(currentUser?.role === 'admin' ? 'admin' : 'user_dashboard');
                   setMobileMenuOpen(false);
                 }}
                 className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-bold"

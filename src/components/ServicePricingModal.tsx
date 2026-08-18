@@ -328,7 +328,7 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
 
             {currentUser && (
               <div className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold text-emerald-800 dark:text-emerald-300">
-                Tài khoản: <span className="font-black text-emerald-600 dark:text-emerald-400">{currentUser.name} ({currentUser.phone})</span>
+                Tài khoản: <span className="font-black text-emerald-600 dark:text-emerald-400">{currentUser.name || currentUser.email || 'Cư Dân'} {currentUser.phone ? `(${currentUser.phone})` : ''}</span>
               </div>
             )}
           </div>

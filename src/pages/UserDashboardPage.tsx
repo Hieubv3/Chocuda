@@ -9,29 +9,55 @@ import { InteractionProofChatModal } from '../components/InteractionProofChatMod
 import { playMessageRingtone } from '../lib/audioRingtone';
 
 interface UserDashboardPageProps {
-
-  user: User;
+  user?: User;
+  currentUser?: User;
   properties: Property[];
   language: Language;
   pricingConfig: UpTinPricingConfig;
-  onPostNewProperty: () => void;
-  onSelectProperty: (property: Property) => void;
-  onDeleteProperty: (id: string) => void;
-  onRefreshData: () => void;
+  onPostNewProperty?: () => void;
+  onOpenPostProperty?: () => void;
+  onSelectProperty?: (property: Property) => void;
+  onUpdateProperty?: (property: Property) => void;
+  onDeleteProperty?: (id: string) => void;
+  onOpenAiWriter?: () => void;
+  onRefreshData?: () => void;
   onLogout?: () => void;
 }
 
 export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
-  user,
+  user: propUser,
+  currentUser,
   properties,
   language,
   pricingConfig,
   onPostNewProperty,
+  onOpenPostProperty,
   onSelectProperty,
+  onUpdateProperty,
   onDeleteProperty,
-  onRefreshData,
+  onOpenAiWriter,
+  onRefreshData = () => {},
   onLogout
 }) => {
+  const rawUser = currentUser || propUser || {};
+  const user: User = {
+    id: rawUser.id || 'user-default',
+    name: rawUser.name || (rawUser.email ? rawUser.email.split('@')[0] : 'Cư Dân Vinhomes'),
+    email: rawUser.email || 'cudan@chocudan24h.com',
+    role: rawUser.role || 'visitor',
+    provider: rawUser.provider || 'local',
+    phone: rawUser.phone || '',
+    avatar: rawUser.avatar || '',
+    upTinCredits: typeof rawUser.upTinCredits === 'number' ? rawUser.upTinCredits : 20,
+    tier: rawUser.tier || 'thuong',
+    balance: rawUser.balance || 0,
+    totalTopup: rawUser.totalTopup || 0
+  };
+
+  const handlePostProperty = onOpenPostProperty || onPostNewProperty || (() => {});
+  const handleSelectProp = onSelectProperty || (() => {});
+  const handleDeleteProp = onDeleteProperty || (() => {});
+
   const [activeTab, setActiveTab] = useState<'my_properties' | 'my_store' | 'transactions' | 'affiliate' | 'profile'>('my_properties');
   const [selectedPropertyForUpTin, setSelectedPropertyForUpTin] = useState<Property | null>(null);
   const [localTransactions, setLocalTransactions] = useState<UpTinTransaction[]>([]);
@@ -45,7 +71,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const [withdrawalSuccess, setWithdrawalSuccess] = useState(false);
   const [affiliateWallet, setAffiliateWallet] = useState(450000); // VNĐ balance
 
-  const userRefCode = `REF-${user.name ? user.name.replace(/\s+/g, '').toUpperCase().slice(0, 8) : 'CUDAN24H'}`;
+  const userRefCode = `REF-${user?.name ? user.name.replace(/\s+/g, '').toUpperCase().slice(0, 8) : 'CUDAN24H'}`;
   const userRefLink = `https://chocudan24h.com/?ref=${userRefCode}`;
 
   const handleCopyRefLink = () => {
@@ -55,12 +81,14 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   };
 
   // Filter properties belonging to logged in user or uploaded in demo
-  const userProperties = properties.filter(p => 
-    (user.id && p.userId === user.id) || 
-    (user.phone && (p.sellerPhone === user.phone || p.userPhone === user.phone)) ||
-    (user.name && p.sellerName && user.name.length > 2 && p.sellerName.toLowerCase().includes(user.name.toLowerCase())) ||
-    user.role === 'admin'
-  );
+  const userProperties = (properties || []).filter(p => {
+    if (!p) return false;
+    const matchId = Boolean(user.id && p.userId === user.id);
+    const matchPhone = Boolean(user.phone && (p.sellerPhone === user.phone || p.userPhone === user.phone));
+    const matchName = Boolean(user.name && p.sellerName && user.name.length > 2 && p.sellerName.toLowerCase().includes(user.name.toLowerCase()));
+    const isAdmin = user.role === 'admin';
+    return matchId || matchPhone || matchName || isAdmin;
+  });
 
   const approvedCount = userProperties.filter(p => p.status === 'approved' || p.approved).length;
   const pendingCount = userProperties.length - approvedCount;
@@ -224,7 +252,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           {/* Action Buttons */}
           <div className="flex items-center gap-2.5 w-full md:w-auto shrink-0 pt-2 md:pt-0">
             <button
-              onClick={onPostNewProperty}
+              onClick={handlePostProperty}
               className="flex-1 md:flex-none px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-lg flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-slate-950" />
@@ -551,7 +579,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                 Đăng tin ngay để tiếp cận hàng ngàn khách hàng tiềm năng mua & thuê Vinhomes Ocean Park 2, 3 và Hạ Long Xanh.
               </p>
               <button
-                onClick={onPostNewProperty}
+                onClick={handlePostProperty}
                 className="px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md hover:bg-emerald-700 transition"
               >
                 + Đăng Tin Ngay
@@ -582,7 +610,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                       src={prop.images[0]}
                       alt={prop.title}
                       className="w-24 h-20 rounded-xl object-cover shrink-0 cursor-pointer"
-                      onClick={() => onSelectProperty(prop)}
+                      onClick={() => handleSelectProp(prop)}
                     />
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
@@ -633,7 +661,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                       </div>
 
                       <h3
-                        onClick={() => onSelectProperty(prop)}
+                        onClick={() => handleSelectProp(prop)}
                         className="text-sm font-bold text-slate-900 dark:text-slate-100 hover:text-emerald-600 cursor-pointer line-clamp-1"
                       >
                         {prop.title}
@@ -709,7 +737,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                     </button>
 
                     <button
-                      onClick={() => onSelectProperty(prop)}
+                      onClick={() => handleSelectProp(prop)}
                       className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition"
                       title="Xem chi tiết"
                     >
@@ -717,7 +745,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                     </button>
 
                     <button
-                      onClick={() => onDeleteProperty(prop.id)}
+                      onClick={() => handleDeleteProp(prop.id)}
                       className="p-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition"
                       title="Xóa bài"
                     >

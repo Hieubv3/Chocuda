@@ -113,12 +113,12 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
       
       const newLog: AdminCreditLog = {
         id: `credit-log-${Date.now()}`,
-        userId: user.id,
-        userName: user.name,
-        userPhone: user.phone,
+        userId: user?.id || 'guest',
+        userName: user?.name || user?.email || 'Thành viên',
+        userPhone: user?.phone,
         type: 'tokens',
-        amountAdded: balance - (user.balance || 0),
-        previousValue: user.balance || 0,
+        amountAdded: balance - (user?.balance || 0),
+        previousValue: user?.balance || 0,
         newValue: balance,
         reason: reason || 'Bơm Token Cư Dân / Điểm Admin',
         adminName: 'Admin Tổng',
@@ -128,7 +128,7 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
       logsList.unshift(newLog);
       localStorage.setItem('chocudan24h_admin_credit_logs', JSON.stringify(logsList.slice(0, 50)));
 
-      alert(`🎉 ĐÃ CẬP NHẬT & BƠM THÀNH CÔNG CHO TÀI KHOẢN "${user.name}"!\n• Token Cư Dân (Xu Tiêu Dùng - Không Thể Rút): ${balance.toLocaleString('vi-VN')} Token\n• Điểm Hoa Hồng Affiliate (Được Rút Về Ngân Hàng): ${affiliatePoints.toLocaleString('vi-VN')} pts\n• Lượt Up-Tin: ${upTinCredits} lượt\n• Hạng Thành Viên: ${tier.toUpperCase()}`);
+      alert(`🎉 ĐÃ CẬP NHẬT & BƠM THÀNH CÔNG CHO TÀI KHOẢN "${user?.name || 'Cư Dân'}"!\n• Token Cư Dân (Xu Tiêu Dùng - Không Thể Rút): ${balance.toLocaleString('vi-VN')} Token\n• Điểm Hoa Hồng Affiliate (Được Rút Về Ngân Hàng): ${affiliatePoints.toLocaleString('vi-VN')} pts\n• Lượt Up-Tin: ${upTinCredits} lượt\n• Hạng Thành Viên: ${tier.toUpperCase()}`);
       
       onSuccessUpdate(updatedUser);
       onClose();
@@ -170,18 +170,18 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
         {/* User Quick Info Summary */}
         <div className="p-4 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700/80 flex items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-3">
-            {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full object-cover border border-amber-500/40 shrink-0" />
+            {user?.avatar ? (
+              <img src={user.avatar} alt={user?.name || 'User'} className="w-10 h-10 rounded-full object-cover border border-amber-500/40 shrink-0" />
             ) : (
               <div className="w-10 h-10 bg-amber-500 text-slate-950 font-black rounded-full flex items-center justify-center text-sm">
-                {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                {user?.name ? user.name.charAt(0).toUpperCase() : user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
               </div>
             )}
             <div>
               <div className="font-black text-slate-900 dark:text-white text-sm flex items-center gap-2">
-                <span>{user.name}</span>
+                <span>{user?.name || user?.email || 'Thành viên'}</span>
                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-extrabold rounded text-[10px] uppercase">
-                  {user.role}
+                  {user?.role || 'user'}
                 </span>
               </div>
               <p className="text-slate-500 dark:text-slate-400 font-medium text-[11px]">

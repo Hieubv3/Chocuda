@@ -41,8 +41,10 @@ export class ErrorBoundary extends Component<Props, State> {
       localStorage.removeItem('hb_projects');
       localStorage.removeItem('hb_news');
       localStorage.removeItem('hb_saved_properties');
-      alert('Đã xóa bộ nhớ đệm cache tạm thời! Trang web sẽ tự động tải lại.');
-      window.location.href = window.location.origin + window.location.search;
+      // If user object was corrupted, clear it to unblock user
+      localStorage.removeItem('hb_user');
+      alert('Đã xóa bộ nhớ đệm cache tạm thời & khôi phục dữ liệu! Trang web sẽ tự động tải lại.');
+      window.location.href = '/';
     } catch (e) {
       window.location.reload();
     }

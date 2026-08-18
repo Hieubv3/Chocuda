@@ -141,7 +141,7 @@ export const InteractionProofChatModal: React.FC<InteractionProofChatModalProps>
                   🎉 ĐÃ GỬI BẰNG CHỨNG THÀNH CÔNG TỚI ADMIN CHAT!
                 </h3>
                 <p className="text-slate-300 text-xs">
-                  Hệ thống đã tự động xác nhận và **CỘNG NGAY +{earnedPoints} LƯỢT UP TIN** vào tài khoản của cư dân <strong className="text-white">{user.name}</strong>!
+                  Hệ thống đã tự động xác nhận và **CỘNG NGAY +{earnedPoints} LƯỢT UP TIN** vào tài khoản của cư dân <strong className="text-white">{user?.name || 'Cư Dân'}</strong>!
                 </p>
               </div>
 

@@ -167,23 +167,25 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
           }
         } else {
           // Initialize default store for this user
-          const defaultName = `Gian Hàng Cư Dân ${user.name}`;
+          const defaultName = `Gian Hàng Cư Dân ${user?.name || 'Vinhomes'}`;
           setStoreName(defaultName);
           setAddress(`Căn hộ phân khu Vinhomes Ocean Park`);
-          setDescription(`Cửa hàng chuyên dịch vụ & sản phẩm chất lượng cao của cư dân ${user.name}.`);
+          setDescription(`Cửa hàng chuyên dịch vụ & sản phẩm chất lượng cao của cư dân ${user?.name || 'Vinhomes'}.`);
         }
       })
       .catch(() => {})
       .finally(() => setIsLoading(false));
 
     // Fetch store orders
-    fetch(`/api/stores/${user.id}/orders`)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setOrders(data);
-      })
-      .catch(() => {});
-  }, [user.id, user.name]);
+    if (user?.id) {
+      fetch(`/api/stores/${user.id}/orders`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) setOrders(data);
+        })
+        .catch(() => {});
+    }
+  }, [user?.id, user?.name]);
 
   // Save Store Configuration
   const handleSaveStore = async (e: React.FormEvent) => {
@@ -191,9 +193,9 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
     setIsSaving(true);
 
     const storePayload: UserStorefront = {
-      id: store?.id || `store-${user.id}`,
-      userId: user.id,
-      ownerName: user.name,
+      id: store?.id || `store-${user?.id || 'guest'}`,
+      userId: user?.id || 'guest',
+      ownerName: user?.name || storeName || 'Cư Dân',
       ownerPhone,
       ownerZalo,
       storeName,

@@ -60,7 +60,17 @@ export const App: React.FC = () => {
 
   // User Auth - Restore session from local storage if existing
   const [user, setUser] = useState<User | null>(() => {
-    return safeLocalStorageGet<User | null>('hb_user', null);
+    const raw = safeLocalStorageGet<User | null>('hb_user', null);
+    if (!raw) return null;
+    return {
+      ...raw,
+      name: raw.name || (raw.email ? raw.email.split('@')[0] : 'Cư Dân Vinhomes'),
+      email: raw.email || 'cudan@chocudan24h.com',
+      role: raw.role || 'visitor',
+      upTinCredits: typeof raw.upTinCredits === 'number' ? raw.upTinCredits : 20,
+      tier: raw.tier || 'thuong',
+      balance: raw.balance || 0
+    };
   });
 
   // Up-Tin & VietQR Pricing Config State
@@ -1079,6 +1089,7 @@ export const App: React.FC = () => {
             element={
               user ? (
                 <UserDashboardPage
+                  user={user}
                   currentUser={user}
                   properties={properties}
                   language={language}
@@ -1086,8 +1097,15 @@ export const App: React.FC = () => {
                   onUpdateProperty={handleUpdateProperty}
                   onDeleteProperty={handleDeleteProperty}
                   onOpenPostProperty={() => navigate('/dang-tin')}
+                  onPostNewProperty={() => navigate('/dang-tin')}
+                  onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
                   onOpenAiWriter={() => setAiWriterModalOpen(true)}
                   onRefreshData={refreshServerData}
+                  onLogout={() => {
+                    setUser(null);
+                    safeLocalStorageSet('hb_user', null);
+                    navigate('/');
+                  }}
                 />
               ) : (
                 <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4 shadow-xl">
