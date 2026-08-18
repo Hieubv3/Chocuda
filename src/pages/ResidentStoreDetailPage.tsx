@@ -7,8 +7,10 @@ import {
 } from 'lucide-react';
 import { UserStorefront, StoreProduct, Language } from '../types';
 import { SEOHead } from '../components/SEOHead';
+import { SeoJsonLd } from '../components/SeoJsonLd';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { INITIAL_USER_STOREFRONTS } from '../data/residentStoresData';
+import { getProductDetailUrl } from '../lib/slugs';
 
 interface ResidentStoreDetailPageProps {
   language: Language;
@@ -112,6 +114,11 @@ export const ResidentStoreDetailPage: React.FC<ResidentStoreDetailPageProps> = (
         }
         url={shareUrl}
         keywords={`${store.storeName}, chợ cư dân vinhomes, mua sắm ${store.project}, nông sản thực phẩm`}
+      />
+
+      <SeoJsonLd
+        type="store"
+        store={store}
       />
 
       {/* Breadcrumbs */}
@@ -309,8 +316,7 @@ export const ResidentStoreDetailPage: React.FC<ResidentStoreDetailPageProps> = (
               <div
                 key={prod.id}
                 onClick={() => {
-                  setSelectedProduct(prod);
-                  window.scrollTo({ top: 300, behavior: 'smooth' });
+                  navigate(getProductDetailUrl(prod, store.slug || store.id));
                 }}
                 className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-amber-500 transition shadow-md hover:shadow-xl flex flex-col justify-between cursor-pointer"
               >

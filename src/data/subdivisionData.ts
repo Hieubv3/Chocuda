@@ -669,5 +669,79 @@ VinBus là phương tiện giao thông xanh tiên phong tại Việt Nam, mang l
       'Tra cứu lộ trình thời gian thực qua App VinBus'
     ],
     image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80'
+  },
+
+  'vinuni': {
+    id: 'vinuni',
+    name: 'Trường Đại học VinUni',
+    projectId: 'ocean-park-1',
+    scale: '23 ha (Khuôn viên Đại học Tinh hoa tiêu chuẩn Quốc tế QS 5 sao)',
+    category: 'Đại học Tinh hoa & Nghiên cứu Đỉnh cao',
+    status: 'Đang vận hành đào tạo cử nhân & thạc sĩ quốc tế',
+    summary: 'Trường Đại học tinh hoa tư thục phi lợi nhuận đầu tiên tại Việt Nam hợp tác chiến lược cùng 2 Đại học Ivy League danh giá: Cornell University và University of Pennsylvania.',
+    contentSEO: `
+Trường Đại học VinUni (VinUniversity) tọa lạc tại cửa ngõ đại đô thị Vinhomes Ocean Park 1 (Gia Lâm, Hà Nội), được Tập đoàn Vingroup đầu tư xây dựng với tổng mức đầu tư 6.500 tỷ VNĐ.
+
+### Kiến Trúc Gothique Độc Bản & Cơ Sở Vật Chất 5 Sao:
+1. **Tòa Tháp Biểu Tượng Cánh Chim Cao 108m:** Biểu trưng cho khát vọng vươn tầm tri thức quốc tế của thế hệ trẻ Việt Nam.
+2. **Khu Thư Viện Kỹ Thuật Số Rộng 4.000m²:** Tích hợp không gian học tập 24/7, phòng VR thực tế ảo và liên kết kho dữ liệu học thuật toàn cầu.
+3. **Khu Thể Thao Phức Hợp Chuẩn Olympic:** Hồ bơi tiêu chuẩn Olympic 50m trong nhà, sân bóng đá cỏ nhân tạo đạt chuẩn FIFA, khu tập Gym đa năng.
+4. **Ký Túc Xá Sinh Viên Chuẩn Căn Hộ Nghỉ Dưỡng:** Đầy đủ tiện nghi phòng ăn, khu giặt là, phòng sinh hoạt cộng đồng và an ninh 24/7.
+    `,
+    highlights: [
+      'Đại học đạt chuẩn kiểm định QS 5 sao trẻ nhất thế giới',
+      'Hợp tác đào tạo cùng Đại học Cornell & Penn (Ivy League)',
+      'Học bổng tài năng lên tới 100% học phí và sinh hoạt phí',
+      'Đội ngũ giáo sư, tiến sĩ danh tiếng hàng đầu thế giới trực tiếp giảng dạy'
+    ],
+    image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80'
+  },
+
+  'crystal-lagoon': {
+    id: 'crystal-lagoon',
+    name: 'Biển hồ nước mặn Crystal Lagoon 6.1ha',
+    projectId: 'ocean-park-1',
+    scale: '6.1 ha (Biển hồ nước mặn nhân tạo giữa lòng Hà Nội)',
+    category: 'Cảnh quan biển hồ & Vui chơi giải trí',
+    status: 'Đã hoàn thiện & Đang mở cửa phục vụ cư dân',
+    summary: 'Kỳ quan biển hồ nước mặn nhân tạo trong xanh rộng 6.1ha với bờ cát trắng mịn tự nhiên dài hàng km, mang đại dương về ngay trước hiên nhà cư dân Thủ đô.',
+    contentSEO: `
+Biển hồ nước mặn Crystal Lagoon 6.1 ha tại Vinhomes Ocean Park 1 do công ty công nghệ biển hồ hàng đầu thế giới Crystal Lagoons (Mỹ) trực tiếp triển khai công nghệ xử lý nước tiên tiến.
+
+### Trải Nghiệm Biển Hồ Độc Đáo:
+- **Làn Nước Xanh Ngọc Bích Chuẩn Độ Mặn Tự Nhiên:** Lọc liên tục và xử lý bằng công nghệ thân thiện với môi trường.
+- **Bờ Cát Trắng Tự Nhiên Rộng Tới 35m:** Cát mịn vận chuyển từ biển Nha Trang tạo không gian dạo bộ, tắm nắng và tiệc nướng BBQ ngoài trời.
+- **Hoạt Động Thể Thao Dưới Nước:** Chèo thuyền Kayak, lướt ván đứng SUP, tắm biển giữa lòng Hà Nội.
+    `,
+    highlights: [
+      'Công nghệ xử lý nước biển độc quyền của Crystal Lagoons (Mỹ)',
+      'Bờ cát trắng tự nhiên Nha Trang rộng 35m rợp bóng dừa',
+      'Đặc quyền tắm biển & chèo thuyền Kayak cho cư dân'
+    ],
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80'
+  },
+
+  'ho-ngoc-trai': {
+    id: 'ho-ngoc-trai',
+    name: 'Hồ nước ngọt Ngọc Trai 24.5ha',
+    projectId: 'ocean-park-1',
+    scale: '24.5 ha (Lớn gấp đôi Hồ Gươm)',
+    category: 'Hồ cảnh quan & Điều hòa sinh thái',
+    status: 'Đã hoàn thiện & Cư dân tập thể dục mỗi ngày',
+    summary: 'Lá phổi xanh điều hòa không khí khổng lồ rộng 24.5ha với bờ cát trắng mịn và hàng chục tấn cá tự nhiên, bao quanh bởi đường chạy bộ rợp bóng cây xanh.',
+    contentSEO: `
+Hồ nước ngọt trung tâm Ngọc Trai quy mô 24.5 ha tại Vinhomes Ocean Park 1 là điểm nhấn sinh thái đắt giá nâng tầm chất lượng sống của toàn bộ cư dân.
+
+### Điểm Nhấn Sinh Thái & Cảnh Quan:
+- **Quy Mô Rộng Gấp 2 Lần Hồ Gươm:** Điều hòa vi khí hậu giúp toàn đô thị luôn mát mẻ hơn nội thành từ 2 - 3 độ C.
+- **Đường Chạy Bộ & Đạp Xe Ven Hồ Dài 8.5km:** Trang bị hệ thống máy tập gym ngoài trời, chòi nghỉ ngơi và khu vực câu cá thư giãn.
+- **Hệ Sinh Thái Thủy Sinh Phong Phú:** Thả hàng chục tấn cá chép, cá mè, cá trắm tự nhiên sinh trưởng.
+    `,
+    highlights: [
+      'Lá phổi xanh quy mô 24.5ha điều hòa vi khí hậu mát mẻ',
+      'Đường chạy bộ ven hồ 8.5km ngắm hoàng hôn tuyệt đẹp',
+      'Hơn 50 điểm nướng BBQ ngoài trời ven hồ cát trắng'
+    ],
+    image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80'
   }
 };

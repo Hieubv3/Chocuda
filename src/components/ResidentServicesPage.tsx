@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   Wrench, ShieldCheck, Phone, MessageSquare, MapPin, Search, PlusCircle, 
   Sparkles, Star, CheckCircle2, CheckCircle, ChevronRight, ChevronDown, AlertTriangle, ArrowUpRight, 
@@ -25,6 +26,7 @@ import { TechnicalServiceEscrowModal } from './TechnicalServiceEscrowModal';
 import { AiMenuScannerModal, AiMenuScanResult, ScannedMenuItem } from './AiMenuScannerModal';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
 import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
+import { getServiceDetailUrl, getServiceCategoryUrl, getStoreDetailUrl } from '../lib/slugs';
 
 interface ResidentServicesPageProps {
   currentUser: UserType | null;
@@ -37,12 +39,32 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   onOpenAuth,
   initialProject = 'all'
 }) => {
-  const [selectedProject, setSelectedProject] = useState<ProjectCategory | 'all'>(initialProject);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('all');
+  const navigate = useNavigate();
+  const { categorySlug, subCategorySlug, projectSlug } = useParams<{ categorySlug?: string; subCategorySlug?: string; projectSlug?: string }>();
+
+  const [selectedProject, setSelectedProject] = useState<ProjectCategory | 'all'>(
+    (projectSlug as ProjectCategory) || initialProject
+  );
+  const [selectedCategory, setSelectedCategory] = useState<string>(categorySlug || 'all');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>(subCategorySlug || 'all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState<boolean>(false);
   const [projectSearchTerm, setProjectSearchTerm] = useState<string>('');
+
+  useEffect(() => {
+    if (categorySlug) {
+      setSelectedCategory(categorySlug);
+    }
+    if (subCategorySlug) {
+      setSelectedSubCategory(subCategorySlug);
+    }
+  }, [categorySlug, subCategorySlug]);
+
+  useEffect(() => {
+    if (projectSlug) {
+      setSelectedProject(projectSlug as ProjectCategory);
+    }
+  }, [projectSlug]);
 
   const filteredProjectsList = useMemo(() => {
     if (!projectSearchTerm.trim()) return VIN_MAJOR_PROJECTS;
@@ -873,7 +895,11 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
           {/* Categories Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button
-              onClick={() => { setSelectedCategory('all'); setSelectedSubCategory('all'); }}
+              onClick={() => {
+                setSelectedCategory('all');
+                setSelectedSubCategory('all');
+                navigate('/dich-vu-cu-dan');
+              }}
               className={`p-2.5 rounded-2xl border text-left transition flex items-center gap-2.5 cursor-pointer ${
                 selectedCategory === 'all'
                   ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
@@ -896,7 +922,11 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               return (
                 <button
                   key={cat.id}
-                  onClick={() => { setSelectedCategory(cat.id); setSelectedSubCategory('all'); }}
+                  onClick={() => {
+                    setSelectedCategory(cat.id);
+                    setSelectedSubCategory('all');
+                    navigate(getServiceCategoryUrl(cat.id));
+                  }}
                   className={`p-2.5 rounded-2xl border text-left transition flex items-center justify-between gap-1.5 cursor-pointer ${
                     isActive
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
@@ -1131,7 +1161,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       key={st.id} 
                       className="bg-slate-950 text-white rounded-2xl border border-slate-800 p-3.5 space-y-3 hover:border-amber-500 transition group flex flex-col justify-between"
                     >
-                      <div className="flex items-center gap-3 cursor-pointer" onClick={() => setSelectedStoreModal(st)}>
+                      <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(getStoreDetailUrl(st))}>
                         <img 
                           src={st.logoUrl} 
                           alt={st.storeName}
@@ -1157,7 +1187,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
 
                       <div className="flex items-center gap-2 pt-1 border-t border-slate-800">
                         <button
-                          onClick={() => setSelectedStoreModal(st)}
+                          onClick={() => navigate(getStoreDetailUrl(st))}
                           className="flex-1 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1 cursor-pointer shadow-xs"
                         >
                           <ShoppingBag className="w-3.5 h-3.5" />
@@ -1216,7 +1246,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                         key={service.id}
                         className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition duration-200 flex flex-col sm:flex-row items-stretch group"
                       >
-                        <div className="relative w-full sm:w-48 md:w-56 h-36 sm:h-auto bg-slate-100 dark:bg-slate-800 shrink-0 overflow-hidden cursor-pointer" onClick={() => setSelectedServiceModal(service)}>
+                        <div className="relative w-full sm:w-48 md:w-56 h-36 sm:h-auto bg-slate-100 dark:bg-slate-800 shrink-0 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
                           <img
                             src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
                             alt={service.title}
@@ -1250,7 +1280,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                             </div>
 
                             <h3 
-                              onClick={() => setSelectedServiceModal(service)}
+                              onClick={() => navigate(getServiceDetailUrl(service))}
                               className="font-black text-sm text-slate-900 dark:text-white hover:text-emerald-600 cursor-pointer transition mt-1.5 leading-snug"
                             >
                               {service.title}
@@ -1319,7 +1349,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                         key={service.id}
                         className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between group"
                       >
-                        <div className="relative h-28 sm:h-36 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => setSelectedServiceModal(service)}>
+                        <div className="relative h-28 sm:h-36 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
                           <img
                             src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
                             alt={service.title}
@@ -1356,7 +1386,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                             </span>
                             
                             <h3 
-                              onClick={() => setSelectedServiceModal(service)}
+                              onClick={() => navigate(getServiceDetailUrl(service))}
                               className="font-black text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 hover:text-emerald-600 cursor-pointer transition leading-snug mt-0.5"
                             >
                               {service.title}
@@ -1426,7 +1456,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                         className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition duration-200 flex flex-col justify-between group"
                       >
                         {/* Thumbnail Header */}
-                        <div className="relative h-48 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => setSelectedServiceModal(service)}>
+                        <div className="relative h-48 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
                           <img
                             src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
                             alt={service.title}
@@ -1480,7 +1510,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                         <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                           <div>
                             <h3 
-                              onClick={() => setSelectedServiceModal(service)}
+                              onClick={() => navigate(getServiceDetailUrl(service))}
                               className="font-black text-sm text-slate-900 dark:text-white line-clamp-2 hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer transition"
                             >
                               {service.title}

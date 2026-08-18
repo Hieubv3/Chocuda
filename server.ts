@@ -2945,40 +2945,135 @@ Trả về JSON object với cấu trúc:
 });
 
 // ------------------- DYNAMIC SITEMAP.XML & ROBOTS.TXT FOR GOOGLE SEARCH & AI CRAWLERS -------------------
+function serverSlugify(text: string): string {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[đĐ]/g, 'd')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 app.get("/sitemap.xml", (req, res) => {
   const host = req.get('host') || 'chocudan24h.com';
   const protocol = req.protocol || 'https';
   const baseUrl = `${protocol}://${host}`;
+  const today = new Date().toISOString().split('T')[0];
 
   const staticUrls = [
     { url: `${baseUrl}/`, changefreq: 'daily', priority: '1.0' },
+    { url: `${baseUrl}/mua-ban`, changefreq: 'daily', priority: '0.9' },
     { url: `${baseUrl}/ban`, changefreq: 'daily', priority: '0.9' },
     { url: `${baseUrl}/cho-thue`, changefreq: 'daily', priority: '0.9' },
+    { url: `${baseUrl}/thue`, changefreq: 'daily', priority: '0.9' },
     { url: `${baseUrl}/du-an`, changefreq: 'weekly', priority: '0.9' },
+    { url: `${baseUrl}/dich-vu-cu-dan`, changefreq: 'daily', priority: '0.9' },
+    { url: `${baseUrl}/cho-cu-dan`, changefreq: 'daily', priority: '0.9' },
+    { url: `${baseUrl}/gian-hang`, changefreq: 'daily', priority: '0.9' },
+    { url: `${baseUrl}/tuyen-dung`, changefreq: 'daily', priority: '0.9' },
+    { url: `${baseUrl}/cong-dong`, changefreq: 'weekly', priority: '0.8' },
     { url: `${baseUrl}/tin-tuc`, changefreq: 'daily', priority: '0.8' },
+    { url: `${baseUrl}/sitemap`, changefreq: 'weekly', priority: '0.7' },
     { url: `${baseUrl}/bang-gia-up-tin`, changefreq: 'monthly', priority: '0.6' },
-    { url: `${baseUrl}/chuyen-vien/hieu-bui`, changefreq: 'monthly', priority: '0.7' }
+    { url: `${baseUrl}/chuyen-vien/hieu-bui`, changefreq: 'monthly', priority: '0.7' },
+    { url: `${baseUrl}/chinh-sach-bao-mat`, changefreq: 'monthly', priority: '0.5' },
+    { url: `${baseUrl}/dieu-khoan-su-dung`, changefreq: 'monthly', priority: '0.5' }
   ];
 
+  // 1. Projects
+  const projectUrls = projectsStore.map(p => ({
+    url: `${baseUrl}/du-an/${serverSlugify(p.id)}`,
+    changefreq: 'weekly',
+    priority: '0.9'
+  }));
+
+  // 2. Real Estate Properties
   const propertyUrls = propertiesStore.map(p => ({
-    url: `${baseUrl}/bat-dong-san/${p.id}`,
+    url: `${baseUrl}/${serverSlugify(p.project)}/${p.id}`,
     changefreq: 'weekly',
     priority: '0.8'
   }));
 
-  const newsUrls = newsStore.map(n => ({
-    url: `${baseUrl}/tin-tuc/${n.id}`,
-    changefreq: 'monthly',
-    priority: '0.7'
+  // 3. Resident Stores (Gian Hàng)
+  const storeUrls = storesStore.map(st => ({
+    url: `${baseUrl}/gian-hang/${encodeURIComponent(st.slug || st.id)}`,
+    changefreq: 'daily',
+    priority: '0.85'
   }));
 
-  const allUrls = [...staticUrls, ...propertyUrls, ...newsUrls];
+  // 4. Resident Products & Goods (Hàng Hóa & Món Ngon Cư Dân)
+  const productUrls: { url: string; changefreq: string; priority: string }[] = [];
+  storesStore.forEach(st => {
+    (st.products || []).forEach(prod => {
+      const pSlug = serverSlugify(prod.name) || prod.id;
+      const storeSlug = st.slug || st.id;
+      productUrls.push({
+        url: `${baseUrl}/gian-hang/${encodeURIComponent(storeSlug)}/san-pham/${encodeURIComponent(prod.id)}/${encodeURIComponent(pSlug)}`,
+        changefreq: 'daily',
+        priority: '0.85'
+      });
+      productUrls.push({
+        url: `${baseUrl}/san-pham/${encodeURIComponent(prod.id)}/${encodeURIComponent(pSlug)}`,
+        changefreq: 'daily',
+        priority: '0.8'
+      });
+    });
+  });
+
+  // 5. Resident Services & Craftsmen (Dịch Vụ & Thợ Kỹ Thuật)
+  const serviceUrls = residentServicesStore.map(srv => ({
+    url: `${baseUrl}/dich-vu-cu-dan/${serverSlugify(srv.title)}-${srv.id}`,
+    changefreq: 'daily',
+    priority: '0.8'
+  }));
+
+  // 6. Recruitment Jobs (Việc Làm Tuyển Dụng)
+  const jobUrls = recruitmentJobsStore.map(job => ({
+    url: `${baseUrl}/tuyen-dung/viec-lam/${job.id}/${serverSlugify(job.title)}`,
+    changefreq: 'daily',
+    priority: '0.8'
+  }));
+
+  // 7. Candidate CVs (Hồ Sơ Ứng Viên)
+  const candidateUrls = candidateProfilesStore.map(cand => ({
+    url: `${baseUrl}/tuyen-dung/ung-vien/${cand.id}/${serverSlugify(cand.fullName)}`,
+    changefreq: 'daily',
+    priority: '0.75'
+  }));
+
+  // 8. News Articles (Tin Tức Thị Trường)
+  const newsUrls = newsStore.map(n => ({
+    url: `${baseUrl}/tin-tuc/${serverSlugify(n.category || 'chung')}/${n.id}`,
+    changefreq: 'weekly',
+    priority: '0.75'
+  }));
+
+  const allUrls = [
+    ...staticUrls,
+    ...projectUrls,
+    ...propertyUrls,
+    ...storeUrls,
+    ...productUrls,
+    ...serviceUrls,
+    ...jobUrls,
+    ...candidateUrls,
+    ...newsUrls
+  ];
+
+  // Deduplicate URLs
+  const uniqueMap = new Map<string, { url: string; changefreq: string; priority: string }>();
+  allUrls.forEach(item => uniqueMap.set(item.url, item));
+  const uniqueUrls = Array.from(uniqueMap.values());
 
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allUrls.map(item => `  <url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${uniqueUrls.map(item => `  <url>
     <loc>${item.url}</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <lastmod>${today}</lastmod>
     <changefreq>${item.changefreq}</changefreq>
     <priority>${item.priority}</priority>
   </url>`).join('\n')}
@@ -3005,6 +3100,18 @@ User-agent: Google-Extended
 Allow: /
 
 User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bingbot
 Allow: /
 
 Sitemap: ${baseUrl}/sitemap.xml`;

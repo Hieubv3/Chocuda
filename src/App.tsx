@@ -12,6 +12,8 @@ import { PropertiesPage } from './pages/PropertiesPage';
 import { PropertyDetailPage } from './pages/PropertyDetailPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { ProjectDetailPage } from './pages/ProjectDetailPage';
+import { SubdivisionDetailPage } from './pages/SubdivisionDetailPage';
+import { AmenityDetailPage } from './pages/AmenityDetailPage';
 import { NewsPage } from './pages/NewsPage';
 import { NewsArticleDetailPage } from './pages/NewsArticleDetailPage';
 import { PostPropertyPage } from './pages/PostPropertyPage';
@@ -24,11 +26,14 @@ import { TermsOfServicePage } from './pages/TermsOfServicePage';
 import { ResidentServicesPage } from './components/ResidentServicesPage';
 import { ResidentServiceDetailPage } from './pages/ResidentServiceDetailPage';
 import { ResidentStoreDetailPage } from './pages/ResidentStoreDetailPage';
+import { ResidentProductDetailPage } from './pages/ResidentProductDetailPage';
+import { SitemapDirectoryPage } from './pages/SitemapDirectoryPage';
 import { AuthCallbackPage } from './pages/AuthCallbackPage';
 import { CommunityGroupsPage } from './pages/CommunityGroupsPage';
 import { MortgageCalculatorPage } from './pages/MortgageCalculatorPage';
 import { RecruitmentCenterPage } from './components/RecruitmentCenterPage';
-import { PropertyDetailModal } from './components/PropertyDetailModal';
+import { RecruitmentJobDetailPage } from './pages/RecruitmentJobDetailPage';
+import { CandidateCvDetailPage } from './pages/CandidateCvDetailPage';
 import { CompareModal } from './components/CompareModal';
 import { AuthModal } from './components/AuthModal';
 import { AiWriterModal } from './components/AiWriterModal';
@@ -104,7 +109,6 @@ export const App: React.FC = () => {
   const [contacts, setContacts] = useState<LeadContact[]>([]);
 
   // Modals
-  const [selectedPropertyModal, setSelectedPropertyModal] = useState<Property | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [aiWriterModalOpen, setAiWriterModalOpen] = useState(false);
   const [marketingModalOpen, setMarketingModalOpen] = useState(false);
@@ -691,6 +695,10 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                onFilterPropertiesByProject={(projId) => {
+                  setSelectedProjectId(projId);
+                  navigate(`/du-an/${getProjectSlug(projId)}`);
+                }}
               />
             }
           />
@@ -711,7 +719,49 @@ export const App: React.FC = () => {
           <Route
             path="/du-an/:projectSlug/phan-khu/:subdivisionSlug"
             element={
-              <ProjectDetailPage
+              <SubdivisionDetailPage
+                projects={projects}
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+          <Route
+            path="/phan-khu/:subdivisionSlug"
+            element={
+              <SubdivisionDetailPage
+                projects={projects}
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+          <Route
+            path="/du-an/:projectSlug/tien-ich/:amenitySlug"
+            element={
+              <AmenityDetailPage
+                projects={projects}
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+          <Route
+            path="/tien-ich/:amenitySlug"
+            element={
+              <AmenityDetailPage
                 projects={projects}
                 properties={properties}
                 language={language}
@@ -814,9 +864,48 @@ export const App: React.FC = () => {
             }
           />
 
-          {/* 4. Chi Tiết Căn Hộ / BĐS */}
+          {/* 4. Chi Tiết Căn Hộ / BĐS - Hỗ Trợ Đầy Đủ Tất Cả Các Đường Dẫn Riêng Biệt */}
           <Route
             path="/bat-dong-san/:id"
+            element={
+              <PropertyDetailPage
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+          <Route
+            path="/ban/:id"
+            element={
+              <PropertyDetailPage
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+          <Route
+            path="/cho-thue/:id"
+            element={
+              <PropertyDetailPage
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+          <Route
+            path="/thue/:id"
             element={
               <PropertyDetailPage
                 properties={properties}
@@ -893,6 +982,33 @@ export const App: React.FC = () => {
             }
           />
           <Route
+            path="/dich-vu-cu-dan/danh-muc/:categorySlug"
+            element={
+              <ResidentServicesPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/dich-vu-cu-dan/danh-muc/:categorySlug/:subCategorySlug"
+            element={
+              <ResidentServicesPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/dich-vu-cu-dan/du-an/:projectSlug"
+            element={
+              <ResidentServicesPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
             path="/cho-cu-dan"
             element={
               <ResidentServicesPage
@@ -920,10 +1036,41 @@ export const App: React.FC = () => {
             }
           />
           <Route
+            path="/gian-hang/:storeSlug/san-pham/:productId/:productSlug"
+            element={
+              <ResidentProductDetailPage
+                language={language}
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
             path="/gian-hang/:storeSlug/san-pham/:productId"
             element={
-              <ResidentStoreDetailPage
+              <ResidentProductDetailPage
                 language={language}
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/gian-hang/:storeSlug/:productId"
+            element={
+              <ResidentProductDetailPage
+                language={language}
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/san-pham/:productId/:productSlug"
+            element={
+              <ResidentProductDetailPage
+                language={language}
+                currentUser={user}
                 onOpenAuth={() => setAuthModalOpen(true)}
               />
             }
@@ -931,8 +1078,49 @@ export const App: React.FC = () => {
           <Route
             path="/san-pham/:productId"
             element={
-              <ResidentStoreDetailPage
+              <ResidentProductDetailPage
                 language={language}
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/cho-cu-dan/san-pham/:productId/:productSlug"
+            element={
+              <ResidentProductDetailPage
+                language={language}
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/cho-cu-dan/san-pham/:productId"
+            element={
+              <ResidentProductDetailPage
+                language={language}
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/hang-hoa/:productId/:productSlug"
+            element={
+              <ResidentProductDetailPage
+                language={language}
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/hang-hoa/:productId"
+            element={
+              <ResidentProductDetailPage
+                language={language}
+                currentUser={user}
                 onOpenAuth={() => setAuthModalOpen(true)}
               />
             }
@@ -947,6 +1135,16 @@ export const App: React.FC = () => {
             }
           />
 
+          {/* HTML Sitemap Directory Route */}
+          <Route
+            path="/sitemap"
+            element={<SitemapDirectoryPage />}
+          />
+          <Route
+            path="/so-do-website"
+            element={<SitemapDirectoryPage />}
+          />
+
           {/* 7. Group Cư Dân & Cộng Đồng */}
           <Route
             path="/cong-dong"
@@ -957,9 +1155,81 @@ export const App: React.FC = () => {
             element={<CommunityGroupsPage />}
           />
 
-          {/* 8. Việc Làm & Tuyển Dụng Cư Dân */}
+          {/* 8. Việc Làm & Tuyển Dụng Cư Dân - ĐẦY ĐỦ CÁC ĐƯỜNG DẪN RIÊNG */}
           <Route
             path="/tuyen-dung"
+            element={
+              <RecruitmentCenterPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/tuyen-dung/viec-lam/:jobId/:slug"
+            element={
+              <RecruitmentJobDetailPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/tuyen-dung/viec-lam/:jobId"
+            element={
+              <RecruitmentJobDetailPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/tuyen-dung/ung-vien/:candidateId/:slug"
+            element={
+              <CandidateCvDetailPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/tuyen-dung/ung-vien/:candidateId"
+            element={
+              <CandidateCvDetailPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/tuyen-dung/cv/:candidateId"
+            element={
+              <CandidateCvDetailPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/tuyen-dung/nganh-nghe/:industryId"
+            element={
+              <RecruitmentCenterPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/tuyen-dung/du-an/:projectSlug"
+            element={
+              <RecruitmentCenterPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/tuyen-dung/:tabName"
             element={
               <RecruitmentCenterPage
                 currentUser={user}
@@ -1192,18 +1462,6 @@ export const App: React.FC = () => {
 
       {/* Zalo Floating Contacts Widget */}
       <ZaloWidget />
-
-      {/* Property Details Modal */}
-      {selectedPropertyModal && (
-        <PropertyDetailModal
-          property={selectedPropertyModal}
-          language={language}
-          onClose={() => setSelectedPropertyModal(null)}
-          onOpenMortgageWithPrice={() => {
-            navigate('/tinh-lai-vay');
-          }}
-        />
-      )}
 
       {/* Compare Side-By-Side Modal */}
       {compareModalOpen && (

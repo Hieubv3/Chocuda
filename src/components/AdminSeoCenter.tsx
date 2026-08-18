@@ -6,6 +6,14 @@ import {
 } from 'lucide-react';
 import { Property, NewsArticle, Project } from '../types';
 import { ArticleAuditCenter } from './ArticleAuditCenter';
+import { INITIAL_USER_STOREFRONTS } from '../data/residentStoresData';
+import { INITIAL_RESIDENT_SERVICES } from '../data/residentServicesData';
+import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES } from '../data/recruitmentData';
+import { 
+  getPropertyDetailUrl, getNewsDetailUrl, getProjectSlug, 
+  getStoreDetailUrl, getProductDetailUrl, getServiceDetailUrl, 
+  getJobDetailUrl, getCandidateCvUrl 
+} from '../lib/slugs';
 
 interface AdminSeoCenterProps {
   properties: Property[];
@@ -264,37 +272,153 @@ export const AdminSeoCenter: React.FC<AdminSeoCenterProps> = ({
   };
 
   // Dynamic Sitemap Generation
+  const today = new Date().toISOString().split('T')[0];
+
+  const allResidentProducts = INITIAL_USER_STOREFRONTS.flatMap(st => 
+    (st.products || []).map(prod => ({
+      ...prod,
+      storeSlug: st.slug || st.id
+    }))
+  );
+
   const sitemapXmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 1. Trang Tĩnh Chính -->
   <url>
     <loc>https://chocudan24h.com/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://chocudan24h.com/mua-ban</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chocudan24h.com/cho-thue</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chocudan24h.com/du-an</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chocudan24h.com/dich-vu-cu-dan</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chocudan24h.com/cho-cu-dan</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chocudan24h.com/gian-hang</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chocudan24h.com/tuyen-dung</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://chocudan24h.com/cong-dong</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://chocudan24h.com/tin-tuc</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://chocudan24h.com/sitemap</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 2. Dự Án Vinhomes -->
 ${projects.map(pj => `  <url>
-    <loc>https://chocudan24h.com/project/${pj.id}</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <loc>https://chocudan24h.com/du-an/${getProjectSlug(pj.id)}</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>`).join('\n')}
+
+  <!-- 3. Bất Động Sản & Quỹ Căn -->
 ${properties.map(p => `  <url>
-    <loc>https://chocudan24h.com/property/${p.id}</loc>
-    <lastmod>${p.createdAt || new Date().toISOString().split('T')[0]}</lastmod>
+    <loc>https://chocudan24h.com${getPropertyDetailUrl(p)}</loc>
+    <lastmod>${p.createdAt ? p.createdAt.split('T')[0] : today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>`).join('\n')}
+
+  <!-- 4. Gian Hàng Cư Dân (In-Store) -->
+${INITIAL_USER_STOREFRONTS.map(st => `  <url>
+    <loc>https://chocudan24h.com${getStoreDetailUrl(st)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>`).join('\n')}
+
+  <!-- 5. Bài Đăng Hàng Hóa & Sản Phẩm Cư Dân (Dedicated URLs) -->
+${allResidentProducts.map(prod => `  <url>
+    <loc>https://chocudan24h.com${getProductDetailUrl(prod, prod.storeSlug)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://chocudan24h.com${getProductDetailUrl(prod)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>`).join('\n')}
+
+  <!-- 6. Thợ Kỹ Thuật & Dịch Vụ Cư Dân -->
+${INITIAL_RESIDENT_SERVICES.map(srv => `  <url>
+    <loc>https://chocudan24h.com${getServiceDetailUrl(srv)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>`).join('\n')}
+
+  <!-- 7. Tin Tuyển Dụng Việc Làm -->
+${INITIAL_RECRUITMENT_JOBS.map(jb => `  <url>
+    <loc>https://chocudan24h.com${getJobDetailUrl(jb)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>`).join('\n')}
+
+  <!-- 8. Hồ Sơ Ứng Viên CV -->
+${INITIAL_CANDIDATE_PROFILES.map(cand => `  <url>
+    <loc>https://chocudan24h.com${getCandidateCvUrl(cand)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>`).join('\n')}
+
+  <!-- 9. Tin Tức & Cẩm Nang Thị Trường -->
 ${news.map(n => `  <url>
-    <loc>https://chocudan24h.com/news/${n.id}</loc>
-    <lastmod>${n.publishedAt || new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://chocudan24h.com${getNewsDetailUrl(n)}</loc>
+    <lastmod>${n.publishedAt ? n.publishedAt.split('T')[0] : today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
   </url>`).join('\n')}
 </urlset>`;
 
@@ -302,6 +426,27 @@ ${news.map(n => `  <url>
 Allow: /
 Disallow: /admin
 Disallow: /api/
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
 
 Sitemap: https://chocudan24h.com/sitemap.xml`;
 

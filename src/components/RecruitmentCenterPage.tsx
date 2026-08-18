@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   Briefcase, Search, Filter, MapPin, DollarSign, Clock, Users, Building2, 
   ShieldCheck, Phone, MessageSquare, PlusCircle, Sparkles, CheckCircle2, 
@@ -22,6 +23,7 @@ import {
   INITIAL_CANDIDATE_PROFILES 
 } from '../data/recruitmentData';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
+import { getJobDetailUrl, getCandidateCvUrl, getRecruitmentIndustryUrl } from '../lib/slugs';
 
 interface RecruitmentCenterPageProps {
   currentUser: UserType | null;
@@ -36,12 +38,29 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
   initialTab = 'jobs',
   initialProject = 'all'
 }) => {
+  const navigate = useNavigate();
+  const { industryId, projectSlug, tabName } = useParams<{ industryId?: string; projectSlug?: string; tabName?: string }>();
+
   // Navigation & Tabs
-  const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'my_cv' | 'my_recruitment'>(initialTab);
-  const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
-  const [selectedProject, setSelectedProject] = useState<ProjectCategory | 'all'>(initialProject);
+  const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'my_cv' | 'my_recruitment'>(
+    tabName === 'ung-vien' || tabName === 'candidates' ? 'candidates' :
+    tabName === 'my-cv' ? 'my_cv' :
+    tabName === 'tuyen-dung-cua-toi' ? 'my_recruitment' : initialTab
+  );
+  const [selectedIndustry, setSelectedIndustry] = useState<string>(industryId || 'all');
+  const [selectedProject, setSelectedProject] = useState<ProjectCategory | 'all'>(
+    (projectSlug as ProjectCategory) || initialProject
+  );
   const [selectedJobType, setSelectedJobType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  useEffect(() => {
+    if (industryId) setSelectedIndustry(industryId);
+  }, [industryId]);
+
+  useEffect(() => {
+    if (projectSlug) setSelectedProject(projectSlug as ProjectCategory);
+  }, [projectSlug]);
 
   // Data States
   const [jobs, setJobs] = useState<RecruitmentJob[]>(INITIAL_RECRUITMENT_JOBS);
@@ -755,7 +774,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
                       {/* Title & Company */}
                       <div>
                         <h3 
-                          onClick={() => setSelectedJobModal(job)}
+                          onClick={() => navigate(getJobDetailUrl(job))}
                           className="font-black text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition cursor-pointer line-clamp-2 leading-snug"
                         >
                           {job.title}
@@ -792,17 +811,14 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
 
                       <div className="flex items-center gap-1.5">
                         <button
-                          onClick={() => setSelectedJobModal(job)}
-                          className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition"
+                          onClick={() => navigate(getJobDetailUrl(job))}
+                          className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition cursor-pointer"
                         >
                           Chi Tiết
                         </button>
                         <button
-                          onClick={() => {
-                            setSelectedJobModal(job);
-                            setIsApplyModalOpen(true);
-                          }}
-                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black transition shadow-xs flex items-center gap-1"
+                          onClick={() => navigate(getJobDetailUrl(job))}
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black transition shadow-xs flex items-center gap-1 cursor-pointer"
                         >
                           <Send className="w-3 h-3" />
                           <span>Ứng Tuyển</span>
@@ -863,7 +879,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <h3 
-                                onClick={() => setSelectedCandidateModal(cand)}
+                                onClick={() => navigate(getCandidateCvUrl(cand))}
                                 className="font-black text-sm sm:text-base text-slate-900 dark:text-white hover:text-emerald-600 transition cursor-pointer truncate"
                               >
                                 {cand.fullName}
@@ -946,8 +962,8 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
                       {/* Card Action Buttons */}
                       <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
                         <button
-                          onClick={() => setSelectedCandidateModal(cand)}
-                          className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition"
+                          onClick={() => navigate(getCandidateCvUrl(cand))}
+                          className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition cursor-pointer"
                         >
                           Xem CV Đầy Đủ
                         </button>

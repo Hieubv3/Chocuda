@@ -61,9 +61,55 @@ export function getNewsDetailUrl(article: { id: string; category?: string; title
   return `/tin-tuc/${catSlug}/${encodeURIComponent(article.id)}`;
 }
 
+export function getSubdivisionUrl(projectId: string, subdivisionNameOrId: string): string {
+  const projSlug = getProjectSlug(projectId);
+  const subSlug = slugify(subdivisionNameOrId.replace(/^phân khu\s*/i, ''));
+  return `/du-an/${projSlug}/phan-khu/${subSlug}`;
+}
+
+export function getAmenityUrl(projectId: string, amenityNameOrId: string): string {
+  const projSlug = getProjectSlug(projectId);
+  const amenitySlug = slugify(amenityNameOrId);
+  return `/du-an/${projSlug}/tien-ich/${amenitySlug}`;
+}
+
 export function getServiceDetailUrl(service: { id: string; categoryId?: string; title?: string }): string {
   const slug = service.id;
   return `/dich-vu-cu-dan/${encodeURIComponent(slug)}`;
+}
+
+export function getServiceCategoryUrl(categoryId: string, subCategoryId?: string): string {
+  if (subCategoryId && subCategoryId !== 'all') {
+    return `/dich-vu-cu-dan/danh-muc/${encodeURIComponent(categoryId)}/${encodeURIComponent(subCategoryId)}`;
+  }
+  return `/dich-vu-cu-dan/danh-muc/${encodeURIComponent(categoryId)}`;
+}
+
+export function getStoreDetailUrl(store: { slug?: string; id: string }): string {
+  return `/gian-hang/${encodeURIComponent(store.slug || store.id)}`;
+}
+
+export function getProductDetailUrl(
+  product: { id: string; name?: string; storeId?: string },
+  storeSlug?: string
+): string {
+  const pSlug = product.name ? slugify(product.name) : product.id;
+  if (storeSlug) {
+    return `/gian-hang/${encodeURIComponent(storeSlug)}/san-pham/${encodeURIComponent(product.id)}/${encodeURIComponent(pSlug)}`;
+  }
+  return `/san-pham/${encodeURIComponent(product.id)}/${encodeURIComponent(pSlug)}`;
+}
+
+export function getJobDetailUrl(job: { id: string; title?: string }): string {
+  return `/tuyen-dung/viec-lam/${encodeURIComponent(job.id)}`;
+}
+
+export function getCandidateCvUrl(candidate: { id: string; fullName?: string }): string {
+  return `/tuyen-dung/ung-vien/${encodeURIComponent(candidate.id)}`;
+}
+
+export function getRecruitmentIndustryUrl(industryId: string): string {
+  return `/tuyen-dung/nganh/${encodeURIComponent(industryId)}`;
 }
 
 export function getCommunityDetailUrl(groupSlug: string): string {

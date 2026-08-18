@@ -1,25 +1,36 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { NewsArticle, Language, User } from '../types';
-import { Newspaper, Clock, Sparkles, Share2, X, ChevronRight, Check } from 'lucide-react';
+import { Newspaper, Clock, Sparkles, Share2, ChevronRight, Check } from 'lucide-react';
 import { ProjectFaqHub } from '../components/ProjectFaqHub';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { getTranslation } from '../lib/i18n';
+import { getNewsDetailUrl } from '../lib/slugs';
 
 interface NewsPageProps {
   news: NewsArticle[];
   language: Language;
   currentUser?: User | null;
+  onSelectArticle?: (article: NewsArticle) => void;
 }
 
-export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser }) => {
+export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser, onSelectArticle }) => {
   const t = getTranslation(language);
-  const [selectedNews, setSelectedNews] = useState<NewsArticle | null>(null);
+  const navigate = useNavigate();
   const [selectedCat, setSelectedCat] = useState<string>('all');
   const [showShareModalFor, setShowShareModalFor] = useState<NewsArticle | null>(null);
 
   const filteredNews = selectedCat === 'all'
     ? news
     : news.filter(n => n.category === selectedCat);
+
+  const handleCardClick = (article: NewsArticle) => {
+    if (onSelectArticle) {
+      onSelectArticle(article);
+    } else {
+      navigate(getNewsDetailUrl(article));
+    }
+  };
 
   const handleShare = (article: NewsArticle) => {
     setShowShareModalFor(article);
@@ -107,7 +118,7 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser 
         {filteredNews.map((article) => (
           <div
             key={article.id}
-            onClick={() => setSelectedNews(article)}
+            onClick={() => handleCardClick(article)}
             className="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
           >
             <div className="relative aspect-[16/10] overflow-hidden">
@@ -150,7 +161,7 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser 
               </div>
 
               <div className="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center justify-between">
-                <span>Đọc bài phân tích</span>
+                <span className="group-hover:underline">Đọc bài phân tích</span>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -163,7 +174,7 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser 
                   >
                     <Share2 className="w-4 h-4" />
                   </button>
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                 </div>
               </div>
             </div>
@@ -171,70 +182,11 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser 
         ))}
       </div>
 
-      {/* Article Detail Modal */}
-      {selectedNews && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl relative border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white max-h-[90vh] overflow-y-auto my-auto animate-in fade-in zoom-in duration-200 space-y-6">
-            
-            <button
-              onClick={() => setSelectedNews(null)}
-              className="absolute top-4 right-4 w-9 h-9 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center transition"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2 text-xs text-amber-500 font-bold">
-                <span className="uppercase">{selectedNews.category}</span>
-                <span>•</span>
-                <span>{selectedNews.publishedAt}</span>
-                <span>•</span>
-                <span>Bởi: {selectedNews.author}</span>
-              </div>
-
-              <h2 className="text-xl sm:text-2xl font-black leading-snug">{selectedNews.title}</h2>
-            </div>
-
-            <div className="rounded-2xl overflow-hidden aspect-[16/9] max-h-[360px]">
-              <img src={selectedNews.image} alt={selectedNews.title} className="w-full h-full object-cover" />
-            </div>
-
-            <div className="p-4 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-800 text-xs font-semibold text-amber-800 dark:text-amber-300 italic">
-              "{selectedNews.summary}"
-            </div>
-
-            <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line space-y-3">
-              {selectedNews.content}
-            </div>
-
-            <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap justify-between items-center gap-3 text-xs">
-              <button
-                onClick={() => setShowShareModalFor(selectedNews)}
-                className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl flex items-center space-x-2 transition shadow-md"
-              >
-                <Share2 className="w-4 h-4" />
-                <span>Chia Sẻ Lên Group Facebook & Zalo</span>
-              </button>
-
-              <a
-                href="https://zalo.me/0868499929"
-                target="_blank"
-                rel="noreferrer"
-                className="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl transition shadow"
-              >
-                Thảo luận thêm qua Zalo
-              </a>
-            </div>
-
-          </div>
-        </div>
-      )}
-
       {showShareModalFor && (
         <SocialShareModal
           title={showShareModalFor.title}
           summary={showShareModalFor.summary}
-          url={window.location.href}
+          url={`${window.location.origin}${getNewsDetailUrl(showShareModalFor)}`}
           onClose={() => setShowShareModalFor(null)}
         />
       )}

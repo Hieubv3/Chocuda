@@ -8,9 +8,8 @@ import {
 import { Project, Property, Language, ProjectCategory } from '../types';
 import { SEOHead } from '../components/SEOHead';
 import { PropertyCard } from '../components/PropertyCard';
-import { SubdivisionDetailModal } from '../components/SubdivisionDetailModal';
 import { ProjectFaqHub } from '../components/ProjectFaqHub';
-import { getProjectIdFromSlug, getProjectSlug } from '../lib/slugs';
+import { getProjectIdFromSlug, getProjectSlug, getSubdivisionUrl, getAmenityUrl, getPropertyDetailUrl } from '../lib/slugs';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { SUBDIVISION_SEO_DATA, SubdivisionSEOInfo } from '../data/subdivisionData';
 
@@ -33,7 +32,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
   compareIds,
   onToggleCompare
 }) => {
-  const { projectSlug, subdivisionSlug } = useParams<{ projectSlug: string; subdivisionSlug?: string }>();
+  const { projectSlug } = useParams<{ projectSlug: string }>();
   const navigate = useNavigate();
 
   // Resolve project id
@@ -41,16 +40,6 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
   const project = projects.find(p => p.id === targetId || p.id === projectSlug) || projects[0];
 
   const [activeTab, setActiveTab] = useState<'all' | 'sale' | 'rent'>('all');
-  const [selectedSubdivision, setSelectedSubdivision] = useState<SubdivisionSEOInfo | null>(() => {
-    if (subdivisionSlug) {
-      // Find matching subdivision
-      const found = Object.values(SUBDIVISION_SEO_DATA).find(
-        s => s.id === subdivisionSlug || s.name.toLowerCase().includes(subdivisionSlug.toLowerCase())
-      );
-      if (found) return found;
-    }
-    return null;
-  });
   const [showShareModal, setShowShareModal] = useState(false);
 
   if (!project) {
@@ -228,7 +217,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
             {normalizedSubdivisions.map(sub => (
               <div
                 key={sub.id}
-                onClick={() => setSelectedSubdivision(sub)}
+                onClick={() => navigate(getSubdivisionUrl(project.id, sub.id || sub.name))}
                 className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 shadow-md hover:shadow-xl transition cursor-pointer"
               >
                 <div className="aspect-[16/10] overflow-hidden relative bg-slate-950">
@@ -254,6 +243,43 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
                     <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
                   </div>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Amenities Section with Dedicated Links */}
+      {project.amenities && project.amenities.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-amber-500" />
+                <span>Chuỗi Tiện Ích Đẳng Cấp Dự Án</span>
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Nhấp vào từng tiện ích để xem bài viết phân tích quy mô & trải nghiệm chi tiết
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {project.amenities.map((amenity, idx) => (
+              <div
+                key={idx}
+                onClick={() => navigate(getAmenityUrl(project.id, amenity))}
+                className="group p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-amber-500/60 shadow-sm hover:shadow-md transition cursor-pointer flex items-center justify-between"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </div>
+                  <span className="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition">
+                    {amenity}
+                  </span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-amber-500 group-hover:translate-x-1 shrink-0 transition" />
               </div>
             ))}
           </div>
@@ -336,18 +362,6 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
           onOpenPostModal={() => navigate('/dang-tin')}
         />
       </div>
-
-      {/* Subdivision Detail Modal */}
-      {selectedSubdivision && (
-        <SubdivisionDetailModal
-          subdivision={selectedSubdivision}
-          onClose={() => setSelectedSubdivision(null)}
-          onFilterProperties={() => {
-            setSelectedSubdivision(null);
-            navigate(`/bat-dong-san?project=${project.id}`);
-          }}
-        />
-      )}
 
       {/* Share Modal */}
       {showShareModal && (

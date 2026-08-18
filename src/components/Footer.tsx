@@ -371,6 +371,13 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
               Điều khoản sử dụng
             </button>
             <span>•</span>
+            <a
+              href="/sitemap"
+              className="hover:text-amber-400 font-semibold transition flex items-center gap-1 text-slate-400"
+            >
+              <span>Sơ đồ website (Sitemap)</span>
+            </a>
+            <span>•</span>
             <span className="text-amber-500 font-semibold">SSL Secured</span>
           </div>
         </div>

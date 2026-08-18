@@ -1,10 +1,9 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { MapPin, Building2, CheckCircle2, ChevronRight, Layers, Award, Sparkles, ExternalLink, ShieldCheck } from 'lucide-react';
 import { Project, ProjectCategory, Language, Property, isAdminProperty } from '../types';
-import { SUBDIVISION_SEO_DATA, AMENITY_SEO_DATA, SubdivisionSEOInfo, AmenitySEOInfo } from '../data/subdivisionData';
-import { SubdivisionDetailModal } from '../components/SubdivisionDetailModal';
-import { AmenityDetailModal } from '../components/AmenityDetailModal';
 import { PropertyCard } from '../components/PropertyCard';
+import { getProjectSlug, getSubdivisionUrl, getAmenityUrl, getPropertyDetailUrl } from '../lib/slugs';
 
 interface ProjectsPageProps {
   projects: Project[];
@@ -31,9 +30,8 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
   compareIds = [],
   onToggleCompare
 }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectCategory>(selectedProjectId || 'ocean-park-2');
-  const [selectedSubdivisionModal, setSelectedSubdivisionModal] = useState<SubdivisionSEOInfo | null>(null);
-  const [selectedAmenityModal, setSelectedAmenityModal] = useState<AmenitySEOInfo | null>(null);
 
   const currentProject = projects.find(p => p.id === activeTab) || projects[0];
 
@@ -48,84 +46,11 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
   }, [properties, currentProject.id]);
 
   const handleSubdivisionClick = (subName: string) => {
-    // Check if in preset SEO data
-    const existing = SUBDIVISION_SEO_DATA[subName];
-    if (existing) {
-      setSelectedSubdivisionModal(existing);
-    } else {
-      // Dynamic fallback for any other subdivision
-      setSelectedSubdivisionModal({
-        id: subName.toLowerCase().replace(/\s+/g, '-'),
-        projectId: currentProject.id,
-        projectName: currentProject.name,
-        name: `Phân khu ${subName}`,
-        style: 'Kiến trúc sang trọng Châu Âu / Hiện đại',
-        scaleArea: '15 - 35 ha',
-        totalUnits: '500 - 2.000 căn thấp tầng & cao tầng',
-        productTypes: ['Nhà liền kề', 'Shophouse', 'Biệt thự Song lập', 'Khu cao tầng quy hoạch'],
-        avgUnitSizes: {
-          lienKe: '50m² - 120m² (Trung bình 63m², 75m², 80m²)',
-          shophouse: '75m² - 150m²',
-          songLap: '120m² - 200m²',
-          donLap: '200m² - 400m²'
-        },
-        highRiseCondosInfo: currentProject.id === 'ha-long-xanh' || currentProject.id === 'green-paradise-can-gio' || currentProject.id === 'tan-my-hau-nghia'
-          ? 'Chung cư cao tầng: Chưa mở bán đợt này / Đang cập nhật quy hoạch chi tiết vị trí tháp cao tầng từ Chủ đầu tư.'
-          : 'Khu chung cư cao tầng quy hoạch 6-12 tòa tháp căn hộ (Studio, 1PN, 2PN, 3PN) cao 25-30 tầng đầy đủ tiện ích.',
-        priceRange: 'Liên hệ Hotline 0868.499.929 nhận báo giá chi tiết',
-        description: `Phân khu ${subName} thuộc dự án ${currentProject.name} sở hữu vị trí đắc địa, hạ tầng đồng bộ và không gian sống sinh thái đẳng cấp.`,
-        highlights: [
-          'Hệ thống công viên nội khu rợp bóng mát & đường chạy bộ',
-          'Sân thể thao đa năng, công viên trẻ em & khu nướng BBQ',
-          'Kết nối giao thông trục chính nội khu siêu tốc'
-        ],
-        images: [currentProject.image]
-      });
-    }
+    navigate(getSubdivisionUrl(currentProject.id, subName));
   };
 
   const handleAmenityClick = (amenityTitle: string) => {
-    // Match keys in AMENITY_SEO_DATA
-    let matchKey = '';
-    if (amenityTitle.toLowerCase().includes('royal wave park') || amenityTitle.toLowerCase().includes('công viên sóng')) {
-      matchKey = 'royal-wave-park';
-    } else if (amenityTitle.toLowerCase().includes('kinh đô ánh sáng') || amenityTitle.toLowerCase().includes('quảng trường')) {
-      matchKey = 'kinh-do-anh-sang';
-    } else if (amenityTitle.toLowerCase().includes('vinmec')) {
-      matchKey = 'vinmec-health-resort';
-    } else if (amenityTitle.toLowerCase().includes('vincom')) {
-      matchKey = 'vincom-mega-mall';
-    } else if (amenityTitle.toLowerCase().includes('vinschool')) {
-      matchKey = 'vinschool-system';
-    } else if (amenityTitle.toLowerCase().includes('vinbus')) {
-      matchKey = 'vinbus-system';
-    }
-
-    if (matchKey && AMENITY_SEO_DATA[matchKey]) {
-      setSelectedAmenityModal(AMENITY_SEO_DATA[matchKey]);
-    } else {
-      // Dynamic fallback
-      setSelectedAmenityModal({
-        id: 'generic-amenity',
-        name: amenityTitle,
-        projectId: currentProject.id,
-        scale: 'Quy mô quốc tế',
-        category: 'Tiện ích cao cấp 5 sao',
-        status: 'Đang vận hành phục vụ cư dân',
-        summary: `Hạng mục ${amenityTitle} là điểm nhấn tiện ích vượt trội gia tăng chất lượng sống chuẩn nghỉ dưỡng cho cư dân tại ${currentProject.name}.`,
-        contentSEO: `
-Hạng mục **${amenityTitle}** được Tập đoàn Vingroup đầu tư bài bản với thiết kế hiện đại, đạt tiêu chuẩn quốc tế. 
-
-Đây là công trình biểu tượng góp phần tạo nên giá trị bất động sản gia tăng bền vững cho toàn bộ siêu đô thị.
-        `,
-        highlights: [
-          'Phục vụ hoàn toàn miễn phí hoặc ưu đãi đặc quyền cho cư dân Vinhomes',
-          'Được quản lý vận hành chuyên nghiệp bởi Vinhomes',
-          'Hạ tầng đồng bộ, an ninh 24/7'
-        ],
-        image: currentProject.image
-      });
-    }
+    navigate(getAmenityUrl(currentProject.id, amenityTitle));
   };
 
   return (
@@ -305,12 +230,19 @@ Hạng mục **${amenityTitle}** được Tập đoàn Vingroup đầu tư bài 
               />
             </div>
             
-            <div className="pt-2">
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to={`/du-an/${getProjectSlug(currentProject.id)}`}
+                className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
+              >
+                <span>Xem Trang Chi Tiết {currentProject.name}</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
               <button
                 onClick={() => onFilterPropertiesByProject(currentProject.id)}
-                className="px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
+                className="px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
               >
-                <span>Xem Toàn Bộ Quỹ Căn Bán / Thuê Tại {currentProject.name}</span>
+                <span>Xem Toàn Bộ Quỹ Căn Bán / Thuê ({adminProjectProperties.length})</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -365,22 +297,6 @@ Hạng mục **${amenityTitle}** được Tập đoàn Vingroup đầu tư bài 
           </div>
 
         </div>
-      )}
-
-      {/* Subdivision Article Modal */}
-      {selectedSubdivisionModal && (
-        <SubdivisionDetailModal
-          subdivision={selectedSubdivisionModal}
-          onClose={() => setSelectedSubdivisionModal(null)}
-        />
-      )}
-
-      {/* Amenity Article Modal */}
-      {selectedAmenityModal && (
-        <AmenityDetailModal
-          amenity={selectedAmenityModal}
-          onClose={() => setSelectedAmenityModal(null)}
-        />
       )}
 
     </div>
