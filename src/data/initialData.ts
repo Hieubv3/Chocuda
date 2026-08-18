@@ -169,7 +169,7 @@ export const INITIAL_ADS: AdBanner[] = [
     widthSize: 'medium',
     displayStyle: 'glowing_border',
     badgeText: 'HOT BÁM ĐUỔI',
-    active: true,
+    active: false,
     clickCount: 520,
     createdAt: '2026-07-25'
   },
@@ -179,7 +179,7 @@ export const INITIAL_ADS: AdBanner[] = [
     imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80',
     linkUrl: 'tel:0868499929',
     position: 'float_left_pc',
-    active: true,
+    active: false,
     clickCount: 380,
     createdAt: '2026-07-26'
   }

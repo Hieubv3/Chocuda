@@ -210,7 +210,13 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
 
               <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-bold text-sm">
                 <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
-                <span>{job.companyName}</span>
+                <Link
+                  to={getEmployerProfileUrl({ id: job.employerUserId, companyName: job.companyName })}
+                  className="hover:text-emerald-600 dark:hover:text-emerald-400 underline decoration-dotted"
+                  title="Xem hồ sơ chi tiết nhà tuyển dụng"
+                >
+                  {job.companyName}
+                </Link>
                 <span className="inline-flex items-center text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded">
                   <ShieldCheck className="w-3.5 h-3.5 mr-1" />
                   Đã xác minh KYC cư dân
@@ -483,6 +489,13 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   Người phụ trách: <b>{job.contactName || 'Phòng Nhân Sự'}</b>
                 </p>
+                <Link
+                  to={getEmployerProfileUrl({ id: job.employerUserId, companyName: job.companyName })}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-teal-600 dark:text-teal-400 hover:underline pt-1"
+                >
+                  <span>Xem hồ sơ & các tin đang tuyển của DN</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
 
               <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">

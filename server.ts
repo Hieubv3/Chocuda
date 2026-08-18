@@ -7,7 +7,7 @@ import nodemailer from "nodemailer";
 import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS, INITIAL_ADS } from "./src/data/initialData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
-import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES } from "./src/data/recruitmentData.ts";
+import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile } from "./src/data/recruitmentData.ts";
 import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord } from "./src/types.ts";
 
 const app = express();
@@ -402,6 +402,7 @@ let packageOrdersStore: any[] = [];
 // Recruitment & Candidate CV Stores
 let recruitmentJobsStore: RecruitmentJob[] = [...INITIAL_RECRUITMENT_JOBS];
 let candidateProfilesStore: CandidateProfile[] = [...INITIAL_CANDIDATE_PROFILES];
+let employersStore: EmployerProfile[] = [...INITIAL_EMPLOYERS];
 let jobApplicationsStore: JobApplication[] = [];
 let cvUnlocksStore: CvUnlockRecord[] = [];
 
@@ -707,6 +708,15 @@ function loadDataStore() {
         candidateProfilesStore = Array.from(candMap.values()) as CandidateProfile[];
       }
 
+      // 10. Employers
+      if (Array.isArray(data.employers) && data.employers.length > 0) {
+        const empMap = new Map(data.employers.map((e: any) => [e.id, e]));
+        INITIAL_EMPLOYERS.forEach(iemp => {
+          if (!empMap.has(iemp.id)) empMap.set(iemp.id, iemp);
+        });
+        employersStore = Array.from(empMap.values()) as EmployerProfile[];
+      }
+
       if (Array.isArray(data.jobApplications) && data.jobApplications.length > 0) jobApplicationsStore = data.jobApplications;
       if (Array.isArray(data.cvUnlocks) && data.cvUnlocks.length > 0) cvUnlocksStore = data.cvUnlocks;
 
@@ -761,6 +771,7 @@ function saveDataStore() {
       taxLedger: taxLedgerStore,
       recruitmentJobs: recruitmentJobsStore,
       candidateProfiles: candidateProfilesStore,
+      employers: employersStore,
       jobApplications: jobApplicationsStore,
       cvUnlocks: cvUnlocksStore,
       savedAt: new Date().toISOString()
@@ -3044,7 +3055,14 @@ app.get("/sitemap.xml", (req, res) => {
     priority: '0.75'
   }));
 
-  // 8. News Articles (Tin Tức Thị Trường)
+  // 8. Employers (Nhà Tuyển Dụng)
+  const employerUrls = employersStore.map(emp => ({
+    url: `${baseUrl}/tuyen-dung/nha-tuyen-dung/${emp.id}/${serverSlugify(emp.companyName)}`,
+    changefreq: 'daily',
+    priority: '0.8'
+  }));
+
+  // 9. News Articles (Tin Tức Thị Trường)
   const newsUrls = newsStore.map(n => ({
     url: `${baseUrl}/tin-tuc/${serverSlugify(n.category || 'chung')}/${n.id}`,
     changefreq: 'weekly',
@@ -3060,6 +3078,7 @@ app.get("/sitemap.xml", (req, res) => {
     ...serviceUrls,
     ...jobUrls,
     ...candidateUrls,
+    ...employerUrls,
     ...newsUrls
   ];
 
@@ -4861,6 +4880,149 @@ app.delete("/api/recruitment/applications/:id", (req, res) => {
   res.json({
     success: true,
     message: "Đã xóa lượt ứng tuyển thành công!"
+  });
+});
+
+// 17. GET Employers (Danh sách Nhà Tuyển Dụng)
+app.get("/api/recruitment/employers", (req, res) => {
+  const { project, industry, q } = req.query;
+  let list = [...employersStore];
+
+  if (project && project !== 'all') {
+    list = list.filter(e => e.project === project);
+  }
+  if (industry && industry !== 'all') {
+    list = list.filter(e => e.industry === industry);
+  }
+  if (q && typeof q === 'string') {
+    const term = q.toLowerCase().trim();
+    list = list.filter(e => 
+      e.companyName.toLowerCase().includes(term) ||
+      (e.brandName && e.brandName.toLowerCase().includes(term)) ||
+      (e.tagline && e.tagline.toLowerCase().includes(term)) ||
+      (e.address && e.address.toLowerCase().includes(term))
+    );
+  }
+
+  // Update activeJobsCount dynamically
+  const enriched = list.map(emp => {
+    const jobCount = recruitmentJobsStore.filter(
+      j => (emp.userId && j.employerUserId === emp.userId) || 
+           j.companyName.toLowerCase() === emp.companyName.toLowerCase()
+    ).length;
+    return {
+      ...emp,
+      activeJobsCount: jobCount
+    };
+  });
+
+  res.json(enriched);
+});
+
+// 18. GET Single Employer by ID
+app.get("/api/recruitment/employers/:id", (req, res) => {
+  const { id } = req.params;
+  let employer = employersStore.find(e => e.id === id || e.userId === id);
+  if (!employer) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ nhà tuyển dụng này!" });
+  }
+
+  employer.totalViews = (employer.totalViews || 0) + 1;
+  saveDataStore();
+
+  const jobCount = recruitmentJobsStore.filter(
+    j => (employer!.userId && j.employerUserId === employer!.userId) || 
+         j.companyName.toLowerCase() === employer!.companyName.toLowerCase()
+  ).length;
+
+  res.json({
+    ...employer,
+    activeJobsCount: jobCount
+  });
+});
+
+// 19. POST Create or Update Employer Profile (Cư dân / DN có thể đăng ký profile)
+app.post("/api/recruitment/employers", (req, res) => {
+  const data = req.body;
+  if (!data.companyName || !data.contactPhone || !data.address) {
+    return res.status(400).json({ error: "Vui lòng nhập đầy đủ Tên Doanh Nghiệp/Cửa Hàng, Số Điện Thoại và Địa Chỉ!" });
+  }
+
+  let existingIndex = -1;
+  if (data.id) {
+    existingIndex = employersStore.findIndex(e => e.id === data.id);
+  } else if (data.userId) {
+    existingIndex = employersStore.findIndex(e => e.userId === data.userId);
+  }
+
+  const nowIso = new Date().toISOString();
+
+  if (existingIndex >= 0) {
+    const existing = employersStore[existingIndex];
+    employersStore[existingIndex] = {
+      ...existing,
+      ...data,
+      id: existing.id,
+      verified: data.verified !== undefined ? data.verified : existing.verified
+    };
+    saveDataStore();
+    return res.json({
+      success: true,
+      message: "🎉 Cập nhật hồ sơ Nhà Tuyển Dụng thành công!",
+      employer: employersStore[existingIndex]
+    });
+  }
+
+  const newEmployer: EmployerProfile = {
+    id: data.id || `emp-${Date.now()}`,
+    userId: data.userId || `u-emp-${Date.now()}`,
+    companyName: data.companyName.trim(),
+    brandName: data.brandName || data.companyName.trim(),
+    logoUrl: data.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
+    bannerUrl: data.bannerUrl || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
+    tagline: data.tagline || 'Nhà tuyển dụng uy tín tại Vinhomes',
+    industry: data.industry || 'Bất Động Sản & Môi Giới',
+    project: data.project || 'ocean-park-2',
+    projectName: data.projectName || 'Vinhomes Ocean Park 2',
+    address: data.address.trim(),
+    contactName: data.contactName || 'Ban Quản Lý Tuyển Dụng',
+    contactPhone: data.contactPhone.trim(),
+    contactZalo: data.contactZalo || data.contactPhone.trim(),
+    contactEmail: data.contactEmail || '',
+    website: data.website || '',
+    facebookUrl: data.facebookUrl || '',
+    introduction: data.introduction || 'Doanh nghiệp uy tín hoạt động tại khu đô thị Vinhomes.',
+    scaleSize: data.scaleSize || '10 - 50 nhân sự',
+    verified: Boolean(data.verified),
+    activeJobsCount: 0,
+    totalViews: 1,
+    createdAt: nowIso
+  };
+
+  employersStore.unshift(newEmployer);
+  saveDataStore();
+
+  res.status(201).json({
+    success: true,
+    message: "🎉 Đăng ký hồ sơ Nhà Tuyển Dụng thành công!",
+    employer: newEmployer
+  });
+});
+
+// 20. DELETE Employer Profile (Admin)
+app.delete("/api/recruitment/employers/:id", (req, res) => {
+  const { id } = req.params;
+  const index = employersStore.findIndex(e => e.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ nhà tuyển dụng để xóa!" });
+  }
+
+  employersStore.splice(index, 1);
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: "Đã xóa hồ sơ nhà tuyển dụng thành công!"
   });
 });
 

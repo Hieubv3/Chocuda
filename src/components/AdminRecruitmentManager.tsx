@@ -3,20 +3,23 @@ import {
   Briefcase, Users, FileText, CheckCircle2, Clock, XCircle, 
   Trash2, Edit3, Plus, Search, Filter, Eye, Phone, Mail, 
   DollarSign, Sparkles, ShieldCheck, Download, RefreshCw,
-  ExternalLink, Building2, MapPin, Tag, Award, Check, UserCheck, Unlock
+  ExternalLink, Building2, MapPin, Tag, Award, Check, UserCheck, Unlock, Globe, Link2
 } from 'lucide-react';
-import { RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, ProjectCategory } from '../types';
+import { RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, ProjectCategory, EmployerProfile } from '../types';
+import { getJobDetailUrl, getCandidateCvUrl, getEmployerProfileUrl, slugify } from '../lib/slugs';
+import { INITIAL_EMPLOYERS } from '../data/recruitmentData';
 
 interface AdminRecruitmentManagerProps {
   onRefresh?: () => void;
 }
 
 export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = ({ onRefresh }) => {
-  const [activeSection, setActiveSection] = useState<'jobs' | 'candidates' | 'applications' | 'unlocks' | 'stats'>('jobs');
+  const [activeSection, setActiveSection] = useState<'jobs' | 'candidates' | 'employers' | 'applications' | 'unlocks' | 'stats'>('jobs');
   
   // Data State
   const [jobs, setJobs] = useState<RecruitmentJob[]>([]);
   const [candidates, setCandidates] = useState<CandidateProfile[]>([]);
+  const [employers, setEmployers] = useState<EmployerProfile[]>(INITIAL_EMPLOYERS);
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [unlocks, setUnlocks] = useState<CvUnlockRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +61,30 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
     deadline: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
   });
 
+  // Employer Modal State (Add / Edit)
+  const [showEmployerModal, setShowEmployerModal] = useState(false);
+  const [editingEmployer, setEditingEmployer] = useState<EmployerProfile | null>(null);
+  const [employerFormData, setEmployerFormData] = useState({
+    companyName: '',
+    brandName: '',
+    logoUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
+    tagline: 'Nhà tuyển dụng uy tín tại Vinhomes',
+    industry: 'Bất Động Sản & Môi Giới',
+    project: 'ocean-park-2' as ProjectCategory,
+    projectName: 'Vinhomes Ocean Park 2',
+    address: 'Shophouse San Hô, Vinhomes Ocean Park 2',
+    contactName: 'Ban Nhân Sự',
+    contactPhone: '0868499929',
+    contactZalo: '0868499929',
+    contactEmail: 'tuyendung@chocudan24h.com',
+    website: '',
+    facebookUrl: '',
+    introduction: 'Doanh nghiệp uy tín hoạt động lâu năm tại các đại đô thị Vinhomes.',
+    scaleSize: '20 - 50 nhân sự',
+    verified: true
+  });
+
   // Candidate View / Edit Modal
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateProfile | null>(null);
   const [editingCandidate, setEditingCandidate] = useState<CandidateProfile | null>(null);
@@ -93,6 +120,15 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
       if (resUnlocks.ok) {
         const dataUnlocks = await resUnlocks.json();
         setUnlocks(dataUnlocks);
+      }
+
+      // 5. Fetch Employers
+      const resEmployers = await fetch('/api/recruitment/employers');
+      if (resEmployers.ok) {
+        const dataEmployers = await resEmployers.json();
+        if (Array.isArray(dataEmployers) && dataEmployers.length > 0) {
+          setEmployers(dataEmployers);
+        }
       }
     } catch (e) {
       console.error('Error fetching recruitment admin data:', e);
@@ -168,6 +204,123 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
       deadline: job.deadline ? job.deadline.split('T')[0] : ''
     });
     setShowJobModal(true);
+  };
+
+  // Handle Employer Actions
+  const handleOpenAddEmployer = () => {
+    setEditingEmployer(null);
+    setEmployerFormData({
+      companyName: '',
+      brandName: '',
+      logoUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
+      bannerUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
+      tagline: 'Nhà tuyển dụng uy tín tại Vinhomes',
+      industry: 'Bất Động Sản & Môi Giới',
+      project: 'ocean-park-2' as ProjectCategory,
+      projectName: 'Vinhomes Ocean Park 2',
+      address: 'Shophouse San Hô, Vinhomes Ocean Park 2',
+      contactName: 'Ban Nhân Sự',
+      contactPhone: '0868499929',
+      contactZalo: '0868499929',
+      contactEmail: 'tuyendung@chocudan24h.com',
+      website: '',
+      facebookUrl: '',
+      introduction: 'Doanh nghiệp uy tín hoạt động lâu năm tại các đại đô thị Vinhomes.',
+      scaleSize: '20 - 50 nhân sự',
+      verified: true
+    });
+    setShowEmployerModal(true);
+  };
+
+  const handleOpenEditEmployer = (emp: EmployerProfile) => {
+    setEditingEmployer(emp);
+    setEmployerFormData({
+      companyName: emp.companyName,
+      brandName: emp.brandName || emp.companyName,
+      logoUrl: emp.logoUrl || '',
+      bannerUrl: emp.bannerUrl || '',
+      tagline: emp.tagline || '',
+      industry: emp.industry || 'Bất Động Sản & Môi Giới',
+      project: (typeof emp.project === 'string' ? emp.project : 'ocean-park-2') as ProjectCategory,
+      projectName: emp.projectName || 'Vinhomes Ocean Park 2',
+      address: emp.address,
+      contactName: emp.contactName,
+      contactPhone: emp.contactPhone,
+      contactZalo: emp.contactZalo || emp.contactPhone,
+      contactEmail: emp.contactEmail || '',
+      website: emp.website || '',
+      facebookUrl: emp.facebookUrl || '',
+      introduction: emp.introduction || '',
+      scaleSize: emp.scaleSize || '10 - 50 nhân sự',
+      verified: Boolean(emp.verified)
+    });
+    setShowEmployerModal(true);
+  };
+
+  const handleSaveEmployer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!employerFormData.companyName || !employerFormData.contactPhone || !employerFormData.address) {
+      alert('Vui lòng nhập Tên Doanh Nghiệp, Số Điện Thoại và Địa Chỉ!');
+      return;
+    }
+
+    try {
+      const payload = {
+        ...(editingEmployer ? { id: editingEmployer.id, userId: editingEmployer.userId } : {}),
+        ...employerFormData
+      };
+
+      const res = await fetch('/api/recruitment/employers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert(editingEmployer ? '✓ Đã cập nhật hồ sơ Nhà Tuyển Dụng!' : '🎉 Đã thêm hồ sơ Nhà Tuyển Dụng thành công!');
+        setShowEmployerModal(false);
+        fetchData();
+        if (onRefresh) onRefresh();
+      } else {
+        const err = await res.json();
+        alert('Lỗi: ' + (err.error || 'Không thể lưu hồ sơ'));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Lỗi kết nối máy chủ!');
+    }
+  };
+
+  const handleDeleteEmployer = async (id: string, name: string) => {
+    if (!window.confirm(`Bạn có chắc chắn muốn xóa hồ sơ nhà tuyển dụng "${name}"?`)) return;
+    try {
+      const res = await fetch(`/api/recruitment/employers/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setEmployers(prev => prev.filter(e => e.id !== id));
+        alert('✓ Đã xóa hồ sơ nhà tuyển dụng!');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleToggleEmployerVerified = async (emp: EmployerProfile) => {
+    const nextVal = !emp.verified;
+    try {
+      const res = await fetch('/api/recruitment/employers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...emp,
+          verified: nextVal
+        })
+      });
+      if (res.ok) {
+        setEmployers(prev => prev.map(e => e.id === emp.id ? { ...e, verified: nextVal } : e));
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleSaveJob = async (e: React.FormEvent) => {
@@ -453,6 +606,18 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
         </button>
 
         <button
+          onClick={() => setActiveSection('employers')}
+          className={`px-4 py-2.5 rounded-xl font-black text-xs transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            activeSection === 'employers'
+              ? 'bg-teal-600 text-white shadow-md'
+              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+          }`}
+        >
+          <Building2 className="w-4 h-4" />
+          <span>3. Danh Bạ Nhà Tuyển Dụng ({employers.length})</span>
+        </button>
+
+        <button
           onClick={() => setActiveSection('applications')}
           className={`px-4 py-2.5 rounded-xl font-black text-xs transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeSection === 'applications'
@@ -461,7 +626,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
           }`}
         >
           <FileText className="w-4 h-4" />
-          <span>3. Danh Sách Ứng Tuyển ({applications.length})</span>
+          <span>4. Danh Sách Ứng Tuyển ({applications.length})</span>
         </button>
 
         <button
@@ -473,7 +638,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
           }`}
         >
           <DollarSign className="w-4 h-4" />
-          <span>4. Nhật Ký Mở Khóa CV & Thu Phí ({unlocks.length})</span>
+          <span>5. Nhật Ký Mở Khóa CV ({unlocks.length})</span>
         </button>
       </div>
 
@@ -657,6 +822,16 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
 
                       <td className="p-3.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          <a
+                            href={getJobDetailUrl(job)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 font-bold text-[11px] border border-emerald-300 dark:border-emerald-800"
+                            title={`Soi link bài đăng: ${getJobDetailUrl(job)}`}
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            <span>Soi Link</span>
+                          </a>
                           <button
                             onClick={() => handleOpenEditJob(job)}
                             className="p-1.5 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 hover:bg-teal-100 rounded-lg transition"
@@ -778,6 +953,16 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
 
                       <td className="p-3.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          <a
+                            href={getCandidateCvUrl(cand)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 font-bold text-[11px] border border-emerald-300 dark:border-emerald-800"
+                            title={`Soi link hồ sơ CV: ${getCandidateCvUrl(cand)}`}
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            <span>Soi Link</span>
+                          </a>
                           <button
                             onClick={() => setSelectedCandidate(cand)}
                             className="p-1.5 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 hover:bg-teal-100 rounded-lg transition"
@@ -796,6 +981,154 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                       </td>
                     </tr>
                   ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* SECTION 3: DANH BẠ HỒ SƠ NHÀ TUYỂN DỤNG & DOANH NGHIỆP */}
+      {/* ========================================================================= */}
+      {activeSection === 'employers' && (
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm space-y-4">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-teal-600" />
+                <span>Hồ Sơ Doanh Nghiệp & Nhà Tuyển Dụng ({employers.length} đơn vị)</span>
+              </span>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Các doanh nghiệp, shophouse, chuỗi nhà hàng tuyển dụng có link profile chuyên nghiệp riêng.
+              </p>
+            </div>
+
+            <button
+              onClick={handleOpenAddEmployer}
+              className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white font-black text-xs rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Thêm Nhà Tuyển Dụng Mới</span>
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+                <tr>
+                  <th className="p-3.5">Doanh Nghiệp / Logo</th>
+                  <th className="p-3.5">Ngành Nghề & Dự Án</th>
+                  <th className="p-3.5">Liên Hệ / Hotline</th>
+                  <th className="p-3.5 text-center">Xác Thực KYC</th>
+                  <th className="p-3.5 text-center">Tin Tuyển Dụng</th>
+                  <th className="p-3.5 text-right">Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {employers.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-12 text-slate-400">
+                      Chưa có hồ sơ nhà tuyển dụng nào.
+                    </td>
+                  </tr>
+                ) : (
+                  employers.map(emp => {
+                    const empJobsCount = jobs.filter(
+                      j => (emp.userId && j.employerUserId === emp.userId) || 
+                           j.companyName.toLowerCase() === emp.companyName.toLowerCase()
+                    ).length;
+
+                    return (
+                      <tr key={emp.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+                        <td className="p-3.5">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={emp.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&auto=format&fit=crop&q=80'}
+                              alt={emp.companyName}
+                              className="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white"
+                            />
+                            <div>
+                              <div className="font-black text-slate-900 dark:text-white text-sm">
+                                {emp.companyName}
+                              </div>
+                              <div className="text-[11px] text-slate-400 flex items-center gap-1">
+                                <MapPin className="w-3 h-3 text-red-500 shrink-0" />
+                                <span className="truncate max-w-[200px]">{emp.address}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="p-3.5">
+                          <div className="font-extrabold text-teal-700 dark:text-teal-400">
+                            {emp.industry}
+                          </div>
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                            {emp.projectName || emp.project}
+                          </div>
+                        </td>
+
+                        <td className="p-3.5">
+                          <div className="font-bold text-slate-900 dark:text-white font-mono flex items-center gap-1.5">
+                            <Phone className="w-3.5 h-3.5 text-emerald-500" />
+                            <span>{emp.contactPhone}</span>
+                          </div>
+                          <div className="text-[11px] text-slate-400 mt-0.5">
+                            Phụ trách: {emp.contactName}
+                          </div>
+                        </td>
+
+                        <td className="p-3.5 text-center">
+                          <button
+                            onClick={() => handleToggleEmployerVerified(emp)}
+                            className={`px-3 py-1 rounded-full text-[10px] font-black border transition cursor-pointer ${
+                              emp.verified
+                                ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300'
+                            }`}
+                          >
+                            {emp.verified ? '🟢 Đã Xác Thực' : '⚪ Chưa Xác Thực'}
+                          </button>
+                        </td>
+
+                        <td className="p-3.5 text-center">
+                          <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-black rounded-lg text-xs">
+                            {empJobsCount} tin tuyển
+                          </span>
+                        </td>
+
+                        <td className="p-3.5 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <a
+                              href={getEmployerProfileUrl(emp)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 font-bold text-[11px] border border-emerald-300 dark:border-emerald-800"
+                              title={`Soi link hồ sơ DN: ${getEmployerProfileUrl(emp)}`}
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                              <span>Soi Link</span>
+                            </a>
+                            <button
+                              onClick={() => handleOpenEditEmployer(emp)}
+                              className="p-1.5 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 hover:bg-teal-100 rounded-lg transition"
+                              title="Chỉnh sửa hồ sơ"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEmployer(emp.id, emp.companyName)}
+                              className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
+                              title="Xóa hồ sơ"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -1209,8 +1542,187 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL: XEM CHI TIẾT CV ỨNG VIÊN (ADMIN FULL VIEW) */}
+      {/* MODAL: THÊM / CHỈNH SỬA HỒ SƠ NHÀ TUYỂN DỤNG */}
       {/* ========================================================================= */}
+      {showEmployerModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 max-w-2xl w-full shadow-2xl space-y-4 my-8">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-black text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-teal-600" />
+                <span>{editingEmployer ? 'Chỉnh Sửa Hồ Sơ Nhà Tuyển Dụng' : 'Thêm Nhà Tuyển Dụng Mới'}</span>
+              </h3>
+              <button
+                onClick={() => setShowEmployerModal(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEmployer} className="space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Tên Công Ty / Doanh Nghiệp (*)</label>
+                  <input
+                    type="text"
+                    required
+                    value={employerFormData.companyName}
+                    onChange={e => setEmployerFormData({ ...employerFormData, companyName: e.target.value })}
+                    placeholder="VD: Cty TNHH Bất Động Sản VinHomes Land"
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Tên Thương Hiệu / Tên Cửa Hàng</label>
+                  <input
+                    type="text"
+                    value={employerFormData.brandName}
+                    onChange={e => setEmployerFormData({ ...employerFormData, brandName: e.target.value })}
+                    placeholder="VD: VinHomes Land"
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Ngành Nghề Hoạt Động</label>
+                  <input
+                    type="text"
+                    value={employerFormData.industry}
+                    onChange={e => setEmployerFormData({ ...employerFormData, industry: e.target.value })}
+                    placeholder="VD: Bất Động Sản & Môi Giới, F&B..."
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Quy Mô Nhân Sự</label>
+                  <input
+                    type="text"
+                    value={employerFormData.scaleSize}
+                    onChange={e => setEmployerFormData({ ...employerFormData, scaleSize: e.target.value })}
+                    placeholder="VD: 20 - 50 nhân sự"
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700 dark:text-slate-300">Địa Chỉ Trụ Sở / Căn Hộ / Shophouse (*)</label>
+                <input
+                  type="text"
+                  required
+                  value={employerFormData.address}
+                  onChange={e => setEmployerFormData({ ...employerFormData, address: e.target.value })}
+                  placeholder="VD: Căn San Hô 12-08, Vinhomes Ocean Park 2"
+                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Người Liên Hệ / Phụ Trách</label>
+                  <input
+                    type="text"
+                    value={employerFormData.contactName}
+                    onChange={e => setEmployerFormData({ ...employerFormData, contactName: e.target.value })}
+                    placeholder="VD: Ban Nhân Sự"
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Hotline / Zalo (*)</label>
+                  <input
+                    type="text"
+                    required
+                    value={employerFormData.contactPhone}
+                    onChange={e => setEmployerFormData({ ...employerFormData, contactPhone: e.target.value })}
+                    placeholder="VD: 0868499929"
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Email Nhận CV</label>
+                  <input
+                    type="email"
+                    value={employerFormData.contactEmail}
+                    onChange={e => setEmployerFormData({ ...employerFormData, contactEmail: e.target.value })}
+                    placeholder="tuyendung@domain.com"
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Link Logo Doanh Nghiệp (URL)</label>
+                  <input
+                    type="text"
+                    value={employerFormData.logoUrl}
+                    onChange={e => setEmployerFormData({ ...employerFormData, logoUrl: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Link Banner Bìa (URL)</label>
+                  <input
+                    type="text"
+                    value={employerFormData.bannerUrl}
+                    onChange={e => setEmployerFormData({ ...employerFormData, bannerUrl: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700 dark:text-slate-300">Giới Thiệu Doanh Nghiệp & Môi Trường Làm Việc</label>
+                <textarea
+                  rows={3}
+                  value={employerFormData.introduction}
+                  onChange={e => setEmployerFormData({ ...employerFormData, introduction: e.target.value })}
+                  placeholder="Mô tả về doanh nghiệp, môi trường văn hóa..."
+                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                <input
+                  type="checkbox"
+                  id="empVerifiedCheck"
+                  checked={employerFormData.verified}
+                  onChange={e => setEmployerFormData({ ...employerFormData, verified: e.target.checked })}
+                  className="w-4 h-4 text-teal-600 rounded"
+                />
+                <label htmlFor="empVerifiedCheck" className="font-black text-emerald-800 dark:text-emerald-300 cursor-pointer">
+                  Xác Thực KYC Doanh Nghiệp (Hiển thị huy hiệu tích xanh uy tín)
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowEmployerModal(false)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-teal-600 hover:bg-teal-500 text-white font-black rounded-xl shadow-lg"
+                >
+                  {editingEmployer ? 'Lưu Thay Đổi' : 'Tạo Hồ Sơ Doanh Nghiệp'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       {selectedCandidate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs overflow-y-auto">
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 max-w-2xl w-full shadow-2xl space-y-4 my-8">

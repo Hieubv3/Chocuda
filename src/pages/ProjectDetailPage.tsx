@@ -148,6 +148,36 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
         </div>
       </div>
 
+      {/* Project Selector Bar for Seamless Navigation */}
+      <div className="bg-slate-100 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 py-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold scrollbar-none">
+            <span className="text-slate-400 shrink-0 font-extrabold uppercase text-[10px]">
+              Dự Án:
+            </span>
+            {projects.map(p => {
+              const isCurr = p.id === project.id;
+              const pSlug = getProjectSlug(p.id);
+              const displayName = p.name.split('-')[0].trim();
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => navigate(`/du-an/${pSlug}`)}
+                  className={`px-3.5 py-1.5 rounded-xl whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer shrink-0 ${
+                    isCurr
+                      ? 'bg-amber-500 text-slate-950 font-black shadow-md ring-2 ring-amber-400/40'
+                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-amber-400 border border-slate-200 dark:border-slate-700'
+                  }`}
+                >
+                  <span>{displayName}</span>
+                  {isCurr && <span className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* Project Hero Banner */}
       <div className="relative bg-slate-950 text-white overflow-hidden">
         <div className="absolute inset-0">

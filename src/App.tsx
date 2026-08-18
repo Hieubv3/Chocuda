@@ -34,6 +34,7 @@ import { MortgageCalculatorPage } from './pages/MortgageCalculatorPage';
 import { RecruitmentCenterPage } from './components/RecruitmentCenterPage';
 import { RecruitmentJobDetailPage } from './pages/RecruitmentJobDetailPage';
 import { CandidateCvDetailPage } from './pages/CandidateCvDetailPage';
+import { EmployerProfilePage } from './pages/EmployerProfilePage';
 import { CompareModal } from './components/CompareModal';
 import { AuthModal } from './components/AuthModal';
 import { AiWriterModal } from './components/AiWriterModal';
@@ -1210,6 +1211,43 @@ export const App: React.FC = () => {
               />
             }
           />
+          {/* Hồ Sơ Nhà Tuyển Dụng Chuyên Nghiệp */}
+          <Route
+            path="/tuyen-dung/nha-tuyen-dung/:employerId/:slug"
+            element={
+              <EmployerProfilePage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/tuyen-dung/nha-tuyen-dung/:employerId"
+            element={
+              <EmployerProfilePage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/nha-tuyen-dung/:employerId/:slug"
+            element={
+              <EmployerProfilePage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/nha-tuyen-dung/:employerId"
+            element={
+              <EmployerProfilePage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
           <Route
             path="/tuyen-dung/nganh-nghe/:industryId"
             element={
@@ -1600,8 +1638,7 @@ export const App: React.FC = () => {
         </button>
       </div>
 
-      {/* Global PC Floating Banners */}
-      <AdBannerWidget ads={INITIAL_ADS} position="float_right_pc" />
+      {/* Global Modals & Popup */}
       <AdBannerWidget ads={INITIAL_ADS} position="popup_modal" />
 
     </div>

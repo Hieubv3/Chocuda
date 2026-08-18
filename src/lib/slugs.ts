@@ -112,6 +112,12 @@ export function getRecruitmentIndustryUrl(industryId: string): string {
   return `/tuyen-dung/nganh/${encodeURIComponent(industryId)}`;
 }
 
+export function getEmployerProfileUrl(employer: { id?: string; employerUserId?: string; companyName?: string }): string {
+  const empId = employer.employerUserId || employer.id || (employer.companyName ? slugify(employer.companyName) : 'nha-tuyen-dung');
+  const compSlug = employer.companyName ? slugify(employer.companyName) : 'doanh-nghiep';
+  return `/tuyen-dung/nha-tuyen-dung/${encodeURIComponent(empId)}/${encodeURIComponent(compSlug)}`;
+}
+
 export function getCommunityDetailUrl(groupSlug: string): string {
   return `/cong-dong/${encodeURIComponent(groupSlug)}`;
 }

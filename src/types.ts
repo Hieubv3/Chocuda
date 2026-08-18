@@ -905,6 +905,33 @@ export interface CvUnlockRecord {
   createdAt: string;
 }
 
+export interface EmployerProfile {
+  id: string;
+  userId?: string;
+  companyName: string;
+  brandName?: string;
+  logoUrl?: string;
+  bannerUrl?: string;
+  tagline?: string;
+  industry: string;
+  project: ProjectCategory | string;
+  projectName?: string;
+  address: string;
+  contactName: string;
+  contactPhone: string;
+  contactZalo?: string;
+  contactEmail?: string;
+  website?: string;
+  facebookUrl?: string;
+  introduction: string;
+  scaleSize?: string;
+  verified?: boolean;
+  activeJobsCount?: number;
+  totalViews?: number;
+  createdAt?: string;
+}
+
+
 
 
 

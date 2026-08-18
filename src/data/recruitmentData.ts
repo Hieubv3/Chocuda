@@ -680,3 +680,104 @@ export const INITIAL_CANDIDATE_PROFILES: CandidateProfile[] = [
     updatedAt: '2026-08-16T07:30:00.000Z'
   }
 ];
+
+export interface EmployerProfile {
+  id: string;
+  userId?: string;
+  companyName: string;
+  brandName?: string;
+  logoUrl?: string;
+  bannerUrl?: string;
+  tagline?: string;
+  industry: string;
+  project: ProjectCategory | string;
+  projectName?: string;
+  address: string;
+  contactName: string;
+  contactPhone: string;
+  contactZalo?: string;
+  contactEmail?: string;
+  website?: string;
+  facebookUrl?: string;
+  introduction: string;
+  scaleSize?: string;
+  verified?: boolean;
+  activeJobsCount?: number;
+  totalViews?: number;
+  createdAt?: string;
+}
+
+export const INITIAL_EMPLOYERS: EmployerProfile[] = [
+  {
+    id: 'emp-01',
+    userId: 'u-emp-01',
+    companyName: 'Công Ty BĐS Nhà Đẹp Vinhomes',
+    brandName: 'Nhà Đẹp Vinhomes Real Estate',
+    logoUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
+    tagline: 'Đơn Vị Phân Phối & Cho Thuê BĐS Thấp Tầng Hàng Đầu Tại Ocean Park 1, 2, 3',
+    industry: 'Bất Động Sản & Môi Giới',
+    project: 'ocean-park-2',
+    projectName: 'Vinhomes Ocean Park 2',
+    address: 'Shophouse Chà Là 15-08 & San Hô 06-12, Vinhomes Ocean Park 2, Hưng Yên',
+    contactName: 'Mr. Hiếu Bùi - Giám Đốc Kinh Doanh',
+    contactPhone: '0868499929',
+    contactZalo: '0868499929',
+    contactEmail: 'tuyendung.nhadepvinhomes@gmail.com',
+    website: 'https://chocudan24h.com',
+    facebookUrl: 'https://facebook.com/nhadepvinhomes',
+    introduction: 'Công ty BĐS Nhà Đẹp Vinhomes với hơn 5 năm kinh nghiệm chuyên sâu tại các đại đô thị Vinhomes Ocean Park 1, 2, 3 và Vinhomes Smart City. Chúng tôi quản lý giỏ hàng hơn 1.000 căn biệt thự, liền kề, shophouse và quỹ căn chuyển nhượng độc quyền. Môi trường làm việc năng động, đào tạo 1:1, hoa hồng hấp dẫn chi trả ngay trong tuần.',
+    scaleSize: '20 - 50 nhân sự',
+    verified: true,
+    activeJobsCount: 2,
+    totalViews: 3450,
+    createdAt: '2026-06-01'
+  },
+  {
+    id: 'emp-02',
+    userId: 'u-emp-02',
+    companyName: 'Hệ Thống Trà Sữa & Quán Cà Phê The Ocean Chill Cafe',
+    brandName: 'The Ocean Chill Cafe & Bakery',
+    logoUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=200&auto=format&fit=crop&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200&auto=format&fit=crop&q=80',
+    tagline: 'Không Gian Cà Phê View Biển Tạo Sóng Đẹp Nhất Ocean Park 2',
+    industry: 'F&B - Nhà Hàng & Cafe',
+    project: 'ocean-park-2',
+    projectName: 'Vinhomes Ocean Park 2',
+    address: 'Căn Cọ Xanh 04-26 (Đối diện Công viên Sóng Wave Park), Ocean Park 2',
+    contactName: 'Chị Lan Quản Lý',
+    contactPhone: '0988665544',
+    contactZalo: '0988665544',
+    contactEmail: 'theoceanchill@gmail.com',
+    introduction: 'The Ocean Chill là chuỗi quán cafe kết hợp bánh ngọt phong cách Địa Trung Hải, phục vụ cư dân và du khách tại Ocean City. Chúng tôi cam kết môi trường làm việc trẻ trung, linh hoạt thời gian theo ca cho học sinh sinh viên cư dân.',
+    scaleSize: '10 - 20 nhân sự',
+    verified: true,
+    activeJobsCount: 2,
+    totalViews: 1890,
+    createdAt: '2026-06-15'
+  },
+  {
+    id: 'emp-03',
+    userId: 'u-emp-03',
+    companyName: 'Trung Tâm Dịch Vụ Kỹ Thuật Điện Nước Vinhomes FixPro',
+    brandName: 'FixPro Resident Services',
+    logoUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=200&auto=format&fit=crop&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=1200&auto=format&fit=crop&q=80',
+    tagline: 'Dịch Vụ Kỹ Thuật, Điện Lạnh & Bảo Dưỡng Nội Thất 24/7 Cho Cư Dân',
+    industry: 'Kỹ Thuật & Xây Dựng',
+    project: 'ocean-park-3',
+    projectName: 'Vinhomes Ocean Park 3',
+    address: 'Phân khu Phố Biển 08-15, Ocean Park 3',
+    contactName: 'Kỹ sư Tuấn',
+    contactPhone: '0912334455',
+    contactZalo: '0912334455',
+    contactEmail: 'hotro.fixpro@gmail.com',
+    introduction: 'Đội ngũ kỹ thuật lành nghề chuyên sửa chữa điều hòa, điện nước, thông tắc và bảo dưỡng nhà thông minh cho hơn 3.000 căn hộ tại Ocean Park 1, 2, 3.',
+    scaleSize: '15 - 30 nhân sự',
+    verified: true,
+    activeJobsCount: 1,
+    totalViews: 1220,
+    createdAt: '2026-07-01'
+  }
+];
+

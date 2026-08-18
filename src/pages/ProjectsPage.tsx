@@ -84,10 +84,14 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
           {projects.map((p) => {
             const isSelected = activeTab === p.id;
             const displayName = p.name.split('-')[0].trim();
+            const projectUrl = `/du-an/${getProjectSlug(p.id)}`;
             return (
               <button
                 key={p.id}
-                onClick={() => setActiveTab(p.id)}
+                onClick={() => {
+                  setActiveTab(p.id);
+                  navigate(projectUrl);
+                }}
                 className={`w-full py-2.5 px-3 rounded-xl text-xs font-black transition-all flex flex-col items-center justify-center text-center border min-h-[48px] relative group cursor-pointer ${
                   isSelected
                     ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg ring-2 ring-amber-400/50 scale-[1.02] z-10'
@@ -97,8 +101,12 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                 <span className="line-clamp-2 leading-tight">
                   {displayName}
                 </span>
-                {isSelected && (
+                {isSelected ? (
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-950 mt-1 animate-ping" />
+                ) : (
+                  <span className="text-[9px] font-mono text-slate-400 opacity-0 group-hover:opacity-100 transition mt-0.5">
+                    {projectUrl}
+                  </span>
                 )}
               </button>
             );
