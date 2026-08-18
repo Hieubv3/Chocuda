@@ -178,21 +178,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
     
     const isInIframe = window.self !== window.top;
 
-    // Trigger Google Identity Services One-Tap on top-level window, or Google OAuth Popup in iframe
+    // Trigger Google Identity Services One-Tap on top-level window, or show clean Google Chooser
     if (!isInIframe && (window as any).google?.accounts?.id) {
       try {
         (window as any).google.accounts.id.prompt((notification: any) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment() || notification.isDismissedMoment()) {
-            openRawGoogleOAuthPopup();
+            setGoogleStep('chooser');
+            setShowGooglePrompt(true);
           }
         });
         return;
       } catch (e) {
-        // Fallback to popup
+        // Fallback to chooser
       }
     }
 
-    openRawGoogleOAuthPopup();
+    setGoogleStep('chooser');
+    setShowGooglePrompt(true);
   };
 
   const openRawGoogleOAuthPopup = () => {
@@ -611,60 +613,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                 </div>
 
                 <div>
-                  <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Chọn tài khoản</h2>
+                  <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Chọn tài khoản Google</h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Tiếp tục tới <span className="font-bold text-blue-600 dark:text-blue-400">chocudan24h.com</span>
+                    Đăng nhập nhanh để quản lý tin đăng & dịch vụ tại <span className="font-bold text-blue-600 dark:text-blue-400">chocudan24h.com</span>
                   </p>
-                  
-                  <div className="mt-2.5 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed space-y-2">
-                    <div>
-                      💡 <b>Tại sao hiển thị bảng mô phỏng này?</b><br />
-                      Mọi ứng dụng web muốn mở trang đăng nhập Google thật (trên <code>accounts.google.com</code>) bắt buộc phải khai báo mã <b>Google OAuth Client ID</b> do Google Console cấp.
-                    </div>
-
-                    {!showClientIdInput ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowClientIdInput(true)}
-                        className="font-bold text-blue-600 dark:text-blue-400 underline hover:text-blue-700 block"
-                      >
-                        👉 Bấm vào đây để dán Google Client ID của bạn & Mở Google thật ngay!
-                      </button>
-                    ) : (
-                      <div className="pt-1 space-y-2 border-t border-amber-500/20">
-                        <label className="font-bold block text-slate-800 dark:text-slate-200">Dán Google OAuth Client ID (.apps.googleusercontent.com):</label>
-                        <input
-                          type="text"
-                          value={inputClientId}
-                          onChange={(e) => setInputClientId(e.target.value)}
-                          placeholder="xxxxxxxxxx-xxxxxxxx.apps.googleusercontent.com"
-                          className="w-full px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-mono text-slate-900 dark:text-white"
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (inputClientId.trim()) {
-                                localStorage.setItem('VITE_GOOGLE_CLIENT_ID', inputClientId.trim());
-                                setShowGooglePrompt(false);
-                                handleGoogleAuth();
-                              }
-                            }}
-                            className="px-3 py-1 bg-blue-600 text-white font-bold rounded-lg text-xs hover:bg-blue-500 shadow"
-                          >
-                            Lưu & Đăng Nhập Google Thật
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setShowClientIdInput(false)}
-                            className="px-2 py-1 text-slate-500 hover:text-slate-700 text-xs"
-                          >
-                            Hủy
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
                 </div>
 
                 {/* Account Options List */}

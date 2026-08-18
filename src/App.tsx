@@ -23,6 +23,8 @@ import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsOfServicePage } from './pages/TermsOfServicePage';
 import { ResidentServicesPage } from './components/ResidentServicesPage';
 import { ResidentServiceDetailPage } from './pages/ResidentServiceDetailPage';
+import { ResidentStoreDetailPage } from './pages/ResidentStoreDetailPage';
+import { AuthCallbackPage } from './pages/AuthCallbackPage';
 import { CommunityGroupsPage } from './pages/CommunityGroupsPage';
 import { MortgageCalculatorPage } from './pages/MortgageCalculatorPage';
 import { RecruitmentCenterPage } from './components/RecruitmentCenterPage';
@@ -188,6 +190,36 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     refreshServerData();
+  }, []);
+
+  // Listen for login events from OAuth popups or other tabs
+  useEffect(() => {
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'hb_user' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed && parsed.email) {
+            setUser(parsed);
+            setAuthModalOpen(false);
+          }
+        } catch (err) {}
+      }
+    };
+
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data && e.data.type === 'GOOGLE_OAUTH_SUCCESS' && e.data.user) {
+        setUser(e.data.user);
+        safeLocalStorageSet('hb_user', e.data.user);
+        setAuthModalOpen(false);
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   // Strict Admin Redirection Rule:
@@ -599,6 +631,20 @@ export const App: React.FC = () => {
       {/* Main Page Render via React Router */}
       <main className="flex-1 w-full overflow-x-hidden">
         <Routes>
+          {/* OAuth Redirect / Popup Callback Route */}
+          <Route
+            path="/auth/callback"
+            element={
+              <AuthCallbackPage
+                onLoginSuccess={(loggedInUser) => {
+                  setUser(loggedInUser);
+                  safeLocalStorageSet('hb_user', loggedInUser);
+                  setAuthModalOpen(false);
+                }}
+              />
+            }
+          />
+
           {/* 1. Trang Chủ */}
           <Route
             path="/"
@@ -640,6 +686,20 @@ export const App: React.FC = () => {
           />
           <Route
             path="/du-an/:projectSlug"
+            element={
+              <ProjectDetailPage
+                projects={projects}
+                properties={properties}
+                language={language}
+                savedIds={savedIds}
+                onToggleSave={handleToggleSave}
+                compareIds={compareIds}
+                onToggleCompare={handleToggleCompare}
+              />
+            }
+          />
+          <Route
+            path="/du-an/:projectSlug/phan-khu/:subdivisionSlug"
             element={
               <ProjectDetailPage
                 projects={projects}
@@ -823,6 +883,51 @@ export const App: React.FC = () => {
             }
           />
           <Route
+            path="/cho-cu-dan"
+            element={
+              <ResidentServicesPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/gian-hang"
+            element={
+              <ResidentServicesPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/gian-hang/:storeSlug"
+            element={
+              <ResidentStoreDetailPage
+                language={language}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/gian-hang/:storeSlug/san-pham/:productId"
+            element={
+              <ResidentStoreDetailPage
+                language={language}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/san-pham/:productId"
+            element={
+              <ResidentStoreDetailPage
+                language={language}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
             path="/dich-vu-cu-dan/:serviceSlug"
             element={
               <ResidentServiceDetailPage
@@ -921,6 +1026,42 @@ export const App: React.FC = () => {
           />
           <Route
             path="/chuyen-gia"
+            element={
+              <HieuBuiProfilePage
+                language={language}
+                onSelectProject={(projId) => {
+                  setSelectedProjectId(projId);
+                  navigate(`/du-an/${getProjectSlug(projId)}`);
+                }}
+              />
+            }
+          />
+          <Route
+            path="/chuyen-gia/:expertSlug"
+            element={
+              <HieuBuiProfilePage
+                language={language}
+                onSelectProject={(projId) => {
+                  setSelectedProjectId(projId);
+                  navigate(`/du-an/${getProjectSlug(projId)}`);
+                }}
+              />
+            }
+          />
+          <Route
+            path="/bui-van-hieu"
+            element={
+              <HieuBuiProfilePage
+                language={language}
+                onSelectProject={(projId) => {
+                  setSelectedProjectId(projId);
+                  navigate(`/du-an/${getProjectSlug(projId)}`);
+                }}
+              />
+            }
+          />
+          <Route
+            path="/bui-trung-hieu"
             element={
               <HieuBuiProfilePage
                 language={language}
