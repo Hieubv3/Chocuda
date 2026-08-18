@@ -417,6 +417,187 @@ let pricingConfigStore = {
   accountHolder: 'BUI VAN HIEU'
 };
 
+// Technical Orders & Escrow Store
+let techOrdersStore: any[] = [
+  {
+    id: 'tech-ord-101',
+    orderCode: 'TECH-ESCROW-9801',
+    serviceId: 'srv-thang-may-01',
+    serviceTitle: 'Lắp Đặt & Bảo Trì Thang Máy Gia Đình Kính Homelift 24/7',
+    categoryId: 'thang-may-sua-nha',
+    subCategory: '🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình & Homelift Kính',
+    customerUserId: 'user-trangnguyen',
+    customerName: 'Nguyễn Thu Trang (Cư dân San Hô OCP2)',
+    customerPhone: '0988.123.456',
+    customerAddress: 'San Hô 12 - Căn 08, Vinhomes Ocean Park 2',
+    project: 'ocean-park-2',
+    subdivision: 'Phân khu San Hô',
+    techUserId: 'user-hieubui',
+    techName: 'Kỹ Sư Nguyễn Văn Đức (Đội Thợ Thang Máy VinCons)',
+    techPhone: '0868.499.929',
+    agreedPrice: 3500000,
+    escrowAmount: 3500000,
+    platformFee: 175000,
+    payoutAmount: 3325000,
+    status: 'inspection_submitted',
+    warrantyDays: 30,
+    warrantyExpiresAt: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+    note: 'Thang máy kính Homelift kẹt nút tầng 3. Đã thay cảm biến an toàn và tra dầu xích tải.',
+    imagesBefore: ['https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80'],
+    imagesAfter: ['https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80'],
+    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
+    updatedAt: new Date().toISOString(),
+    autoReleaseAt: new Date(Date.now() + 3600000 * 19).toISOString(),
+    bankInfoForPayout: {
+      bankName: 'MBBank (Ngân Hàng Quân Đội)',
+      accountNumber: '3028031988',
+      accountHolder: 'BUI VAN HIEU'
+    }
+  },
+  {
+    id: 'tech-ord-102',
+    orderCode: 'TECH-ESCROW-9802',
+    serviceId: 'srv-dien-nuoc-laptop-02',
+    serviceTitle: 'Sửa Điện Nước & Wi-Fi Mesh Khẩn Cấp 24/7',
+    categoryId: 'dien-may-tinh-cong-nghe',
+    subCategory: 'Sửa Máy tính, Laptop & Wi-Fi',
+    customerUserId: 'user-quanghuy',
+    customerName: 'Trần Quang Huy (Cư dân OCP1)',
+    customerPhone: '0912.888.999',
+    customerAddress: 'Tòa S2.12 - Căn 1806, Vinhomes Ocean Park 1',
+    project: 'ocean-park-1',
+    subdivision: 'S2.12',
+    techUserId: 'user-trangnguyen',
+    techName: 'Thợ Cư Dân Lê Anh Tuấn (Bách Khoa)',
+    techPhone: '0972.112.334',
+    agreedPrice: 450000,
+    escrowAmount: 450000,
+    platformFee: 22500,
+    payoutAmount: 427500,
+    status: 'completed_released',
+    warrantyDays: 14,
+    warrantyExpiresAt: new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0],
+    note: 'Xử lý chập Aptomat tầng 2 và kích sóng Wi-Fi Mesh phòng ngủ.',
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000).toISOString()
+  }
+];
+
+let walletsStore: Map<string, any> = new Map([
+  ['user-trangnguyen', {
+    userId: 'user-trangnguyen',
+    availableBalance: 5200000,
+    escrowLockedBalance: 3500000,
+    securityDeposit: 2000000,
+    totalEarned: 12500000,
+    bankDetails: {
+      bankName: 'MBBank (Ngân Hàng Quân Đội)',
+      accountNumber: '3028031988',
+      accountHolder: 'NGUYEN THU TRANG',
+      qrCodeUrl: 'https://img.vietqr.io/image/MB-3028031988-compact2.png'
+    }
+  }],
+  ['user-hieubui', {
+    userId: 'user-hieubui',
+    availableBalance: 18450000,
+    escrowLockedBalance: 0,
+    securityDeposit: 5000000,
+    totalEarned: 48200000,
+    bankDetails: {
+      bankName: 'MSB (Ngân hàng Hàng Hải)',
+      accountNumber: '3028031988',
+      accountHolder: 'BUI VAN HIEU',
+      qrCodeUrl: 'https://img.vietqr.io/image/MSB-3028031988-compact2.png'
+    }
+  }],
+  ['user-admin', {
+    userId: 'user-admin',
+    availableBalance: 85200000,
+    escrowLockedBalance: 3500000,
+    securityDeposit: 10000000,
+    totalEarned: 125000000,
+    bankDetails: {
+      bankName: 'Vietcombank',
+      accountNumber: '0868499929',
+      accountHolder: 'CHOCUDAN24H ESCROW VAULT',
+      qrCodeUrl: 'https://img.vietqr.io/image/VCB-0868499929-compact2.png'
+    }
+  }]
+]);
+
+let walletTransactionsStore: any[] = [
+  {
+    id: 'wtx-101',
+    userId: 'user-trangnguyen',
+    type: 'escrow_hold',
+    amount: 3500000,
+    orderId: 'tech-ord-101',
+    orderCode: 'TECH-ESCROW-9801',
+    description: 'Tạm giữ tiền dịch vụ Thang máy Homelift Kính OCP2 (Trạng thái Escrow Hold)',
+    status: 'success',
+    createdAt: new Date(Date.now() - 3600000 * 5).toLocaleString('vi-VN'),
+    referenceCode: 'ESCROW-9801-HOLD'
+  },
+  {
+    id: 'wtx-102',
+    userId: 'user-trangnguyen',
+    type: 'deposit_vietqr',
+    amount: 10000000,
+    description: 'Nạp tiền tự động qua VietQR MBBank 3028031988',
+    status: 'success',
+    createdAt: new Date(Date.now() - 86400000 * 3).toLocaleString('vi-VN'),
+    referenceCode: 'NAP-VQR-10000'
+  }
+];
+
+let taxConfigStore = {
+  autoWithholdEnabled: true,
+  pitRateServices: 1.5,
+  vatRateServices: 3.5,
+  pitRateGoods: 0.5,
+  vatRateGoods: 1.0,
+  minAnnualRevenueThreshold: 100000000,
+  taxAuthorityUnit: 'Chi Cục Thuế Huyện Văn Giang - Tỉnh Hưng Yên',
+  taxCodePlatform: '0109888999-001'
+};
+
+let taxLedgerStore: any[] = [
+  {
+    id: 'tax-rec-101',
+    taxpayerName: 'Bùi Văn Hiếu',
+    taxpayerPhone: '0868.499.929',
+    taxCodeCCCD: '001088019988',
+    userRole: 'Kỹ Sư / Thợ Thang Máy',
+    project: 'ocean-park-2',
+    grossRevenue: 3500000,
+    pitWithheld: 52500,
+    vatWithheld: 122500,
+    totalTaxWithheld: 175000,
+    netPayout: 3150000,
+    orderCode: 'TECH-ESCROW-9801',
+    status: 'withheld_in_vault',
+    quarterPeriod: 'Q3/2026',
+    createdAt: new Date().toLocaleString('vi-VN')
+  },
+  {
+    id: 'tax-rec-102',
+    taxpayerName: 'Lê Anh Tuấn',
+    taxpayerPhone: '0972.112.334',
+    taxCodeCCCD: '001095012345',
+    userRole: 'Thợ Điện Nước & Wi-Fi',
+    project: 'ocean-park-1',
+    grossRevenue: 450000,
+    pitWithheld: 6750,
+    vatWithheld: 15750,
+    totalTaxWithheld: 22500,
+    netPayout: 405000,
+    orderCode: 'TECH-ESCROW-9802',
+    status: 'declared_gdt',
+    quarterPeriod: 'Q3/2026',
+    createdAt: new Date(Date.now() - 86400000).toLocaleString('vi-VN')
+  }
+];
+
 // Data Store File Persistence (Local JSON Database)
 const DATA_STORE_PATH = path.join(process.cwd(), "app_data_store.json");
 const DATA_STORE_BACKUP_PATH = path.join(process.cwd(), "app_data_store.backup.json");
@@ -3510,138 +3691,6 @@ app.post("/api/auth/facebook/data-deletion", (req, res) => {
 // TECHNICAL SERVICES & AUTOMATED WALLET ESCROW ENGINE (GIAO DỊCH VÍ TỰ ĐỘNG)
 // =========================================================================
 
-let techOrdersStore: any[] = [
-  {
-    id: 'tech-ord-101',
-    orderCode: 'TECH-ESCROW-9801',
-    serviceId: 'srv-thang-may-01',
-    serviceTitle: 'Lắp Đặt & Bảo Trì Thang Máy Gia Đình Kính Homelift 24/7',
-    categoryId: 'thang-may-sua-nha',
-    subCategory: '🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình & Homelift Kính',
-    customerUserId: 'user-trangnguyen',
-    customerName: 'Nguyễn Thu Trang (Cư dân San Hô OCP2)',
-    customerPhone: '0988.123.456',
-    customerAddress: 'San Hô 12 - Căn 08, Vinhomes Ocean Park 2',
-    project: 'ocean-park-2',
-    subdivision: 'Phân khu San Hô',
-    techUserId: 'user-hieubui',
-    techName: 'Kỹ Sư Nguyễn Văn Đức (Đội Thợ Thang Máy VinCons)',
-    techPhone: '0868.499.929',
-    agreedPrice: 3500000, // 3,500,000đ (Bảo trì & Tải thử định kỳ)
-    escrowAmount: 3500000,
-    platformFee: 175000, // 5% Chiết khấu hệ thống = 175,000đ
-    payoutAmount: 3325000, // Thợ nhận = 3,325,000đ
-    status: 'inspection_submitted',
-    warrantyDays: 30,
-    warrantyExpiresAt: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
-    note: 'Thang máy kính Homelift kẹt nút tầng 3. Đã thay cảm biến an toàn và tra dầu xích tải.',
-    imagesBefore: ['https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80'],
-    imagesAfter: ['https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80'],
-    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-    updatedAt: new Date().toISOString(),
-    autoReleaseAt: new Date(Date.now() + 3600000 * 19).toISOString(),
-    bankInfoForPayout: {
-      bankName: 'MBBank (Ngân Hàng Quân Đội)',
-      accountNumber: '3028031988',
-      accountHolder: 'BUI VAN HIEU'
-    }
-  },
-  {
-    id: 'tech-ord-102',
-    orderCode: 'TECH-ESCROW-9802',
-    serviceId: 'srv-dien-nuoc-laptop-02',
-    serviceTitle: 'Sửa Điện Nước & Wi-Fi Mesh Khẩn Cấp 24/7',
-    categoryId: 'dien-may-tinh-cong-nghe',
-    subCategory: 'Sửa Máy tính, Laptop & Wi-Fi',
-    customerUserId: 'user-quanghuy',
-    customerName: 'Trần Quang Huy (Cư dân OCP1)',
-    customerPhone: '0912.888.999',
-    customerAddress: 'Tòa S2.12 - Căn 1806, Vinhomes Ocean Park 1',
-    project: 'ocean-park-1',
-    subdivision: 'S2.12',
-    techUserId: 'user-trangnguyen',
-    techName: 'Thợ Cư Dân Lê Anh Tuấn (Bách Khoa)',
-    techPhone: '0972.112.334',
-    agreedPrice: 450000,
-    escrowAmount: 450000,
-    platformFee: 22500,
-    payoutAmount: 427500,
-    status: 'completed_released',
-    warrantyDays: 14,
-    warrantyExpiresAt: new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0],
-    note: 'Xử lý chập Aptomat tầng 2 và kích sóng Wi-Fi Mesh phòng ngủ.',
-    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000).toISOString()
-  }
-];
-
-let walletsStore: Map<string, any> = new Map([
-  ['user-trangnguyen', {
-    userId: 'user-trangnguyen',
-    availableBalance: 5200000,
-    escrowLockedBalance: 3500000,
-    securityDeposit: 2000000,
-    totalEarned: 12500000,
-    bankDetails: {
-      bankName: 'MBBank (Ngân Hàng Quân Đội)',
-      accountNumber: '3028031988',
-      accountHolder: 'NGUYEN THU TRANG',
-      qrCodeUrl: 'https://img.vietqr.io/image/MB-3028031988-compact2.png'
-    }
-  }],
-  ['user-hieubui', {
-    userId: 'user-hieubui',
-    availableBalance: 18450000,
-    escrowLockedBalance: 0,
-    securityDeposit: 5000000,
-    totalEarned: 48200000,
-    bankDetails: {
-      bankName: 'MSB (Ngân hàng Hàng Hải)',
-      accountNumber: '3028031988',
-      accountHolder: 'BUI VAN HIEU',
-      qrCodeUrl: 'https://img.vietqr.io/image/MSB-3028031988-compact2.png'
-    }
-  }],
-  ['user-admin', {
-    userId: 'user-admin',
-    availableBalance: 85200000, // Quỹ hệ thống & Hoa hồng thu được
-    escrowLockedBalance: 3500000,
-    securityDeposit: 10000000,
-    totalEarned: 125000000,
-    bankDetails: {
-      bankName: 'Vietcombank',
-      accountNumber: '0868499929',
-      accountHolder: 'CHOCUDAN24H ESCROW VAULT',
-      qrCodeUrl: 'https://img.vietqr.io/image/VCB-0868499929-compact2.png'
-    }
-  }]
-]);
-
-let walletTransactionsStore: any[] = [
-  {
-    id: 'wtx-101',
-    userId: 'user-trangnguyen',
-    type: 'escrow_hold',
-    amount: 3500000,
-    orderId: 'tech-ord-101',
-    orderCode: 'TECH-ESCROW-9801',
-    description: 'Tạm giữ tiền dịch vụ Thang máy Homelift Kính OCP2 (Trạng thái Escrow Hold)',
-    status: 'success',
-    createdAt: new Date(Date.now() - 3600000 * 5).toLocaleString('vi-VN'),
-    referenceCode: 'ESCROW-9801-HOLD'
-  },
-  {
-    id: 'wtx-102',
-    userId: 'user-trangnguyen',
-    type: 'deposit_vietqr',
-    amount: 10000000,
-    description: 'Nạp tiền tự động qua VietQR MBBank 3028031988',
-    status: 'success',
-    createdAt: new Date(Date.now() - 86400000 * 3).toLocaleString('vi-VN'),
-    referenceCode: 'NAP-VQR-10000'
-  }
-];
-
 // Helper to get or create wallet
 function getUserWallet(userId: string) {
   if (!walletsStore.has(userId)) {
@@ -3963,54 +4012,6 @@ app.post("/api/wallets/:userId/withdraw", (req, res) => {
 });
 
 // 8. Tax Withholding & E-Commerce Tax Declaration Endpoints (Nghị định 91/2022/NĐ-CP & Thông tư 40/2021/TT-BTC)
-let taxConfigStore = {
-  autoWithholdEnabled: true,
-  pitRateServices: 1.5, // 1.5% Thuế TNCN dịch vụ
-  vatRateServices: 3.5, // 3.5% Thuế GTGT dịch vụ
-  pitRateGoods: 0.5,    // 0.5% Thuế TNCN bán hàng
-  vatRateGoods: 1.0,    // 1.0% Thuế GTGT bán hàng
-  minAnnualRevenueThreshold: 100000000, // Ngưỡng 100tr/năm bắt đầu nộp thuế
-  taxAuthorityUnit: 'Chi Cục Thuế Huyện Văn Giang - Tỉnh Hưng Yên',
-  taxCodePlatform: '0109888999-001'
-};
-
-let taxLedgerStore: any[] = [
-  {
-    id: 'tax-rec-101',
-    taxpayerName: 'Bùi Văn Hiếu',
-    taxpayerPhone: '0868.499.929',
-    taxCodeCCCD: '001088019988',
-    userRole: 'Kỹ Sư / Thợ Thang Máy',
-    project: 'ocean-park-2',
-    grossRevenue: 3500000,
-    pitWithheld: 52500, // 1.5% x 3.5tr = 52,500đ
-    vatWithheld: 122500, // 3.5% x 3.5tr = 122,500đ
-    totalTaxWithheld: 175000,
-    netPayout: 3150000,
-    orderCode: 'TECH-ESCROW-9801',
-    status: 'withheld_in_vault', // withheld_in_vault | declared_gdt | paid_kbnn
-    quarterPeriod: 'Q3/2026',
-    createdAt: new Date().toLocaleString('vi-VN')
-  },
-  {
-    id: 'tax-rec-102',
-    taxpayerName: 'Lê Anh Tuấn',
-    taxpayerPhone: '0972.112.334',
-    taxCodeCCCD: '001095012345',
-    userRole: 'Thợ Điện Nước & Wi-Fi',
-    project: 'ocean-park-1',
-    grossRevenue: 450000,
-    pitWithheld: 6750,
-    vatWithheld: 15750,
-    totalTaxWithheld: 22500,
-    netPayout: 405000,
-    orderCode: 'TECH-ESCROW-9802',
-    status: 'declared_gdt',
-    quarterPeriod: 'Q3/2026',
-    createdAt: new Date(Date.now() - 86400000).toLocaleString('vi-VN')
-  }
-];
-
 app.get("/api/admin/tax-config", (req, res) => {
   res.json(taxConfigStore);
 });
