@@ -11,7 +11,7 @@ import { SEOHead } from '../components/SEOHead';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { INITIAL_RECRUITMENT_JOBS, RECRUITMENT_INDUSTRIES } from '../data/recruitmentData';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
-import { getJobDetailUrl, getRecruitmentIndustryUrl } from '../lib/slugs';
+import { getJobDetailUrl, getRecruitmentIndustryUrl, getEmployerProfileUrl, getCandidateCvUrl } from '../lib/slugs';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
 
 interface RecruitmentJobDetailPageProps {

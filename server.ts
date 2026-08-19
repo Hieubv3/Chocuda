@@ -7,8 +7,8 @@ import nodemailer from "nodemailer";
 import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS, INITIAL_ADS } from "./src/data/initialData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
-import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile } from "./src/data/recruitmentData.ts";
-import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord } from "./src/types.ts";
+import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile, RECRUITMENT_PACKAGES, INITIAL_EMPLOYER_REGISTRATIONS, INITIAL_TASK_DELEGATIONS } from "./src/data/recruitmentData.ts";
+import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation } from "./src/types.ts";
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
@@ -403,6 +403,8 @@ let packageOrdersStore: any[] = [];
 let recruitmentJobsStore: RecruitmentJob[] = [...INITIAL_RECRUITMENT_JOBS];
 let candidateProfilesStore: CandidateProfile[] = [...INITIAL_CANDIDATE_PROFILES];
 let employersStore: EmployerProfile[] = [...INITIAL_EMPLOYERS];
+let employerRegistrationsStore: EmployerRegistrationRequest[] = [...INITIAL_EMPLOYER_REGISTRATIONS];
+let adminTaskDelegationsStore: AdminTaskDelegation[] = [...INITIAL_TASK_DELEGATIONS];
 let jobApplicationsStore: JobApplication[] = [];
 let cvUnlocksStore: CvUnlockRecord[] = [];
 
@@ -4219,14 +4221,41 @@ function maskCandidateData(cand: CandidateProfile, requesterUserId?: string, isA
   };
 }
 
-// 1. GET Recruitment Jobs (Filter by Industry, Project, JobType, Search)
+// Helper function for Telegram Recruitment Notification
+function sendTelegramRecruitmentAlert(appItem: any, jobItem: any) {
+  const message = `🔔 [CHỢ CƯ DÂN 24H] CÓ ỨNG VIÊN NỘP HỒ SƠ VIỆC LÀM MỚI!
+------------------------------------------------
+💼 Vị trí: ${jobItem.title}
+🏢 Đơn vị tuyển dụng: ${jobItem.companyName}
+📍 Địa điểm: ${jobItem.location || jobItem.projectName || 'Vinhomes'}
+👤 Ứng viên: ${appItem.candidateName}
+📞 Số điện thoại: ${appItem.candidatePhone}
+🏠 Căn hộ / Địa chỉ: ${appItem.candidateAddress || appItem.targetJobTitle || 'Cư dân Vinhomes'}
+📝 Tóm tắt kinh nghiệm: ${appItem.message || 'Chưa có ghi chú thêm'}
+⏰ Thời gian nộp: ${appItem.createdAt}
+------------------------------------------------
+👉 Xem chi tiết và duyệt ứng viên tại: https://chocudan24h.com/admin`;
+
+  console.log(`[TELEGRAM BOT 24/7] Sent alert to Telegram Admin Channel:\n${message}`);
+  return true;
+}
+
+// 1. GET Recruitment Jobs (Filter by Industry, Project, JobType, Search with Full Case-Insensitive & Alias Support)
 app.get("/api/recruitment/jobs", (req, res) => {
-  const { industry, project, jobType, q, employerUserId, status } = req.query;
+  const { industry, project, jobType, q, search, employerUserId, status, format } = req.query;
 
   let result = [...recruitmentJobsStore];
 
+  // Status mapping (HIRING -> active, ACTIVE -> active, CLOSED -> closed)
   if (status && status !== 'all') {
-    result = result.filter(j => j.status === status);
+    const normStatus = String(status).toLowerCase().trim();
+    if (normStatus === 'hiring' || normStatus === 'active') {
+      result = result.filter(j => j.status === 'active' || !j.status);
+    } else if (normStatus === 'closed') {
+      result = result.filter(j => j.status === 'closed');
+    } else {
+      result = result.filter(j => j.status === status);
+    }
   } else if (!employerUserId) {
     result = result.filter(j => j.status === 'active' || !j.status);
   }
@@ -4239,16 +4268,19 @@ app.get("/api/recruitment/jobs", (req, res) => {
     result = result.filter(j => j.project === project || j.project === 'all');
   }
 
+  // JobType mapping (PART_TIME -> part-time, FULL_TIME -> full-time, SHIFT -> shift, etc.)
   if (jobType && jobType !== 'all') {
-    result = result.filter(j => j.jobType === jobType);
+    const rawType = String(jobType).toLowerCase().replace(/_/g, '-').trim();
+    result = result.filter(j => j.jobType === rawType || j.jobType === jobType);
   }
 
   if (employerUserId) {
     result = result.filter(j => j.employerUserId === employerUserId);
   }
 
-  if (q && typeof q === 'string' && q.trim()) {
-    const term = q.toLowerCase().trim();
+  const searchTerm = (search || q) as string;
+  if (searchTerm && typeof searchTerm === 'string' && searchTerm.trim()) {
+    const term = searchTerm.toLowerCase().trim();
     result = result.filter(j => 
       j.title.toLowerCase().includes(term) ||
       j.companyName.toLowerCase().includes(term) ||
@@ -4266,7 +4298,24 @@ app.get("/api/recruitment/jobs", (req, res) => {
     return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
   });
 
-  res.json(result);
+  // Enrich with compatible fields (workplace, salaryRange, contactPerson, applicantsCount)
+  const enrichedJobs = result.map(j => ({
+    ...j,
+    workplace: j.location,
+    salaryRange: j.salaryDisplay,
+    contactPerson: j.contactName,
+    applicantsCount: j.applicationsCount || 0
+  }));
+
+  if (format === 'wrapper' || format === 'json_wrapper') {
+    return res.json({
+      success: true,
+      total: enrichedJobs.length,
+      jobs: enrichedJobs
+    });
+  }
+
+  res.json(enrichedJobs);
 });
 
 // 2. GET Single Job by ID
@@ -4740,11 +4789,31 @@ app.post("/api/recruitment/candidates/:id/unlock", (req, res) => {
   });
 });
 
-// 10. POST Apply for Job (Ứng tuyển việc làm)
-app.post("/api/recruitment/applications", (req, res) => {
-  const { jobId, candidateId, candidateName, candidatePhone, candidateEmail, message, expectedSalary, targetJobTitle, candidateAvatar } = req.body;
+// 10. POST Apply for Job (Ứng tuyển việc làm - Compatible with both /api/recruitment/applications & /api/recruitment/applicants/apply)
+app.post(["/api/recruitment/applications", "/api/recruitment/applicants/apply"], (req, res) => {
+  const { 
+    jobId, 
+    candidateId, 
+    candidateName, 
+    applicantName, 
+    candidatePhone, 
+    phone, 
+    candidateEmail, 
+    message, 
+    experienceSummary, 
+    apartment, 
+    candidateAddress, 
+    expectedSalary, 
+    targetJobTitle, 
+    candidateAvatar 
+  } = req.body;
 
-  if (!jobId || !candidateName || !candidatePhone) {
+  const actualName = (applicantName || candidateName || '').trim();
+  const actualPhone = (phone || candidatePhone || '').trim();
+  const actualMessage = (experienceSummary || message || '').trim();
+  const actualAddress = (apartment || candidateAddress || '').trim();
+
+  if (!jobId || !actualName || !actualPhone) {
     return res.status(400).json({ error: "Vui lòng nhập đầy đủ Họ Tên và Số Điện Thoại để nộp hồ sơ!" });
   }
 
@@ -4759,13 +4828,13 @@ app.post("/api/recruitment/applications", (req, res) => {
     jobTitle: job.title,
     companyName: job.companyName,
     candidateId: candidateId || `cand-${Date.now()}`,
-    candidateName: candidateName.trim(),
-    candidatePhone: candidatePhone.trim(),
+    candidateName: actualName,
+    candidatePhone: actualPhone,
     candidateEmail: candidateEmail || '',
     candidateAvatar: candidateAvatar || '',
     expectedSalary: expectedSalary || '',
-    targetJobTitle: targetJobTitle || job.title,
-    message: message || '',
+    targetJobTitle: targetJobTitle || actualAddress || job.title,
+    message: actualMessage,
     employerUserId: job.employerUserId,
     status: 'applied',
     createdAt: new Date().toLocaleString('vi-VN')
@@ -4774,20 +4843,35 @@ app.post("/api/recruitment/applications", (req, res) => {
   jobApplicationsStore.unshift(newApp);
   job.applicationsCount = (job.applicationsCount || 0) + 1;
 
+  // Send instant Telegram Alert to Admin
+  sendTelegramRecruitmentAlert(newApp, job);
+
   saveDataStore();
 
   res.status(201).json({
     success: true,
-    message: `🎉 Nộp hồ sơ ứng tuyển thành công!\n\nThông tin của bạn đã được gửi trực tiếp đến Nhà tuyển dụng (${job.companyName} - ${job.contactName}).`,
+    applicantId: newApp.id,
+    totalApplicants: job.applicationsCount,
+    message: `🎉 Nộp hồ sơ ứng tuyển thành công!\n\nThông tin của bạn đã được gửi trực tiếp đến Nhà tuyển dụng (${job.companyName} - ${job.contactName}) và báo về Telegram Admin.`,
     application: newApp
   });
 });
 
 // 11. GET Job Applications (Xem danh sách ứng tuyển)
-app.get("/api/recruitment/applications", (req, res) => {
-  const { employerUserId, candidatePhone, candidateId, jobId } = req.query;
+app.get(["/api/recruitment/applications", "/api/recruitment/applicants"], (req, res) => {
+  const { employerUserId, candidatePhone, candidateId, jobId, status } = req.query;
 
   let list = [...jobApplicationsStore];
+
+  if (status && status !== 'all') {
+    const rawStatus = String(status).toLowerCase();
+    if (rawStatus === 'accepted') list = list.filter(a => a.status === 'accepted');
+    else if (rawStatus === 'new') list = list.filter(a => a.status === 'applied');
+    else if (rawStatus === 'contacted') list = list.filter(a => a.status === 'reviewing');
+    else if (rawStatus === 'interviewed') list = list.filter(a => a.status === 'interview_scheduled');
+    else if (rawStatus === 'rejected') list = list.filter(a => a.status === 'rejected');
+    else list = list.filter(a => a.status === status);
+  }
 
   if (employerUserId) {
     list = list.filter(a => a.employerUserId === employerUserId);
@@ -4806,17 +4890,65 @@ app.get("/api/recruitment/applications", (req, res) => {
   res.json(list);
 });
 
-// 12. PUT Update Job Application Status
+// 12. POST/PUT Update Job Application Status (Supports /status & /update-status)
+app.post(["/api/recruitment/applicants/update-status", "/api/recruitment/applications/update-status"], (req, res) => {
+  const { applicantId, id, status, adminNotes } = req.body;
+  const targetId = applicantId || id;
+
+  if (!targetId) {
+    return res.status(400).json({ error: "Thiếu thông tin applicantId!" });
+  }
+
+  const appItem = jobApplicationsStore.find(a => a.id === targetId);
+  if (!appItem) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ ứng tuyển!" });
+  }
+
+  // Normalize status (ACCEPTED -> accepted, NEW -> applied, CONTACTED -> reviewing, INTERVIEWED -> interview_scheduled, REJECTED -> rejected)
+  let mappedStatus = status;
+  const upperStatus = String(status).toUpperCase();
+  if (upperStatus === 'ACCEPTED') mappedStatus = 'accepted';
+  else if (upperStatus === 'NEW') mappedStatus = 'applied';
+  else if (upperStatus === 'CONTACTED') mappedStatus = 'reviewing';
+  else if (upperStatus === 'INTERVIEWED') mappedStatus = 'interview_scheduled';
+  else if (upperStatus === 'REJECTED') mappedStatus = 'rejected';
+
+  appItem.status = mappedStatus;
+  if (adminNotes) {
+    appItem.message = appItem.message ? `${appItem.message}\n[Admin]: ${adminNotes}` : `[Admin]: ${adminNotes}`;
+  }
+
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: `Đã cập nhật trạng thái hồ sơ ứng viên thành: ${status}`,
+    application: appItem
+  });
+});
+
 app.put("/api/recruitment/applications/:id/status", (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { status, adminNotes } = req.body;
 
   const appItem = jobApplicationsStore.find(a => a.id === id);
   if (!appItem) {
     return res.status(404).json({ error: "Không tìm thấy hồ sơ ứng tuyển!" });
   }
 
-  appItem.status = status;
+  let mappedStatus = status;
+  const upperStatus = String(status).toUpperCase();
+  if (upperStatus === 'ACCEPTED') mappedStatus = 'accepted';
+  else if (upperStatus === 'NEW') mappedStatus = 'applied';
+  else if (upperStatus === 'CONTACTED') mappedStatus = 'reviewing';
+  else if (upperStatus === 'INTERVIEWED') mappedStatus = 'interview_scheduled';
+  else if (upperStatus === 'REJECTED') mappedStatus = 'rejected';
+
+  appItem.status = mappedStatus;
+  if (adminNotes) {
+    appItem.message = appItem.message ? `${appItem.message}\n[Admin]: ${adminNotes}` : `[Admin]: ${adminNotes}`;
+  }
+
   saveDataStore();
 
   res.json({
@@ -5023,6 +5155,296 @@ app.delete("/api/recruitment/employers/:id", (req, res) => {
   res.json({
     success: true,
     message: "Đã xóa hồ sơ nhà tuyển dụng thành công!"
+  });
+});
+
+// 21. GET Recruitment Packages (Bảng giá các gói tuyển dụng)
+app.get("/api/recruitment/packages", (req, res) => {
+  res.json(RECRUITMENT_PACKAGES);
+});
+
+// 22. GET Employer Registration Requests (Admin)
+app.get("/api/recruitment/employer-registrations", (req, res) => {
+  const { status, project } = req.query;
+  let list = [...employerRegistrationsStore];
+  if (status && status !== 'all') {
+    list = list.filter(r => r.status === status);
+  }
+  if (project && project !== 'all') {
+    list = list.filter(r => r.project === project);
+  }
+  res.json(list);
+});
+
+// 23. POST Submit Employer Registration & Buy Package
+app.post("/api/recruitment/employer-registrations", (req, res) => {
+  const data = req.body;
+  if (!data.companyName || !data.contactPhone || !data.contactName || !data.selectedPackageId) {
+    return res.status(400).json({ error: "Vui lòng điền đầy đủ Tên Công Ty/Cửa Hàng, Người Đại Diện, SĐT và Chọn Gói Dịch Vụ!" });
+  }
+
+  const pkg = RECRUITMENT_PACKAGES.find(p => p.id === data.selectedPackageId) || RECRUITMENT_PACKAGES[0];
+  const newReg: EmployerRegistrationRequest = {
+    id: `reg-emp-${Date.now()}`,
+    userId: data.userId || 'guest',
+    companyName: data.companyName.trim(),
+    brandName: data.brandName || data.companyName.trim(),
+    industry: data.industry || 'Bất Động Sản & Môi Giới',
+    taxCode: data.taxCode || '',
+    project: data.project || 'ocean-park-2',
+    address: data.address || 'Vinhomes Ocean Park',
+    contactName: data.contactName.trim(),
+    contactPhone: data.contactPhone.trim(),
+    contactZalo: data.contactZalo || data.contactPhone.trim(),
+    contactEmail: data.contactEmail || '',
+    selectedPackageId: pkg.id,
+    selectedPackageName: pkg.name,
+    tokenCost: pkg.priceToken,
+    status: 'pending',
+    assignedAdminId: 'admin-master',
+    assignedAdminName: 'Ban Quản Trị Tuyển Dụng',
+    adminNote: 'Hồ sơ đăng ký mới, chờ liên hệ xác minh và cấp Token gói',
+    createdAt: new Date().toLocaleString('vi-VN')
+  };
+
+  employerRegistrationsStore.unshift(newReg);
+  saveDataStore();
+
+  res.status(201).json({
+    success: true,
+    message: `🎉 Gửi hồ sơ đăng ký Nhà Tuyển Dụng (${pkg.name}) thành công! Ban Quản Trị sẽ xác minh và kích hoạt gói Token cho bạn trong 15-30 phút.`,
+    registration: newReg
+  });
+});
+
+// 24. POST Approve Employer Registration Request (Admin)
+app.post("/api/recruitment/employer-registrations/:id/approve", (req, res) => {
+  const { id } = req.params;
+  const { adminName, adminNote } = req.body;
+
+  const reg = employerRegistrationsStore.find(r => r.id === id);
+  if (!reg) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ đăng ký này!" });
+  }
+
+  reg.status = 'approved';
+  reg.approvedAt = new Date().toLocaleString('vi-VN');
+  if (adminNote) reg.adminNote = adminNote;
+  if (adminName) reg.assignedAdminName = adminName;
+
+  // Automatically create/update Employer Profile
+  let existingEmp = employersStore.find(e => (reg.userId && e.userId === reg.userId) || e.companyName.toLowerCase() === reg.companyName.toLowerCase());
+  if (existingEmp) {
+    existingEmp.verified = true;
+    existingEmp.contactPhone = reg.contactPhone;
+    existingEmp.contactZalo = reg.contactZalo;
+  } else {
+    employersStore.unshift({
+      id: `emp-${Date.now()}`,
+      userId: reg.userId || `u-emp-${Date.now()}`,
+      companyName: reg.companyName,
+      brandName: reg.brandName || reg.companyName,
+      logoUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
+      bannerUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
+      tagline: `Nhà tuyển dụng uy tín tại ${reg.project}`,
+      industry: reg.industry,
+      project: reg.project,
+      projectName: typeof reg.project === 'string' ? reg.project : 'Vinhomes',
+      address: reg.address,
+      contactName: reg.contactName,
+      contactPhone: reg.contactPhone,
+      contactZalo: reg.contactZalo,
+      contactEmail: reg.contactEmail,
+      introduction: `Doanh nghiệp hoạt động tại khu đô thị Vinhomes, đăng ký gói tuyển dụng ${reg.selectedPackageName}.`,
+      scaleSize: '10 - 50 nhân sự',
+      verified: true,
+      activeJobsCount: 0,
+      totalViews: 1,
+      createdAt: new Date().toISOString()
+    });
+  }
+
+  // Inject package tokens to user wallet if registered with a valid userId
+  if (reg.userId && reg.userId !== 'guest') {
+    const user = usersStore.find(u => u.id === reg.userId);
+    if (user) {
+      user.balance = (user.balance || 0) + reg.tokenCost;
+      user.tokenBalance = (user.tokenBalance || 0) + reg.tokenCost;
+      user.totalTokensPumped = (user.totalTokensPumped || 0) + reg.tokenCost;
+      user.role = 'partner'; // Upgrade user to partner/recruiter
+
+      walletTransactionsStore.unshift({
+        id: `wtx-reg-${Date.now()}`,
+        userId: user.id,
+        type: 'admin_pump_tokens' as any,
+        amount: reg.tokenCost,
+        description: `[KÍCH HOẠT GÓI TUYỂN DỤNG] Cấp +${reg.tokenCost.toLocaleString('vi-VN')} Token Cư Dân cho gói "${reg.selectedPackageName}"`,
+        status: 'success',
+        createdAt: new Date().toLocaleString('vi-VN'),
+        referenceCode: `REG-PACKAGE-${reg.id}`
+      });
+    }
+  }
+
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: `🎉 Đã phê duyệt hồ sơ "${reg.companyName}" và kích hoạt gói ${reg.selectedPackageName} (${reg.tokenCost.toLocaleString('vi-VN')} Token)!`,
+    registration: reg
+  });
+});
+
+// 25. POST Reject Employer Registration Request (Admin)
+app.post("/api/recruitment/employer-registrations/:id/reject", (req, res) => {
+  const { id } = req.params;
+  const { adminNote } = req.body;
+
+  const reg = employerRegistrationsStore.find(r => r.id === id);
+  if (!reg) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ đăng ký này!" });
+  }
+
+  reg.status = 'rejected';
+  if (adminNote) reg.adminNote = adminNote;
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: "Đã từ chối hồ sơ đăng ký nhà tuyển dụng.",
+    registration: reg
+  });
+});
+
+// 26. GET Admin Task Delegations (Phân công giao việc quản trị các mảng)
+app.get("/api/admin/tasks", (req, res) => {
+  const { category, status, assignedToAdminId, targetProject } = req.query;
+  let list = [...adminTaskDelegationsStore];
+
+  if (category && category !== 'all') {
+    list = list.filter(t => t.category === category);
+  }
+  if (status && status !== 'all') {
+    list = list.filter(t => t.status === status);
+  }
+  if (assignedToAdminId && assignedToAdminId !== 'all') {
+    list = list.filter(t => t.assignedToAdminId === assignedToAdminId);
+  }
+  if (targetProject && targetProject !== 'all') {
+    list = list.filter(t => t.targetProject === targetProject);
+  }
+
+  res.json(list);
+});
+
+// 27. POST Create Admin Task Delegation
+app.post("/api/admin/tasks", (req, res) => {
+  const data = req.body;
+  if (!data.title || !data.assignedToAdminName || !data.category) {
+    return res.status(400).json({ error: "Vui lòng nhập đầy đủ Tiêu đề nhiệm vụ, Mảng công việc và Người được phân công!" });
+  }
+
+  const newTask: AdminTaskDelegation = {
+    id: `task-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    title: data.title.trim(),
+    category: data.category || 'recruitment',
+    targetId: data.targetId || `target-${Date.now()}`,
+    targetTitle: data.targetTitle || data.title,
+    targetProject: data.targetProject || 'ocean-park-2',
+    assignedToAdminId: data.assignedToAdminId || 'admin-branch-ocp2',
+    assignedToAdminName: data.assignedToAdminName.trim(),
+    assignedByAdminId: data.assignedByAdminId || 'admin-master',
+    assignedByAdminName: data.assignedByAdminName || 'Admin Trưởng Ban Tổng',
+    priority: data.priority || 'medium',
+    status: 'pending',
+    deadline: data.deadline || new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+    notes: data.notes || '',
+    createdAt: new Date().toLocaleString('vi-VN'),
+    updatedAt: new Date().toLocaleString('vi-VN')
+  };
+
+  adminTaskDelegationsStore.unshift(newTask);
+  saveDataStore();
+
+  res.status(201).json({
+    success: true,
+    message: `🎉 Giao việc "${newTask.title}" cho [${newTask.assignedToAdminName}] thành công!`,
+    task: newTask
+  });
+});
+
+// 28. PUT Update Admin Task Delegation
+app.put("/api/admin/tasks/:id", (req, res) => {
+  const { id } = req.params;
+  const index = adminTaskDelegationsStore.findIndex(t => t.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: "Không tìm thấy nhiệm vụ này để cập nhật!" });
+  }
+
+  adminTaskDelegationsStore[index] = {
+    ...adminTaskDelegationsStore[index],
+    ...req.body,
+    id,
+    updatedAt: new Date().toLocaleString('vi-VN')
+  };
+
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: "Cập nhật tiến độ nhiệm vụ thành công!",
+    task: adminTaskDelegationsStore[index]
+  });
+});
+
+// 29. DELETE Admin Task Delegation
+app.delete("/api/admin/tasks/:id", (req, res) => {
+  const { id } = req.params;
+  const index = adminTaskDelegationsStore.findIndex(t => t.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: "Không tìm thấy nhiệm vụ để xóa!" });
+  }
+
+  adminTaskDelegationsStore.splice(index, 1);
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: "Đã xóa nhiệm vụ bàn giao thành công!"
+  });
+});
+
+// 30. GET User's own CV (Candidate Profile)
+app.get("/api/recruitment/my-cv", (req, res) => {
+  const { userId } = req.query;
+  if (!userId || typeof userId !== 'string') {
+    return res.status(400).json({ error: "Thiếu thông tin userId!" });
+  }
+
+  const cv = candidateProfilesStore.find(c => c.userId === userId);
+  if (!cv) {
+    return res.status(404).json({ error: "Chưa tạo CV trực tuyến." });
+  }
+
+  res.json(cv);
+});
+
+// 31. POST Toggle Candidate Job Seeking Status
+app.post("/api/recruitment/candidates/:id/toggle-seeking", (req, res) => {
+  const { id } = req.params;
+  const cand = candidateProfilesStore.find(c => c.id === id);
+  if (!cand) {
+    return res.status(404).json({ error: "Không tìm thấy hồ sơ ứng viên!" });
+  }
+
+  cand.isLookingForJob = !cand.isLookingForJob;
+  cand.updatedAt = new Date().toISOString();
+  saveDataStore();
+
+  res.json({
+    success: true,
+    message: cand.isLookingForJob ? "Đã bật chế độ 'Sẵn sàng tìm việc'!" : "Đã tạm dừng tìm việc.",
+    isLookingForJob: cand.isLookingForJob
   });
 });
 

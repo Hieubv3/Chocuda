@@ -28,7 +28,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
 
   const [candidates, setCandidates] = useState<CandidateProfile[]>(INITIAL_CANDIDATE_PROFILES);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [isContactUnlocked, setIsContactUnlocked] = useState(true); // Direct access for residents
+  const [isUnlocking, setIsUnlocking] = useState(false);
 
   // Employer Message / Interview Invitation form state
   const [employerName, setEmployerName] = useState(currentUser?.displayName || currentUser?.name || '');
@@ -40,7 +40,8 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
   const [inviteSuccess, setInviteSuccess] = useState(false);
 
   useEffect(() => {
-    fetch('/api/recruitment/candidates')
+    const requesterParam = currentUser?.id ? `?requesterUserId=${encodeURIComponent(currentUser.id)}&isAdmin=${currentUser.role === 'admin'}` : '';
+    fetch(`/api/recruitment/candidates${requesterParam}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
@@ -48,12 +49,83 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
         }
       })
       .catch(() => {});
-  }, []);
+  }, [currentUser]);
 
   const cleanId = decodeURIComponent(candidateId || '').trim();
   const candidate = useMemo(() => {
     return candidates.find(c => c.id === cleanId || c.id.toLowerCase() === cleanId.toLowerCase()) || candidates[0];
   }, [candidates, cleanId]);
+
+  const isUnlocked = useMemo(() => {
+    if (!candidate) return false;
+    if (currentUser?.role === 'admin') return true;
+    if (currentUser?.id && candidate.userId && currentUser.id === candidate.userId) return true;
+    if (candidate.isUnlocked) return true;
+    if (currentUser?.id && Array.isArray(candidate.unlockedByUserIds) && candidate.unlockedByUserIds.includes(currentUser.id)) return true;
+    return false;
+  }, [candidate, currentUser]);
+
+  const maskedPhone = useMemo(() => {
+    if (!candidate?.phone) return '098***321';
+    if (candidate.phone.length >= 7) {
+      return `${candidate.phone.substring(0, 3)}***${candidate.phone.substring(candidate.phone.length - 3)}`;
+    }
+    return '098***321';
+  }, [candidate]);
+
+  const maskedEmail = useMemo(() => {
+    if (!candidate?.email) return 'cv***@chocudan24h.com';
+    if (candidate.email.includes('@')) {
+      const [u, d] = candidate.email.split('@');
+      return `${u.substring(0, 2)}***@${d}`;
+    }
+    return 'cv***@chocudan24h.com';
+  }, [candidate]);
+
+  const handleUnlockCandidate = async () => {
+    if (!currentUser) {
+      onOpenAuth();
+      return;
+    }
+
+    if (!confirm(`Bạn có chắc chắn muốn dùng 20.000 Token để mở khóa hồ sơ ứng viên "${candidate.fullName}"?`)) {
+      return;
+    }
+
+    setIsUnlocking(true);
+    try {
+      const res = await fetch(`/api/recruitment/candidates/${candidate.id}/unlock`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recruiterUserId: currentUser.id,
+          recruiterName: currentUser.name || currentUser.email,
+          recruiterPhone: currentUser.phone || '',
+          amountVnd: 20000,
+          paymentMethod: 'token_balance'
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setCandidates(prev => prev.map(c => c.id === candidate.id ? { 
+          ...c, 
+          isUnlocked: true,
+          phone: data.candidate.phone,
+          email: data.candidate.email,
+          zalo: data.candidate.zalo,
+          currentAddress: data.candidate.currentAddress,
+          attachedCvUrl: data.candidate.attachedCvUrl
+        } : c));
+        alert(`🎉 ${data.message}`);
+      } else {
+        alert(`⚠️ ${data.error || 'Không thể mở khóa hồ sơ!'}`);
+      }
+    } catch (err) {
+      alert('⚠️ Lỗi kết nối máy chủ khi mở khóa hồ sơ!');
+    } finally {
+      setIsUnlocking(false);
+    }
+  };
 
   const industry = RECRUITMENT_INDUSTRIES.find(ind => ind.id === candidate?.desiredIndustry);
   const project = VIN_MAJOR_PROJECTS.find(p => p.id === candidate?.desiredProject);
@@ -481,29 +553,109 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
             
             {/* Direct Contact Card */}
             <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-              <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md">
-                Thông Tin Liên Hệ Trực Tiếp
-              </span>
-
-              <div className="space-y-2 text-xs">
-                <a
-                  href={`tel:${candidate.phone || '0868499929'}`}
-                  className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow transition"
-                >
-                  <Phone className="w-4 h-4" />
-                  <span>Gọi Điện: {candidate.phone || '0868.499.929'}</span>
-                </a>
-
-                <a
-                  href={`https://zalo.me/${candidate.zalo || candidate.phone || '0868499929'}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 px-3 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow transition"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  <span>Chat Zalo: {candidate.zalo || candidate.phone || '0868.499.929'}</span>
-                </a>
+              <div className="flex items-center justify-between">
+                <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md ${
+                  isUnlocked ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                }`}>
+                  {isUnlocked ? 'Thông Tin Đã Mở Khóa' : 'Thông Tin Liên Hệ (Bảo Mật)'}
+                </span>
+                {isUnlocked ? (
+                  <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                    <Unlock className="w-3.5 h-3.5" />
+                    Đã mở khóa
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                    <Lock className="w-3.5 h-3.5" />
+                    Chỉ Nhà Tuyển Dụng
+                  </span>
+                )}
               </div>
+
+              {isUnlocked ? (
+                <div className="space-y-2.5 text-xs">
+                  <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800 space-y-1">
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Số điện thoại liên hệ:</div>
+                    <div className="text-base font-black text-emerald-700 dark:text-emerald-300 font-mono tracking-wider">
+                      {candidate.phone}
+                    </div>
+                    {candidate.email && (
+                      <div className="text-[11px] text-slate-600 dark:text-slate-300 font-medium pt-1 border-t border-emerald-200/60 dark:border-emerald-800/60">
+                        Email: <span className="font-bold">{candidate.email}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <a
+                    href={`tel:${candidate.phone}`}
+                    className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow transition"
+                  >
+                    <Phone className="w-4 h-4" />
+                    <span>Gọi Điện: {candidate.phone}</span>
+                  </a>
+
+                  <a
+                    href={`https://zalo.me/${candidate.zalo || candidate.phone}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-3 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow transition"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Chat Zalo Tuyển Dụng</span>
+                  </a>
+
+                  {candidate.attachedCvUrl && (
+                    <a
+                      href={candidate.attachedCvUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow transition text-[11px]"
+                    >
+                      <FileText className="w-4 h-4 text-emerald-400" />
+                      <span>Xem / Tải File CV Đính Kèm</span>
+                    </a>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3 text-xs">
+                  <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 space-y-2">
+                    <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 font-mono">
+                      <span>SĐT:</span>
+                      <span className="font-bold">{maskedPhone}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 font-mono">
+                      <span>Email:</span>
+                      <span className="font-bold">{maskedEmail}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 font-mono">
+                      <span>Zalo:</span>
+                      <span className="font-bold">🔒 Đã ẩn số</span>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                    ⚠️ Để bảo mật thông tin cá nhân của cư dân, chỉ tài khoản <b>Nhà Tuyển Dụng</b> đã đăng ký hoặc sử dụng <b>Token Cư Dân</b> mới có quyền mở khóa xem đầy đủ số điện thoại và liên hệ trực tiếp.
+                  </p>
+
+                  <button
+                    onClick={handleUnlockCandidate}
+                    disabled={isUnlocking}
+                    className="w-full py-3 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black rounded-xl flex items-center justify-center gap-2 shadow-lg transition cursor-pointer"
+                  >
+                    <Unlock className="w-4 h-4" />
+                    <span>{isUnlocking ? 'Đang Xử Lý Mở Khóa...' : 'MỞ KHÓA CV (20.000 TOKEN)'}</span>
+                  </button>
+
+                  {!currentUser && (
+                    <button
+                      onClick={onOpenAuth}
+                      className="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-[11px] transition text-center"
+                    >
+                      Đăng Nhập / Đăng Ký Nhà Tuyển Dụng
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Post Job CTA */}

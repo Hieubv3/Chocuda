@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Property, User, Language, UpTinPricingConfig, UpTinTransaction } from '../types';
-import { PlusCircle, Zap, Crown, Eye, MessageSquare, Edit3, Trash2, ShieldCheck, CheckCircle2, Clock, Sparkles, AlertCircle, ArrowUpRight, UserCheck, Shield, Lock, Users, Share2, DollarSign, Gift, Wallet, Copy, Check, ExternalLink, Award, ArrowRight, RefreshCw } from 'lucide-react';
+import { PlusCircle, Zap, Crown, Eye, MessageSquare, Edit3, Trash2, ShieldCheck, CheckCircle2, Clock, Sparkles, AlertCircle, ArrowUpRight, UserCheck, Shield, Lock, Users, Share2, DollarSign, Gift, Wallet, Copy, Check, ExternalLink, Award, ArrowRight, RefreshCw, Briefcase, FileText, Building2, Coins } from 'lucide-react';
 import { calculateExpiryInfo } from '../lib/expiration';
 import { UpTinPaymentModal } from '../components/UpTinPaymentModal';
 import { KycVerificationModal } from '../components/KycVerificationModal';
 import { UserStorefrontManager } from '../components/UserStorefrontManager';
 import { InteractionProofChatModal } from '../components/InteractionProofChatModal';
+import { UserCvManagement } from '../components/UserCvManagement';
+import { UserEmployerRegistrationModal } from '../components/UserEmployerRegistrationModal';
 import { playMessageRingtone } from '../lib/audioRingtone';
+import { RECRUITMENT_PACKAGES } from '../data/recruitmentData';
 
 interface UserDashboardPageProps {
   user?: User;
@@ -58,11 +61,29 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const handleSelectProp = onSelectProperty || (() => {});
   const handleDeleteProp = onDeleteProperty || (() => {});
 
-  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_store' | 'transactions' | 'affiliate' | 'profile'>('my_properties');
+  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_cv' | 'recruiter_packages' | 'my_store' | 'transactions' | 'affiliate' | 'profile'>('my_properties');
   const [selectedPropertyForUpTin, setSelectedPropertyForUpTin] = useState<Property | null>(null);
   const [localTransactions, setLocalTransactions] = useState<UpTinTransaction[]>([]);
   const [showKycModal, setShowKycModal] = useState(false);
+  const [showEmployerRegModal, setShowEmployerRegModal] = useState(false);
   const [userState, setUserState] = useState<User>(user);
+
+  // Live Token Sync with Admin & LocalStorage
+  useEffect(() => {
+    const handleTokenUpdated = (e: any) => {
+      if (e.detail && (e.detail.id === user.id || !user.id)) {
+        setUserState(prev => ({ ...prev, ...e.detail }));
+        if (typeof e.detail.upTinCredits === 'number') {
+          setUpTinCredits(e.detail.upTinCredits);
+        }
+      }
+    };
+
+    window.addEventListener('user-token-updated', handleTokenUpdated);
+    return () => {
+      window.removeEventListener('user-token-updated', handleTokenUpdated);
+    };
+  }, [user.id]);
 
   // Affiliate & Referral State
   const [copiedLink, setCopiedLink] = useState(false);
@@ -519,6 +540,32 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('my_cv')}
+          className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'my_cv'
+              ? 'bg-teal-600 text-white shadow-sm font-extrabold'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          <span>Hồ Sơ CV Cư Dân</span>
+          <span className="px-1.5 py-0.2 bg-emerald-500 text-slate-950 text-[9px] rounded font-black">Mới</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('recruiter_packages')}
+          className={`flex-1 min-w-[160px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'recruiter_packages'
+              ? 'bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-sm font-extrabold'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Building2 className="w-3.5 h-3.5" />
+          <span>Gói Nhà Tuyển Dụng</span>
+          <span className="px-1.5 py-0.2 bg-slate-900 text-amber-400 text-[9px] rounded font-black">VIP</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('my_store')}
           className={`flex-1 min-w-[150px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'my_store'
@@ -757,6 +804,109 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Tab: CV Management & Applications */}
+      {activeTab === 'my_cv' && (
+        <UserCvManagement currentUser={userState} onRefresh={onRefreshData} />
+      )}
+
+      {/* Tab: Recruiter Packages & Pricing */}
+      {activeTab === 'recruiter_packages' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-teal-950 p-6 rounded-3xl border border-amber-500/30 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                DÀNH CHO DOANH NGHIỆP & CHỦ SHOP
+              </span>
+              <h2 className="text-xl font-black text-amber-300">
+                BẢNG GIÁ & ĐĂNG KÝ GÓI NHÀ TUYỂN DỤNG CƯ DÂN
+              </h2>
+              <p className="text-xs text-slate-300 max-w-2xl">
+                Đăng ký tài khoản Nhà Tuyển Dụng để mở khóa liên hệ ứng viên, đăng tin VIP lên đầu danh mục và tiếp cận hàng vạn người tìm việc nội khu Vinhomes.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowEmployerRegModal(true)}
+              className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-lg transition transform active:scale-95 cursor-pointer shrink-0"
+            >
+              + ĐĂNG KÝ GÓI DOANH NGHIỆP NGAY
+            </button>
+          </div>
+
+          {/* Pricing Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {RECRUITMENT_PACKAGES.map((pkg) => (
+              <div
+                key={pkg.id}
+                className={`bg-white dark:bg-slate-900 rounded-3xl border-2 p-5 flex flex-col justify-between space-y-4 shadow-sm relative ${
+                  pkg.isPopular ? 'border-amber-500 ring-2 ring-amber-500/20' : 'border-slate-200 dark:border-slate-800'
+                }`}
+              >
+                {pkg.isPopular && (
+                  <span className="absolute -top-3 right-4 px-3 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-black rounded-full shadow-xs uppercase tracking-wider">
+                    Gói Phổ Biến Nhất
+                  </span>
+                )}
+
+                <div className="space-y-3">
+                  <div className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">{pkg.name}</div>
+                  <div className="space-y-0.5">
+                    <div className="text-2xl font-black text-slate-900 dark:text-white">
+                      {pkg.priceVnd.toLocaleString('vi-VN')} <span className="text-xs font-bold text-slate-400">VNĐ</span>
+                    </div>
+                    <div className="text-xs font-black text-amber-500 flex items-center gap-1">
+                      🪙 {pkg.priceToken.toLocaleString('vi-VN')} Token Cư Dân
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-3">
+                    {pkg.description}
+                  </p>
+
+                  <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                    <li className="flex items-center gap-2">
+                      <span className="text-emerald-500 font-bold">✓</span>
+                      <span><strong>{pkg.jobPostsCount}</strong> tin đăng tuyển dụng</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-emerald-500 font-bold">✓</span>
+                      <span>Mở khóa <strong>{pkg.cvUnlockCount}</strong> CV ứng viên</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-emerald-500 font-bold">✓</span>
+                      <span>Thời hạn sử dụng: <strong>{pkg.durationDays} ngày</strong></span>
+                    </li>
+                    {pkg.isVipBadge && (
+                      <li className="flex items-center gap-2 text-amber-500 font-bold">
+                        <span>👑</span>
+                        <span>Cấp Huy hiệu Doanh Nghiệp VIP</span>
+                      </li>
+                    )}
+                    {pkg.isTopPlacement && (
+                      <li className="flex items-center gap-2 text-rose-500 font-bold">
+                        <span>🔥</span>
+                        <span>Đẩy Top 1 Trang Tuyển Dụng</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+
+                <button
+                  onClick={() => setShowEmployerRegModal(true)}
+                  className={`w-full py-2.5 rounded-xl font-black text-xs transition cursor-pointer ${
+                    pkg.isPopular
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 hover:from-amber-400 shadow-md'
+                      : 'bg-slate-900 dark:bg-slate-800 text-white hover:bg-slate-800'
+                  }`}
+                >
+                  Đăng Ký & Kích Hoạt Gói
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -1166,6 +1316,17 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           onClose={() => setShowInteractionChatModal(false)}
           onGrantPoints={(points, activityName) => {
             setUpTinCredits(prev => prev + points);
+          }}
+        />
+      )}
+
+      {/* Employer Registration & Package Purchase Modal */}
+      {showEmployerRegModal && (
+        <UserEmployerRegistrationModal
+          currentUser={userState}
+          onClose={() => setShowEmployerRegModal(false)}
+          onSuccess={() => {
+            onRefreshData();
           }}
         />
       )}

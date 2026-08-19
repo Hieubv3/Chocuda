@@ -3,9 +3,10 @@ import {
   Briefcase, Users, FileText, CheckCircle2, Clock, XCircle, 
   Trash2, Edit3, Plus, Search, Filter, Eye, Phone, Mail, 
   DollarSign, Sparkles, ShieldCheck, Download, RefreshCw,
-  ExternalLink, Building2, MapPin, Tag, Award, Check, UserCheck, Unlock, Globe, Link2
+  ExternalLink, Building2, MapPin, Tag, Award, Check, UserCheck, Unlock, Globe, Link2,
+  Coins, Send, CheckSquare, Layers, AlertTriangle, Shield
 } from 'lucide-react';
-import { RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, ProjectCategory, EmployerProfile } from '../types';
+import { RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, ProjectCategory, EmployerProfile, EmployerRegistrationRequest, AdminTaskDelegation } from '../types';
 import { getJobDetailUrl, getCandidateCvUrl, getEmployerProfileUrl, slugify } from '../lib/slugs';
 import { INITIAL_EMPLOYERS } from '../data/recruitmentData';
 
@@ -14,7 +15,7 @@ interface AdminRecruitmentManagerProps {
 }
 
 export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = ({ onRefresh }) => {
-  const [activeSection, setActiveSection] = useState<'jobs' | 'candidates' | 'employers' | 'applications' | 'unlocks' | 'stats'>('jobs');
+  const [activeSection, setActiveSection] = useState<'jobs' | 'candidates' | 'employers' | 'applications' | 'unlocks' | 'registrations' | 'tasks' | 'stats'>('jobs');
   
   // Data State
   const [jobs, setJobs] = useState<RecruitmentJob[]>([]);
@@ -22,7 +23,27 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
   const [employers, setEmployers] = useState<EmployerProfile[]>(INITIAL_EMPLOYERS);
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [unlocks, setUnlocks] = useState<CvUnlockRecord[]>([]);
+  const [registrations, setRegistrations] = useState<EmployerRegistrationRequest[]>([]);
+  const [tasks, setTasks] = useState<AdminTaskDelegation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Task Modal & Form State
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [editingTask, setEditingTask] = useState<AdminTaskDelegation | null>(null);
+  const [taskFormData, setTaskFormData] = useState<Partial<AdminTaskDelegation>>({
+    title: '',
+    category: 'recruitment',
+    targetTitle: '',
+    targetProject: 'ocean-park-2',
+    assignedToAdminId: 'admin_tuyendung_01',
+    assignedToAdminName: 'Admin Trưởng Ban Tuyển Dụng',
+    assignedByAdminId: 'admin_root',
+    assignedByAdminName: 'Quản Trị Viên Tổng',
+    priority: 'high',
+    status: 'pending',
+    deadline: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0],
+    notes: ''
+  });
 
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -130,10 +151,134 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
           setEmployers(dataEmployers);
         }
       }
+
+      // 6. Fetch Employer Registrations
+      const resRegs = await fetch('/api/recruitment/employer-registrations');
+      if (resRegs.ok) {
+        const dataRegs = await resRegs.json();
+        setRegistrations(Array.isArray(dataRegs) ? dataRegs : []);
+      }
+
+      // 7. Fetch Admin Tasks
+      const resTasks = await fetch('/api/admin/tasks');
+      if (resTasks.ok) {
+        const dataTasks = await resTasks.json();
+        setTasks(Array.isArray(dataTasks) ? dataTasks : []);
+      }
     } catch (e) {
       console.error('Error fetching recruitment admin data:', e);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Employer Registration Approval & Token Injection
+  const handleApproveRegistration = async (reg: EmployerRegistrationRequest) => {
+    const defaultTokens = reg.tokenCost || 1000000;
+    const inputTokens = prompt(`Nhập số Token Cư Dân (Xu Tiêu Dùng) sẽ tự động BƠM vào ví của Doanh Nghiệp "${reg.companyName}":`, defaultTokens.toString());
+    if (inputTokens === null) return;
+    const tokensToInject = parseInt(inputTokens, 10) || defaultTokens;
+
+    try {
+      const res = await fetch(`/api/recruitment/employer-registrations/${reg.id}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tokensToInject,
+          adminName: 'Admin Trưởng Ban Tuyển Dụng'
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message || `🎉 Đã duyệt gói tuyển dụng và bơm thành công ${tokensToInject.toLocaleString('vi-VN')} Token vào ví người dùng!`);
+        fetchData();
+        if (onRefresh) onRefresh();
+      } else {
+        alert(data.error || 'Lỗi duyệt đăng ký');
+      }
+    } catch (err: any) {
+      alert('Lỗi kết nối máy chủ');
+    }
+  };
+
+  const handleRejectRegistration = async (regId: string) => {
+    const reason = prompt('Nhập lý do từ chối đăng ký (nếu có):', 'Thông tin doanh nghiệp chưa đầy đủ hoặc không hợp lệ');
+    if (reason === null) return;
+
+    try {
+      const res = await fetch(`/api/recruitment/employer-registrations/${regId}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminNote: reason })
+      });
+      if (res.ok) {
+        alert('Đã từ chối yêu cầu đăng ký.');
+        fetchData();
+      }
+    } catch (e) {
+      alert('Lỗi khi từ chối');
+    }
+  };
+
+  // Task Delegation Handlers
+  const handleSaveTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!taskFormData.title || !taskFormData.assignedToAdminName) {
+      alert('Vui lòng nhập Tiêu đề nhiệm vụ và Người phụ trách!');
+      return;
+    }
+
+    try {
+      if (editingTask) {
+        const res = await fetch(`/api/admin/tasks/${editingTask.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(taskFormData)
+        });
+        if (res.ok) {
+          alert('Cập nhật nhiệm vụ thành công!');
+        }
+      } else {
+        const res = await fetch('/api/admin/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(taskFormData)
+        });
+        if (res.ok) {
+          alert('Tạo và giao nhiệm vụ mới thành công!');
+        }
+      }
+      setShowTaskModal(false);
+      fetchData();
+    } catch (e) {
+      alert('Lỗi lưu nhiệm vụ');
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (!confirm('Bạn có chắc chắn muốn xóa nhiệm vụ này?')) return;
+    try {
+      const res = await fetch(`/api/admin/tasks/${taskId}`, { method: 'DELETE' });
+      if (res.ok) {
+        alert('Đã xóa nhiệm vụ');
+        fetchData();
+      }
+    } catch (e) {
+      alert('Lỗi khi xóa nhiệm vụ');
+    }
+  };
+
+  const handleUpdateTaskStatus = async (task: AdminTaskDelegation, newStatus: any) => {
+    try {
+      await fetch(`/api/admin/tasks/${task.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      fetchData();
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -570,11 +715,12 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
           </div>
 
           <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">Doanh Thu Mở Khóa CV</span>
-            <div className="text-lg font-black text-amber-400">
-              {totalUnlockRevenue.toLocaleString('vi-VN')} đ
+            <span className="text-[10px] text-slate-400 font-bold uppercase block">Token Thu Phí Mở Khóa CV</span>
+            <div className="text-lg font-black text-amber-400 flex items-center gap-1">
+              <span>🪙 {totalUnlockRevenue.toLocaleString('vi-VN')}</span>
+              <span className="text-xs font-normal text-slate-400">Token</span>
             </div>
-            <span className="text-[10px] text-amber-400 font-semibold block">{unlocks.length} lượt mở VietQR</span>
+            <span className="text-[10px] text-amber-400 font-semibold block">{unlocks.length} lượt mở khóa hồ sơ</span>
           </div>
         </div>
       </div>
@@ -637,8 +783,37 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
               : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
           }`}
         >
-          <DollarSign className="w-4 h-4" />
-          <span>5. Nhật Ký Mở Khóa CV ({unlocks.length})</span>
+          <Coins className="w-4 h-4" />
+          <span>5. Nhật Ký Mở Khóa CV Token ({unlocks.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveSection('registrations')}
+          className={`px-4 py-2.5 rounded-xl font-black text-xs transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            activeSection === 'registrations'
+              ? 'bg-amber-500 text-slate-950 shadow-md font-extrabold'
+              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+          }`}
+        >
+          <Award className="w-4 h-4 text-amber-500" />
+          <span>6. Duyệt Gói & Bơm Token NTD</span>
+          {registrations.filter(r => r.status === 'pending').length > 0 && (
+            <span className="px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[10px] font-black animate-pulse">
+              {registrations.filter(r => r.status === 'pending').length}
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={() => setActiveSection('tasks')}
+          className={`px-4 py-2.5 rounded-xl font-black text-xs transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            activeSection === 'tasks'
+              ? 'bg-sky-600 text-white shadow-md font-extrabold'
+              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+          }`}
+        >
+          <CheckSquare className="w-4 h-4 text-sky-400" />
+          <span>7. Phân Công Giao Việc Quản Trị ({tasks.length})</span>
         </button>
       </div>
 
@@ -1140,107 +1315,169 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
       {/* SECTION 3: DANH SÁCH ỨNG TUYỂN (APPLICATIONS) */}
       {/* ========================================================================= */}
       {activeSection === 'applications' && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
-              <FileText className="w-4 h-4 text-sky-600" />
-              <span>Hồ sơ nộp ứng tuyển ({applications.length} lượt nộp)</span>
-            </span>
+        <div className="space-y-4">
+          <div className="bg-gradient-to-r from-sky-900 via-slate-900 to-indigo-950 p-4 rounded-2xl border border-sky-500/30 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 bg-sky-500 text-slate-950 text-[10px] font-black rounded uppercase">
+                  TELEGRAM ALERT 24/7
+                </span>
+                <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  Đang trực tuyến & nhận thông báo
+                </span>
+              </div>
+              <h3 className="text-sm font-black text-white flex items-center gap-2">
+                <FileText className="w-4 h-4 text-sky-400" />
+                HỒ SƠ CƯ DÂN NỘP ỨNG TUYỂN & DUYỆT TRẠNG THÁI NHANH
+              </h3>
+              <p className="text-[11px] text-slate-300">
+                Khi cư dân nộp đơn từ Website hoặc App di động, hệ thống tự động bắn thông báo tức thì về Telegram Admin. Quản trị viên có thể duyệt nhanh sang 4 trạng thái: 🟢 Nhận Việc, 📅 Phỏng Vấn, 📞 Đã Liên Hệ, 🔴 Từ Chối.
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-[10px] text-slate-400 font-bold uppercase">Tổng hồ sơ</div>
+              <div className="text-xl font-black text-sky-300 font-mono">
+                {applications.length} đơn
+              </div>
+            </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
-                <tr>
-                  <th className="p-3.5">Ứng Viên Nộp Hồ Sơ</th>
-                  <th className="p-3.5">Vị Trí / Tin Tuyển Dụng</th>
-                  <th className="p-3.5">Lời Nhắn / Kỳ Vọng</th>
-                  <th className="p-3.5">Thời Gian Nộp</th>
-                  <th className="p-3.5 text-center">Trạng Thái Hồ Sơ</th>
-                  <th className="p-3.5 text-right">Thao Tác</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {applications.length === 0 ? (
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                <FileText className="w-4 h-4 text-sky-600" />
+                <span>Danh sách ứng viên nộp hồ sơ ({applications.length} lượt nộp)</span>
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-400">
-                      Chưa có lượt ứng tuyển nào.
-                    </td>
+                    <th className="p-3.5">Ứng Viên Nộp Hồ Sơ</th>
+                    <th className="p-3.5">Vị Trí / Tin Tuyển Dụng</th>
+                    <th className="p-3.5">Lời Nhắn / Kinh Nghiệm</th>
+                    <th className="p-3.5">Thời Gian Nộp</th>
+                    <th className="p-3.5 text-center">Trạng Thái & Duyệt Nhanh</th>
+                    <th className="p-3.5 text-right">Thao Tác</th>
                   </tr>
-                ) : (
-                  applications.map(app => (
-                    <tr key={app.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                      <td className="p-3.5">
-                        <div className="font-black text-slate-900 dark:text-white text-sm">
-                          {app.candidateName}
-                        </div>
-                        <div className="font-mono text-teal-600 dark:text-teal-400 font-bold mt-0.5">
-                          📞 {app.candidatePhone} • {app.candidateEmail || 'Chưa cập nhật email'}
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-extrabold text-slate-800 dark:text-slate-200">
-                          {app.jobTitle}
-                        </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">
-                          Đơn vị: {app.companyName}
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="text-slate-600 dark:text-slate-300 italic max-w-xs line-clamp-2">
-                          "{app.message || 'Xin chào, tôi rất quan tâm đến công việc này và mong muốn ứng tuyển!'}"
-                        </div>
-                        {app.expectedSalary && (
-                          <div className="text-[10px] text-emerald-600 font-bold mt-0.5">
-                            Lương mong muốn: {app.expectedSalary}
-                          </div>
-                        )}
-                      </td>
-
-                      <td className="p-3.5 text-slate-400 font-mono text-[11px]">
-                        {app.createdAt}
-                      </td>
-
-                      <td className="p-3.5 text-center">
-                        <select
-                          value={app.status}
-                          onChange={e => handleUpdateApplicationStatus(app.id, e.target.value)}
-                          className={`px-2.5 py-1 rounded-xl text-[10px] font-black border cursor-pointer ${
-                            app.status === 'applied'
-                              ? 'bg-amber-50 text-amber-700 border-amber-300'
-                              : app.status === 'reviewing'
-                              ? 'bg-sky-50 text-sky-700 border-sky-300'
-                              : app.status === 'interview_scheduled'
-                              ? 'bg-purple-50 text-purple-700 border-purple-300'
-                              : app.status === 'accepted'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                              : 'bg-rose-50 text-rose-700 border-rose-300'
-                          }`}
-                        >
-                          <option value="applied">🟡 Đã Nộp</option>
-                          <option value="reviewing">🔍 Đang Xem Xét</option>
-                          <option value="interview_scheduled">📅 Đã Hẹn Phỏng Vấn</option>
-                          <option value="accepted">🟢 Đã Nhận Việc</option>
-                          <option value="rejected">🔴 Từ Chối</option>
-                        </select>
-                      </td>
-
-                      <td className="p-3.5 text-right">
-                        <button
-                          onClick={() => handleDeleteApplication(app.id)}
-                          className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
-                          title="Xóa lượt nộp"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {applications.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="text-center py-12 text-slate-400">
+                        Chưa có lượt ứng tuyển nào.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    applications.map(app => (
+                      <tr key={app.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+                        <td className="p-3.5">
+                          <div className="font-black text-slate-900 dark:text-white text-sm">
+                            {app.candidateName}
+                          </div>
+                          <div className="font-mono text-teal-600 dark:text-teal-400 font-bold mt-0.5">
+                            📞 {app.candidatePhone} • {app.candidateEmail || 'Chưa cập nhật email'}
+                          </div>
+                        </td>
+
+                        <td className="p-3.5">
+                          <div className="font-extrabold text-slate-800 dark:text-slate-200">
+                            {app.jobTitle}
+                          </div>
+                          <div className="text-[11px] text-slate-400 mt-0.5">
+                            Đơn vị: {app.companyName}
+                          </div>
+                        </td>
+
+                        <td className="p-3.5">
+                          <div className="text-slate-600 dark:text-slate-300 italic max-w-xs line-clamp-2">
+                            "{app.message || 'Xin chào, tôi rất quan tâm đến công việc này và mong muốn ứng tuyển!'}"
+                          </div>
+                          {app.expectedSalary && (
+                            <div className="text-[10px] text-emerald-600 font-bold mt-0.5">
+                              Lương mong muốn: {app.expectedSalary}
+                            </div>
+                          )}
+                        </td>
+
+                        <td className="p-3.5 text-slate-400 font-mono text-[11px]">
+                          {app.createdAt}
+                        </td>
+
+                        <td className="p-3.5 text-center">
+                          <div className="space-y-1.5">
+                            <select
+                              value={app.status}
+                              onChange={e => handleUpdateApplicationStatus(app.id, e.target.value)}
+                              className={`w-full px-2.5 py-1 rounded-xl text-[10px] font-black border cursor-pointer ${
+                                app.status === 'applied'
+                                  ? 'bg-amber-50 text-amber-700 border-amber-300'
+                                  : app.status === 'reviewing'
+                                  ? 'bg-sky-50 text-sky-700 border-sky-300'
+                                  : app.status === 'interview_scheduled'
+                                  ? 'bg-purple-50 text-purple-700 border-purple-300'
+                                  : app.status === 'accepted'
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                  : 'bg-rose-50 text-rose-700 border-rose-300'
+                              }`}
+                            >
+                              <option value="applied">🟡 Đã Nộp (Mới)</option>
+                              <option value="reviewing">📞 Đã Liên Hệ</option>
+                              <option value="interview_scheduled">📅 Đã Hẹn Phỏng Vấn</option>
+                              <option value="accepted">🟢 Nhận Việc (Thành Công)</option>
+                              <option value="rejected">🔴 Từ Chối</option>
+                            </select>
+
+                            {/* 3 Nút Duyệt Nhanh Chuẩn Theo Yêu Cầu */}
+                            <div className="flex items-center justify-center gap-1">
+                              <button
+                                onClick={() => handleUpdateApplicationStatus(app.id, 'accepted')}
+                                className={`px-2 py-0.5 rounded text-[9px] font-bold transition cursor-pointer ${
+                                  app.status === 'accepted' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                }`}
+                                title="Nhận việc"
+                              >
+                                ✓ Nhận
+                              </button>
+                              <button
+                                onClick={() => handleUpdateApplicationStatus(app.id, 'interview_scheduled')}
+                                className={`px-2 py-0.5 rounded text-[9px] font-bold transition cursor-pointer ${
+                                  app.status === 'interview_scheduled' ? 'bg-purple-600 text-white' : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
+                                }`}
+                                title="Hẹn phỏng vấn"
+                              >
+                                📅 PV
+                              </button>
+                              <button
+                                onClick={() => handleUpdateApplicationStatus(app.id, 'rejected')}
+                                className={`px-2 py-0.5 rounded text-[9px] font-bold transition cursor-pointer ${
+                                  app.status === 'rejected' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'
+                                }`}
+                                title="Từ chối"
+                              >
+                                ✕ Loại
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="p-3.5 text-right">
+                          <button
+                            onClick={() => handleDeleteApplication(app.id)}
+                            className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
+                            title="Xóa lượt nộp"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -1302,11 +1539,12 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                       </td>
 
                       <td className="p-3.5">
-                        <div className="font-black text-amber-600 dark:text-amber-400">
-                          {log.amountVnd.toLocaleString('vi-VN')} đ
+                        <div className="font-black text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                          <span>🪙 {log.amountVnd.toLocaleString('vi-VN')}</span>
+                          <span className="text-[10px] text-slate-400 font-bold">Token</span>
                         </div>
                         <div className="text-[10px] text-slate-400 uppercase font-bold mt-0.5">
-                          {log.paymentMethod === 'vietqr' ? 'VietQR Tự Động' : 'Ví Cư Dân'}
+                          {log.paymentMethod === 'vietqr' ? 'Ví Token VietQR' : 'Ví Token Cư Dân'}
                         </div>
                       </td>
 
@@ -1324,6 +1562,494 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* SECTION 6: DUYỆT ĐĂNG KÝ GÓI NHÀ TUYỂN DỤNG & BƠM TOKEN VÀO VÍ */}
+      {/* ========================================================================= */}
+      {activeSection === 'registrations' && (
+        <div className="space-y-4">
+          <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-teal-950 p-5 rounded-2xl border border-amber-500/30 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+            <div className="space-y-1">
+              <span className="px-2 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-black rounded uppercase">
+                HỆ THỐNG GIAO DỊCH B2B
+              </span>
+              <h3 className="text-base font-black text-amber-300 flex items-center gap-2">
+                <Award className="w-5 h-5 text-amber-400" />
+                DUYỆT ĐĂNG KÝ GÓI DOANH NGHIỆP & BƠM TOKEN VÍ TỰ ĐỘNG
+              </h3>
+              <p className="text-xs text-slate-300 max-w-2xl">
+                Kiểm tra thông tin nhà tuyển dụng, xác nhận chuyển khoản ngân hàng và bấm "Duyệt & Bơm Token" để hệ thống tự động cộng Token vào ví người dùng ngay lập tức.
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-xs text-slate-400 font-bold uppercase">Yêu cầu chờ duyệt</div>
+              <div className="text-2xl font-black text-amber-400 font-mono">
+                {registrations.filter(r => r.status === 'pending').length} đơn
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-black uppercase text-[10px] tracking-wider">
+                  <th className="p-3.5">Doanh Nghiệp / Chủ Shop</th>
+                  <th className="p-3.5">Gói Đăng Ký</th>
+                  <th className="p-3.5">Giá Trị Token</th>
+                  <th className="p-3.5">Khu Đô Thị</th>
+                  <th className="p-3.5">Liên Hệ / Mã Số Thuế</th>
+                  <th className="p-3.5">Thời Gian</th>
+                  <th className="p-3.5 text-center">Trạng Thái</th>
+                  <th className="p-3.5 text-center">Hành Động Admin</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {registrations.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="text-center py-12 text-slate-400">
+                      Chưa có yêu cầu đăng ký gói tuyển dụng nào.
+                    </td>
+                  </tr>
+                ) : (
+                  registrations.map(reg => (
+                    <tr key={reg.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+                      <td className="p-3.5">
+                        <div className="font-black text-slate-900 dark:text-white text-xs">
+                          {reg.companyName}
+                        </div>
+                        {reg.brandName && (
+                          <div className="text-[11px] text-teal-600 font-bold">
+                            Thương hiệu: {reg.brandName}
+                          </div>
+                        )}
+                        <div className="text-[10px] text-slate-400">
+                          Ngành nghề: {reg.industry}
+                        </div>
+                      </td>
+
+                      <td className="p-3.5">
+                        <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-black rounded-lg border border-amber-300 text-[11px]">
+                          {reg.selectedPackageName}
+                        </span>
+                      </td>
+
+                      <td className="p-3.5">
+                        <div className="font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1 text-sm">
+                          <span>🪙 {(reg.tokenCost || 0).toLocaleString('vi-VN')}</span>
+                          <span className="text-[10px] text-slate-400 font-bold">Token</span>
+                        </div>
+                      </td>
+
+                      <td className="p-3.5 text-slate-600 dark:text-slate-300 font-medium">
+                        {reg.project}
+                      </td>
+
+                      <td className="p-3.5">
+                        <div className="font-mono font-bold text-slate-900 dark:text-white">
+                          📞 {reg.contactPhone}
+                        </div>
+                        <div className="text-[11px] text-slate-500">
+                          {reg.contactName}
+                        </div>
+                        {reg.taxCode && (
+                          <div className="text-[10px] font-mono text-slate-400">
+                            MST: {reg.taxCode}
+                          </div>
+                        )}
+                      </td>
+
+                      <td className="p-3.5 text-slate-400 font-mono text-[11px]">
+                        {reg.createdAt}
+                      </td>
+
+                      <td className="p-3.5 text-center">
+                        {reg.status === 'approved' ? (
+                          <span className="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-black rounded-full border border-emerald-300 text-[10px]">
+                            ✓ Đã Duyệt & Bơm Ví
+                          </span>
+                        ) : reg.status === 'rejected' ? (
+                          <span className="px-2.5 py-1 bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 font-black rounded-full border border-rose-300 text-[10px]">
+                            ✕ Từ Chối
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 font-black rounded-full border border-amber-300 text-[10px] animate-pulse">
+                            ⏳ Chờ Admin Duyệt
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="p-3.5 text-center">
+                        {reg.status === 'pending' ? (
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              onClick={() => handleApproveRegistration(reg)}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer"
+                              title="Duyệt và Bơm Token trực tiếp"
+                            >
+                              <Coins className="w-3.5 h-3.5" />
+                              <span>Duyệt & Bơm Token</span>
+                            </button>
+                            <button
+                              onClick={() => handleRejectRegistration(reg.id)}
+                              className="p-1.5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-600 rounded-lg transition cursor-pointer"
+                              title="Từ chối"
+                            >
+                              <XCircle className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-[11px] text-slate-400 font-mono">Hoàn tất</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* SECTION 7: PHÂN CÔNG & GIAO VIỆC QUẢN TRỊ TOÀN DIỆN */}
+      {/* ========================================================================= */}
+      {activeSection === 'tasks' && (
+        <div className="space-y-4">
+          <div className="bg-gradient-to-r from-sky-950 via-slate-900 to-indigo-950 p-5 rounded-2xl border border-sky-500/30 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+            <div className="space-y-1">
+              <span className="px-2 py-0.5 bg-sky-500 text-slate-950 text-[10px] font-black rounded uppercase">
+                ĐIỀU HÀNH HỆ THỐNG ĐA NHÁNH
+              </span>
+              <h3 className="text-base font-black text-sky-300 flex items-center gap-2">
+                <CheckSquare className="w-5 h-5 text-sky-400" />
+                PHÂN CÔNG GIAO VIỆC & QUẢN TRỊ CÁC NHÁNH QUẢN LÝ
+              </h3>
+              <p className="text-xs text-slate-300 max-w-2xl">
+                Giao việc kiểm duyệt tin tuyển dụng, xác thực KYC, thẩm định bất động sản, hỗ trợ cư dân cho các chi nhánh quản lý hoặc admin chuyên trách.
+              </p>
+            </div>
+            
+            <button
+              onClick={() => {
+                setEditingTask(null);
+                setTaskFormData({
+                  title: '',
+                  category: 'recruitment',
+                  targetTitle: '',
+                  targetProject: 'ocean-park-2',
+                  assignedToAdminId: 'admin_tuyendung_01',
+                  assignedToAdminName: 'Admin Trưởng Ban Tuyển Dụng',
+                  assignedByAdminId: 'admin_root',
+                  assignedByAdminName: 'Quản Trị Viên Tổng',
+                  priority: 'high',
+                  status: 'pending',
+                  deadline: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0],
+                  notes: ''
+                });
+                setShowTaskModal(true);
+              }}
+              className="px-4 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow-md transition transform active:scale-95 cursor-pointer shrink-0"
+            >
+              <Plus className="w-4 h-4 text-slate-950" />
+              <span>+ Tạo & Giao Nhiệm Vụ Mới</span>
+            </button>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-black uppercase text-[10px] tracking-wider">
+                  <th className="p-3.5">Nhiệm Vụ & Phân Loại</th>
+                  <th className="p-3.5">Đối Tượng Phụ Trách</th>
+                  <th className="p-3.5">Người Được Gán</th>
+                  <th className="p-3.5">Mức Độ Ưu Tiên</th>
+                  <th className="p-3.5">Hạn Chót</th>
+                  <th className="p-3.5 text-center">Trạng Thái</th>
+                  <th className="p-3.5 text-center">Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {tasks.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-12 text-slate-400">
+                      Chưa có nhiệm vụ giao việc nào. Nhấn "+ Tạo & Giao Nhiệm Vụ Mới" để bắt đầu.
+                    </td>
+                  </tr>
+                ) : (
+                  tasks.map(task => (
+                    <tr key={task.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+                      <td className="p-3.5">
+                        <div className="font-black text-slate-900 dark:text-white text-xs">
+                          {task.title}
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] rounded">
+                            {task.category === 'recruitment' ? '💼 Tuyển Dụng' : task.category === 'bds_realestate' ? '🏠 Bất Động Sản' : task.category === 'kyc_user' ? '🛡️ Duyệt KYC' : '📦 Dịch Vụ Cư Dân'}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            {task.targetProject}
+                          </span>
+                        </div>
+                        {task.notes && (
+                          <p className="text-[11px] text-slate-500 mt-1 italic line-clamp-1">
+                            Ghi chú: {task.notes}
+                          </p>
+                        )}
+                      </td>
+
+                      <td className="p-3.5 text-slate-700 dark:text-slate-300 font-medium">
+                        {task.targetTitle || 'Toàn phân khu'}
+                      </td>
+
+                      <td className="p-3.5">
+                        <div className="font-bold text-sky-600 dark:text-sky-400">
+                          {task.assignedToAdminName}
+                        </div>
+                        <div className="text-[10px] text-slate-400">
+                          Giao bởi: {task.assignedByAdminName}
+                        </div>
+                      </td>
+
+                      <td className="p-3.5">
+                        {task.priority === 'urgent' ? (
+                          <span className="px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 font-black rounded text-[10px]">
+                            🔥 KHẨN CẤP
+                          </span>
+                        ) : task.priority === 'high' ? (
+                          <span className="px-2.5 py-0.5 bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-black rounded text-[10px]">
+                            ⚡ Cao
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold rounded text-[10px]">
+                            Bình thường
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="p-3.5 font-mono text-[11px] text-slate-500">
+                        {task.deadline || 'Không giới hạn'}
+                      </td>
+
+                      <td className="p-3.5 text-center">
+                        <select
+                          value={task.status}
+                          onChange={e => handleUpdateTaskStatus(task, e.target.value)}
+                          className={`px-2.5 py-1 rounded-xl text-[10px] font-black border cursor-pointer ${
+                            task.status === 'completed'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                              : task.status === 'in_progress'
+                              ? 'bg-sky-50 text-sky-700 border-sky-300'
+                              : 'bg-amber-50 text-amber-700 border-amber-300'
+                          }`}
+                        >
+                          <option value="pending">⏳ Chờ Xử Lý</option>
+                          <option value="in_progress">⚙️ Đang Thực Hiện</option>
+                          <option value="completed">✓ Hoàn Thành</option>
+                          <option value="cancelled">✕ Hủy Bỏ</option>
+                        </select>
+                      </td>
+
+                      <td className="p-3.5 text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            onClick={() => {
+                              setEditingTask(task);
+                              setTaskFormData(task);
+                              setShowTaskModal(true);
+                            }}
+                            className="p-1.5 text-slate-400 hover:text-sky-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                            title="Sửa nhiệm vụ"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTask(task.id)}
+                            className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                            title="Xóa nhiệm vụ"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: TẠO / SỬA NHIỆM VỤ GIAO VIỆC ADMIN */}
+      {/* ========================================================================= */}
+      {showTaskModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 max-w-lg w-full shadow-2xl space-y-4 my-8">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <CheckSquare className="w-5 h-5 text-sky-600" />
+                <span>{editingTask ? 'Chỉnh Sửa Phân Công Nhiệm Vụ' : 'Giao Việc Quản Trị Tuyển Dụng & Phân Nhánh'}</span>
+              </h3>
+              <button
+                onClick={() => setShowTaskModal(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveTask} className="space-y-3.5 text-xs">
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  Tiêu Đề Nhiệm Vụ / Công Việc <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ví dụ: Kiểm duyệt 10 tin tuyển dụng F&B Ocean Park 2"
+                  value={taskFormData.title || ''}
+                  onChange={e => setTaskFormData({ ...taskFormData, title: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Mảng / Nhánh Quản Trị
+                  </label>
+                  <select
+                    value={taskFormData.category || 'recruitment'}
+                    onChange={e => setTaskFormData({ ...taskFormData, category: e.target.value as any })}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                  >
+                    <option value="recruitment">💼 Tuyển Dụng Cư Dân</option>
+                    <option value="bds_realestate">🏠 Bất Động Sản</option>
+                    <option value="resident_market">📦 Sàn Dịch Vụ Cư Dân</option>
+                    <option value="kyc_user">🛡️ Duyệt KYC & Hồ Sơ</option>
+                    <option value="technical_escrow">🔒 Kỹ Thuật & Escrow</option>
+                    <option value="content_seo">📝 Biên Tập & SEO</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Khu Đô Thị / Dự Án
+                  </label>
+                  <select
+                    value={taskFormData.targetProject || 'ocean-park-2'}
+                    onChange={e => setTaskFormData({ ...taskFormData, targetProject: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                  >
+                    <option value="ocean-park-1">Vinhomes Ocean Park 1</option>
+                    <option value="ocean-park-2">Vinhomes Ocean Park 2</option>
+                    <option value="ocean-park-3">Vinhomes Ocean Park 3</option>
+                    <option value="smart-city">Vinhomes Smart City</option>
+                    <option value="grand-park">Vinhomes Grand Park</option>
+                    <option value="all">Toàn Hệ Thống</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Giao Cho Quản Trị Viên / Nhánh <span className="text-rose-500">*</span>
+                  </label>
+                  <select
+                    value={taskFormData.assignedToAdminName || 'Admin Trưởng Ban Tuyển Dụng'}
+                    onChange={e => {
+                      const name = e.target.value;
+                      const id = name.toLowerCase().replace(/\s+/g, '_');
+                      setTaskFormData({ ...taskFormData, assignedToAdminName: name, assignedToAdminId: id });
+                    }}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sky-600"
+                  >
+                    <option value="Admin Trưởng Ban Tuyển Dụng">Admin Trưởng Ban Tuyển Dụng</option>
+                    <option value="Nhánh QL Tuyển Dụng Ocean Park 2">Nhánh QL Tuyển Dụng Ocean Park 2</option>
+                    <option value="Admin Thẩm Định KYC & Doanh Nghiệp">Admin Thẩm Định KYC & Doanh Nghiệp</option>
+                    <option value="Admin Kiểm Duyệt Tin BĐS">Admin Kiểm Duyệt Tin BĐS</option>
+                    <option value="Admin CSKH & Giải Quyết Khiếu Nại">Admin CSKH & Giải Quyết Khiếu Nại</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Mức Độ Ưu Tiên
+                  </label>
+                  <select
+                    value={taskFormData.priority || 'high'}
+                    onChange={e => setTaskFormData({ ...taskFormData, priority: e.target.value as any })}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                  >
+                    <option value="urgent">🔥 Khẩn cấp (Xử lý ngay)</option>
+                    <option value="high">⚡ Cao</option>
+                    <option value="medium">Bình thường</option>
+                    <option value="low">Thấp</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Hạn Chót Xử Lý
+                  </label>
+                  <input
+                    type="date"
+                    value={taskFormData.deadline || ''}
+                    onChange={e => setTaskFormData({ ...taskFormData, deadline: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Đối Tượng / Mục Tiêu Cụ Thể
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ví dụ: Phân khu Sao Biển / Job #REC-102"
+                    value={taskFormData.targetTitle || ''}
+                    onChange={e => setTaskFormData({ ...taskFormData, targetTitle: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  Chỉ Dẫn & Ghi Chú Chi Tiết
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Nhập yêu cầu chi tiết hoặc lưu ý cho nhân sự thực hiện..."
+                  value={taskFormData.notes || ''}
+                  onChange={e => setTaskFormData({ ...taskFormData, notes: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowTaskModal(false)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 font-bold rounded-xl"
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-black rounded-xl shadow-lg cursor-pointer"
+                >
+                  {editingTask ? 'Lưu Thay Đổi' : 'Giao Nhiệm Vụ Ngay'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

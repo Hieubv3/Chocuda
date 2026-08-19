@@ -199,6 +199,7 @@ export type UserRole =
   | 'manager'             // General Manager
   | 'sale' 
   | 'owner' 
+  | 'partner'             // Đối tác Doanh nghiệp / Nhà tuyển dụng
   | 'visitor';
 
 export type SubBranchPermission = 
@@ -931,9 +932,61 @@ export interface EmployerProfile {
   createdAt?: string;
 }
 
+export interface RecruitmentPackage {
+  id: string;
+  name: string;
+  slug: string;
+  priceToken: number; // Giá bằng Token Cư Dân (1 Token = 1 VNĐ)
+  originalPriceToken?: number;
+  jobPostLimit: number;
+  cvUnlockLimit: number;
+  vipDaysDuration: number;
+  isPopular?: boolean;
+  badge?: string;
+  description: string;
+  features: string[];
+}
 
+export interface EmployerRegistrationRequest {
+  id: string;
+  userId?: string;
+  companyName: string;
+  brandName?: string;
+  industry: string;
+  taxCode?: string;
+  project: ProjectCategory | string;
+  address: string;
+  contactName: string;
+  contactPhone: string;
+  contactZalo?: string;
+  contactEmail?: string;
+  selectedPackageId: string;
+  selectedPackageName: string;
+  tokenCost: number;
+  status: 'pending' | 'approved' | 'rejected';
+  assignedAdminId?: string;
+  assignedAdminName?: string;
+  adminNote?: string;
+  createdAt: string;
+  approvedAt?: string;
+}
 
-
-
-
+export interface AdminTaskDelegation {
+  id: string;
+  title: string;
+  category: 'recruitment' | 'bds_realestate' | 'resident_market' | 'technical_escrow' | 'kyc_user' | 'content_seo';
+  targetId: string; // ID của tin đăng, ứng viên, hồ sơ DN, đơn hàng, v.v.
+  targetTitle: string;
+  targetProject: ProjectCategory | string;
+  assignedToAdminId: string;
+  assignedToAdminName: string;
+  assignedByAdminId: string;
+  assignedByAdminName: string;
+  priority: 'urgent' | 'high' | 'medium' | 'low';
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  deadline?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 

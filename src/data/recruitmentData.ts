@@ -129,6 +129,14 @@ export const RECRUITMENT_INDUSTRIES = [
   { id: 'khac', name: 'Ngành Nghề Khác', icon: 'Grid', count: 3, color: 'text-gray-600 bg-gray-50 dark:bg-gray-800 border-gray-200' },
 ];
 
+export const VIN_MAJOR_PROJECTS = [
+  { id: 'ocean-park-1', name: 'Vinhomes Ocean Park 1 (Gia Lâm)' },
+  { id: 'ocean-park-2', name: 'Vinhomes Ocean Park 2 (The Empire)' },
+  { id: 'ocean-park-3', name: 'Vinhomes Ocean Park 3 (The Crown)' },
+  { id: 'smart-city', name: 'Vinhomes Smart City (Tây Mỗ)' },
+  { id: 'grand-park', name: 'Vinhomes Grand Park (TP. Thủ Đức)' }
+];
+
 export const INITIAL_RECRUITMENT_JOBS: RecruitmentJob[] = [
   {
     id: 'job-1',
@@ -781,3 +789,248 @@ export const INITIAL_EMPLOYERS: EmployerProfile[] = [
   }
 ];
 
+export interface RecruitmentPackage {
+  id: string;
+  name: string;
+  slug: string;
+  priceToken: number;
+  priceVnd: number;
+  originalPriceToken?: number;
+  jobPostLimit: number;
+  jobPostsCount: number;
+  cvUnlockLimit: number;
+  cvUnlockCount: number;
+  vipDaysDuration: number;
+  durationDays: number;
+  isPopular?: boolean;
+  badge?: string;
+  isVipBadge?: boolean;
+  isTopPlacement?: boolean;
+  description: string;
+  features: string[];
+}
+
+export const RECRUITMENT_PACKAGES: RecruitmentPackage[] = [
+  {
+    id: 'pack-starter',
+    name: 'Gói Tuyển Dụng Khởi Nghiệp',
+    slug: 'khoi-nghiep',
+    priceToken: 50000,
+    priceVnd: 500000,
+    originalPriceToken: 70000,
+    jobPostLimit: 3,
+    jobPostsCount: 3,
+    cvUnlockLimit: 5,
+    cvUnlockCount: 5,
+    vipDaysDuration: 15,
+    durationDays: 30,
+    isPopular: false,
+    description: 'Phù hợp cho cá nhân kinh doanh, shop nhỏ hoặc gia đình cần tìm người phụ việc, gia sư, thu ngân.',
+    features: [
+      'Đăng tối đa 03 tin tuyển dụng (Hiển thị 30 ngày)',
+      'Tặng 05 lượt mở khóa CV ứng viên trực tuyến',
+      'Được gán nhãn Tin Cư Dân Xác Thực',
+      'Tự động gửi thông báo đến ứng viên nội khu'
+    ]
+  },
+  {
+    id: 'pack-pro-shop',
+    name: 'Gói Shophouse & Cửa Hàng VIP',
+    slug: 'shop-vip',
+    priceToken: 150000,
+    priceVnd: 1200000,
+    originalPriceToken: 200000,
+    jobPostLimit: 10,
+    jobPostsCount: 10,
+    cvUnlockLimit: 20,
+    cvUnlockCount: 20,
+    vipDaysDuration: 30,
+    durationDays: 60,
+    isPopular: true,
+    isVipBadge: true,
+    badge: '🔥 ĐƯỢC CHỌN NHIỀU NHẤT',
+    description: 'Dành cho các nhà hàng F&B, quán cafe, shop thời trang và văn phòng công ty cần tuyển dụng đều đặn.',
+    features: [
+      'Đăng tối đa 10 tin tuyển dụng',
+      'Tặng 20 lượt mở khóa hồ sơ CV chi tiết',
+      'Ghim TOP 1 tin tuyển dụng VIP Kim Cương',
+      'Huy hiệu Doanh Nghiệp Uy Tín có tick xanh KYC',
+      'Đẩy Top tin tự động 1 lần/ngày'
+    ]
+  },
+  {
+    id: 'pack-enterprise',
+    name: 'Gói Doanh Nghiệp Toàn Diện',
+    slug: 'doanh-nghiep-vip',
+    priceToken: 300000,
+    priceVnd: 2500000,
+    originalPriceToken: 450000,
+    jobPostLimit: 30,
+    jobPostsCount: 30,
+    cvUnlockLimit: 60,
+    cvUnlockCount: 60,
+    vipDaysDuration: 60,
+    durationDays: 90,
+    isPopular: false,
+    isVipBadge: true,
+    isTopPlacement: true,
+    badge: '⭐ DOANH NGHIỆP LỚN',
+    description: 'Giải pháp tuyển dụng quy mô lớn cho chuỗi kinh doanh, sàn giao dịch BĐS, trung tâm dịch vụ kỹ thuật.',
+    features: [
+      'Đăng tối đa 30 tin tuyển dụng đa phân khu',
+      'Tặng 60 lượt mở khóa CV không giới hạn',
+      'Banner thương hiệu nhà tuyển dụng trên trang Tuyển Dụng',
+      'Được ưu tiên xuất hiện trong bản tin Zalo Tuyển Dụng Tuần',
+      'Hỗ trợ lọc & gợi ý ứng viên phù hợp qua Zalo Hotline riêng'
+    ]
+  },
+  {
+    id: 'pack-speed-vip',
+    name: 'Gói Tuyển Dụng Thần Tốc VIP 24/7',
+    slug: 'tuyen-dung-than-toc',
+    priceToken: 500000,
+    priceVnd: 6000000,
+    originalPriceToken: 750000,
+    jobPostLimit: 100,
+    jobPostsCount: 100,
+    cvUnlockLimit: 150,
+    cvUnlockCount: 150,
+    vipDaysDuration: 90,
+    durationDays: 365,
+    isPopular: false,
+    isVipBadge: true,
+    isTopPlacement: true,
+    badge: '🚀 TUYỂN GẤP SIÊU TỐC',
+    description: 'Dịch vụ tuyển dụng cam kết hỗ trợ tối đa, phân bổ trực tiếp cho Admin ban tuyển dụng phụ trách.',
+    features: [
+      'Không giới hạn số lượng tin tuyển dụng đăng tải',
+      'Tặng 150 lượt mở khóa CV ứng viên chất lượng cao',
+      'Ghim trang chủ toàn hệ thống Cổng Việc Làm Cư Dân',
+      'Có chuyên viên Admin ban Tuyển dụng riêng hỗ trợ kết nối ứng viên',
+      'Bảo hành tuyển dụng: Hỗ trợ bù lượt ứng viên trong 90 ngày'
+    ]
+  }
+];
+
+export const INITIAL_EMPLOYER_REGISTRATIONS = [
+  {
+    id: 'reg-emp-101',
+    userId: 'user-02',
+    companyName: 'Nhà Hàng Lẩu Hải Sản San Hô Quán',
+    brandName: 'San Hô Quán Ocean Park 2',
+    industry: 'F&B - Nhà Hàng & Cafe',
+    taxCode: '0109887766',
+    project: 'ocean-park-2',
+    address: 'San Hô 06-88, Vinhomes Ocean Park 2',
+    contactName: 'Anh Long (Chủ quán)',
+    contactPhone: '0988.112.233',
+    contactZalo: '0988.112.233',
+    contactEmail: 'sanhoquan.ocp2@gmail.com',
+    selectedPackageId: 'pack-pro-shop',
+    selectedPackageName: 'Gói Shophouse & Cửa Hàng VIP',
+    tokenCost: 150000,
+    status: 'pending' as const,
+    assignedAdminId: 'admin-branch-ocp2',
+    assignedAdminName: 'Quản lý Chi nhánh Ocean Park 2',
+    adminNote: 'Đã gọi xác nhận giấy phép kinh doanh Shophouse, chờ duyệt cấp Token',
+    createdAt: new Date(Date.now() - 3600000 * 3).toLocaleString('vi-VN')
+  },
+  {
+    id: 'reg-emp-102',
+    userId: 'u-emp-01',
+    companyName: 'Công Ty BĐS Nhà Đẹp Vinhomes',
+    brandName: 'Nhà Đẹp Vinhomes Real Estate',
+    industry: 'Bất Động Sản & Môi Giới',
+    taxCode: '0108991234',
+    project: 'ocean-park-2',
+    address: 'Shophouse Chà Là 15-08, Vinhomes Ocean Park 2',
+    contactName: 'Mr. Hiếu Bùi',
+    contactPhone: '0868499929',
+    contactZalo: '0868499929',
+    contactEmail: 'tuyendung.nhadepvinhomes@gmail.com',
+    selectedPackageId: 'pack-enterprise',
+    selectedPackageName: 'Gói Doanh Nghiệp Toàn Diện',
+    tokenCost: 300000,
+    status: 'approved' as const,
+    assignedAdminId: 'admin-master',
+    assignedAdminName: 'Admin Trưởng Ban Quản Trị',
+    adminNote: 'Đã phê duyệt và kích hoạt gói 300.000 Token',
+    createdAt: new Date(Date.now() - 86400000 * 2).toLocaleString('vi-VN'),
+    approvedAt: new Date(Date.now() - 86400000 * 2 + 1800000).toLocaleString('vi-VN')
+  }
+];
+
+export const INITIAL_TASK_DELEGATIONS = [
+  {
+    id: 'task-101',
+    title: 'Xác minh hồ sơ đăng ký & duyệt gói Tuyển Dụng San Hô Quán',
+    category: 'recruitment' as const,
+    targetId: 'reg-emp-101',
+    targetTitle: 'Đăng ký Nhà tuyển dụng: Nhà Hàng Lẩu Hải Sản San Hô Quán',
+    targetProject: 'ocean-park-2',
+    assignedToAdminId: 'admin-branch-ocp2',
+    assignedToAdminName: 'Admin Chi Nhánh Ocean Park 2',
+    assignedByAdminId: 'admin-master',
+    assignedByAdminName: 'Admin Trưởng Ban Tổng',
+    priority: 'high' as const,
+    status: 'in_progress' as const,
+    deadline: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    notes: 'Liên hệ chủ quán SĐT 0988.112.233 để hướng dẫn nạp Token và mở khóa tính năng tuyển dụng.',
+    createdAt: new Date(Date.now() - 3600000 * 2).toLocaleString('vi-VN'),
+    updatedAt: new Date(Date.now() - 1800000).toLocaleString('vi-VN')
+  },
+  {
+    id: 'task-102',
+    title: 'Hỗ trợ kết nối ứng viên Trưởng ca Thu ngân cho The Ocean Chill Cafe',
+    category: 'recruitment' as const,
+    targetId: 'job-1',
+    targetTitle: 'Quản Lý & Trưởng Ca Chuỗi Cà Phê The Ocean Chill',
+    targetProject: 'ocean-park-2',
+    assignedToAdminId: 'admin-branch-ocp2',
+    assignedToAdminName: 'Admin Chi Nhánh Ocean Park 2',
+    assignedByAdminId: 'admin-master',
+    assignedByAdminName: 'Admin Trưởng Ban Tổng',
+    priority: 'medium' as const,
+    status: 'in_progress' as const,
+    deadline: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+    notes: 'Gợi ý 3 ứng viên sinh sống tại phân khu Cọ Xanh & Sao Biển có kinh nghiệm F&B.',
+    createdAt: new Date(Date.now() - 86400000).toLocaleString('vi-VN'),
+    updatedAt: new Date(Date.now() - 86400000).toLocaleString('vi-VN')
+  },
+  {
+    id: 'task-103',
+    title: 'Thẩm định hồ sơ Sổ đỏ Biệt thự Chà Là chuyển nhượng',
+    category: 'bds_realestate' as const,
+    targetId: 'prop-1',
+    targetTitle: 'Shophouse Chà Là CL-08 Phố Đi Bộ Sầm Uất',
+    targetProject: 'ocean-park-2',
+    assignedToAdminId: 'admin-branch-bds',
+    assignedToAdminName: 'Trưởng Ban Quản Lý BĐS',
+    assignedByAdminId: 'admin-master',
+    assignedByAdminName: 'Admin Trưởng Ban Tổng',
+    priority: 'urgent' as const,
+    status: 'completed' as const,
+    deadline: new Date(Date.now() - 3600000).toISOString().split('T')[0],
+    notes: 'Đã đối soát thông tin với Ban Quản Lý Vinhomes, tin đăng hợp lệ.',
+    createdAt: new Date(Date.now() - 86400000 * 2).toLocaleString('vi-VN'),
+    updatedAt: new Date(Date.now() - 86400000).toLocaleString('vi-VN')
+  },
+  {
+    id: 'task-104',
+    title: 'Kiểm tra chất lượng gian hàng Nông Sản Sạch Cư Dân S2.05 Smart City',
+    category: 'resident_market' as const,
+    targetId: 'store-smart-01',
+    targetTitle: 'Gian hàng Thực Phẩm Sạch S2.05 Smart City',
+    targetProject: 'smart-city',
+    assignedToAdminId: 'admin-branch-smartcity',
+    assignedToAdminName: 'Admin Phụ Trách Smart City',
+    assignedByAdminId: 'admin-master',
+    assignedByAdminName: 'Admin Trưởng Ban Tổng',
+    priority: 'medium' as const,
+    status: 'in_progress' as const,
+    deadline: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+    notes: 'Đã hỗ trợ chủ shop kết nối đồng bộ KiotViet POS.',
+    createdAt: new Date(Date.now() - 86400000).toLocaleString('vi-VN'),
+    updatedAt: new Date(Date.now() - 3600000).toLocaleString('vi-VN')
+  }
+];

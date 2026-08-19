@@ -128,6 +128,22 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
       logsList.unshift(newLog);
       localStorage.setItem('chocudan24h_admin_credit_logs', JSON.stringify(logsList.slice(0, 50)));
 
+      // Sync active logged-in user in localStorage if matching ID
+      const storedUserRaw = localStorage.getItem('chocudan24h_current_user');
+      if (storedUserRaw) {
+        try {
+          const storedUser = JSON.parse(storedUserRaw);
+          if (storedUser && storedUser.id === user.id) {
+            const synced = { ...storedUser, ...updatedUser };
+            localStorage.setItem('chocudan24h_current_user', JSON.stringify(synced));
+          }
+        } catch (e) {}
+      }
+
+      // Dispatch global event for instantaneous reactive UI update
+      window.dispatchEvent(new CustomEvent('user-token-updated', { detail: updatedUser }));
+      window.dispatchEvent(new Event('storage'));
+
       alert(`🎉 ĐÃ CẬP NHẬT & BƠM THÀNH CÔNG CHO TÀI KHOẢN "${user?.name || 'Cư Dân'}"!\n• Token Cư Dân (Xu Tiêu Dùng - Không Thể Rút): ${balance.toLocaleString('vi-VN')} Token\n• Điểm Hoa Hồng Affiliate (Được Rút Về Ngân Hàng): ${affiliatePoints.toLocaleString('vi-VN')} pts\n• Lượt Up-Tin: ${upTinCredits} lượt\n• Hạng Thành Viên: ${tier.toUpperCase()}`);
       
       onSuccessUpdate(updatedUser);
