@@ -100,19 +100,28 @@ export function getProductDetailUrl(
   return `/san-pham/${encodeURIComponent(product.id)}/${encodeURIComponent(pSlug)}`;
 }
 
-export function getJobDetailUrl(job: { id: string; title?: string }): string {
-  return `/tuyen-dung/viec-lam/${encodeURIComponent(job.id)}`;
+export function getJobDetailUrl(job?: { id?: string; title?: string } | string | null): string {
+  if (!job) return '/tuyen-dung';
+  const jId = typeof job === 'string' ? job : (job.id || 'job-detail');
+  return `/tuyen-dung/viec-lam/${encodeURIComponent(jId)}`;
 }
 
-export function getCandidateCvUrl(candidate: { id: string; fullName?: string }): string {
-  return `/tuyen-dung/ung-vien/${encodeURIComponent(candidate.id)}`;
+export function getCandidateCvUrl(candidate?: { id?: string; fullName?: string } | string | null): string {
+  if (!candidate) return '/tuyen-dung';
+  const cId = typeof candidate === 'string' ? candidate : (candidate.id || 'ung-vien');
+  return `/tuyen-dung/ung-vien/${encodeURIComponent(cId)}`;
 }
 
-export function getRecruitmentIndustryUrl(industryId: string): string {
+export function getRecruitmentIndustryUrl(industryId?: string | null): string {
+  if (!industryId) return '/tuyen-dung';
   return `/tuyen-dung/nganh/${encodeURIComponent(industryId)}`;
 }
 
-export function getEmployerProfileUrl(employer: { id?: string; employerUserId?: string; companyName?: string }): string {
+export function getEmployerProfileUrl(employer?: { id?: string; employerUserId?: string; companyName?: string } | string | null): string {
+  if (!employer) return '/tuyen-dung';
+  if (typeof employer === 'string') {
+    return `/tuyen-dung/nha-tuyen-dung/${encodeURIComponent(employer)}/doanh-nghiep`;
+  }
   const empId = employer.employerUserId || employer.id || (employer.companyName ? slugify(employer.companyName) : 'nha-tuyen-dung');
   const compSlug = employer.companyName ? slugify(employer.companyName) : 'doanh-nghiep';
   return `/tuyen-dung/nha-tuyen-dung/${encodeURIComponent(empId)}/${encodeURIComponent(compSlug)}`;

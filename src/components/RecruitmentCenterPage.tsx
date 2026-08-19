@@ -23,7 +23,7 @@ import {
   INITIAL_CANDIDATE_PROFILES 
 } from '../data/recruitmentData';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
-import { getJobDetailUrl, getCandidateCvUrl, getRecruitmentIndustryUrl } from '../lib/slugs';
+import { getJobDetailUrl, getCandidateCvUrl, getRecruitmentIndustryUrl, getEmployerProfileUrl } from '../lib/slugs';
 
 interface RecruitmentCenterPageProps {
   currentUser: UserType | null;
