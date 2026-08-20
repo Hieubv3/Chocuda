@@ -1176,29 +1176,184 @@ app.post("/api/auth/users", (req, res) => {
   return res.status(201).json({ success: true, message: "Tạo tài khoản thành viên thành công!", user: safeUser });
 });
 
-// Update User (Role, UpTin credits, Phone, Name, Block status)
-app.patch("/api/auth/users/:id", (req, res) => {
+// Get Single User by ID, Email or Phone (Live Profile & Balance Sync)
+app.get(["/api/auth/users/:id", "/api/users/:id"], (req, res) => {
   const { id } = req.params;
-  const userIndex = usersStore.findIndex(u => u.id === id);
-  if (userIndex === -1) {
+  const { email, phone, userId } = req.query;
+
+  let user = usersStore.find(u => u.id === id);
+  if (!user && (id.includes('@') || email)) {
+    const targetEmail = String(email || id).toLowerCase();
+    user = usersStore.find(u => u.email && u.email.toLowerCase() === targetEmail);
+  }
+  if (!user && (phone || /^\d+$/.test(id.replace(/\D/g, '')))) {
+    const targetPhone = String(phone || id).replace(/\D/g, '');
+    if (targetPhone.length >= 7) {
+      user = usersStore.find(u => u.phone && u.phone.replace(/\D/g, '') === targetPhone);
+    }
+  }
+  if (!user && userId) {
+    user = usersStore.find(u => u.id === String(userId));
+  }
+
+  if (!user) {
     return res.status(404).json({ error: "Không tìm thấy người dùng" });
   }
 
-  const { role, upTinCredits, balance, socialPoints, totalTopup, phone, name, isBlocked, tier, businessCategories } = req.body;
-  if (role !== undefined) usersStore[userIndex].role = role;
-  if (upTinCredits !== undefined) usersStore[userIndex].upTinCredits = Number(upTinCredits);
-  if (balance !== undefined) usersStore[userIndex].balance = Number(balance);
-  if (socialPoints !== undefined) usersStore[userIndex].socialPoints = Number(socialPoints);
-  if (totalTopup !== undefined) usersStore[userIndex].totalTopup = Number(totalTopup);
-  if (phone !== undefined) usersStore[userIndex].phone = String(phone);
-  if (name !== undefined) usersStore[userIndex].name = String(name);
-  if (tier !== undefined) usersStore[userIndex].tier = tier;
-  if (businessCategories !== undefined && Array.isArray(businessCategories)) usersStore[userIndex].businessCategories = businessCategories;
-  if (isBlocked !== undefined) (usersStore[userIndex] as any).isBlocked = Boolean(isBlocked);
+  const { password, ...safeUser } = user;
+  return res.json({
+    ...safeUser,
+    balance: user.balance || 0,
+    tokenBalance: user.tokenBalance || user.balance || 0,
+    affiliatePoints: user.affiliatePoints || 0,
+    upTinCredits: user.upTinCredits || 0
+  });
+});
+
+// Current User Me Endpoint
+app.get(["/api/auth/me", "/api/users/current"], (req, res) => {
+  const { userId, email, phone } = req.query;
+  let user: any = null;
+
+  if (userId) {
+    user = usersStore.find(u => u.id === String(userId));
+  }
+  if (!user && email) {
+    user = usersStore.find(u => u.email && u.email.toLowerCase() === String(email).toLowerCase());
+  }
+  if (!user && phone) {
+    const cleanPhone = String(phone).replace(/\D/g, '');
+    user = usersStore.find(u => u.phone && u.phone.replace(/\D/g, '') === cleanPhone);
+  }
+
+  if (!user) {
+    return res.status(404).json({ error: "Chưa đăng nhập hoặc không tìm thấy người dùng" });
+  }
+
+  const { password, ...safeUser } = user;
+  return res.json({
+    ...safeUser,
+    balance: user.balance || 0,
+    tokenBalance: user.tokenBalance || user.balance || 0,
+    affiliatePoints: user.affiliatePoints || 0,
+    upTinCredits: user.upTinCredits || 0
+  });
+});
+
+// Update User (Role, UpTin credits, Balance, Tokens, Affiliate points, Phone, Name, Block status)
+app.all(["/api/auth/users/:id", "/api/users/:id"], (req, res, next) => {
+  if (req.method !== 'PATCH' && req.method !== 'PUT') return next();
+  const { id } = req.params;
+  let userIndex = usersStore.findIndex(u => u.id === id);
+
+  // Fallback search by email or phone if id differed slightly
+  if (userIndex === -1 && (req.body.email || id.includes('@'))) {
+    const targetEmail = String(req.body.email || id).toLowerCase();
+    userIndex = usersStore.findIndex(u => u.email && u.email.toLowerCase() === targetEmail);
+  }
+  if (userIndex === -1 && (req.body.phone || req.body.userPhone)) {
+    const cleanPhone = String(req.body.phone || req.body.userPhone).replace(/\D/g, '');
+    userIndex = usersStore.findIndex(u => u.phone && u.phone.replace(/\D/g, '') === cleanPhone);
+  }
+  if (userIndex === -1 && req.body.userId) {
+    userIndex = usersStore.findIndex(u => u.id === req.body.userId);
+  }
+
+  // If still not found, auto create account so no funds are ever lost
+  if (userIndex === -1) {
+    const newId = id || req.body.userId || `user-${Date.now()}`;
+    const autoUser: StoredUser = {
+      id: newId,
+      name: req.body.name || req.body.userName || 'Cư Dân',
+      email: req.body.email || (id.includes('@') ? id : `cudan_${Date.now()}@chocudan24h.com`),
+      phone: req.body.phone || '0868499929',
+      role: req.body.role || 'owner',
+      provider: 'local',
+      upTinCredits: Number(req.body.upTinCredits) || 10,
+      balance: Number(req.body.balance) || Number(req.body.tokenBalance) || 0,
+      tokenBalance: Number(req.body.balance) || Number(req.body.tokenBalance) || 0,
+      affiliatePoints: Number(req.body.affiliatePoints) || 0,
+      tier: req.body.tier || 'thuong',
+      registeredAt: new Date().toISOString()
+    };
+    usersStore.unshift(autoUser);
+    userIndex = 0;
+  }
+
+  const { 
+    role, 
+    upTinCredits, 
+    balance, 
+    tokenBalance, 
+    affiliatePoints, 
+    socialPoints, 
+    totalTopup, 
+    phone, 
+    name, 
+    isBlocked, 
+    tier, 
+    businessCategories 
+  } = req.body;
+
+  const targetUser = usersStore[userIndex];
+  const oldBalance = targetUser.balance || 0;
+
+  if (role !== undefined) targetUser.role = role;
+  if (upTinCredits !== undefined) targetUser.upTinCredits = Number(upTinCredits);
+  
+  if (balance !== undefined) {
+    targetUser.balance = Number(balance);
+    (targetUser as any).tokenBalance = Number(balance);
+  } else if (tokenBalance !== undefined) {
+    targetUser.balance = Number(tokenBalance);
+    (targetUser as any).tokenBalance = Number(tokenBalance);
+  }
+  if (affiliatePoints !== undefined) (targetUser as any).affiliatePoints = Number(affiliatePoints);
+  if (socialPoints !== undefined) targetUser.socialPoints = Number(socialPoints);
+  if (totalTopup !== undefined) targetUser.totalTopup = Number(totalTopup);
+  if (phone !== undefined) targetUser.phone = String(phone);
+  if (name !== undefined) targetUser.name = String(name);
+  if (tier !== undefined) targetUser.tier = tier;
+  if (businessCategories !== undefined && Array.isArray(businessCategories)) targetUser.businessCategories = businessCategories;
+  if (isBlocked !== undefined) (targetUser as any).isBlocked = Boolean(isBlocked);
+
+  // Sync to walletsStore
+  if (walletsStore.has(targetUser.id)) {
+    const w = walletsStore.get(targetUser.id);
+    if (w) w.availableBalance = targetUser.balance || 0;
+  }
+
+  // Also synchronize any duplicate records that share the same email or phone
+  const userEmail = targetUser.email?.toLowerCase();
+  const userPhone = targetUser.phone?.replace(/\D/g, '');
+  usersStore.forEach((u, idx) => {
+    if (idx !== userIndex) {
+      const emailMatch = userEmail && u.email && u.email.toLowerCase() === userEmail;
+      const phoneMatch = userPhone && u.phone && u.phone.replace(/\D/g, '') === userPhone;
+      if (emailMatch || phoneMatch) {
+        u.balance = targetUser.balance;
+        (u as any).tokenBalance = targetUser.balance;
+        (u as any).affiliatePoints = (targetUser as any).affiliatePoints;
+        u.upTinCredits = targetUser.upTinCredits;
+        if (targetUser.tier) u.tier = targetUser.tier;
+        if (targetUser.role) u.role = targetUser.role;
+      }
+    }
+  });
 
   saveDataStore();
-  const { password, ...safeUser } = usersStore[userIndex];
-  return res.json({ success: true, message: "Cập nhật tài khoản thành công!", user: safeUser });
+  const { password, ...safeUser } = targetUser;
+  return res.json({ 
+    success: true, 
+    message: "Cập nhật tài khoản thành công!", 
+    user: {
+      ...safeUser,
+      balance: targetUser.balance || 0,
+      tokenBalance: (targetUser as any).tokenBalance || targetUser.balance || 0,
+      affiliatePoints: (targetUser as any).affiliatePoints || 0,
+      upTinCredits: targetUser.upTinCredits || 0
+    } 
+  });
 });
 
 // Delete User Endpoint
@@ -4018,10 +4173,41 @@ app.post("/api/tech-orders/:id/update-status", (req, res) => {
 // 4. GET User Wallet Details Endpoint
 app.get("/api/wallets/:userId", (req, res) => {
   const { userId } = req.params;
-  const wallet = getUserWallet(userId);
-  const txs = walletTransactionsStore.filter(t => t.userId === userId);
+  const { email, phone } = req.query;
+
+  let targetUser = usersStore.find(u => u.id === userId);
+  if (!targetUser && (email || (userId && userId.includes('@')))) {
+    const targetEmail = String(email || userId).toLowerCase();
+    targetUser = usersStore.find(u => u.email && u.email.toLowerCase() === targetEmail);
+  }
+  if (!targetUser && (phone || (userId && /^\d+$/.test(userId)))) {
+    const cleanPhone = String(phone || userId).replace(/\D/g, '');
+    targetUser = usersStore.find(u => u.phone && u.phone.replace(/\D/g, '') === cleanPhone);
+  }
+
+  const effectiveId = targetUser?.id || userId;
+  const userEmail = targetUser?.email?.toLowerCase();
+  const userPhone = targetUser?.phone?.replace(/\D/g, '');
+
+  const wallet = getUserWallet(effectiveId);
+  if (targetUser) {
+    wallet.availableBalance = targetUser.balance !== undefined ? targetUser.balance : wallet.availableBalance;
+  }
+
+  const txs = walletTransactionsStore.filter(t => 
+    t.userId === effectiveId || 
+    t.userId === userId || 
+    (userEmail && t.userEmail && t.userEmail.toLowerCase() === userEmail) ||
+    (userPhone && t.userPhone && t.userPhone.replace(/\D/g, '') === userPhone) ||
+    (t.referenceCode && (t.referenceCode.includes(effectiveId) || t.referenceCode.includes(userId)))
+  );
+
   res.json({
     wallet,
+    tokenBalance: targetUser?.balance || (targetUser as any)?.tokenBalance || 0,
+    balance: targetUser?.balance || 0,
+    affiliatePoints: (targetUser as any)?.affiliatePoints || 0,
+    upTinCredits: targetUser?.upTinCredits || 0,
     transactions: txs
   });
 });
@@ -4334,13 +4520,22 @@ app.get("/api/recruitment/jobs/:id", (req, res) => {
 
 // ------------------- ADMIN TOKEN INJECTION (BƠM TOKEN CƯ DÂN & HOA HỒNG AFFILIATE) -------------------
 app.post("/api/admin/pump-tokens", (req, res) => {
-  const { userId, tokenAmount, affiliatePointsAmount, reason, adminName } = req.body;
+  const { userId, email, phone, tokenAmount, affiliatePointsAmount, reason, adminName } = req.body;
 
-  if (!userId) {
-    return res.status(400).json({ error: "Thiếu userId của cư dân cần bơm Token/Điểm!" });
+  if (!userId && !email && !phone) {
+    return res.status(400).json({ error: "Thiếu thông tin nhận diện cư dân (userId, email hoặc phone) để bơm Token/Điểm!" });
   }
 
-  const user = usersStore.find(u => u.id === userId);
+  let user = usersStore.find(u => u.id === userId);
+  if (!user && (email || (userId && userId.includes('@')))) {
+    const targetEmail = String(email || userId).toLowerCase();
+    user = usersStore.find(u => u.email && u.email.toLowerCase() === targetEmail);
+  }
+  if (!user && (phone || (userId && /^\d+$/.test(userId)))) {
+    const cleanPhone = String(phone || userId).replace(/\D/g, '');
+    user = usersStore.find(u => u.phone && u.phone.replace(/\D/g, '') === cleanPhone);
+  }
+
   if (!user) {
     return res.status(404).json({ error: "Không tìm thấy người dùng trong hệ thống!" });
   }
@@ -4361,6 +4556,9 @@ app.post("/api/admin/pump-tokens", (req, res) => {
     walletTransactionsStore.unshift({
       id: `wtx-pump-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       userId: user.id,
+      userName: user.name,
+      userEmail: user.email,
+      userPhone: user.phone,
       type: 'admin_pump_tokens' as any,
       amount: tokensToAdd,
       description: `[BƠM TOKEN ADMIN] Tặng +${tokensToAdd.toLocaleString('vi-VN')} Token Cư Dân (Xu Tiêu Dùng - Không Thể Rút) - Lý do: ${reason || 'Khuyến mãi / Trợ giá cư dân'}`,
@@ -4378,6 +4576,9 @@ app.post("/api/admin/pump-tokens", (req, res) => {
     walletTransactionsStore.unshift({
       id: `wtx-aff-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       userId: user.id,
+      userName: user.name,
+      userEmail: user.email,
+      userPhone: user.phone,
       type: 'affiliate_commission' as any,
       amount: affiliateToAdd,
       description: `[CỘNG ĐIỂM HOA HỒNG] Thưởng +${affiliateToAdd.toLocaleString('vi-VN')} Điểm Affiliate (ĐƯỢC RÚT VỀ NGÂN HÀNG) - Lý do: ${reason || 'Hoa hồng giới thiệu / Đối tác'}`,
@@ -4387,13 +4588,44 @@ app.post("/api/admin/pump-tokens", (req, res) => {
     });
   }
 
+  // Sync to walletsStore
+  if (walletsStore.has(user.id)) {
+    const w = walletsStore.get(user.id);
+    if (w) w.availableBalance = user.balance || 0;
+  }
+
+  // Also sync duplicate records by email or phone
+  const uEmail = user.email?.toLowerCase();
+  const uPhone = user.phone?.replace(/\D/g, '');
+  usersStore.forEach(otherUser => {
+    if (otherUser.id !== user!.id) {
+      const emailMatch = uEmail && otherUser.email && otherUser.email.toLowerCase() === uEmail;
+      const phoneMatch = uPhone && otherUser.phone && otherUser.phone.replace(/\D/g, '') === uPhone;
+      if (emailMatch || phoneMatch) {
+        otherUser.balance = user!.balance;
+        otherUser.tokenBalance = user!.balance;
+        otherUser.affiliatePoints = user!.affiliatePoints;
+        if (walletsStore.has(otherUser.id)) {
+          const w = walletsStore.get(otherUser.id);
+          if (w) w.availableBalance = user!.balance || 0;
+        }
+      }
+    }
+  });
+
   saveDataStore();
 
   const { password: _, ...safeUser } = user;
   res.json({
     success: true,
     message: `🎉 Đã bơm thành công cho cư dân "${user.name}"!\n• +${tokensToAdd.toLocaleString('vi-VN')} Token (Không thể rút)\n• +${affiliateToAdd.toLocaleString('vi-VN')} Điểm Affiliate (Được rút về ngân hàng)`,
-    user: safeUser
+    user: {
+      ...safeUser,
+      balance: user.balance || 0,
+      tokenBalance: user.balance || 0,
+      affiliatePoints: user.affiliatePoints || 0,
+      upTinCredits: user.upTinCredits || 0
+    }
   });
 });
 

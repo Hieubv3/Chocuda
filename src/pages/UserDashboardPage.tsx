@@ -61,29 +61,94 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const handleSelectProp = onSelectProperty || (() => {});
   const handleDeleteProp = onDeleteProperty || (() => {});
 
-  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_cv' | 'recruiter_packages' | 'my_store' | 'transactions' | 'affiliate' | 'profile'>('my_properties');
+  const [activeTab, setActiveTab] = useState<'my_properties' | 'wallet_tokens' | 'my_cv' | 'recruiter_packages' | 'my_store' | 'transactions' | 'affiliate' | 'profile'>('my_properties');
   const [selectedPropertyForUpTin, setSelectedPropertyForUpTin] = useState<Property | null>(null);
   const [localTransactions, setLocalTransactions] = useState<UpTinTransaction[]>([]);
+  const [serverWalletTransactions, setServerWalletTransactions] = useState<any[]>([]);
   const [showKycModal, setShowKycModal] = useState(false);
   const [showEmployerRegModal, setShowEmployerRegModal] = useState(false);
   const [userState, setUserState] = useState<User>(user);
+  const [isSyncingBalance, setIsSyncingBalance] = useState(false);
 
-  // Live Token Sync with Admin & LocalStorage
+  // Synchronize with parent user prop
   useEffect(() => {
+    if (user) {
+      setUserState(prev => ({ ...prev, ...user }));
+      if (typeof user.upTinCredits === 'number') setUpTinCredits(user.upTinCredits);
+      if (typeof user.affiliatePoints === 'number') setAffiliateWallet(user.affiliatePoints);
+    }
+  }, [user]);
+
+  // Live Token Sync with Server, Admin & LocalStorage
+  const refreshUserBalance = async (showToast = false) => {
+    if (!user || (!user.id && !user.email)) return;
+    setIsSyncingBalance(true);
+    try {
+      const queryParams = new URLSearchParams();
+      if (user.id) queryParams.set('userId', user.id);
+      if (user.email) queryParams.set('email', user.email);
+      if (user.phone) queryParams.set('phone', user.phone);
+
+      const [resUser, resWallet] = await Promise.allSettled([
+        fetch(`/api/auth/users/${user.id || 'me'}?${queryParams.toString()}`),
+        fetch(`/api/wallets/${user.id || 'me'}?${queryParams.toString()}`)
+      ]);
+
+      if (resUser.status === 'fulfilled' && resUser.value.ok) {
+        const freshData = await resUser.value.json();
+        if (freshData) {
+          setUserState(prev => ({ ...prev, ...freshData }));
+          if (typeof freshData.upTinCredits === 'number') {
+            setUpTinCredits(freshData.upTinCredits);
+          }
+          if (typeof freshData.affiliatePoints === 'number') {
+            setAffiliateWallet(freshData.affiliatePoints);
+          }
+          // Update localStorage hb_user
+          const merged = { ...user, ...freshData };
+          try {
+            localStorage.setItem('hb_user', JSON.stringify(merged));
+          } catch (e) {}
+          if (showToast) {
+            alert(`✅ ĐÃ ĐỒNG BỘ SỐ DƯ TỨC THÌ TỪ HỆ THỐNG:\n• Token Cư Dân (Xu Tiêu Dùng): ${(freshData.balance || 0).toLocaleString('vi-VN')} Token\n• Điểm Rút Tiền Affiliate: ${(freshData.affiliatePoints || 0).toLocaleString('vi-VN')} đ\n• Lượt Up Tin: ${freshData.upTinCredits || 0} lượt`);
+          }
+        }
+      }
+
+      if (resWallet.status === 'fulfilled' && resWallet.value.ok) {
+        const walletData = await resWallet.value.json();
+        if (walletData && Array.isArray(walletData.transactions)) {
+          setServerWalletTransactions(walletData.transactions);
+        }
+      }
+    } catch (err) {
+      console.warn('Balance sync error:', err);
+    } finally {
+      setIsSyncingBalance(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshUserBalance();
+    const interval = setInterval(() => refreshUserBalance(false), 3000); // Live poll every 3s
     const handleTokenUpdated = (e: any) => {
-      if (e.detail && (e.detail.id === user.id || !user.id)) {
+      if (e.detail && (e.detail.id === user.id || e.detail.email === user.email || !user.id)) {
         setUserState(prev => ({ ...prev, ...e.detail }));
         if (typeof e.detail.upTinCredits === 'number') {
           setUpTinCredits(e.detail.upTinCredits);
+        }
+        if (typeof e.detail.affiliatePoints === 'number') {
+          setAffiliateWallet(e.detail.affiliatePoints);
         }
       }
     };
 
     window.addEventListener('user-token-updated', handleTokenUpdated);
     return () => {
+      clearInterval(interval);
       window.removeEventListener('user-token-updated', handleTokenUpdated);
     };
-  }, [user.id]);
+  }, [user.id, user.email, user.phone]);
 
   // Affiliate & Referral State
   const [copiedLink, setCopiedLink] = useState(false);
@@ -261,68 +326,114 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                 <span>✉️ Email: <strong className="text-white">{user.email}</strong></span>
               </div>
 
-              <div className="flex items-center gap-2 text-[11px] text-emerald-300 pt-0.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>Quyền lợi: <strong className="text-slate-200">{tierInfo.vipLimit}</strong></span>
+              <div className="flex items-center gap-3 flex-wrap text-[11px] text-emerald-300 pt-0.5">
+                <span className="flex items-center gap-1 bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-lg border border-amber-500/30 font-black font-mono">
+                  🪙 {(userState.balance || 0).toLocaleString('vi-VN')} Token Cư Dân
+                </span>
                 <span className="text-slate-600">|</span>
-                <span>Số dư Up Tin: <strong className="text-amber-300 font-black text-xs">{upTinCredits} lượt</strong></span>
+                <span className="flex items-center gap-1 bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-lg border border-emerald-500/30 font-black font-mono">
+                  💸 {(userState.affiliatePoints || affiliateWallet || 0).toLocaleString('vi-VN')} đ Rút Tiền
+                </span>
+                <span className="text-slate-600">|</span>
+                <span>Lượt Up Tin: <strong className="text-amber-300 font-black">{upTinCredits} lượt</strong></span>
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2.5 w-full md:w-auto shrink-0 pt-2 md:pt-0">
+          <div className="flex items-center gap-2 w-full md:w-auto shrink-0 pt-2 md:pt-0 flex-wrap sm:flex-nowrap">
+            <button
+              onClick={() => refreshUserBalance(true)}
+              disabled={isSyncingBalance}
+              className="px-3 py-2.5 bg-slate-800/90 hover:bg-slate-700 text-sky-300 border border-sky-500/40 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+              title="Nhấn để cập nhật số dư Token tức thì từ hệ thống"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSyncingBalance ? 'animate-spin text-amber-400' : 'text-sky-400'}`} />
+              <span>{isSyncingBalance ? 'Đang đồng bộ...' : 'Đồng Bộ Số Dư'}</span>
+            </button>
             <button
               onClick={handlePostProperty}
               className="flex-1 md:flex-none px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-lg flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-slate-950" />
-              <span>ĐĂNG TIN MỚI (AI VIẾT BÀI TỪ ẢNH)</span>
+              <span>ĐĂNG TIN MỚI</span>
             </button>
             {onLogout && (
               <button
                 onClick={onLogout}
-                className="px-3.5 py-2.5 bg-slate-800/90 hover:bg-slate-800 text-rose-300 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 shrink-0 cursor-pointer"
+                className="px-3 py-2.5 bg-slate-800/90 hover:bg-slate-800 text-rose-300 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 shrink-0 cursor-pointer"
                 title="Đăng xuất hoặc đổi tài khoản"
               >
-                <span>Đổi Tài Khoản</span>
+                <span>Đổi Nick</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* SECTION 2: QUICK STATS GRID - 4 COLUMNS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
-          <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-800/40 flex items-center justify-between">
-            <div>
-              <span className="text-slate-400 text-[11px] block">Tổng Tin Đăng</span>
-              <span className="text-lg font-black text-white mt-0.5 block">{userProperties.length} <span className="text-xs font-normal text-slate-400">căn</span></span>
+        {/* SECTION 2: LIVE WALLET & QUICK STATS GRID - 5 COLUMNS */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 text-xs">
+          {/* Box 1: Token Cư Dân */}
+          <div className="bg-gradient-to-br from-amber-950/70 via-slate-900 to-slate-900 p-3.5 rounded-2xl border-2 border-amber-500/60 shadow-lg flex flex-col justify-between relative overflow-hidden">
+            <div className="flex items-center justify-between">
+              <span className="text-amber-400 font-black text-[10px] uppercase tracking-wider">VÍ TOKEN TIÊU DÙNG</span>
+              <span className="p-1 bg-amber-500/20 text-amber-400 rounded-lg text-xs">🪙</span>
             </div>
-            <Zap className="w-5 h-5 text-emerald-400/80" />
+            <div className="mt-2">
+              <div className="text-xl font-black text-amber-300 font-mono">
+                {(userState.balance || 0).toLocaleString('vi-VN')}
+              </div>
+              <span className="text-[10px] text-slate-400">Xu tiêu dùng dịch vụ</span>
+            </div>
           </div>
 
-          <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-800/40 flex items-center justify-between">
-            <div>
-              <span className="text-slate-400 text-[11px] block">Đã Duyệt Hiển Thị</span>
-              <span className="text-lg font-black text-emerald-400 mt-0.5 block">{approvedCount} <span className="text-xs font-normal text-slate-400">căn</span></span>
+          {/* Box 2: Điểm Rút Tiền Affiliate */}
+          <div className="bg-gradient-to-br from-emerald-950/70 via-slate-900 to-slate-900 p-3.5 rounded-2xl border-2 border-emerald-500/60 shadow-lg flex flex-col justify-between relative overflow-hidden">
+            <div className="flex items-center justify-between">
+              <span className="text-emerald-400 font-black text-[10px] uppercase tracking-wider">VÍ RÚT TIỀN AFFILIATE</span>
+              <span className="p-1 bg-emerald-500/20 text-emerald-400 rounded-lg text-xs">💸</span>
             </div>
-            <CheckCircle2 className="w-5 h-5 text-emerald-400/80" />
+            <div className="mt-2">
+              <div className="text-xl font-black text-emerald-300 font-mono">
+                {(userState.affiliatePoints || affiliateWallet || 0).toLocaleString('vi-VN')}
+              </div>
+              <span className="text-[10px] text-slate-400">VNĐ (Được rút về ATM)</span>
+            </div>
           </div>
 
-          <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-800/40 flex items-center justify-between">
-            <div>
-              <span className="text-slate-400 text-[11px] block">Lượt Up Tin Còn Lại</span>
-              <span className="text-lg font-black text-amber-400 mt-0.5 block">{upTinCredits} <span className="text-xs font-normal text-slate-400">lượt</span></span>
+          {/* Box 3: Lượt Up Tin */}
+          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-emerald-800/40 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 text-[10px] font-bold uppercase">LƯỢT UP TIN TOP 1</span>
+              <Sparkles className="w-4 h-4 text-amber-400" />
             </div>
-            <Sparkles className="w-5 h-5 text-amber-400/80" />
+            <div className="mt-2">
+              <div className="text-xl font-black text-amber-400 font-mono">{upTinCredits}</div>
+              <span className="text-[10px] text-slate-400">Lượt đẩy bài ưu tiên</span>
+            </div>
           </div>
 
-          <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-800/40 flex items-center justify-between">
-            <div>
-              <span className="text-slate-400 text-[11px] block">Lượt Xem Tích Lũy</span>
-              <span className="text-lg font-black text-white mt-0.5 block">{totalViews.toLocaleString('vi-VN')} <span className="text-xs font-normal text-slate-400">lượt</span></span>
+          {/* Box 4: Tổng Tin Đăng */}
+          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-emerald-800/40 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 text-[10px] font-bold uppercase">TỔNG TIN ĐĂNG BĐS</span>
+              <Zap className="w-4 h-4 text-emerald-400" />
             </div>
-            <Eye className="w-5 h-5 text-slate-400/80" />
+            <div className="mt-2">
+              <div className="text-xl font-black text-white font-mono">{userProperties.length}</div>
+              <span className="text-[10px] text-slate-400">({approvedCount} tin đã duyệt)</span>
+            </div>
+          </div>
+
+          {/* Box 5: Lượt Xem Tích Lũy */}
+          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-emerald-800/40 flex flex-col justify-between col-span-2 sm:col-span-1">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 text-[10px] font-bold uppercase">LƯỢT XEM TÍCH LŨY</span>
+              <Eye className="w-4 h-4 text-slate-400" />
+            </div>
+            <div className="mt-2">
+              <div className="text-xl font-black text-white font-mono">{totalViews.toLocaleString('vi-VN')}</div>
+              <span className="text-[10px] text-slate-400">Lượt khách ghé xem</span>
+            </div>
           </div>
         </div>
 
@@ -540,6 +651,19 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('wallet_tokens')}
+          className={`flex-1 min-w-[180px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'wallet_tokens'
+              ? 'bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-sm font-extrabold'
+              : 'text-amber-600 dark:text-amber-300 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <span>🪙</span>
+          <span>Ví Token & Tiền ({((userState.balance || 0) / 1000).toLocaleString('vi-VN')}k)</span>
+          <span className="px-1.5 py-0.2 bg-slate-900 text-amber-300 text-[9px] rounded font-black">Live</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('my_cv')}
           className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'my_cv'
@@ -599,7 +723,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           }`}
         >
           <Share2 className="w-3.5 h-3.5" />
-          <span>Affiliate & Hoa Hồng</span>
+          <span>Affiliate & Rút Tiền</span>
           <span className="px-1 py-0.2 bg-slate-900 text-amber-400 text-[9px] rounded font-black">15-20%</span>
         </button>
       </div>
@@ -804,6 +928,247 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Tab: Wallet & Token Management (Ví Token Cư Dân & Điểm Rút Tiền) */}
+      {activeTab === 'wallet_tokens' && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          {/* Main Wallet Hero Balance Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* 1. Token Cư Dân (Xu Tiêu Dùng) */}
+            <div className="bg-gradient-to-br from-amber-500/10 via-slate-900 to-slate-900 text-white p-6 rounded-3xl border-2 border-amber-500/40 shadow-xl relative overflow-hidden space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 px-2.5 py-0.5 rounded-full">
+                  🪙 XU TIÊU DÙNG NỘI BỘ
+                </span>
+                <span className="text-xs text-amber-300/80 font-bold">Không thể rút</span>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 font-bold">Số Dư Token Cư Dân:</p>
+                <div className="flex items-baseline gap-1.5 mt-1">
+                  <span className="text-3xl font-black text-amber-400 font-mono tracking-tight">
+                    {(userState.balance || 0).toLocaleString('vi-VN')}
+                  </span>
+                  <span className="text-sm font-black text-amber-300">Token</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed border-t border-slate-700/60 pt-2.5">
+                Dùng để mua gói tin tuyển dụng, mở khóa CV ứng viên, đăng ký gian hàng KiotViet & các dịch vụ tiện ích nội khu.
+              </p>
+              <div className="pt-1 flex gap-2">
+                <button
+                  onClick={() => setActiveTab('recruiter_packages')}
+                  className="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1 cursor-pointer active:scale-95"
+                >
+                  <Building2 className="w-3.5 h-3.5" />
+                  <span>Dùng Token Mua Gói Tuyển Dụng</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Điểm Affiliate Rút Tiền Về Ngân Hàng */}
+            <div className="bg-gradient-to-br from-emerald-500/10 via-slate-900 to-slate-900 text-white p-6 rounded-3xl border-2 border-emerald-500/40 shadow-xl relative overflow-hidden space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-slate-950 px-2.5 py-0.5 rounded-full">
+                  💸 TIỀN RÚT VỀ ATM
+                </span>
+                <span className="text-xs text-emerald-400 font-bold">VietQR 24/7</span>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 font-bold">Điểm Hoa Hồng Affiliate:</p>
+                <div className="flex items-baseline gap-1.5 mt-1">
+                  <span className="text-3xl font-black text-emerald-400 font-mono tracking-tight">
+                    {(userState.affiliatePoints || affiliateWallet || 0).toLocaleString('vi-VN')}
+                  </span>
+                  <span className="text-sm font-black text-emerald-300">VNĐ</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed border-t border-slate-700/60 pt-2.5">
+                Hoa hồng nhận từ giới thiệu cư dân (15% F1, 5% F2) hoặc Admin thưởng. Rút trực tiếp về tài khoản ngân hàng của bạn.
+              </p>
+              <div className="pt-1 flex gap-2">
+                <button
+                  onClick={() => setShowWithdrawModal(true)}
+                  className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1 cursor-pointer active:scale-95"
+                >
+                  <Wallet className="w-3.5 h-3.5" />
+                  <span>Rút Tiền Về ATM</span>
+                </button>
+                <button
+                  onClick={() => {
+                    const currentAff = userState.affiliatePoints || affiliateWallet || 0;
+                    if (currentAff < 10000) {
+                      alert('Số dư điểm hoa hồng cần tối thiểu 10.000đ để quy đổi Lượt Up Tin!');
+                      return;
+                    }
+                    const newCredits = Math.floor(currentAff / 10000);
+                    setUpTinCredits(prev => prev + newCredits);
+                    setUserState(prev => ({ ...prev, affiliatePoints: 0 }));
+                    setAffiliateWallet(0);
+                    alert(`🎉 Đã quy đổi thành công ${currentAff.toLocaleString('vi-VN')}đ sang +${newCredits} Lượt Up-Tin BĐS!`);
+                  }}
+                  className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-1 cursor-pointer"
+                  title="Đổi 10.000đ = 1 lượt Up Tin"
+                >
+                  <Zap className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Đổi Up Tin</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 3. Lượt Up Tin BĐS */}
+            <div className="bg-gradient-to-br from-blue-500/10 via-slate-900 to-slate-900 text-white p-6 rounded-3xl border-2 border-blue-500/40 shadow-xl relative overflow-hidden space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-blue-500 text-slate-950 px-2.5 py-0.5 rounded-full">
+                  ⚡ UP TIN TOP 1
+                </span>
+                <span className="text-xs text-blue-400 font-bold">Tự Động & Thủ Công</span>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 font-bold">Số Lượt Up Tin Còn Lại:</p>
+                <div className="flex items-baseline gap-1.5 mt-1">
+                  <span className="text-3xl font-black text-blue-400 font-mono tracking-tight">
+                    {upTinCredits}
+                  </span>
+                  <span className="text-sm font-black text-blue-300">Lượt</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed border-t border-slate-700/60 pt-2.5">
+                Mỗi lượt up tin giúp đẩy bài viết của bạn lên đầu trang chủ và danh mục, tiếp cận hàng ngàn khách tìm mua/thuê.
+              </p>
+              <div className="pt-1 flex gap-2">
+                <button
+                  onClick={() => setActiveTab('my_properties')}
+                  className="w-full py-2 bg-blue-500 hover:bg-blue-400 text-slate-950 font-black text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1 cursor-pointer active:scale-95"
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>Xem Tin & Đẩy Bài Ngay</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Refresh & Notification Bar */}
+          <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+              <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                Số dư tài khoản được đồng bộ tự động thời gian thực với máy chủ Chợ Cư Dân 24h.
+              </p>
+            </div>
+            <button
+              onClick={() => refreshUserBalance(true)}
+              disabled={isSyncingBalance}
+              className="px-4 py-2 bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white font-extrabold text-xs rounded-xl transition shadow flex items-center gap-1.5 shrink-0 cursor-pointer active:scale-95"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${isSyncingBalance ? 'animate-spin' : ''}`} />
+              <span>{isSyncingBalance ? 'Đang Kiểm Tra...' : '🔄 Đồng Bộ Lại Số Dư'}</span>
+            </button>
+          </div>
+
+          {/* Live Transaction History Table from Server */}
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-md">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-4">
+              <div>
+                <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-amber-500" />
+                  LỊCH SỬ BIẾN ĐỘNG VÍ & BƠM TIỀN TỪ HỆ THỐNG
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Ghi nhận đầy đủ các lần Admin bơm Token, thưởng hoa hồng, nạp VietQR và chi tiêu
+                </p>
+              </div>
+              <span className="text-xs font-mono font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full border border-amber-300/40">
+                {serverWalletTransactions.length} Giao Dịch
+              </span>
+            </div>
+
+            {serverWalletTransactions.length === 0 ? (
+              <div className="text-center py-10 space-y-3">
+                <Clock className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto" />
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  Chưa có lịch sử giao dịch nào được ghi nhận.
+                </p>
+                <p className="text-xs text-slate-400 max-w-md mx-auto">
+                  Khi Admin bơm Token, bạn rút tiền hoa hồng hoặc nạp tiền VietQR, các giao dịch sẽ tự động xuất hiện chi tiết tại đây.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 font-bold uppercase text-[10px] bg-slate-50 dark:bg-slate-900/60">
+                      <th className="p-3">Thời Gian</th>
+                      <th className="p-3">Loại Giao Dịch</th>
+                      <th className="p-3">Chi Tiết & Lý Do</th>
+                      <th className="p-3 text-right">Biến Động</th>
+                      <th className="p-3 text-center">Trạng Thái</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                    {serverWalletTransactions.map((tx: any, idx: number) => {
+                      const isPumpToken = tx.type === 'admin_pump_tokens';
+                      const isAffiliate = tx.type === 'affiliate_commission';
+                      const isDeposit = tx.type === 'deposit_vietqr';
+                      const isWithdraw = tx.type === 'withdraw_vietqr';
+                      const isSpend = tx.type === 'job_posting_fee' || tx.type === 'escrow_hold';
+
+                      return (
+                        <tr key={tx.id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                          <td className="p-3 font-mono text-slate-500 text-[11px] whitespace-nowrap">
+                            {tx.createdAt || 'Vừa xong'}
+                          </td>
+                          <td className="p-3 whitespace-nowrap">
+                            {isPumpToken ? (
+                              <span className="px-2 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black rounded border border-amber-500/30 text-[10px]">
+                                🪙 BƠM TOKEN ADMIN
+                              </span>
+                            ) : isAffiliate ? (
+                              <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black rounded border border-emerald-500/30 text-[10px]">
+                                🎁 HOA HỒNG AFFILIATE
+                              </span>
+                            ) : isDeposit ? (
+                              <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black rounded border border-blue-500/30 text-[10px]">
+                                💳 NẠP TIỀN VIETQR
+                              </span>
+                            ) : isWithdraw ? (
+                              <span className="px-2 py-0.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-black rounded border border-rose-500/30 text-[10px]">
+                                💸 RÚT TIỀN ATM
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 bg-slate-500/10 text-slate-600 dark:text-slate-400 font-black rounded text-[10px]">
+                                🛒 CHI TIÊU NỘI BỘ
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-3 text-slate-700 dark:text-slate-200 font-medium">
+                            {tx.description || 'Giao dịch hệ thống'}
+                          </td>
+                          <td className="p-3 text-right font-black font-mono text-sm whitespace-nowrap">
+                            {isSpend || isWithdraw ? (
+                              <span className="text-rose-600 dark:text-rose-400">
+                                -{(tx.amount || 0).toLocaleString('vi-VN')} {isPumpToken ? 'Token' : 'đ'}
+                              </span>
+                            ) : (
+                              <span className="text-emerald-600 dark:text-emerald-400">
+                                +{(tx.amount || 0).toLocaleString('vi-VN')} {isPumpToken ? 'Token' : 'đ'}
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-3 text-center whitespace-nowrap">
+                            <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-[10px] rounded">
+                              ✓ Thành Công
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

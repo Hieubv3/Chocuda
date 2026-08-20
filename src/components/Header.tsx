@@ -439,7 +439,15 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* User Account Button / Admin Panel */}
             {currentUser?.role === 'admin' ? (
-              <div className="relative group shrink-0">
+              <div className="relative group shrink-0 flex items-center gap-1.5">
+                <button
+                  onClick={() => setCurrentTab('user_dashboard')}
+                  className="hidden md:flex items-center gap-1 px-2 py-1 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-600 dark:text-amber-300 rounded-xl text-xs font-black transition cursor-pointer"
+                  title="Số dư Token Cư Dân"
+                >
+                  <span>🪙</span>
+                  <span>{(currentUser.balance || 0).toLocaleString('vi-VN')} Token</span>
+                </button>
                 <button
                   onClick={() => setCurrentTab('admin')}
                   className="px-2 sm:px-3 py-1.5 bg-slate-900 text-emerald-400 border border-emerald-500/40 hover:bg-slate-800 rounded-xl text-xs font-bold flex items-center space-x-1 shadow"
@@ -456,6 +464,12 @@ export const Header: React.FC<HeaderProps> = ({
                       👑 Bảng Quản Trị Admin
                     </button>
                     <button
+                      onClick={() => setCurrentTab('user_dashboard')}
+                      className="w-full text-left px-3 py-2 text-slate-800 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-slate-700 transition"
+                    >
+                      ⚡ Quản Lý Tin & Ví Token
+                    </button>
+                    <button
                       onClick={() => {
                         if (onLogout) onLogout();
                         else onOpenAuth();
@@ -468,7 +482,15 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
               </div>
             ) : currentUser ? (
-              <div className="relative group shrink-0">
+              <div className="relative group shrink-0 flex items-center gap-1.5">
+                <button
+                  onClick={() => setCurrentTab('user_dashboard')}
+                  className="hidden md:flex items-center gap-1 px-2.5 py-1 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-600 dark:text-amber-300 rounded-xl text-xs font-black transition cursor-pointer"
+                  title="Số dư Token Cư Dân của bạn"
+                >
+                  <span>🪙</span>
+                  <span>{(currentUser.balance || 0).toLocaleString('vi-VN')} Token</span>
+                </button>
                 <button
                   onClick={() => setCurrentTab('user_dashboard')}
                   className="px-2 sm:px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-200 rounded-xl text-xs font-bold flex items-center space-x-1 transition border border-emerald-200 dark:border-emerald-800 shrink-0"
@@ -477,23 +499,33 @@ export const Header: React.FC<HeaderProps> = ({
                   <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span className="hidden xs:inline sm:inline">{currentUser?.name || 'Cá Nhân'}</span>
                 </button>
-                <div className="absolute right-0 top-full pt-1.5 w-52 hidden group-hover:block z-50 text-xs font-bold">
-                  <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 py-1">
-                    <div className="px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
+                <div className="absolute right-0 top-full pt-1.5 w-60 hidden group-hover:block z-50 text-xs font-bold">
+                  <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 py-1 overflow-hidden">
+                    <div className="px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70">
                       <p className="text-slate-900 dark:text-white font-extrabold truncate">{currentUser?.name || 'Cư Dân'}</p>
                       <p className="text-[10px] text-slate-400 font-normal truncate">{currentUser?.email || ''}</p>
+                      <div className="mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-700 space-y-1">
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="text-slate-500 dark:text-slate-400">Ví Token:</span>
+                          <span className="font-mono font-black text-amber-500">{(currentUser.balance || 0).toLocaleString('vi-VN')} Token</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="text-slate-500 dark:text-slate-400">Điểm Rút Tiền:</span>
+                          <span className="font-mono font-black text-emerald-500">{(currentUser.affiliatePoints || 0).toLocaleString('vi-VN')} đ</span>
+                        </div>
+                      </div>
                     </div>
                     <button
                       onClick={() => setCurrentTab('user_dashboard')}
                       className="w-full text-left px-3.5 py-2.5 text-slate-800 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-slate-700 transition flex items-center gap-2"
                     >
-                      ⚡ Quản Lý Tin & Up Tin
+                      ⚡ Quản Lý Tin & Ví Token
                     </button>
                     <button
                       onClick={() => setCurrentTab('post')}
                       className="w-full text-left px-3.5 py-2.5 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-700 transition flex items-center gap-2"
                     >
-                      + Đăng Tin Mới
+                      + Đăng Tin BĐS Mới
                     </button>
                     <button
                       onClick={() => {

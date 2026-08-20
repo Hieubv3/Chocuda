@@ -229,13 +229,83 @@ export const App: React.FC = () => {
       }
     };
 
+    const handleUserTokenUpdated = (e: any) => {
+      if (e.detail) {
+        setUser(prev => {
+          if (!prev) return e.detail;
+          const matches = 
+            e.detail.id === prev.id || 
+            (e.detail.email && prev.email && e.detail.email.toLowerCase() === prev.email.toLowerCase()) ||
+            (e.detail.phone && prev.phone && e.detail.phone === prev.phone);
+          if (matches || !prev.id) {
+            const merged = { ...prev, ...e.detail };
+            safeLocalStorageSet('hb_user', merged);
+            return merged;
+          }
+          return prev;
+        });
+      }
+    };
+
     window.addEventListener('storage', handleStorage);
     window.addEventListener('message', handleMessage);
+    window.addEventListener('user-token-updated', handleUserTokenUpdated);
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener('message', handleMessage);
+      window.removeEventListener('user-token-updated', handleUserTokenUpdated);
     };
   }, []);
+
+  // Real-time User Balance & Profile Background Sync
+  useEffect(() => {
+    if (!user || (!user.id && !user.email)) return;
+
+    const fetchLatestUserProfile = async () => {
+      try {
+        const queryParams = new URLSearchParams();
+        if (user.id) queryParams.set('userId', user.id);
+        if (user.email) queryParams.set('email', user.email);
+        if (user.phone) queryParams.set('phone', user.phone);
+
+        const res = await fetch(`/api/auth/me?${queryParams.toString()}`);
+        if (res.ok) {
+          const freshUser = await res.json();
+          if (freshUser) {
+            setUser(prev => {
+              if (!prev) return freshUser;
+              const hasChanged = 
+                freshUser.balance !== prev.balance ||
+                freshUser.tokenBalance !== (prev as any).tokenBalance ||
+                freshUser.upTinCredits !== prev.upTinCredits ||
+                freshUser.affiliatePoints !== (prev as any).affiliatePoints ||
+                freshUser.role !== prev.role ||
+                freshUser.tier !== prev.tier;
+
+              if (hasChanged) {
+                const merged = { ...prev, ...freshUser };
+                safeLocalStorageSet('hb_user', merged);
+                return merged;
+              }
+              return prev;
+            });
+          }
+        }
+      } catch (err) {}
+    };
+
+    fetchLatestUserProfile();
+    const interval = setInterval(fetchLatestUserProfile, 4000); // Polling every 4s for instant balance updates
+    const handleFocus = () => fetchLatestUserProfile();
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('visibilitychange', handleFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('visibilitychange', handleFocus);
+    };
+  }, [user?.id, user?.email, user?.phone]);
 
   // Strict Admin Redirection Rule:
   // On non-admin domains, strip #admin / #quantri hash and redirect to home

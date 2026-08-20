@@ -80,6 +80,10 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          userId: user.id,
+          email: user.email,
+          phone: user.phone,
+          name: user.name,
           balance,
           tokenBalance: balance,
           affiliatePoints,
@@ -99,6 +103,9 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             userId: user.id,
+            email: user.email,
+            phone: user.phone,
+            userName: user.name,
             tokenAmount: Math.max(0, tokenDiff),
             affiliatePointsAmount: Math.max(0, affDiff),
             reason: reason || 'Admin bơm điểm/token hỗ trợ cư dân',
@@ -128,12 +135,23 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
       logsList.unshift(newLog);
       localStorage.setItem('chocudan24h_admin_credit_logs', JSON.stringify(logsList.slice(0, 50)));
 
-      // Sync active logged-in user in localStorage if matching ID
+      // Sync active logged-in user in localStorage if matching ID or email or phone
+      const hbUserRaw = localStorage.getItem('hb_user');
+      if (hbUserRaw) {
+        try {
+          const hbUser = JSON.parse(hbUserRaw);
+          if (hbUser && (hbUser.id === user.id || hbUser.email === user.email || hbUser.phone === user.phone)) {
+            const synced = { ...hbUser, ...updatedUser };
+            localStorage.setItem('hb_user', JSON.stringify(synced));
+          }
+        } catch (e) {}
+      }
+
       const storedUserRaw = localStorage.getItem('chocudan24h_current_user');
       if (storedUserRaw) {
         try {
           const storedUser = JSON.parse(storedUserRaw);
-          if (storedUser && storedUser.id === user.id) {
+          if (storedUser && (storedUser.id === user.id || storedUser.email === user.email || storedUser.phone === user.phone)) {
             const synced = { ...storedUser, ...updatedUser };
             localStorage.setItem('chocudan24h_current_user', JSON.stringify(synced));
           }
