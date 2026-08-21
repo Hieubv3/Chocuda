@@ -88,12 +88,27 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
           callback: async (response: any) => {
             if (response.error) {
               setLoading(false);
+              if (response.error === 'popup_closed' || response.error === 'access_denied' || response.error === 'user_cancel') {
+                setStatusMsg('');
+                return;
+              }
               setErrorMsg(`Lỗi xác thực Google: ${response.error}`);
               return;
             }
             if (response.access_token) {
               await initializeDriveAndSheets(response.access_token);
             }
+          },
+          error_callback: (err: any) => {
+            setLoading(false);
+            const errType = err?.type || '';
+            const errMsg = err?.message || String(err || '');
+            if (errType === 'popup_closed' || errMsg.toLowerCase().includes('closed') || errMsg.toLowerCase().includes('cancel')) {
+              setStatusMsg('');
+              return;
+            }
+            console.warn('Google Workspace token client notice:', err);
+            setErrorMsg('Không thể mở cửa sổ cấp quyền Google Workspace.');
           }
         });
         client.requestAccessToken();

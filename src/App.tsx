@@ -41,9 +41,13 @@ import { AiWriterModal } from './components/AiWriterModal';
 import { OmnichannelBulkMarketingModal } from './components/OmnichannelBulkMarketingModal';
 import { AndroidApkModal } from './components/AndroidApkModal';
 import { AdBannerWidget } from './components/AdBannerWidget';
+import { DraggableSidebarAds } from './components/DraggableSidebarAds';
+import { HashtagExploreModal } from './components/HashtagExploreModal';
 import { PopularVinhomesLinksSection } from './components/PopularVinhomesLinksSection';
-import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig } from './types';
+import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig, AdBanner } from './types';
 import { INITIAL_PROPERTIES, INITIAL_PROJECTS, INITIAL_NEWS, INITIAL_ADS } from './data/initialData';
+import { INITIAL_RESIDENT_SERVICES } from './data/residentServicesData';
+import { INITIAL_RECRUITMENT_JOBS } from './data/recruitmentData';
 import { safeLocalStorageGet, safeLocalStorageSet } from './lib/imageUtils';
 import { getProjectSlug } from './lib/slugs';
 
@@ -124,6 +128,14 @@ export const App: React.FC = () => {
   const [marketingModalOpen, setMarketingModalOpen] = useState(false);
   const [compareModalOpen, setCompareModalOpen] = useState(false);
   const [androidModalOpen, setAndroidModalOpen] = useState(false);
+  const [hashtagModalOpen, setHashtagModalOpen] = useState(false);
+  const [activeHashtag, setActiveHashtag] = useState('');
+
+  // Ads state
+  const [ads, setAds] = useState<AdBanner[]>(() => {
+    const saved = safeLocalStorageGet<AdBanner[]>('hb_ads', INITIAL_ADS);
+    return Array.isArray(saved) && saved.length > 0 ? saved : INITIAL_ADS;
+  });
 
   // Favorites & Compare IDs
   const [savedIds, setSavedIds] = useState<string[]>(() => {
@@ -210,10 +222,31 @@ export const App: React.FC = () => {
         }
       })
       .catch(() => {});
+
+    fetch('/api/ads')
+      .then(res => res.json())
+      .then((data: AdBanner[]) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setAds(data);
+          safeLocalStorageSet('hb_ads', data);
+        }
+      })
+      .catch(() => {});
   };
 
   useEffect(() => {
     refreshServerData();
+
+    const handleExploreHashtag = (e: any) => {
+      const tag = e.detail?.tag || '';
+      setActiveHashtag(tag);
+      setHashtagModalOpen(true);
+    };
+
+    window.addEventListener('chocudan_explore_hashtag', handleExploreHashtag);
+    return () => {
+      window.removeEventListener('chocudan_explore_hashtag', handleExploreHashtag);
+    };
   }, []);
 
   // Listen for login events from OAuth popups or other tabs
@@ -1745,7 +1778,21 @@ export const App: React.FC = () => {
       </div>
 
       {/* Global Modals & Popup */}
-      <AdBannerWidget ads={INITIAL_ADS} position="popup_modal" />
+      <AdBannerWidget ads={ads} position="popup_modal" />
+
+      {/* Floating Draggable Sidebar Ads on Right Edge */}
+      <DraggableSidebarAds ads={ads} />
+
+      {/* Global Hashtag Explore Modal */}
+      <HashtagExploreModal
+        isOpen={hashtagModalOpen}
+        onClose={() => setHashtagModalOpen(false)}
+        initialTag={activeHashtag}
+        properties={properties}
+        services={INITIAL_RESIDENT_SERVICES}
+        newsArticles={news}
+        jobs={INITIAL_RECRUITMENT_JOBS}
+      />
 
     </div>
   );

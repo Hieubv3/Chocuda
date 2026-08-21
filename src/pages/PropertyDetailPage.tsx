@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   MapPin, Bed, Bath, Compass, ShieldCheck, Phone, MessageCircle, 
   Calendar, Share2, Calculator, CheckCircle2, ChevronRight, Home, 
-  Building2, Sparkles, Heart, Eye, ArrowLeft, Clock, DollarSign, UserCheck
+  Building2, Sparkles, Heart, Eye, ArrowLeft, Clock, DollarSign, UserCheck, Hash
 } from 'lucide-react';
 import { Property, Language, ProjectCategory } from '../types';
 import { getTranslation } from '../lib/i18n';
@@ -342,6 +342,31 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
 
                 <div className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line bg-slate-50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-800">
                   {property.description || 'Vị trí đắc địa, căn góc thoáng mát, gần công viên trung tâm và trường học. Pháp lý rõ ràng, hỗ trợ vay ngân hàng lãi suất ưu đãi.'}
+                </div>
+
+                {/* Hashtag exploration pills */}
+                <div className="pt-2 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
+                    <Hash className="w-3.5 h-3.5 text-emerald-500" /> Chủ đề liên quan:
+                  </span>
+                  {[
+                    property.project ? property.project.replace(/-/g, '_') : 'ocean_park_2',
+                    property.subdivision ? property.subdivision.toLowerCase().replace(/[^a-z0-9]+/g, '_') : null,
+                    property.category ? property.category.toLowerCase().replace(/[^a-z0-9]+/g, '_') : 'can_ho',
+                    property.transactionType === 'rent' ? 'cho_thue' : 'chuyen_nhuong',
+                    'vinhomes',
+                    'chocudan24h'
+                  ].filter(Boolean).map((tag, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        window.dispatchEvent(new CustomEvent('chocudan_explore_hashtag', { detail: { tag } }));
+                      }}
+                      className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 hover:border-emerald-500 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-0.5"
+                    >
+                      <span>#{tag}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
 

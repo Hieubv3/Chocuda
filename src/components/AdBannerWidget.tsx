@@ -57,11 +57,11 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
     }).catch(() => {});
   };
 
-  // 1. BANNER TOP TRANG WEB (Header Top Bar)
+  // 1. BANNER TOP TRANG WEB (Header Top Bar - Hidden on mobile to avoid obstruction)
   if (position === 'header_top') {
     const currentAd = activeAds[0];
     return (
-      <div className={`bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-500 text-slate-950 px-3 py-1.5 text-xs font-bold flex items-center justify-between shadow-md relative z-30 ${className}`}>
+      <div className={`hidden md:flex bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-500 text-slate-950 px-3 py-1.5 text-xs font-bold items-center justify-between shadow-md relative z-30 ${className}`}>
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2">
           <div className="flex items-center space-x-2 truncate">
             <span className="bg-slate-950 text-amber-400 text-[10px] uppercase font-black px-2 py-0.5 rounded-md shrink-0 flex items-center gap-1">
@@ -232,11 +232,11 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
     );
   }
 
-  // 4. BANNER POP-UP NỔI TRUNG TÂM (Center Modal Pop-up)
+  // 4. BANNER POP-UP NỔI TRUNG TÂM (Center Modal Pop-up - Hidden on mobile)
   if (position === 'popup_modal') {
     const currentAd = activeAds[0];
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+      <div className="hidden md:flex fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
         <div className="relative bg-slate-900 border-2 border-amber-500/80 rounded-3xl max-w-lg w-full p-5 shadow-2xl space-y-4 text-white overflow-hidden">
           {/* Nút Tắt X */}
           <button

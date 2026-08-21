@@ -16,9 +16,18 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
   onOpenItem
 }) => {
   const navigate = useNavigate();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Default to collapsed on mobile to avoid covering screen or blocking gestures
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return true;
+    }
+    return false;
+  });
   const [activeAdIndex, setActiveAdIndex] = useState(0);
-  const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 160 });
+  const [position, setPosition] = useState<{ x: number; y: number }>(() => ({
+    x: 0,
+    y: typeof window !== 'undefined' && window.innerWidth < 768 ? 200 : 160
+  }));
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{ startX: number; startY: number; posX: number; posY: number }>({
     startX: 0,
@@ -68,8 +77,8 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
       const dx = e.clientX - dragStartRef.current.startX;
       const dy = e.clientY - dragStartRef.current.startY;
       
-      const newY = Math.max(80, Math.min(window.innerHeight - 300, dragStartRef.current.posY + dy));
-      const newX = Math.max(-window.innerWidth + 240, Math.min(0, dragStartRef.current.posX + dx));
+      const newY = Math.max(60, Math.min(window.innerHeight - 250, dragStartRef.current.posY + dy));
+      const newX = Math.max(-window.innerWidth + 200, Math.min(0, dragStartRef.current.posX + dx));
 
       setPosition({ x: newX, y: newY });
     };
@@ -80,8 +89,8 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
       const dx = touch.clientX - dragStartRef.current.startX;
       const dy = touch.clientY - dragStartRef.current.startY;
       
-      const newY = Math.max(80, Math.min(window.innerHeight - 300, dragStartRef.current.posY + dy));
-      const newX = Math.max(-window.innerWidth + 240, Math.min(0, dragStartRef.current.posX + dx));
+      const newY = Math.max(60, Math.min(window.innerHeight - 250, dragStartRef.current.posY + dy));
+      const newX = Math.max(-window.innerWidth + 200, Math.min(0, dragStartRef.current.posX + dx));
 
       setPosition({ x: newX, y: newY });
     };
@@ -138,7 +147,7 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
         right: `${Math.abs(position.x)}px`,
         transform: `translate(${position.x > 0 ? position.x : 0}px, 0)`,
       }}
-      className={`fixed z-40 transition-all duration-150 select-none ${
+      className={`hidden md:block fixed z-40 transition-all duration-150 select-none ${
         isCollapsed ? 'w-10' : 'w-64 sm:w-72'
       }`}
     >

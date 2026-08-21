@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { 
   Wrench, Phone, MessageCircle, Star, BadgeCheck, ShieldCheck, 
   MapPin, Clock, Calendar, CheckCircle2, ChevronRight, Home, Share2, 
-  User, DollarSign, ArrowLeft
+  User, DollarSign, ArrowLeft, Hash
 } from 'lucide-react';
 import { ResidentServiceItem, Language, User as UserType } from '../types';
 import { SEOHead } from '../components/SEOHead';
@@ -168,6 +168,30 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
                 </h2>
                 <div className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl">
                   {service.description || 'Dịch vụ chất lượng cao phục vụ cư dân tại khu đô thị Vinhomes. Cam kết đúng hẹn, giá cả minh bạch và bảo hành dài hạn.'}
+                </div>
+
+                {/* Hashtag exploration pills */}
+                <div className="pt-2 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
+                    <Hash className="w-3.5 h-3.5 text-amber-500" /> Chủ đề liên quan:
+                  </span>
+                  {[
+                    service.projectScope ? service.projectScope.replace(/-/g, '_') : 'ocean_park_2',
+                    service.subCategory ? service.subCategory.toLowerCase().replace(/[^a-z0-9]+/g, '_') : 'dich_vu',
+                    'dich_vu_cu_dan',
+                    'vinhomes',
+                    'chocudan24h'
+                  ].filter(Boolean).map((tag, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        window.dispatchEvent(new CustomEvent('chocudan_explore_hashtag', { detail: { tag } }));
+                      }}
+                      className="px-2.5 py-1 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-500/20 hover:border-amber-500 hover:bg-amber-100 dark:hover:bg-amber-900/60 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-0.5"
+                    >
+                      <span>#{tag}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
 

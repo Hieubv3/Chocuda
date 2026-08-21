@@ -153,8 +153,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           scope: 'openid email profile',
           callback: async (tokenResponse: any) => {
             if (tokenResponse.error) {
-              setErrorMsg('Đăng nhập Google thất bại hoặc bị hủy.');
               setIsLoading(false);
+              if (tokenResponse.error === 'popup_closed' || tokenResponse.error === 'access_denied' || tokenResponse.error === 'user_cancel') {
+                // User simply dismissed or cancelled the popup dialog
+                return;
+              }
+              setErrorMsg('Đăng nhập Google chưa hoàn tất hoặc bị hủy.');
               return;
             }
             try {
@@ -193,9 +197,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
             }
           },
           error_callback: (err: any) => {
-            console.error('Google Token Client Error:', err);
             setIsLoading(false);
-            setErrorMsg('Không thể mở cửa sổ đăng nhập Google.');
+            const errType = err?.type || '';
+            const errMsg = err?.message || String(err || '');
+            
+            // Check if user dismissed popup or closed the auth window
+            if (errType === 'popup_closed' || errMsg.toLowerCase().includes('closed') || errMsg.toLowerCase().includes('cancel')) {
+              console.info('Google sign-in popup was dismissed by user.');
+              return;
+            }
+
+            if (errType === 'popup_blocked_by_browser') {
+              setErrorMsg('Trình duyệt đã chặn cửa sổ đăng nhập Google. Vui lòng cho phép popup.');
+              return;
+            }
+
+            console.warn('Google Token Client notice:', err);
+            setErrorMsg('Không thể mở cửa sổ đăng nhập Google. Vui lòng thử lại.');
           }
         });
         client.requestAccessToken({ prompt: 'select_account' });

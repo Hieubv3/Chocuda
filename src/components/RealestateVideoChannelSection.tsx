@@ -360,20 +360,22 @@ export const RealestateVideoChannelSection: React.FC<RealestateVideoChannelSecti
           <div className="lg:col-span-4 space-y-3 max-h-[480px] overflow-y-auto pr-1">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider">
-                DANH SÁCH VIDEO KÊNH CỦA BẠN
+                DANH SÁCH VIDEO KÊNH CHÍNH THỨC
               </h4>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="text-[11px] font-bold text-amber-400 hover:underline flex items-center gap-1"
-              >
-                <Plus className="w-3 h-3" />
-                <span>Thêm video</span>
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="text-[11px] font-bold text-amber-400 hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>Thêm video</span>
+                </button>
+              )}
             </div>
 
             {videoList.length === 0 ? (
               <div className="p-4 text-center border border-dashed border-slate-700 rounded-2xl text-slate-500 text-xs">
-                Chưa có video nào. Hãy bấm "Thêm Video Kênh Của Tôi" để đưa video YouTube của bạn lên đây.
+                Hiện chưa có video nào được đăng tải từ kênh chính thức @chocudan24h.
               </div>
             ) : (
               videoList.map((vid) => {
@@ -502,7 +504,7 @@ export const RealestateVideoChannelSection: React.FC<RealestateVideoChannelSecti
       <div className="p-4 bg-slate-800/40 rounded-2xl border border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
         <div className="flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>Kênh truyền thông chính chủ <b>@chocudan24h</b>: Bạn có thể bấm nút <b>"Thêm Video Kênh Của Tôi"</b> ở trên để dán bất kỳ link video YouTube nào của bạn.</span>
+          <span>Kênh truyền thông chính thức <b>@chocudan24h</b>: Các video review thực tế và nhận định thị trường được cập nhật định kỳ từ Ban Quản Trị.</span>
         </div>
         <a
           href="https://www.youtube.com/@chocudan24h"
