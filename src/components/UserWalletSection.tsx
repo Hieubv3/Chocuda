@@ -63,7 +63,7 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
             <span className="text-xs font-bold text-amber-300">Token</span>
           </div>
           <p className="text-[11px] text-slate-400 border-t border-slate-800 pt-2">
-            Dùng để mua gói Up Tin Top 1, đăng ký gói Tuyển dụng VIP và mở khóa dịch vụ.
+            Dùng để mua gói Đẩy Tin Lên Top 1, đăng ký gói Tuyển dụng VIP và mở khóa dịch vụ.
           </p>
           <div className="pt-1 flex gap-2">
             <button
@@ -105,25 +105,25 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
               onClick={() => {
                 const currentAff = userState.affiliatePoints || affiliateWallet || 0;
                 if (currentAff < 10000) {
-                  alert('Cần tối thiểu 10.000đ để quy đổi Lượt Up Tin!');
+                  alert('Cần tối thiểu 10.000đ để quy đổi Lượt Đẩy Tin!');
                   return;
                 }
                 const newCredits = Math.floor(currentAff / 10000);
                 onQuickExchangeAffiliate(newCredits);
               }}
               className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl transition cursor-pointer"
-              title="Đổi 10.000đ = 1 lượt Up Tin"
+              title="Đổi 10.000đ = 1 lượt Đẩy Tin"
             >
-              Đổi Up Tin
+              Đổi Lượt Đẩy Tin
             </button>
           </div>
         </div>
 
-        {/* 3. Lượt Up Tin Top 1 */}
+        {/* 3. Lượt Đẩy Tin Top 1 */}
         <div className="bg-gradient-to-br from-blue-500/10 via-slate-900 to-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-blue-500/40 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase bg-blue-500 text-slate-950 px-2 py-0.5 rounded">
-              ⚡ UP TIN TOP 1
+              ⚡ ĐẨY TIN TOP 1
             </span>
             <span className="text-xs text-blue-400 font-bold">Đẩy bài đầu trang</span>
           </div>

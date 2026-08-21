@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
-import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase } from 'lucide-react';
+import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { calculateExpiryInfo } from '../lib/expiration';
 
@@ -72,12 +73,53 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   onRefreshData,
   onSeed1000Properties
 }) => {
-  // 2 Mảng Quản Trị Riêng Biệt (Sector 1: Bất Động Sản, Sector 2: Dịch Vụ Chợ Cư Dân)
+  // 7 Mảng Quản Trị Chuyên Biệt Tách Rời (1. BĐS, 2. Thợ Dịch Vụ, 3. Tuyển Dụng, 4. Dịch Vụ Cư Dân, 5. Người Dùng, 6. Quảng Cáo, 7. Công Cụ)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
     | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
   >('properties');
+
+  // Compute active main category (Phân rõ các tab riêng biệt không bị gộp chung)
+  const effectiveMainTab: 'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' = (() => {
+    if (['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt'].includes(activeTab)) return 'bds';
+    if (activeTab === 'resident_services_mgmt') return 'technicians';
+    if (activeTab === 'recruitment_mgmt') return 'recruitment';
+    if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
+    if (['users', 'leads', 'enterprise_core'].includes(activeTab)) return 'users_leads';
+    if (activeTab === 'ads') return 'ads';
+    return 'tools';
+  })();
+
+  const handleSelectMainTab = (tab: 'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools') => {
+    if (tab === 'bds') {
+      setAdminSector('bds');
+      if (!['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt'].includes(activeTab)) {
+        setActiveTab('properties');
+      }
+    } else if (tab === 'technicians') {
+      setAdminSector('resident_market');
+      setActiveTab('resident_services_mgmt');
+    } else if (tab === 'recruitment') {
+      setAdminSector('resident_market');
+      setActiveTab('recruitment_mgmt');
+    } else if (tab === 'resident_market') {
+      setAdminSector('resident_market');
+      if (!['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) {
+        setActiveTab('stores_mgmt');
+      }
+    } else if (tab === 'users_leads') {
+      if (!['users', 'leads', 'enterprise_core'].includes(activeTab)) {
+        setActiveTab('users');
+      }
+    } else if (tab === 'ads') {
+      setActiveTab('ads');
+    } else if (tab === 'tools') {
+      if (!['analytics', 'seo', 'marketing', 'zalo', 'workspace_sync', 'n8n', 'reputation'].includes(activeTab)) {
+        setActiveTab('analytics');
+      }
+    }
+  };
 
   const [adminReputationPosts, setAdminReputationPosts] = useState<ReputationPost[]>([]);
 
@@ -100,6 +142,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [storeProjectFilter, setStoreProjectFilter] = useState<string>('all');
   const [storeModerationFilter, setStoreModerationFilter] = useState<'all' | 'pending' | 'approved' | 'kiotviet'>('all');
   const [storeDetailActiveTab, setStoreDetailActiveTab] = useState<'products' | 'services' | 'info'>('products');
+
+  // Icon Compact & Expandable Table rows state
+  const [adminViewMode, setAdminViewMode] = useState<'icon_compact' | 'detailed'>('icon_compact');
+  const [expandedAdminPropIds, setExpandedAdminPropIds] = useState<Record<string, boolean>>({});
+
+  const toggleExpandAdminProp = (id: string) => {
+    setExpandedAdminPropIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleExpandAllAdminProps = (propsList: Property[]) => {
+    const allExpanded = propsList.length > 0 && propsList.every(p => expandedAdminPropIds[p.id]);
+    const newState: Record<string, boolean> = {};
+    propsList.forEach(p => {
+      newState[p.id] = !allExpanded;
+    });
+    setExpandedAdminPropIds(newState);
+  };
 
   // Store Create / Edit Form Modal
   const [showStoreFormModal, setShowStoreFormModal] = useState<boolean>(false);
@@ -1443,778 +1502,526 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4">
       
-      {/* Header - Mệnh Mộc Styling */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 text-white p-6 sm:p-8 rounded-3xl border border-emerald-500/30 shadow-2xl relative overflow-hidden">
-        <div className="space-y-1 z-10">
-          <div className="flex items-center space-x-2">
-            <span className="p-1.5 bg-emerald-600 text-white font-black text-[10px] rounded-lg tracking-wider">
-              ADMIN TỔNG
-            </span>
-            <span className="text-xs text-emerald-300 font-bold bg-emerald-900/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-              Hệ Thống Phân Mảng Độc Lập
-            </span>
-          </div>
-          <h1 className="text-xl sm:text-2xl font-black text-emerald-400 tracking-tight">
-            QUẢN TRỊ TỔNG HỆ THỐNG NHÀ ĐẸP & CHỢ CƯ DÂN
-          </h1>
-          <p className="text-xs text-slate-300">
-            Hệ thống phân chia 2 mảng quản trị riêng biệt: Bất Động Sản & Dịch Vụ Cư Dân Vinhomes
-          </p>
+      {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Cho phép tương tác mọi mục ngoài giao diện bình thường */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-xs flex items-center justify-between gap-2 overflow-x-auto text-xs">
+        <div className="flex items-center gap-1.5 shrink-0 font-bold text-slate-700 dark:text-slate-300">
+          <span className="text-slate-400 text-[11px] uppercase tracking-wider hidden md:inline">Xem Trang Công Khai:</span>
+          
+          <Link
+            to="/"
+            className="px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1 text-slate-700 dark:text-slate-200 transition"
+          >
+            <Home className="w-3.5 h-3.5 text-emerald-500" />
+            <span>Trang Chủ</span>
+          </Link>
+
+          <Link
+            to="/bat-dong-san"
+            className="px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1 text-slate-700 dark:text-slate-200 transition"
+          >
+            <Building2 className="w-3.5 h-3.5 text-blue-500" />
+            <span>BĐS Mua Bán</span>
+          </Link>
+
+          <Link
+            to="/cho-thue"
+            className="px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1 text-slate-700 dark:text-slate-200 transition"
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-500" />
+            <span>Cho Thuê</span>
+          </Link>
+
+          <Link
+            to="/dich-vu-cu-dan"
+            className="px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1 text-slate-700 dark:text-slate-200 transition"
+          >
+            <Wrench className="w-3.5 h-3.5 text-teal-500" />
+            <span>Dịch Vụ & Thợ</span>
+          </Link>
+
+          <Link
+            to="/tuyen-dung"
+            className="px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1 text-slate-700 dark:text-slate-200 transition"
+          >
+            <Briefcase className="w-3.5 h-3.5 text-purple-500" />
+            <span>Tuyển Dụng & CV</span>
+          </Link>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 z-10">
+        <Link
+          to="/dashboard"
+          className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold rounded-xl flex items-center gap-1 shrink-0 transition"
+        >
+          <UserIcon className="w-3.5 h-3.5 text-emerald-500" />
+          <span>Vào Dashboard Cư Dân</span>
+        </Link>
+      </div>
+
+      {/* 1. TOP HEADER - Tinh gọn, hiện đại, không chiếm diện tích */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl border border-slate-800 shadow-xl">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-emerald-600/20 text-emerald-400 rounded-xl border border-emerald-500/30 shrink-0">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase bg-emerald-500 text-slate-950 px-2 py-0.5 rounded">ADMIN TỔNG</span>
+              <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                Hệ Thống Đang Hoạt Động Realtime
+              </span>
+            </div>
+            <h1 className="text-sm sm:text-base font-black text-white tracking-tight mt-0.5">
+              TRUNG TÂM QUẢN TRỊ HỆ THỐNG CHỢ CƯ DÂN 24H
+            </h1>
+          </div>
+        </div>
+
+        {/* Toolbar Nút Thao Tác Nhanh */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <button
+            onClick={handleSyncToPublicWeb}
+            disabled={isSyncingPublic}
+            className={`px-3.5 py-2 font-black rounded-xl text-xs flex items-center gap-1.5 transition shadow cursor-pointer ${
+              pendingProperties.length > 0
+                ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 ring-2 ring-amber-300 animate-pulse'
+                : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+            }`}
+            title="Phê duyệt tin & Xuất bản trực tiếp lên Website công khai"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingPublic ? 'animate-spin' : ''}`} />
+            <span>{isSyncingPublic ? 'Đang đồng bộ...' : `🔄 Đồng Bộ Web ${pendingProperties.length > 0 ? `(${pendingProperties.length} Chờ Duyệt)` : 'Public'}`}</span>
+          </button>
+
           <button
             onClick={() => setShowTaxModal(true)}
-            className="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-slate-900 hover:from-indigo-500 hover:to-slate-800 text-white font-black rounded-xl text-xs flex items-center gap-1.5 shadow-lg transition transform active:scale-95 uppercase tracking-wider border border-indigo-400/40"
+            className="px-3 py-2 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/30 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+            title="Khai báo thuế TMĐT Quốc Gia"
           >
-            <Shield className="w-4 h-4 text-indigo-300 animate-pulse" />
-            <span>🏛️ Khai Báo Thuế TMĐT Quốc Gia</span>
+            <Shield className="w-3.5 h-3.5 text-indigo-300" />
+            <span className="hidden sm:inline">Thuế TMĐT</span>
           </button>
 
           <button
             onClick={() => setShowAiUrlTracker(true)}
-            className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow-lg transition transform active:scale-95 uppercase tracking-wider"
+            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+            title="Theo dõi Website & Google AI Index"
           >
-            <Globe className="w-4 h-4 text-slate-950" />
-            <span>🌐 Theo Dõi Website & AI</span>
+            <Globe className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">Theo Dõi AI</span>
           </button>
 
           <button
             onClick={handleSeed1000Click}
             disabled={isSeeding}
-            className="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-900/50 transition transform active:scale-95"
+            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+            title="Tạo nhanh 1,000 tin mẫu kiểm thử"
           >
-            <Zap className="w-4 h-4 text-emerald-200" />
-            {isSeeding ? 'Đang tạo 1,000 tin...' : '⚡ Test 1,000 Tin BĐS'}
+            <Zap className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden sm:inline">{isSeeding ? 'Đang tạo...' : 'Test 1K Tin'}</span>
           </button>
 
           <button
             onClick={onOpenAiWriter}
-            className="px-4 py-2.5 bg-emerald-800/80 hover:bg-emerald-700 text-emerald-100 font-bold rounded-xl text-xs flex items-center gap-1.5 transition border border-emerald-500/40"
+            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+            title="Viết bài tự động bằng AI"
           >
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            AI Writer
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">AI Writer</span>
           </button>
 
           <button
             onClick={onRefreshData}
-            className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition"
+            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition cursor-pointer border border-slate-700"
             title="Làm mới dữ liệu"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
-      {/* SECTOR SWITCHER - BỘ CHUYỂN DỔI MẢNG QUẢN TRỊ ĐỘC LẬP */}
-      <div className="bg-slate-950 p-4 sm:p-5 rounded-3xl border-2 border-emerald-500/50 shadow-2xl space-y-3 text-white">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+      {/* 2. LIVE METRICS STRIP - Hàng chỉ số nhanh gọn (~42px height) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-emerald-400 rounded-full animate-ping"></div>
-            <span className="font-black text-xs sm:text-sm text-amber-400 uppercase tracking-wider">
-              ⚡ BỘ CHUYỂN MẢNG QUẢN TRỊ RIÊNG BỆT — TỐI ƯU HIỆU SUẤT VẬN HÀNH
-            </span>
+            <span className="p-1 bg-emerald-500/10 text-emerald-500 rounded-md font-bold">🏠</span>
+            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">BĐS Bán</span>
           </div>
-          <span className="text-[11px] text-slate-400 font-bold">
-            Bấm chọn để chuyển đổi bộ công cụ quản lý chuyên biệt
+          <span className="font-mono font-black text-slate-900 dark:text-emerald-400 text-sm">{saleProperties.length}</span>
+        </div>
+
+        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-2">
+            <span className="p-1 bg-teal-500/10 text-teal-500 rounded-md font-bold">🔑</span>
+            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Cho Thuê</span>
+          </div>
+          <span className="font-mono font-black text-slate-900 dark:text-teal-400 text-sm">{rentProperties.length}</span>
+        </div>
+
+        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-2">
+            <span className="p-1 bg-amber-500/10 text-amber-500 rounded-md font-bold">⏳</span>
+            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Chờ Duyệt</span>
+          </div>
+          <span className={`font-mono font-black text-sm ${pendingProperties.length > 0 ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`}>
+            {pendingProperties.length}
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button
-            onClick={() => {
-              setAdminSector('bds');
-              setActiveTab('properties');
-            }}
-            className={`p-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-between transition duration-200 cursor-pointer shadow-xl ${
-              adminSector === 'bds'
-                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white ring-4 ring-emerald-400/50 scale-[1.01]'
-                : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <div className={`p-2.5 rounded-xl ${adminSector === 'bds' ? 'bg-white/20 text-white' : 'bg-emerald-950 text-emerald-400'}`}>
-                <Building2 className="w-6 h-6" />
-              </div>
-              <div className="text-left">
-                <div className="font-black text-base tracking-tight flex items-center gap-2">
-                  <span>🏢 MẢNG 1: QUẢN TRỊ BẤT ĐỘNG SẢN</span>
-                </div>
-                <div className="text-xs font-medium text-emerald-200/80 mt-0.5">
-                  1,000+ Căn BĐS, Sơ đồ Dự án, Khách Hàng, Giá Up Tin & Sale
-                </div>
-              </div>
-            </div>
-            <span className={`px-3 py-1 rounded-full text-xs font-black ${adminSector === 'bds' ? 'bg-white text-emerald-900' : 'bg-emerald-500/20 text-emerald-400'}`}>
-              {properties.length} Căn
-            </span>
-          </button>
+        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-2">
+            <span className="p-1 bg-orange-500/10 text-orange-500 rounded-md font-bold">🛠️</span>
+            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Thợ Dịch Vụ</span>
+          </div>
+          <span className="font-mono font-black text-slate-900 dark:text-orange-400 text-sm">{adminResidentServices.length}</span>
+        </div>
 
-          <button
-            onClick={() => {
-              setAdminSector('resident_market');
-              setActiveTab('resident_services_mgmt');
-            }}
-            className={`p-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-between transition duration-200 cursor-pointer shadow-xl ${
-              adminSector === 'resident_market'
-                ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 ring-4 ring-amber-300 scale-[1.01]'
-                : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <div className={`p-2.5 rounded-xl ${adminSector === 'resident_market' ? 'bg-slate-950 text-amber-400' : 'bg-amber-950 text-amber-400'}`}>
-                <Store className="w-6 h-6" />
-              </div>
-              <div className="text-left">
-                <div className="font-black text-base tracking-tight flex items-center gap-2">
-                  <span>🛍️ MẢNG 2: QUẢN TRỊ CHỢ CƯ DÂN & DỊCH VỤ</span>
-                </div>
-                <div className="text-xs font-medium text-slate-900/80 mt-0.5">
-                  12 Ngành Dịch Vụ Cư Dân, Gian Hàng KiotViet, Đơn Hàng & Tài Chính
-                </div>
-              </div>
-            </div>
-            <span className={`px-3 py-1 rounded-full text-xs font-black ${adminSector === 'resident_market' ? 'bg-slate-950 text-amber-400' : 'bg-amber-500/20 text-amber-400'}`}>
-              {adminResidentServices.length} Dịch Vụ
-            </span>
-          </button>
+        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-2">
+            <span className="p-1 bg-purple-500/10 text-purple-500 rounded-md font-bold">🏪</span>
+            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Gian Hàng</span>
+          </div>
+          <span className="font-mono font-black text-slate-900 dark:text-purple-400 text-sm">{adminStores.length}</span>
+        </div>
+
+        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-2">
+            <span className="p-1 bg-blue-500/10 text-blue-500 rounded-md font-bold">💼</span>
+            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Khách & Việc</span>
+          </div>
+          <span className="font-mono font-black text-slate-900 dark:text-blue-400 text-sm">{contacts.length}</span>
         </div>
       </div>
 
-      {/* BỘ PHÊ DUYỆT CẤP QUẢN TRỊ & ĐỒNG BỘ WEB PUBLIC */}
-      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-indigo-950 p-5 rounded-3xl border-2 border-emerald-500/50 shadow-2xl text-white space-y-4">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                CHẾ ĐỘ CẤP QUẢN TRỊ & PHÊ DUYỆT SUB-ADMIN
-              </span>
-              <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold text-[10px] rounded-full">
-                ● REALTIME SYNC ACTIVE
-              </span>
-            </div>
-            <h3 className="text-base sm:text-lg font-black text-white mt-1 flex items-center gap-2">
-              <span>🔄 BỘ ĐỒNG BỘ NỘI DUNG LÊN PUBLIC WEBSITE & CHẾ ĐỘ CẤP CHỜ DUYỆT</span>
-            </h3>
-            <p className="text-xs text-slate-300 mt-0.5 max-w-3xl">
-              Các bài đăng do Admin cấp dưới hoặc Môi giới/Chủ nhà tải lên sẽ ở trạng thái <strong className="text-amber-400">🟡 Chờ Duyệt</strong>. Khi Admin cấp cao bấm nút <strong>"Phê duyệt & Đồng bộ Public"</strong>, toàn bộ nội dung chuẩn hóa sẽ lập tức xuất bản trực tiếp lên giao diện Web công khai.
-            </p>
-          </div>
+      {/* 3. PRIMARY TAB BAR - 7 MẢNG QUẢN TRỊ CHUYÊN BIỆT TÁCH RỜI (Tab Menu ngang mượt mà, trực quan) */}
+      <div className="bg-slate-950 p-1.5 rounded-2xl border border-slate-800 shadow-md flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+        {/* Tab 1: Bất Động Sản */}
+        <button
+          onClick={() => handleSelectMainTab('bds')}
+          className={`flex-1 min-w-[135px] sm:min-w-[155px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            effectiveMainTab === 'bds'
+              ? 'bg-emerald-600 text-white shadow-md'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <Building2 className="w-4 h-4 shrink-0 text-emerald-400" />
+          <span>1. BẤT ĐỘNG SẢN</span>
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono ${effectiveMainTab === 'bds' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
+            {properties.length}
+          </span>
+        </button>
 
-          <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
-            <button
-              onClick={handleSyncToPublicWeb}
-              disabled={isSyncingPublic}
-              className="px-5 py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:brightness-110 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl flex items-center gap-2 border border-emerald-300 transform active:scale-95 cursor-pointer"
-            >
-              <RefreshCw className={`w-4 h-4 text-slate-950 ${isSyncingPublic ? 'animate-spin' : ''}`} />
-              <span>{isSyncingPublic ? 'Đang đồng bộ Public...' : '🔄 NÚT ĐỒNG BỘ LÊN WEB PUBLIC'}</span>
-            </button>
+        {/* Tab 2: Thợ Kỹ Thuật */}
+        <button
+          onClick={() => handleSelectMainTab('technicians')}
+          className={`flex-1 min-w-[130px] sm:min-w-[150px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            effectiveMainTab === 'technicians'
+              ? 'bg-orange-500 text-slate-950 shadow-md'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <Wrench className="w-4 h-4 shrink-0 text-orange-400" />
+          <span>2. DỊCH VỤ & KỸ THUẬT</span>
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono ${effectiveMainTab === 'technicians' ? 'bg-slate-950 text-orange-300' : 'bg-slate-800 text-slate-400'}`}>
+            {adminResidentServices.length}
+          </span>
+        </button>
 
-            {pendingProperties.length > 0 && (
-              <button
-                onClick={handleSyncToPublicWeb}
-                className="px-4 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-1.5 cursor-pointer"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Duyệt Nhanh {pendingProperties.length} Tin Chờ</span>
-              </button>
-            )}
-          </div>
-        </div>
+        {/* Tab 3: Tuyển Dụng & Việc Làm */}
+        <button
+          onClick={() => handleSelectMainTab('recruitment')}
+          className={`flex-1 min-w-[135px] sm:min-w-[155px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            effectiveMainTab === 'recruitment'
+              ? 'bg-teal-500 text-slate-950 shadow-md'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <Briefcase className="w-4 h-4 shrink-0 text-teal-400" />
+          <span>3. TUYỂN DỤNG & VIỆC LÀM</span>
+          <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold ${effectiveMainTab === 'recruitment' ? 'bg-slate-950 text-teal-300' : 'bg-teal-950 text-teal-400'}`}>
+            Ưu tiên
+          </span>
+        </button>
 
-        {/* Status breakdown metrics */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-800 text-xs">
-          <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">Chờ Cấp Phê Duyệt</span>
-            <div className="text-lg font-black text-amber-400 flex items-center gap-1.5">
-              <span>{pendingProperties.length} Tin BĐS</span>
-              <span className="w-2 h-2 bg-amber-500 rounded-full animate-ping"></span>
-            </div>
-            <span className="text-[10px] text-slate-400 block">Sub-admin / Môi giới gửi</span>
-          </div>
+        {/* Tab 4: Dịch Vụ Cư Dân & Gian Hàng */}
+        <button
+          onClick={() => handleSelectMainTab('resident_market')}
+          className={`flex-1 min-w-[145px] sm:min-w-[165px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            effectiveMainTab === 'resident_market'
+              ? 'bg-amber-500 text-slate-950 shadow-md'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <Store className="w-4 h-4 shrink-0 text-amber-400" />
+          <span>4. GIAN HÀNG & DỊCH VỤ</span>
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono ${effectiveMainTab === 'resident_market' ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-400'}`}>
+            {adminStores.length}
+          </span>
+        </button>
 
-          <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">Đã Đồng Bộ Public</span>
-            <div className="text-lg font-black text-emerald-400">
-              {properties.filter(p => p.approved || p.status === 'approved').length} / {properties.length} Căn
-            </div>
-            <span className="text-[10px] text-emerald-400 font-semibold block">✓ Đang công khai trên Web</span>
-          </div>
+        {/* Tab 5: Người Dùng & Môi Giới */}
+        <button
+          onClick={() => handleSelectMainTab('users_leads')}
+          className={`flex-1 min-w-[140px] sm:min-w-[160px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            effectiveMainTab === 'users_leads'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <UserCheck className="w-4 h-4 shrink-0 text-blue-400" />
+          <span>5. THÀNH VIÊN & ĐỐI TÁC</span>
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono ${effectiveMainTab === 'users_leads' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
+            {registeredUsers.length}
+          </span>
+        </button>
 
-          <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">Bài Viết & Dịch Vụ</span>
-            <div className="text-lg font-black text-sky-400">
-              {adminResidentServices.length} Dịch Vụ Cư Dân
-            </div>
-            <span className="text-[10px] text-sky-400 font-semibold block">✓ 12 Ngành Nghề Chợ</span>
-          </div>
+        {/* Tab 6: Banner Quảng Cáo */}
+        <button
+          onClick={() => handleSelectMainTab('ads')}
+          className={`flex-1 min-w-[130px] sm:min-w-[150px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            effectiveMainTab === 'ads'
+              ? 'bg-rose-600 text-white shadow-md'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 shrink-0 text-rose-400" />
+          <span>6. QUẢNG CÁO & TRUYỀN THÔNG</span>
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono ${effectiveMainTab === 'ads' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
+            {adsList.length}
+          </span>
+        </button>
 
-          <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">Gian Hàng & KiotViet</span>
-            <div className="text-lg font-black text-purple-300">
-              {adminStores.length} Gian Hàng
-            </div>
-            <span className="text-[10px] text-purple-400 font-semibold block">✓ KiotViet POS Synced</span>
-          </div>
-        </div>
+        {/* Tab 7: Công Cụ & Hệ Thống */}
+        <button
+          onClick={() => handleSelectMainTab('tools')}
+          className={`flex-1 min-w-[135px] sm:min-w-[155px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            effectiveMainTab === 'tools'
+              ? 'bg-indigo-600 text-white shadow-md'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <Settings className="w-4 h-4 shrink-0 text-indigo-400" />
+          <span>7. CÔNG CỤ HỆ THỐNG</span>
+        </button>
       </div>
 
-      {/* Overview Stat Cards - Dynamic Based on Selected Sector */}
-      {adminSector === 'bds' ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 text-xs">
-          <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-emerald-500/30 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-500 dark:text-slate-400 font-bold">Căn Đang Bán</span>
-              <span className="p-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-md">🏠</span>
-            </div>
-            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 block">{saleProperties.length} căn</span>
-            <span className="text-[10px] text-emerald-600 font-bold block">✓ Trực tuyến</span>
-          </div>
-
-          <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-teal-500/30 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-500 dark:text-slate-400 font-bold">Căn Cho Thuê</span>
-              <span className="p-1 bg-teal-100 dark:bg-teal-950 text-teal-600 rounded-md">🔑</span>
-            </div>
-            <span className="text-2xl font-black text-teal-600 dark:text-teal-400 block">{rentProperties.length} căn</span>
-            <span className="text-[10px] text-teal-600 font-bold block">✓ Căn hộ & Shophouse</span>
-          </div>
-
-          <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-blue-500/30 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-500 dark:text-slate-400 font-bold">Số Lượng Khách</span>
-              <span className="p-1 bg-blue-100 dark:bg-blue-950 text-blue-600 rounded-md">📞</span>
-            </div>
-            <span className="text-2xl font-black text-blue-600 dark:text-blue-400 block">{contacts.length} khách</span>
-            <span className="text-[10px] text-blue-600 font-bold block">Đã để lại SĐT</span>
-          </div>
-
-          <div className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-amber-500/30 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-500 dark:text-slate-400 font-bold">Số Lượng Sale</span>
-              <span className="p-1 bg-amber-100 dark:bg-amber-950 text-amber-600 rounded-md">💼</span>
-            </div>
-            <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block">{totalSalesCount} nhân sự</span>
-            <span className="text-[10px] text-amber-600 font-bold block">Tài khoản môi giới</span>
-          </div>
-
-          <div className="p-4 bg-purple-50 dark:bg-purple-950/40 rounded-2xl border border-purple-200 dark:border-purple-800/60 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-purple-900 dark:text-purple-300 font-bold">Kho Lưu Trữ</span>
-              <span className="p-1 bg-purple-200 dark:bg-purple-900 text-purple-700 rounded-md">📁</span>
-            </div>
-            <span className="text-2xl font-black text-purple-700 dark:text-purple-300 block">{archivedProperties.length} căn</span>
-            <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold block">✓ Lưu 1 tháng (Giữ SĐT & Căn)</span>
-          </div>
-
-          <div className="p-4 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-300 dark:border-amber-800 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-amber-900 dark:text-amber-300 font-bold">Tin Chờ Duyệt</span>
-              <span className="p-1 bg-amber-200 dark:bg-amber-900 text-amber-800 rounded-md">⏳</span>
-            </div>
-            <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block">{pendingProperties.length} căn</span>
-            <span className="text-[10px] text-amber-600 font-bold block">Cần duyệt ngay</span>
-          </div>
-        </div>
-      ) : (
-        /* Resident Market Sector Metrics */
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 text-xs">
-          <div className="p-4 bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:bg-slate-800/90 rounded-2xl border border-amber-500/40 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-amber-800 dark:text-amber-400 font-bold">Dịch Vụ Cư Dân</span>
-              <Wrench className="w-4 h-4 text-amber-500" />
-            </div>
-            <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block">{adminResidentServices.length} bài DV</span>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">
-              ✓ {adminResidentServices.filter(s => s.verified || s.kycStatus === 'verified').length} Đã Cấp Nút Xanh KYC
-            </span>
-          </div>
-
-          <div className="p-4 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:bg-slate-800/90 rounded-2xl border border-emerald-500/40 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-emerald-800 dark:text-emerald-400 font-bold">Gian Hàng KiotViet</span>
-              <Store className="w-4 h-4 text-emerald-500" />
-            </div>
-            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 block">{adminStores.length} gian hàng</span>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">
-              ✓ {adminStores.filter(s => s.kiotVietConfig?.syncStatus === 'connected').length} Đồng bộ API live
-            </span>
-          </div>
-
-          <div className="p-4 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 dark:bg-slate-800/90 rounded-2xl border border-blue-500/40 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-blue-800 dark:text-blue-400 font-bold">Đơn Hàng Chợ</span>
-              <ShoppingBag className="w-4 h-4 text-blue-500" />
-            </div>
-            <span className="text-2xl font-black text-blue-600 dark:text-blue-400 block">{adminStoreOrders.length} đơn</span>
-            <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold block">
-              {adminStoreOrders.filter(o => o.orderStatus === 'new').length} đơn mới cần duyệt
-            </span>
-          </div>
-
-          <div className="p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:bg-slate-800/90 rounded-2xl border border-purple-500/40 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-purple-800 dark:text-purple-400 font-bold">Bài PR & Uy Tín</span>
-              <Star className="w-4 h-4 text-purple-500" />
-            </div>
-            <span className="text-2xl font-black text-purple-600 dark:text-purple-400 block">{adminReputationPosts.length} bài</span>
-            <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold block">Review YouTube & Bóc phốt</span>
-          </div>
-
-          <div className="p-4 bg-gradient-to-br from-teal-500/10 to-emerald-500/10 dark:bg-slate-800/90 rounded-2xl border border-teal-500/40 shadow-sm space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-teal-800 dark:text-teal-400 font-bold">Doanh Thu Chợ</span>
-              <DollarSign className="w-4 h-4 text-teal-500" />
-            </div>
-            <span className="text-xl font-black text-teal-600 dark:text-teal-400 block">
-              {adminStoreOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0).toLocaleString('vi-VN')} đ
-            </span>
-            <span className="text-[10px] text-teal-600 dark:text-teal-400 font-bold block">Thanh toán VietQR & COD</span>
-          </div>
+      {/* 4. CONTEXTUAL SUB-NAV PILLS CHO TỪNG TAB */}
+      {effectiveMainTab === 'bds' && (
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none bg-slate-100 dark:bg-slate-900/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+          <button
+            onClick={() => setActiveTab('properties')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'properties' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Danh Sách Bất Động Sản ({properties.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('projects')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'projects' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <MapPin className="w-3.5 h-3.5" />
+            <span>Dự Án & Mặt Bằng ({projects.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('news')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'news' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Tin Tức & Thị Trường ({news.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('pricing')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'pricing' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Settings className="w-3.5 h-3.5" />
+            <span>Bảng Giá Dịch Vụ & Thanh Toán</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('affiliate_mgmt')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'affiliate_mgmt' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Award className="w-3.5 h-3.5" />
+            <span>Đối Tác Giới Thiệu & Hoa Hồng</span>
+          </button>
         </div>
       )}
 
-      {/* Vertical Left Sidebar Admin Navigation Layout */}
-      <div className="flex flex-col md:flex-row gap-6 items-start">
-        
-        {/* LEFT VERTICAL SIDEBAR MENU */}
-        <aside className="w-full md:w-64 lg:w-72 shrink-0 bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200 dark:border-slate-800 shadow-xl md:sticky md:top-20 z-10 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 px-1">
-            <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></div>
-              <span className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-wider">
-                {adminSector === 'bds' ? '🏢 DANH MỤC QUẢN TRỊ BĐS' : '🛍️ DANH MỤC CHỢ CƯ DÂN'}
-              </span>
-            </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/20">
-              {adminSector === 'bds' ? 'MẢNG 1' : 'MẢNG 2'}
-            </span>
-          </div>
+      {effectiveMainTab === 'resident_market' && (
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none bg-slate-100 dark:bg-slate-900/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+          <button
+            onClick={() => setActiveTab('stores_mgmt')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'stores_mgmt' ? 'bg-amber-500 text-slate-950 shadow-xs font-black' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Store className="w-3.5 h-3.5" />
+            <span>Gian Hàng & Điểm Bán ({adminStores.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('orders_mgmt')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'orders_mgmt' ? 'bg-amber-500 text-slate-950 shadow-xs font-black' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <ShoppingBag className="w-3.5 h-3.5" />
+            <span>Quản Lý Đơn Hàng ({adminStoreOrders.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('package_orders_mgmt')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'package_orders_mgmt' ? 'bg-amber-500 text-slate-950 shadow-xs font-black' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Package className="w-3.5 h-3.5" />
+            <span>Gói Tiện Ích Cư Dân ({adminPackageOrders.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('resident_finance')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'resident_finance' ? 'bg-amber-500 text-slate-950 shadow-xs font-black' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Wallet className="w-3.5 h-3.5" />
+            <span>Doanh Thu & Quyết Toán</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('partners_reputation')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'partners_reputation' ? 'bg-amber-500 text-slate-950 shadow-xs font-black' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Star className="w-3.5 h-3.5" />
+            <span>Đánh Giá Uy Tín Đối Tác ({adminReputationPosts.length})</span>
+          </button>
+        </div>
+      )}
 
-          {adminSector === 'bds' ? (
-            /* ==================== MẢNG 1: BẤT ĐỘNG SẢN MENU ==================== */
-            <>
-              {/* Group 1: CORE & BĐS */}
-              <div className="space-y-1">
-                <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block pt-1">
-                  Quản Trị Core & BĐS
-                </span>
+      {effectiveMainTab === 'users_leads' && (
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none bg-slate-100 dark:bg-slate-900/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'users' ? 'bg-blue-600 text-white shadow-xs font-black' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <UserCheck className="w-3.5 h-3.5" />
+            <span>Danh Sách Thành Viên & Môi Giới ({registeredUsers.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('leads')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'leads' ? 'bg-blue-600 text-white shadow-xs font-black' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Phone className="w-3.5 h-3.5" />
+            <span>Khách Hàng Hẹn Xem Nhà ({contacts.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('enterprise_core')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'enterprise_core' ? 'bg-blue-600 text-white shadow-xs font-black' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>Phân Quyền & Quản Trị Nhân Sự</span>
+          </button>
+        </div>
+      )}
 
-                <button
-                  onClick={() => setActiveTab('enterprise_core')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'enterprise_core'
-                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg ring-2 ring-purple-400/50'
-                      : 'text-purple-700 dark:text-purple-300 hover:bg-purple-500/10 border border-purple-500/20'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <ShieldCheck className="w-4 h-4 text-amber-300 shrink-0" />
-                    <span className="truncate">⭐ KPI & Phân Quyền</span>
-                  </div>
-                </button>
+      {effectiveMainTab === 'tools' && (
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none bg-slate-100 dark:bg-slate-900/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+          <button
+            onClick={() => setActiveTab('analytics')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'analytics' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>Thống Kê Lượt Truy Cập</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('seo')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'seo' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span>Tối Ưu Hóa Tìm Kiếm (SEO)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('marketing')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'marketing' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Chiến Dịch Truyền Thông</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('zalo')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'zalo' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Cộng Đồng Zalo & Tin Nhắn Tự Động</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('workspace_sync')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'workspace_sync' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span>Đồng Bộ Google Workspace</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('n8n')}
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'n8n' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+            }`}
+          >
+            <Database className="w-3.5 h-3.5" />
+            <span>Tự Động Hóa Quy Trình</span>
+          </button>
+        </div>
+      )}
 
-                <button
-                  onClick={() => setActiveTab('properties')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'properties'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Layers className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span className="truncate">BĐS & Hình Ảnh</span>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'properties' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'}`}>
-                    {properties.length}
-                  </span>
-                </button>
+      {/* 5. MAIN CONTENT AREA - 100% Full Width */}
+      <div className="w-full space-y-4">
 
-                <button
-                  onClick={() => setActiveTab('projects')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'projects'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <MapPin className="w-4 h-4 text-teal-500 shrink-0" />
-                    <span className="truncate">Dự Án & Sơ Đồ</span>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'projects' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
-                    {projects.length}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('news')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'news'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <FileText className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span className="truncate">Bài Viết & Tin Tức</span>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'news' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400'}`}>
-                    {news.length}
-                  </span>
-                </button>
-              </div>
-
-              {/* Group 2: KHÁCH HÀNG & THÀNH VIÊN */}
-              <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block">
-                  Khách Hàng & Nguồn Thu
-                </span>
-
-                <button
-                  onClick={() => setActiveTab('leads')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'leads'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Phone className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span className="truncate">Khách Yêu Cầu</span>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'leads' ? 'bg-white/20 text-white' : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'}`}>
-                    {contacts.length}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('users')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'users'
-                      ? 'bg-amber-500 text-slate-950 shadow-md'
-                      : 'text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <UserCheck className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span className="truncate">Quản Lý Thành Viên</span>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'users' ? 'bg-slate-950 text-amber-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-600'}`}>
-                    {registeredUsers.length}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('pricing')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'pricing'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Settings className="w-4 h-4 text-slate-500 shrink-0" />
-                    <span className="truncate">Giá Up Tin & VietQR</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('affiliate_mgmt')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'affiliate_mgmt'
-                      ? 'bg-amber-500 text-slate-950 shadow-md'
-                      : 'text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Award className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span className="truncate">Affiliate & Thu Phí</span>
-                  </div>
-                </button>
-              </div>
-
-              {/* Group 3: MARKETING & TIẾP THỊ */}
-              <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 block">
-                  Marketing & SEO
-                </span>
-
-                <button
-                  onClick={() => setActiveTab('analytics')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'analytics'
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 border border-blue-500/20'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <BarChart3 className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span className="truncate">Thống Kê Traffic</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('seo')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'seo'
-                      ? 'bg-amber-500 text-slate-950 shadow-md'
-                      : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Globe className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span className="truncate">Chuyên SEO Web</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('marketing')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'marketing'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Share2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span className="truncate">Marketing Hàng Loạt</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('zalo')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'zalo'
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 border border-blue-500/20'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <MessageSquare className="w-4 h-4 text-sky-400 shrink-0" />
-                    <span className="truncate">Zalo Group Cư Dân</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('ads')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'ads'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span className="truncate">Quảng Cáo Banner</span>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'ads' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
-                    {adsList.length}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('reputation')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'reputation'
-                      ? 'bg-purple-600 text-white shadow-md'
-                      : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 border border-purple-500/20'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
-                    <span className="truncate">PR & Review YouTube</span>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'reputation' ? 'bg-white/20 text-white' : 'bg-purple-100 dark:bg-purple-950 text-purple-600'}`}>
-                    {adminReputationPosts.length}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('n8n')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'n8n'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Database className="w-4 h-4 text-slate-500 shrink-0" />
-                    <span className="truncate">Webhook n8n</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('workspace_sync')}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                    activeTab === 'workspace_sync'
-                      ? 'bg-emerald-600 text-white shadow-md font-extrabold ring-2 ring-emerald-400'
-                      : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/30'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <FileSpreadsheet className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span className="truncate">📊 Google Drive & Sheets</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500 text-white">
-                    HOT
-                  </span>
-                </button>
-              </div>
-            </>
-          ) : (
-            /* ==================== MẢNG 2: CHỢ CƯ DÂN & DỊCH VỤ MENU ==================== */
-            <div className="space-y-1.5">
-              <span className="text-[10px] font-black uppercase text-amber-500 tracking-wider px-2 block pt-1">
-                Quản Lý Chợ & Dịch Vụ Cư Dân
-              </span>
-
-              <button
-                onClick={() => setActiveTab('resident_services_mgmt')}
-                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                  activeTab === 'resident_services_mgmt'
-                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-lg font-black ring-2 ring-amber-300'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <Wrench className="w-4 h-4 text-amber-500 shrink-0" />
-                  <span className="truncate">🛠️ Quản Lý Dịch Vụ Cư Dân</span>
-                </div>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'resident_services_mgmt' ? 'bg-slate-950 text-amber-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400'}`}>
-                  {adminResidentServices.length}
-                </span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('recruitment_mgmt')}
-                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                  activeTab === 'recruitment_mgmt'
-                    ? 'bg-gradient-to-r from-teal-500 to-emerald-600 text-slate-950 shadow-lg font-black ring-2 ring-teal-300'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-teal-500/20'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <Briefcase className="w-4 h-4 text-teal-500 shrink-0" />
-                  <span className="truncate">💼 Quản Trị Việc Làm & Tuyển Dụng</span>
-                </div>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-teal-500/20 text-teal-700 dark:text-teal-400 border border-teal-500/30">
-                  HOT
-                </span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('stores_mgmt')}
-                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                  activeTab === 'stores_mgmt'
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg font-black ring-2 ring-emerald-300'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <Store className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span className="truncate">🏪 Gian Hàng & KiotViet POS</span>
-                </div>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'stores_mgmt' ? 'bg-slate-950 text-emerald-400' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'}`}>
-                  {adminStores.length}
-                </span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('orders_mgmt')}
-                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                  activeTab === 'orders_mgmt'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg font-black ring-2 ring-blue-300'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <ShoppingBag className="w-4 h-4 text-blue-500 shrink-0" />
-                  <span className="truncate">📦 Đơn Hàng & Giao Dịch Chợ</span>
-                </div>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'orders_mgmt' ? 'bg-white text-blue-900' : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'}`}>
-                  {adminStoreOrders.length}
-                </span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('partners_reputation')}
-                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                  activeTab === 'partners_reputation'
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg font-black ring-2 ring-purple-300'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <Star className="w-4 h-4 text-purple-500 shrink-0" />
-                  <span className="truncate">🌟 PR Đối Tác & Bài Uy Tín</span>
-                </div>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'partners_reputation' ? 'bg-white text-purple-900' : 'bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400'}`}>
-                  {adminReputationPosts.length}
-                </span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('resident_finance')}
-                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                  activeTab === 'resident_finance'
-                    ? 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg font-black ring-2 ring-teal-300'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <Wallet className="w-4 h-4 text-teal-500 shrink-0" />
-                  <span className="truncate">💰 Tài Chính & Chiết Khấu DV</span>
-                </div>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('package_orders_mgmt')}
-                className={`w-full text-left px-3.5 py-3 rounded-2xl transition flex items-center justify-between font-bold text-xs cursor-pointer ${
-                  activeTab === 'package_orders_mgmt'
-                    ? 'bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-slate-950 shadow-lg font-black ring-2 ring-amber-300'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <Package className="w-4 h-4 text-amber-500 shrink-0" />
-                  <span className="truncate">💎 Quản Lý 6 Gói Dịch Vụ & Đơn Đăng Ký</span>
-                </div>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'package_orders_mgmt' ? 'bg-slate-950 text-amber-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400'}`}>
-                  {adminPackageOrders.filter(o => o.status === 'pending').length > 0 ? `🟡 ${adminPackageOrders.filter(o => o.status === 'pending').length}` : adminStorePackages.length}
-                </span>
-              </button>
-            </div>
-          )}
-        </aside>
-
-        {/* RIGHT MAIN CONTENT PANEL */}
-        <main className="flex-1 min-w-0 w-full space-y-6">
-
-      {/* ==================== MẢNG 2: TAB 1 - QUẢN LÝ DỊCH VỤ CƯ DÂN ==================== */}
+      {/* ==================== TAB THỢ DỊCH VỤ & KỸ THUẬT CƯ DÂN ==================== */}
       {activeTab === 'resident_services_mgmt' && (
-        <div className="space-y-6">
-          {/* Header Banner */}
-          <div className="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 p-6 rounded-3xl border-2 border-amber-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="space-y-4">
+          {/* Header Banner - Compact & focused on Technicians */}
+          <div className="bg-gradient-to-r from-slate-900 via-orange-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-orange-500/40 shadow-lg text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                  MẢNG 2: CHỢ CƯ DÂN
+                <span className="px-2 py-0.5 bg-orange-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">
+                  THỢ DỊCH VỤ & KỸ THUẬT CƯ DÂN
                 </span>
-                <span className="px-2.5 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-500/40 font-bold text-[10px] rounded-full flex items-center gap-1">
-                  <BadgeCheck className="w-3 h-3 text-blue-400" /> BLUE VERIFIED KYC
+                <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-500/40 font-bold text-[10px] rounded flex items-center gap-1">
+                  <BadgeCheck className="w-3 h-3 text-blue-400" /> NÚT XANH VERIFIED KYC
                 </span>
               </div>
-              <h2 className="text-xl font-black text-amber-400 mt-1.5 flex items-center gap-2">
-                <Wrench className="w-6 h-6 text-amber-400" />
-                <span>QUẢN LÝ DỊCH VỤ CƯ DÂN & DUYỆT CẤP NÚT XANH VERIFIED KYC</span>
+              <h2 className="text-base sm:text-lg font-black text-orange-400 mt-1 flex items-center gap-2">
+                <Wrench className="w-5 h-5 text-orange-400" />
+                <span>QUẢN LÝ THỢ KỸ THUẬT, SỬA CHỮA ĐIỆN NƯỚC & DỊCH VỤ CƯ DÂN</span>
               </h2>
-              <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                Quản lý 12 ngành nghề dịch vụ cư dân Vinhomes (Thang máy, Smarthome, Taxi, Giặt là, Spa, Pass đồ...). Duyệt Nút Xanh KYC để tạo niềm tin chính chủ cho cư dân.
+              <p className="text-xs text-slate-300 mt-0.5 max-w-2xl">
+                Quản lý đội ngũ Thợ Điện Nước, Điện Lạnh, Thợ Khóa, Cửa Cuốn, Nhôm Kính, Dọn Vệ Sinh & Taxi Cư Dân. Cấp Nút Xanh KYC để định danh uy tín.
               </p>
             </div>
 
@@ -2224,10 +2031,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 setEditingService(null);
                 setShowAddServiceModal(true);
               }}
-              className="px-5 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl flex items-center gap-2 border border-amber-300 cursor-pointer shrink-0"
+              className="px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 border border-orange-300 cursor-pointer shrink-0"
             >
-              <PlusCircle className="w-5 h-5 text-slate-950" />
-              <span>➕ Thêm Dịch Vụ Cư Dân Mới</span>
+              <PlusCircle className="w-4 h-4 text-slate-950" />
+              <span>➕ Thêm Thợ / Dịch Vụ Mới</span>
             </button>
           </div>
 
@@ -3766,31 +3573,79 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
       {/* Tab 1: Properties Table */}
       {activeTab === 'properties' && (
-        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-5 shadow-xl">
+        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 space-y-4 shadow-xl">
           {/* Header & Title */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-700/60">
             <div>
-              <h3 className="font-black text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+              <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                 <span>🏢</span> QUẢN LÝ TẤT CẢ BẤT ĐỘNG SẢN ({properties.length} CĂN)
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Tự động hết hạn hiển thị sau 15–25 ngày. Dữ liệu Người đăng & Chi tiết căn được bảo lưu đầy đủ 1 tháng (30 ngày) trong Kho Lưu Trữ.
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                Tự động hết hạn hiển thị sau 15–25 ngày. Dữ liệu Người đăng & Chi tiết căn được bảo lưu đầy đủ trong Kho Lưu Trữ.
               </p>
             </div>
 
-            <button
-              onClick={handleSeed1000Click}
-              className="px-3.5 py-2 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-extrabold rounded-xl text-xs shrink-0 transition flex items-center gap-1.5"
-            >
-              <span>✨</span> + Tạo 1,000 Tin Test Mượt Mà
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Density View Switcher */}
+              <div className="bg-slate-100 dark:bg-slate-700/60 p-0.5 rounded-xl flex items-center gap-0.5 text-[11px] font-bold">
+                <button
+                  onClick={() => setAdminViewMode('icon_compact')}
+                  className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
+                    adminViewMode === 'icon_compact'
+                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Chế độ biểu tượng thu gọn"
+                >
+                  <span>⚡ Icon Thu Gọn</span>
+                </button>
+                <button
+                  onClick={() => setAdminViewMode('detailed')}
+                  className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
+                    adminViewMode === 'detailed'
+                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Chế độ chi tiết đầy đủ"
+                >
+                  <span>📋 Chi Tiết</span>
+                </button>
+              </div>
+
+              <button
+                onClick={() => {
+                  const currentFiltered = properties.filter((p) => {
+                    const expiryInfo = getPropertyExpiryInfo(p);
+                    if (propertySubFilter === 'sale') return p.type === 'sale' || (p as any).category === 'ban';
+                    if (propertySubFilter === 'rent') return p.type === 'rent' || (p as any).category === 'cho-thue';
+                    if (propertySubFilter === 'pushed') return !!p.pushedAt;
+                    if (propertySubFilter === 'expiring') return !expiryInfo.isExpired && expiryInfo.daysRemaining <= 5;
+                    if (propertySubFilter === 'archived') return expiryInfo.isExpired || p.status === 'sold';
+                    if (propertySubFilter === 'pending') return (!p.approved && p.status !== 'approved' && p.status !== 'rejected');
+                    return true;
+                  }).slice(0, 150);
+                  toggleExpandAllAdminProps(currentFiltered);
+                }}
+                className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold text-[11px] rounded-xl transition cursor-pointer"
+                title="Mở rộng hoặc thu gọn tất cả dòng"
+              >
+                Mở rộng / Thu gọn ▾
+              </button>
+
+              <button
+                onClick={handleSeed1000Click}
+                className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-extrabold rounded-xl text-[11px] shrink-0 transition flex items-center gap-1"
+              >
+                <span>✨</span> + 1,000 Tin Test
+              </button>
+            </div>
           </div>
 
           {/* Sub-Filters Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-bold scrollbar-none">
             <button
               onClick={() => setPropertySubFilter('all')}
-              className={`px-3 py-1.5 rounded-xl transition shrink-0 ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 ${
                 propertySubFilter === 'all'
                   ? 'bg-slate-900 text-white dark:bg-emerald-500 dark:text-slate-950 shadow'
                   : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
@@ -3801,83 +3656,276 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
             <button
               onClick={() => setPropertySubFilter('sale')}
-              className={`px-3 py-1.5 rounded-xl transition shrink-0 flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
                 propertySubFilter === 'sale'
                   ? 'bg-emerald-600 text-white shadow'
                   : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100'
               }`}
             >
-              🏠 Đang Bán ({saleProperties.length})
+              🏠 Bán ({saleProperties.length})
             </button>
 
             <button
               onClick={() => setPropertySubFilter('rent')}
-              className={`px-3 py-1.5 rounded-xl transition shrink-0 flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
                 propertySubFilter === 'rent'
                   ? 'bg-teal-600 text-white shadow'
                   : 'bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100'
               }`}
             >
-              🔑 Cho Thuê ({rentProperties.length})
+              🔑 Thuê ({rentProperties.length})
             </button>
 
             <button
               onClick={() => setPropertySubFilter('pushed')}
-              className={`px-3 py-1.5 rounded-xl transition shrink-0 flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
                 propertySubFilter === 'pushed'
                   ? 'bg-blue-600 text-white shadow'
                   : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100'
               }`}
             >
-              ⚡ Đã Up Tin ({pushedProperties.length})
+              ⚡ Tin Nổi Bật ({pushedProperties.length})
             </button>
 
             <button
               onClick={() => setPropertySubFilter('expiring')}
-              className={`px-3 py-1.5 rounded-xl transition shrink-0 flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
                 propertySubFilter === 'expiring'
                   ? 'bg-amber-500 text-slate-950 font-black shadow'
                   : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100'
               }`}
             >
-              ⏰ Sắp Hết Hạn (≤5 ngày) ({expiringSoonProperties.length})
+              ⏰ Sắp Hết Hạn ({expiringSoonProperties.length})
             </button>
 
             <button
               onClick={() => setPropertySubFilter('archived')}
-              className={`px-3 py-1.5 rounded-xl transition shrink-0 flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
                 propertySubFilter === 'archived'
                   ? 'bg-purple-700 text-white shadow'
                   : 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 hover:bg-purple-100'
               }`}
             >
-              📁 Kho Lưu Trữ ({archivedProperties.length})
+              📁 Tin Đã Đóng ({archivedProperties.length})
             </button>
 
             <button
               onClick={() => setPropertySubFilter('pending')}
-              className={`px-3 py-1.5 rounded-xl transition shrink-0 flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
                 propertySubFilter === 'pending'
                   ? 'bg-rose-600 text-white shadow'
                   : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100'
               }`}
             >
-              ⏳ Chờ Duyệt ({pendingProperties.length})
+              ⏳ Chờ Phê Duyệt ({pendingProperties.length})
             </button>
           </div>
 
-          {/* Properties Data Table */}
-          <div className="overflow-x-auto max-h-[620px] overflow-y-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+          {/* Properties Mobile Compact Icon List (< md) */}
+          <div className="block md:hidden space-y-2 max-h-[660px] overflow-y-auto pr-0.5">
+            {properties
+              .filter((p) => {
+                const expiryInfo = getPropertyExpiryInfo(p);
+                if (propertySubFilter === 'sale') return p.type === 'sale' || (p as any).category === 'ban';
+                if (propertySubFilter === 'rent') return p.type === 'rent' || (p as any).category === 'cho-thue';
+                if (propertySubFilter === 'pushed') return !!p.pushedAt;
+                if (propertySubFilter === 'expiring') return !expiryInfo.isExpired && expiryInfo.daysRemaining <= 5;
+                if (propertySubFilter === 'archived') return expiryInfo.isExpired || p.status === 'sold';
+                if (propertySubFilter === 'pending') return (!p.approved && p.status !== 'approved' && p.status !== 'rejected');
+                return true;
+              })
+              .slice(0, 150)
+              .map((p) => {
+                const expiryInfo = getPropertyExpiryInfo(p);
+                const sellerPhoneFormatted = p.sellerPhone || 'Chưa có số liên hệ';
+                const sellerNameFormatted = p.sellerName || 'Chính Chủ / Chuyên Viên BĐS';
+                const isApproved = p.status === 'approved' || p.approved || p.approvalStatus === 'approved';
+                const isRejected = p.status === 'rejected' || p.approvalStatus === 'rejected';
+                const isExpanded = adminViewMode === 'detailed' || Boolean(expandedAdminPropIds[p.id]);
+
+                return (
+                  <div
+                    key={`mob-${p.id}`}
+                    className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-2.5 shadow-xs transition hover:border-emerald-500/40"
+                  >
+                    {/* Compact Top Row: Thumbnail + Core Specs + Price */}
+                    <div
+                      onClick={() => toggleExpandAdminProp(p.id)}
+                      className="flex items-start gap-2.5 cursor-pointer"
+                    >
+                      <div className="relative shrink-0">
+                        <img
+                          src={p.images[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
+                          alt={p.title}
+                          className="w-14 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700"
+                        />
+                        <span className="absolute bottom-0 right-0 px-1 py-0.2 bg-slate-950/80 text-white text-[8px] font-bold rounded">
+                          {p.images?.length || 1}📷
+                        </span>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-extrabold text-[11px] text-slate-900 dark:text-white truncate">
+                            {p.title}
+                          </span>
+                          <span className="font-black text-xs text-emerald-600 dark:text-emerald-400 shrink-0 font-mono">
+                            {p.priceDisplay}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-[9px] text-slate-500 dark:text-slate-400 mt-0.5 flex-wrap">
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold uppercase">
+                            📍 {p.project}
+                          </span>
+                          <span>•</span>
+                          <span className="font-mono">📐 {p.area}m²</span>
+                          {p.bedrooms && (
+                            <>
+                              <span>•</span>
+                              <span>🛏️ {p.bedrooms}PN</span>
+                            </>
+                          )}
+                          <span>•</span>
+                          <span>{p.type === 'sale' ? '🏠 Bán' : '🔑 Thuê'}</span>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-1 mt-1 text-[10px]">
+                          <span className="text-slate-600 dark:text-slate-300 truncate font-semibold">
+                            👤 {sellerNameFormatted}
+                          </span>
+                          <span className={`text-[8px] font-black px-1.5 py-0.2 rounded-full shrink-0 ${
+                            isApproved
+                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                              : isRejected
+                              ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                              : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                          }`}>
+                            {isApproved ? '🟢 Đã duyệt' : isRejected ? '🔴 Từ chối' : '🟡 Chờ duyệt'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Quick Mobile Action Bar */}
+                    <div className="flex items-center justify-between gap-1 pt-2 mt-2 border-t border-slate-100 dark:border-slate-800 text-[10px]">
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handlePushPropertyNow(p)}
+                          className="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg text-[9px] flex items-center gap-0.5 cursor-pointer shadow-xs"
+                          title="Đẩy tin lên đầu (+20 ngày)"
+                        >
+                          <Zap className="w-2.5 h-2.5 fill-slate-950" />
+                          <span>Đẩy Tin</span>
+                        </button>
+                        <a
+                          href={`tel:${sellerPhoneFormatted.replace(/\D/g, '')}`}
+                          className="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold rounded-lg text-[9px] flex items-center gap-0.5"
+                        >
+                          <Phone className="w-2.5 h-2.5" />
+                          <span>Gọi Điện</span>
+                        </a>
+                        <a
+                          href={`https://zalo.me/${sellerPhoneFormatted.replace(/\D/g, '')}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-2 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold rounded-lg text-[9px] flex items-center gap-0.5"
+                        >
+                          <span>Nhắn Zalo</span>
+                        </a>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        {!isApproved && (
+                          <button
+                            onClick={() => onApproveProperty(p.id)}
+                            className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg text-[9px] flex items-center gap-0.5 cursor-pointer shadow-xs"
+                          >
+                            <Check className="w-2.5 h-2.5" /> Duyệt
+                          </button>
+                        )}
+                        {!isRejected && (
+                          <button
+                            onClick={() => handleRejectProperty(p)}
+                            className="px-1.5 py-1 bg-rose-600 text-white font-bold rounded-lg text-[9px] cursor-pointer"
+                          >
+                            ✕
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setEditingProperty(p)}
+                          className="p-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={() => toggleExpandAdminProp(p.id)}
+                          className="p-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg"
+                        >
+                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Expandable Details for Mobile */}
+                    {isExpanded && (
+                      <div className="pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-800 space-y-2 text-[10px] animate-in fade-in duration-150">
+                        {p.images && p.images.length > 0 && (
+                          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                            {p.images.map((imgUrl, idx) => (
+                              <img
+                                key={idx}
+                                src={imgUrl}
+                                alt="Căn hộ"
+                                className="w-20 h-14 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shrink-0"
+                              />
+                            ))}
+                          </div>
+                        )}
+                        <div className="grid grid-cols-2 gap-1.5 text-[9px] bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
+                          <div>📍 Vị trí: <strong>{p.address || p.location || p.project}</strong></div>
+                          <div>🧭 Hướng: <strong>{p.direction || 'Đông Nam'}</strong></div>
+                          <div>📜 Pháp lý: <strong>{p.legalStatus || 'Sổ đỏ'}</strong></div>
+                          <div>🛋️ Nội thất: <strong>{p.furniture || 'Đầy đủ'}</strong></div>
+                        </div>
+                        {p.description && (
+                          <p className="text-[10px] text-slate-600 dark:text-slate-400 line-clamp-3 bg-slate-50 dark:bg-slate-950 p-2 rounded-xl">
+                            {p.description}
+                          </p>
+                        )}
+                        <div className="flex items-center justify-between gap-1 pt-1">
+                          <button
+                            onClick={() => setSelectedSellerDetail(p)}
+                            className="px-2.5 py-1 bg-blue-600 text-white font-bold rounded-lg text-[9px] flex items-center gap-1"
+                          >
+                            <Eye className="w-3 h-3" /> Xem Thông Tin Liên Hệ
+                          </button>
+                          <button
+                            onClick={() => onDeleteProperty(p.id)}
+                            className="px-2 py-1 bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 font-bold rounded-lg text-[9px] flex items-center gap-0.5"
+                          >
+                            <Trash2 className="w-3 h-3" /> Xóa
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+
+          {/* Properties Desktop Full Data Table (>= md) */}
+          <div className="hidden md:block overflow-x-auto max-h-[660px] overflow-y-auto rounded-2xl border border-slate-200 dark:border-slate-700">
             <table className="w-full text-xs text-left border-collapse">
               <thead className="sticky top-0 bg-slate-100 dark:bg-slate-900 z-10 shadow-sm">
-                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wider text-[11px]">
-                  <th className="p-3">Hình ảnh</th>
-                  <th className="p-3">Tiêu đề & Dự án</th>
-                  <th className="p-3">Thông Tin Người Đăng</th>
-                  <th className="p-3">Loại & Mức giá</th>
-                  <th className="p-3">Trạng Thái Admin</th>
-                  <th className="p-3">Hạn Hiển Thị (15–25 Ngày)</th>
-                  <th className="p-3 text-center">Thao Tác Quản Lý</th>
+                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
+                  <th className="p-2.5">Ảnh</th>
+                  <th className="p-2.5">Tiêu đề & Dự án</th>
+                  <th className="p-2.5">Người Đăng & SĐT</th>
+                  <th className="p-2.5">Giá & Loại</th>
+                  <th className="p-2.5">Trạng Thái</th>
+                  <th className="p-2.5">Hạn Hiển Thị</th>
+                  <th className="p-2.5 text-center">Thao Tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -3899,210 +3947,348 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     const sellerNameFormatted = p.sellerName || 'Chủ Hộ / Sale BĐS';
                     const isApproved = p.status === 'approved' || p.approved || p.approvalStatus === 'approved';
                     const isRejected = p.status === 'rejected' || p.approvalStatus === 'rejected';
+                    const isExpanded = adminViewMode === 'detailed' || Boolean(expandedAdminPropIds[p.id]);
 
                     return (
-                      <tr key={p.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-900/60 transition">
-                        <td className="p-3">
-                          <img
-                            src={p.images[0]}
-                            alt={p.title}
-                            className="w-16 h-12 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm"
-                          />
-                        </td>
+                      <React.Fragment key={p.id}>
+                        <tr className="hover:bg-slate-50/80 dark:hover:bg-slate-900/60 transition text-xs">
+                          {/* 1. Thumbnail */}
+                          <td className="p-2">
+                            <div 
+                              onClick={() => toggleExpandAdminProp(p.id)}
+                              className="relative cursor-pointer group"
+                            >
+                              <img
+                                src={p.images[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
+                                alt={p.title}
+                                className="w-12 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs group-hover:opacity-80 transition"
+                              />
+                              <span className="absolute bottom-0 right-0 px-1 py-0.2 bg-slate-950/80 text-white text-[7px] font-bold rounded">
+                                {p.images?.length || 1}📷
+                              </span>
+                            </div>
+                          </td>
 
-                        <td className="p-3 max-w-xs">
-                          <span className="font-bold text-slate-900 dark:text-white line-clamp-1 block">{p.title}</span>
-                          <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold uppercase">
-                              {p.project}
+                          {/* 2. Title & Specs */}
+                          <td className="p-2 max-w-xs">
+                            <button
+                              onClick={() => toggleExpandAdminProp(p.id)}
+                              className="font-bold text-slate-900 dark:text-white line-clamp-1 text-left hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer text-xs"
+                              title="Bấm để mở rộng chi tiết BĐS"
+                            >
+                              {p.title}
+                            </button>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-extrabold uppercase">
+                                📍 {p.project}
+                              </span>
+                              <span className="text-slate-300 dark:text-slate-600">•</span>
+                              <span className="text-[9px] text-slate-500 font-medium font-mono">📐 {p.area} m²</span>
+                              {p.bedrooms && (
+                                <>
+                                  <span className="text-slate-300 dark:text-slate-600">•</span>
+                                  <span className="text-[9px] text-slate-500 font-medium">🛏️ {p.bedrooms}PN</span>
+                                </>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* 3. Poster Info */}
+                          <td className="p-2">
+                            <div className="space-y-0.5 text-[11px]">
+                              <div className="flex items-center gap-1">
+                                {p.sellerRole === 'owner' ? (
+                                  <span className="px-1.5 py-0.5 bg-amber-500/20 text-amber-700 dark:text-amber-400 font-black rounded text-[8px]">
+                                    🏠 CHỦ NHÀ GỐC
+                                  </span>
+                                ) : (
+                                  <span className="px-1.5 py-0.5 bg-teal-500/20 text-teal-700 dark:text-teal-400 font-black rounded text-[8px]">
+                                    💼 MÔI GIỚI
+                                  </span>
+                                )}
+                              </div>
+                              <span className="font-extrabold text-slate-800 dark:text-slate-200 block text-[11px] truncate max-w-[130px]">
+                                {sellerNameFormatted}
+                              </span>
+                              <a
+                                href={`https://zalo.me/${sellerPhoneFormatted.replace(/\D/g, '')}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-0.5"
+                              >
+                                📞 {sellerPhoneFormatted}
+                              </a>
+                            </div>
+                          </td>
+
+                          {/* 4. Price & Type */}
+                          <td className="p-2">
+                            <span className="font-black text-emerald-600 dark:text-emerald-400 block text-xs font-mono">
+                              💰 {p.priceDisplay}
                             </span>
-                            <span className="text-slate-300 dark:text-slate-600">•</span>
-                            <span className="text-[10px] text-slate-500 font-medium">{p.area} m²</span>
-                          </div>
-                        </td>
+                            <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold inline-block mt-0.5 ${
+                              p.type === 'sale' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300'
+                            }`}>
+                              {p.type === 'sale' ? '🏠 BÁN' : '🔑 CHO THUÊ'}
+                            </span>
+                          </td>
 
-                        <td className="p-3">
-                          <div className="space-y-0.5">
-                            <div className="flex items-center gap-1">
-                              {p.sellerRole === 'owner' ? (
-                                <span className="px-1.5 py-0.5 bg-amber-500/20 text-amber-700 dark:text-amber-400 font-black rounded text-[9px]">
-                                  🏠 CHỦ NHÀ GỐC
+                          {/* 5. Status Badge */}
+                          <td className="p-2">
+                            <div className="space-y-1">
+                              <span className={`text-[9px] font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${
+                                isApproved
+                                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-500/30'
+                                  : isRejected
+                                  ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-500/30'
+                                  : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-500/30'
+                              }`}>
+                                {isApproved && '🟢 Đang hiện'}
+                                {isRejected && '🔴 Từ chối'}
+                                {!isApproved && !isRejected && '🟡 Chờ duyệt'}
+                              </span>
+                              {p.rejectionReason && (
+                                <div className="text-[9px] text-rose-600 dark:text-rose-400 font-medium line-clamp-1 max-w-[110px]" title={p.rejectionReason}>
+                                  {p.rejectionReason}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* 6. Expiry / Archive Info */}
+                          <td className="p-2 max-w-[150px]">
+                            <div className="space-y-0.5 text-[10px]">
+                              <div className="text-slate-500">
+                                🗓️ Đăng: <span className="font-bold text-slate-700 dark:text-slate-300">{expiryInfo.postDateFormatted}</span>
+                              </div>
+
+                              {expiryInfo.isExpired ? (
+                                <span className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-950/70 border border-purple-300 dark:border-purple-800 rounded text-purple-900 dark:text-purple-300 text-[9px] font-bold block">
+                                  📁 Lưu trữ: còn {expiryInfo.archiveDaysLeft}d
+                                </span>
+                              ) : expiryInfo.daysRemaining <= 5 ? (
+                                <span className="px-1.5 py-0.5 bg-amber-100 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-800 rounded text-amber-900 dark:text-amber-300 text-[9px] font-bold block">
+                                  ⏰ Còn {expiryInfo.daysRemaining} ngày
                                 </span>
                               ) : (
-                                <span className="px-1.5 py-0.5 bg-teal-500/20 text-teal-700 dark:text-teal-400 font-black rounded text-[9px]">
-                                  💼 SALE / MÔI GIỚI
+                                <span className="text-emerald-700 dark:text-emerald-400 text-[9px] font-bold block">
+                                  ⚡ Còn <b>{expiryInfo.daysRemaining} ngày</b>
                                 </span>
                               )}
                             </div>
-                            <span className="font-extrabold text-slate-800 dark:text-slate-200 block text-[11px]">
-                              {sellerNameFormatted}
-                            </span>
-                            <a
-                              href={`https://zalo.me/${sellerPhoneFormatted.replace(/\D/g, '')}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-[11px] font-black text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1"
-                            >
-                              📞 {sellerPhoneFormatted}
-                            </a>
-                          </div>
-                        </td>
+                          </td>
 
-                        <td className="p-3">
-                          <span className="font-black text-emerald-600 dark:text-emerald-400 block text-xs">
-                            {p.priceDisplay}
-                          </span>
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold inline-block mt-0.5 ${
-                            p.type === 'sale' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300'
-                          }`}>
-                            {p.type === 'sale' ? 'BÁN' : 'CHO THUÊ'}
-                          </span>
-                        </td>
+                          {/* 7. Action Icons Bar */}
+                          <td className="p-2 text-center">
+                            <div className="flex items-center justify-center gap-1 flex-wrap">
+                              {/* Up Tin Button */}
+                              <button
+                                onClick={() => handlePushPropertyNow(p)}
+                                className="p-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg text-[10px] transition shadow-xs flex items-center gap-0.5 shrink-0"
+                                title="Up tin lên đầu & gia hạn thêm +20 ngày"
+                              >
+                                <Zap className="w-3 h-3 fill-slate-950" />
+                                <span className="hidden lg:inline">Up (+20d)</span>
+                              </button>
 
-                        <td className="p-3">
-                          <div className="space-y-1">
-                            <span className={`text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1 ${
-                              isApproved
-                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-500/30'
-                                : isRejected
-                                ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-500/30'
-                                : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-500/30'
-                            }`}>
-                              {isApproved && '🟢 Đang hiển thị'}
-                              {isRejected && '🔴 Bị từ chối'}
-                              {!isApproved && !isRejected && '🟡 Đang chờ duyệt'}
-                            </span>
-                            {p.rejectionReason && (
-                              <div className="text-[10px] text-rose-600 dark:text-rose-400 font-medium line-clamp-2 max-w-[130px]" title={p.rejectionReason}>
-                                Lý do: {p.rejectionReason}
-                              </div>
-                            )}
-                          </div>
-                        </td>
+                              {/* View Details Modal Button */}
+                              <button
+                                onClick={() => setSelectedSellerDetail(p)}
+                                className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-[10px] transition flex items-center gap-0.5 shrink-0"
+                                title="Xem đầy đủ Thông Tin Người Đăng & Chi Tiết Căn BĐS"
+                              >
+                                <Eye className="w-3 h-3" />
+                                <span className="hidden lg:inline">SĐT & Căn</span>
+                              </button>
 
-                        <td className="p-3 max-w-[180px]">
-                          <div className="space-y-1">
-                            <div className="text-[10px] text-slate-500 font-medium">
-                              🗓️ Đăng: <span className="font-bold text-slate-700 dark:text-slate-300">{expiryInfo.postDateFormatted}</span>
+                              {/* Share Button */}
+                              <button
+                                onClick={() => setSharingProperty(p)}
+                                className="p-1.5 bg-sky-600 hover:bg-sky-500 text-white font-extrabold rounded-lg text-[10px] transition shadow-xs flex items-center gap-0.5 shrink-0"
+                                title="Chia sẻ thông tin căn này lên Zalo, Group FB"
+                              >
+                                <Share2 className="w-3 h-3" />
+                              </button>
+
+                              {/* Archive / Restore Button */}
+                              <button
+                                onClick={() => handleToggleArchiveProperty(p)}
+                                className={`p-1.5 rounded-lg text-[10px] font-bold transition shrink-0 ${
+                                  expiryInfo.isExpired
+                                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                                    : 'bg-purple-100 dark:bg-purple-950 hover:bg-purple-200 text-purple-800 dark:text-purple-300'
+                                }`}
+                                title={expiryInfo.isExpired ? 'Phục hồi hiển thị' : 'Chuyển vào Kho Lưu Trữ'}
+                              >
+                                {expiryInfo.isExpired ? '🟢 Phục Hồi' : '📁 Lưu'}
+                              </button>
+
+                              {/* Edit Property */}
+                              <button
+                                onClick={() => setEditingProperty(p)}
+                                className="p-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-800 dark:text-slate-200 rounded-lg transition"
+                                title="Sửa BĐS & Che Mờ Vị Trí Ảnh"
+                              >
+                                <Edit3 className="w-3 h-3" />
+                              </button>
+
+                              {/* Approve Button */}
+                              {!isApproved && (
+                                <button
+                                  onClick={() => onApproveProperty(p.id)}
+                                  className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg text-[10px] transition shadow-xs flex items-center gap-0.5"
+                                  title="Phê duyệt tin này và đồng bộ lên Web Public"
+                                >
+                                  <Check className="w-3 h-3" /> Duyệt
+                                </button>
+                              )}
+
+                              {/* Reject Button */}
+                              {!isRejected && (
+                                <button
+                                  onClick={() => handleRejectProperty(p)}
+                                  className="px-1.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-lg text-[10px] transition shadow-xs flex items-center gap-0.5"
+                                  title="Từ chối tin này và ghi lý do gửi tới người đăng"
+                                >
+                                  ✕ Từ Chối
+                                </button>
+                              )}
+
+                              {/* Pending Button */}
+                              {(isApproved || isRejected) && (
+                                <button
+                                  onClick={() => handleUnapproveProperty(p)}
+                                  className="px-1.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg text-[10px] transition flex items-center gap-0.5"
+                                  title="Trả tin này về trạng thái Chờ Duyệt"
+                                >
+                                  🟡 Chờ
+                                </button>
+                              )}
+
+                              {/* Delete Property */}
+                              <button
+                                onClick={() => onDeleteProperty(p.id)}
+                                className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg transition"
+                                title="Xóa tin vĩnh viễn"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+
+                              {/* Expand / Collapse Button */}
+                              <button
+                                onClick={() => toggleExpandAdminProp(p.id)}
+                                className="p-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition"
+                                title={isExpanded ? 'Thu gọn' : 'Mở rộng chi tiết căn'}
+                              >
+                                {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                              </button>
                             </div>
+                          </td>
+                        </tr>
 
-                            {expiryInfo.isExpired ? (
-                              <div className="p-1.5 bg-purple-100 dark:bg-purple-950/70 border border-purple-300 dark:border-purple-800 rounded-lg text-purple-900 dark:text-purple-300 text-[10px] font-bold">
-                                📁 <b>TỰ ĐỘNG LƯU TRỮ</b>
-                                <div className="text-[9px] text-purple-700 dark:text-purple-400">
-                                  Bảo lưu SĐT & Căn {expiryInfo.archiveDaysLeft} ngày
+                        {/* EXPANDED ACCORDION ROW */}
+                        {isExpanded && (
+                          <tr className="bg-slate-50/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-700">
+                            <td colSpan={7} className="p-3 sm:p-4">
+                              <div className="space-y-3 text-xs animate-in fade-in duration-150">
+                                {/* Photo Gallery */}
+                                {p.images && p.images.length > 0 && (
+                                  <div>
+                                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1.5">
+                                      📷 Toàn Bộ Album Ảnh Căn Hộ / Biệt Thự ({p.images.length} ảnh):
+                                    </span>
+                                    <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                                      {p.images.map((imgUrl, imgIndex) => (
+                                        <img
+                                          key={imgIndex}
+                                          src={imgUrl}
+                                          alt={`${p.title} - ảnh ${imgIndex + 1}`}
+                                          className="w-24 h-16 sm:w-28 sm:h-20 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs"
+                                        />
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Technical Specs Grid */}
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                                  <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-400 block text-[10px]">Dự Án / Vị Trí:</span>
+                                    <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
+                                      📍 {p.project} • {p.address || p.location || 'Vinhomes'}
+                                    </span>
+                                  </div>
+
+                                  <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-400 block text-[10px]">Cơ Cấu / Phòng:</span>
+                                    <span className="font-bold text-slate-800 dark:text-slate-200 block">
+                                      🛏️ {p.bedrooms || 1} PN • 🚿 {p.bathrooms || 1} WC • 📐 {p.area} m²
+                                    </span>
+                                  </div>
+
+                                  <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-400 block text-[10px]">Hướng / Tầng:</span>
+                                    <span className="font-bold text-slate-800 dark:text-slate-200 block">
+                                      🧭 {p.direction || 'Đông Nam'} {p.floor ? `• Tầng ${p.floor}` : ''}
+                                    </span>
+                                  </div>
+
+                                  <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-400 block text-[10px]">Pháp Lý & Nội Thất:</span>
+                                    <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
+                                      📜 {p.legalStatus || 'Sổ đỏ lâu dài'} • {p.furniture || 'Đầy đủ'}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Full Description */}
+                                {p.description && (
+                                  <div className="bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                                      📝 Nội Dung Bài Đăng Đầy Đủ:
+                                    </span>
+                                    <p className="text-slate-700 dark:text-slate-300 text-xs whitespace-pre-line leading-relaxed">
+                                      {p.description}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {/* Direct Actions bar inside accordion */}
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+                                  <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                                    <span>👤 Người đăng: <strong>{sellerNameFormatted}</strong></span>
+                                    <span>•</span>
+                                    <a
+                                      href={`tel:${sellerPhoneFormatted}`}
+                                      className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                                    >
+                                      📞 {sellerPhoneFormatted}
+                                    </a>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={() => setSelectedSellerDetail(p)}
+                                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl flex items-center gap-1 shadow-xs"
+                                    >
+                                      <Eye className="w-3.5 h-3.5" />
+                                      <span>Xem SĐT Gốc & Căn Hộ</span>
+                                    </button>
+
+                                    <button
+                                      onClick={() => setEditingProperty(p)}
+                                      className="px-2.5 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl flex items-center gap-1"
+                                    >
+                                      <Edit3 className="w-3.5 h-3.5" />
+                                      <span>Sửa Nội Dung & Ảnh</span>
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
-                            ) : expiryInfo.daysRemaining <= 5 ? (
-                              <div className="p-1.5 bg-amber-100 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-800 rounded-lg text-amber-900 dark:text-amber-300 text-[10px] font-bold">
-                                ⏰ <b>SẮP HẾT HẠN: Còn {expiryInfo.daysRemaining} ngày</b>
-                                <div className="text-[9px] text-amber-700 dark:text-amber-400">
-                                  Bấm Up Tin để gia hạn +20 ngày
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="p-1 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 rounded-lg text-emerald-800 dark:text-emerald-300 text-[10px] font-bold">
-                                ⚡ Hạn hiển thị: Còn <b>{expiryInfo.daysRemaining} ngày</b>
-                              </div>
-                            )}
-                          </div>
-                        </td>
-
-                        <td className="p-3 text-center">
-                          <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                            {/* Up Tin Button */}
-                            <button
-                              onClick={() => handlePushPropertyNow(p)}
-                              className="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg text-[10px] transition shadow flex items-center gap-1 shrink-0"
-                              title="Up tin lên đầu & gia hạn thêm +20 ngày"
-                            >
-                              <Zap className="w-3 h-3 fill-slate-950" /> Up Tin (+20d)
-                            </button>
-
-                            {/* View Details Modal Button */}
-                            <button
-                              onClick={() => setSelectedSellerDetail(p)}
-                              className="px-2 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-[10px] transition flex items-center gap-1 shrink-0"
-                              title="Xem đầy đủ Thông Tin Người Đăng & Chi Tiết Căn BĐS"
-                            >
-                              <Eye className="w-3 h-3" /> SĐT & Căn
-                            </button>
-
-                            {/* Share to Zalo / FB Button */}
-                            <button
-                              onClick={() => setSharingProperty(p)}
-                              className="px-2 py-1.5 bg-sky-600 hover:bg-sky-500 text-white font-extrabold rounded-lg text-[10px] transition shadow flex items-center gap-1 shrink-0"
-                              title="Chia sẻ thông tin căn này lên Zalo, Group Facebook, Telegram"
-                            >
-                              <Share2 className="w-3 h-3" /> Chia Sẻ Zalo/FB
-                            </button>
-
-                            {/* Archive / Restore Button */}
-                            <button
-                              onClick={() => handleToggleArchiveProperty(p)}
-                              className={`p-1.5 rounded-lg text-[10px] font-bold transition shrink-0 ${
-                                expiryInfo.isExpired
-                                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                                  : 'bg-purple-100 dark:bg-purple-950 hover:bg-purple-200 text-purple-800 dark:text-purple-300'
-                              }`}
-                              title={expiryInfo.isExpired ? 'Phục hồi hiển thị' : 'Chuyển vào Kho Lưu Trữ'}
-                            >
-                              {expiryInfo.isExpired ? '🟢 Phục Hồi' : '📁 Lưu Trữ'}
-                            </button>
-
-                            {/* Edit Property */}
-                            <button
-                              onClick={() => setEditingProperty(p)}
-                              className="p-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-800 dark:text-slate-200 rounded-lg transition"
-                              title="Sửa BĐS & Che Mờ Vị Trí Ảnh"
-                            >
-                              <Edit3 className="w-3.5 h-3.5" />
-                            </button>
-
-                            {/* Approve Button */}
-                            {!isApproved && (
-                              <button
-                                onClick={() => onApproveProperty(p.id)}
-                                className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg text-[10px] transition shadow flex items-center gap-1"
-                                title="Phê duyệt tin này và đồng bộ lên Web Public"
-                              >
-                                <Check className="w-3.5 h-3.5" /> Duyệt
-                              </button>
-                            )}
-
-                            {/* Reject Button */}
-                            {!isRejected && (
-                              <button
-                                onClick={() => handleRejectProperty(p)}
-                                className="px-2 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-lg text-[10px] transition shadow flex items-center gap-1"
-                                title="Từ chối tin này và ghi lý do gửi tới người đăng"
-                              >
-                                🔴 Từ Chối
-                              </button>
-                            )}
-
-                            {/* Pending/Unapprove Button */}
-                            {(isApproved || isRejected) && (
-                              <button
-                                onClick={() => handleUnapproveProperty(p)}
-                                className="px-2 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg text-[10px] transition flex items-center gap-1"
-                                title="Trả tin này về trạng thái Chờ Duyệt"
-                              >
-                                🟡 Chờ Duyệt
-                              </button>
-                            )}
-
-                            {/* Delete Property */}
-                            <button
-                              onClick={() => onDeleteProperty(p.id)}
-                              className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg transition"
-                              title="Xóa tin vĩnh viễn"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
                     );
                   })}
               </tbody>
@@ -6344,7 +6530,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-        </main>
       </div>
 
       {/* Admin Tax Management Modal */}

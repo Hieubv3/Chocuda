@@ -170,9 +170,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
                     onOpenUpTinModal(property);
                   }}
                   className="px-1.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-[9px] font-bold rounded shadow-xs flex items-center gap-0.5"
-                  title="Up tin"
+                  title="Đẩy tin lên đầu"
                 >
-                  <Zap className="w-2.5 h-2.5" /> Up
+                  <Zap className="w-2.5 h-2.5" /> Đẩy Tin
                 </button>
               )}
 
@@ -276,10 +276,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               </span>
             )}
 
-            {/* Up Tin Tag */}
+            {/* Đẩy Tin Tag */}
             {!isVipDiamond && !isVipGold && isRecentlyPushed && (
               <span className="text-[8px] font-black badge-uptin px-1 py-0.2 rounded flex items-center gap-0.5">
-                <Zap className="w-2 h-2" /> UP
+                <Zap className="w-2 h-2" /> ĐẨY TIN
               </span>
             )}
 
@@ -288,7 +288,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             </span>
           </div>
 
-          {/* Top Right Actions (Save & Compare & Up-Tin) */}
+          {/* Top Right Actions (Save & Compare & Đẩy Tin) */}
           <div className="flex items-center gap-1 shrink-0 pointer-events-auto">
             {onOpenUpTinModal && (
               <button
@@ -297,10 +297,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
                   onOpenUpTinModal(property);
                 }}
                 className="px-1.5 py-0.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-[8px] font-bold rounded shadow-xs flex items-center gap-0.5 backdrop-blur-md transition transform active:scale-95"
-                title="Thanh toán Up Tin lên đầu"
+                title="Đẩy tin lên đầu danh sách"
               >
                 <Zap className="w-2 h-2 text-emerald-200" />
-                Up
+                Đẩy Tin
               </button>
             )}
 

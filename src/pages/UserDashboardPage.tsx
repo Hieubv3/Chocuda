@@ -6,7 +6,8 @@ import {
   Clock, Sparkles, AlertCircle, ArrowUpRight, Users, Share2,
   Gift, Wallet, Copy, Check, ExternalLink, Award, RefreshCw,
   Building2, FileText, ChevronDown, ChevronUp, Home,
-  ShoppingBag, Briefcase, Calculator, Plus, Phone, Mail, CheckCircle
+  ShoppingBag, Briefcase, Calculator, Plus, Phone, Mail, CheckCircle,
+  Edit2, Wrench, Settings, UserCheck, CreditCard
 } from 'lucide-react';
 import { calculateExpiryInfo } from '../lib/expiration';
 import { UpTinPaymentModal } from '../components/UpTinPaymentModal';
@@ -16,6 +17,9 @@ import { InteractionProofChatModal } from '../components/InteractionProofChatMod
 import { UserCvManagement } from '../components/UserCvManagement';
 import { UserEmployerRegistrationModal } from '../components/UserEmployerRegistrationModal';
 import { UserWalletSection } from '../components/UserWalletSection';
+import { UserProfileEditModal } from '../components/UserProfileEditModal';
+import { UserPropertyEditModal } from '../components/UserPropertyEditModal';
+import { UserResidentServicesManager } from '../components/UserResidentServicesManager';
 import { playMessageRingtone } from '../lib/audioRingtone';
 import { RECRUITMENT_PACKAGES } from '../data/recruitmentData';
 import { getPropertyDetailUrl, getProjectSlug } from '../lib/slugs';
@@ -71,7 +75,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const handleSelectProp = onSelectProperty || ((p: Property) => navigate(getPropertyDetailUrl(p)));
   const handleDeleteProp = onDeleteProperty || (() => {});
 
-  const [activeTab, setActiveTab] = useState<'my_properties' | 'wallet_tokens' | 'my_cv' | 'recruiter_packages' | 'my_store' | 'transactions' | 'affiliate'>('my_properties');
+  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_services' | 'my_store' | 'wallet_tokens' | 'my_cv' | 'recruiter_packages' | 'affiliate' | 'account_profile' | 'transactions'>('my_properties');
   const [propertyFilter, setPropertyFilter] = useState<'all' | 'approved' | 'pending' | 'expired'>('all');
   const [selectedPropertyForUpTin, setSelectedPropertyForUpTin] = useState<Property | null>(null);
   const [localTransactions, setLocalTransactions] = useState<UpTinTransaction[]>([]);
@@ -85,14 +89,35 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const [showInteractionChatModal, setShowInteractionChatModal] = useState<boolean>(false);
   const [isRenewingId, setIsRenewingId] = useState<string | null>(null);
 
+  // Profile & Property Edit Modals state
+  const [showProfileEditModal, setShowProfileEditModal] = useState<boolean>(false);
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null);
+  const [showPropertyEditModal, setShowPropertyEditModal] = useState<boolean>(false);
+
+  // Icon Compact & Expandable items state
+  const [userViewMode, setUserViewMode] = useState<'icon_compact' | 'detailed'>('icon_compact');
+  const [expandedPropIds, setExpandedPropIds] = useState<Record<string, boolean>>({});
+
   // Synchronize with parent user prop
   useEffect(() => {
     if (user) {
-      setUserState(prev => ({ ...prev, ...user }));
+      setUserState(prev => {
+        if (
+          prev.id === user.id &&
+          prev.balance === user.balance &&
+          prev.upTinCredits === user.upTinCredits &&
+          prev.affiliatePoints === user.affiliatePoints &&
+          prev.role === user.role &&
+          prev.name === user.name
+        ) {
+          return prev;
+        }
+        return { ...prev, ...user };
+      });
       if (typeof user.upTinCredits === 'number') setUpTinCredits(user.upTinCredits);
       if (typeof user.affiliatePoints === 'number') setAffiliateWallet(user.affiliatePoints);
     }
-  }, [user]);
+  }, [user?.id, user?.balance, user?.upTinCredits, user?.affiliatePoints, user?.tier, user?.role, user?.name, user?.phone, user?.email]);
 
   // Live Token Sync with Server, Admin & LocalStorage
   const refreshUserBalance = async (showToast = false) => {
@@ -206,6 +231,19 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
     if (propertyFilter === 'expired') return expiry.isExpired;
     return true;
   });
+
+  const toggleExpandProp = (id: string) => {
+    setExpandedPropIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleExpandAllProps = () => {
+    const allExpanded = filteredProperties.length > 0 && filteredProperties.every(p => expandedPropIds[p.id]);
+    const newState: Record<string, boolean> = {};
+    filteredProperties.forEach(p => {
+      newState[p.id] = !allExpanded;
+    });
+    setExpandedPropIds(newState);
+  };
 
   const handleUpTinSuccess = (updatedProp: Property, newTx: UpTinTransaction) => {
     setSelectedPropertyForUpTin(null);
@@ -400,7 +438,16 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           </div>
 
           {/* Quick Action Buttons */}
-          <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-center flex-wrap">
+            <button
+              onClick={() => setShowProfileEditModal(true)}
+              className="px-3 py-1.5 bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/50 rounded-xl text-xs font-black transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+              title="Chỉnh sửa họ tên, SĐT, Zalo, địa chỉ căn hộ, STK ngân hàng"
+            >
+              <Edit2 className="w-3.5 h-3.5" />
+              <span>Sửa Thông Tin</span>
+            </button>
+
             {user.role === 'admin' && (
               <Link
                 to="/admin"
@@ -622,39 +669,15 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
         </button>
 
         <button
-          onClick={() => setActiveTab('wallet_tokens')}
-          className={`flex-1 min-w-[150px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
-            activeTab === 'wallet_tokens'
-              ? 'bg-amber-500 text-slate-950 shadow-xs font-black'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
-        >
-          <span>🪙</span>
-          <span>Ví Token ({(userState.balance || 0).toLocaleString('vi-VN')})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('my_cv')}
-          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
-            activeTab === 'my_cv'
+          onClick={() => setActiveTab('my_services')}
+          className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'my_services'
               ? 'bg-teal-600 text-white shadow-xs font-black'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <FileText className="w-3.5 h-3.5" />
-          <span>Hồ Sơ CV Cư Dân</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('recruiter_packages')}
-          className={`flex-1 min-w-[145px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
-            activeTab === 'recruiter_packages'
-              ? 'bg-blue-600 text-white shadow-xs font-black'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
-        >
-          <Building2 className="w-3.5 h-3.5" />
-          <span>Gói Tuyển Dụng VIP</span>
+          <Wrench className="w-3.5 h-3.5" />
+          <span>Dịch Vụ & Kỹ Thuật</span>
         </button>
 
         <button
@@ -666,24 +689,72 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           }`}
         >
           <Crown className="w-3.5 h-3.5" />
-          <span>Gian Hàng KiotViet</span>
+          <span>Gian Hàng & Dịch Vụ</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('my_cv')}
+          className={`flex-1 min-w-[125px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'my_cv'
+              ? 'bg-sky-600 text-white shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          <span>Tuyển Dụng & Việc Làm</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('wallet_tokens')}
+          className={`flex-1 min-w-[145px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'wallet_tokens'
+              ? 'bg-amber-500 text-slate-950 shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <span>🪙</span>
+          <span>Ví Điểm Thưởng ({(userState.balance || 0).toLocaleString('vi-VN')})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('affiliate')}
-          className={`flex-1 min-w-[145px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+          className={`flex-1 min-w-[135px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'affiliate'
               ? 'bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-xs font-black'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <Share2 className="w-3.5 h-3.5" />
-          <span>Affiliate & Rút Tiền</span>
+          <span>Rút Hoa Hồng VietQR</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('account_profile')}
+          className={`flex-1 min-w-[145px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'account_profile'
+              ? 'bg-indigo-600 text-white shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <UserCheck className="w-3.5 h-3.5" />
+          <span>Hồ Sơ & Ngân Hàng</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('recruiter_packages')}
+          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'recruiter_packages'
+              ? 'bg-blue-600 text-white shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Building2 className="w-3.5 h-3.5" />
+          <span>Gói Tuyển Dụng</span>
         </button>
 
         <button
           onClick={() => setActiveTab('transactions')}
-          className={`flex-1 min-w-[125px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+          className={`flex-1 min-w-[120px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'transactions'
               ? 'bg-slate-800 text-white shadow-xs font-black'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -699,12 +770,12 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
       {/* ========================================================================= */}
       {activeTab === 'my_properties' && (
         <div className="space-y-3">
-          {/* Header & Filter Controls */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-            <div className="flex items-center gap-1.5 overflow-x-auto text-xs font-bold">
+          {/* Header & Filter Controls & Density Toggle */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-white dark:bg-slate-900 p-2.5 sm:p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+            <div className="flex items-center gap-1.5 overflow-x-auto text-xs font-bold scrollbar-none">
               <button
                 onClick={() => setPropertyFilter('all')}
-                className={`px-3 py-1.5 rounded-xl transition ${
+                className={`px-2.5 py-1.5 rounded-xl text-xs transition ${
                   propertyFilter === 'all'
                     ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900'
@@ -715,18 +786,18 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
               <button
                 onClick={() => setPropertyFilter('approved')}
-                className={`px-3 py-1.5 rounded-xl transition ${
+                className={`px-2.5 py-1.5 rounded-xl text-xs transition ${
                   propertyFilter === 'approved'
                     ? 'bg-emerald-600 text-white font-black'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900'
                 }`}
               >
-                🟢 Đang Hiển Thị ({approvedCount})
+                🟢 Đang Hiện ({approvedCount})
               </button>
 
               <button
                 onClick={() => setPropertyFilter('pending')}
-                className={`px-3 py-1.5 rounded-xl transition ${
+                className={`px-2.5 py-1.5 rounded-xl text-xs transition ${
                   propertyFilter === 'pending'
                     ? 'bg-amber-500 text-slate-950 font-black'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900'
@@ -737,23 +808,63 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
               <button
                 onClick={() => setPropertyFilter('expired')}
-                className={`px-3 py-1.5 rounded-xl transition ${
+                className={`px-2.5 py-1.5 rounded-xl text-xs transition ${
                   propertyFilter === 'expired'
                     ? 'bg-rose-600 text-white font-black'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900'
                 }`}
               >
-                🛑 Quá Hạn 30 Ngày
+                🛑 Quá Hạn
               </button>
             </div>
 
-            <button
-              onClick={handlePostProperty}
-              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ Đăng Tin Mới</span>
-            </button>
+            <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+              {/* Density View Switcher */}
+              <div className="bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl flex items-center gap-0.5 text-[11px] font-bold">
+                <button
+                  onClick={() => setUserViewMode('icon_compact')}
+                  className={`px-2 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
+                    userViewMode === 'icon_compact'
+                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Chế độ biểu tượng thu gọn, click để mở rộng"
+                >
+                  <span>⚡</span>
+                  <span className="hidden sm:inline">Icon Thu Gọn</span>
+                </button>
+                <button
+                  onClick={() => setUserViewMode('detailed')}
+                  className={`px-2 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
+                    userViewMode === 'detailed'
+                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Chế độ hiển thị chi tiết đầy đủ"
+                >
+                  <span>📋</span>
+                  <span className="hidden sm:inline">Chi Tiết</span>
+                </button>
+              </div>
+
+              {filteredProperties.length > 0 && (
+                <button
+                  onClick={toggleExpandAllProps}
+                  className="px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-[11px] rounded-xl transition cursor-pointer"
+                  title="Mở rộng hoặc thu gọn tất cả tin đăng"
+                >
+                  {filteredProperties.every(p => expandedPropIds[p.id]) ? 'Thu gọn ▴' : 'Mở rộng ▾'}
+                </button>
+              )}
+
+              <button
+                onClick={handlePostProperty}
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Đăng Tin</span>
+              </button>
+            </div>
           </div>
 
           {/* Listings Container */}
@@ -776,139 +887,295 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-2.5">
+            <div className="space-y-2">
               {filteredProperties.map((prop) => {
                 const expiry = calculateExpiryInfo(prop, 30);
                 const isApproved = prop.status === 'approved' || prop.approved || prop.approvalStatus === 'approved';
                 const isRejected = prop.status === 'rejected' || prop.approvalStatus === 'rejected';
                 const isPending = !isApproved && !isRejected;
                 const detailUrl = getPropertyDetailUrl(prop);
+                const isExpanded = userViewMode === 'detailed' || Boolean(expandedPropIds[prop.id]);
 
                 return (
                   <div
                     key={prop.id}
-                    className={`bg-white dark:bg-slate-900 rounded-2xl border p-3 sm:p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xs hover:shadow-sm transition ${
+                    className={`bg-white dark:bg-slate-900 rounded-2xl border transition shadow-xs overflow-hidden ${
                       expiry.isExpired
-                        ? 'border-rose-300 dark:border-rose-800/80 bg-rose-50/20'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-emerald-500/50'
+                        ? 'border-rose-300 dark:border-rose-800/80 bg-rose-50/10'
+                        : isExpanded
+                        ? 'border-emerald-500/60 ring-1 ring-emerald-500/20'
+                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                     }`}
                   >
-                    {/* Left: Thumbnail & Main Info with DIRECT Link */}
-                    <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <Link to={detailUrl} className="relative shrink-0 group">
-                        <img
-                          src={prop.images?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=300&q=80'}
-                          alt={prop.title}
-                          className="w-20 h-16 sm:w-24 sm:h-20 rounded-xl object-cover border border-slate-200 dark:border-slate-800 group-hover:opacity-90 transition"
-                        />
-                        <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-slate-950/80 text-white text-[9px] font-bold rounded">
-                          {prop.area}m²
-                        </span>
-                      </Link>
-
-                      <div className="space-y-1 min-w-0 flex-1">
-                        {/* Badges row */}
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          {isApproved && !expiry.isExpired && (
-                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30">
-                              🟢 Hiển thị
-                            </span>
-                          )}
-                          {isApproved && expiry.isExpired && (
-                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-500/30">
-                              🛑 Quá 30 ngày
-                            </span>
-                          )}
-                          {isRejected && (
-                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300">
-                              🔴 Từ chối
-                            </span>
-                          )}
-                          {isPending && (
-                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
-                              🟡 Chờ duyệt
-                            </span>
-                          )}
-
-                          {isApproved && !expiry.isExpired && (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 inline-flex items-center gap-1">
-                              <Clock className="w-2.5 h-2.5" />
-                              <span>Còn {expiry.daysRemaining} ngày</span>
-                            </span>
-                          )}
-
-                          <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">
-                            {prop.priceDisplay}
+                    {/* PRIMARY COMPACT HEADER ROW (Icon-First & Dense) */}
+                    <div className="p-2.5 sm:p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+                      
+                      {/* Left: Thumbnail & Core Icon Specs */}
+                      <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                        {/* Thumbnail */}
+                        <div 
+                          onClick={() => toggleExpandProp(prop.id)}
+                          className="relative shrink-0 cursor-pointer group"
+                        >
+                          <img
+                            src={prop.images?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
+                            alt={prop.title}
+                            className="w-14 h-12 sm:w-16 sm:h-14 rounded-xl object-cover border border-slate-200 dark:border-slate-800 group-hover:opacity-90 transition"
+                          />
+                          <span className="absolute bottom-0.5 right-0.5 px-1 py-0.2 bg-slate-950/80 text-white text-[8px] font-bold rounded">
+                            {prop.images?.length || 1} 📷
                           </span>
                         </div>
 
-                        {/* Title with Direct Link */}
+                        {/* Text & Icon Pills */}
+                        <div className="space-y-1 min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {/* Status Icon Pill */}
+                            {isApproved && !expiry.isExpired && (
+                              <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md inline-flex items-center gap-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30">
+                                🟢 Hiện
+                              </span>
+                            )}
+                            {isApproved && expiry.isExpired && (
+                              <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md inline-flex items-center gap-0.5 bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-500/30">
+                                🛑 Hết hạn
+                              </span>
+                            )}
+                            {isPending && (
+                              <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md inline-flex items-center gap-0.5 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                                🟡 Chờ
+                              </span>
+                            )}
+                            {isRejected && (
+                              <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md inline-flex items-center gap-0.5 bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300">
+                                🔴 Từ chối
+                              </span>
+                            )}
+
+                            {/* Type Pill */}
+                            <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-md uppercase ${
+                              prop.type === 'sale' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-teal-500/10 text-teal-600'
+                            }`}>
+                              {prop.type === 'sale' ? '🏠 Bán' : '🔑 Thuê'}
+                            </span>
+
+                            {/* Price */}
+                            <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                              💰 {prop.priceDisplay}
+                            </span>
+
+                            {/* Area */}
+                            <span className="text-[10px] text-slate-500 font-mono font-bold">
+                              📐 {prop.area}m²
+                            </span>
+
+                            {/* Bedrooms */}
+                            {prop.bedrooms && (
+                              <span className="text-[10px] text-slate-500 font-bold hidden md:inline">
+                                🛏️ {prop.bedrooms}PN
+                              </span>
+                            )}
+
+                            {/* Expiry */}
+                            {isApproved && !expiry.isExpired && (
+                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 inline-flex items-center gap-0.5">
+                                ⏳ {expiry.daysRemaining}d
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Title (Clickable) */}
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => toggleExpandProp(prop.id)}
+                              className="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-emerald-600 dark:hover:text-emerald-400 text-left line-clamp-1 cursor-pointer"
+                              title="Bấm để mở rộng xem chi tiết"
+                            >
+                              {prop.title}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: Functional Action Icons */}
+                      <div className="flex items-center gap-1 shrink-0 self-end sm:self-center flex-wrap">
+                        {/* View Public Button */}
                         <Link
                           to={detailUrl}
-                          className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 hover:text-emerald-600 dark:hover:text-emerald-400 transition line-clamp-1 block"
-                          title="Bấm để xem bài viết công khai"
+                          className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition flex items-center gap-1 text-[11px] font-bold"
+                          title="Xem bài đăng công khai"
                         >
-                          {prop.title}
+                          <Eye className="w-3.5 h-3.5 text-slate-500" />
+                          <span className="hidden md:inline">Xem Tin</span>
                         </Link>
 
-                        {/* Location & Post Date */}
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                          📍 {prop.address || prop.location || 'Vinhomes'} • Đăng: {expiry.postDateFormatted}
-                        </p>
+                        {/* Edit Button */}
+                        <button
+                          onClick={() => {
+                            setEditingProperty(prop);
+                            setShowPropertyEditModal(true);
+                          }}
+                          className="p-1.5 bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-500/30 rounded-xl transition flex items-center gap-1 text-[11px] font-bold cursor-pointer"
+                          title="Sửa bài đăng BĐS"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                          <span className="hidden md:inline">Sửa</span>
+                        </button>
+
+                        {/* Up Tin Button */}
+                        <button
+                          onClick={() => setSelectedPropertyForUpTin(prop)}
+                          className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[11px] rounded-xl shadow-xs flex items-center gap-1 transition cursor-pointer"
+                          title="Đẩy tin lên Top 1"
+                        >
+                          <Zap className="w-3.5 h-3.5 text-emerald-200" />
+                          <span>Up Tin</span>
+                        </button>
+
+                        {/* Renew Button */}
+                        <button
+                          onClick={() => handleRenewProperty(prop.id)}
+                          disabled={isRenewingId === prop.id}
+                          className="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 text-slate-600 hover:text-amber-600 rounded-xl transition cursor-pointer"
+                          title="Gia hạn +30 ngày"
+                        >
+                          <RefreshCw className={`w-3.5 h-3.5 ${isRenewingId === prop.id ? 'animate-spin text-amber-500' : ''}`} />
+                        </button>
+
+                        {/* Delete Button */}
+                        <button
+                          onClick={() => {
+                            if (window.confirm('Bạn có chắc chắn muốn xóa bài đăng này?')) {
+                              handleDeleteProp(prop.id);
+                            }
+                          }}
+                          className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
+                          title="Xóa bài đăng"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Expand / Collapse Chevron Button */}
+                        <button
+                          onClick={() => toggleExpandProp(prop.id)}
+                          className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition flex items-center gap-0.5 text-[11px] font-bold cursor-pointer"
+                          title={isExpanded ? 'Thu gọn' : 'Mở rộng chi tiết'}
+                        >
+                          <span className="text-[10px] text-slate-500 hidden lg:inline">{isExpanded ? 'Gọn' : 'Chi tiết'}</span>
+                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                        </button>
                       </div>
                     </div>
 
-                    {/* Right: Functional Action Buttons */}
-                    <div className="flex items-center gap-1.5 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800 shrink-0 justify-end">
-                      {/* Direct Public Link Button */}
-                      <Link
-                        to={detailUrl}
-                        className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl transition flex items-center gap-1"
-                        title="Xem trang hiển thị công khai của tin đăng"
-                      >
-                        <Eye className="w-3.5 h-3.5 text-slate-500" />
-                        <span>Xem Tin</span>
-                      </Link>
+                    {/* EXPANDED DETAILED ACCORDION (Click to Expand) */}
+                    {isExpanded && (
+                      <div className="p-3 sm:p-4 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-800 space-y-3 animate-in fade-in duration-200 text-xs">
+                        {/* 1. Image Gallery Strip */}
+                        {prop.images && prop.images.length > 0 && (
+                          <div>
+                            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1.5">
+                              📷 Album Ảnh ({prop.images.length} ảnh):
+                            </span>
+                            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                              {prop.images.map((imgUrl, imgIdx) => (
+                                <img
+                                  key={imgIdx}
+                                  src={imgUrl}
+                                  alt={`${prop.title} - ảnh ${imgIdx + 1}`}
+                                  className="w-24 h-16 sm:w-28 sm:h-20 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs"
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
-                      {/* Up Tin Button */}
-                      <button
-                        onClick={() => setSelectedPropertyForUpTin(prop)}
-                        className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs rounded-xl shadow-xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
-                        title="Đẩy tin lên Top 1 trang chủ"
-                      >
-                        <Zap className="w-3.5 h-3.5 text-emerald-200" />
-                        <span>⚡ Up Tin</span>
-                      </button>
+                        {/* 2. Full Technical Specs Grid */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                          <div className="bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <span className="text-slate-400 block text-[10px]">Dự Án / Phân Khu:</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200 truncate block">
+                              📍 {prop.project} {prop.subdivision ? `• ${prop.subdivision}` : ''}
+                            </span>
+                          </div>
 
-                      {/* Renew Button */}
-                      <button
-                        onClick={() => handleRenewProperty(prop.id)}
-                        disabled={isRenewingId === prop.id}
-                        className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-slate-700 dark:text-slate-300 hover:text-amber-600 rounded-xl transition cursor-pointer"
-                        title="Gia hạn thêm 30 ngày hiển thị"
-                      >
-                        <RefreshCw className={`w-3.5 h-3.5 ${isRenewingId === prop.id ? 'animate-spin text-amber-500' : ''}`} />
-                      </button>
+                          <div className="bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <span className="text-slate-400 block text-[10px]">Cơ Cấu Phòng:</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200 block">
+                              🛏️ {prop.bedrooms || 1} PN • 🚿 {prop.bathrooms || 1} WC
+                            </span>
+                          </div>
 
-                      {/* Delete Button */}
-                      <button
-                        onClick={() => {
-                          if (window.confirm('Bạn có chắc chắn muốn xóa bài đăng này?')) {
-                            handleDeleteProp(prop.id);
-                          }
-                        }}
-                        className="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
-                        title="Xóa bài đăng"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                          <div className="bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <span className="text-slate-400 block text-[10px]">Hướng & Tầng:</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200 block">
+                              🧭 {prop.direction || 'Đông Nam'} {prop.floor ? `• Tầng ${prop.floor}` : ''}
+                            </span>
+                          </div>
+
+                          <div className="bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <span className="text-slate-400 block text-[10px]">Pháp Lý & Nội Thất:</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200 truncate block">
+                              📜 {prop.legalStatus || 'Sổ đỏ lâu dài'} • {prop.furniture || 'Đầy đủ'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 3. Description Box */}
+                        {prop.description && (
+                          <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                              📝 Mô Tả Chi Tiết:
+                            </span>
+                            <p className="text-slate-700 dark:text-slate-300 text-xs whitespace-pre-line line-clamp-4 leading-relaxed">
+                              {prop.description}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* 4. Bottom Footer Info & Fast Actions */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-700/60 text-[11px]">
+                          <div className="flex items-center gap-3 text-slate-500">
+                            <span>🗓️ Đăng: <strong>{expiry.postDateFormatted}</strong></span>
+                            <span>⏳ Hết hạn: <strong>{expiry.expiresAtFormatted}</strong></span>
+                            <span>👁️ Lượt xem: <strong>{prop.viewsCount || 24}</strong></span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <Link
+                              to={detailUrl}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl flex items-center gap-1 transition shadow-xs"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                              <span>Mở Trang BĐS</span>
+                            </Link>
+
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(`${window.location.origin}${detailUrl}`);
+                                alert('📋 Đã sao chép liên kết bài đăng BĐS!');
+                              }}
+                              className="px-2.5 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl flex items-center gap-1 transition cursor-pointer"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>Copy Link</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
           )}
         </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB: MY SERVICES (DỊCH VỤ & THỢ KỸ THUẬT CƯ DÂN) */}
+      {/* ========================================================================= */}
+      {activeTab === 'my_services' && (
+        <UserResidentServicesManager user={userState} onRefresh={onRefreshData} />
       )}
 
       {/* ========================================================================= */}
@@ -1147,8 +1414,132 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
       )}
 
       {/* ========================================================================= */}
+      {/* TAB: ACCOUNT PROFILE & BANK DETAILS */}
+      {/* ========================================================================= */}
+      {activeTab === 'account_profile' && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 space-y-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center gap-3">
+              <img
+                src={userState.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}
+                alt={userState.name}
+                className="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-500/50 shadow-md"
+              />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                    {userState.name}
+                  </h2>
+                  <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] rounded-md border border-emerald-500/20">
+                    {userState.role === 'admin' ? '👑 Admin' : 'Cư Dân'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500">{userState.email}</p>
+                <p className="text-xs text-slate-500 mt-0.5">📞 {userState.phone || 'Chưa cập nhật SĐT'}</p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowProfileEditModal(true)}
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition cursor-pointer self-start sm:self-center"
+            >
+              <Edit2 className="w-4 h-4" />
+              <span>Chỉnh Sửa Hồ Sơ & Ngân Hàng</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            {/* Box 1: Thông tin liên hệ cư dân */}
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+              <h3 className="font-black text-slate-900 dark:text-white flex items-center gap-2 text-sm">
+                <UserCheck className="w-4 h-4 text-emerald-500" />
+                Thông Tin Cư Dân & Căn Hộ
+              </h3>
+              <div className="space-y-2">
+                <div className="flex justify-between border-b border-slate-200 dark:border-slate-700/60 pb-1.5">
+                  <span className="text-slate-500">Họ và tên:</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{userState.name}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 dark:border-slate-700/60 pb-1.5">
+                  <span className="text-slate-500">Số điện thoại:</span>
+                  <span className="font-bold font-mono text-slate-800 dark:text-slate-200">{userState.phone || '—'}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 dark:border-slate-700/60 pb-1.5">
+                  <span className="text-slate-500">Số Zalo liên hệ:</span>
+                  <span className="font-bold font-mono text-slate-800 dark:text-slate-200">{userState.zaloPhone || userState.phone || '—'}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 dark:border-slate-700/60 pb-1.5">
+                  <span className="text-slate-500">Email đăng nhập:</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{userState.email}</span>
+                </div>
+                <div className="flex justify-between pb-1">
+                  <span className="text-slate-500">Căn hộ / Địa chỉ:</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400 truncate max-w-[200px]">{userState.apartmentAddress || 'Vinhomes Ocean Park'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Box 2: Thông tin tài khoản ngân hàng */}
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+              <h3 className="font-black text-slate-900 dark:text-white flex items-center gap-2 text-sm">
+                <CreditCard className="w-4 h-4 text-amber-500" />
+                Tài Khoản Ngân Hàng Nhận Tiền
+              </h3>
+              <div className="space-y-2">
+                <div className="flex justify-between border-b border-slate-200 dark:border-slate-700/60 pb-1.5">
+                  <span className="text-slate-500">Ngân hàng:</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{userState.bankName || 'Vietcombank'}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 dark:border-slate-700/60 pb-1.5">
+                  <span className="text-slate-500">Số tài khoản:</span>
+                  <span className="font-bold font-mono text-amber-600 dark:text-amber-400">{userState.bankAccountNumber || 'Chưa cập nhật'}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 dark:border-slate-700/60 pb-1.5">
+                  <span className="text-slate-500">Tên chủ tài khoản:</span>
+                  <span className="font-bold uppercase text-slate-800 dark:text-slate-200">{userState.bankAccountName || userState.name.toUpperCase()}</span>
+                </div>
+                <div className="flex justify-between pb-1">
+                  <span className="text-slate-500">Phương thức rút tiền:</span>
+                  <span className="font-bold text-emerald-600">VietQR Tự Động 24/7</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
       {/* MODALS */}
       {/* ========================================================================= */}
+
+      {/* User Profile Edit Modal */}
+      <UserProfileEditModal
+        isOpen={showProfileEditModal}
+        onClose={() => setShowProfileEditModal(false)}
+        user={userState}
+        onSave={(updated) => {
+          setUserState(prev => ({ ...prev, ...updated }));
+          if (onRefreshData) onRefreshData();
+        }}
+      />
+
+      {/* User Property Edit Modal */}
+      <UserPropertyEditModal
+        isOpen={showPropertyEditModal}
+        onClose={() => {
+          setShowPropertyEditModal(false);
+          setEditingProperty(null);
+        }}
+        property={editingProperty}
+        onSave={(savedProp) => {
+          if (onUpdateProperty) {
+            onUpdateProperty(savedProp);
+          }
+          if (onRefreshData) {
+            onRefreshData();
+          }
+        }}
+      />
 
       {/* Withdrawal Modal */}
       {showWithdrawModal && (

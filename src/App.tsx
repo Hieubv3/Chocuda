@@ -352,7 +352,7 @@ export const App: React.FC = () => {
   // Admin route & hash compatibility:
   // If user visits #admin, #quantri or #quantri24h, route to /admin
   useEffect(() => {
-    const hash = window.location.hash.toLowerCase();
+    const hash = (location.hash || '').toLowerCase();
     if (
       hash === '#admin' ||
       hash === '#quantri' ||
@@ -360,10 +360,11 @@ export const App: React.FC = () => {
       hash === '#quantri24h' ||
       hash === '#admin-login'
     ) {
-      window.history.replaceState(null, '', window.location.pathname + window.location.search);
-      navigate('/admin');
+      if (location.pathname !== '/admin') {
+        navigate('/admin', { replace: true });
+      }
     }
-  }, [location, navigate]);
+  }, [location.hash, location.pathname, navigate]);
 
   // Handle tab switching helper for Header/Footer compatibility
   const handleTabSwitch = (tab: string) => {

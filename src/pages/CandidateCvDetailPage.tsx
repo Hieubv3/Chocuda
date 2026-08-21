@@ -49,7 +49,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
         }
       })
       .catch(() => {});
-  }, [currentUser]);
+  }, [currentUser?.id, currentUser?.role]);
 
   const cleanId = decodeURIComponent(candidateId || '').trim();
   const candidate = useMemo(() => {
