@@ -538,7 +538,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
             : 'CẬP NHẬT & ĐỒNG BỘ HÀNG HÓA TỪ KIOTVIET'}
         </h1>
         <p className="text-xs text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          Nền tảng trao đổi BĐS chính chủ, đăng quảng bá dịch vụ cư dân và tự động đồng bộ kho hàng hóa từ KiotViet lên Chợ Cư Dân 24H. (Hotline/Zalo <b>0868.499.929</b> hỗ trợ 24/7).
+          Nền tảng trao đổi BĐS chính chủ, đăng quảng bá dịch vụ cư dân và tự động đồng bộ kho hàng hóa từ KiotViet lên Chợ Cư Dân 24H. Người dùng tự do nhập số điện thoại liên hệ chính chủ của mình.
         </p>
       </div>
 
@@ -839,6 +839,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   required
                   value={servicePhoneInput}
                   onChange={(e) => setServicePhoneInput(e.target.value)}
+                  placeholder="Nhập SĐT/Zalo của bạn (VD: 0912345678)"
                   className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                 />
               </div>
@@ -1633,7 +1634,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     required
                     value={sellerPhone}
                     onChange={(e) => setSellerPhone(e.target.value)}
-                    placeholder="0868.xxx.xxx"
+                    placeholder="Nhập SĐT/Zalo của bạn (VD: 0912345678)"
                     className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                   />
                   {user?.phone && sellerPhone === user.phone && (

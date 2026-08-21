@@ -169,7 +169,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
         project: candidate.desiredProject,
         details: {
           candidateName: candidate.fullName,
-          candidatePhone: candidate.phone || candidate.zalo || '0868499929',
+          candidatePhone: candidate.phone || candidate.zalo || '',
           employerCompany,
           jobTitleOffered
         }
@@ -273,15 +273,17 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
                 <span>Mời Phỏng Vấn Ngay</span>
               </a>
 
-              <a
-                href={`https://zalo.me/${candidate.zalo || candidate.phone || '0868499929'}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-2xl shadow transition flex items-center gap-2"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>Chat Zalo Trực Tiếp</span>
-              </a>
+              {(candidate.zalo || candidate.phone) && (
+                <a
+                  href={`https://zalo.me/${(candidate.zalo || candidate.phone || '').replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-2xl shadow transition flex items-center gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Chat Zalo Trực Tiếp</span>
+                </a>
+              )}
 
               <button
                 onClick={() => setShowShareModal(true)}
@@ -452,7 +454,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
                   <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
                   <h4 className="text-base font-black text-white">ĐÃ GỬI LỜI MỜI THÀNH CÔNG!</h4>
                   <p className="text-xs text-emerald-200">
-                    Ứng viên đã nhận được thông báo. Bạn cũng có thể liên hệ trực tiếp qua Zalo / Số điện thoại <b>{candidate.phone || candidate.zalo || '0868.499.929'}</b>.
+                    Ứng viên đã nhận được thông báo. Bạn cũng có thể liên hệ trực tiếp qua Zalo / Số điện thoại <b>{candidate.phone || candidate.zalo || 'của ứng viên'}</b>.
                   </p>
                   <button
                     onClick={() => setInviteSuccess(false)}

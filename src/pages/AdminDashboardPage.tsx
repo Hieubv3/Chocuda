@@ -267,8 +267,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newSrvSubCat, setNewSrvSubCat] = useState('');
   const [newSrvProject, setNewSrvProject] = useState('Vinhomes Ocean Park 1');
   const [newSrvProviderName, setNewSrvProviderName] = useState('');
-  const [newSrvProviderPhone, setNewSrvProviderPhone] = useState('0868499929');
-  const [newSrvProviderZalo, setNewSrvProviderZalo] = useState('0868499929');
+  const [newSrvProviderPhone, setNewSrvProviderPhone] = useState('');
+  const [newSrvProviderZalo, setNewSrvProviderZalo] = useState('');
   const [newSrvAddress, setNewSrvAddress] = useState('');
   const [newSrvPrice, setNewSrvPrice] = useState('Liên hệ báo giá');
   const [newSrvImage, setNewSrvImage] = useState('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');
@@ -280,8 +280,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewSrvSubCat('');
     setNewSrvProject('Vinhomes Ocean Park 1');
     setNewSrvProviderName('');
-    setNewSrvProviderPhone('0868499929');
-    setNewSrvProviderZalo('0868499929');
+    setNewSrvProviderPhone('');
+    setNewSrvProviderZalo('');
     setNewSrvAddress('');
     setNewSrvPrice('Liên hệ báo giá');
     setNewSrvImage('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');
@@ -400,7 +400,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [servicePackageMonthPrice, setServicePackageMonthPrice] = useState<number>(199000); // 199k VNĐ/tháng
   const [servicePackage3MonthPrice, setServicePackage3MonthPrice] = useState<number>(499000); // 499k VNĐ/3 tháng
   const [payoutRequests, setPayoutRequests] = useState([
-    { id: 'po-1', userName: 'Bùi Trung Hiếu', userPhone: '0868499929', amount: 300000, bank: 'Vietcombank', bankAccount: '0868499929', status: 'pending', requestedAt: '2026-08-02 09:15' },
+    { id: 'po-1', userName: 'Bùi Trung Hiếu', userPhone: '0988112233', amount: 300000, bank: 'Vietcombank', bankAccount: '0988112233', status: 'pending', requestedAt: '2026-08-02 09:15' },
     { id: 'po-2', userName: 'Nguyễn Văn Anh', userPhone: '0912345678', amount: 500000, bank: 'MB Bank', bankAccount: '0912345678', status: 'approved', requestedAt: '2026-08-01 14:20' },
   ]);
 
@@ -518,8 +518,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       `"${(c.email || '').replace(/"/g, '""')}"`,
       `"${(c.projectInterest || '').replace(/"/g, '""')}"`,
       `"${(c.propertyTitle || '').replace(/"/g, '""')}"`,
-      `"${(c.sellerName || 'Nhà đẹp Vinhomes').replace(/"/g, '""')}"`,
-      `"${(c.sellerPhone || '0868.499.929').replace(/"/g, '""')}"`,
+      `"${(c.sellerName || 'Người đăng tin').replace(/"/g, '""')}"`,
+      `"${(c.sellerPhone || '').replace(/"/g, '""')}"`,
       `"${(c.preferredTime || '').replace(/"/g, '""')}"`,
       `"${(c.note || '').replace(/"/g, '""')}"`,
       c.type === 'viewing' ? 'Đặt lịch xem nhà' : c.type === 'deposit' ? 'Cọc giữ chỗ' : 'Tư vấn',
@@ -1057,8 +1057,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewSrvSubCat(srv.subCategory || '');
     setNewSrvProject(srv.project || 'Vinhomes Ocean Park 1');
     setNewSrvProviderName(srv.providerName || '');
-    setNewSrvProviderPhone(srv.providerPhone || '0868499929');
-    setNewSrvProviderZalo(srv.providerZalo || '0868499929');
+    setNewSrvProviderPhone(srv.providerPhone || '');
+    setNewSrvProviderZalo(srv.providerZalo || '');
     setNewSrvAddress(srv.address || '');
     setNewSrvPrice(srv.priceDisplay || 'Liên hệ báo giá');
     setNewSrvImage(srv.images && srv.images.length > 0 ? srv.images[0] : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');
@@ -3388,7 +3388,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">2. Đường dẫn liên kết (Link Web / Zalo)</label>
                     <input
                       type="text"
-                      placeholder="Ví dụ: https://zalo.me/0868499929"
+                      placeholder="Ví dụ: https://zalo.me/0912345678"
                       value={newAdLink}
                       onChange={e => setNewAdLink(e.target.value)}
                       className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs"
@@ -3895,7 +3895,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   .slice(0, 150)
                   .map((p) => {
                     const expiryInfo = getPropertyExpiryInfo(p);
-                    const sellerPhoneFormatted = p.sellerPhone || '0868.499.929';
+                    const sellerPhoneFormatted = p.sellerPhone || 'Chưa cập nhật SĐT';
                     const sellerNameFormatted = p.sellerName || 'Chủ Hộ / Sale BĐS';
                     const isApproved = p.status === 'approved' || p.approved || p.approvalStatus === 'approved';
                     const isRejected = p.status === 'rejected' || p.approvalStatus === 'rejected';
@@ -4665,17 +4665,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                       {/* Seller info */}
                       <td className="py-3.5 px-3">
-                        <div className="font-bold text-slate-800 dark:text-slate-200">{c.sellerName || 'Nhà đẹp Vinhomes'}</div>
+                        <div className="font-bold text-slate-800 dark:text-slate-200">{c.sellerName || 'Người đăng tin'}</div>
                         <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                          <span>SĐT: {c.sellerPhone || '0868.499.929'}</span>
-                          <a
-                            href={`https://zalo.me/${(c.sellerPhone || '0868499929').replace(/\D/g, '')}?text=Báo%20lịch%20xem%20nhà%3A%20${encodeURIComponent(c.fullName)}%20(${c.phone})`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[9px] text-blue-500 font-bold hover:underline"
-                          >
-                            (Báo Chủ)
-                          </a>
+                          {c.sellerPhone ? (
+                            <>
+                              <span>SĐT: {c.sellerPhone}</span>
+                              <a
+                                href={`https://zalo.me/${c.sellerPhone.replace(/\D/g, '')}?text=Báo%20lịch%20xem%20nhà%3A%20${encodeURIComponent(c.fullName)}%20(${c.phone})`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[9px] text-blue-500 font-bold hover:underline"
+                              >
+                                (Báo Chủ)
+                              </a>
+                            </>
+                          ) : (
+                            <span className="italic text-slate-400">Chưa có SĐT</span>
+                          )}
                         </div>
                       </td>
 
@@ -6035,7 +6041,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           price={sharingProperty.priceDisplay}
           location={`${sharingProperty.location} - ${sharingProperty.project}`}
           summary={sharingProperty.description}
-          phone={sharingProperty.sellerPhone || '0868499929'}
+          phone={sharingProperty.sellerPhone || ''}
           url={`${window.location.origin}/#property-${sharingProperty.id}`}
           onClose={() => setSharingProperty(null)}
         />
@@ -6155,7 +6161,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số điện thoại / Zalo</label>
                   <input
                     type="text"
-                    placeholder="0868.499.929"
+                    placeholder="VD: 0912.345.678"
                     value={userFormData.phone}
                     onChange={(e) => setUserFormData(p => ({ ...p, phone: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -7398,7 +7404,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <input
                     type="tel"
                     required
-                    placeholder="0868.499.929"
+                    placeholder="VD: 0912.345.678"
                     value={storeFormData.ownerPhone}
                     onChange={(e) => setStoreFormData(p => ({ ...p, ownerPhone: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-mono font-bold"

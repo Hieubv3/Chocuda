@@ -132,9 +132,9 @@ export const INITIAL_PROJECTS: Project[] = [
 export const INITIAL_ADS: AdBanner[] = [
   {
     id: 'ad-01',
-    title: 'Đăng Bán & Cho Thuê BĐS Vinhomes Ocean Park 2,3 Miễn Phí Trên Nhà đẹp Vinhomes',
+    title: 'Đăng Bán & Cho Thuê BĐS Vinhomes Ocean Park 2,3 Miễn Phí Trên Chợ Cư Dân',
     imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
-    linkUrl: 'https://zalo.me/0868499929',
+    linkUrl: '/post-property',
     position: 'header_top',
     active: true,
     clickCount: 1420,
@@ -144,7 +144,7 @@ export const INITIAL_ADS: AdBanner[] = [
     id: 'ad-02',
     title: 'Gói Vay Vốn Ngân Hàng Ưu Đãi Lãi Suất 0% Trong 24 Tháng Tại Vinhomes',
     imageUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
-    linkUrl: 'tel:0868499929',
+    linkUrl: '/mortgage-calculator',
     position: 'home_sidebar',
     active: true,
     clickCount: 890,
@@ -152,9 +152,9 @@ export const INITIAL_ADS: AdBanner[] = [
   },
   {
     id: 'ad-03',
-    title: 'Quỹ Căn Cắt Lỗ Sâu Shophouse Chà Là & San Hô - Hotline Nhà đẹp Vinhomes: 0868.499.929',
+    title: 'Quỹ Căn Cắt Lỗ Sâu Shophouse Chà Là & San Hô - Xem Bảng Hàng Mới Nhất',
     imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    linkUrl: 'https://zalo.me/0868499929',
+    linkUrl: '/properties',
     position: 'home_middle',
     active: true,
     clickCount: 2310,
@@ -164,7 +164,7 @@ export const INITIAL_ADS: AdBanner[] = [
     id: 'ad-04',
     title: '⚡ BẤM XEM NGAY: Quỹ Căn Biệt Thự - Shophouse Đã Có Sổ Đỏ Lâu Dài',
     imageUrl: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=600&q=80',
-    linkUrl: 'https://zalo.me/0868499929',
+    linkUrl: '/properties',
     position: 'float_right_pc',
     widthSize: 'medium',
     displayStyle: 'glowing_border',
@@ -175,9 +175,9 @@ export const INITIAL_ADS: AdBanner[] = [
   },
   {
     id: 'ad-05',
-    title: '🚕 Dịch Vụ Taxi & Chuyển Nhà Cư Dân Vinhomes 24/7 - Hotline: 0868.499.929',
+    title: '🚕 Dịch Vụ Taxi & Chuyển Nhà Cư Dân Vinhomes 24/7',
     imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80',
-    linkUrl: 'tel:0868499929',
+    linkUrl: '/resident-services',
     position: 'float_left_pc',
     active: false,
     clickCount: 380,
@@ -253,9 +253,9 @@ export const INITIAL_PROPERTIES: Property[] = [
     featured: true,
     status: 'approved',
     createdAt: '2026-07-20',
-    sellerName: 'Nhà đẹp Vinhomes',
-    sellerPhone: '0868.499.929',
-    sellerRole: 'admin',
+    sellerName: 'Chủ nhà Hoàng Minh',
+    sellerPhone: '0988.765.432',
+    sellerRole: 'owner',
     subdivision: 'Chà Là'
   },
   {
@@ -282,9 +282,9 @@ export const INITIAL_PROPERTIES: Property[] = [
     featured: true,
     status: 'approved',
     createdAt: '2026-07-22',
-    sellerName: 'Nhà đẹp Vinhomes',
-    sellerPhone: '0868.499.929',
-    sellerRole: 'admin',
+    sellerName: 'Chủ nhà Lê Tuấn',
+    sellerPhone: '0903.112.233',
+    sellerRole: 'owner',
     subdivision: 'San Hô'
   },
   {
@@ -339,9 +339,9 @@ export const INITIAL_PROPERTIES: Property[] = [
     featured: true,
     status: 'approved',
     createdAt: '2026-07-23',
-    sellerName: 'Nhà đẹp Vinhomes',
-    sellerPhone: '0868.499.929',
-    sellerRole: 'admin',
+    sellerName: 'Chủ nhà Phạm Đức',
+    sellerPhone: '0974.556.677',
+    sellerRole: 'owner',
     subdivision: 'Phố Biển'
   },
   {
@@ -396,9 +396,9 @@ export const INITIAL_PROPERTIES: Property[] = [
     featured: true,
     status: 'approved',
     createdAt: '2026-07-25',
-    sellerName: 'Nhà đẹp Vinhomes',
-    sellerPhone: '0868.499.929',
-    sellerRole: 'admin',
+    sellerName: 'Chủ đầu tư / Suất ngoại giao',
+    sellerPhone: '0936.889.900',
+    sellerRole: 'owner',
     subdivision: 'Đảo Sinh Thái'
   },
   {
@@ -425,9 +425,9 @@ export const INITIAL_PROPERTIES: Property[] = [
     featured: true,
     status: 'approved',
     createdAt: '2026-07-26',
-    sellerName: 'Chợ Cư Dân 24h',
-    sellerPhone: '0868.499.929',
-    sellerRole: 'admin',
+    sellerName: 'Chủ nhà Đặng Văn Hùng',
+    sellerPhone: '0966.332.111',
+    sellerRole: 'owner',
     subdivision: 'Chà Là'
   },
   {
@@ -491,7 +491,7 @@ export const INITIAL_NEWS: NewsArticle[] = [
       Vinhomes Hạ Long Xanh nằm tại tam giác kinh tế bứt phá Hà Nội - Hải Phòng - Quảng Ninh. Khi đi vào vận hành, đây sẽ là tâm điểm du lịch sinh thái nghỉ dưỡng quốc tế, mang lại giá trị gia tăng bất động sản đột phá X2, X3 cho nhà đầu tư tiên phong.
     `,
     category: 'vinhomes',
-    author: 'Nhà đẹp Vinhomes - 0868.499.929',
+    author: 'Ban Quản Trị Chợ Cư Dân 24H',
     image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
     publishedAt: '2026-07-26',
     views: 3240,
@@ -522,7 +522,7 @@ export const INITIAL_NEWS: NewsArticle[] = [
       - **Tiện ích nổi bật:** Vịnh biển thiên đường Paradise Bay 12ha, công viên nước Aqua Bay, hồ bơi bốn mùa Tropical Surf.
     `,
     category: 'vinhomes',
-    author: 'Nhà đẹp Vinhomes - 0868.499.929',
+    author: 'Ban Quản Trị Chợ Cư Dân 24H',
     image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
     publishedAt: '2026-07-26',
     views: 2890,
@@ -551,7 +551,7 @@ export const INITIAL_NEWS: NewsArticle[] = [
       Sở hữu Biển hồ lấn biển Lagoon rộng đến 400 ha, Sân Golf 36 hố, cầu Cần Giờ nối Nhà Bè. Dự án hưởng lợi tối đa khi Cần Giờ chính thức nâng cấp thành phố sinh thái trực thuộc TP.HCM.
     `,
     category: 'thi-truong',
-    author: 'Nhà đẹp Vinhomes AI Assistant',
+    author: 'Ban Biên Tập Chợ Cư Dân 24H',
     image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
     publishedAt: '2026-07-26',
     views: 2150,
@@ -578,7 +578,7 @@ export const INITIAL_NEWS: NewsArticle[] = [
       Công viên hồ điều hòa trung tâm 15ha, TTTM Vincom Plaza, Trường Vinschool, Bệnh viện Vinmec. Nằm kề bên Vành Đai 3, Vành Đai 4 và Cao tốc TP.HCM - Mộc Bài giúp di chuyển về Quận 1 chỉ 35 phút.
     `,
     category: 'thi-truong',
-    author: 'Nhà đẹp Vinhomes - 0868.499.929',
+    author: 'Ban Quản Trị Chợ Cư Dân 24H',
     image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80',
     publishedAt: '2026-07-26',
     views: 1870,
@@ -604,7 +604,7 @@ export const INITIAL_NEWS: NewsArticle[] = [
       Kết nối trực tiếp Vành Đai 3, Tuyến Metro số 2 kéo dài. Đóng vai trò là đô thị vệ tinh hiện đại hàng đầu phía Tây Bắc TP.HCM.
     `,
     category: 'thi-truong',
-    author: 'Nhà đẹp Vinhomes AI Assistant',
+    author: 'Ban Biên Tập Chợ Cư Dân 24H',
     image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=80',
     publishedAt: '2026-07-26',
     views: 1650,
@@ -631,7 +631,7 @@ export const INITIAL_NEWS: NewsArticle[] = [
       Bến du thuyền quốc tế, Sân Golf 18 hố, Cáp treo Làng Vân, Công viên VinWonders. Liền kề Siêu cảng nước sâu Liên Chiểu giúp BĐS Làng Vân trở thành hàng hiếm thu hút dòng vốn toàn cầu.
     `,
     category: 'vinhomes',
-    author: 'Nhà đẹp Vinhomes - 0868.499.929',
+    author: 'Ban Quản Trị Chợ Cư Dân 24H',
     image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80',
     publishedAt: '2026-07-26',
     views: 2410,

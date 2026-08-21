@@ -234,15 +234,17 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                 <span>Ứng Tuyển Ngay</span>
               </a>
 
-              <a
-                href={`https://zalo.me/${job.contactZalo || job.contactPhone || '0868499929'}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-2xl shadow transition flex items-center gap-2"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>Chat Zalo Tuyển Dụng</span>
-              </a>
+              {(job.contactZalo || job.contactPhone) && (
+                <a
+                  href={`https://zalo.me/${(job.contactZalo || job.contactPhone || '').replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-2xl shadow transition flex items-center gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Chat Zalo Tuyển Dụng</span>
+                </a>
+              )}
 
               <button
                 onClick={() => setShowShareModal(true)}
@@ -499,23 +501,27 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
               </div>
 
               <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-                <a
-                  href={`tel:${job.contactPhone || '0868499929'}`}
-                  className="w-full py-2.5 px-3 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-bold rounded-xl flex items-center justify-center gap-2 transition"
-                >
-                  <Phone className="w-4 h-4" />
-                  <span>Gọi Hotline: {job.contactPhone || '0868.499.929'}</span>
-                </a>
+                {job.contactPhone && (
+                  <a
+                    href={`tel:${job.contactPhone.replace(/\D/g, '')}`}
+                    className="w-full py-2.5 px-3 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-bold rounded-xl flex items-center justify-center gap-2 transition"
+                  >
+                    <Phone className="w-4 h-4" />
+                    <span>Gọi Hotline: {job.contactPhone}</span>
+                  </a>
+                )}
 
-                <a
-                  href={`https://zalo.me/${job.contactZalo || job.contactPhone || '0868499929'}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 px-3 bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-950 text-sky-700 dark:text-sky-400 font-bold rounded-xl flex items-center justify-center gap-2 transition"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  <span>Chat Zalo: {job.contactZalo || job.contactPhone || '0868.499.929'}</span>
-                </a>
+                {(job.contactZalo || job.contactPhone) && (
+                  <a
+                    href={`https://zalo.me/${(job.contactZalo || job.contactPhone || '').replace(/\D/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-3 bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-950 text-sky-700 dark:text-sky-400 font-bold rounded-xl flex items-center justify-center gap-2 transition"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Chat Zalo: {job.contactZalo || job.contactPhone}</span>
+                  </a>
+                )}
               </div>
             </div>
 
