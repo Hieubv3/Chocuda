@@ -169,11 +169,15 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   // Filter properties belonging to logged in user or uploaded in demo
   const userProperties = (properties || []).filter(p => {
     if (!p) return false;
-    const matchId = Boolean(user.id && p.userId === user.id);
-    const matchPhone = Boolean(user.phone && (p.sellerPhone === user.phone || p.userPhone === user.phone));
-    const matchName = Boolean(user.name && p.sellerName && user.name.length > 2 && p.sellerName.toLowerCase().includes(user.name.toLowerCase()));
-    const isAdmin = user.role === 'admin';
-    return matchId || matchPhone || matchName || isAdmin;
+    if (user.role === 'admin') return true;
+    const matchId = Boolean(user.id && (p.userId === user.id || (p as any).authorId === user.id || (p as any).createdBy === user.id));
+    const matchEmail = Boolean(user.email && (
+      (p.userEmail && p.userEmail.toLowerCase() === user.email.toLowerCase()) ||
+      ((p as any).sellerEmail && (p as any).sellerEmail.toLowerCase() === user.email.toLowerCase())
+    ));
+    const matchPhone = Boolean(user.phone && (p.sellerPhone === user.phone || (p as any).userPhone === user.phone));
+    const matchName = Boolean(user.name && p.sellerName && user.name.length > 2 && p.sellerName.toLowerCase() === user.name.toLowerCase());
+    return matchId || matchEmail || matchPhone || matchName;
   });
 
   const approvedCount = userProperties.filter(p => p.status === 'approved' || p.approved).length;
@@ -342,6 +346,16 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2 w-full md:w-auto shrink-0 pt-2 md:pt-0 flex-wrap sm:flex-nowrap">
+            {user.role === 'admin' && (
+              <a
+                href="/admin"
+                className="px-3.5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-lg border border-emerald-400/50 flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
+                title="Truy cập Bảng điều khiển Quản trị Hệ Thống"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-300" />
+                <span>BẢNG QUẢN TRỊ ADMIN</span>
+              </a>
+            )}
             <button
               onClick={() => refreshUserBalance(true)}
               disabled={isSyncingBalance}

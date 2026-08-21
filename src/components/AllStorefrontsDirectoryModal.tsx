@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   X, Store, Search, Filter, Star, Phone, MessageSquare, MapPin, 
   ExternalLink, CheckCircle2, ChevronRight, ShoppingBag, Sparkles, Building2 
 } from 'lucide-react';
 import { UserStorefront } from '../types';
+import { getStoreDetailUrl } from '../lib/slugs';
 
 interface AllStorefrontsDirectoryModalProps {
   stores: UserStorefront[];
   onClose: () => void;
-  onSelectStore: (store: UserStorefront) => void;
+  onSelectStore?: (store: UserStorefront) => void;
 }
 
 export const AllStorefrontsDirectoryModal: React.FC<AllStorefrontsDirectoryModalProps> = ({
@@ -16,8 +18,15 @@ export const AllStorefrontsDirectoryModal: React.FC<AllStorefrontsDirectoryModal
   onClose,
   onSelectStore
 }) => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const handleGoToStore = (st: UserStorefront) => {
+    onClose();
+    if (onSelectStore) onSelectStore(st);
+    navigate(getStoreDetailUrl(st));
+  };
 
   // Extract all unique store categories
   const categories = Array.from(
@@ -131,7 +140,7 @@ export const AllStorefrontsDirectoryModal: React.FC<AllStorefrontsDirectoryModal
               {filteredStores.map((st) => (
                 <div
                   key={st.id}
-                  onClick={() => onSelectStore(st)}
+                  onClick={() => handleGoToStore(st)}
                   className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-purple-500 rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group relative overflow-hidden"
                 >
                   {/* Banner / Header image */}

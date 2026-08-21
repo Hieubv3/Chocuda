@@ -66,23 +66,36 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
   ]);
 
   // Batch add products from AI Menu Scanner
-  const handleBatchAddScannedProducts = (scannedData: AiMenuScanResult) => {
-    const itemsList = scannedData.menuItems || (scannedData as any).items || [];
+  const handleBatchAddScannedProducts = (scannedData: any) => {
+    let itemsList: any[] = [];
+    if (Array.isArray(scannedData)) {
+      itemsList = scannedData;
+    } else if (scannedData && Array.isArray(scannedData.menuItems)) {
+      itemsList = scannedData.menuItems;
+    } else if (scannedData && Array.isArray(scannedData.items)) {
+      itemsList = scannedData.items;
+    }
+
     if (!itemsList || itemsList.length === 0) {
       alert('Không tìm thấy danh sách món nào trong kết quả quét.');
       return;
     }
+
     const isUserAdmin = user.role === 'admin';
+    const currentStoreId = store?.id || `store-${user.id}`;
+    
     const newProducts: StoreProduct[] = itemsList.map((item: any, idx: number) => ({
       id: `p-scan-${Date.now()}-${idx}`,
-      storeId: store?.id || `store-${user.id}`,
+      storeId: currentStoreId,
       code: `SCAN-${Math.floor(Math.random() * 9000) + 1000}`,
-      name: item.name,
+      name: item.name || 'Món ăn / Hàng hóa',
       category: item.category || category || 'Món Ăn & Đồ Uống',
       price: Number(item.price) || 50000,
       unit: item.unit || 'suất',
       stockQuantity: 50,
-      images: ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
+      images: [
+        item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'
+      ],
       description: item.description || `Món ngon niêm yết chính xác từ Menu: ${item.name} (${item.unit || 'suất'})`,
       isAvailable: true,
       status: isUserAdmin ? 'approved' : 'pending',
@@ -90,17 +103,42 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
       soldCount: 0
     }));
 
-    const updatedProducts = [...newProducts, ...(store?.products || [])];
-    const updatedStore = { ...store!, products: updatedProducts };
-    setStore(updatedStore as UserStorefront);
+    const existingProds = store?.products || [];
+    const updatedProducts = [...newProducts, ...existingProds];
+    
+    const updatedStore: UserStorefront = store ? {
+      ...store,
+      products: updatedProducts
+    } : {
+      id: currentStoreId,
+      userId: user.id,
+      shopName: storeName || user.name || 'Gian Hàng Cư Dân',
+      storeName: storeName || user.name || 'Gian Hàng Cư Dân',
+      slug: (storeName || user.name || 'gian-hang').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      category: category || 'Ẩm thực & Đồ Uống',
+      project: 'ocean-park-2',
+      address: address || 'Vinhomes Ocean Park',
+      ownerName: user.name || 'Chủ Gian Hàng',
+      ownerPhone: ownerPhone || user.phone || '0868.499.929',
+      ownerZalo: ownerZalo || user.phone || '0868.499.929',
+      description: description || 'Gian hàng cư dân chất lượng cao, phục vụ nhanh chóng.',
+      rating: 5.0,
+      reviewCount: 1,
+      verified: isUserAdmin,
+      products: updatedProducts,
+      status: 'active',
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+
+    setStore(updatedStore);
 
     fetch('/api/stores', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedStore)
-    });
+    }).catch(e => console.warn('Store persist error:', e));
 
-    alert(`🎉 Đã tự động thêm ${newProducts.length} món/sản phẩm từ Menu vào gian hàng thành công!`);
+    alert(`🎉 Đã tự động thêm ${newProducts.length} món/sản phẩm từ Menu quét vào gian hàng của bạn thành công!`);
   };
 
   // Order Invoice Export & Filter State

@@ -252,7 +252,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       providerZalo: scannedData.providerZalo || prev.providerZalo || '',
       address: scannedData.address || prev.address || '',
       subdivision: scannedData.subdivision || prev.subdivision || '',
-      imagesText: rawImage ? (prev.imagesText ? `${rawImage}\n${prev.imagesText}` : rawImage) : prev.imagesText
+      imagesText: rawImage ? (prev.imagesText ? `${rawImage}\n${prev.imagesText}` : rawImage) : prev.imagesText,
+      legalCommitmentAccepted: true
     }));
     setIsPostingModalOpen(true);
   };

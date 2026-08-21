@@ -73,7 +73,7 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-xs transition-colors">
+    <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-xs transition-colors">
       {/* Top Banner Bar - Clean Slim Slate */}
       <div className="bg-slate-900 text-slate-300 text-[11px] py-1 px-4 hidden sm:block border-b border-slate-800">
         <div className="max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1680px] mx-auto flex justify-between items-center">

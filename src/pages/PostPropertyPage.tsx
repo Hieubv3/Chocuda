@@ -26,11 +26,31 @@ interface PostPropertyPageProps {
 
 export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   language,
-  user,
+  user: initialUser,
   onOpenAuth,
   onPropertySubmitted,
   existingProperties = []
 }) => {
+  const [currentUserState, setCurrentUserState] = useState<UserType | null>(() => {
+    if (initialUser) return initialUser;
+    try {
+      const saved = localStorage.getItem('chocudan24h_user') || 
+                    localStorage.getItem('chocudan24h_resident_user') || 
+                    sessionStorage.getItem('chocudan24h_user');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return null;
+  });
+
+  const effectiveUser = initialUser || currentUserState;
+  const user = effectiveUser;
+
+  React.useEffect(() => {
+    if (initialUser) {
+      setCurrentUserState(initialUser);
+    }
+  }, [initialUser]);
+
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
@@ -86,17 +106,17 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
   // Auto-fill seller name & phone directly from logged-in user account if autoUseProfileInfo is checked
   React.useEffect(() => {
-    if (user && autoUseProfileInfo) {
-      if (user.name) {
-        setSellerName(user.name);
-        setServiceContactName(user.name);
+    if (effectiveUser && autoUseProfileInfo) {
+      if (effectiveUser.name) {
+        setSellerName(effectiveUser.name);
+        setServiceContactName(effectiveUser.name);
       }
-      if (user.phone) {
-        setSellerPhone(user.phone);
-        setServicePhoneInput(user.phone);
+      if (effectiveUser.phone) {
+        setSellerPhone(effectiveUser.phone);
+        setServicePhoneInput(effectiveUser.phone);
       }
     }
-  }, [user, autoUseProfileInfo]);
+  }, [effectiveUser, autoUseProfileInfo]);
 
   // Images state
   const [imagesList, setImagesList] = useState<string[]>([
@@ -271,7 +291,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
     setDuplicateWarning(null);
 
     // Rule Check 0: Must be logged in to post listing
-    if (!user) {
+    if (!effectiveUser) {
       alert('🔒 QUY ĐỊNH HỆ THỐNG: Quý khách không được phép đăng tin khi chưa đăng nhập. Vui lòng đăng nhập hoặc đăng ký tài khoản mới!');
       if (onOpenAuth) onOpenAuth();
       return;
@@ -553,7 +573,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       </div>
 
       {/* LOGIN PROTECTION GATE: REQUIRE LOGGED-IN RESIDENT ACCOUNT TO VIEW AND OPERATE FORMS */}
-      {!user ? (
+      {!effectiveUser ? (
         <div className="p-8 sm:p-12 bg-slate-900 border-2 border-amber-500 rounded-3xl text-center space-y-6 shadow-2xl text-white">
           <div className="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center font-black text-3xl mx-auto border border-amber-500/30">
             🔒

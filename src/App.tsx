@@ -66,7 +66,16 @@ export const App: React.FC = () => {
 
   // User Auth - Restore session from local storage if existing
   const [user, setUser] = useState<User | null>(() => {
-    const raw = safeLocalStorageGet<User | null>('hb_user', null);
+    let raw = safeLocalStorageGet<User | null>('hb_user', null);
+    if (!raw) {
+      try {
+        const alt = localStorage.getItem('chocudan24h_user') || 
+                    localStorage.getItem('chocudan24h_resident_user') || 
+                    sessionStorage.getItem('hb_user') || 
+                    sessionStorage.getItem('chocudan24h_user');
+        if (alt) raw = JSON.parse(alt);
+      } catch (e) {}
+    }
     if (!raw) return null;
     return {
       ...raw,
@@ -307,22 +316,21 @@ export const App: React.FC = () => {
     };
   }, [user?.id, user?.email, user?.phone]);
 
-  // Strict Admin Redirection Rule:
-  // On non-admin domains, strip #admin / #quantri hash and redirect to home
+  // Admin route & hash compatibility:
+  // If user visits #admin, #quantri or #quantri24h, route to /admin
   useEffect(() => {
-    if (!isAdminDomain) {
-      const hash = window.location.hash.toLowerCase();
-      if (
-        hash === '#admin' ||
-        hash === '#quantri' ||
-        hash === '#admin-secret' ||
-        hash === '#quantri24h'
-      ) {
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
-        navigate('/', { replace: true });
-      }
+    const hash = window.location.hash.toLowerCase();
+    if (
+      hash === '#admin' ||
+      hash === '#quantri' ||
+      hash === '#admin-secret' ||
+      hash === '#quantri24h' ||
+      hash === '#admin-login'
+    ) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      navigate('/admin');
     }
-  }, [location, isAdminDomain, navigate]);
+  }, [location, navigate]);
 
   // Handle tab switching helper for Header/Footer compatibility
   const handleTabSwitch = (tab: string) => {
@@ -388,11 +396,9 @@ export const App: React.FC = () => {
         break;
       case 'admin':
       case 'admin_login':
-        if (isAdminDomain) {
-          navigate('/');
-        } else {
-          navigate('/', { replace: true });
-        }
+      case 'quantri':
+      case 'quantri24h':
+        navigate('/admin');
         break;
       default:
         navigate('/');
@@ -1532,11 +1538,47 @@ export const App: React.FC = () => {
             element={<TermsOfServicePage language={language} onBackToHome={() => navigate('/')} />}
           />
 
-          {/* Strict Admin Route Shield: Non-admin host -> Redirect to Home */}
-          <Route path="/admin" element={<Navigate to="/" replace />} />
-          <Route path="/quantri" element={<Navigate to="/" replace />} />
-          <Route path="/admin-login" element={<Navigate to="/" replace />} />
-          <Route path="/quantri24h" element={<Navigate to="/" replace />} />
+          {/* Admin Management Routes */}
+          <Route
+            path="/admin"
+            element={
+              user?.role === 'admin' || user?.role === 'manager' ? (
+                <AdminDashboardPage
+                  properties={properties}
+                  projects={projects}
+                  news={news}
+                  contacts={contacts}
+                  pricingConfig={pricingConfig}
+                  onSavePricingConfig={handleSavePricingConfig}
+                  onApproveProperty={handleApproveProperty}
+                  onUpdateProperty={handleUpdateProperty}
+                  onDeleteProperty={handleDeleteProperty}
+                  onUpdateProject={handleUpdateProject}
+                  onAddProject={handleAddProject}
+                  onDeleteProject={handleDeleteProject}
+                  onUpdateNews={handleUpdateNews}
+                  onAddNews={handleAddNews}
+                  onDeleteNews={handleDeleteNews}
+                  onOpenAiWriter={() => setAiWriterModalOpen(true)}
+                  onRefreshData={refreshServerData}
+                  onSeed1000Properties={handleSeed1000Properties}
+                />
+              ) : (
+                <AdminLoginPage
+                  language={language}
+                  onLoginSuccess={(u) => {
+                    setUser(u);
+                    safeLocalStorageSet('hb_user', u);
+                    navigate('/admin');
+                  }}
+                  onBackToHome={() => navigate('/')}
+                />
+              )
+            }
+          />
+          <Route path="/quantri" element={<Navigate to="/admin" replace />} />
+          <Route path="/quantri24h" element={<Navigate to="/admin" replace />} />
+          <Route path="/admin-login" element={<Navigate to="/admin" replace />} />
 
           {/* Catch-all Wildcard Route -> Redirect Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -1558,13 +1600,7 @@ export const App: React.FC = () => {
       <Footer
         language={language}
         setCurrentTab={handleTabSwitch}
-        onOpenSecretAdmin={() => {
-          if (isAdminDomain) {
-            navigate('/');
-          } else {
-            navigate('/');
-          }
-        }}
+        onOpenSecretAdmin={() => navigate('/admin')}
         onOpenAndroidModal={() => setAndroidModalOpen(true)}
       />
 
@@ -1595,8 +1631,8 @@ export const App: React.FC = () => {
               localStorage.setItem('hb_user', JSON.stringify(u));
             } catch (e) {}
             setAuthModalOpen(false);
-            if (u.role === 'admin' && isAdminDomain) {
-              navigate('/');
+            if (u.role === 'admin' || u.role === 'manager') {
+              navigate('/admin');
             } else {
               navigate('/tai-khoan');
             }

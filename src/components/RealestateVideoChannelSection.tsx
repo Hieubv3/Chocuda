@@ -32,7 +32,13 @@ const DEFAULT_CHANNEL_VIDEOS: VideoItem[] = [
   }
 ];
 
-export const RealestateVideoChannelSection: React.FC = () => {
+interface RealestateVideoChannelSectionProps {
+  isAdmin?: boolean;
+}
+
+export const RealestateVideoChannelSection: React.FC<RealestateVideoChannelSectionProps> = ({
+  isAdmin = false
+}) => {
   const [activeTab, setActiveTab] = useState<'youtube' | 'tiktok'>('youtube');
   const [videoList, setVideoList] = useState<VideoItem[]>(() => {
     try {
@@ -46,7 +52,7 @@ export const RealestateVideoChannelSection: React.FC = () => {
 
   const [activePlayingId, setActivePlayingId] = useState<string>('c1');
   
-  // Custom video input modal state
+  // Custom video input modal state (Admin only)
   const [showAddModal, setShowAddModal] = useState(false);
   const [newVideoUrl, setNewVideoUrl] = useState('');
   const [newVideoTitle, setNewVideoTitle] = useState('');
@@ -147,16 +153,18 @@ export const RealestateVideoChannelSection: React.FC = () => {
 
         {/* Buttons */}
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="px-4 py-3 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-black text-xs sm:text-sm rounded-xl transition shadow-lg flex items-center gap-1.5 transform hover:-translate-y-0.5"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span>Thêm Video Kênh Của Tôi</span>
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="px-4 py-3 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-black text-xs sm:text-sm rounded-xl transition shadow-lg flex items-center gap-1.5 transform hover:-translate-y-0.5"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              <span>Quản Lý Kênh (Admin)</span>
+            </button>
+          )}
 
           <a
-            href="https://www.youtube.com/@chocudan24h"
+            href="https://www.youtube.com/@chocudan24h?sub_confirmation=1"
             target="_blank"
             rel="noreferrer"
             className="px-4 py-3 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs sm:text-sm rounded-xl transition shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5"
@@ -400,14 +408,16 @@ export const RealestateVideoChannelSection: React.FC = () => {
                       </h5>
                     </div>
 
-                    {/* Delete Custom Video Button */}
-                    <button
-                      onClick={(e) => handleDeleteVideo(vid.id, e)}
-                      title="Xóa khỏi danh sách"
-                      className="absolute right-2 top-2 text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition p-1"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    {/* Delete Custom Video Button (Admin only) */}
+                    {isAdmin && (
+                      <button
+                        onClick={(e) => handleDeleteVideo(vid.id, e)}
+                        title="Xóa khỏi danh sách"
+                        className="absolute right-2 top-2 text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition p-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 );
               })

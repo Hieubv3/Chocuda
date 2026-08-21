@@ -3,7 +3,7 @@ import {
   X, ShoppingBag, Search, CheckCircle2, Phone, MessageSquare, MapPin, 
   Sparkles, Star, Plus, Minus, Trash2, ArrowRight, ShieldCheck, Clock,
   Building2, Check, RefreshCw, CreditCard, ChevronRight, Store, Edit2, Eye, EyeOff,
-  Bell, UserCheck, Settings, Tag, Shield
+  Bell, UserCheck, Settings, Tag, Shield, ExternalLink
 } from 'lucide-react';
 import { UserStorefront, StoreProduct, StoreOrder } from '../types';
 import { InAppStorefrontChatModal } from './InAppStorefrontChatModal';
@@ -587,23 +587,34 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                       </button>
                     </div>
                   ) : (
-                    // VISITOR CONTROLS: IB CHAT & BUY
-                    <div className="flex items-center justify-between w-full gap-1.5">
+                    // VISITOR CONTROLS: DIRECT LINK, IB CHAT & BUY
+                    <div className="flex items-center justify-between w-full gap-1.5 flex-wrap">
+                      <a
+                        href={`/gian-hang/${encodeURIComponent(storeState.slug || storeState.id)}/san-pham/${encodeURIComponent(product.id)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-2 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-extrabold text-[10px] rounded-xl transition flex items-center gap-1"
+                        title="Xem trang chi tiết có link riêng của sản phẩm này"
+                      >
+                        <ExternalLink className="w-3 h-3 text-slate-500" />
+                        <span>Link Riêng</span>
+                      </a>
+
                       <button
                         onClick={() => handleOpenChatWithProduct(product)}
-                        className="px-2.5 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-extrabold text-[11px] rounded-xl transition flex items-center gap-1 border border-amber-500/30"
+                        className="px-2 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-extrabold text-[10px] rounded-xl transition flex items-center gap-1 border border-amber-500/30"
                         title="Nhắn tin IB hỏi về mặt hàng này"
                       >
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>💬 IB Hỏi Món</span>
+                        <MessageSquare className="w-3 h-3" />
+                        <span>💬 IB Shop</span>
                       </button>
 
                       <button
                         onClick={() => addToCart(product)}
                         disabled={product.isAvailable === false}
-                        className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-slate-950 font-black text-xs rounded-xl transition flex items-center gap-1 shadow-xs"
+                        className="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-slate-950 font-black text-xs rounded-xl transition flex items-center gap-1 shadow-xs"
                       >
-                        <Plus className="w-3.5 h-3.5" />
+                        <Plus className="w-3 h-3" />
                         <span>Chọn Mua</span>
                       </button>
                     </div>
