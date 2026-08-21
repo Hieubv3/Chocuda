@@ -56,7 +56,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
   // CHỢ TỐT / NHÀ TỐT STYLE HORIZONTAL LISTING ROW (1 CĂN / 1 DÒNG TỐI ƯU MOBI)
   if (viewMode === 'list') {
-    const phoneClean = (property.sellerPhone || '0868499929').replace(/\D/g, '');
+    const phoneClean = (property.sellerPhone || '').replace(/\D/g, '');
     const sellerName = property.sellerName || 'Người đăng tin';
 
     return (
@@ -425,7 +425,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
           <div className="flex items-center gap-1 shrink-0">
             {(() => {
-              const phoneClean = (property.sellerPhone || '0868499929').replace(/\D/g, '');
+              const phoneClean = (property.sellerPhone || '').replace(/\D/g, '');
               const sellerName = property.sellerName || 'Người đăng tin';
               return (
                 <>
@@ -441,23 +441,27 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
                     <Share2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   </button>
 
-                  <a
-                    href={`https://zalo.me/${phoneClean}?text=Tôi%20quan%20tâm%20căn%3A%20${encodeURIComponent(property.title)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-1 sm:p-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-lg transition"
-                    title={`Chat Zalo trực tiếp với ${sellerName}`}
-                  >
-                    <MessageCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  </a>
+                  {phoneClean && (
+                    <>
+                      <a
+                        href={`https://zalo.me/${phoneClean}?text=Tôi%20quan%20tâm%20căn%3A%20${encodeURIComponent(property.title)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="p-1 sm:p-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-lg transition"
+                        title={`Chat Zalo trực tiếp với ${sellerName}`}
+                      >
+                        <MessageCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      </a>
 
-                  <a
-                    href={`tel:${phoneClean}`}
-                    className="p-1 sm:p-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 rounded-lg transition"
-                    title={`Gọi trực tiếp ${sellerName}`}
-                  >
-                    <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  </a>
+                      <a
+                        href={`tel:${phoneClean}`}
+                        className="p-1 sm:p-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 rounded-lg transition"
+                        title={`Gọi trực tiếp ${sellerName}`}
+                      >
+                        <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      </a>
+                    </>
+                  )}
                 </>
               );
             })()}

@@ -74,8 +74,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const [legal, setLegal] = useState<'red-book' | 'contract' | 'waiting'>('red-book');
   const [address, setAddress] = useState('Phân khu Chà Là, Vinhomes Ocean Park 2');
   const [description, setDescription] = useState('');
-  const [sellerName, setSellerName] = useState('');
-  const [sellerPhone, setSellerPhone] = useState('0868.499.929');
+  const [sellerName, setSellerName] = useState(() => effectiveUser?.name || '');
+  const [sellerPhone, setSellerPhone] = useState(() => effectiveUser?.phone || '');
   const [sellerRole, setSellerRole] = useState<'owner' | 'sale'>('owner');
 
   // Post Category Mode: 'real_estate' | 'service' | 'kiotviet'
@@ -95,8 +95,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const [serviceProject, setServiceProject] = useState('vinhomes-ocean-park-2');
   const [servicePrice, setServicePrice] = useState('Thỏa thuận');
   const [serviceDesc, setServiceDesc] = useState('');
-  const [serviceContactName, setServiceContactName] = useState('');
-  const [servicePhoneInput, setServicePhoneInput] = useState('0868.499.929');
+  const [serviceContactName, setServiceContactName] = useState(() => effectiveUser?.name || '');
+  const [servicePhoneInput, setServicePhoneInput] = useState(() => effectiveUser?.phone || '');
   const [serviceImg, setServiceImg] = useState('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80');
   const [serviceLoading, setServiceLoading] = useState(false);
   const [serviceSubmitted, setServiceSubmitted] = useState(false);
@@ -359,7 +359,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       description: description || `Bất động sản vị trí đẹp tại ${project.toUpperCase()}, phù hợp để ở hoặc đầu tư kinh doanh.`,
       images: imagesList.length > 0 ? imagesList : ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'],
       sellerName: sellerName || user?.name || 'Chủ nhà chính chủ',
-      sellerPhone: sellerPhone || user?.phone || '0868.499.929',
+      sellerPhone: sellerPhone.trim() || user?.phone || '',
       sellerRole,
       soDoImage: sellerRole === 'owner' ? soDoImage : undefined,
       soDoRedactedImage: sellerRole === 'owner' ? (soDoRedactedImage || soDoImage) : undefined,
@@ -367,6 +367,12 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       status: 'approved',
       approvalStatus: 'approved'
     };
+
+    if (!payload.sellerPhone) {
+      alert('Vui lòng nhập số điện thoại liên hệ của bạn để khách mua/thuê có thể liên hệ trực tiếp!');
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch('/api/properties', {
@@ -397,7 +403,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           sourceType: 'post_property',
           title: `[ĐĂNG TIN MỚI BĐS] ${title}`,
           customerName: sellerName || user?.name || 'Chủ nhà chính chủ',
-          customerPhone: sellerPhone || user?.phone || '0868.499.929',
+          customerPhone: sellerPhone || user?.phone || '',
           project: project,
           subdivision: subdivision,
           note: `Loại: ${type === 'sale' ? 'Căn Bán' : 'Cho Thuê'} | Giá: ${type === 'sale' ? `${priceNum} Tỷ` : `${priceNum} Tr/tháng`} | Diện tích: ${areaNum}m² | Vai trò: ${sellerRole.toUpperCase()}`
@@ -463,10 +469,10 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       images: [serviceImg || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80'],
       description: serviceDesc || 'Dịch vụ cư dân chất lượng cao.',
       providerName: serviceContactName || user.name || 'Cư dân Vinhomes',
-      providerPhone: servicePhoneInput || user.phone || '0868.499.929',
-      providerZalo: servicePhoneInput || user.phone || '0868.499.929',
+      providerPhone: servicePhoneInput.trim() || user.phone || '',
+      providerZalo: servicePhoneInput.trim() || user.phone || '',
       contactName: serviceContactName || user.name || 'Cư dân Vinhomes',
-      contactPhone: servicePhoneInput || user.phone || '0868.499.929',
+      contactPhone: servicePhoneInput.trim() || user.phone || '',
       userId: user.id || `usr-${Date.now()}`,
       status: user.role === 'admin' ? 'approved' : 'pending',
       approved: user.role === 'admin',
@@ -475,6 +481,12 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       reviewCount: 1,
       createdAt: new Date().toISOString().split('T')[0]
     };
+
+    if (!servicePayload.providerPhone) {
+      alert('Vui lòng nhập số điện thoại liên hệ của bạn để khách hàng có thể gọi điện/Zalo!');
+      setServiceLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch('/api/resident-services', {
@@ -499,7 +511,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         sourceType: 'post_property',
         title: `[SẢN PHẨM & DỊCH VỤ CƯ DÂN] ${serviceTitle}`,
         customerName: serviceContactName || user.name || 'Cư dân Vinhomes',
-        customerPhone: servicePhoneInput || user.phone || '0868.499.929',
+        customerPhone: servicePhoneInput.trim() || user.phone || '',
         project: serviceProject,
         note: `Danh mục: ${serviceCategory} | Giá: ${servicePrice} | Chi tiết: ${serviceDesc}`
       }).catch(err => console.warn('Lead dispatch error:', err));
@@ -725,7 +737,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   </span>
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium mt-0.5">
                     {autoUseProfileInfo 
-                      ? `Đã tích chọn (Đồng ý): Hệ thống tự động điền Tên "${serviceContactName || user?.name || 'Cư dân'}" & SĐT "${servicePhoneInput || user?.phone || '0868.499.929'}" từ hồ sơ tài khoản.` 
+                      ? `Đã tích chọn (Đồng ý): Hệ thống tự động điền Tên "${serviceContactName || user?.name || 'Cư dân'}" & SĐT "${servicePhoneInput || user?.phone || 'Chưa cập nhật'}" từ hồ sơ tài khoản.` 
                       : 'Bỏ tích chọn (Không đồng ý): Bạn có thể tự nhập Họ tên chủ cửa hàng & SĐT liên hệ mới hiển thị bên dưới.'}
                   </p>
                 </div>
@@ -1508,7 +1520,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   </span>
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium mt-0.5">
                     {autoUseProfileInfo 
-                      ? `Đã tích chọn (Đồng ý): Hệ thống tự động dùng Họ tên "${sellerName || user?.name || 'Cư dân'}" & SĐT "${sellerPhone || user?.phone || '0868.499.929'}" từ tài khoản.` 
+                      ? `Đã tích chọn (Đồng ý): Hệ thống tự động dùng Họ tên "${sellerName || user?.name || 'Cư dân'}" & SĐT "${sellerPhone || user?.phone || 'Chưa cập nhật'}" từ tài khoản.` 
                       : 'Bỏ tích chọn (Không đồng ý): Bạn có thể tự do nhập Tên và Số điện thoại liên hệ hiển thị mới bên dưới.'}
                   </p>
                 </div>

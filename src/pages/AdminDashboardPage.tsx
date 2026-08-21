@@ -4923,23 +4923,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                           {/* Phone / Zalo */}
                           <td className="py-3 px-3">
-                            <div className="flex items-center gap-1.5">
-                              <a 
-                                href={`tel:${u.phone || '0868499929'}`} 
-                                className="font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
-                              >
-                                <PhoneCall className="w-3 h-3 text-emerald-500" />
-                                {u.phone || '0868.499.929'}
-                              </a>
-                              <a
-                                href={`https://zalo.me/${(u.phone || '0868499929').replace(/\D/g, '')}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="px-1.5 py-0.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 font-bold rounded text-[9px] transition"
-                              >
-                                Zalo
-                              </a>
-                            </div>
+                            {u.phone ? (
+                              <div className="flex items-center gap-1.5">
+                                <a 
+                                  href={`tel:${u.phone}`} 
+                                  className="font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                                >
+                                  <PhoneCall className="w-3 h-3 text-emerald-500" />
+                                  {u.phone}
+                                </a>
+                                <a
+                                  href={`https://zalo.me/${u.phone.replace(/\D/g, '')}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="px-1.5 py-0.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 font-bold rounded text-[9px] transition"
+                                >
+                                  Zalo
+                                </a>
+                              </div>
+                            ) : (
+                              <span className="text-slate-400 italic text-xs">Chưa cập nhật SĐT</span>
+                            )}
                           </td>
 
                           {/* Posted Listings */}
@@ -5507,25 +5511,31 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                 <div>
                   <span className="text-slate-400 block text-[11px]">Số điện thoại chính:</span>
-                  <a
-                    href={`tel:${selectedSellerDetail.sellerPhone || '0868499929'}`}
-                    className="font-black text-amber-400 hover:underline text-sm block"
-                  >
-                    📞 {selectedSellerDetail.sellerPhone || '0868.499.929'}
-                  </a>
+                  {selectedSellerDetail.sellerPhone ? (
+                    <a
+                      href={`tel:${selectedSellerDetail.sellerPhone}`}
+                      className="font-black text-amber-400 hover:underline text-sm block"
+                    >
+                      📞 {selectedSellerDetail.sellerPhone}
+                    </a>
+                  ) : (
+                    <span className="text-slate-400 text-xs italic">Chưa cập nhật SĐT</span>
+                  )}
                 </div>
 
-                <div>
-                  <span className="text-slate-400 block text-[11px]">Mở Trực Tiếp Zalo:</span>
-                  <a
-                    href={`https://zalo.me/${(selectedSellerDetail.sellerPhone || '0868499929').replace(/\D/g, '')}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-[11px] inline-flex items-center gap-1 mt-1 transition shadow"
-                  >
-                    💬 Chat Zalo Với Người Đăng
-                  </a>
-                </div>
+                {selectedSellerDetail.sellerPhone && (
+                  <div>
+                    <span className="text-slate-400 block text-[11px]">Mở Trực Tiếp Zalo:</span>
+                    <a
+                      href={`https://zalo.me/${selectedSellerDetail.sellerPhone.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-[11px] inline-flex items-center gap-1 mt-1 transition shadow"
+                    >
+                      💬 Chat Zalo Với Người Đăng
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 

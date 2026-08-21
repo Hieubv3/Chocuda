@@ -17,7 +17,7 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
   summary,
   price,
   location,
-  phone = '0868499929',
+  phone = '',
   onClose 
 }) => {
   const [copied, setCopied] = useState(false);
@@ -32,8 +32,7 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
 ${price ? `💰 Mức giá: ${price}\n` : ''}${location ? `📍 Vị trí: ${location}\n` : ''}${summary ? `📝 Mô tả ngắn: ${summary.slice(0, 150)}...\n` : ''}
 👉 Xem bài đăng chi tiết & liên hệ chính chủ tại:
 🔗 ${url}
-
-📞 Hotline/Zalo tư vấn: ${phone}
+${phone ? `\n📞 Liên hệ/Zalo: ${phone}` : ''}
 #Chocudan24h #Vinhomes #BatDongSanVinhomes #MuabanBDS`;
 
   const handleCopyLink = () => {

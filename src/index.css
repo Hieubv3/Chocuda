@@ -3,6 +3,28 @@
 html, body {
   max-width: 100vw;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  touch-action: manipulation;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mobile smooth hardware acceleration */
+@media (max-width: 768px) {
+  * {
+    scroll-behavior: smooth;
+  }
+  
+  img {
+    content-visibility: auto;
+  }
 }
 
 @layer base {

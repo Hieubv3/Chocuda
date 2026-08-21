@@ -325,7 +325,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               </div>
 
               <div className="flex items-center gap-3 flex-wrap text-[11px] text-slate-300">
-                <span>📱 SĐT: <strong className="text-white">{user.phone || '0868.499.929'}</strong></span>
+                <span>📱 SĐT: <strong className="text-white">{user.phone || 'Chưa cập nhật'}</strong></span>
                 <span className="text-slate-600">|</span>
                 <span>✉️ Email: <strong className="text-white">{user.email}</strong></span>
               </div>
@@ -1630,7 +1630,8 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                   </label>
                   <input
                     type="text"
-                    defaultValue={user.phone ? user.phone.replace(/\D/g, '') : '0868499929'}
+                    defaultValue={user.phone ? user.phone.replace(/\D/g, '') : ''}
+                    placeholder="Nhập số tài khoản nhận tiền..."
                     className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold font-mono"
                   />
                 </div>
@@ -1641,7 +1642,8 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                   </label>
                   <input
                     type="text"
-                    defaultValue={user.name ? user.name.toUpperCase() : 'BÙI TRUNG HIẾU'}
+                    defaultValue={user.name ? user.name.toUpperCase() : ''}
+                    placeholder="VD: NGUYEN VAN A"
                     className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold uppercase"
                   />
                 </div>
