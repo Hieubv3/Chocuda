@@ -277,29 +277,33 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                   <span>{property.sellerName || 'Chủ tin đăng'}</span>
                 </h3>
                 <p className="text-xs text-slate-300 mt-0.5">
-                  Số điện thoại / Zalo trực tiếp: <b className="text-amber-400 font-mono text-sm">{property.sellerPhone || '0868.499.929'}</b>
+                  Số điện thoại / Zalo trực tiếp: <b className="text-amber-400 font-mono text-sm">{property.sellerPhone || 'Chưa cập nhật SĐT'}</b>
                 </p>
               </div>
 
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                <a
-                  href={`tel:${(property.sellerPhone || '0868499929').replace(/\D/g, '')}`}
-                  className="flex-1 sm:flex-initial px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5"
-                >
-                  <Phone className="w-4 h-4" />
-                  <span>Gọi Điện</span>
-                </a>
+                {property.sellerPhone && (
+                  <a
+                    href={`tel:${property.sellerPhone.replace(/\D/g, '')}`}
+                    className="flex-1 sm:flex-initial px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5"
+                  >
+                    <Phone className="w-4 h-4" />
+                    <span>Gọi Điện</span>
+                  </a>
+                )}
 
-                <a
-                  href={`https://zalo.me/${(property.sellerPhone || '0868499929').replace(/\D/g, '')}?text=Tôi%20quan%20tâm%20căn%20bạn%20đăng%3A%20${encodeURIComponent(property.title)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={recordZaloInteraction}
-                  className="flex-1 sm:flex-initial px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Chat Zalo</span>
-                </a>
+                {property.sellerPhone && (
+                  <a
+                    href={`https://zalo.me/${property.sellerPhone.replace(/\D/g, '')}?text=Tôi%20quan%20tâm%20căn%20bạn%20đăng%3A%20${encodeURIComponent(property.title)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={recordZaloInteraction}
+                    className="flex-1 sm:flex-initial px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Chat Zalo</span>
+                  </a>
+                )}
 
                 <button
                   type="button"
@@ -313,7 +317,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             </div>
 
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              💡 <b>Minh bạch thông tin:</b> Khách xem tin liên hệ trực tiếp với <b>{property.sellerName}</b> ({property.sellerPhone || '0868.499.929'}) để thương lượng giá chuẩn, xem sổ đỏ và nhận tư vấn chính chủ. *(Lưu ý: Số hotline 0868.499.929 hỗ trợ cư dân đăng tin & quản trị hệ thống).*
+              💡 <b>Minh bạch thông tin:</b> Khách xem tin liên hệ trực tiếp với <b>{property.sellerName}</b> {property.sellerPhone ? `(${property.sellerPhone})` : ''} để thương lượng giá chuẩn, xem sổ đỏ và nhận tư vấn chính chủ.
             </p>
           </div>
 
@@ -332,7 +336,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               <div>
                 <h3 className="text-sm font-extrabold text-amber-400">ĐẶT LỊCH XEM NHÀ — GỬI YÊU CẦU CHO NGƯỜI ĐĂNG TIN</h3>
                 <p className="text-xs text-slate-300">
-                  📩 Yêu cầu của bạn được gửi trực tiếp tới: <b className="text-amber-300">{property.sellerName} ({property.sellerPhone || '0868.499.929'})</b> & Hệ thống Quản trị.
+                  📩 Yêu cầu của bạn được gửi trực tiếp tới: <b className="text-amber-300">{property.sellerName} {property.sellerPhone ? `(${property.sellerPhone})` : ''}</b> & Hệ thống Quản trị.
                 </p>
               </div>
             </div>
@@ -344,7 +348,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                   <div>
                     <p className="text-xs font-black uppercase text-white">Đặt Lịch Xem Căn Bất Động Sản Thành Công!</p>
                     <p className="text-[11px] text-emerald-200">
-                      Thông tin đã được chuyển trực tiếp tới Người Đăng Tin: <b>{property.sellerName} ({property.sellerPhone || '0868.499.929'})</b>.
+                      Thông tin đã được chuyển trực tiếp tới Người Đăng Tin: <b>{property.sellerName} {property.sellerPhone ? `(${property.sellerPhone})` : ''}</b>.
                     </p>
                   </div>
                 </div>

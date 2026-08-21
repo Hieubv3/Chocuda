@@ -82,7 +82,7 @@ export const InteractionProofChatModal: React.FC<InteractionProofChatModalProps>
         id: `proof-${Date.now()}`,
         userId: user.id || 'usr-guest',
         userName: user.name || 'Cư Dân',
-        userPhone: user.phone || '0868.499.929',
+        userPhone: user.phone || 'Chưa cập nhật SĐT',
         activityTitle: currentAct.title,
         points: currentAct.points,
         note: proofNote,

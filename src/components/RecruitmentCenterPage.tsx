@@ -1687,7 +1687,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
                     type="tel"
                     value={postJobForm.contactPhone}
                     onChange={(e) => setPostJobForm(prev => ({ ...prev, contactPhone: e.target.value, contactZalo: e.target.value }))}
-                    placeholder="0868499929"
+                    placeholder="Nhập SĐT / Zalo của bạn (VD: 0912.xxx.xxx)"
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500 outline-hidden"
                     required
                   />

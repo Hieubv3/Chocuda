@@ -36,8 +36,45 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
   const navigate = useNavigate();
   const t = getTranslation(language);
 
-  // Find property by ID or slug match
-  const property = properties.find(p => p.id === id || p.id === decodeURIComponent(id || ''));
+  const cleanParamId = id ? decodeURIComponent(id).trim() : '';
+
+  // Local state for fetched property if not present in initial array
+  const [fetchedProperty, setFetchedProperty] = useState<Property | null>(null);
+  const [isFetchingServer, setIsFetchingServer] = useState<boolean>(false);
+
+  // Find property by ID or slug match in memory
+  const propertyInMemory = properties.find(p => 
+    p && (
+      p.id === id || 
+      p.id === cleanParamId || 
+      (cleanParamId && p.id && p.id.toLowerCase() === cleanParamId.toLowerCase())
+    )
+  );
+
+  const property = propertyInMemory || fetchedProperty;
+
+  // If not found in memory, try fetching directly from /api/properties/:id
+  useEffect(() => {
+    if (!propertyInMemory && cleanParamId) {
+      setIsFetchingServer(true);
+      fetch(`/api/properties/${cleanParamId}`)
+        .then(res => {
+          if (res.ok) return res.json();
+          throw new Error('Not found');
+        })
+        .then(data => {
+          if (data && data.id) {
+            setFetchedProperty(data);
+          }
+        })
+        .catch(err => {
+          console.warn('Property fetch error:', err);
+        })
+        .finally(() => {
+          setIsFetchingServer(false);
+        });
+    }
+  }, [cleanParamId, propertyInMemory]);
 
   const [selectedImgIndex, setSelectedImgIndex] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -49,6 +86,15 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
   const [phone, setPhone] = useState('');
   const [preferredTime, setPreferredTime] = useState('Cuối tuần này');
   const [note, setNote] = useState('');
+
+  if (isFetchingServer && !property) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
+        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p className="text-sm font-bold text-slate-600 dark:text-slate-300">Đang tải thông tin chi tiết bài đăng...</p>
+      </div>
+    );
+  }
 
   if (!property) {
     return (

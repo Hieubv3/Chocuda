@@ -312,7 +312,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
     setIsLoading(true);
 
     try {
-      const defaultPhone = phone || '0868.499.929';
+      const defaultPhone = phone || '';
       const defaultName = name || 'Cư dân Zalo 24H';
 
       const res = await fetch('/api/auth/zalo', {
@@ -847,7 +847,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="0868.499.929"
+                    placeholder="Nhập SĐT/Zalo của bạn (VD: 0912.xxx.xxx)"
                     className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   />
                 </div>
