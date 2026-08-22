@@ -14,6 +14,7 @@ interface UserWalletSectionProps {
   onRefreshBalance: (showToast?: boolean) => void;
   isSyncingBalance: boolean;
   onQuickExchangeAffiliate: (credits: number) => void;
+  onOpenEscrowModal?: () => void;
 }
 
 export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
@@ -24,12 +25,23 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
   onOpenWithdrawModal,
   onRefreshBalance,
   isSyncingBalance,
-  onQuickExchangeAffiliate
+  onQuickExchangeAffiliate,
+  onOpenEscrowModal
 }) => {
   const [topupTab, setTopupTab] = useState<'qr' | 'crypto'>('qr');
   const [copiedAccount, setCopiedAccount] = useState(false);
   const [copiedMemo, setCopiedMemo] = useState(false);
   const [customAmount, setCustomAmount] = useState(100000);
+
+  // Check if user is authorized for business / technician services
+  const isBusinessOrTechnician = Boolean(
+    userState.role === 'admin' ||
+    userState.role === 'partner' ||
+    userState.role === 'sale' ||
+    userState.accountType === 'technician' ||
+    userState.accountType === 'business_enterprise' ||
+    Boolean(userState.companyName)
+  );
 
   const transferMemo = `TOKEN ${userState.phone || userState.email?.split('@')[0] || userState.id?.slice(0, 8) || 'CUDAN'}`;
 
@@ -46,8 +58,8 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
 
   return (
     <div className="space-y-4 animate-in fade-in duration-200">
-      {/* 3 Wallets Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      {/* Wallets Cards Grid */}
+      <div className={`grid grid-cols-1 md:grid-cols-2 ${isBusinessOrTechnician ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-3`}>
         {/* 1. Token Cư Dân */}
         <div className="bg-gradient-to-br from-amber-500/10 via-slate-900 to-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-amber-500/40 space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between">
@@ -141,6 +153,40 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
             <span>Ưu tiên số 1 khi người mua tìm kiếm</span>
           </div>
         </div>
+
+        {/* 4. Ví Tự Động & Escrow Ký Quỹ Thợ (Chỉ hiển thị cho User có quyền kinh doanh / thợ / đối tác) */}
+        {isBusinessOrTechnician && (
+          <div className="bg-gradient-to-br from-teal-500/10 via-slate-900 to-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-teal-500/40 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase bg-teal-500 text-slate-950 px-2 py-0.5 rounded">
+                🛡️ VÍ ESCROW THỢ & DOANH NGHIỆP
+              </span>
+              <span className="text-xs text-teal-400 font-bold">Tạm giữ an toàn</span>
+            </div>
+            <div className="flex items-baseline gap-1 mt-1">
+              <span className="text-2xl sm:text-3xl font-black text-teal-300 font-mono">
+                {((userState as any).escrowBalance || 0).toLocaleString('vi-VN')}
+              </span>
+              <span className="text-xs font-bold text-teal-200">VNĐ</span>
+            </div>
+            <p className="text-[11px] text-slate-400 border-t border-slate-800 pt-2">
+              Ví tự động giữ tiền nghiệm thu đơn kỹ thuật, xây lắp, dịch vụ & giải ngân an toàn.
+            </p>
+            <div className="pt-1">
+              {onOpenEscrowModal ? (
+                <button
+                  onClick={onOpenEscrowModal}
+                  className="w-full py-2 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-black text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <Wallet className="w-3.5 h-3.5" />
+                  <span>Mở Quản Lý Ví Escrow & Đơn Tạm Giữ</span>
+                </button>
+              ) : (
+                <span className="text-[10px] text-teal-400 font-bold block">✓ Tài khoản đã kích hoạt nghiệp vụ</span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* VietQR Quick Topup Section */}

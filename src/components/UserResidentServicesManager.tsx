@@ -13,11 +13,13 @@ import { getServiceDetailUrl } from '../lib/slugs';
 interface UserResidentServicesManagerProps {
   user: User;
   onRefresh?: () => void;
+  onOpenEscrowModal?: () => void;
 }
 
 export const UserResidentServicesManager: React.FC<UserResidentServicesManagerProps> = ({
   user,
-  onRefresh
+  onRefresh,
+  onOpenEscrowModal
 }) => {
   const [services, setServices] = useState<ResidentServiceItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -425,6 +427,17 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
               title="Mở rộng hoặc thu gọn tất cả"
             >
               {services.every(s => expandedSvcIds[s.id]) ? 'Thu gọn ▴' : 'Mở rộng ▾'}
+            </button>
+          )}
+
+          {onOpenEscrowModal && (
+            <button
+              onClick={onOpenEscrowModal}
+              className="px-3 py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer border border-emerald-400/40"
+              title="Mở ví tạm giữ nghiệm thu & quản lý đơn kỹ thuật"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+              <span>Ví Escrow Ký Quỹ</span>
             </button>
           )}
 

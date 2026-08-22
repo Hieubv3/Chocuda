@@ -20,6 +20,7 @@ import { UserWalletSection } from '../components/UserWalletSection';
 import { UserProfileEditModal } from '../components/UserProfileEditModal';
 import { UserPropertyEditModal } from '../components/UserPropertyEditModal';
 import { UserResidentServicesManager } from '../components/UserResidentServicesManager';
+import { TechnicalServiceEscrowModal } from '../components/TechnicalServiceEscrowModal';
 import { playMessageRingtone } from '../lib/audioRingtone';
 import { RECRUITMENT_PACKAGES } from '../data/recruitmentData';
 import { getPropertyDetailUrl, getProjectSlug } from '../lib/slugs';
@@ -91,6 +92,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
   // Profile & Property Edit Modals state
   const [showProfileEditModal, setShowProfileEditModal] = useState<boolean>(false);
+  const [showEscrowModal, setShowEscrowModal] = useState<boolean>(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [showPropertyEditModal, setShowPropertyEditModal] = useState<boolean>(false);
 
@@ -1175,7 +1177,11 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
       {/* TAB: MY SERVICES (DỊCH VỤ & THỢ KỸ THUẬT CƯ DÂN) */}
       {/* ========================================================================= */}
       {activeTab === 'my_services' && (
-        <UserResidentServicesManager user={userState} onRefresh={onRefreshData} />
+        <UserResidentServicesManager
+          user={userState}
+          onRefresh={onRefreshData}
+          onOpenEscrowModal={() => setShowEscrowModal(true)}
+        />
       )}
 
       {/* ========================================================================= */}
@@ -1190,6 +1196,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           onOpenWithdrawModal={() => setShowWithdrawModal(true)}
           onRefreshBalance={refreshUserBalance}
           isSyncingBalance={isSyncingBalance}
+          onOpenEscrowModal={() => setShowEscrowModal(true)}
           onQuickExchangeAffiliate={(credits) => {
             setUpTinCredits(prev => prev + credits);
             setUserState(prev => ({ ...prev, affiliatePoints: 0 }));
@@ -1697,6 +1704,16 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           onSuccess={() => {
             onRefreshData();
           }}
+        />
+      )}
+
+      {/* Technical Service Escrow Modal (Chỉ mở cho User có quyền kinh doanh / thợ) */}
+      {showEscrowModal && (
+        <TechnicalServiceEscrowModal
+          isOpen={showEscrowModal}
+          onClose={() => setShowEscrowModal(false)}
+          currentUser={userState}
+          onOpenAuth={() => {}}
         />
       )}
     </div>

@@ -622,13 +622,23 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               <span>BẢNG GIÁ QUẢNG BÁ</span>
             </button>
 
-            <button
-              onClick={() => setIsEscrowModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-slate-900 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md transition active:scale-95 cursor-pointer ring-1 ring-emerald-400/50"
-            >
-              <Wallet className="w-3.5 h-3.5 text-emerald-300" />
-              <span>VÍ TỰ ĐỘNG &amp; ESCROW THỢ KĨ THUẬT</span>
-            </button>
+            {/* VÍ TỰ ĐỘNG & ESCROW THỢ KĨ THUẬT: Chỉ hiển thị trong tài khoản thợ / doanh nghiệp / đối tác có quyền kinh doanh */}
+            {currentUser && (
+              currentUser.role === 'admin' ||
+              currentUser.role === 'partner' ||
+              currentUser.role === 'sale' ||
+              currentUser.accountType === 'technician' ||
+              currentUser.accountType === 'business_enterprise' ||
+              Boolean(currentUser.companyName)
+            ) && (
+              <button
+                onClick={() => setIsEscrowModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-slate-900 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md transition active:scale-95 cursor-pointer ring-1 ring-emerald-400/50"
+              >
+                <Wallet className="w-3.5 h-3.5 text-emerald-300" />
+                <span>VÍ TỰ ĐỘNG &amp; ESCROW THỢ KĨ THUẬT</span>
+              </button>
+            )}
 
             <button
               onClick={() => setIsTransportModalOpen(true)}
