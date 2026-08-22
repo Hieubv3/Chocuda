@@ -242,7 +242,20 @@ export interface User {
   emailVerified?: boolean;
   phoneVerified?: boolean;
   
-  // Xác thực chính chủ (KYC) & Chứng chỉ Môi giới Sale
+  // Xác thực chính chủ (KYC), Doanh Nghiệp B2B & Chứng chỉ Môi giới Sale / Ngành Nghề
+  accountType?: 'individual_resident' | 'business_enterprise' | 'technician' | 'consumer'; // Phân loại tài khoản
+  companyName?: string; // Tên công ty / Doanh nghiệp / Sàn BĐS / Nhà Thầu
+  taxCode?: string; // Mã số thuế (MST)
+  businessLicenseUrl?: string; // Ảnh Giấy phép ĐKKD / Giấy chứng nhận Đăng ký Doanh nghiệp
+  businessType?: 'real_estate_agency' | 'interior_construction' | 'recruitment' | 'pharmacy_health' | 'food_beverage' | 'general_services' | 'other'; // Loại hình DN
+  specializedCertificates?: Array<{ // Danh sách chứng chỉ ngành nghề bắt buộc (Môi giới BĐS, Dược phẩm, PCCC, An toàn thực phẩm...)
+    id: string;
+    certName: string; // Tên chứng chỉ / Giấy phép con
+    certNumber?: string; // Số hiệu chứng chỉ
+    issuedBy?: string; // Nơi cấp
+    issuedDate?: string; // Ngày cấp
+    certImageUrl: string; // Ảnh chụp chứng chỉ
+  }>;
   dob?: string; // Ngày tháng năm sinh (YYYY-MM-DD)
   idCardNumber?: string; // Số CCCD / Giấy tờ cá nhân
   idCardFrontUrl?: string; // Ảnh CCCD Mặt Trước

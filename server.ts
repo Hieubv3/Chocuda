@@ -3296,6 +3296,86 @@ Sitemap: ${baseUrl}/sitemap.xml`;
   res.send(robotsTxt);
 });
 
+// In-App Chat Orders Store (Đồ ăn, cafe, hàng vật lý, taxi, thợ sửa qua Chatbot)
+let chatOrdersStore: any[] = [
+  {
+    id: 'ord-chat-101',
+    orderCode: 'CHAT-8891',
+    itemType: 'food_drink',
+    orderCategory: 'Ẩm Thực & Cafe Cư Dân',
+    items: [
+      { name: 'Cơm Sườn Nướng Mật Ong', quantity: 2, price: 45000, priceDisplay: '45.000đ' },
+      { name: 'Trà Sữa Trân Châu Đường Đen', quantity: 2, price: 35000, priceDisplay: '35.000đ' }
+    ],
+    totalAmount: 160000,
+    totalDisplay: '160.000đ',
+    customerName: 'Trần Thu Trang',
+    customerPhone: '0988.123.456',
+    customerAddress: 'Tòa S2.12 - Căn 1806, Vinhomes Ocean Park 1',
+    project: 'ocean-park-1',
+    note: 'Giao nhanh trước 12h, trà sữa ít đường nhiều trân châu',
+    paymentMethod: 'cod',
+    status: 'preparing',
+    sellerName: 'Bếp Cư Dân S2.12 & Trà Sữa Tươi',
+    sellerPhone: '0868.499.929',
+    createdAt: new Date(Date.now() - 15 * 60000).toLocaleString('vi-VN')
+  }
+];
+
+// GET /api/chat-orders
+app.get("/api/chat-orders", (req, res) => {
+  const { phone, userId } = req.query;
+  let filtered = [...chatOrdersStore];
+  if (phone) {
+    filtered = filtered.filter(o => o.customerPhone && o.customerPhone.includes(String(phone)));
+  }
+  if (userId) {
+    filtered = filtered.filter(o => o.userId === String(userId));
+  }
+  res.json({ success: true, orders: filtered });
+});
+
+// POST /api/chat-orders
+app.post("/api/chat-orders", (req, res) => {
+  const orderData = req.body;
+  if (!orderData || !orderData.customerName || !orderData.customerPhone || !orderData.items || orderData.items.length === 0) {
+    return res.status(400).json({ error: "Thiếu thông tin khách hàng, số điện thoại hoặc danh sách món/sản phẩm đặt." });
+  }
+
+  const orderCode = `CHAT-${Math.floor(1000 + Math.random() * 9000)}`;
+  const totalAmount = orderData.items.reduce((sum: number, it: any) => sum + ((it.price || 0) * (it.quantity || 1)), 0);
+
+  const newOrder = {
+    id: `ord-chat-${Date.now()}`,
+    orderCode,
+    itemType: orderData.itemType || 'food_drink',
+    orderCategory: orderData.orderCategory || 'Ẩm Thực & Cơm Cư Dân',
+    items: orderData.items,
+    totalAmount,
+    totalDisplay: `${totalAmount.toLocaleString('vi-VN')}đ`,
+    customerName: orderData.customerName,
+    customerPhone: orderData.customerPhone,
+    customerAddress: orderData.customerAddress || 'Nội khu Vinhomes',
+    project: orderData.project || 'ocean-park-2',
+    note: orderData.note || '',
+    paymentMethod: orderData.paymentMethod || 'cod',
+    status: 'confirmed',
+    sellerName: orderData.sellerName || 'Cửa Hàng / Thợ Cư Dân 24H',
+    sellerPhone: orderData.sellerPhone || '0868.499.929',
+    userId: orderData.userId,
+    createdAt: new Date().toLocaleString('vi-VN')
+  };
+
+  chatOrdersStore.unshift(newOrder);
+  saveDataStore();
+
+  res.status(201).json({
+    success: true,
+    message: `🎉 Đặt hàng qua Chat thành công! Mã đơn #${orderCode}. Người bán & Shipper nội khu đang chuẩn bị đơn và sẽ giao tới ${newOrder.customerAddress} trong 15-20 phút.`,
+    order: newOrder
+  });
+});
+
 // Gemini AI Straight-Line Sales Chatbot Endpoint
 app.post("/api/chat", async (req, res) => {
   const { message, role } = req.body;
@@ -3303,40 +3383,48 @@ app.post("/api/chat", async (req, res) => {
   try {
     const ai = getGeminiClient();
 
-    const systemPrompt = `Bạn là Trợ Lý AI Chuyên Viên Bán Hàng Đường Thẳng (Straight Line Selling) cao cấp của Chợ Cư Dân 24H tại website chocudan24h.com.
-DỮ LIỆU THỰC TẾ TRÊN WEBSITE:
-- Hotline/Zalo Chợ Cư Dân 24H: 0868.499.929
-- Bảng giá Up Tin VIP: Gói Bạc (50.000đ/ngày), Gói Vàng (100.000đ/ngày), Gói Kim Cương (200.000đ/ngày).
-- Dự án chính: Vinhomes Ocean Park 1 (Gia Lâm), Vinhomes Ocean Park 2 (The Empire - Chà Là, San Hô, Phố Biển), Vinhomes Ocean Park 3 (Grand Park), Vinhomes Hạ Long Xanh (Quảng Ninh), Vinhomes Green Paradise Cần Giờ, Vinhomes Tân Mỹ - Hậu Nghĩa Long An, Vinhomes Green City Hóc Môn, Vinhomes Làng Vân Đà Nẵng.
-- Tổng số tin đăng BĐS hiện tại trên sàn: ${propertiesStore.length} căn.
+    const systemPrompt = `Bạn là Trợ Lý AI Đa Năng Chợ Cư Dân 24H tại website chocudan24h.com (Hotline/Zalo: 0868.499.929).
+NĂNG LỰC TƯ VẤN & ĐẶT HÀNG TRỰC TIẾP QUA CHAT:
+1. ĐẶT ĐỒ ĂN, CAFE, TRÀ SỮA & NÔNG SẢN THỰC PHẨM CƯ DÂN: Hỗ trợ khách đặt món ăn, cafe, nước uống, đồ ăn vặt giao tận cửa trong 15-20 phút.
+2. ĐẶT HÀNG VẬT LÝ / HÀNG TIÊU DÙNG TỪ CÁC GIAN HÀNG CƯ DÂN: Bách hóa, thiết bị gia đình, đồ thanh lý, phụ kiện.
+3. ĐẶT XE CƯ DÂN 24/7: Xe điện Buggy nội khu, Taxi điện, Taxi sân bay Nội Bài, xe tiện chuyến.
+4. GỌI THỢ KỸ THUẬT & SỬA CHỮA: Sửa thang máy gia đình, sửa điện nước, máy tính, vệ sinh nhà, giặt rèm.
+5. MUA BÁN & CHO THUÊ BẤT ĐỘNG SẢN: Lọc quỹ căn Ocean Park 1, 2, 3, tính vay ngân hàng lãi suất 0%, Up Tin VIP.
 
-VĂN PHONG VÀ KỸ NĂNG BÁN HÀNG ĐƯỜNG THẲNG:
-1. Luôn xưng "Dạ em chào Anh/Chị" hoặc "Dạ em kính chào Anh/Chị", thể hiện sự thân tình, lịch sự, tôn trọng, chuyên nghiệp, KHÔNG bỗ bã.
-2. Dựa STRICTLY vào dữ liệu thật của website. Tuyệt đối KHÔNG bịa đặt dự án không có thật.
-3. Áp dụng kỹ thuật Bán Hàng Đường Thẳng (Straight Line Selling): 
-   - Trả lời ngắn gọn, đánh đúng trọng tâm nhu cầu.
-   - Luôn kết thúc câu bằng 1-2 CÂU HỎI SÀNG LỌC nhu cầu (Qualification Question) để điều hướng khách hàng trên đường thẳng tiến tới giao dịch (VD: Hỏi về ngân sách bao nhiêu Tỷ, mua ở hay đầu tư, loại sản phẩm mong muốn).
-4. Hướng dẫn sử dụng website chi tiết theo đúng vai trò (${role || 'buyer'}):
-   - Với Khách Mua/Thuê (buyer): Hướng dẫn lọc căn theo dự án/mức giá, dùng Bảng tính vay ngân hàng, xem so sánh pháp lý, liên hệ Hotline 0868.499.929.
-   - Với Chủ Nhà (owner): Hướng dẫn Đăng tin bán/cho thuê miễn phí (có AI đọc ảnh điền form), nâng gói Tin VIP lên Top 1 Google.
-   - Với Sale BĐS (sale): Hướng dẫn đăng căn chào hàng, nhận hotline lead, dùng công cụ AI Studio viết bài SEO BĐS, kết nối Webhook n8n Automation.
+VĂN PHONG VÀ KỸ NĂNG:
+- Luôn xưng "Dạ em chào Anh/Chị", lịch sự, chu đáo, nhanh nhẹn, chuẩn phong cách cư dân Vinhomes.
+- Khi khách có nhu cầu đặt đồ ăn / cafe / hàng hóa / xe / thợ, hãy xác nhận ngay và hướng dẫn hoặc mở form đặt hàng qua chat.
+- Luôn kết thúc bằng 1 câu hỏi sàng lọc hoặc gợi ý nút bấm tiện ích.
 
 YÊU CẦU ĐẦU RA: Trả về duy nhất JSON object với cấu trúc:
 {
-  "reply": "Nội dung phản hồi đầy đủ, lịch sự, chi tiết và có câu hỏi đường thẳng",
-  "suggestedOptions": ["Gợi ý nút bấm 1", "Gợi ý nút bấm 2", "Gợi ý nút bấm 3"]
+  "reply": "Nội dung phản hồi đầy đủ, chi tiết, nhiệt tình",
+  "suggestedOptions": ["Gợi ý nút bấm 1", "Gợi ý nút bấm 2", "Gợi ý nút bấm 3"],
+  "orderAction": "food" | "transport" | "repair" | "goods" | null
 }`;
 
     if (!ai) {
       // Fallback if no Gemini key
-      return res.json({
-        reply: `Dạ em chào Anh/Chị! Em là Trợ lý AI BĐS Vinhomes của Chợ Cư Dân 24H (Hotline 0868.499.929).\n\nVề thắc mắc "${message}": Hệ thống website chocudan24h.com đang quản lý ${propertiesStore.length} căn hộ & biệt thự Vinhomes chính chủ.\n\nAnh/Chị cần em hỗ trợ tìm quỹ căn cụ thể ở Vinhomes Ocean Park 2/3 hay hướng dẫn đăng tin chính chủ ạ?`,
-        suggestedOptions: [
-          '🔍 Tìm căn Vinhomes Ocean Park 2',
-          '✍️ Hướng dẫn Đăng Tin & Up VIP',
-          '📞 Gọi Hotline 0868.499.929'
-        ]
-      });
+      const lowerM = (message || '').toLowerCase();
+      let orderAction: string | null = null;
+      let reply = `Dạ em chào Anh/Chị! Em là Trợ lý AI Chợ Cư Dân 24H (Hotline/Zalo: 0868.499.929).\n\nEm có thể hỗ trợ Anh/Chị đặt món ăn/cafe, gọi xe 24/7, gọi thợ kỹ thuật hoặc tìm quỹ căn BĐS Vinhomes. Anh/Chị muốn đặt dịch vụ nào ạ?`;
+      let suggestedOptions = ['🍲 Đặt Cơm & Cafe Giao Nhanh', '🚗 Đặt Xe Nội / Ngoại Khu 24/7', '🔧 Gọi Thợ Sửa Chữa Khẩn Cấp', '🔍 Lọc Căn Ocean Park 2'];
+
+      if (lowerM.includes('ăn') || lowerM.includes('uống') || lowerM.includes('cafe') || lowerM.includes('trà sữa') || lowerM.includes('cơm') || lowerM.includes('bún')) {
+        orderAction = 'food';
+        reply = `Dạ! Em đã mở sẵn Bảng Thực Đơn & Món Ngon Cư Dân Vinhomes để Anh/Chị chọn món ngay trong chat. Quán sẽ làm nóng hổi và ship tận căn hộ trong 15-20 phút ạ!`;
+        suggestedOptions = ['🍲 Chọn món & Đặt ngay', '🥤 Đặt Trà sữa / Cafe', '🍱 Đặt Cơm sườn nướng'];
+      } else if (lowerM.includes('xe') || lowerM.includes('taxi') || lowerM.includes('sân bay') || lowerM.includes('nội bài') || lowerM.includes('buggy')) {
+        orderAction = 'transport';
+        reply = `Dạ! Đội ngũ tài xế cư dân 24/7 luôn túc trực tại các sảnh Vinhomes. Em mở biểu mẫu đặt xe trực tiếp trong chat để Anh/Chị điền điểm đón nhé ạ!`;
+        suggestedOptions = ['⚡ Đặt Xe Buggy Nội Khu', '✈️ Đặt Taxi Sân Bay Nội Bài', '🚗 Xe Tiện Chuyến Đi Tỉnh'];
+      } else if (lowerM.includes('sửa') || lowerM.includes('thợ') || lowerM.includes('điện nước') || lowerM.includes('thang máy')) {
+        orderAction = 'repair';
+        reply = `Dạ! Em đã sẵn sàng kết nối Anh/Chị với Đội Thợ Kỹ Thuật & Sửa Chữa Cư Dân có mặt sau 10-15 phút để xử lý sự cố.`;
+        suggestedOptions = ['🛗 Sửa Thang Máy Gia Đình', '⚡ Sửa Điện Nước Khẩn Cấp', '🛋️ Sửa Khóa & Smart Home'];
+      }
+
+      return res.json({ reply, suggestedOptions, orderAction });
     }
 
     const response = await ai.models.generateContent({
@@ -3349,15 +3437,16 @@ YÊU CẦU ĐẦU RA: Trả về duy nhất JSON object với cấu trúc:
 
     const parsed = JSON.parse(response.text || "{}");
     res.json({
-      reply: parsed.reply || "Dạ em đã ghi nhận thông tin từ Anh/Chị. Vui lòng liên hệ Hotline/Zalo 0868.499.929 để Chợ Cư Dân 24H gửi bảng giá chi tiết ạ!",
-      suggestedOptions: parsed.suggestedOptions || ["Lọc căn Ocean Park 2", "Hotline 0868.499.929"]
+      reply: parsed.reply || "Dạ em đã ghi nhận thông tin từ Anh/Chị. Vui lòng liên hệ Hotline/Zalo 0868.499.929 để Chợ Cư Dân 24H phục vụ nhanh nhất ạ!",
+      suggestedOptions: parsed.suggestedOptions || ["🍲 Đặt Cơm/Cafe", "🚗 Đặt Xe 24/7", "🔧 Gọi Thợ Cư Dân", "Hotline 0868.499.929"],
+      orderAction: parsed.orderAction || null
     });
 
   } catch (err: any) {
     console.error("Chat API error:", err);
     res.json({
-      reply: `Dạ em chào Anh/Chị! Chợ Cư Dân 24H (0868.499.929) luôn sẵn sàng tư vấn trực tiếp 24/7. Anh/Chị đang quan tâm phân khu nào tại Vinhomes Ocean Park ạ?`,
-      suggestedOptions: ["Vinhomes Ocean Park 2", "Vinhomes Ocean Park 3", "Lọc biệt thự San Hô"]
+      reply: `Dạ em chào Anh/Chị! Chợ Cư Dân 24H (0868.499.929) luôn sẵn sàng phục vụ đặt món ăn, cafe, đặt xe và sửa chữa 24/7. Anh/Chị muốn đặt dịch vụ nào ạ?`,
+      suggestedOptions: ["🍲 Đặt Cơm/Cafe Giao Nhanh", "🚗 Đặt Xe 24/7", "🔧 Gọi Thợ Cư Dân", "Vinhomes Ocean Park 2"]
     });
   }
 });

@@ -36,6 +36,22 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
   const [bankAccountNumber, setBankAccountNumber] = useState(user.bankAccountNumber || '');
   const [bankAccountName, setBankAccountName] = useState(user.bankAccountName || user.name || '');
 
+  // Business & Verification Profile (MST, ĐKKD, Chứng chỉ Môi giới / Dược / Xây dựng...)
+  const [accountType, setAccountType] = useState<string>(user.accountType || (user.role === 'partner' ? 'business_enterprise' : user.role === 'sale' ? 'business_enterprise' : 'individual_resident'));
+  const [companyName, setCompanyName] = useState(user.companyName || '');
+  const [taxCode, setTaxCode] = useState(user.taxCode || '');
+  const [businessType, setBusinessType] = useState(user.businessType || 'real_estate_agency');
+  const [businessLicenseUrl, setBusinessLicenseUrl] = useState(user.businessLicenseUrl || '');
+  const [brokerLicenseUrl, setBrokerLicenseUrl] = useState(user.brokerLicenseUrl || '');
+  
+  // Custom Specialized Certificates list
+  const [specializedCertificates, setSpecializedCertificates] = useState<Array<{ id: string; certName: string; certNumber?: string; issuedBy?: string; issuedDate?: string; certImageUrl: string }>>(
+    user.specializedCertificates || []
+  );
+  const [newCertName, setNewCertName] = useState('');
+  const [newCertNumber, setNewCertNumber] = useState('');
+  const [newCertImage, setNewCertImage] = useState('');
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -90,6 +106,14 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
       bankName: bankName.trim(),
       bankAccountNumber: bankAccountNumber.trim(),
       bankAccountName: bankAccountName.trim().toUpperCase(),
+      // Business & Enterprise Verification Profile
+      accountType: accountType as any,
+      companyName: companyName.trim(),
+      taxCode: taxCode.trim(),
+      businessType: businessType as any,
+      businessLicenseUrl: businessLicenseUrl.trim(),
+      brokerLicenseUrl: brokerLicenseUrl.trim(),
+      specializedCertificates: specializedCertificates,
       // Keep extra fields
       ...{
         projectArea,
@@ -326,11 +350,260 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
             </div>
           </div>
 
-          {/* Section 3: Bank Account for Affiliate & Token Payouts */}
+          {/* Section 3: Doanh Nghiệp & Giấy Phép Kinh Doanh / Chứng Chỉ Ngành Nghề */}
+          <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-blue-500/30 dark:border-blue-500/20 space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5" />
+                3. Hồ Sơ Doanh Nghiệp, Giấy Phép & Chứng Chỉ Bắt Buộc
+              </h4>
+              <span className="text-[10px] px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-300 font-bold rounded-full border border-blue-500/30">
+                Xác Thực B2B & Pháp Lý
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                  Loại Hình Tài Khoản
+                </label>
+                <select
+                  value={accountType}
+                  onChange={e => setAccountType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-blue-500 outline-hidden"
+                >
+                  <option value="individual_resident">🏠 Cư Dân Cá Nhân (Chủ Hộ / Người Ở)</option>
+                  <option value="business_enterprise">🏢 Doanh Nghiệp / Sàn BĐS / Công Ty</option>
+                  <option value="technician">🛠️ Thợ Kỹ Thuật / Đội Cơ Động</option>
+                  <option value="consumer">👤 Khách Hàng Tiêu Dùng (Chỉ Xem / Đặt Lịch)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                  Lĩnh Vực / Ngành Nghề Đăng Ký
+                </label>
+                <select
+                  value={businessType}
+                  onChange={e => setBusinessType(e.target.value as any)}
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
+                >
+                  <option value="real_estate_agency">🏢 Sàn Giao Dịch & Môi Giới BĐS</option>
+                  <option value="interior_construction">🏗️ Công Ty Xây Dựng & Thiết Kế Nội Thất</option>
+                  <option value="recruitment">💼 Công Ty / Chuỗi Tuyển Dụng Lao Động</option>
+                  <option value="pharmacy_health">💊 Nhà Thuốc, Dược Phẩm & Y Tế Gia Đình</option>
+                  <option value="food_beverage">🍱 Ẩm Thực, F&B & Thực Phẩm Sạch</option>
+                  <option value="general_services">⚡ Kỹ Thuật, Sửa Chữa & Vận Chuyển 24/7</option>
+                  <option value="other">✨ Lĩnh Vực / Ngành Nghề Khác</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                  Tên Công Ty / Doanh Nghiệp / Hộ Kinh Doanh
+                </label>
+                <input
+                  type="text"
+                  value={companyName}
+                  onChange={e => setCompanyName(e.target.value)}
+                  placeholder="Ví dụ: Công Ty Cổ Phần BĐS Tân Thời Đại / Nhà Thuốc An Tâm"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                  Mã Số Thuế (MST) / Số ĐKKD
+                </label>
+                <input
+                  type="text"
+                  value={taxCode}
+                  onChange={e => setTaxCode(e.target.value)}
+                  placeholder="Ví dụ: 0108999888"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-blue-500 outline-hidden"
+                />
+              </div>
+            </div>
+
+            {/* Business License & Broker / Industry Certificate Upload */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200 dark:border-slate-700">
+              {/* Giấy phép ĐKKD */}
+              <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-slate-900 dark:text-white text-xs">
+                    📄 Giấy Phép Kinh Doanh (ĐKKD):
+                  </span>
+                  <label className="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] rounded-lg cursor-pointer inline-flex items-center gap-1 transition">
+                    <Upload className="w-3 h-3" />
+                    <span>Tải Lên</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const preview = await createInstantPreview(file);
+                          setBusinessLicenseUrl(preview);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                {businessLicenseUrl ? (
+                  <div className="relative rounded-lg overflow-hidden h-20 bg-slate-900 border border-slate-300 dark:border-slate-700">
+                    <img src={businessLicenseUrl} alt="Giấy phép ĐKKD" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setBusinessLicenseUrl('')}
+                      className="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white rounded text-[10px] flex items-center justify-center"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-slate-400 italic">Chưa tải ảnh giấy phép ĐKKD</p>
+                )}
+              </div>
+
+              {/* Chứng chỉ hành nghề / Giấy phép chuyên ngành */}
+              <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-slate-900 dark:text-white text-xs">
+                    📜 Chứng Chỉ Nghề / Giấy Phép Con:
+                  </span>
+                  <label className="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] rounded-lg cursor-pointer inline-flex items-center gap-1 transition">
+                    <Upload className="w-3 h-3" />
+                    <span>Tải Lên</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const preview = await createInstantPreview(file);
+                          setBrokerLicenseUrl(preview);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                {brokerLicenseUrl ? (
+                  <div className="relative rounded-lg overflow-hidden h-20 bg-slate-900 border border-slate-300 dark:border-slate-700">
+                    <img src={brokerLicenseUrl} alt="Chứng chỉ nghề" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setBrokerLicenseUrl('')}
+                      className="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white rounded text-[10px] flex items-center justify-center"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-slate-400 italic">Chứng chỉ Môi giới BĐS, Dược, ATTP...</p>
+                )}
+              </div>
+            </div>
+
+            {/* Add Custom Specialized Certificate */}
+            <div className="p-3 bg-blue-50/60 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-900/40 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-blue-900 dark:text-blue-300 text-[11px]">
+                  + Bổ Sung Chứng Chỉ / Giấy Phép Khác (Tùy Chọn):
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <input
+                  type="text"
+                  placeholder="Tên chứng chỉ (VD: Giấy phép Dược / PCCC)"
+                  value={newCertName}
+                  onChange={e => setNewCertName(e.target.value)}
+                  className="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                />
+                <input
+                  type="text"
+                  placeholder="Số hiệu / Ngày cấp"
+                  value={newCertNumber}
+                  onChange={e => setNewCertNumber(e.target.value)}
+                  className="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-mono"
+                />
+                <div className="flex items-center gap-1.5">
+                  <label className="flex-1 px-2 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-800 dark:text-slate-200 font-bold text-[11px] rounded-lg cursor-pointer text-center truncate">
+                    <span>{newCertImage ? '✓ Đã chọn ảnh' : '📷 Chọn ảnh'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const preview = await createInstantPreview(file);
+                          setNewCertImage(preview);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!newCertName.trim()) {
+                        alert('Vui lòng nhập tên chứng chỉ.');
+                        return;
+                      }
+                      if (!newCertImage) {
+                        alert('Vui lòng chọn ảnh chụp chứng chỉ.');
+                        return;
+                      }
+                      setSpecializedCertificates(prev => [
+                        ...prev,
+                        {
+                          id: `cert-${Date.now()}`,
+                          certName: newCertName.trim(),
+                          certNumber: newCertNumber.trim(),
+                          certImageUrl: newCertImage
+                        }
+                      ]);
+                      setNewCertName('');
+                      setNewCertNumber('');
+                      setNewCertImage('');
+                    }}
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs rounded-lg shadow-xs cursor-pointer"
+                  >
+                    Thêm
+                  </button>
+                </div>
+              </div>
+
+              {/* Added Certs preview list */}
+              {specializedCertificates.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {specializedCertificates.map((cert) => (
+                    <div key={cert.id} className="flex items-center gap-2 p-1.5 bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-800 rounded-lg text-[11px]">
+                      <img src={cert.certImageUrl} alt={cert.certName} className="w-8 h-8 object-cover rounded" />
+                      <div>
+                        <span className="font-bold block text-slate-900 dark:text-white">{cert.certName}</span>
+                        {cert.certNumber && <span className="text-[10px] text-slate-400 font-mono">{cert.certNumber}</span>}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSpecializedCertificates(prev => prev.filter(c => c.id !== cert.id))}
+                        className="text-rose-500 hover:text-rose-700 font-bold px-1"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section 4: Bank Account for Affiliate & Token Payouts */}
           <div className="bg-amber-500/5 dark:bg-amber-500/10 p-4 rounded-2xl border border-amber-500/30 space-y-3">
             <h4 className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
               <CreditCard className="w-3.5 h-3.5" />
-              3. Tài Khoản Ngân Hàng Nhận Tiền Rút Hoa Hồng VietQR
+              4. Tài Khoản Ngân Hàng Nhận Tiền Rút Hoa Hồng VietQR
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">

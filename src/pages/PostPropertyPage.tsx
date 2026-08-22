@@ -861,12 +861,12 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
             <div>
               <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
-                Ảnh Sản Phẩm / Bảng Giá / Cửa Hàng
+                Ảnh Sản Phẩm / Bảng Giá / Cửa Hàng (Tải từ Album/Camera)
               </label>
               <div className="flex flex-col sm:flex-row gap-2">
                 <label className="px-4 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition shrink-0">
                   <Upload className="w-4 h-4 stroke-[2.5]" />
-                  <span>📸 CHỌN / CHỤP ẢNH (DƯỚI 10MB)</span>
+                  <span>📸 CHỌN / CHỤP ẢNH TỪ THIẾT BỊ</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -893,17 +893,18 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     }}
                   />
                 </label>
-                <input
-                  type="url"
-                  value={serviceImg}
-                  onChange={(e) => setServiceImg(e.target.value)}
-                  placeholder="Hoặc dán link ảnh Web https://..."
-                  className="flex-1 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-xs text-slate-900 dark:text-white"
-                />
               </div>
               {serviceImg && (
-                <div className="w-32 h-24 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 mt-2">
+                <div className="relative w-32 h-24 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 mt-2 group">
                   <img src={serviceImg} alt="Preview" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setServiceImg('')}
+                    className="absolute top-1 right-1 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer"
+                    title="Xóa ảnh"
+                  >
+                    ✕
+                  </button>
                 </div>
               )}
             </div>
@@ -1671,10 +1672,10 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                 <div className="space-y-0.5">
                   <span className="font-black text-xs text-slate-900 dark:text-white block">
-                    Tải Ảnh Căn Hộ / Biệt Thự / Sổ Đỏ Pháp Lý
+                    Tải Ảnh Căn Hộ / Biệt Thự Thực Tế
                   </span>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Hỗ trợ tải trực tiếp từ Album ảnh, Camera điện thoại hoặc dán link Web
+                    Chọn trực tiếp từ Thư viện Album hoặc Chụp từ Camera điện thoại
                   </p>
                 </div>
 
@@ -1689,7 +1690,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     <span>
                       {uploadProgress 
                         ? `⚡ ĐANG NÉN NHẸ & ĐÓNG DẤU (${uploadProgress.completed}/${uploadProgress.total})...`
-                        : '📸 CHỌN / CHỤP ẢNH (DƯỚI 10MB)'}
+                        : '📸 CHỌN / CHỤP ẢNH TỪ THIẾT BỊ'}
                     </span>
                     <input
                       type="file"
@@ -1702,31 +1703,11 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 </div>
               </div>
 
-              {/* Paste URL Input bar */}
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="url"
-                    placeholder="Hoặc dán đường dẫn link ảnh Web (https://...)"
-                    value={newImgInput}
-                    onChange={e => setNewImgInput(e.target.value)}
-                    className="flex-1 p-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddImage}
-                    className="px-4 py-3 bg-slate-800 hover:bg-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-400 font-black rounded-xl text-xs shrink-0 cursor-pointer border border-amber-500/30 transition"
-                  >
-                    + Thêm Link
-                  </button>
-                </div>
-              </div>
-
               {/* Watermark security feature notification */}
               <div className="flex items-center justify-between flex-wrap gap-2 text-[10px] text-amber-600 dark:text-amber-400 font-bold bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
                 <div className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                  <span>Ảnh hiển thị tức thì, hệ thống tự động nén nhẹ xuống ~150KB & gắn chìm Logo <b>"Chợ Cư Dân 24H"</b>.</span>
+                  <span>Ảnh tải trực tiếp từ máy, tự động nén tối ưu & đóng dấu bản quyền <b>"Chợ Cư Dân 24H"</b>.</span>
                 </div>
                 <span className="text-[9px] bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded-md font-extrabold">
                   ⚡ Hỗ trợ ảnh dưới 10MB
@@ -1738,7 +1719,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 <div className="space-y-2 pt-1">
                   <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
                     <span>Đã chọn ({imagesList.length} ảnh):</span>
-                    <span className="text-amber-500">Ảnh đầu tiên làm ảnh đại diện tin</span>
+                    <span className="text-amber-500">Ảnh đầu tiên làm ảnh đại diện</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -1748,7 +1729,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         <button
                           type="button"
                           onClick={() => handleRemoveImage(idx)}
-                          className="absolute top-1.5 right-1.5 w-6 h-6 bg-rose-600 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md hover:scale-110 transition cursor-pointer"
+                          className="absolute top-1.5 right-1.5 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 hover:bg-rose-700 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer z-10"
                           title="Xóa ảnh này"
                         >
                           ✕
@@ -1768,7 +1749,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 </div>
               ) : (
                 <div className="text-center py-6 text-slate-400 text-xs font-medium">
-                  Chưa có hình ảnh nào. Hãy nhấn <b className="text-amber-500">📸 CHỌN / CHỤP ẢNH</b> để bắt đầu.
+                  Chưa có hình ảnh nào. Hãy nhấn <b className="text-amber-500">📸 CHỌN / CHỤP ẢNH TỪ THIẾT BỊ</b> để tải ảnh.
                 </div>
               )}
             </div>
@@ -1782,10 +1763,10 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   </div>
                   <div className="space-y-1">
                     <h4 className="font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wider text-xs">
-                      QUY ĐỊNH CHỦ NHÀ: TẢI ẢNH & SỔ ĐỎ NGUYÊN BẢN GỐC (KHÔNG CHE)
+                      TẢI SỔ ĐỎ / HỢP ĐỒNG MUA BÁN (HĐMB) NGUYÊN BẢN CHÍNH CHỦ
                     </h4>
                     <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
-                      Chủ nhà gửi trực tiếp <strong>ảnh Sổ Đỏ / Giấy tờ chính chủ nguyên bản gốc (chưa che)</strong>. Ban Quản Trị (Admin) sẽ tiếp nhận để kiểm tra, đối chiếu chính chủ và vị trí căn nhà. Sau khi xác minh, Admin sẽ chủ động <strong>che mờ thông tin vị trí & số sổ nhạy cảm</strong> trước khi phê duyệt công khai.
+                      Chủ nhà tải trực tiếp <strong>ảnh Sổ Đỏ / Hợp đồng mua bán từ Album hoặc Chụp từ máy</strong>. Ban Quản Trị bảo mật tuyệt đối, chỉ dùng đối chiếu chính chủ và sẽ chủ động che mờ số sổ & tên trước khi hiển thị.
                     </p>
                   </div>
                 </div>
@@ -1793,12 +1774,12 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 {/* Owner Sổ Đỏ Upload Input */}
                 <div className="pt-2 border-t border-amber-500/20 space-y-2">
                   <label className="block font-bold text-slate-800 dark:text-slate-200 text-[11px]">
-                    Ảnh Sổ Đỏ / Hợp Đồng Mua Bán Nguyên Bản (Admin bảo mật tuyệt đối):
+                    Tải Ảnh Sổ Đỏ / HĐMB (Chế độ tải ảnh riêng từ Album/Camera):
                   </label>
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <label className="px-3.5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
-                      <Upload className="w-4 h-4" />
-                      <span>📁 CHỌN SỔ ĐỎ (DƯỚI 10MB)</span>
+                    <label className="px-4 py-3 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
+                      <Upload className="w-4 h-4 stroke-[2.5]" />
+                      <span>📸 CHỤP / CHỌN SỔ ĐỎ & HĐMB TỪ MÁY</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1830,21 +1811,21 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         }}
                       />
                     </label>
-
-                    <input
-                      type="url"
-                      placeholder="Hoặc dán link ảnh Sổ Đỏ gốc (https://...)"
-                      value={soDoImage}
-                      onChange={(e) => {
-                        setSoDoImage(e.target.value);
-                        setSoDoRedactedImage(e.target.value);
-                      }}
-                      className="flex-1 p-2.5 bg-white dark:bg-slate-900 border border-amber-500/30 rounded-xl font-mono text-[11px] text-slate-900 dark:text-white"
-                    />
                   </div>
                   {soDoImage && (
-                    <div className="w-36 h-24 rounded-xl overflow-hidden border border-amber-500/40 shadow-sm mt-1">
+                    <div className="relative w-40 h-28 rounded-xl overflow-hidden border border-amber-500/40 shadow-sm mt-2 group">
                       <img src={soDoImage} alt="Sổ đỏ gốc" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSoDoImage('');
+                          setSoDoRedactedImage('');
+                        }}
+                        className="absolute top-1.5 right-1.5 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer z-10"
+                        title="Xóa ảnh sổ đỏ"
+                      >
+                        ✕
+                      </button>
                     </div>
                   )}
                 </div>
@@ -1855,15 +1836,15 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 <div className="space-y-2 border-b border-teal-500/20 pb-3">
                   <h4 className="font-extrabold text-teal-700 dark:text-teal-300 uppercase tracking-wider text-xs flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-teal-600" />
-                    XÁC MINH MÔI GIỚI: TẢI CHỨNG CHỈ HÀNH NGHỀ / GIẤY ỦY QUYỀN BÁN HỘ
+                    XÁC MINH MÔI GIỚI: CHỨNG CHỈ HÀNH NGHỀ / GIẤY ỦY QUYỀN BÁN HỘ
                   </h4>
                   <p className="text-slate-600 dark:text-slate-300 text-[11px]">
-                    Môi giới bán hộ cần tải lên <strong>Chứng chỉ hành nghề BĐS</strong> hoặc <strong>Giấy ủy quyền / Thỏa thuận môi giới</strong> từ Chủ nhà để được xác minh uy tín (Hỗ trợ ảnh dưới 10MB).
+                    Tải trực tiếp từ máy <strong>Chứng chỉ hành nghề BĐS</strong> hoặc <strong>Giấy ủy quyền / Hợp đồng môi giới</strong> từ Chủ nhà.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <label className="px-3.5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
-                      <Upload className="w-4 h-4" />
-                      <span>📁 CHỌN GIẤY TỜ (DƯỚI 10MB)</span>
+                    <label className="px-4 py-3 bg-teal-600 hover:bg-teal-500 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
+                      <Upload className="w-4 h-4 stroke-[2.5]" />
+                      <span>📸 CHỤP / CHỌN GIẤY TỜ TỪ THIẾT BỊ</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1890,15 +1871,20 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         }}
                       />
                     </label>
-
-                    <input
-                      type="url"
-                      placeholder="Hoặc dán link ảnh Chứng chỉ hành nghề (https://...)"
-                      value={brokerCertImage}
-                      onChange={(e) => setBrokerCertImage(e.target.value)}
-                      className="flex-1 p-2.5 bg-white dark:bg-slate-900 border border-teal-500/30 rounded-xl font-mono text-[11px] text-slate-900 dark:text-white"
-                    />
                   </div>
+                  {brokerCertImage && (
+                    <div className="relative w-40 h-28 rounded-xl overflow-hidden border border-teal-500/40 shadow-sm mt-2 group">
+                      <img src={brokerCertImage} alt="Giấy tờ môi giới" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setBrokerCertImage('')}
+                        className="absolute top-1.5 right-1.5 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer z-10"
+                        title="Xóa ảnh giấy tờ"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

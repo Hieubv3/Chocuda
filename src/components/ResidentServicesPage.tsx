@@ -92,6 +92,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   const [transportName, setTransportName] = useState<string>(currentUser?.displayName || '');
   const [transportPhone, setTransportPhone] = useState<string>(currentUser?.phone || '');
   const [transportNote, setTransportNote] = useState<string>('');
+  const [transportImages, setTransportImages] = useState<string[]>([]);
   const [isSubmittingTransport, setIsSubmittingTransport] = useState<boolean>(false);
   const [transportSubmitResult, setTransportSubmitResult] = useState<string | null>(null);
 
@@ -105,6 +106,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   const [constructionBudget, setConstructionBudget] = useState<string>('Khảo sát chọn gói phù hợp');
   const [constructionTimeline, setConstructionTimeline] = useState<string>('Cần khảo sát báo giá trong tuần');
   const [constructionNote, setConstructionNote] = useState<string>('');
+  const [constructionImages, setConstructionImages] = useState<string[]>([]);
   const [isSubmittingConstruction, setIsSubmittingConstruction] = useState<boolean>(false);
   const [constructionSubmitResult, setConstructionSubmitResult] = useState<string | null>(null);
 
@@ -384,7 +386,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     const images = postForm.imagesText
       .split('\n')
       .map(s => s.trim())
-      .filter(s => s.startsWith('http'));
+      .filter(s => s.startsWith('http') || s.startsWith('data:image') || s.startsWith('blob:'));
 
     if (images.length === 0) {
       images.push('https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80');
@@ -2584,14 +2586,55 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">URL Ảnh Review (Nếu có)</label>
-                <input
-                  type="text"
-                  value={newPRForm.imageUrl}
-                  onChange={(e) => setNewPRForm({ ...newPRForm, imageUrl: e.target.value })}
-                  placeholder="https://..."
-                  className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-xs"
-                />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300">
+                    Ảnh Minh Họa / Review (Tải từ thiết bị hoặc URL)
+                  </label>
+                  <label className="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
+                    <Upload className="w-3 h-3" />
+                    <span>📁 Chọn Ảnh Từ Máy</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const check = validateImageSize(file);
+                          if (!check.valid) {
+                            alert(check.message);
+                            e.target.value = '';
+                            return;
+                          }
+                          const previewUrl = createInstantPreview(file);
+                          setNewPRForm(prev => ({ ...prev, imageUrl: previewUrl }));
+                          try {
+                            const compressed = await addWatermarkToImage(file);
+                            if (compressed) setNewPRForm(prev => ({ ...prev, imageUrl: compressed }));
+                          } catch (err) {
+                            console.error('Error compressing PR image:', err);
+                          } finally {
+                            e.target.value = '';
+                          }
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newPRForm.imageUrl}
+                    onChange={(e) => setNewPRForm({ ...newPRForm, imageUrl: e.target.value })}
+                    placeholder="https://... hoặc chọn ảnh từ máy"
+                    className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-xs"
+                  />
+                  {newPRForm.imageUrl && (
+                    <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-purple-400">
+                      <img src={newPRForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                </div>
               </div>
 
               <button
@@ -2936,6 +2979,56 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   />
                 </div>
 
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-bold text-slate-700 dark:text-slate-300">
+                      Ảnh Đính Kèm (Hành lý / Vé bay / Vị trí đón):
+                    </label>
+                    <label className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
+                      <Upload className="w-3 h-3" />
+                      <span>📁 Tải Ảnh Từ Máy</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={async (e) => {
+                          const files: File[] = Array.from(e.target.files || []);
+                          for (const file of files) {
+                            const check = validateImageSize(file);
+                            if (!check.valid) {
+                              alert(check.message);
+                              continue;
+                            }
+                            const preview = createInstantPreview(file);
+                            setTransportImages(prev => [...prev, preview]);
+                            addWatermarkToImage(file).then(comp => {
+                              if (comp) setTransportImages(prev => prev.map(p => p === preview ? comp : p));
+                            }).catch(() => {});
+                          }
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
+                  </div>
+                  {transportImages.length > 0 && (
+                    <div className="flex gap-2 overflow-x-auto py-1">
+                      {transportImages.map((img, idx) => (
+                        <div key={idx} className="relative w-14 h-14 rounded-lg overflow-hidden border border-amber-500/40 shrink-0">
+                          <img src={img} alt="Transport luggage" className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => setTransportImages(prev => prev.filter((_, i) => i !== idx))}
+                            className="absolute top-0.5 right-0.5 p-0.5 bg-rose-600 text-white rounded-full text-[9px]"
+                          >
+                            <X className="w-2.5 h-2.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <div className="pt-2">
                   <button
                     type="submit"
@@ -3132,6 +3225,56 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     placeholder="Cần thi công hố thang máy kính khung thép hố 1500x1500mm, làm nội thất phòng bếp..."
                     className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium"
                   />
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-bold text-slate-700 dark:text-slate-300">
+                      Ảnh Hiện Trạng / Bản Vẽ / Hố Thang (Tải từ máy):
+                    </label>
+                    <label className="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
+                      <Upload className="w-3 h-3" />
+                      <span>📁 Tải Ảnh Từ Máy</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={async (e) => {
+                          const files: File[] = Array.from(e.target.files || []);
+                          for (const file of files) {
+                            const check = validateImageSize(file);
+                            if (!check.valid) {
+                              alert(check.message);
+                              continue;
+                            }
+                            const preview = createInstantPreview(file);
+                            setConstructionImages(prev => [...prev, preview]);
+                            addWatermarkToImage(file).then(comp => {
+                              if (comp) setConstructionImages(prev => prev.map(p => p === preview ? comp : p));
+                            }).catch(() => {});
+                          }
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
+                  </div>
+                  {constructionImages.length > 0 && (
+                    <div className="flex gap-2 overflow-x-auto py-1">
+                      {constructionImages.map((img, idx) => (
+                        <div key={idx} className="relative w-14 h-14 rounded-lg overflow-hidden border border-blue-500/40 shrink-0">
+                          <img src={img} alt="Construction blueprint / site" className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => setConstructionImages(prev => prev.filter((_, i) => i !== idx))}
+                            className="absolute top-0.5 right-0.5 p-0.5 bg-rose-600 text-white rounded-full text-[9px]"
+                          >
+                            <X className="w-2.5 h-2.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-2">

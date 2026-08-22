@@ -459,31 +459,13 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 p-1 bg-rose-600 hover:bg-rose-500 text-white rounded-lg opacity-90 group-hover:opacity-100 transition cursor-pointer"
+                    className="absolute top-1 right-1 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 hover:bg-rose-500 text-white rounded-lg flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer z-10"
                     title="Xóa ảnh này"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               ))}
-            </div>
-
-            {/* Add Image by URL input */}
-            <div className="flex items-center gap-2 pt-2">
-              <input
-                type="text"
-                value={newImageUrl}
-                onChange={e => setNewImageUrl(e.target.value)}
-                placeholder="Hoặc dán URL link ảnh trực tiếp tại đây..."
-                className="flex-1 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs outline-hidden"
-              />
-              <button
-                type="button"
-                onClick={handleAddImageUrl}
-                className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl cursor-pointer"
-              >
-                + Thêm Link
-              </button>
             </div>
           </div>
 

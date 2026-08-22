@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ChevronRight, ChevronDown, Sparkles, Building2, ShieldCheck, MapPin, Phone, ArrowRight, CheckCircle2, UserCheck, Star, Clock, KeyRound, Wrench } from 'lucide-react';
+import { Search, ChevronRight, ChevronDown, Sparkles, Building2, ShieldCheck, MapPin, Phone, ArrowRight, CheckCircle2, UserCheck, Star, Clock, KeyRound, Wrench, Briefcase } from 'lucide-react';
 import logoImg from '../assets/images/chocudan24h_custom_logo_1785384117746.jpg';
 import { Property, Project, NewsArticle, Language, PropertyType, ProjectCategory } from '../types';
 import { PropertyCard } from '../components/PropertyCard';
@@ -120,54 +120,54 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Search Box Widget */}
           <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-3 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white max-w-4xl">
             
-            {/* Desktop 3 Sub-Tabs Cards */}
-            <div className="hidden sm:grid grid-cols-3 gap-3 border-b border-slate-200 dark:border-slate-800 pb-5 mb-5">
+            {/* Desktop 4 Services Cards (Horizontal Grid) */}
+            <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-3 border-b border-slate-200 dark:border-slate-800 pb-5 mb-5">
               {/* Card 1: Mua Bán BĐS */}
               <button
                 onClick={() => {
                   setSearchType('sale');
                   setCurrentTab('sale');
                 }}
-                className={`group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between ${
+                className={`group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between cursor-pointer ${
                   searchType === 'sale'
                     ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500 shadow-md ring-2 ring-amber-500/50'
                     : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-amber-400 hover:shadow-md'
                 }`}
               >
                 {/* Image Simulation Preview */}
-                <div className="relative h-28 sm:h-32 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
                   
                   {/* Badge & Icon on Image */}
-                  <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                    <div className="p-1.5 bg-amber-500 text-slate-950 rounded-lg shadow-md">
-                      <Building2 className="w-4 h-4" />
+                  <div className="absolute top-2 left-2 flex items-center gap-1">
+                    <div className="p-1 bg-amber-500 text-slate-950 rounded-md shadow-xs">
+                      <Building2 className="w-3.5 h-3.5" />
                     </div>
-                    <span className="px-2 py-0.5 bg-amber-500/90 text-slate-950 text-[10px] font-black rounded-md uppercase tracking-wider backdrop-blur-xs">
+                    <span className="px-1.5 py-0.2 bg-amber-500/90 text-slate-950 text-[9px] font-black rounded uppercase tracking-wider">
                       Chính Chủ
                     </span>
                   </div>
 
-                  <div className="absolute bottom-2 left-2.5 right-2.5">
-                    <span className="text-white font-black text-sm drop-shadow-sm uppercase tracking-tight block">
+                  <div className="absolute bottom-1.5 left-2 right-2">
+                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
                       1. Mua Bán BĐS
                     </span>
                   </div>
                 </div>
 
                 {/* Brief Info */}
-                <div className="p-3 space-y-1">
+                <div className="p-2.5 space-y-0.5">
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Căn hộ cao cấp, Shophouse & Biệt thự thấp tầng Vinhomes chính chủ bán.
+                    Căn hộ, Shophouse & Biệt thự Vinhomes bán chính chủ.
                   </p>
                   <div className="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 font-bold pt-0.5">
-                    <span>Xem danh sách & Bảng giá →</span>
+                    <span>Xem bảng giá →</span>
                   </div>
                 </div>
               </button>
@@ -178,46 +178,46 @@ export const HomePage: React.FC<HomePageProps> = ({
                   setSearchType('rent');
                   setCurrentTab('rent');
                 }}
-                className={`group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between ${
+                className={`group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between cursor-pointer ${
                   searchType === 'rent'
                     ? 'bg-sky-500/10 dark:bg-sky-500/20 border-sky-500 shadow-md ring-2 ring-sky-500/50'
                     : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-sky-400 hover:shadow-md'
                 }`}
               >
                 {/* Image Simulation Preview */}
-                <div className="relative h-28 sm:h-32 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
                   
                   {/* Badge & Icon on Image */}
-                  <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                    <div className="p-1.5 bg-sky-500 text-white rounded-lg shadow-md">
-                      <KeyRound className="w-4 h-4" />
+                  <div className="absolute top-2 left-2 flex items-center gap-1">
+                    <div className="p-1 bg-sky-500 text-white rounded-md shadow-xs">
+                      <KeyRound className="w-3.5 h-3.5" />
                     </div>
-                    <span className="px-2 py-0.5 bg-sky-500/90 text-white text-[10px] font-black rounded-md uppercase tracking-wider backdrop-blur-xs">
+                    <span className="px-1.5 py-0.2 bg-sky-500/90 text-white text-[9px] font-black rounded uppercase tracking-wider">
                       Ở Ngay
                     </span>
                   </div>
 
-                  <div className="absolute bottom-2 left-2.5 right-2.5">
-                    <span className="text-white font-black text-sm drop-shadow-sm uppercase tracking-tight block">
+                  <div className="absolute bottom-1.5 left-2 right-2">
+                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
                       2. Cho Thuê BĐS
                     </span>
                   </div>
                 </div>
 
                 {/* Brief Info */}
-                <div className="p-3 space-y-1">
+                <div className="p-2.5 space-y-0.5">
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Căn hộ full đồ, Thuê theo tầng, Văn phòng & Mặt bằng kinh doanh.
+                    Căn hộ full đồ, Thuê theo tầng, VP & Mặt bằng KD.
                   </p>
                   <div className="flex items-center gap-1 text-[10px] text-sky-600 dark:text-sky-400 font-bold pt-0.5">
-                    <span>Xem danh sách cho thuê →</span>
+                    <span>Xem danh sách →</span>
                   </div>
                 </div>
               </button>
@@ -225,82 +225,117 @@ export const HomePage: React.FC<HomePageProps> = ({
               {/* Card 3: Dịch Vụ Cư Dân */}
               <button
                 onClick={() => setCurrentTab('services')}
-                className="group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-emerald-400 hover:shadow-md"
+                className="group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-emerald-400 hover:shadow-md cursor-pointer"
               >
                 {/* Image Simulation Preview */}
-                <div className="relative h-28 sm:h-32 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
                   
                   {/* Badge & Icon on Image */}
-                  <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                    <div className="p-1.5 bg-emerald-600 text-white rounded-lg shadow-md">
-                      <Wrench className="w-4 h-4" />
+                  <div className="absolute top-2 left-2 flex items-center gap-1">
+                    <div className="p-1 bg-emerald-600 text-white rounded-md shadow-xs">
+                      <Wrench className="w-3.5 h-3.5" />
                     </div>
-                    <span className="px-2 py-0.5 bg-emerald-600/90 text-white text-[10px] font-black rounded-md uppercase tracking-wider backdrop-blur-xs">
-                      Tiện Ích 24/7
+                    <span className="px-1.5 py-0.2 bg-emerald-600/90 text-white text-[9px] font-black rounded uppercase tracking-wider">
+                      Tiện Ích
                     </span>
                   </div>
 
-                  <div className="absolute bottom-2 left-2.5 right-2.5">
-                    <span className="text-white font-black text-sm drop-shadow-sm uppercase tracking-tight block">
+                  <div className="absolute bottom-1.5 left-2 right-2">
+                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
                       3. Dịch Vụ Cư Dân
                     </span>
                   </div>
                 </div>
 
                 {/* Brief Info */}
-                <div className="p-3 space-y-1">
+                <div className="p-2.5 space-y-0.5">
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Thợ sửa chữa, Giặt là, Taxi Nội Bài, Spa, Đặt cơm & Gian hàng cư dân.
+                    Sửa chữa, Giặt là, Taxi, Spa, Đặt cơm & Gian hàng.
                   </p>
                   <div className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-bold pt-0.5">
-                    <span>Khám phá chợ cư dân →</span>
+                    <span>Khám phá chợ →</span>
+                  </div>
+                </div>
+              </button>
+
+              {/* Card 4: Việc Làm & Tuyển Dụng */}
+              <button
+                onClick={() => setCurrentTab('recruitment')}
+                className="group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-teal-400 hover:shadow-md cursor-pointer"
+              >
+                {/* Image Simulation Preview */}
+                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+                  <img
+                    src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80"
+                    alt="Tuyển Dụng Việc Làm"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
+                  
+                  {/* Badge & Icon on Image */}
+                  <div className="absolute top-2 left-2 flex items-center gap-1">
+                    <div className="p-1 bg-teal-600 text-white rounded-md shadow-xs">
+                      <Briefcase className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="px-1.5 py-0.2 bg-teal-600/90 text-white text-[9px] font-black rounded uppercase tracking-wider">
+                      Việc Làm
+                    </span>
+                  </div>
+
+                  <div className="absolute bottom-1.5 left-2 right-2">
+                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
+                      4. Việc Làm & Tuyển Dụng
+                    </span>
+                  </div>
+                </div>
+
+                {/* Brief Info */}
+                <div className="p-2.5 space-y-0.5">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
+                    Tìm việc làm nội khu, ứng tuyển thợ, nhân sự DN.
+                  </p>
+                  <div className="flex items-center gap-1 text-[10px] text-teal-600 dark:text-teal-400 font-bold pt-0.5">
+                    <span>Tìm việc ngay →</span>
                   </div>
                 </div>
               </button>
             </div>
 
-            {/* Mobile Compact Sleek Cards List (Ultra Neat & Clean) */}
-            <div className="grid sm:hidden grid-cols-1 gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 mb-3">
+            {/* Mobile Compact 2x2 Clean Services Grid (Ultra Neat Chợ Tốt Style) */}
+            <div className="grid sm:hidden grid-cols-2 gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 mb-3">
               {/* Mobile Card 1: Mua Bán */}
               <button
                 onClick={() => {
                   setSearchType('sale');
                   setCurrentTab('sale');
                 }}
-                className={`text-left p-2 rounded-xl border transition flex items-center gap-2.5 ${
+                className={`text-left p-2 rounded-xl border transition flex items-center gap-2 cursor-pointer ${
                   searchType === 'sale'
                     ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500/80 shadow-xs ring-1 ring-amber-500/40'
                     : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80'
                 }`}
               >
-                <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=300&q=80"
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
-                  <span className="absolute bottom-0.5 left-0.5 px-1 py-0.2 bg-amber-500 text-slate-950 font-black text-[8px] rounded uppercase">
-                    Chính Chủ
-                  </span>
                 </div>
-                <div className="flex-1 min-w-0 space-y-0.5">
-                  <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-xs text-slate-900 dark:text-white uppercase truncate">
-                      1. Mua Bán BĐS
-                    </span>
-                    <span className="text-[10px] font-bold text-amber-500 shrink-0 ml-1">Xem giá →</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-tight">
-                    Căn hộ, Shophouse & Biệt thự Vinhomes chính chủ
-                  </p>
+                <div className="flex-1 min-w-0">
+                  <span className="font-extrabold text-[11px] text-slate-900 dark:text-white uppercase truncate block">
+                    1. Mua Bán BĐS
+                  </span>
+                  <span className="text-[9px] font-bold text-amber-500 block truncate">Xem giá căn →</span>
                 </div>
               </button>
 
@@ -310,62 +345,67 @@ export const HomePage: React.FC<HomePageProps> = ({
                   setSearchType('rent');
                   setCurrentTab('rent');
                 }}
-                className={`text-left p-2 rounded-xl border transition flex items-center gap-2.5 ${
+                className={`text-left p-2 rounded-xl border transition flex items-center gap-2 cursor-pointer ${
                   searchType === 'rent'
                     ? 'bg-sky-500/10 dark:bg-sky-500/20 border-sky-500/80 shadow-xs ring-1 ring-sky-500/40'
                     : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80'
                 }`}
               >
-                <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=300&q=80"
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
-                  <span className="absolute bottom-0.5 left-0.5 px-1 py-0.2 bg-sky-500 text-white font-black text-[8px] rounded uppercase">
-                    Ở Ngay
-                  </span>
                 </div>
-                <div className="flex-1 min-w-0 space-y-0.5">
-                  <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-xs text-slate-900 dark:text-white uppercase truncate">
-                      2. Cho Thuê BĐS
-                    </span>
-                    <span className="text-[10px] font-bold text-sky-400 shrink-0 ml-1">Xem thuê →</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-tight">
-                    Căn hộ full đồ, Thuê tầng & Văn phòng kinh doanh
-                  </p>
+                <div className="flex-1 min-w-0">
+                  <span className="font-extrabold text-[11px] text-slate-900 dark:text-white uppercase truncate block">
+                    2. Cho Thuê BĐS
+                  </span>
+                  <span className="text-[9px] font-bold text-sky-400 block truncate">Xem cho thuê →</span>
                 </div>
               </button>
 
               {/* Mobile Card 3: Dịch Vụ Cư Dân */}
               <button
                 onClick={() => setCurrentTab('services')}
-                className="text-left p-2 rounded-xl border transition flex items-center gap-2.5 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80"
+                className="text-left p-2 rounded-xl border transition flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
               >
-                <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=80"
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
-                  <span className="absolute bottom-0.5 left-0.5 px-1 py-0.2 bg-emerald-600 text-white font-black text-[8px] rounded uppercase">
-                    24/7
-                  </span>
                 </div>
-                <div className="flex-1 min-w-0 space-y-0.5">
-                  <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-xs text-slate-900 dark:text-white uppercase truncate">
-                      3. Dịch Vụ Cư Dân
-                    </span>
-                    <span className="text-[10px] font-bold text-emerald-400 shrink-0 ml-1">Khám phá →</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-tight">
-                    Sửa chữa, Giặt là, Taxi, Spa & Gian hàng
-                  </p>
+                <div className="flex-1 min-w-0">
+                  <span className="font-extrabold text-[11px] text-slate-900 dark:text-white uppercase truncate block">
+                    3. Dịch Vụ Cư Dân
+                  </span>
+                  <span className="text-[9px] font-bold text-emerald-400 block truncate">Khám phá chợ →</span>
+                </div>
+              </button>
+
+              {/* Mobile Card 4: Việc Làm & Tuyển Dụng */}
+              <button
+                onClick={() => setCurrentTab('recruitment')}
+                className="text-left p-2 rounded-xl border transition flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
+              >
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
+                  <img
+                    src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=300&q=80"
+                    alt="Việc Làm"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="font-extrabold text-[11px] text-slate-900 dark:text-white uppercase truncate block">
+                    4. Tuyển Dụng
+                  </span>
+                  <span className="text-[9px] font-bold text-teal-400 block truncate">Tìm việc làm →</span>
                 </div>
               </button>
             </div>

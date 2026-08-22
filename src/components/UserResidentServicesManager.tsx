@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { 
   Wrench, Plus, Edit2, Trash2, CheckCircle2, AlertCircle, Phone, 
   MapPin, Image as ImageIcon, ExternalLink, Sparkles, X, Check, Eye, Clock, ShieldCheck,
-  ChevronDown, ChevronUp, Copy
+  ChevronDown, ChevronUp, Copy, Car, Utensils, Hammer, Sparkle, RefreshCw, Upload
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ResidentServiceItem, RESIDENT_SERVICE_CATEGORIES, VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
 import { User, ProjectCategory } from '../types';
-import { createInstantPreview, validateImageSize } from '../lib/watermark';
+import { createInstantPreview, validateImageSize, addWatermarkToImage } from '../lib/watermark';
 import { getServiceDetailUrl } from '../lib/slugs';
 
 interface UserResidentServicesManagerProps {
@@ -20,6 +20,8 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
   onRefresh
 }) => {
   const [services, setServices] = useState<ResidentServiceItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<ResidentServiceItem | null>(null);
 
@@ -42,61 +44,86 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
   // Form State
   const [title, setTitle] = useState('');
-  const [categoryId, setCategoryId] = useState('dien-nuoc-lanh');
-  const [subCategory, setSubCategory] = useState('Sửa điện gia dụng');
+  const [categoryId, setCategoryId] = useState('van-tai-xe-dien');
+  const [subCategory, setSubCategory] = useState('Xe Taxi & Vận chuyển nội/ngoại khu 24/7');
   const [project, setProject] = useState<ProjectCategory>('ocean-park-2');
   const [subdivision, setSubdivision] = useState('Toàn khu đô thị');
   const [providerName, setProviderName] = useState(user.name || '');
   const [providerPhone, setProviderPhone] = useState(user.phone || '');
   const [providerZalo, setProviderZalo] = useState(user.phone || '');
   const [address, setAddress] = useState(user.apartmentAddress || 'Vinhomes Ocean Park 2');
-  const [priceDisplay, setPriceDisplay] = useState('Từ 150.000đ / lần');
+  const [priceDisplay, setPriceDisplay] = useState('Từ 50.000đ - 150.000đ');
   const [description, setDescription] = useState('');
-  const [images, setImages] = useState<string[]>(['https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80']);
+  const [images, setImages] = useState<string[]>([
+    'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80'
+  ]);
   const [newImageUrl, setNewImageUrl] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
-  // Load user services from localStorage & default seed if empty
-  const loadUserServices = () => {
+  // Load user services from Server API + LocalStorage fallback
+  const loadUserServices = async () => {
+    setIsLoading(true);
     try {
-      const stored = localStorage.getItem('resident_services');
-      let allServices: ResidentServiceItem[] = [];
-      if (stored) {
-        allServices = JSON.parse(stored);
+      // 1. Fetch from Server
+      const res = await fetch(`/api/resident-services?userId=${user.id || ''}&isAdmin=${user.role === 'admin'}`);
+      let serverServices: ResidentServiceItem[] = [];
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          serverServices = data;
+        }
       }
 
+      // 2. Fetch from LocalStorage
+      let localServices: ResidentServiceItem[] = [];
+      const storedHb = localStorage.getItem('hb_resident_services');
+      const storedOld = localStorage.getItem('resident_services');
+      if (storedHb) {
+        try { localServices = JSON.parse(storedHb); } catch (e) {}
+      } else if (storedOld) {
+        try { localServices = JSON.parse(storedOld); } catch (e) {}
+      }
+
+      // Merge unique
+      const combinedMap = new Map<string, ResidentServiceItem>();
+      [...serverServices, ...localServices].forEach(s => {
+        if (s && s.id) combinedMap.set(s.id, s);
+      });
+      const allMerged = Array.from(combinedMap.values());
+
       // Filter for this user
-      const userList = allServices.filter(s => {
+      const userList = allMerged.filter(s => {
         if (!s) return false;
         const matchId = user.id && s.userId === user.id;
         const matchPhone = user.phone && s.providerPhone === user.phone;
         const matchName = user.name && s.providerName && s.providerName.toLowerCase() === user.name.toLowerCase();
-        return matchId || matchPhone || matchName;
+        return matchId || matchPhone || matchName || (user.role === 'admin');
       });
 
       if (userList.length > 0) {
         setServices(userList);
       } else {
-        // If empty, supply a sample initial technician service ready for editing
+        // Sample starter service
         const sampleService: ResidentServiceItem = {
           id: `srv-${user.id || 'sample'}-1`,
           userId: user.id,
-          title: `Dịch Vụ Kỹ Thuật Điện Nước & Điện Lạnh - Cư Dân ${user.name || 'Vinhomes'}`,
-          categoryId: 'dien-nuoc-lanh',
-          subCategory: 'Sửa điện lạnh & Điều hòa',
+          title: `Dịch Vụ Đặt Xe Điện Buggy, Taxi Cư Dân & Vận Chuyển 24/7 - ${user.name || 'Vinhomes'}`,
+          categoryId: 'van-tai-xe-dien',
+          subCategory: 'Xe Taxi & Chở đồ nội khu 24/7',
           project: 'ocean-park-2',
-          subdivision: 'Phân khu Chà Là & Toàn khu',
-          providerName: user.name || 'Kỹ Thuật Cư Dân',
-          providerPhone: user.phone || '0988889999',
-          providerZalo: user.phone || '0988889999',
+          subdivision: 'Toàn đại đô thị Ocean Park 1, 2, 3',
+          providerName: user.name || 'Tài Xế / Đội Xe Cư Dân',
+          providerPhone: user.phone || '0868499929',
+          providerZalo: user.phone || '0868499929',
           address: user.apartmentAddress || 'Vinhomes Ocean Park 2',
-          priceDisplay: 'Từ 150.000đ / lần (Khảo sát miễn phí)',
+          priceDisplay: 'Từ 20.000đ / chuyến (Nội khu) - Trọn gói sân bay 250k',
           rating: 5.0,
-          reviewCount: 28,
+          reviewCount: 36,
           images: [
-            'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80'
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80',
+            'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80'
           ],
-          description: 'Chuyên sửa chữa điện nước, bảo dưỡng điều hòa, xử lý rò rỉ nước, thay thế thiết bị điện dân dụng tại căn hộ. Có mặt sau 15 phút, giá niêm yết rõ ràng, bảo hành uy tín.',
+          description: 'Nhận đón trả cư dân đi học, đi làm, đi siêu thị Vincom, đi sân bay Nội Bài 24/7. Xe đời mới sạch sẽ, không mùi, đúng giờ, chu đáo và phục vụ tận tâm.',
           verified: true,
           legalCommitmentAccepted: true,
           status: 'approved',
@@ -105,12 +132,20 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
           createdAt: new Date().toISOString()
         };
         setServices([sampleService]);
-        // Also save to allServices
-        allServices.push(sampleService);
-        localStorage.setItem('resident_services', JSON.stringify(allServices));
+        
+        // Sync sample
+        try {
+          fetch('/api/resident-services', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(sampleService)
+          }).catch(() => {});
+        } catch (e) {}
       }
     } catch (e) {
       console.error('Error loading resident services:', e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -121,50 +156,66 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
   const handleOpenAddModal = () => {
     setEditingService(null);
     setTitle('');
-    setCategoryId('dien-nuoc-lanh');
-    setSubCategory('Sửa điện gia dụng');
+    setCategoryId('van-tai-xe-dien');
+    setSubCategory('Xe Taxi & Vận chuyển nội/ngoại khu 24/7');
     setProject('ocean-park-2');
     setSubdivision('Toàn khu đô thị');
     setProviderName(user.name || '');
     setProviderPhone(user.phone || '');
     setProviderZalo(user.phone || '');
     setAddress(user.apartmentAddress || 'Vinhomes Ocean Park 2');
-    setPriceDisplay('Từ 150.000đ / lần');
+    setPriceDisplay('Từ 50.000đ / lần');
     setDescription('');
-    setImages(['https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80']);
+    setImages(['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80']);
     setIsEditingModalOpen(true);
   };
 
   const handleOpenEditModal = (svc: ResidentServiceItem) => {
     setEditingService(svc);
     setTitle(svc.title);
-    setCategoryId(svc.categoryId || 'dien-nuoc-lanh');
-    setSubCategory(svc.subCategory || 'Sửa điện gia dụng');
+    setCategoryId(svc.categoryId || 'van-tai-xe-dien');
+    setSubCategory(svc.subCategory || 'Dịch vụ cư dân');
     setProject(svc.project || 'ocean-park-2');
     setSubdivision(svc.subdivision || 'Toàn khu đô thị');
     setProviderName(svc.providerName || user.name || '');
     setProviderPhone(svc.providerPhone || user.phone || '');
     setProviderZalo(svc.providerZalo || svc.providerPhone || '');
     setAddress(svc.address || 'Vinhomes Ocean Park 2');
-    setPriceDisplay(svc.priceDisplay || 'Từ 150.000đ');
+    setPriceDisplay(svc.priceDisplay || 'Từ 50.000đ');
     setDescription(svc.description || '');
-    setImages(svc.images && svc.images.length > 0 ? [...svc.images] : ['https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80']);
+    setImages(svc.images && svc.images.length > 0 ? [...svc.images] : ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80']);
     setIsEditingModalOpen(true);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const validation = validateImageSize(file);
-    if (!validation.valid) {
-      alert(validation.message || 'Kích thước ảnh vượt quá giới hạn 10MB.');
-      return;
-    }
+  // Image Upload from Device (Camera / Gallery / PC)
+  const handleImageUploadFromDevice = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files: File[] = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setIsUploadingImage(true);
+
     try {
-      const preview = await createInstantPreview(file);
-      setImages(prev => [...prev, preview]);
+      for (const file of files) {
+        const validation = validateImageSize(file);
+        if (!validation.valid) {
+          alert(validation.message || 'Kích thước ảnh vượt quá giới hạn 10MB.');
+          continue;
+        }
+        // Instant preview
+        const instantPreview = createInstantPreview(file);
+        setImages(prev => [...prev, instantPreview]);
+
+        // Compress and watermark
+        addWatermarkToImage(file).then(watermarked => {
+          if (watermarked) {
+            setImages(prev => prev.map(img => img === instantPreview ? watermarked : img));
+          }
+        }).catch(err => console.warn('Watermark err:', err));
+      }
     } catch (err) {
-      console.error('Image preview error:', err);
+      console.error('Image upload error:', err);
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = '';
     }
   };
 
@@ -182,39 +233,50 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
     setImages(prev => prev.filter((_, idx) => idx !== idxToRemove));
   };
 
-  const handleDeleteService = (idToDelete: string) => {
+  const handleDeleteService = async (idToDelete: string) => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa bài đăng dịch vụ này?')) return;
     try {
-      const stored = localStorage.getItem('resident_services');
-      if (stored) {
-        const all: ResidentServiceItem[] = JSON.parse(stored);
-        const filtered = all.filter(s => s.id !== idToDelete);
-        localStorage.setItem('resident_services', JSON.stringify(filtered));
+      // 1. Delete on Server
+      await fetch(`/api/resident-services/${idToDelete}`, { method: 'DELETE' });
+
+      // 2. Delete in local state & localStorage
+      const storedHb = localStorage.getItem('hb_resident_services');
+      if (storedHb) {
+        const all: ResidentServiceItem[] = JSON.parse(storedHb);
+        localStorage.setItem('hb_resident_services', JSON.stringify(all.filter(s => s.id !== idToDelete)));
       }
+      const storedOld = localStorage.getItem('resident_services');
+      if (storedOld) {
+        const allOld: ResidentServiceItem[] = JSON.parse(storedOld);
+        localStorage.setItem('resident_services', JSON.stringify(allOld.filter(s => s.id !== idToDelete)));
+      }
+
       setServices(prev => prev.filter(s => s.id !== idToDelete));
       if (onRefresh) onRefresh();
+      alert('🗑️ Đã xóa bài dịch vụ thành công!');
     } catch (e) {
       console.error('Error deleting service:', e);
+      alert('Không thể xóa bài dịch vụ lúc này.');
     }
   };
 
-  const handleSaveService = (e: React.FormEvent) => {
+  const handleSaveService = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
-      alert('Vui lòng nhập tên dịch vụ.');
+      alert('Vui lòng nhập tên dịch vụ hoặc tiêu đề bài đăng.');
       return;
     }
     if (!providerPhone.trim()) {
-      alert('Vui lòng nhập số điện thoại thợ / chủ dịch vụ.');
+      alert('Vui lòng nhập số điện thoại Zalo để cư dân liên hệ.');
       return;
     }
 
+    setIsSaving(true);
     try {
-      const stored = localStorage.getItem('resident_services');
-      let allServices: ResidentServiceItem[] = stored ? JSON.parse(stored) : [];
+      const finalImages = images.length > 0 ? images : ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80'];
 
       if (editingService) {
-        // Update existing
+        // Update existing service
         const updated: ResidentServiceItem = {
           ...editingService,
           title: title.trim(),
@@ -222,26 +284,30 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
           subCategory: subCategory.trim(),
           project,
           subdivision: subdivision.trim(),
-          providerName: providerName.trim(),
+          providerName: providerName.trim() || user.name || 'Thợ Cư Dân',
           providerPhone: providerPhone.trim(),
           providerZalo: providerZalo.trim() || providerPhone.trim(),
           address: address.trim(),
           priceDisplay: priceDisplay.trim(),
           description: description.trim(),
-          images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80'],
+          images: finalImages,
           status: 'approved',
-          approved: true
+          approved: true,
+          updatedAt: new Date().toISOString()
         };
 
-        const idx = allServices.findIndex(s => s.id === editingService.id);
-        if (idx >= 0) {
-          allServices[idx] = updated;
-        } else {
-          allServices.unshift(updated);
-        }
+        // Server update
+        await fetch(`/api/resident-services/${editingService.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated)
+        });
+
+        // Update local caches
+        updateLocalCache(updated);
         setServices(prev => prev.map(s => s.id === editingService.id ? updated : s));
       } else {
-        // Add new
+        // Create new service
         const newSvc: ResidentServiceItem = {
           id: `srv-${user.id || 'usr'}-${Date.now()}`,
           userId: user.id,
@@ -250,14 +316,14 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
           subCategory: subCategory.trim(),
           project,
           subdivision: subdivision.trim(),
-          providerName: providerName.trim(),
+          providerName: providerName.trim() || user.name || 'Thợ Cư Dân',
           providerPhone: providerPhone.trim(),
           providerZalo: providerZalo.trim() || providerPhone.trim(),
           address: address.trim(),
           priceDisplay: priceDisplay.trim(),
           rating: 5.0,
           reviewCount: 1,
-          images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80'],
+          images: finalImages,
           description: description.trim(),
           verified: true,
           legalCommitmentAccepted: true,
@@ -266,38 +332,62 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
           kycStatus: 'verified',
           createdAt: new Date().toISOString()
         };
-        allServices.unshift(newSvc);
+
+        // Server create
+        await fetch('/api/resident-services', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newSvc)
+        });
+
+        // Update local caches
+        updateLocalCache(newSvc);
         setServices(prev => [newSvc, ...prev]);
       }
 
-      localStorage.setItem('resident_services', JSON.stringify(allServices));
       setIsEditingModalOpen(false);
       if (onRefresh) onRefresh();
-      alert('🎉 Đã lưu dịch vụ thành công! Dịch vụ đã hiển thị ngay trên Chợ Cư Dân.');
+      alert('🎉 Đã lưu & xuất bản bài đăng Dịch Vụ Cư Dân thành công! Bài viết đã hiển thị ngay trên Chợ Cư Dân.');
     } catch (e) {
       console.error('Error saving resident service:', e);
-      alert('Có lỗi xảy ra khi lưu dịch vụ.');
+      alert('Có lỗi xảy ra khi lưu bài dịch vụ.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const updateLocalCache = (item: ResidentServiceItem) => {
+    try {
+      const storedHb = localStorage.getItem('hb_resident_services');
+      let allHb: ResidentServiceItem[] = storedHb ? JSON.parse(storedHb) : [];
+      const idx = allHb.findIndex(s => s.id === item.id);
+      if (idx >= 0) allHb[idx] = item;
+      else allHb.unshift(item);
+      localStorage.setItem('hb_resident_services', JSON.stringify(allHb));
+      localStorage.setItem('resident_services', JSON.stringify(allHb));
+    } catch (e) {
+      console.warn('Cache error:', e);
     }
   };
 
   return (
     <div className="space-y-4">
       {/* Top Banner & Density Controls & Add Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-teal-950 via-slate-900 to-emerald-950 p-3 sm:p-4 rounded-2xl border border-teal-500/30 text-white shadow-md">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-teal-950 via-slate-900 to-emerald-950 p-3.5 sm:p-4 rounded-2xl border border-teal-500/30 text-white shadow-md">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 bg-teal-500 text-slate-950 font-black text-[9px] rounded uppercase">
-              THỢ & DỊCH VỤ CƯ DÂN
+              ⚡ THỢ, ĐẶT XE & DỊCH VỤ CƯ DÂN
             </span>
-            <span className="text-xs text-teal-300 font-bold">
-              Hiển thị trên Danh Bạ Tiện Ích Cư Dân Toàn Khu
+            <span className="text-xs text-teal-300 font-bold hidden sm:inline">
+              Hiển thị tức thì trên Danh Bạ & Chợ Cư Dân Vinhomes
             </span>
           </div>
           <h2 className="text-sm sm:text-base font-black text-white">
-            Quản Lý Bài Đăng Dịch Vụ & Thợ Kỹ Thuật Của Bạn
+            Quản Lý Bài Đăng Dịch Vụ, Đặt Xe & Thợ Kỹ Thuật
           </h2>
           <p className="text-[11px] text-slate-300">
-            Tự do thêm mới, sửa giá, cập nhật SĐT/Zalo và mô tả dịch vụ của bạn bất kỳ lúc nào.
+            Tự do thêm mới bài đăng, tải ảnh từ điện thoại/máy tính, sửa giá và SĐT Zalo của bạn bất kỳ lúc nào.
           </p>
         </div>
 
@@ -313,7 +403,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
               }`}
               title="Chế độ biểu tượng thu gọn"
             >
-              <span>⚡ Icon Thu Gọn</span>
+              <span>⚡ Thu Gọn</span>
             </button>
             <button
               onClick={() => setServiceViewMode('detailed')}
@@ -343,28 +433,33 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
             className="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>+ Đăng Dịch Vụ</span>
+            <span>+ Đăng Dịch Vụ Mới</span>
           </button>
         </div>
       </div>
 
       {/* Services List */}
-      {services.length === 0 ? (
+      {isLoading ? (
+        <div className="text-center py-10 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-2">
+          <RefreshCw className="w-6 h-6 animate-spin text-teal-500 mx-auto" />
+          <p className="text-xs text-slate-500">Đang tải danh sách bài đăng dịch vụ...</p>
+        </div>
+      ) : services.length === 0 ? (
         <div className="text-center py-10 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-3">
           <div className="w-12 h-12 bg-teal-100 dark:bg-teal-950/60 text-teal-600 rounded-full flex items-center justify-center mx-auto">
             <Wrench className="w-6 h-6" />
           </div>
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-            Bạn chưa đăng dịch vụ hoặc nghề kỹ thuật nào
+            Bạn chưa có bài đăng dịch vụ hoặc đặt xe nào
           </h3>
           <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Đăng ký dịch vụ kỹ thuật điện nước, điều hòa, thợ khóa, giúp việc, đồ ăn... để hàng vạn cư dân trong khu đô thị tìm thấy bạn.
+            Đăng ký dịch vụ đặt xe, sửa chữa điện nước, đồ ăn, dọn nhà, thang máy... để tiếp cận hàng vạn cư dân Vinhomes.
           </p>
           <button
             onClick={handleOpenAddModal}
             className="px-4 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-500 transition cursor-pointer"
           >
-            + Đăng Ký Dịch Vụ Ngay
+            + Đăng Dịch Vụ Ngay
           </button>
         </div>
       ) : (
@@ -390,7 +485,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                       className="relative shrink-0 cursor-pointer group"
                     >
                       <img
-                        src={svc.images?.[0] || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=200&q=80'}
+                        src={svc.images?.[0] || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=200&q=80'}
                         alt={svc.title}
                         className="w-14 h-12 sm:w-16 sm:h-14 rounded-xl object-cover border border-slate-200 dark:border-slate-800 group-hover:opacity-90 transition"
                       />
@@ -402,10 +497,10 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     <div className="space-y-1 min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-[9px] font-bold px-1.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md border border-emerald-500/20">
-                          ✓ Nút Xanh KYC
+                          ✓ Đang Hoạt Động
                         </span>
                         <span className="text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-md">
-                          🔧 {svc.subCategory || 'Dịch vụ'}
+                          🏷️ {svc.subCategory || 'Dịch vụ'}
                         </span>
                         <span className="text-xs font-black text-amber-500 font-mono">
                           💰 {svc.priceDisplay}
@@ -432,7 +527,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                       title="Xem dịch vụ công khai"
                     >
                       <Eye className="w-3.5 h-3.5 text-slate-500" />
-                      <span className="hidden md:inline">Xem Dịch Vụ</span>
+                      <span className="hidden md:inline">Xem</span>
                     </Link>
 
                     <button
@@ -470,7 +565,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     {svc.images && svc.images.length > 0 && (
                       <div>
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1.5">
-                          📷 Ảnh Dịch Vụ ({svc.images.length} ảnh):
+                          📷 Album Ảnh Dịch Vụ ({svc.images.length} ảnh):
                         </span>
                         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                           {svc.images.map((img, i) => (
@@ -488,7 +583,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     {/* Specs / Contact Info */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
                       <div className="bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <span className="text-slate-400 block text-[10px]">Người Đăng / Thợ:</span>
+                        <span className="text-slate-400 block text-[10px]">Người Đăng / Chủ Dịch Vụ:</span>
                         <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
                           👤 {svc.providerName || 'Thợ Cư Dân'}
                         </span>
@@ -524,7 +619,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     {/* Bottom Action strip */}
                     <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-700/60 text-[11px]">
                       <span className="text-slate-500">
-                        ⭐ Đánh giá: <strong>5.0/5</strong> • Trạng thái: <strong className="text-emerald-600">Đang hoạt động</strong>
+                        ⭐ Đánh giá: <strong>5.0/5</strong> • Trạng thái: <strong className="text-emerald-600">Đang hiển thị công khai</strong>
                       </span>
                       <div className="flex items-center gap-2">
                         <Link
@@ -532,12 +627,12 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                           className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl flex items-center gap-1 transition shadow-xs"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
-                          <span>Xem Trên Web</span>
+                          <span>Xem Trang Chi Tiết</span>
                         </Link>
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(`${window.location.origin}${detailUrl}`);
-                            alert('📋 Đã sao chép liên kết dịch vụ cư dân!');
+                            alert('📋 Đã sao chép liên kết bài đăng dịch vụ cư dân!');
                           }}
                           className="px-2.5 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl flex items-center gap-1 transition cursor-pointer"
                         >
@@ -556,20 +651,20 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
       {/* Edit / Add Service Modal */}
       {isEditingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col my-auto">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto overscroll-contain">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl max-h-[94vh] overflow-y-auto shadow-2xl flex flex-col my-auto relative">
             
-            <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-10">
+            <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-20">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 bg-teal-500/10 text-teal-600 dark:text-teal-400 rounded-xl">
                   <Wrench className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-slate-900 dark:text-white">
-                    {editingService ? 'Chỉnh Sửa Dịch Vụ Cư Dân' : 'Đăng Bài Dịch Vụ / Thợ Kỹ Thuật Mới'}
+                  <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
+                    {editingService ? 'Chỉnh Sửa Dịch Vụ Cư Dân' : 'Đăng Dịch Vụ, Đặt Xe & Thợ Kỹ Thuật'}
                   </h3>
-                  <p className="text-xs text-slate-500">
-                    Thông tin hiển thị trực tiếp trên trang Dịch Vụ & Danh Bạ Thợ Vinhomes
+                  <p className="text-[11px] text-slate-500 line-clamp-1">
+                    Hiển thị trực tiếp trên Danh Bạ & Chợ Tiện Ích Cư Dân Vinhomes
                   </p>
                 </div>
               </div>
@@ -581,18 +676,18 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
               </button>
             </div>
 
-            <form onSubmit={handleSaveService} className="p-4 sm:p-6 space-y-4 text-xs">
+            <form onSubmit={handleSaveService} className="p-4 sm:p-6 space-y-4 text-xs pb-28 sm:pb-6">
               
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Tên Dịch Vụ / Bài Đăng <span className="text-rose-500">*</span>
+                  Tiêu Đề Bài Đăng Dịch Vụ <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  placeholder="VD: Sửa Chữa Điện Lạnh, Điều Hòa Cư Dân 24/7 - Có Mặt Sau 15 Phút"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden"
+                  placeholder="VD: Dịch Vụ Đặt Xe Buggy & Taxi Sân Bay 24/7 / Sửa Điện Lạnh 15 Phút Có Mặt"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   required
                 />
               </div>
@@ -600,16 +695,34 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Nhóm Ngành Dịch Vụ
+                    Nhóm Ngành Dịch Vụ (*)
                   </label>
                   <select
                     value={categoryId}
-                    onChange={e => setCategoryId(e.target.value)}
+                    onChange={e => {
+                      const newCat = e.target.value;
+                      setCategoryId(newCat);
+                      if (newCat === 'van-tai-xe-dien') setSubCategory('Xe Taxi & Vận chuyển nội/ngoại khu 24/7');
+                      else if (newCat === 'an-uong-nha-hang') setSubCategory('Cơm văn phòng & Đồ ăn đêm ship tận căn');
+                      else if (newCat === 'dien-nuoc-lanh') setSubCategory('Sửa điện lạnh & Điều hòa gia dụng');
+                      else if (newCat === 'thang-may-sua-nha') setSubCategory('Thang máy & Cải tạo sửa nhà');
+                      else if (newCat === 've-sinh-giup-viec') setSubCategory('Dọn dẹp & Giúp việc theo giờ');
+                      else if (newCat === 'sua-chua-khoa') setSubCategory('Mở khóa & Sửa đồ gia dụng');
+                    }}
                     className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden"
                   >
-                    {RESIDENT_SERVICE_CATEGORIES.map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))}
+                    <option value="van-tai-xe-dien">⚡ Vận Tải - Đặt Xe Buggy & Taxi 24/7</option>
+                    <option value="an-uong-nha-hang">🍲 Ăn Uống, Cafe & Đồ Ăn Giao Tận Căn</option>
+                    <option value="dien-nuoc-lanh">❄️ Điện Nước & Điện Lạnh Cư Dân</option>
+                    <option value="thang-may-sua-nha">🛗 Thang Máy, Cải Tạo & Sửa Nhà</option>
+                    <option value="ve-sinh-giup-viec">🧹 Vệ Sinh, Giúp Việc & Giặt Là</option>
+                    <option value="sua-chua-khoa">🔑 Sửa Chữa Gia Dụng & Thợ Khóa</option>
+                    <option value="cham-soc-thu-cung">🐕 Chăm Sóc Thú Cưng & Spa Chó Mèo</option>
+                    <option value="lam-dep-suc-khoe">💆 Làm Đẹp, Nail & Spa Thư Giãn</option>
+                    <option value="giao-duc-gia-su">🎓 Gia Sư & Luyện Thi Nội Khu</option>
+                    <option value="khach-san-homestay">🏨 Khách Sạn & Homestay Vinhomes</option>
+                    <option value="di-cho-thuc-pham">🛒 Đi Chợ & Thực Phẩm Sạch Cư Dân</option>
+                    <option value="moi-gioi-bds-uy-tin">🏡 Môi Giới BĐS Uy Tín</option>
                   </select>
                 </div>
 
@@ -621,8 +734,8 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     type="text"
                     value={subCategory}
                     onChange={e => setSubCategory(e.target.value)}
-                    placeholder="VD: Nạp gas điều hòa, thay van khóa, thông tắc..."
-                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden"
+                    placeholder="VD: Taxi sân bay Nội Bài / Nạp gas điều hòa / Cơm trưa..."
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   />
                 </div>
               </div>
@@ -648,14 +761,14 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Báo Giá / Mức Phí
+                    Báo Giá / Mức Phí Hiển Thị
                   </label>
                   <input
                     type="text"
                     value={priceDisplay}
                     onChange={e => setPriceDisplay(e.target.value)}
-                    placeholder="VD: Từ 150.000đ / lần hoặc Khảo sát báo giá miễn phí"
-                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-amber-600 focus:ring-2 focus:ring-teal-500 outline-hidden"
+                    placeholder="VD: Từ 30.000đ - 150.000đ / Khảo sát miễn phí"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-amber-600 focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   />
                 </div>
               </div>
@@ -663,14 +776,14 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Tên Thợ / Đơn Vị
+                    Tên Đơn Vị / Người Đăng
                   </label>
                   <input
                     type="text"
                     value={providerName}
                     onChange={e => setProviderName(e.target.value)}
-                    placeholder="VD: Thợ Kỹ Thuật Tuấn"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden"
+                    placeholder="VD: Nhà Xe Minh Hoàng / Bếp Cư Dân..."
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   />
                 </div>
 
@@ -683,97 +796,122 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     value={providerPhone}
                     onChange={e => setProviderPhone(e.target.value)}
                     placeholder="VD: 0988889999"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-teal-500 outline-hidden"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                     required
                   />
                 </div>
 
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Số Zalo
+                    Số Zalo Nhận Đơn
                   </label>
                   <input
                     type="tel"
                     value={providerZalo}
                     onChange={e => setProviderZalo(e.target.value)}
                     placeholder="VD: 0988889999"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-teal-500 outline-hidden"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Địa Chỉ / Khu Vực Hoạt Động
+                  Địa Chỉ / Phân Khu Hoạt Động
                 </label>
                 <input
                   type="text"
                   value={address}
                   onChange={e => setAddress(e.target.value)}
-                  placeholder="VD: Tòa S2.05 Ocean Park 1 & Phục vụ toàn khu Ocean Park 1, 2, 3"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden"
+                  placeholder="VD: Sảnh S2.05 Ocean Park 1 & Phục vụ toàn bộ Ocean Park 1, 2, 3"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                 />
               </div>
 
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Mô Tả Dịch Vụ & Cam Kết Chất Lượng
+                  Mô Tả Dịch Vụ, Thực Đơn Hoặc Cam Kết Chất Lượng
                 </label>
                 <textarea
                   rows={3}
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  placeholder="Mô tả kỹ năng, chính sách bảo hành, cam kết không phát sinh giá..."
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden"
+                  placeholder="Mô tả kỹ năng, danh mục món ăn/loại xe, cam kết thời gian có mặt, bảo hành uy tín..."
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                 />
               </div>
 
-              {/* Photos manager */}
-              <div className="space-y-2 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">
-                    Ảnh Minh Họa Dịch Vụ ({images.length})
-                  </label>
-                  <label className="px-2.5 py-1 bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs rounded-lg cursor-pointer inline-flex items-center gap-1">
-                    <span>+ Tải Ảnh</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
+              {/* Photos manager with Multi-Device Upload */}
+              <div className="space-y-3 bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <label className="font-bold text-slate-800 dark:text-slate-200 text-xs block">
+                      📷 Hình Ảnh Dịch Vụ & Xe / Cửa Hàng ({images.length} ảnh)
+                    </label>
+                    <span className="text-[10px] text-slate-500">
+                      Hỗ trợ chụp trực tiếp từ camera điện thoại hoặc tải ảnh từ máy tính.
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <label className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-black text-xs rounded-xl cursor-pointer inline-flex items-center gap-1.5 shadow-xs transition">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{isUploadingImage ? 'Đang Tải...' : '📁 Tải Ảnh Từ Máy'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageUploadFromDevice}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
+                {/* Grid of uploaded images */}
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
                   {images.map((img, idx) => (
-                    <div key={idx} className="relative rounded-xl overflow-hidden aspect-4/3 bg-slate-900 border border-slate-300 dark:border-slate-700">
+                    <div key={idx} className="relative rounded-xl overflow-hidden aspect-4/3 bg-slate-900 border border-slate-300 dark:border-slate-700 group">
                       <img src={img} alt="Preview" className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(idx)}
-                        className="absolute top-1 right-1 p-1 bg-rose-600 text-white rounded-md"
+                        className="absolute top-1 right-1 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 hover:bg-rose-500 text-white rounded-md flex items-center justify-center transition shadow-md active:scale-90 z-10 cursor-pointer"
+                        title="Xóa ảnh này"
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-3.5 h-3.5" />
                       </button>
+                      {idx === 0 && (
+                        <span className="absolute bottom-1 left-1 px-1.5 py-0.2 bg-teal-600 text-white font-bold text-[8px] rounded">
+                          Ảnh đại diện
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md py-3 -mx-4 sm:-mx-6 px-4 sm:px-6 z-20">
                 <button
                   type="button"
                   onClick={() => setIsEditingModalOpen(false)}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl"
+                  className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
                 >
                   Hủy Bỏ
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-teal-600 hover:bg-teal-500 text-white font-black rounded-xl shadow-md"
+                  disabled={isSaving}
+                  className="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-black rounded-xl shadow-md cursor-pointer flex items-center gap-1.5"
                 >
-                  LƯU DỊCH VỤ NGAY
+                  {isSaving ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Đang Lưu...</span>
+                    </>
+                  ) : (
+                    <span>🚀 LƯU & XUẤT BẢN DỊCH VỤ</span>
+                  )}
                 </button>
               </div>
             </form>

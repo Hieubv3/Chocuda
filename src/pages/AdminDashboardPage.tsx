@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
-import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown } from 'lucide-react';
+import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { calculateExpiryInfo } from '../lib/expiration';
 
@@ -121,6 +121,59 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     }
   };
 
+  // Mobile Gesture Navigation (Gạt sang trái: Sang Tab tiếp theo / Sổ menu | Gạt sang phải: Quay lại Tab trước)
+  const MAIN_TAB_KEYS: Array<'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools'> = [
+    'bds',
+    'technicians',
+    'recruitment',
+    'resident_market',
+    'users_leads',
+    'ads',
+    'tools'
+  ];
+
+  const handleNextTab = () => {
+    const currentIndex = MAIN_TAB_KEYS.indexOf(effectiveMainTab);
+    const nextIndex = (currentIndex + 1) % MAIN_TAB_KEYS.length;
+    handleSelectMainTab(MAIN_TAB_KEYS[nextIndex]);
+  };
+
+  const handlePrevTab = () => {
+    const currentIndex = MAIN_TAB_KEYS.indexOf(effectiveMainTab);
+    const prevIndex = (currentIndex - 1 + MAIN_TAB_KEYS.length) % MAIN_TAB_KEYS.length;
+    handleSelectMainTab(MAIN_TAB_KEYS[prevIndex]);
+  };
+
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [showMobileMenuDrawer, setShowMobileMenuDrawer] = useState<boolean>(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+    setTouchStartY(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null || touchStartY === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+
+    // Ngưỡng vuốt ngang (threshold: 45px và góc chủ đạo là trục X)
+    if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.25) {
+      if (deltaX < 0) {
+        // Gạt sang trái (Swipe Left) -> Chuyển sang Tab kế tiếp
+        handleNextTab();
+      } else {
+        // Gạt sang phải (Swipe Right) -> Quay lại Tab trước đó
+        handlePrevTab();
+      }
+    }
+    setTouchStartX(null);
+    setTouchStartY(null);
+  };
+
   const [adminReputationPosts, setAdminReputationPosts] = useState<ReputationPost[]>([]);
 
   // Resident Services & Marketplace State
@@ -146,6 +199,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // Icon Compact & Expandable Table rows state
   const [adminViewMode, setAdminViewMode] = useState<'icon_compact' | 'detailed'>('icon_compact');
   const [expandedAdminPropIds, setExpandedAdminPropIds] = useState<Record<string, boolean>>({});
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
 
   const toggleExpandAdminProp = (id: string) => {
     setExpandedAdminPropIds(prev => ({ ...prev, [id]: !prev[id] }));
@@ -1642,65 +1698,182 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       </div>
 
-      {/* 2. LIVE METRICS STRIP - Hàng chỉ số nhanh gọn (~42px height) */}
+      {/* 2. LIVE METRICS STRIP - Hàng chỉ số nhanh gọn (~42px height) - Clickable & Filter Trực Tiếp */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
-        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+        {/* BĐS Bán */}
+        <button
+          onClick={() => {
+            handleSelectMainTab('bds');
+            setActiveTab('properties');
+            setPropertySubFilter('sale');
+          }}
+          className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all duration-150 cursor-pointer shadow-xs hover:scale-[1.02] active:scale-[0.98] ${
+            effectiveMainTab === 'bds' && activeTab === 'properties' && propertySubFilter === 'sale'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-2 ring-emerald-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600'
+          }`}
+          title="Xem danh sách BĐS Bán"
+        >
           <div className="flex items-center gap-2">
-            <span className="p-1 bg-emerald-500/10 text-emerald-500 rounded-md font-bold">🏠</span>
-            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">BĐS Bán</span>
+            <span className="p-1 bg-emerald-500/10 text-emerald-500 rounded-md font-bold text-sm">🏠</span>
+            <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">BĐS Bán</span>
           </div>
           <span className="font-mono font-black text-slate-900 dark:text-emerald-400 text-sm">{saleProperties.length}</span>
-        </div>
+        </button>
 
-        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+        {/* Cho Thuê */}
+        <button
+          onClick={() => {
+            handleSelectMainTab('bds');
+            setActiveTab('properties');
+            setPropertySubFilter('rent');
+          }}
+          className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all duration-150 cursor-pointer shadow-xs hover:scale-[1.02] active:scale-[0.98] ${
+            effectiveMainTab === 'bds' && activeTab === 'properties' && propertySubFilter === 'rent'
+              ? 'bg-teal-50 dark:bg-teal-950/40 border-teal-500 ring-2 ring-teal-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-teal-400 dark:hover:border-teal-600'
+          }`}
+          title="Xem danh sách BĐS Cho Thuê"
+        >
           <div className="flex items-center gap-2">
-            <span className="p-1 bg-teal-500/10 text-teal-500 rounded-md font-bold">🔑</span>
-            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Cho Thuê</span>
+            <span className="p-1 bg-teal-500/10 text-teal-500 rounded-md font-bold text-sm">🔑</span>
+            <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Cho Thuê</span>
           </div>
           <span className="font-mono font-black text-slate-900 dark:text-teal-400 text-sm">{rentProperties.length}</span>
-        </div>
+        </button>
 
-        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+        {/* Chờ Duyệt */}
+        <button
+          onClick={() => {
+            handleSelectMainTab('bds');
+            setActiveTab('properties');
+            setPropertySubFilter('pending');
+          }}
+          className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all duration-150 cursor-pointer shadow-xs hover:scale-[1.02] active:scale-[0.98] ${
+            effectiveMainTab === 'bds' && activeTab === 'properties' && propertySubFilter === 'pending'
+              ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-500 ring-2 ring-amber-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-600'
+          }`}
+          title="Xem danh sách tin BĐS Chờ Duyệt"
+        >
           <div className="flex items-center gap-2">
-            <span className="p-1 bg-amber-500/10 text-amber-500 rounded-md font-bold">⏳</span>
-            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Chờ Duyệt</span>
+            <span className="p-1 bg-amber-500/10 text-amber-500 rounded-md font-bold text-sm">⏳</span>
+            <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Chờ Duyệt</span>
           </div>
           <span className={`font-mono font-black text-sm ${pendingProperties.length > 0 ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`}>
             {pendingProperties.length}
           </span>
-        </div>
+        </button>
 
-        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+        {/* Thợ Dịch Vụ */}
+        <button
+          onClick={() => {
+            handleSelectMainTab('technicians');
+            setActiveTab('resident_services_mgmt');
+          }}
+          className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all duration-150 cursor-pointer shadow-xs hover:scale-[1.02] active:scale-[0.98] ${
+            effectiveMainTab === 'technicians'
+              ? 'bg-orange-50 dark:bg-orange-950/40 border-orange-500 ring-2 ring-orange-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-orange-400 dark:hover:border-orange-600'
+          }`}
+          title="Xem danh sách Thợ Dịch Vụ & Kỹ Thuật"
+        >
           <div className="flex items-center gap-2">
-            <span className="p-1 bg-orange-500/10 text-orange-500 rounded-md font-bold">🛠️</span>
-            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Thợ Dịch Vụ</span>
+            <span className="p-1 bg-orange-500/10 text-orange-500 rounded-md font-bold text-sm">🛠️</span>
+            <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Thợ Dịch Vụ</span>
           </div>
           <span className="font-mono font-black text-slate-900 dark:text-orange-400 text-sm">{adminResidentServices.length}</span>
-        </div>
+        </button>
 
-        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+        {/* Gian Hàng */}
+        <button
+          onClick={() => {
+            handleSelectMainTab('resident_market');
+            setActiveTab('stores_mgmt');
+          }}
+          className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all duration-150 cursor-pointer shadow-xs hover:scale-[1.02] active:scale-[0.98] ${
+            effectiveMainTab === 'resident_market' && activeTab === 'stores_mgmt'
+              ? 'bg-purple-50 dark:bg-purple-950/40 border-purple-500 ring-2 ring-purple-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-purple-400 dark:hover:border-purple-600'
+          }`}
+          title="Xem danh sách Gian Hàng & Shop Cư Dân"
+        >
           <div className="flex items-center gap-2">
-            <span className="p-1 bg-purple-500/10 text-purple-500 rounded-md font-bold">🏪</span>
-            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Gian Hàng</span>
+            <span className="p-1 bg-purple-500/10 text-purple-500 rounded-md font-bold text-sm">🏪</span>
+            <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Gian Hàng</span>
           </div>
           <span className="font-mono font-black text-slate-900 dark:text-purple-400 text-sm">{adminStores.length}</span>
-        </div>
+        </button>
 
-        <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+        {/* Khách & Việc */}
+        <button
+          onClick={() => {
+            handleSelectMainTab('recruitment');
+            setActiveTab('recruitment_mgmt');
+          }}
+          className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all duration-150 cursor-pointer shadow-xs hover:scale-[1.02] active:scale-[0.98] ${
+            effectiveMainTab === 'recruitment'
+              ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-500 ring-2 ring-blue-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600'
+          }`}
+          title="Xem Tuyển Dụng, Việc Làm & Yêu Cầu Cư Dân"
+        >
           <div className="flex items-center gap-2">
-            <span className="p-1 bg-blue-500/10 text-blue-500 rounded-md font-bold">💼</span>
-            <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px]">Khách & Việc</span>
+            <span className="p-1 bg-blue-500/10 text-blue-500 rounded-md font-bold text-sm">💼</span>
+            <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Khách & Việc</span>
           </div>
           <span className="font-mono font-black text-slate-900 dark:text-blue-400 text-sm">{contacts.length}</span>
+        </button>
+      </div>
+
+      {/* MOBILE CONTROLS & GESTURE GUIDANCE (Hiển thị riêng cho Di động) */}
+      <div className="sm:hidden space-y-1.5">
+        <div className="flex items-center justify-between gap-1.5">
+          <button
+            onClick={handlePrevTab}
+            className="flex-1 py-2 px-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-800 flex items-center justify-center gap-1 font-bold text-xs active:scale-95 transition"
+            title="Quay lại phân hệ trước (hoặc gạt ngón tay sang phải)"
+          >
+            <ChevronLeft className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>Tab trước</span>
+          </button>
+
+          <button
+            onClick={() => setShowMobileMenuDrawer(true)}
+            className="py-2 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-black text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition shrink-0"
+            title="Mở toàn bộ 7 phân hệ quản trị"
+          >
+            <Menu className="w-4 h-4 shrink-0" />
+            <span>7 Phân Hệ</span>
+          </button>
+
+          <button
+            onClick={handleNextTab}
+            className="flex-1 py-2 px-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-800 flex items-center justify-center gap-1 font-bold text-xs active:scale-95 transition"
+            title="Chuyển sang phân hệ kế tiếp (hoặc gạt ngón tay sang trái)"
+          >
+            <span>Tiếp theo</span>
+            <ChevronRight className="w-4 h-4 text-emerald-400 shrink-0" />
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between text-[10px] text-slate-400 px-1 font-medium bg-slate-900/50 py-1 rounded-lg border border-slate-800/60">
+          <span>👉 Gạt phải: Quay lại</span>
+          <span className="text-emerald-400 font-bold">✨ Vuốt ngang để đổi Tab</span>
+          <span>👈 Gạt trái: Tiếp theo</span>
         </div>
       </div>
 
-      {/* 3. PRIMARY TAB BAR - 7 MẢNG QUẢN TRỊ CHUYÊN BIỆT TÁCH RỜI (Tab Menu ngang mượt mà, trực quan) */}
-      <div className="bg-slate-950 p-1.5 rounded-2xl border border-slate-800 shadow-md flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+      {/* 3. PRIMARY TAB BAR - 7 MẢNG QUẢN TRỊ CHUYÊN BIỆT TÁCH RỜI (Chống đè chữ trên mọi màn hình) */}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className="bg-slate-950 p-1.5 rounded-2xl border border-slate-800 shadow-md flex items-center gap-2 overflow-x-auto scrollbar-none select-none"
+      >
         {/* Tab 1: Bất Động Sản */}
         <button
           onClick={() => handleSelectMainTab('bds')}
-          className={`flex-1 min-w-[135px] sm:min-w-[155px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+          className={`shrink-0 py-2.5 px-3.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
             effectiveMainTab === 'bds'
               ? 'bg-emerald-600 text-white shadow-md'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -1716,7 +1889,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* Tab 2: Thợ Kỹ Thuật */}
         <button
           onClick={() => handleSelectMainTab('technicians')}
-          className={`flex-1 min-w-[130px] sm:min-w-[150px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+          className={`shrink-0 py-2.5 px-3.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
             effectiveMainTab === 'technicians'
               ? 'bg-orange-500 text-slate-950 shadow-md'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -1732,7 +1905,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* Tab 3: Tuyển Dụng & Việc Làm */}
         <button
           onClick={() => handleSelectMainTab('recruitment')}
-          className={`flex-1 min-w-[135px] sm:min-w-[155px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+          className={`shrink-0 py-2.5 px-3.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
             effectiveMainTab === 'recruitment'
               ? 'bg-teal-500 text-slate-950 shadow-md'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -1748,7 +1921,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* Tab 4: Dịch Vụ Cư Dân & Gian Hàng */}
         <button
           onClick={() => handleSelectMainTab('resident_market')}
-          className={`flex-1 min-w-[145px] sm:min-w-[165px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+          className={`shrink-0 py-2.5 px-3.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
             effectiveMainTab === 'resident_market'
               ? 'bg-amber-500 text-slate-950 shadow-md'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -1764,7 +1937,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* Tab 5: Người Dùng & Môi Giới */}
         <button
           onClick={() => handleSelectMainTab('users_leads')}
-          className={`flex-1 min-w-[140px] sm:min-w-[160px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+          className={`shrink-0 py-2.5 px-3.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
             effectiveMainTab === 'users_leads'
               ? 'bg-blue-600 text-white shadow-md'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -1780,7 +1953,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* Tab 6: Banner Quảng Cáo */}
         <button
           onClick={() => handleSelectMainTab('ads')}
-          className={`flex-1 min-w-[130px] sm:min-w-[150px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+          className={`shrink-0 py-2.5 px-3.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
             effectiveMainTab === 'ads'
               ? 'bg-rose-600 text-white shadow-md'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -1796,7 +1969,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* Tab 7: Công Cụ & Hệ Thống */}
         <button
           onClick={() => handleSelectMainTab('tools')}
-          className={`flex-1 min-w-[135px] sm:min-w-[155px] py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+          className={`shrink-0 py-2.5 px-3.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
             effectiveMainTab === 'tools'
               ? 'bg-indigo-600 text-white shadow-md'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -1806,6 +1979,183 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <span>7. CÔNG CỤ HỆ THỐNG</span>
         </button>
       </div>
+
+      {/* MOBILE MENU DRAWER (Sổ Menu 7 Phân Hệ Cho Di Động) */}
+      {showMobileMenuDrawer && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/80 backdrop-blur-xs p-0 sm:p-4">
+          <div
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-2xl p-4 shadow-2xl space-y-3 animate-in slide-in-from-bottom duration-200"
+          >
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <h3 className="font-black text-sm text-white">Menu 7 Phân Hệ Quản Trị</h3>
+              </div>
+              <button
+                onClick={() => setShowMobileMenuDrawer(false)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5 max-h-[65vh] overflow-y-auto pr-1">
+              {/* 1. BĐS */}
+              <button
+                onClick={() => {
+                  handleSelectMainTab('bds');
+                  setShowMobileMenuDrawer(false);
+                }}
+                className={`w-full p-3 rounded-xl font-black text-xs flex items-center justify-between transition cursor-pointer ${
+                  effectiveMainTab === 'bds'
+                    ? 'bg-emerald-600 text-white shadow-md'
+                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Building2 className="w-4 h-4 text-emerald-400" />
+                  <span>1. BẤT ĐỘNG SẢN</span>
+                </div>
+                <span className="px-2 py-0.5 bg-slate-950/60 rounded-full font-mono text-[11px]">
+                  {properties.length} tin
+                </span>
+              </button>
+
+              {/* 2. Kỹ thuật */}
+              <button
+                onClick={() => {
+                  handleSelectMainTab('technicians');
+                  setShowMobileMenuDrawer(false);
+                }}
+                className={`w-full p-3 rounded-xl font-black text-xs flex items-center justify-between transition cursor-pointer ${
+                  effectiveMainTab === 'technicians'
+                    ? 'bg-orange-500 text-slate-950 shadow-md'
+                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Wrench className="w-4 h-4 text-orange-400" />
+                  <span>2. DỊCH VỤ & KỸ THUẬT</span>
+                </div>
+                <span className="px-2 py-0.5 bg-slate-950/60 rounded-full font-mono text-[11px]">
+                  {adminResidentServices.length} thợ
+                </span>
+              </button>
+
+              {/* 3. Tuyển dụng */}
+              <button
+                onClick={() => {
+                  handleSelectMainTab('recruitment');
+                  setShowMobileMenuDrawer(false);
+                }}
+                className={`w-full p-3 rounded-xl font-black text-xs flex items-center justify-between transition cursor-pointer ${
+                  effectiveMainTab === 'recruitment'
+                    ? 'bg-teal-500 text-slate-950 shadow-md'
+                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Briefcase className="w-4 h-4 text-teal-400" />
+                  <span>3. TUYỂN DỤNG & VIỆC LÀM</span>
+                </div>
+                <span className="px-2 py-0.5 bg-slate-950/60 rounded-full text-[10px] text-teal-300 font-bold">
+                  Ưu tiên
+                </span>
+              </button>
+
+              {/* 4. Gian Hàng */}
+              <button
+                onClick={() => {
+                  handleSelectMainTab('resident_market');
+                  setShowMobileMenuDrawer(false);
+                }}
+                className={`w-full p-3 rounded-xl font-black text-xs flex items-center justify-between transition cursor-pointer ${
+                  effectiveMainTab === 'resident_market'
+                    ? 'bg-amber-500 text-slate-950 shadow-md'
+                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Store className="w-4 h-4 text-amber-400" />
+                  <span>4. GIAN HÀNG & DỊCH VỤ</span>
+                </div>
+                <span className="px-2 py-0.5 bg-slate-950/60 rounded-full font-mono text-[11px]">
+                  {adminStores.length} shop
+                </span>
+              </button>
+
+              {/* 5. Thành viên */}
+              <button
+                onClick={() => {
+                  handleSelectMainTab('users_leads');
+                  setShowMobileMenuDrawer(false);
+                }}
+                className={`w-full p-3 rounded-xl font-black text-xs flex items-center justify-between transition cursor-pointer ${
+                  effectiveMainTab === 'users_leads'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <UserCheck className="w-4 h-4 text-blue-400" />
+                  <span>5. THÀNH VIÊN & ĐỐI TÁC</span>
+                </div>
+                <span className="px-2 py-0.5 bg-slate-950/60 rounded-full font-mono text-[11px]">
+                  {registeredUsers.length} user
+                </span>
+              </button>
+
+              {/* 6. Quảng cáo */}
+              <button
+                onClick={() => {
+                  handleSelectMainTab('ads');
+                  setShowMobileMenuDrawer(false);
+                }}
+                className={`w-full p-3 rounded-xl font-black text-xs flex items-center justify-between transition cursor-pointer ${
+                  effectiveMainTab === 'ads'
+                    ? 'bg-rose-600 text-white shadow-md'
+                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Sparkles className="w-4 h-4 text-rose-400" />
+                  <span>6. QUẢNG CÁO & TRUYỀN THÔNG</span>
+                </div>
+                <span className="px-2 py-0.5 bg-slate-950/60 rounded-full font-mono text-[11px]">
+                  {adsList.length} banner
+                </span>
+              </button>
+
+              {/* 7. Công cụ */}
+              <button
+                onClick={() => {
+                  handleSelectMainTab('tools');
+                  setShowMobileMenuDrawer(false);
+                }}
+                className={`w-full p-3 rounded-xl font-black text-xs flex items-center justify-between transition cursor-pointer ${
+                  effectiveMainTab === 'tools'
+                    ? 'bg-indigo-600 text-white shadow-md'
+                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Settings className="w-4 h-4 text-indigo-400" />
+                  <span>7. CÔNG CỤ HỆ THỐNG</span>
+                </div>
+                <span className="px-2 py-0.5 bg-slate-950/60 rounded-full text-[10px] text-indigo-300 font-bold">
+                  SEO & Zalo
+                </span>
+              </button>
+            </div>
+
+            <div className="pt-2 text-center">
+              <span className="text-[11px] text-slate-400 font-medium">💡 Gạt sang phải hoặc bấm nút để đóng menu</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 4. CONTEXTUAL SUB-NAV PILLS CHO TỪNG TAB */}
       {effectiveMainTab === 'bds' && (
@@ -2728,8 +3078,112 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
-            <div className="overflow-x-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            {/* Mobile Compact & Expandable Orders List */}
+            <div className="block md:hidden space-y-2.5">
+              {adminStoreOrders.length === 0 ? (
+                <div className="text-center py-8 text-slate-400 text-xs">
+                  Chưa có đơn hàng nào trên Chợ Cư Dân.
+                </div>
+              ) : (
+                adminStoreOrders.map(order => {
+                  const isExpanded = expandedOrderId === order.id;
+                  return (
+                    <div
+                      key={order.id}
+                      className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-amber-500/40 cursor-pointer"
+                      onClick={() => setExpandedOrderId(isExpanded ? null : order.id)}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="font-mono font-black text-xs text-amber-600 dark:text-amber-400 shrink-0">
+                            #{order.id.slice(-6)}
+                          </span>
+                          <span className="font-bold text-slate-900 dark:text-white text-xs truncate">
+                            {order.customerName || 'Khách Vãng Lai'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="font-black text-xs text-emerald-600 dark:text-emerald-400">
+                            {order.totalAmount ? order.totalAmount.toLocaleString('vi-VN') : 0} đ
+                          </span>
+                          <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                            ▼
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Brief single line summary */}
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                        <span className="truncate max-w-[140px] text-teal-600 dark:text-teal-400 font-semibold">
+                          🏪 {order.storeName}
+                        </span>
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                          order.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                        }`}>
+                          {order.paymentMethod === 'vietqr' ? 'VietQR' : 'COD'} • {order.paymentStatus === 'paid' ? 'Đã Thanh Toán' : 'Chưa Trả'}
+                        </span>
+                      </div>
+
+                      {/* Expanded Full Details */}
+                      {isExpanded && (
+                        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2 text-xs">
+                          <div className="grid grid-cols-2 gap-2 text-[11px]">
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">SĐT Khách Hàng:</span>
+                              <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                                📞 {order.customerPhone || 'Chưa cập nhật'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Địa Chỉ Nhận:</span>
+                              <span className="font-medium text-slate-800 dark:text-slate-200">
+                                📍 {order.customerAddress || 'Giao tại căn hộ'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Trạng Thái Giao Hàng:</span>
+                              <span className="font-bold text-blue-600 dark:text-blue-400">
+                                {order.orderStatus === 'new' && '🆕 Đơn Mới'}
+                                {order.orderStatus === 'confirmed' && '✓ Đã Xác Nhận'}
+                                {order.orderStatus === 'delivering' && '🚚 Đang Giao Hàng'}
+                                {order.orderStatus === 'completed' && '🎉 Hoàn Thành'}
+                                {order.orderStatus === 'cancelled' && '❌ Đã Hủy'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Quyền Quản Lý:</span>
+                              <span className="text-purple-600 dark:text-purple-400 font-bold">
+                                👤 Đối tác tự xử lý
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {order.items && order.items.length > 0 && (
+                            <div className="bg-slate-100 dark:bg-slate-900/80 p-2 rounded-xl mt-2 space-y-1">
+                              <span className="text-[10px] font-black uppercase text-slate-500 block">Sản Phẩm Đã Đặt:</span>
+                              {order.items.map((item, i) => (
+                                <div key={i} className="flex justify-between text-[11px]">
+                                  <span className="text-slate-700 dark:text-slate-300 font-medium">
+                                    • {item.productName} x{item.quantity}
+                                  </span>
+                                  <span className="font-mono text-slate-900 dark:text-white font-bold">
+                                    {(item.price * item.quantity).toLocaleString('vi-VN')} đ
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 font-black uppercase tracking-wider">
@@ -4792,147 +5246,280 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">Chưa có dữ liệu đặt lịch xem nhà nào phù hợp với bộ lọc.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold uppercase text-[10px] tracking-wider">
-                    <th className="py-3 px-3">STT</th>
-                    <th className="py-3 px-3">Khách Hàng Đặt Lịch</th>
-                    <th className="py-3 px-3">Căn BĐS Quan Tâm</th>
-                    <th className="py-3 px-3">Người Đăng Tin (Chủ Nhà / Admin)</th>
-                    <th className="py-3 px-3">Lịch Hẹn & Ghi Chú</th>
-                    <th className="py-3 px-3">Trạng Thái</th>
-                    <th className="py-3 px-3 text-right">Thao Tác</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-800/40">
-                  {filteredContacts.map((c, idx) => (
-                    <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition">
-                      <td className="py-3.5 px-3 font-bold text-slate-400">{idx + 1}</td>
-                      
-                      {/* Customer info */}
-                      <td className="py-3.5 px-3">
-                        <div className="font-extrabold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
-                          {c.fullName}
+            <div className="space-y-4">
+              {/* Mobile Compact & Expandable Leads List */}
+              <div className="block md:hidden space-y-2.5">
+                {filteredContacts.map((c, idx) => {
+                  const isExpanded = expandedLeadId === c.id;
+                  return (
+                    <div
+                      key={c.id}
+                      className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-amber-500/40 cursor-pointer"
+                      onClick={() => setExpandedLeadId(isExpanded ? null : c.id)}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-black text-[10px] flex items-center justify-center shrink-0">
+                            {idx + 1}
+                          </span>
+                          <span className="font-extrabold text-slate-900 dark:text-white text-xs truncate">
+                            {c.fullName}
+                          </span>
                           {c.type === 'viewing' && (
-                            <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[9px] rounded-md font-bold">
+                            <span className="px-1.5 py-0.2 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[9px] rounded font-bold shrink-0">
                               Xem Nhà
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <a href={`tel:${c.phone}`} className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1">
-                            <Phone className="w-3 h-3" />
-                            {c.phone}
-                          </a>
-                          <a
-                            href={`https://zalo.me/${c.phone.replace(/\D/g, '')}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[10px] bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 px-1.5 py-0.5 rounded font-semibold hover:underline"
-                          >
-                            Zalo
-                          </a>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            c.status === 'done'
+                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                              : c.status === 'contacted'
+                              ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300'
+                              : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                          }`}>
+                            {c.status === 'done' ? '🟢 Hoàn tất' : c.status === 'contacted' ? '🟡 Đã liên hệ' : '🔴 Mới'}
+                          </span>
+                          <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                            ▼
+                          </span>
                         </div>
-                        {c.email && <div className="text-[10px] text-slate-400 mt-0.5">{c.email}</div>}
-                      </td>
+                      </div>
 
-                      {/* Property title */}
-                      <td className="py-3.5 px-3 max-w-xs">
-                        {c.propertyTitle ? (
-                          <div>
-                            <p className="font-bold text-slate-800 dark:text-slate-200 line-clamp-2">{c.propertyTitle}</p>
-                            <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">{c.projectInterest}</span>
+                      {/* Summary line */}
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                        <span className="truncate max-w-[170px] text-slate-800 dark:text-slate-200 font-semibold">
+                          🏢 {c.propertyTitle || c.projectInterest}
+                        </span>
+                        <a
+                          href={`tel:${c.phone}`}
+                          onClick={e => e.stopPropagation()}
+                          className="font-mono text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1"
+                        >
+                          📞 {c.phone}
+                        </a>
+                      </div>
+
+                      {/* Expanded Details */}
+                      {isExpanded && (
+                        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
+                          <div className="grid grid-cols-2 gap-2 text-[11px]">
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Người Đăng / Chủ Nhà:</span>
+                              <span className="font-bold text-slate-800 dark:text-slate-200">
+                                {c.sellerName || 'Admin / Ban Quản Trị'}
+                              </span>
+                              {c.sellerPhone && (
+                                <span className="block text-slate-500 font-mono text-[10px]">
+                                  SĐT: {c.sellerPhone}
+                                </span>
+                              )}
+                            </div>
+
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Lịch Hẹn Xem:</span>
+                              <span className="font-bold text-amber-600 dark:text-amber-400">
+                                {c.preferredTime || 'Càng sớm càng tốt'}
+                              </span>
+                            </div>
                           </div>
-                        ) : (
-                          <span className="text-slate-400 italic">Yêu cầu tư vấn dự án {c.projectInterest}</span>
-                        )}
-                      </td>
 
-                      {/* Seller info */}
-                      <td className="py-3.5 px-3">
-                        <div className="font-bold text-slate-800 dark:text-slate-200">{c.sellerName || 'Người đăng tin'}</div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                          {c.sellerPhone ? (
-                            <>
-                              <span>SĐT: {c.sellerPhone}</span>
+                          {c.note && (
+                            <div className="bg-slate-100 dark:bg-slate-900 p-2 rounded-xl text-[11px] italic text-slate-600 dark:text-slate-300">
+                              "{c.note}"
+                            </div>
+                          )}
+
+                          <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-2 flex-wrap" onClick={e => e.stopPropagation()}>
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={c.status || 'new'}
+                                onChange={(e) => handleUpdateLeadStatus(c.id, e.target.value as any)}
+                                className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold"
+                              >
+                                <option value="new">🔴 Yêu cầu mới</option>
+                                <option value="contacted">🟡 Đã liên hệ</option>
+                                <option value="done">🟢 Hoàn tất</option>
+                              </select>
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
                               <a
-                                href={`https://zalo.me/${c.sellerPhone.replace(/\D/g, '')}?text=Báo%20lịch%20xem%20nhà%3A%20${encodeURIComponent(c.fullName)}%20(${c.phone})`}
+                                href={`tel:${c.phone}`}
+                                className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl font-bold text-xs flex items-center gap-1"
+                              >
+                                <Phone className="w-3 h-3" />
+                                <span>Gọi</span>
+                              </a>
+                              <a
+                                href={`https://zalo.me/${c.phone.replace(/\D/g, '')}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-[9px] text-blue-500 font-bold hover:underline"
+                                className="px-3 py-1.5 bg-blue-600 text-white rounded-xl font-bold text-xs"
                               >
-                                (Báo Chủ)
+                                Zalo
                               </a>
-                            </>
-                          ) : (
-                            <span className="italic text-slate-400">Chưa có SĐT</span>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Viewing time & Note */}
-                      <td className="py-3.5 px-3 max-w-xs">
-                        {c.preferredTime && (
-                          <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 font-bold text-[10px] rounded-lg mb-1 border border-amber-200 dark:border-amber-800">
-                            <Clock className="w-3 h-3" />
-                            {c.preferredTime}
+                              <button
+                                onClick={() => handleDeleteLead(c.id)}
+                                className="p-1.5 bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-300 rounded-xl"
+                                title="Xóa"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </div>
-                        )}
-                        {c.note ? (
-                          <p className="text-[11px] text-slate-600 dark:text-slate-300 italic bg-slate-50 dark:bg-slate-900 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
-                            "{c.note}"
-                          </p>
-                        ) : (
-                          <span className="text-slate-400 text-[10px]">Không có ghi chú</span>
-                        )}
-                        <div className="text-[9px] text-slate-400 mt-1">
-                          {new Date(c.createdAt).toLocaleString('vi-VN')}
                         </div>
-                      </td>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
 
-                      {/* Status Dropdown */}
-                      <td className="py-3.5 px-3">
-                        <select
-                          value={c.status || 'new'}
-                          onChange={(e) => handleUpdateLeadStatus(c.id, e.target.value as any)}
-                          className={`p-1.5 rounded-xl text-[11px] font-bold border transition cursor-pointer ${
-                            c.status === 'done'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
-                              : c.status === 'contacted'
-                              ? 'bg-sky-50 text-sky-700 border-sky-300 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800'
-                              : 'bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800'
-                          }`}
-                        >
-                          <option value="new">🔴 Yêu cầu mới</option>
-                          <option value="contacted">🟡 Đã liên hệ</option>
-                          <option value="done">🟢 Hoàn tất</option>
-                        </select>
-                      </td>
-
-                      {/* Action buttons */}
-                      <td className="py-3.5 px-3 text-right">
-                        <div className="flex items-center justify-end space-x-1.5">
-                          <a
-                            href={`tel:${c.phone}`}
-                            className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[11px] flex items-center gap-1 transition"
-                            title="Gọi ngay cho khách"
-                          >
-                            <Phone className="w-3.5 h-3.5" />
-                          </a>
-                          <button
-                            onClick={() => handleDeleteLead(c.id)}
-                            className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-lg transition"
-                            title="Xóa yêu cầu"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-3">STT</th>
+                      <th className="py-3 px-3">Khách Hàng Đặt Lịch</th>
+                      <th className="py-3 px-3">Căn BĐS Quan Tâm</th>
+                      <th className="py-3 px-3">Người Đăng Tin (Chủ Nhà / Admin)</th>
+                      <th className="py-3 px-3">Lịch Hẹn & Ghi Chú</th>
+                      <th className="py-3 px-3">Trạng Thái</th>
+                      <th className="py-3 px-3 text-right">Thao Tác</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-800/40">
+                    {filteredContacts.map((c, idx) => (
+                      <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition">
+                        <td className="py-3.5 px-3 font-bold text-slate-400">{idx + 1}</td>
+                        
+                        {/* Customer info */}
+                        <td className="py-3.5 px-3">
+                          <div className="font-extrabold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
+                            {c.fullName}
+                            {c.type === 'viewing' && (
+                              <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[9px] rounded-md font-bold">
+                                Xem Nhà
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <a href={`tel:${c.phone}`} className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1">
+                              <Phone className="w-3 h-3" />
+                              {c.phone}
+                            </a>
+                            <a
+                              href={`https://zalo.me/${c.phone.replace(/\D/g, '')}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[10px] bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 px-1.5 py-0.5 rounded font-semibold hover:underline"
+                            >
+                              Zalo
+                            </a>
+                          </div>
+                          {c.email && <div className="text-[10px] text-slate-400 mt-0.5">{c.email}</div>}
+                        </td>
+
+                        {/* Property title */}
+                        <td className="py-3.5 px-3 max-w-xs">
+                          {c.propertyTitle ? (
+                            <div>
+                              <p className="font-bold text-slate-800 dark:text-slate-200 line-clamp-2">{c.propertyTitle}</p>
+                              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">{c.projectInterest}</span>
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 italic">Yêu cầu tư vấn dự án {c.projectInterest}</span>
+                          )}
+                        </td>
+
+                        {/* Seller info */}
+                        <td className="py-3.5 px-3">
+                          <div className="font-bold text-slate-800 dark:text-slate-200">{c.sellerName || 'Người đăng tin'}</div>
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                            {c.sellerPhone ? (
+                              <>
+                                <span>SĐT: {c.sellerPhone}</span>
+                                <a
+                                  href={`https://zalo.me/${c.sellerPhone.replace(/\D/g, '')}?text=Báo%20lịch%20xem%20nhà%3A%20${encodeURIComponent(c.fullName)}%20(${c.phone})`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-[9px] text-blue-500 font-bold hover:underline"
+                                >
+                                  (Báo Chủ)
+                                </a>
+                              </>
+                            ) : (
+                              <span className="italic text-slate-400">Chưa có SĐT</span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Viewing time & Note */}
+                        <td className="py-3.5 px-3 max-w-xs">
+                          {c.preferredTime && (
+                            <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 font-bold text-[10px] rounded-lg mb-1 border border-amber-200 dark:border-amber-800">
+                              <Clock className="w-3 h-3" />
+                              {c.preferredTime}
+                            </div>
+                          )}
+                          {c.note ? (
+                            <p className="text-[11px] text-slate-600 dark:text-slate-300 italic bg-slate-50 dark:bg-slate-900 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                              "{c.note}"
+                            </p>
+                          ) : (
+                            <span className="text-slate-400 text-[10px]">Không có ghi chú</span>
+                          )}
+                          <div className="text-[9px] text-slate-400 mt-1">
+                            {new Date(c.createdAt).toLocaleString('vi-VN')}
+                          </div>
+                        </td>
+
+                        {/* Status Dropdown */}
+                        <td className="py-3.5 px-3">
+                          <select
+                            value={c.status || 'new'}
+                            onChange={(e) => handleUpdateLeadStatus(c.id, e.target.value as any)}
+                            className={`p-1.5 rounded-xl text-[11px] font-bold border transition cursor-pointer ${
+                              c.status === 'done'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
+                                : c.status === 'contacted'
+                                ? 'bg-sky-50 text-sky-700 border-sky-300 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800'
+                                : 'bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800'
+                            }`}
+                          >
+                            <option value="new">🔴 Yêu cầu mới</option>
+                            <option value="contacted">🟡 Đã liên hệ</option>
+                            <option value="done">🟢 Hoàn tất</option>
+                          </select>
+                        </td>
+
+                        {/* Action buttons */}
+                        <td className="py-3.5 px-3 text-right">
+                          <div className="flex items-center justify-end space-x-1.5">
+                            <a
+                              href={`tel:${c.phone}`}
+                              className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[11px] flex items-center gap-1 transition"
+                              title="Gọi ngay cho khách"
+                            >
+                              <Phone className="w-3.5 h-3.5" />
+                            </a>
+                            <button
+                              onClick={() => handleDeleteLead(c.id)}
+                              className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-lg transition"
+                              title="Xóa yêu cầu"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>
@@ -4958,8 +5545,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <span className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
                 👥 Tổng: <strong className="text-amber-500">{registeredUsers.length}</strong>
               </span>
+              <span className="px-3 py-1.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
+                🏢 Doanh Nghiệp: <strong>{registeredUsers.filter(u => u.accountType === 'business_enterprise' || u.role === 'partner' || u.companyName).length}</strong>
+              </span>
               <span className="px-3 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                🏠 Cư Dân/Chủ Nhà: <strong>{registeredUsers.filter(u => u.role === 'owner').length}</strong>
+                🏠 Cư Dân: <strong>{registeredUsers.filter(u => u.role === 'owner' || (!u.companyName && u.accountType !== 'business_enterprise' && u.role !== 'sale' && u.role !== 'admin')).length}</strong>
               </span>
               <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
                 💼 Môi Giới/Sale: <strong>{registeredUsers.filter(u => u.role === 'sale').length}</strong>
@@ -4984,7 +5574,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="relative flex-1 max-w-md">
               <input
                 type="text"
-                placeholder="Tìm theo Tên, SĐT, Email..."
+                placeholder="Tìm theo Tên, SĐT, Email, MST, Tên Công Ty..."
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
                 className="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs"
@@ -5005,6 +5595,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 Tất Cả ({registeredUsers.length})
               </button>
               <button
+                onClick={() => setUserRoleFilter('business')}
+                className={`px-3 py-1.5 rounded-xl font-extrabold text-[11px] transition ${
+                  userRoleFilter === 'business'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                🏢 Doanh Nghiệp (B2B)
+              </button>
+              <button
                 onClick={() => setUserRoleFilter('owner')}
                 className={`px-3 py-1.5 rounded-xl font-extrabold text-[11px] transition ${
                   userRoleFilter === 'owner'
@@ -5012,7 +5612,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                 }`}
               >
-                🏠 Chủ Nhà / Cư Dân
+                🏠 Cư Dân / Chính Chủ
               </button>
               <button
                 onClick={() => setUserRoleFilter('sale')}
@@ -5050,205 +5650,383 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <p className="text-xs text-slate-400 font-medium">Chưa có dữ liệu thành viên phù hợp.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700/80">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-extrabold uppercase text-[10px] tracking-wider">
-                    <th className="py-3 px-3.5">Họ & Tên</th>
-                    <th className="py-3 px-3">Email liên hệ</th>
-                    <th className="py-3 px-3">SĐT / Zalo</th>
-                    <th className="py-3 px-3 text-center">BĐS Đã Đăng</th>
-                    <th className="py-3 px-3 text-center">Lượt Up Tin</th>
-                    <th className="py-3 px-3 text-center">Ví VNĐ & Điểm</th>
-                    <th className="py-3 px-3">Vai Trò / Cấp Bậc</th>
-                    <th className="py-3 px-3 text-center">Trạng Thái</th>
-                    <th className="py-3 px-3.5 text-right">Thao Tác Admin</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {registeredUsers
-                    .filter(u => {
-                      const matchesSearch = !userSearch || 
-                        (u.name && u.name.toLowerCase().includes(userSearch.toLowerCase())) ||
-                        (u.email && u.email.toLowerCase().includes(userSearch.toLowerCase())) ||
-                        (u.phone && u.phone.includes(userSearch));
-                      const matchesRole = userRoleFilter === 'all' || u.role === userRoleFilter;
-                      return matchesSearch && matchesRole;
-                    })
-                    .map((u) => {
-                      const userPropertiesList = properties.filter(p => 
-                        (p.userId && p.userId === u.id) ||
-                        (p.contactEmail && u.email && p.contactEmail.toLowerCase() === u.email.toLowerCase()) ||
-                        (p.contactPhone && u.phone && p.contactPhone.replace(/\D/g, '') === u.phone.replace(/\D/g, ''))
-                      );
+            <div className="space-y-4">
+              {/* Mobile Compact & Expandable Users List */}
+              <div className="block md:hidden space-y-2.5">
+                {registeredUsers
+                  .filter(u => {
+                    const matchesSearch = !userSearch || 
+                      (u.name && u.name.toLowerCase().includes(userSearch.toLowerCase())) ||
+                      (u.email && u.email.toLowerCase().includes(userSearch.toLowerCase())) ||
+                      (u.phone && u.phone.includes(userSearch)) ||
+                      (u.companyName && u.companyName.toLowerCase().includes(userSearch.toLowerCase())) ||
+                      (u.taxCode && u.taxCode.includes(userSearch));
+                    
+                    const isBusinessUser = u.accountType === 'business_enterprise' || u.role === 'partner' || !!u.companyName || !!u.taxCode;
+                    const matchesRole = userRoleFilter === 'all' 
+                      ? true 
+                      : userRoleFilter === 'business'
+                      ? isBusinessUser
+                      : userRoleFilter === 'owner'
+                      ? (u.role === 'owner' || (!isBusinessUser && u.role !== 'sale' && u.role !== 'admin'))
+                      : u.role === userRoleFilter;
+                    return matchesSearch && matchesRole;
+                  })
+                  .map((u) => {
+                    const isExpanded = expandedUserId === u.id;
+                    const userPropertiesList = properties.filter(p => 
+                      (p.userId && p.userId === u.id) ||
+                      (p.contactEmail && u.email && p.contactEmail.toLowerCase() === u.email.toLowerCase()) ||
+                      (p.contactPhone && u.phone && p.contactPhone.replace(/\D/g, '') === u.phone.replace(/\D/g, ''))
+                    );
+                    const isUserBlocked = (u as any).isBlocked;
 
-                      const isUserBlocked = (u as any).isBlocked;
-
-                      return (
-                        <tr key={u.id} className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition ${isUserBlocked ? 'opacity-60 bg-rose-50/20 dark:bg-rose-950/20' : ''}`}>
-                          {/* User Info */}
-                          <td className="py-3.5 px-3.5 font-extrabold text-slate-900 dark:text-white flex items-center gap-2.5">
+                    return (
+                      <div
+                        key={u.id}
+                        className={`border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-amber-500/40 cursor-pointer ${isUserBlocked ? 'opacity-70 bg-rose-50/20' : ''}`}
+                        onClick={() => setExpandedUserId(isExpanded ? null : u.id)}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2.5 min-w-0">
                             {u.avatar ? (
-                              <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover border border-amber-500/30 shrink-0" />
+                              <img src={u.avatar} alt={u.name} className="w-7 h-7 rounded-full object-cover border border-amber-500/30 shrink-0" />
                             ) : (
-                              <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black rounded-full flex items-center justify-center text-xs shadow-xs shrink-0">
+                              <div className="w-7 h-7 bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black rounded-full flex items-center justify-center text-[11px] shrink-0">
                                 {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
                               </div>
                             )}
-                            <div>
-                              <div className="flex items-center gap-1.5">
-                                <span className="font-extrabold text-slate-900 dark:text-white">{u.name}</span>
-                                {u.provider === 'google' && (
-                                  <span className="text-[9px] px-1.5 py-0.2 bg-blue-500/10 text-blue-600 font-bold rounded border border-blue-500/20">Google</span>
+                            <div className="min-w-0">
+                              <span className="font-extrabold text-slate-900 dark:text-white text-xs block truncate">
+                                {u.name || 'Người dùng'}
+                              </span>
+                              <span className="text-[10px] text-slate-400 block truncate">
+                                {u.email || u.phone || 'Chưa cập nhật email'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                              u.role === 'admin'
+                                ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                                : u.role === 'owner'
+                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                                : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                            }`}>
+                              {u.role === 'admin' ? '👑 Admin' : u.role === 'owner' ? '🏠 Cư Dân' : '💼 Môi Giới'}
+                            </span>
+                            <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                              ▼
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Brief summary row */}
+                        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                          <span>📦 <b>{userPropertiesList.length}</b> BĐS • ⚡ <b>{u.upTinCredits || 10}</b> Lượt Up</span>
+                          <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                            {(u.balance || 0).toLocaleString('vi-VN')} đ
+                          </span>
+                        </div>
+
+                        {/* Expanded details */}
+                        {isExpanded && (
+                          <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
+                            <div className="grid grid-cols-2 gap-2 text-[11px]">
+                              <div>
+                                <span className="text-slate-400 block text-[10px]">SĐT / Zalo:</span>
+                                {u.phone ? (
+                                  <a
+                                    href={`tel:${u.phone}`}
+                                    onClick={e => e.stopPropagation()}
+                                    className="font-mono font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                                  >
+                                    📞 {u.phone}
+                                  </a>
+                                ) : (
+                                  <span className="text-slate-400 italic">Chưa có SĐT</span>
                                 )}
                               </div>
-                              <span className="text-[10px] text-slate-400 block font-normal">
-                                Đăng ký: {u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('vi-VN') : 'Mới tạo'}
-                              </span>
-                            </div>
-                          </td>
-
-                          {/* Email */}
-                          <td className="py-3 px-3 text-slate-700 dark:text-slate-300 font-medium">
-                            {u.email}
-                          </td>
-
-                          {/* Phone / Zalo */}
-                          <td className="py-3 px-3">
-                            {u.phone ? (
-                              <div className="flex items-center gap-1.5">
-                                <a 
-                                  href={`tel:${u.phone}`} 
-                                  className="font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
-                                >
-                                  <PhoneCall className="w-3 h-3 text-emerald-500" />
-                                  {u.phone}
-                                </a>
-                                <a
-                                  href={`https://zalo.me/${u.phone.replace(/\D/g, '')}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="px-1.5 py-0.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 font-bold rounded text-[9px] transition"
-                                >
-                                  Zalo
-                                </a>
+                              <div>
+                                <span className="text-slate-400 block text-[10px]">Trạng Thái:</span>
+                                <span className={isUserBlocked ? 'font-bold text-rose-600' : 'font-bold text-emerald-600'}>
+                                  {isUserBlocked ? '🔴 Tạm Khóa' : '🟢 Hoạt Động'}
+                                </span>
                               </div>
-                            ) : (
-                              <span className="text-slate-400 italic text-xs">Chưa cập nhật SĐT</span>
-                            )}
-                          </td>
-
-                          {/* Posted Listings */}
-                          <td className="py-3 px-3 text-center">
-                            <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-extrabold rounded-lg border border-amber-500/30 text-xs inline-flex items-center gap-1">
-                              <Building2 className="w-3.5 h-3.5 text-amber-500" />
-                              <span>{userPropertiesList.length} tin</span>
-                            </span>
-                          </td>
-
-                          {/* UpTin Credits */}
-                          <td className="py-3 px-3 text-center">
-                            <div className="inline-flex items-center gap-1.5">
-                              <span className="font-black text-amber-500 text-xs">{u.upTinCredits || 10} lượt</span>
-                              <button
-                                onClick={() => setUserForCreditInjector(u)}
-                                className="p-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-lg transition text-[10px] shadow-xs"
-                                title="Cộng hoặc điều chỉnh lượt Up Tin"
-                              >
-                                + Tặng
-                              </button>
                             </div>
-                          </td>
 
-                          {/* Wallet Balance & Social Points */}
-                          <td className="py-3 px-3 text-center">
-                            <div className="flex flex-col items-center gap-1">
-                              <span className="font-black text-emerald-600 dark:text-emerald-400 text-xs">
-                                {(u.balance || 0).toLocaleString('vi-VN')}đ
-                              </span>
-                              <button
-                                onClick={() => setUserForCreditInjector(u)}
-                                className="px-2 py-0.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-md text-[10px] shadow-xs flex items-center gap-1 transition cursor-pointer"
-                                title="Mở công cụ bơm tiền ví, lượt Up-Tin và điểm thưởng"
+                            <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-1.5 flex-wrap" onClick={e => e.stopPropagation()}>
+                              <select
+                                value={u.role}
+                                onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
+                                className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold"
                               >
-                                <Wallet className="w-2.5 h-2.5 text-emerald-200" />
-                                <span>💵 Bơm Ví</span>
-                              </button>
+                                <option value="owner">🏠 Chủ Nhà / Cư Dân</option>
+                                <option value="sale">💼 Môi Giới / Sale</option>
+                                <option value="admin">👑 Quản Trị Viên (Admin)</option>
+                              </select>
+
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => setUserForCreditInjector(u)}
+                                  className="px-2 py-1 bg-amber-500 text-slate-950 rounded-lg font-bold text-[10px]"
+                                >
+                                  💵 Bơm Ví/Lượt
+                                </button>
+                                <button
+                                  onClick={() => handleToggleBlockUser(u.id, !!isUserBlocked)}
+                                  className={`px-2 py-1 rounded-lg font-bold text-[10px] ${
+                                    isUserBlocked ? 'bg-emerald-600 text-white' : 'bg-amber-100 text-amber-800'
+                                  }`}
+                                >
+                                  {isUserBlocked ? 'Mở Khóa' : 'Khóa'}
+                                </button>
+                                <button
+                                  onClick={() => setEditingUser(u)}
+                                  className="p-1 bg-blue-50 text-blue-600 rounded-lg"
+                                  title="Sửa"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteUser(u.id)}
+                                  className="p-1 bg-rose-50 text-rose-600 rounded-lg"
+                                  title="Xóa"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
                             </div>
-                          </td>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+              </div>
 
-                          {/* Role Selector */}
-                          <td className="py-3 px-3">
-                            <select
-                              value={u.role}
-                              onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
-                              className={`px-2.5 py-1.5 rounded-xl font-extrabold text-[11px] border focus:outline-none cursor-pointer transition ${
-                                u.role === 'admin'
-                                  ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
-                                  : u.role === 'owner'
-                                  ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
-                                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                              }`}
-                            >
-                              <option value="owner">🏠 Chủ Nhà / Cư Dân</option>
-                              <option value="sale">💼 Môi Giới / Sale</option>
-                              <option value="admin">👑 Quản Trị Viên (Admin)</option>
-                            </select>
-                          </td>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700/80">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-extrabold uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-3.5">Họ & Tên</th>
+                      <th className="py-3 px-3">Email liên hệ</th>
+                      <th className="py-3 px-3">SĐT / Zalo</th>
+                      <th className="py-3 px-3 text-center">BĐS Đã Đăng</th>
+                      <th className="py-3 px-3 text-center">Lượt Up Tin</th>
+                      <th className="py-3 px-3 text-center">Ví VNĐ & Điểm</th>
+                      <th className="py-3 px-3">Vai Trò / Cấp Bậc</th>
+                      <th className="py-3 px-3 text-center">Trạng Thái</th>
+                      <th className="py-3 px-3.5 text-right">Thao Tác Admin</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {registeredUsers
+                      .filter(u => {
+                        const matchesSearch = !userSearch || 
+                          (u.name && u.name.toLowerCase().includes(userSearch.toLowerCase())) ||
+                          (u.email && u.email.toLowerCase().includes(userSearch.toLowerCase())) ||
+                          (u.phone && u.phone.includes(userSearch)) ||
+                          (u.companyName && u.companyName.toLowerCase().includes(userSearch.toLowerCase())) ||
+                          (u.taxCode && u.taxCode.includes(userSearch));
+                        
+                        const isBusinessUser = u.accountType === 'business_enterprise' || u.role === 'partner' || !!u.companyName || !!u.taxCode;
+                        const matchesRole = userRoleFilter === 'all' 
+                          ? true 
+                          : userRoleFilter === 'business'
+                          ? isBusinessUser
+                          : userRoleFilter === 'owner'
+                          ? (u.role === 'owner' || (!isBusinessUser && u.role !== 'sale' && u.role !== 'admin'))
+                          : u.role === userRoleFilter;
+                        return matchesSearch && matchesRole;
+                      })
+                      .map((u) => {
+                        const userPropertiesList = properties.filter(p => 
+                          (p.userId && p.userId === u.id) ||
+                          (p.contactEmail && u.email && p.contactEmail.toLowerCase() === u.email.toLowerCase()) ||
+                          (p.contactPhone && u.phone && p.contactPhone.replace(/\D/g, '') === u.phone.replace(/\D/g, ''))
+                        );
 
-                          {/* Blocked Status */}
-                          <td className="py-3 px-3 text-center">
-                            {isUserBlocked ? (
-                              <span className="px-2.5 py-1 bg-rose-500/20 text-rose-600 dark:text-rose-400 font-extrabold rounded-lg border border-rose-500/40 text-[10px] inline-flex items-center gap-1">
-                                <Ban className="w-3 h-3 text-rose-500" />
-                                Tạm Khóa
+                        const isUserBlocked = (u as any).isBlocked;
+
+                        return (
+                          <tr key={u.id} className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition ${isUserBlocked ? 'opacity-60 bg-rose-50/20 dark:bg-rose-950/20' : ''}`}>
+                            {/* User Info */}
+                            <td className="py-3.5 px-3.5 font-extrabold text-slate-900 dark:text-white flex items-center gap-2.5">
+                              {u.avatar ? (
+                                <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover border border-amber-500/30 shrink-0" />
+                              ) : (
+                                <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black rounded-full flex items-center justify-center text-xs shadow-xs shrink-0">
+                                  {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+                                </div>
+                              )}
+                              <div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-extrabold text-slate-900 dark:text-white">{u.name}</span>
+                                  {u.provider === 'google' && (
+                                    <span className="text-[9px] px-1.5 py-0.2 bg-blue-500/10 text-blue-600 font-bold rounded border border-blue-500/20">Google</span>
+                                  )}
+                                  {(u.companyName || u.accountType === 'business_enterprise') && (
+                                    <span className="text-[9px] px-1.5 py-0.2 bg-blue-600 text-white font-bold rounded">DN</span>
+                                  )}
+                                  {u.businessLicenseUrl && (
+                                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-600 text-white font-bold rounded" title="Đã có Giấy phép ĐKKD">ĐKKD ✓</span>
+                                  )}
+                                </div>
+                                {u.companyName && (
+                                  <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold block truncate max-w-[180px]">
+                                    🏢 {u.companyName} {u.taxCode ? `(MST: ${u.taxCode})` : ''}
+                                  </span>
+                                )}
+                                <span className="text-[10px] text-slate-400 block font-normal">
+                                  Đăng ký: {u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('vi-VN') : 'Mới tạo'}
+                                </span>
+                              </div>
+                            </td>
+
+                            {/* Email */}
+                            <td className="py-3 px-3 text-slate-700 dark:text-slate-300 font-medium">
+                              {u.email}
+                            </td>
+
+                            {/* Phone / Zalo */}
+                            <td className="py-3 px-3">
+                              {u.phone ? (
+                                <div className="flex items-center gap-1.5">
+                                  <a 
+                                    href={`tel:${u.phone}`} 
+                                    className="font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                                  >
+                                    <PhoneCall className="w-3 h-3 text-emerald-500" />
+                                    {u.phone}
+                                  </a>
+                                  <a
+                                    href={`https://zalo.me/${u.phone.replace(/\D/g, '')}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-1.5 py-0.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 font-bold rounded text-[9px] transition"
+                                  >
+                                    Zalo
+                                  </a>
+                                </div>
+                              ) : (
+                                <span className="text-slate-400 italic text-xs">Chưa cập nhật SĐT</span>
+                              )}
+                            </td>
+
+                            {/* Posted Listings */}
+                            <td className="py-3 px-3 text-center">
+                              <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-extrabold rounded-lg border border-amber-500/30 text-xs inline-flex items-center gap-1">
+                                <Building2 className="w-3.5 h-3.5 text-amber-500" />
+                                <span>{userPropertiesList.length} tin</span>
                               </span>
-                            ) : (
-                              <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold rounded-lg border border-emerald-500/30 text-[10px] inline-flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                Hoạt Động
-                              </span>
-                            )}
-                          </td>
+                            </td>
 
-                          {/* Admin Actions */}
-                          <td className="py-3 px-3.5 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
-                              <button
-                                onClick={() => setEditingUser(u)}
-                                className="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:hover:bg-blue-900 dark:text-blue-300 rounded-xl transition cursor-pointer"
-                                title="Sửa thông tin tài khoản"
-                              >
-                                <Edit3 className="w-3.5 h-3.5" />
-                              </button>
+                            {/* UpTin Credits */}
+                            <td className="py-3 px-3 text-center">
+                              <div className="inline-flex items-center gap-1.5">
+                                <span className="font-black text-amber-500 text-xs">{u.upTinCredits || 10} lượt</span>
+                                <button
+                                  onClick={() => setUserForCreditInjector(u)}
+                                  className="p-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-lg transition text-[10px] shadow-xs"
+                                  title="Cộng hoặc điều chỉnh lượt Up Tin"
+                                >
+                                  + Tặng
+                                </button>
+                              </div>
+                            </td>
 
-                              <button
-                                onClick={() => handleToggleBlockUser(u.id, !!isUserBlocked)}
-                                className={`px-2 py-1.5 rounded-xl font-bold transition text-[10px] flex items-center gap-1 cursor-pointer ${
-                                  isUserBlocked
-                                    ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                                    : 'bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 border border-amber-500/30'
+                            {/* Wallet Balance & Social Points */}
+                            <td className="py-3 px-3 text-center">
+                              <div className="flex flex-col items-center gap-1">
+                                <span className="font-black text-emerald-600 dark:text-emerald-400 text-xs">
+                                  {(u.balance || 0).toLocaleString('vi-VN')}đ
+                                </span>
+                                <button
+                                  onClick={() => setUserForCreditInjector(u)}
+                                  className="px-2 py-0.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-md text-[10px] shadow-xs flex items-center gap-1 transition cursor-pointer"
+                                  title="Mở công cụ bơm tiền ví, lượt Up-Tin và điểm thưởng"
+                                >
+                                  <Wallet className="w-2.5 h-2.5 text-emerald-200" />
+                                  <span>💵 Bơm Ví</span>
+                                </button>
+                              </div>
+                            </td>
+
+                            {/* Role Selector */}
+                            <td className="py-3 px-3">
+                              <select
+                                value={u.role}
+                                onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
+                                className={`px-2.5 py-1.5 rounded-xl font-extrabold text-[11px] border focus:outline-none cursor-pointer transition ${
+                                  u.role === 'admin'
+                                    ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                                    : u.role === 'owner'
+                                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
                                 }`}
-                                title={isUserBlocked ? 'Mở khóa tài khoản' : 'Khóa tạm thời'}
                               >
-                                {isUserBlocked ? <ShieldCheck className="w-3 h-3" /> : <Ban className="w-3 h-3" />}
-                                {isUserBlocked ? 'Mở Khóa' : 'Khóa TK'}
-                              </button>
+                                <option value="owner">🏠 Chủ Nhà / Cư Dân</option>
+                                <option value="sale">💼 Môi Giới / Sale</option>
+                                <option value="admin">👑 Quản Trị Viên (Admin)</option>
+                              </select>
+                            </td>
 
-                              <button
-                                onClick={() => handleDeleteUser(u.id)}
-                                className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-xl transition cursor-pointer"
-                                title="Xóa người dùng"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
+                            {/* Blocked Status */}
+                            <td className="py-3 px-3 text-center">
+                              {isUserBlocked ? (
+                                <span className="px-2.5 py-1 bg-rose-500/20 text-rose-600 dark:text-rose-400 font-extrabold rounded-lg border border-rose-500/40 text-[10px] inline-flex items-center gap-1">
+                                  <Ban className="w-3 h-3 text-rose-500" />
+                                  Tạm Khóa
+                                </span>
+                              ) : (
+                                <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold rounded-lg border border-emerald-500/30 text-[10px] inline-flex items-center gap-1">
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                                  Hoạt Động
+                                </span>
+                              )}
+                            </td>
+
+                            {/* Admin Actions */}
+                            <td className="py-3 px-3.5 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => setEditingUser(u)}
+                                  className="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:hover:bg-blue-900 dark:text-blue-300 rounded-xl transition cursor-pointer"
+                                  title="Sửa thông tin tài khoản"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+
+                                <button
+                                  onClick={() => handleToggleBlockUser(u.id, !!isUserBlocked)}
+                                  className={`px-2 py-1.5 rounded-xl font-bold transition text-[10px] flex items-center gap-1 cursor-pointer ${
+                                    isUserBlocked
+                                      ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                                      : 'bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 border border-amber-500/30'
+                                  }`}
+                                  title={isUserBlocked ? 'Mở khóa tài khoản' : 'Khóa tạm thời'}
+                                >
+                                  {isUserBlocked ? <ShieldCheck className="w-3 h-3" /> : <Ban className="w-3 h-3" />}
+                                  {isUserBlocked ? 'Mở Khóa' : 'Khóa TK'}
+                                </button>
+
+                                <button
+                                  onClick={() => handleDeleteUser(u.id)}
+                                  className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-xl transition cursor-pointer"
+                                  title="Xóa người dùng"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>
@@ -6500,6 +7278,65 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
               </div>
 
+              {/* Enterprise & Business Verification in Admin modal */}
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-blue-600 dark:text-blue-400 text-[11px] uppercase flex items-center gap-1">
+                    <Building2 className="w-3.5 h-3.5" />
+                    Hồ Sơ Doanh Nghiệp & Pháp Lý (MST / ĐKKD)
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-bold">Xác minh B2B</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Tên Công Ty / Doanh Nghiệp</label>
+                    <input
+                      type="text"
+                      placeholder="VD: Sàn BĐS NewHome / Cty Xây Dựng An Phát"
+                      value={editingUser.companyName || ''}
+                      onChange={(e) => setEditingUser({ ...editingUser, companyName: e.target.value })}
+                      className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Mã Số Thuế (MST)</label>
+                    <input
+                      type="text"
+                      placeholder="VD: 0109988776"
+                      value={editingUser.taxCode || ''}
+                      onChange={(e) => setEditingUser({ ...editingUser, taxCode: e.target.value })}
+                      className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Link Ảnh Giấy Phép ĐKKD</label>
+                    <input
+                      type="text"
+                      placeholder="https://..."
+                      value={editingUser.businessLicenseUrl || ''}
+                      onChange={(e) => setEditingUser({ ...editingUser, businessLicenseUrl: e.target.value })}
+                      className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Chứng Chỉ Nghề / Giấy Phép Con</label>
+                    <input
+                      type="text"
+                      placeholder="Chứng chỉ Môi giới BĐS / Dược / ATTP..."
+                      value={editingUser.brokerLicenseUrl || ''}
+                      onChange={(e) => setEditingUser({ ...editingUser, brokerLicenseUrl: e.target.value })}
+                      className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số dư Ví VNĐ (đ)</label>
                 <input
@@ -6540,12 +7377,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
       {/* Add / Edit Resident Service Modal */}
       {showAddServiceModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border-2 border-amber-500/50 shadow-2xl w-full max-w-2xl my-8 overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 p-5 text-white flex items-center justify-between border-b border-amber-500/30">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto overscroll-contain">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border-2 border-amber-500/50 shadow-2xl w-full max-w-2xl my-auto max-h-[94vh] overflow-y-auto flex flex-col relative">
+            <div className="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 p-4 sm:p-5 text-white flex items-center justify-between border-b border-amber-500/30 sticky top-0 z-20">
               <div className="flex items-center gap-2">
                 <Wrench className="w-5 h-5 text-amber-400" />
-                <h3 className="font-black text-base text-amber-400">
+                <h3 className="font-black text-sm sm:text-base text-amber-400">
                   {editingService ? '✏️ CHỈNH SỬA DỊCH VỤ CƯ DÂN' : '➕ THÊM DỊCH VỤ CƯ DÂN MỚI'}
                 </h3>
               </div>
@@ -6560,7 +7397,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
             </div>
 
-            <form onSubmit={handleSaveResidentServiceSubmit} className="p-6 space-y-4 text-xs">
+            <form onSubmit={handleSaveResidentServiceSubmit} className="p-4 sm:p-6 space-y-4 text-xs pb-28 sm:pb-6">
               <div>
                 <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
                   Tên Dịch Vụ / Ngành Nghề Cư Dân (*):
@@ -6571,7 +7408,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   placeholder="Ví dụ: Sửa Chữa Thang Máy, Lắp Đặt Smarthome, Taxi Nội Khu..."
                   value={newSrvTitle}
                   onChange={(e) => setNewSrvTitle(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
                 />
               </div>
 
@@ -6623,7 +7460,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     placeholder="Nguyễn Văn A"
                     value={newSrvProviderName}
                     onChange={(e) => setNewSrvProviderName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
                   />
                 </div>
 
@@ -6637,7 +7474,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     placeholder="0987654321"
                     value={newSrvProviderPhone}
                     onChange={(e) => setNewSrvProviderPhone(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
                   />
                 </div>
 
@@ -6650,7 +7487,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     placeholder="0987654321 hoặc link Zalo"
                     value={newSrvProviderZalo}
                     onChange={(e) => setNewSrvProviderZalo(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
                   />
                 </div>
               </div>
@@ -6664,7 +7501,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   placeholder="Thỏa thuận / 200.000đ"
                   value={newSrvPrice}
                   onChange={(e) => setNewSrvPrice(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
                 />
               </div>
 
@@ -6677,7 +7514,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   placeholder="Ví dụ: Tòa S2.01, Ocean Park 1"
                   value={newSrvAddress}
                   onChange={(e) => setNewSrvAddress(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
                 />
               </div>
 
@@ -6690,24 +7527,51 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   placeholder="Mô tả năng lực, trang thiết bị, thời gian phục vụ, cam kết chất lượng..."
                   value={newSrvDesc}
                   onChange={(e) => setNewSrvDesc(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
                 />
               </div>
 
-              <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                  URL Hình Ảnh Dịch Vụ:
-                </label>
-                <input
-                  type="text"
-                  placeholder="https://images.unsplash.com/..."
-                  value={newSrvImage}
-                  onChange={(e) => setNewSrvImage(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
-                />
+              <div className="space-y-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between">
+                  <label className="font-extrabold text-slate-700 dark:text-slate-300 text-xs">
+                    📷 Hình Ảnh Dịch Vụ:
+                  </label>
+                  <label className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl cursor-pointer inline-flex items-center gap-1.5 shadow-xs transition">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>📁 Tải Ảnh Từ Máy</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          try {
+                            const preview = await createInstantPreview(file);
+                            setNewSrvImage(preview);
+                          } catch (err) {
+                            console.error(err);
+                          }
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                {newSrvImage && (
+                  <div className="relative rounded-xl overflow-hidden aspect-video max-w-xs bg-slate-900 border border-slate-300 dark:border-slate-700">
+                    <img src={newSrvImage} alt="Service preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setNewSrvImage('')}
+                      className="absolute top-1 right-1 w-6 h-6 bg-rose-600 text-white rounded-md flex items-center justify-center text-xs"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800 sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md py-3 -mx-4 sm:-mx-6 px-4 sm:px-6 z-20">
                 <button
                   type="button"
                   onClick={() => {

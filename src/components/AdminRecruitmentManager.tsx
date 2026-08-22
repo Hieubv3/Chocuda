@@ -110,6 +110,9 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateProfile | null>(null);
   const [editingCandidate, setEditingCandidate] = useState<CandidateProfile | null>(null);
   const [showCandidateModal, setShowCandidateModal] = useState(false);
+  const [expandedCandidateId, setExpandedCandidateId] = useState<string | null>(null);
+  const [expandedEmployerId, setExpandedEmployerId] = useState<string | null>(null);
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
 
   // Load All Recruitment Data
   const fetchData = async () => {
@@ -885,20 +888,149 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
               <Briefcase className="w-4 h-4 text-teal-600" />
               <span>Danh sách tin tuyển dụng ({filteredJobs.length} tin)</span>
             </span>
-            <span className="text-xs text-slate-400 font-medium">Bấm vào các nút trạng thái để bật/tắt hoặc chỉnh sửa</span>
+            <span className="text-xs text-slate-400 font-medium hidden sm:inline">Bấm vào các nút trạng thái để bật/tắt hoặc chỉnh sửa</span>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile Compact & Expandable Jobs List */}
+          <div className="block md:hidden p-3 space-y-2.5">
+            {filteredJobs.length === 0 ? (
+              <div className="text-center py-8 text-slate-400 text-xs">
+                Không tìm thấy tin tuyển dụng nào phù hợp bộ lọc.
+              </div>
+            ) : (
+              filteredJobs.map(job => {
+                const isExpanded = expandedJobId === job.id;
+                return (
+                  <div
+                    key={job.id}
+                    className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-teal-500/40 cursor-pointer"
+                    onClick={() => setExpandedJobId(isExpanded ? null : job.id)}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="font-black text-slate-900 dark:text-white text-xs leading-snug">
+                          {job.title}
+                        </div>
+                        <div className="text-[11px] text-teal-700 dark:text-teal-400 font-bold mt-0.5">
+                          🏢 {job.companyName}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border ${
+                          job.status === 'active'
+                            ? 'bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300'
+                            : job.status === 'closed'
+                            ? 'bg-slate-100 text-slate-500 border-slate-300'
+                            : 'bg-amber-100 text-amber-800 border-amber-300'
+                        }`}>
+                          {job.status === 'active' ? '🟢 Tuyển' : job.status === 'closed' ? '⚫ Đóng' : '🟡 Chờ'}
+                        </span>
+                        <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                          ▼
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Quick summary row */}
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                      <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
+                        💰 {job.salaryDisplay}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        {job.isVip && (
+                          <span className="px-1.5 py-0.2 bg-amber-500 text-slate-950 rounded text-[9px] font-black">
+                            VIP
+                          </span>
+                        )}
+                        {job.isUrgent && (
+                          <span className="px-1.5 py-0.2 bg-rose-600 text-white rounded text-[9px] font-black">
+                            GẤP
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Expanded details */}
+                    {isExpanded && (
+                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
+                        <div className="grid grid-cols-2 gap-2 text-[11px]">
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Địa Điểm Làm Việc:</span>
+                            <span className="font-medium text-slate-800 dark:text-slate-200">
+                              📍 {job.location}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Liên Hệ:</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200">
+                              {job.contactName} - <a href={`tel:${job.contactPhone}`} onClick={e => e.stopPropagation()} className="font-mono text-emerald-600 hover:underline">📞 {job.contactPhone}</a>
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-1.5 flex-wrap" onClick={e => e.stopPropagation()}>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleToggleJobStatus(job)}
+                              className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold"
+                            >
+                              {job.status === 'active' ? 'Đóng tin' : 'Mở tuyển'}
+                            </button>
+                            <button
+                              onClick={() => handleToggleJobVip(job)}
+                              className="px-2 py-1 bg-amber-100 text-amber-900 rounded-lg text-[10px] font-bold"
+                            >
+                              {job.isVip ? 'Tắt VIP' : 'Bật VIP'}
+                            </button>
+                          </div>
+
+                          <div className="flex items-center gap-1">
+                            <a
+                              href={getJobDetailUrl(job)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold flex items-center gap-0.5"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              <span>Soi Link</span>
+                            </a>
+                            <button
+                              onClick={() => handleOpenEditJob(job)}
+                              className="p-1 bg-teal-50 text-teal-600 rounded-lg"
+                              title="Sửa"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteJob(job.id, job.title)}
+                              className="p-1 bg-rose-50 text-rose-600 rounded-lg"
+                              title="Xóa"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="p-3.5">Tin Tuyển Dụng</th>
-                  <th className="p-3.5">Đơn Vị & Địa Điểm</th>
-                  <th className="p-3.5">Mức Lương & Hình Thức</th>
-                  <th className="p-3.5">Liên Hệ</th>
-                  <th className="p-3.5 text-center">Huy Hiệu</th>
-                  <th className="p-3.5 text-center">Trạng Thái</th>
-                  <th className="p-3.5 text-right">Thao Tác</th>
+                  <th className="p-3.5 whitespace-nowrap">Tin Tuyển Dụng</th>
+                  <th className="p-3.5 whitespace-nowrap">Đơn Vị & Địa Điểm</th>
+                  <th className="p-3.5 whitespace-nowrap">Mức Lương & Hình Thức</th>
+                  <th className="p-3.5 whitespace-nowrap">Liên Hệ</th>
+                  <th className="p-3.5 text-center whitespace-nowrap">Huy Hiệu</th>
+                  <th className="p-3.5 text-center whitespace-nowrap">Trạng Thái</th>
+                  <th className="p-3.5 text-right whitespace-nowrap">Thao Tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -916,11 +1048,11 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                           {job.title}
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="px-2 py-0.5 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-400 font-bold rounded-md border border-teal-200/50 text-[10px]">
+                          <span className="px-2 py-0.5 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-400 font-bold rounded-md border border-teal-200/50 text-[10px] whitespace-nowrap">
                             {job.industry}
                           </span>
-                          <span className="text-slate-400 text-[11px]">
-                            👁️ {job.viewsCount || 0} lượt xem • 📄 {job.applicationsCount || 0} ứng tuyển
+                          <span className="text-slate-400 text-[11px] whitespace-nowrap">
+                            👁️ {job.viewsCount || 0} xem • 📄 {job.applicationsCount || 0} ứng tuyển
                           </span>
                         </div>
                       </td>
@@ -936,19 +1068,19 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                       </td>
 
                       <td className="p-3.5">
-                        <div className="font-extrabold text-emerald-600 dark:text-emerald-400">
+                        <div className="font-extrabold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                           {job.salaryDisplay}
                         </div>
-                        <div className="text-[11px] text-slate-400 font-medium capitalize mt-0.5">
+                        <div className="text-[11px] text-slate-400 font-medium capitalize mt-0.5 whitespace-nowrap">
                           {job.jobType === 'full-time' ? 'Toàn thời gian' : job.jobType === 'part-time' ? 'Bán thời gian' : job.jobType === 'shift' ? 'Theo ca' : 'Freelance'} • {job.experienceDisplay}
                         </div>
                       </td>
 
                       <td className="p-3.5">
-                        <div className="font-bold text-slate-800 dark:text-slate-200">
+                        <div className="font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
                           {job.contactName}
                         </div>
-                        <div className="text-[11px] font-mono text-teal-600 dark:text-teal-400">
+                        <div className="text-[11px] font-mono text-teal-600 dark:text-teal-400 whitespace-nowrap">
                           📞 {job.contactPhone}
                         </div>
                       </td>
@@ -983,7 +1115,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                       <td className="p-3.5 text-center">
                         <button
                           onClick={() => handleToggleJobStatus(job)}
-                          className={`px-2.5 py-1 rounded-full text-[10px] font-black border transition cursor-pointer ${
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-black border transition cursor-pointer whitespace-nowrap ${
                             job.status === 'active'
                               ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
                               : job.status === 'closed'
@@ -995,7 +1127,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                         </button>
                       </td>
 
-                      <td className="p-3.5 text-right">
+                      <td className="p-3.5 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           <a
                             href={getJobDetailUrl(job)}
@@ -1037,24 +1169,157 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
       {/* ========================================================================= */}
       {activeSection === 'candidates' && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
               <Users className="w-4 h-4 text-emerald-600" />
-              <span>Kho CV Ứng Viên Cư Dân ({filteredCandidates.length} hồ sơ - Đầy đủ Số ĐT/Zalo chế độ Quản Trị)</span>
+              <span>Kho CV Ứng Viên Cư Dân ({filteredCandidates.length} hồ sơ)</span>
             </span>
-            <span className="text-xs text-emerald-600 font-bold">✓ Quyền Quản Trị: Xem 100% số liên hệ không bị mã hóa</span>
+            <span className="text-xs text-emerald-600 font-bold">✓ Xem 100% SĐT & Zalo</span>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile Compact & Expandable Candidates List */}
+          <div className="block md:hidden p-3 space-y-2.5">
+            {filteredCandidates.length === 0 ? (
+              <div className="text-center py-8 text-slate-400 text-xs">
+                Chưa có hồ sơ ứng viên nào phù hợp.
+              </div>
+            ) : (
+              filteredCandidates.map(cand => {
+                const isExpanded = expandedCandidateId === cand.id;
+                return (
+                  <div
+                    key={cand.id}
+                    className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-emerald-500/40 cursor-pointer"
+                    onClick={() => setExpandedCandidateId(isExpanded ? null : cand.id)}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <img
+                          src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
+                          alt={cand.fullName}
+                          className="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <div className="font-black text-slate-900 dark:text-white text-xs truncate">
+                            {cand.fullName}
+                          </div>
+                          <div className="text-[11px] text-teal-700 dark:text-teal-400 font-bold truncate">
+                            {cand.targetJobTitle}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border ${
+                          cand.isLookingForJob
+                            ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300'
+                            : 'bg-slate-100 text-slate-400 border-slate-300'
+                        }`}>
+                          {cand.isLookingForJob ? '🟢 Sẵn sàng' : '⚪ Đã có việc'}
+                        </span>
+                        <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                          ▼
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Quick summary line */}
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                      <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
+                        💰 {cand.expectedSalary || 'Thỏa thuận'}
+                      </span>
+                      <a
+                        href={`tel:${cand.phone}`}
+                        onClick={e => e.stopPropagation()}
+                        className="font-mono text-emerald-600 font-bold hover:underline"
+                      >
+                        📞 {cand.phone}
+                      </a>
+                    </div>
+
+                    {/* Expanded CV details */}
+                    {isExpanded && (
+                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
+                        <div className="grid grid-cols-2 gap-2 text-[11px]">
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Ngành Nghề:</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200">
+                              {cand.primaryIndustry}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Kinh Nghiệm:</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200">
+                              {cand.yearsOfExp ? `${cand.yearsOfExp} năm` : 'Mới ra trường'} • {cand.experienceLevel}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Nơi Cư Trú:</span>
+                            <span className="text-slate-800 dark:text-slate-200">
+                              {cand.currentAddress || cand.projectName || 'Vinhomes'}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Zalo & Email:</span>
+                            <span className="font-mono text-slate-800 dark:text-slate-200">
+                              {cand.zalo || cand.phone}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-1.5 flex-wrap" onClick={e => e.stopPropagation()}>
+                          <button
+                            onClick={() => handleToggleCandidateStatus(cand)}
+                            className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold"
+                          >
+                            {cand.isLookingForJob ? 'Đổi sang Đã có việc' : 'Đổi sang Đang tìm việc'}
+                          </button>
+
+                          <div className="flex items-center gap-1">
+                            <a
+                              href={getCandidateCvUrl(cand)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold flex items-center gap-0.5"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              <span>Soi CV</span>
+                            </a>
+                            <button
+                              onClick={() => setSelectedCandidate(cand)}
+                              className="p-1 bg-teal-50 text-teal-600 rounded-lg"
+                              title="Xem chi tiết"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCandidate(cand.id, cand.fullName)}
+                              className="p-1 bg-rose-50 text-rose-600 rounded-lg"
+                              title="Xóa"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="p-3.5">Ứng Viên</th>
-                  <th className="p-3.5">Vị Trí & Ngành Nghề</th>
-                  <th className="p-3.5">Kinh Nghiệm & Lương Kỳ Vọng</th>
-                  <th className="p-3.5">Số Điện Thoại & Zalo (Admin)</th>
-                  <th className="p-3.5 text-center">Trạng Thái Tìm Việc</th>
-                  <th className="p-3.5 text-right">Thao Tác</th>
+                  <th className="p-3.5 whitespace-nowrap">Ứng Viên</th>
+                  <th className="p-3.5 whitespace-nowrap">Vị Trí & Ngành Nghề</th>
+                  <th className="p-3.5 whitespace-nowrap">Kinh Nghiệm & Lương Kỳ Vọng</th>
+                  <th className="p-3.5 whitespace-nowrap">Số Điện Thoại & Zalo (Admin)</th>
+                  <th className="p-3.5 text-center whitespace-nowrap">Trạng Thái Tìm Việc</th>
+                  <th className="p-3.5 text-right whitespace-nowrap">Thao Tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -1072,13 +1337,13 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                           <img
                             src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
                             alt={cand.fullName}
-                            className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700"
+                            className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                           />
                           <div>
-                            <div className="font-black text-slate-900 dark:text-white text-sm">
+                            <div className="font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
                               {cand.fullName}
                             </div>
-                            <div className="text-[11px] text-slate-400">
+                            <div className="text-[11px] text-slate-400 whitespace-nowrap">
                               Sinh năm: {cand.birthYear || 'N/A'} • {cand.currentAddress || cand.projectName || 'Vinhomes'}
                             </div>
                           </div>
@@ -1086,29 +1351,29 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                       </td>
 
                       <td className="p-3.5">
-                        <div className="font-extrabold text-teal-700 dark:text-teal-400 text-sm">
+                        <div className="font-extrabold text-teal-700 dark:text-teal-400 text-sm whitespace-nowrap">
                           {cand.targetJobTitle}
                         </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 whitespace-nowrap">
                           {cand.primaryIndustry}
                         </div>
                       </td>
 
                       <td className="p-3.5">
-                        <div className="font-black text-emerald-600 dark:text-emerald-400">
+                        <div className="font-black text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                           {cand.expectedSalary}
                         </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">
+                        <div className="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">
                           {cand.yearsOfExp ? `${cand.yearsOfExp} năm KN` : 'Chưa có KN'} • {cand.experienceLevel}
                         </div>
                       </td>
 
                       <td className="p-3.5">
-                        <div className="font-bold text-slate-900 dark:text-white font-mono flex items-center gap-1.5">
+                        <div className="font-bold text-slate-900 dark:text-white font-mono flex items-center gap-1.5 whitespace-nowrap">
                           <Phone className="w-3.5 h-3.5 text-emerald-500" />
                           <span>{cand.phone}</span>
                         </div>
-                        <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+                        <div className="text-[11px] text-slate-400 font-mono mt-0.5 whitespace-nowrap">
                           Zalo: {cand.zalo || cand.phone} • {cand.email}
                         </div>
                       </td>
@@ -1116,7 +1381,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                       <td className="p-3.5 text-center">
                         <button
                           onClick={() => handleToggleCandidateStatus(cand)}
-                          className={`px-3 py-1 rounded-full text-[10px] font-black border transition cursor-pointer ${
+                          className={`px-3 py-1 rounded-full text-[10px] font-black border transition cursor-pointer whitespace-nowrap ${
                             cand.isLookingForJob
                               ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300'
@@ -1126,7 +1391,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                         </button>
                       </td>
 
-                      <td className="p-3.5 text-right">
+                      <td className="p-3.5 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           <a
                             href={getCandidateCvUrl(cand)}
@@ -1188,16 +1453,148 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
             </button>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile Compact & Expandable Employers List */}
+          <div className="block md:hidden p-3 space-y-2.5">
+            {employers.length === 0 ? (
+              <div className="text-center py-8 text-slate-400 text-xs">
+                Chưa có hồ sơ nhà tuyển dụng nào.
+              </div>
+            ) : (
+              employers.map(emp => {
+                const isExpanded = expandedEmployerId === emp.id;
+                const empJobsCount = jobs.filter(
+                  j => (emp.userId && j.employerUserId === emp.userId) || 
+                       j.companyName.toLowerCase() === emp.companyName.toLowerCase()
+                ).length;
+
+                return (
+                  <div
+                    key={emp.id}
+                    className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-teal-500/40 cursor-pointer"
+                    onClick={() => setExpandedEmployerId(isExpanded ? null : emp.id)}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <img
+                          src={emp.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&auto=format&fit=crop&q=80'}
+                          alt={emp.companyName}
+                          className="w-8 h-8 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <div className="font-black text-slate-900 dark:text-white text-xs truncate">
+                            {emp.companyName}
+                          </div>
+                          <div className="text-[11px] text-slate-400 truncate">
+                            {emp.industry}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border ${
+                          emp.verified
+                            ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300'
+                            : 'bg-slate-100 text-slate-400 border-slate-300'
+                        }`}>
+                          {emp.verified ? '🟢 Đã xác thực' : '⚪ Chưa duyệt'}
+                        </span>
+                        <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                          ▼
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Quick summary row */}
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                      <span className="font-semibold text-teal-700 dark:text-teal-400 truncate max-w-[160px]">
+                        📍 {emp.projectName || emp.project}
+                      </span>
+                      <span className="font-bold text-slate-700 dark:text-slate-300">
+                        📋 {empJobsCount} tin tuyển
+                      </span>
+                    </div>
+
+                    {/* Expanded Employer details */}
+                    {isExpanded && (
+                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
+                        <div className="grid grid-cols-2 gap-2 text-[11px]">
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Người Phụ Trách:</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200">
+                              {emp.contactName}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Hotline / Zalo:</span>
+                            <a
+                              href={`tel:${emp.contactPhone}`}
+                              onClick={e => e.stopPropagation()}
+                              className="font-mono text-emerald-600 font-bold hover:underline"
+                            >
+                              📞 {emp.contactPhone}
+                            </a>
+                          </div>
+                          <div className="col-span-2">
+                            <span className="text-slate-400 block text-[10px]">Địa Chỉ:</span>
+                            <span className="text-slate-800 dark:text-slate-200">
+                              {emp.address}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-1.5 flex-wrap" onClick={e => e.stopPropagation()}>
+                          <button
+                            onClick={() => handleToggleEmployerVerified(emp)}
+                            className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold"
+                          >
+                            {emp.verified ? 'Bỏ xác thực' : 'Xác thực KYC'}
+                          </button>
+
+                          <div className="flex items-center gap-1">
+                            <a
+                              href={getEmployerProfileUrl(emp)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold flex items-center gap-0.5"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              <span>Soi Link</span>
+                            </a>
+                            <button
+                              onClick={() => handleOpenEditEmployer(emp)}
+                              className="p-1 bg-teal-50 text-teal-600 rounded-lg"
+                              title="Sửa"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEmployer(emp.id, emp.companyName)}
+                              className="p-1 bg-rose-50 text-rose-600 rounded-lg"
+                              title="Xóa"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="p-3.5">Doanh Nghiệp / Logo</th>
-                  <th className="p-3.5">Ngành Nghề & Dự Án</th>
-                  <th className="p-3.5">Liên Hệ / Hotline</th>
-                  <th className="p-3.5 text-center">Xác Thực KYC</th>
-                  <th className="p-3.5 text-center">Tin Tuyển Dụng</th>
-                  <th className="p-3.5 text-right">Thao Tác</th>
+                  <th className="p-3.5 whitespace-nowrap">Doanh Nghiệp / Logo</th>
+                  <th className="p-3.5 whitespace-nowrap">Ngành Nghề & Dự Án</th>
+                  <th className="p-3.5 whitespace-nowrap">Liên Hệ / Hotline</th>
+                  <th className="p-3.5 text-center whitespace-nowrap">Xác Thực KYC</th>
+                  <th className="p-3.5 text-center whitespace-nowrap">Tin Tuyển Dụng</th>
+                  <th className="p-3.5 text-right whitespace-nowrap">Thao Tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -1221,13 +1618,13 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                             <img
                               src={emp.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&auto=format&fit=crop&q=80'}
                               alt={emp.companyName}
-                              className="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white"
+                              className="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white shrink-0"
                             />
                             <div>
-                              <div className="font-black text-slate-900 dark:text-white text-sm">
+                              <div className="font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
                                 {emp.companyName}
                               </div>
-                              <div className="text-[11px] text-slate-400 flex items-center gap-1">
+                              <div className="text-[11px] text-slate-400 flex items-center gap-1 whitespace-nowrap">
                                 <MapPin className="w-3 h-3 text-red-500 shrink-0" />
                                 <span className="truncate max-w-[200px]">{emp.address}</span>
                               </div>
@@ -1236,20 +1633,20 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                         </td>
 
                         <td className="p-3.5">
-                          <div className="font-extrabold text-teal-700 dark:text-teal-400">
+                          <div className="font-extrabold text-teal-700 dark:text-teal-400 whitespace-nowrap">
                             {emp.industry}
                           </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 whitespace-nowrap">
                             {emp.projectName || emp.project}
                           </div>
                         </td>
 
                         <td className="p-3.5">
-                          <div className="font-bold text-slate-900 dark:text-white font-mono flex items-center gap-1.5">
+                          <div className="font-bold text-slate-900 dark:text-white font-mono flex items-center gap-1.5 whitespace-nowrap">
                             <Phone className="w-3.5 h-3.5 text-emerald-500" />
                             <span>{emp.contactPhone}</span>
                           </div>
-                          <div className="text-[11px] text-slate-400 mt-0.5">
+                          <div className="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">
                             Phụ trách: {emp.contactName}
                           </div>
                         </td>
@@ -1257,7 +1654,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                         <td className="p-3.5 text-center">
                           <button
                             onClick={() => handleToggleEmployerVerified(emp)}
-                            className={`px-3 py-1 rounded-full text-[10px] font-black border transition cursor-pointer ${
+                            className={`px-3 py-1 rounded-full text-[10px] font-black border transition cursor-pointer whitespace-nowrap ${
                               emp.verified
                                 ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
                                 : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300'
@@ -1268,12 +1665,12 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                         </td>
 
                         <td className="p-3.5 text-center">
-                          <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-black rounded-lg text-xs">
+                          <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-black rounded-lg text-xs whitespace-nowrap">
                             {empJobsCount} tin tuyển
                           </span>
                         </td>
 
-                        <td className="p-3.5 text-right">
+                        <td className="p-3.5 text-right whitespace-nowrap">
                           <div className="flex items-center justify-end gap-1.5">
                             <a
                               href={getEmployerProfileUrl(emp)}
