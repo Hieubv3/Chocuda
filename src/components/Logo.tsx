@@ -70,7 +70,7 @@ export const Logo: React.FC<LogoProps> = ({
   if (variant === 'auth') {
     return (
       <div className={`flex flex-col items-center text-center ${className}`}>
-        <div className="relative h-20 sm:h-24 md:h-28 w-auto p-2 rounded-2xl bg-white shadow-lg mb-2 overflow-hidden flex items-center justify-center border border-slate-100">
+        <div className="relative h-10 sm:h-14 md:h-16 w-auto p-1 sm:p-1.5 rounded-xl bg-white shadow-md mb-1 overflow-hidden flex items-center justify-center border border-slate-100">
           <img 
             src={logoImg} 
             alt="Logo Chợ Cư Dân 24H Vinhomes" 

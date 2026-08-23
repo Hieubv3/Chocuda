@@ -14,8 +14,8 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
   onLoginSuccess,
   onBackToHome
 }) => {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [role, setRole] = useState<'admin' | 'manager'>('admin');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -55,40 +55,31 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-600/20 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative w-full max-w-md bg-slate-900 border border-emerald-500/30 rounded-3xl p-8 shadow-2xl shadow-emerald-950/50 backdrop-blur-xl">
+      <div className="relative w-full max-w-md bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-emerald-950/50 backdrop-blur-xl">
         
         {/* Back button */}
         <button
           onClick={onBackToHome}
-          className="text-xs text-slate-400 hover:text-emerald-400 flex items-center gap-1 mb-6 transition"
+          className="text-xs text-slate-400 hover:text-emerald-400 flex items-center gap-1 mb-4 sm:mb-6 transition cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" /> Quay lại Trang Chủ
         </button>
 
         {/* Header Icon */}
-        <div className="text-center space-y-3 mb-8">
-          <div className="w-16 h-16 mx-auto bg-gradient-to-tr from-emerald-600 to-teal-500 rounded-2xl p-0.5 shadow-lg shadow-emerald-600/30">
+        <div className="text-center space-y-2 mb-6">
+          <div className="w-14 h-14 mx-auto bg-gradient-to-tr from-emerald-600 to-teal-500 rounded-2xl p-0.5 shadow-lg shadow-emerald-600/30">
             <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-emerald-400">
-              <ShieldCheck className="w-8 h-8" />
+              <ShieldCheck className="w-7 h-7" />
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-black text-white tracking-tight flex items-center justify-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center justify-center gap-1.5">
               Cổng Quản Trị Hệ Thống
               <Sparkles className="w-4 h-4 text-emerald-400" />
             </h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-400 mt-0.5">
               Nhà đẹp Vinhomes — Cấu Hình & Quản Lý Hệ Thống
             </p>
-          </div>
-        </div>
-
-        {/* Quick Credentials Hint */}
-        <div className="p-3 bg-emerald-950/40 border border-emerald-800/50 rounded-xl mb-6 text-xs text-emerald-300 flex items-start gap-2">
-          <KeyRound className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-          <div>
-            <span className="font-bold block">Tài khoản demo truy cập nhanh:</span>
-            <span>Tên: <code className="bg-emerald-900/60 px-1.5 py-0.5 rounded font-mono">admin</code> | Mật khẩu: <code className="bg-emerald-900/60 px-1.5 py-0.5 rounded font-mono">admin123</code></span>
           </div>
         </div>
 

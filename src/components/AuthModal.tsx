@@ -494,31 +494,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto">
       {/* Screen Safety Fixed Close Button */}
       <button
         type="button"
         onClick={onClose}
-        className="fixed top-3 right-3 sm:top-5 sm:right-5 z-[70] p-2.5 bg-slate-900/90 hover:bg-slate-800 text-white rounded-full transition cursor-pointer border border-white/20 shadow-2xl flex items-center justify-center"
+        className="fixed top-2.5 right-2.5 sm:top-5 sm:right-5 z-[70] p-2 bg-slate-900/90 hover:bg-slate-800 text-white rounded-full transition cursor-pointer border border-white/20 shadow-2xl flex items-center justify-center"
         title="Đóng cửa sổ"
       >
-        <X className="w-5 h-5 text-white" />
+        <X className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
       </button>
 
-      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white animate-in fade-in zoom-in duration-200 max-h-[88vh] overflow-y-auto my-auto">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl max-w-sm sm:max-w-md w-full p-4 sm:p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white animate-in fade-in zoom-in duration-200 max-h-[92vh] overflow-y-auto my-auto">
         
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-full z-10"
+          className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-full z-10"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
         {/* Logo Header */}
-        <Logo variant="auth" className="mb-4" />
+        <Logo variant="auth" className="mb-2" />
 
         {/* Tab Switcher */}
-        <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl mb-6">
+        <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-3 sm:mb-4">
           <button
             type="button"
             onClick={() => {
@@ -526,7 +526,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
               setErrorMsg('');
               setSuccessMsg('');
             }}
-            className={`flex-1 py-2.5 text-xs font-black rounded-xl transition ${
+            className={`flex-1 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black rounded-lg sm:rounded-xl transition ${
               !isRegister
                 ? 'bg-amber-500 text-slate-950 shadow-md'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -541,7 +541,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
               setErrorMsg('');
               setSuccessMsg('');
             }}
-            className={`flex-1 py-2.5 text-xs font-black rounded-xl transition ${
+            className={`flex-1 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black rounded-lg sm:rounded-xl transition ${
               isRegister
                 ? 'bg-amber-500 text-slate-950 shadow-md'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -551,24 +551,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           </button>
         </div>
 
-        <div className="text-center space-y-1 mb-5">
-          <h2 className="text-lg font-black uppercase tracking-tight text-slate-900 dark:text-white">
+        <div className="text-center space-y-0.5 mb-3 sm:mb-4">
+          <h2 className="text-sm sm:text-base font-black uppercase tracking-tight text-slate-900 dark:text-white">
             {isRegister ? 'TẠO TÀI KHOẢN CHÍNH THỨC' : 'XÁC THỰC TÀI KHOẢN BĐS 24H'}
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
             Hệ thống lưu giữ tài khoản & quản lý bài đăng BĐS Vinhomes chính chủ
           </p>
         </div>
 
         {/* Real Social Auth Shortcuts */}
-        <div className="space-y-2 mb-5">
+        <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
           <button
             type="button"
             disabled={isLoading}
             onClick={handleGoogleAuth}
-            className="w-full py-3 px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-extrabold text-xs rounded-xl flex items-center justify-center gap-2.5 transition border border-slate-300 dark:border-slate-700 shadow-xs cursor-pointer active:scale-[0.99]"
+            className="w-full py-2 sm:py-2.5 px-3 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-extrabold text-[11px] sm:text-xs rounded-xl flex items-center justify-center gap-2 transition border border-slate-300 dark:border-slate-700 shadow-xs cursor-pointer active:scale-[0.99]"
           >
-            <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
               <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
               <path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.39l3.99-3.15z"/>
@@ -581,7 +581,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
             type="button"
             disabled={isLoading}
             onClick={handleFacebookAuth}
-            className="w-full py-2.5 px-3 bg-[#1877F2] hover:bg-[#166FE5] text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition shadow-xs"
+            className="w-full py-2 sm:py-2.5 px-3 bg-[#1877F2] hover:bg-[#166FE5] text-white font-extrabold text-[11px] sm:text-xs rounded-xl flex items-center justify-center gap-2 transition shadow-xs"
           >
             <svg className="w-4 h-4 shrink-0 fill-current" viewBox="0 0 24 24">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -590,9 +590,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           </button>
         </div>
 
-        <div className="relative flex py-1 items-center mb-4">
+        <div className="relative flex py-0.5 items-center mb-3">
           <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
-          <span className="flex-shrink mx-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+          <span className="flex-shrink mx-2 sm:mx-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
             {isRegister ? 'Hoặc điền biểu mẫu đăng ký' : 'Hoặc đăng nhập mật khẩu'}
           </span>
           <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
@@ -855,84 +855,81 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
             </>
           )}
 
-          <div>
-            <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+          <div className="space-y-1">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
               Địa chỉ Email <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+              <Mail className="w-4 h-4 absolute left-3 top-2.5 sm:top-3 text-slate-400" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@gmail.com (hoặc admin)"
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                placeholder="Nhập email của bạn (VD: name@gmail.com)"
+                className="w-full pl-9 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+          <div className="space-y-1">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
               Mật khẩu <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+              <Lock className="w-4 h-4 absolute left-3 top-2.5 sm:top-3 text-slate-400" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={isRegister ? "Tối thiểu 6 ký tự" : "Mật khẩu của bạn"}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                placeholder={isRegister ? "Tối thiểu 6 ký tự" : "Nhập mật khẩu của bạn"}
+                className="w-full pl-9 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none"
               />
             </div>
           </div>
 
           {isRegister && (
             <>
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                   Nhập lại Mật khẩu <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <Lock className="w-4 h-4 absolute left-3 top-2.5 sm:top-3 text-slate-400" />
                   <input
                     type="password"
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Xác nhận lại mật khẩu"
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="p-3 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 rounded-2xl space-y-1.5">
-                <label htmlFor="agreeTerms" className="flex items-start space-x-2.5 cursor-pointer">
+              <div className="p-2.5 sm:p-3 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 rounded-xl space-y-1">
+                <label htmlFor="agreeTerms" className="flex items-start space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
                     id="agreeTerms"
                     required
                     checked={agreeTerms}
                     onChange={(e) => setAgreeTerms(e.target.checked)}
-                    className="mt-0.5 rounded text-amber-500 focus:ring-amber-500 cursor-pointer w-4.5 h-4.5 shrink-0"
+                    className="mt-0.5 rounded text-amber-500 focus:ring-amber-500 cursor-pointer w-4 h-4 shrink-0"
                   />
-                  <span className="text-[11px] text-slate-800 dark:text-slate-200 leading-snug font-semibold">
-                    Tôi đã đọc, hiểu rõ & đồng ý tuân thủ{' '}
+                  <span className="text-[10.5px] sm:text-[11px] text-slate-800 dark:text-slate-200 leading-snug font-semibold">
+                    Tôi đồng ý tuân thủ{' '}
                     <button
                       type="button"
                       onClick={() => setShowTripartiteModal(true)}
                       className="text-amber-600 dark:text-amber-400 font-extrabold underline hover:text-amber-500 inline-flex items-center gap-1 cursor-pointer"
                     >
-                      <span>📄 Thỏa thuận Ba Bên (Cư dân / Khách hàng - Nhà cung cấp / Chủ shop - chocudan24h.com)</span>
+                      <span>Thỏa thuận Ba Bên</span>
                     </button>
-                    {' '}và Chính sách Bảo mật. <span className="text-rose-500 font-black">(*)</span>
+                    {' '}& Chính sách Bảo mật. <span className="text-rose-500 font-black">(*)</span>
                   </span>
                 </label>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 pl-7 flex items-center gap-1">
-                  <span>👉 Click vào đường dẫn gạch chân màu cam ở trên để mở Popup xem chi tiết đầy đủ 10 Điều khoản văn bản.</span>
-                </div>
               </div>
             </>
           )}
@@ -940,7 +937,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md mt-3 flex items-center justify-center gap-2"
+            className="w-full py-2.5 sm:py-3 bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md mt-2 flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? (
               <span className="inline-block animate-spin border-2 border-slate-950 border-t-transparent rounded-full w-4 h-4"></span>
@@ -953,7 +950,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
         </form>
       )}
 
-        <div className="mt-5 text-center">
+        <div className="mt-3 sm:mt-4 text-center">
           <button
             type="button"
             onClick={() => {
@@ -961,9 +958,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
               setErrorMsg('');
               setSuccessMsg('');
             }}
-            className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline"
+            className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer"
           >
-            {isRegister ? 'Đã có tài khoản? Bấm vào đây để Đăng nhập' : 'Chưa có tài khoản? Bấm vào đây để Đăng ký mới'}
+            {isRegister ? 'Đã có tài khoản? Đăng nhập ngay' : 'Chưa có tài khoản? Đăng ký mới'}
           </button>
         </div>
 
