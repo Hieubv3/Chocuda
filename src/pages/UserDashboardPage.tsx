@@ -326,6 +326,20 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
   const tierInfo = getTierBadge();
 
+  // Check if user is allowed to do business / has merchant permission
+  const isBusinessAllowed = Boolean(
+    userState.role === 'admin' ||
+    userState.role === 'partner' ||
+    userState.role === 'sale' ||
+    userState.role === 'owner' ||
+    userState.accountType === 'business_enterprise' ||
+    userState.accountType === 'technician' ||
+    userState.kycStatus === 'verified' ||
+    (userState.businessCategories && userState.businessCategories.length > 0) ||
+    Boolean(userState.companyName) ||
+    Boolean((userState as any).isBusinessAllowed)
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 space-y-4">
       {/* QUICK SYSTEM NAVIGATION SHORTCUTS BAR (Fixed access to all app sections) */}
@@ -494,19 +508,38 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
         {/* Row 2: Ultra-Compact Metric Stats Grid (5 pills) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 text-xs">
-          {/* Box 1: Token Cư Dân */}
-          <div
-            onClick={() => setActiveTab('wallet_tokens')}
-            className="bg-slate-900/90 hover:bg-slate-800/90 border border-amber-500/40 p-2.5 rounded-xl transition cursor-pointer flex items-center justify-between gap-2"
-          >
-            <div>
-              <span className="text-[10px] text-amber-400 font-bold uppercase block">Token Cư Dân</span>
-              <span className="text-base font-black text-amber-300 font-mono">
-                {(userState.balance || 0).toLocaleString('vi-VN')}
-              </span>
+          {/* Box 1: Token Cư Dân / Ví Doanh Nghiệp (Chỉ hiển thị cho tài khoản được phép kinh doanh) */}
+          {isBusinessAllowed ? (
+            <div
+              onClick={() => setActiveTab('wallet_tokens')}
+              className="bg-slate-900/90 hover:bg-slate-800/90 border border-amber-500/40 p-2.5 rounded-xl transition cursor-pointer flex items-center justify-between gap-2"
+              title="Ví Token & Điểm kinh doanh khả dụng"
+            >
+              <div>
+                <span className="text-[10px] text-amber-400 font-bold uppercase block">Token Kinh Doanh</span>
+                <span className="text-base font-black text-amber-300 font-mono">
+                  {(userState.balance || 0).toLocaleString('vi-VN')}
+                </span>
+              </div>
+              <span className="p-1.5 bg-amber-500/20 text-amber-400 rounded-lg text-xs">🪙</span>
             </div>
-            <span className="p-1.5 bg-amber-500/20 text-amber-400 rounded-lg text-xs">🪙</span>
-          </div>
+          ) : (
+            <div
+              onClick={() => setShowEmployerRegModal(true)}
+              className="bg-slate-900/70 hover:bg-slate-800/90 border border-slate-700/80 p-2.5 rounded-xl transition cursor-pointer flex items-center justify-between gap-2 opacity-90 group"
+              title="Tài khoản chưa kích hoạt ví kinh doanh - Bấm để đăng ký"
+            >
+              <div>
+                <span className="text-[10px] text-slate-400 font-bold uppercase block flex items-center gap-1">
+                  <span>🔒 Ví Kinh Doanh</span>
+                </span>
+                <span className="text-xs font-bold text-amber-400 group-hover:underline">
+                  Kích hoạt ngay →
+                </span>
+              </div>
+              <span className="p-1.5 bg-slate-800 text-slate-400 rounded-lg text-xs">🔒</span>
+            </div>
+          )}
 
           {/* Box 2: Tiền Affiliate Rút ATM */}
           <div
@@ -714,8 +747,8 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <span>🪙</span>
-          <span>Ví Điểm Thưởng ({(userState.balance || 0).toLocaleString('vi-VN')})</span>
+          <span>{isBusinessAllowed ? '🪙' : '🔒'}</span>
+          <span>{isBusinessAllowed ? `Ví Token B2B (${(userState.balance || 0).toLocaleString('vi-VN')})` : 'Ví Kinh Doanh'}</span>
         </button>
 
         <button
@@ -1188,22 +1221,64 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
       {/* TAB 2: WALLET & TOKENS (VÍ TOKEN CƯ DÂN & TIỀN RÚT) */}
       {/* ========================================================================= */}
       {activeTab === 'wallet_tokens' && (
-        <UserWalletSection
-          userState={userState}
-          affiliateWallet={affiliateWallet}
-          upTinCredits={upTinCredits}
-          serverWalletTransactions={serverWalletTransactions}
-          onOpenWithdrawModal={() => setShowWithdrawModal(true)}
-          onRefreshBalance={refreshUserBalance}
-          isSyncingBalance={isSyncingBalance}
-          onOpenEscrowModal={() => setShowEscrowModal(true)}
-          onQuickExchangeAffiliate={(credits) => {
-            setUpTinCredits(prev => prev + credits);
-            setUserState(prev => ({ ...prev, affiliatePoints: 0 }));
-            setAffiliateWallet(0);
-            alert(`🎉 Đã quy đổi thành công sang +${credits} Lượt Up Tin BĐS!`);
-          }}
-        />
+        isBusinessAllowed ? (
+          <UserWalletSection
+            userState={userState}
+            affiliateWallet={affiliateWallet}
+            upTinCredits={upTinCredits}
+            serverWalletTransactions={serverWalletTransactions}
+            onOpenWithdrawModal={() => setShowWithdrawModal(true)}
+            onRefreshBalance={refreshUserBalance}
+            isSyncingBalance={isSyncingBalance}
+            onOpenEscrowModal={() => setShowEscrowModal(true)}
+            onQuickExchangeAffiliate={(credits) => {
+              setUpTinCredits(prev => prev + credits);
+              setUserState(prev => ({ ...prev, affiliatePoints: 0 }));
+              setAffiliateWallet(0);
+              alert(`🎉 Đã quy đổi thành công sang +${credits} Lượt Up Tin BĐS!`);
+            }}
+          />
+        ) : (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-amber-500/40 p-6 sm:p-8 text-center space-y-4 shadow-md animate-in fade-in">
+            <div className="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto text-2xl border border-amber-500/20">
+              🔒
+            </div>
+            <div className="max-w-md mx-auto space-y-2">
+              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                Ví Doanh Nghiệp Chỉ Dành Cho Tài Khoản Được Phép Kinh Doanh
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400">
+                Để đảm bảo môi trường giao dịch an toàn và minh bạch, chỉ các tài khoản đã đăng ký Doanh Nghiệp B2B, Thợ Dịch Vụ, Môi Giới hoặc hoàn tất Xác Thực Danh Tính (KYC) mới có quyền sử dụng Ví Nạp Token & Ký Quỹ Escrow.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setShowEmployerRegModal(true)}
+                className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <Crown className="w-4 h-4" />
+                <span>Đăng Ký Tài Khoản Doanh Nghiệp / B2B</span>
+              </button>
+
+              <button
+                onClick={() => setShowKycModal(true)}
+                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Xác Thực Danh Tính KYC</span>
+              </button>
+
+              <button
+                onClick={() => setShowProfileEditModal(true)}
+                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <Edit2 className="w-4 h-4" />
+                <span>Cập Nhật Ngành Nghề Kinh Doanh</span>
+              </button>
+            </div>
+          </div>
+        )
       )}
 
       {/* ========================================================================= */}

@@ -110,9 +110,35 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateProfile | null>(null);
   const [editingCandidate, setEditingCandidate] = useState<CandidateProfile | null>(null);
   const [showCandidateModal, setShowCandidateModal] = useState(false);
+  const [candidateFormData, setCandidateFormData] = useState({
+    fullName: '',
+    targetJobTitle: '',
+    primaryIndustry: 'Bất Động Sản & Môi Giới',
+    birthYear: 1995,
+    gender: 'male' as 'male' | 'female' | 'other',
+    currentProject: 'ocean-park-2' as ProjectCategory,
+    projectName: 'Vinhomes Ocean Park 2',
+    currentAddress: 'Phân khu Cọ Xanh, Vinhomes Ocean Park 2',
+    phone: '',
+    zalo: '',
+    email: '',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+    expectedSalary: '15 - 25 Triệu/tháng',
+    yearsOfExp: 2,
+    experienceLevel: 'experienced' as any,
+    introduction: '',
+    skillsText: 'Kỹ năng bán hàng, Tư vấn khách hàng, Giao tiếp tốt',
+    isLookingForJob: true
+  });
+
+  // Accordion Expand IDs for All Sections
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [expandedCandidateId, setExpandedCandidateId] = useState<string | null>(null);
   const [expandedEmployerId, setExpandedEmployerId] = useState<string | null>(null);
-  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
+  const [expandedApplicationId, setExpandedApplicationId] = useState<string | null>(null);
+  const [expandedUnlockId, setExpandedUnlockId] = useState<string | null>(null);
+  const [expandedRegistrationId, setExpandedRegistrationId] = useState<string | null>(null);
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
 
   // Load All Recruitment Data
   const fetchData = async () => {
@@ -562,7 +588,93 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
     }
   };
 
-  // Candidate Actions
+  // Candidate Actions (Add / Edit / Delete / Toggle)
+  const handleOpenAddCandidate = () => {
+    setEditingCandidate(null);
+    setCandidateFormData({
+      fullName: '',
+      targetJobTitle: '',
+      primaryIndustry: 'Bất Động Sản & Môi Giới',
+      birthYear: 1995,
+      gender: 'male',
+      currentProject: 'ocean-park-2',
+      projectName: 'Vinhomes Ocean Park 2',
+      currentAddress: 'Phân khu Cọ Xanh, Vinhomes Ocean Park 2',
+      phone: '',
+      zalo: '',
+      email: '',
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+      expectedSalary: '15 - 25 Triệu/tháng',
+      yearsOfExp: 2,
+      experienceLevel: 'experienced',
+      introduction: 'Ứng viên năng động, nhiệt tình, có trách nhiệm cao trong công việc.',
+      skillsText: 'Kỹ năng bán hàng, Tư vấn khách hàng, Giao tiếp tốt',
+      isLookingForJob: true
+    });
+    setShowCandidateModal(true);
+  };
+
+  const handleOpenEditCandidate = (cand: CandidateProfile) => {
+    setEditingCandidate(cand);
+    setCandidateFormData({
+      fullName: cand.fullName || '',
+      targetJobTitle: cand.targetJobTitle || '',
+      primaryIndustry: cand.primaryIndustry || 'Bất Động Sản & Môi Giới',
+      birthYear: cand.birthYear || 1995,
+      gender: cand.gender || 'male',
+      currentProject: cand.currentProject || 'ocean-park-2',
+      projectName: cand.projectName || 'Vinhomes Ocean Park 2',
+      currentAddress: cand.currentAddress || '',
+      phone: cand.phone || '',
+      zalo: cand.zalo || cand.phone || '',
+      email: cand.email || '',
+      avatarUrl: cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+      expectedSalary: cand.expectedSalary || 'Thỏa thuận',
+      yearsOfExp: cand.yearsOfExp || 1,
+      experienceLevel: (cand.experienceLevel as any) || 'experienced',
+      introduction: cand.introduction || '',
+      skillsText: Array.isArray(cand.skills) ? cand.skills.join(', ') : '',
+      isLookingForJob: Boolean(cand.isLookingForJob)
+    });
+    setShowCandidateModal(true);
+  };
+
+  const handleSaveCandidate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!candidateFormData.fullName || !candidateFormData.phone || !candidateFormData.targetJobTitle) {
+      alert('Vui lòng nhập đầy đủ Tên Ứng Viên, Vị Trí và Số Điện Thoại!');
+      return;
+    }
+
+    try {
+      const skills = candidateFormData.skillsText.split(',').map(s => s.trim()).filter(Boolean);
+      const payload = {
+        ...(editingCandidate ? { id: editingCandidate.id, userId: editingCandidate.userId } : {}),
+        ...candidateFormData,
+        skills
+      };
+
+      const res = await fetch('/api/recruitment/candidates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert(editingCandidate ? '✓ Đã cập nhật hồ sơ Ứng viên CV!' : '🎉 Đã thêm hồ sơ Ứng viên CV mới thành công!');
+        setShowCandidateModal(false);
+        fetchData();
+        if (onRefresh) onRefresh();
+      } else {
+        const err = await res.json();
+        alert('Lỗi: ' + (err.error || 'Không thể lưu hồ sơ ứng viên'));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Lỗi kết nối máy chủ!');
+    }
+  };
+
   const handleDeleteCandidate = async (id: string, name: string) => {
     if (!confirm(`Bạn có chắc chắn muốn xóa hồ sơ ứng viên "${name}" khỏi hệ thống?`)) return;
     try {
@@ -883,12 +995,24 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
       {/* ========================================================================= */}
       {activeSection === 'jobs' && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-teal-600" />
-              <span>Danh sách tin tuyển dụng ({filteredJobs.length} tin)</span>
-            </span>
-            <span className="text-xs text-slate-400 font-medium hidden sm:inline">Bấm vào các nút trạng thái để bật/tắt hoặc chỉnh sửa</span>
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-teal-600" />
+                <span>Danh Sách Tin Tuyển Dụng ({filteredJobs.length} tin)</span>
+              </span>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Nhấp vào từng dòng để mở rộng xem chi tiết nội dung, mô tả, quyền lợi và thanh công cụ Thêm / Sửa / Xóa / Đổi trạng thái.
+              </p>
+            </div>
+
+            <button
+              onClick={handleOpenAddJob}
+              className="px-4 py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-black text-xs rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer self-start sm:self-auto transition transform active:scale-95 shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ Thêm Tin Tuyển Mới</span>
+            </button>
           </div>
 
           {/* Mobile Compact & Expandable Jobs List */}
@@ -903,16 +1027,21 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                 return (
                   <div
                     key={job.id}
-                    className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-teal-500/40 cursor-pointer"
+                    className={`border rounded-2xl p-3.5 transition cursor-pointer ${
+                      isExpanded 
+                        ? 'border-teal-500/80 bg-teal-50/30 dark:bg-slate-800/80 shadow-md ring-1 ring-teal-500/30' 
+                        : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-teal-500/40'
+                    }`}
                     onClick={() => setExpandedJobId(isExpanded ? null : job.id)}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="font-black text-slate-900 dark:text-white text-xs leading-snug">
                           {job.title}
                         </div>
-                        <div className="text-[11px] text-teal-700 dark:text-teal-400 font-bold mt-0.5">
-                          🏢 {job.companyName}
+                        <div className="text-[11px] text-teal-700 dark:text-teal-400 font-bold mt-0.5 flex items-center gap-1">
+                          <Building2 className="w-3 h-3 text-teal-600 shrink-0" />
+                          <span className="truncate">{job.companyName}</span>
                         </div>
                       </div>
 
@@ -926,7 +1055,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                         }`}>
                           {job.status === 'active' ? '🟢 Tuyển' : job.status === 'closed' ? '⚫ Đóng' : '🟡 Chờ'}
                         </span>
-                        <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                        <span className={`text-[10px] text-teal-600 font-bold transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
                           ▼
                         </span>
                       </div>
@@ -940,12 +1069,12 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                       <div className="flex items-center gap-1">
                         {job.isVip && (
                           <span className="px-1.5 py-0.2 bg-amber-500 text-slate-950 rounded text-[9px] font-black">
-                            VIP
+                            ⭐ VIP
                           </span>
                         )}
                         {job.isUrgent && (
-                          <span className="px-1.5 py-0.2 bg-rose-600 text-white rounded text-[9px] font-black">
-                            GẤP
+                          <span className="px-1.5 py-0.2 bg-rose-600 text-white rounded text-[9px] font-black animate-pulse">
+                            🔥 GẤP
                           </span>
                         )}
                       </div>
@@ -953,61 +1082,92 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
 
                     {/* Expanded details */}
                     {isExpanded && (
-                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
-                        <div className="grid grid-cols-2 gap-2 text-[11px]">
+                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-3 text-xs" onClick={e => e.stopPropagation()}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
                           <div>
-                            <span className="text-slate-400 block text-[10px]">Địa Điểm Làm Việc:</span>
+                            <span className="text-slate-400 block text-[10px] font-bold">Địa Điểm:</span>
                             <span className="font-medium text-slate-800 dark:text-slate-200">
                               📍 {job.location}
                             </span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[10px]">Liên Hệ:</span>
+                            <span className="text-slate-400 block text-[10px] font-bold">Hình Thức & KN:</span>
                             <span className="font-bold text-slate-800 dark:text-slate-200">
-                              {job.contactName} - <a href={`tel:${job.contactPhone}`} onClick={e => e.stopPropagation()} className="font-mono text-emerald-600 hover:underline">📞 {job.contactPhone}</a>
+                              {job.jobType} • {job.experienceDisplay}
                             </span>
+                          </div>
+                          <div className="sm:col-span-2">
+                            <span className="text-slate-400 block text-[10px] font-bold">Liên Hệ Tuyển Dụng:</span>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="font-bold text-slate-800 dark:text-slate-200">{job.contactName}</span>
+                              <a href={`tel:${job.contactPhone}`} className="font-mono font-bold text-emerald-600 hover:underline">
+                                📞 {job.contactPhone}
+                              </a>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-1.5 flex-wrap" onClick={e => e.stopPropagation()}>
-                          <div className="flex items-center gap-1">
+                        {job.description && (
+                          <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Mô tả công việc:</span>
+                            <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                              {job.description}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Complete Action Toolbar */}
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-700 gap-1.5 flex-wrap">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <button
                               onClick={() => handleToggleJobStatus(job)}
-                              className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold"
+                              className={`px-2.5 py-1.5 rounded-lg text-[10px] font-black border transition cursor-pointer ${
+                                job.status === 'active'
+                                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300'
+                                  : 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                              }`}
                             >
-                              {job.status === 'active' ? 'Đóng tin' : 'Mở tuyển'}
+                              {job.status === 'active' ? '⚫ Đóng Tin' : '🟢 Mở Tuyển'}
                             </button>
                             <button
                               onClick={() => handleToggleJobVip(job)}
-                              className="px-2 py-1 bg-amber-100 text-amber-900 rounded-lg text-[10px] font-bold"
+                              className="px-2.5 py-1.5 bg-amber-100 text-amber-900 rounded-lg text-[10px] font-black border border-amber-300 transition cursor-pointer"
                             >
-                              {job.isVip ? 'Tắt VIP' : 'Bật VIP'}
+                              {job.isVip ? 'Tắt VIP' : '⭐ Bật VIP'}
+                            </button>
+                            <button
+                              onClick={() => handleToggleJobUrgent(job)}
+                              className="px-2.5 py-1.5 bg-rose-100 text-rose-800 rounded-lg text-[10px] font-black border border-rose-300 transition cursor-pointer"
+                            >
+                              {job.isUrgent ? 'Tắt Gấp' : '🔥 Bật Gấp'}
                             </button>
                           </div>
 
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1.5">
                             <a
                               href={getJobDetailUrl(job)}
                               target="_blank"
                               rel="noreferrer"
-                              className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold flex items-center gap-0.5"
+                              className="px-2.5 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-black flex items-center gap-1 border border-emerald-300"
                             >
                               <ExternalLink className="w-3 h-3" />
                               <span>Soi Link</span>
                             </a>
                             <button
                               onClick={() => handleOpenEditJob(job)}
-                              className="p-1 bg-teal-50 text-teal-600 rounded-lg"
+                              className="p-1.5 bg-teal-50 text-teal-700 rounded-lg font-bold flex items-center gap-1 border border-teal-300"
                               title="Sửa"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
+                              <span className="text-[10px]">Sửa</span>
                             </button>
                             <button
                               onClick={() => handleDeleteJob(job.id, job.title)}
-                              className="p-1 bg-rose-50 text-rose-600 rounded-lg"
+                              className="p-1.5 bg-rose-50 text-rose-600 rounded-lg font-bold flex items-center gap-1 border border-rose-300"
                               title="Xóa"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
+                              <span className="text-[10px]">Xóa</span>
                             </button>
                           </div>
                         </div>
@@ -1019,15 +1179,16 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
             )}
           </div>
 
-          {/* Desktop Table View */}
+          {/* Desktop Table View with Clickable Rows and Sub-row Details */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[880px]">
               <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
+                  <th className="p-3.5 w-10 text-center">#</th>
                   <th className="p-3.5 whitespace-nowrap">Tin Tuyển Dụng</th>
                   <th className="p-3.5 whitespace-nowrap">Đơn Vị & Địa Điểm</th>
                   <th className="p-3.5 whitespace-nowrap">Mức Lương & Hình Thức</th>
-                  <th className="p-3.5 whitespace-nowrap">Liên Hệ</th>
+                  <th className="p-3.5 whitespace-nowrap">Liên Hệ Tuyển Dụng</th>
                   <th className="p-3.5 text-center whitespace-nowrap">Huy Hiệu</th>
                   <th className="p-3.5 text-center whitespace-nowrap">Trạng Thái</th>
                   <th className="p-3.5 text-right whitespace-nowrap">Thao Tác</th>
@@ -1036,127 +1197,216 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredJobs.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-12 text-slate-400">
+                    <td colSpan={8} className="text-center py-12 text-slate-400">
                       Không tìm thấy tin tuyển dụng nào phù hợp bộ lọc.
                     </td>
                   </tr>
                 ) : (
-                  filteredJobs.map(job => (
-                    <tr key={job.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                      <td className="p-3.5">
-                        <div className="font-black text-slate-900 dark:text-white text-sm line-clamp-1">
-                          {job.title}
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="px-2 py-0.5 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-400 font-bold rounded-md border border-teal-200/50 text-[10px] whitespace-nowrap">
-                            {job.industry}
-                          </span>
-                          <span className="text-slate-400 text-[11px] whitespace-nowrap">
-                            👁️ {job.viewsCount || 0} xem • 📄 {job.applicationsCount || 0} ứng tuyển
-                          </span>
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-bold text-slate-800 dark:text-slate-200">
-                          {job.companyName}
-                        </div>
-                        <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                          <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-                          <span className="truncate max-w-[180px]">{job.location}</span>
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-extrabold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                          {job.salaryDisplay}
-                        </div>
-                        <div className="text-[11px] text-slate-400 font-medium capitalize mt-0.5 whitespace-nowrap">
-                          {job.jobType === 'full-time' ? 'Toàn thời gian' : job.jobType === 'part-time' ? 'Bán thời gian' : job.jobType === 'shift' ? 'Theo ca' : 'Freelance'} • {job.experienceDisplay}
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
-                          {job.contactName}
-                        </div>
-                        <div className="text-[11px] font-mono text-teal-600 dark:text-teal-400 whitespace-nowrap">
-                          📞 {job.contactPhone}
-                        </div>
-                      </td>
-
-                      <td className="p-3.5 text-center">
-                        <div className="flex items-center justify-center gap-1.5">
-                          <button
-                            onClick={() => handleToggleJobVip(job)}
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-black border transition cursor-pointer ${
-                              job.isVip 
-                                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-xs' 
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300 dark:border-slate-700'
-                            }`}
-                            title="Bấm để bật/tắt VIP"
-                          >
-                            VIP
-                          </button>
-                          <button
-                            onClick={() => handleToggleJobUrgent(job)}
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-black border transition cursor-pointer ${
-                              job.isUrgent 
-                                ? 'bg-rose-600 text-white border-rose-500 shadow-xs animate-pulse' 
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300 dark:border-slate-700'
-                            }`}
-                            title="Bấm để bật/tắt Tuyển Gấp"
-                          >
-                            GẤP
-                          </button>
-                        </div>
-                      </td>
-
-                      <td className="p-3.5 text-center">
-                        <button
-                          onClick={() => handleToggleJobStatus(job)}
-                          className={`px-2.5 py-1 rounded-full text-[10px] font-black border transition cursor-pointer whitespace-nowrap ${
-                            job.status === 'active'
-                              ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
-                              : job.status === 'closed'
-                              ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-300 dark:border-slate-700'
-                              : 'bg-amber-100 text-amber-800 border-amber-300'
+                  filteredJobs.map((job, idx) => {
+                    const isExpanded = expandedJobId === job.id;
+                    return (
+                      <React.Fragment key={job.id}>
+                        <tr 
+                          onClick={() => setExpandedJobId(isExpanded ? null : job.id)}
+                          className={`hover:bg-teal-50/40 dark:hover:bg-slate-800/60 transition cursor-pointer select-none ${
+                            isExpanded ? 'bg-teal-50/60 dark:bg-slate-800/80 font-medium' : ''
                           }`}
                         >
-                          {job.status === 'active' ? '🟢 Đang Tuyển' : job.status === 'closed' ? '⚫ Đã Đóng' : '🟡 Chờ Duyệt'}
-                        </button>
-                      </td>
+                          <td className="p-3.5 text-center text-slate-400 font-bold text-[11px]">
+                            <span className={`inline-block transition-transform duration-200 text-teal-600 ${isExpanded ? 'rotate-90' : ''}`}>
+                              ▶
+                            </span>
+                          </td>
 
-                      <td className="p-3.5 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <a
-                            href={getJobDetailUrl(job)}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 font-bold text-[11px] border border-emerald-300 dark:border-emerald-800"
-                            title={`Soi link bài đăng: ${getJobDetailUrl(job)}`}
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                            <span>Soi Link</span>
-                          </a>
-                          <button
-                            onClick={() => handleOpenEditJob(job)}
-                            className="p-1.5 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 hover:bg-teal-100 rounded-lg transition"
-                            title="Chỉnh sửa tin"
-                          >
-                            <Edit3 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteJob(job.id, job.title)}
-                            className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
-                            title="Xóa tin"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                          <td className="p-3.5">
+                            <div className="font-black text-slate-900 dark:text-white text-sm line-clamp-1">
+                              {job.title}
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="px-2 py-0.5 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-400 font-bold rounded-md border border-teal-200/50 text-[10px] whitespace-nowrap">
+                                {job.industry}
+                              </span>
+                              <span className="text-slate-400 text-[11px] whitespace-nowrap">
+                                👁️ {job.viewsCount || 0} xem • 📄 {job.applicationsCount || 0} nộp
+                              </span>
+                            </div>
+                          </td>
+
+                          <td className="p-3.5">
+                            <div className="font-bold text-slate-800 dark:text-slate-200">
+                              {job.companyName}
+                            </div>
+                            <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                              <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                              <span className="truncate max-w-[180px]">{job.location}</span>
+                            </div>
+                          </td>
+
+                          <td className="p-3.5">
+                            <div className="font-extrabold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                              {job.salaryDisplay}
+                            </div>
+                            <div className="text-[11px] text-slate-400 font-medium capitalize mt-0.5 whitespace-nowrap">
+                              {job.jobType === 'full-time' ? 'Toàn thời gian' : job.jobType === 'part-time' ? 'Bán thời gian' : job.jobType === 'shift' ? 'Theo ca' : 'Freelance'} • {job.experienceDisplay}
+                            </div>
+                          </td>
+
+                          <td className="p-3.5">
+                            <div className="font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                              {job.contactName}
+                            </div>
+                            <div className="text-[11px] font-mono text-teal-600 dark:text-teal-400 whitespace-nowrap">
+                              📞 {job.contactPhone}
+                            </div>
+                          </td>
+
+                          <td className="p-3.5 text-center">
+                            <div className="flex items-center justify-center gap-1.5" onClick={e => e.stopPropagation()}>
+                              <button
+                                onClick={() => handleToggleJobVip(job)}
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-black border transition cursor-pointer ${
+                                  job.isVip 
+                                    ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-xs' 
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300 dark:border-slate-700'
+                                }`}
+                                title="Bấm để bật/tắt VIP"
+                              >
+                                VIP
+                              </button>
+                              <button
+                                onClick={() => handleToggleJobUrgent(job)}
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-black border transition cursor-pointer ${
+                                  job.isUrgent 
+                                    ? 'bg-rose-600 text-white border-rose-500 shadow-xs animate-pulse' 
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300 dark:border-slate-700'
+                                }`}
+                                title="Bấm để bật/tắt Tuyển Gấp"
+                              >
+                                GẤP
+                              </button>
+                            </div>
+                          </td>
+
+                          <td className="p-3.5 text-center" onClick={e => e.stopPropagation()}>
+                            <button
+                              onClick={() => handleToggleJobStatus(job)}
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-black border transition cursor-pointer whitespace-nowrap ${
+                                job.status === 'active'
+                                  ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
+                                  : job.status === 'closed'
+                                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-300 dark:border-slate-700'
+                                  : 'bg-amber-100 text-amber-800 border-amber-300'
+                              }`}
+                            >
+                              {job.status === 'active' ? '🟢 Đang Tuyển' : job.status === 'closed' ? '⚫ Đã Đóng' : '🟡 Chờ Duyệt'}
+                            </button>
+                          </td>
+
+                          <td className="p-3.5 text-right whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <a
+                                href={getJobDetailUrl(job)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 font-bold text-[11px] border border-emerald-300 dark:border-emerald-800"
+                                title={`Soi link bài đăng: ${getJobDetailUrl(job)}`}
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                                <span>Soi Link</span>
+                              </a>
+                              <button
+                                onClick={() => handleOpenEditJob(job)}
+                                className="p-1.5 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 hover:bg-teal-100 rounded-lg transition"
+                                title="Chỉnh sửa tin"
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteJob(job.id, job.title)}
+                                className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
+                                title="Xóa tin"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Detailed Expanded Sub-row for Job */}
+                        {isExpanded && (
+                          <tr className="bg-teal-50/40 dark:bg-slate-800/70 border-b-2 border-teal-500/30">
+                            <td colSpan={8} className="p-4.5">
+                              <div className="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-teal-200 dark:border-teal-900/50 shadow-inner">
+                                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                                  <div className="font-black text-teal-800 dark:text-teal-300 text-sm flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-teal-500" />
+                                    <span>CHI TIẾT ĐẦY ĐỦ TIN TUYỂN DỤNG & CÔNG CỤ QUẢN TRỊ</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={() => handleOpenAddJob()}
+                                      className="px-3 py-1 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Plus className="w-3.5 h-3.5" />
+                                      <span>+ Thêm Tin Mới</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleOpenEditJob(job)}
+                                      className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Edit3 className="w-3.5 h-3.5" />
+                                      <span>Chỉnh Sửa Tin Này</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteJob(job.id, job.title)}
+                                      className="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <span>Xóa Tin</span>
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                  <div className="space-y-1.5">
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block">Thông tin doanh nghiệp:</span>
+                                    <div className="font-bold text-slate-800 dark:text-slate-200 text-sm">{job.companyName}</div>
+                                    <div className="text-slate-600 dark:text-slate-400">📍 {job.location} ({job.projectName})</div>
+                                    <div className="text-slate-600 dark:text-slate-400">🏢 Ngành: {job.industry}</div>
+                                  </div>
+
+                                  <div className="space-y-1.5">
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block">Chế độ đãi ngộ:</span>
+                                    <div className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">{job.salaryDisplay}</div>
+                                    <div className="text-slate-600 dark:text-slate-400">🕒 {job.jobType} • {job.experienceDisplay}</div>
+                                    <div className="text-slate-600 dark:text-slate-400">📅 Hạn nộp: {job.deadline || 'Liên tục tuyển dụng'}</div>
+                                  </div>
+
+                                  <div className="space-y-1.5">
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block">Kênh liên hệ trực tiếp:</span>
+                                    <div className="font-bold text-slate-800 dark:text-slate-200">👤 {job.contactName}</div>
+                                    <div className="font-mono text-emerald-600 font-bold">
+                                      📞 <a href={`tel:${job.contactPhone}`} className="hover:underline">{job.contactPhone}</a> (Zalo: {job.contactZalo || job.contactPhone})
+                                    </div>
+                                    <div className="font-mono text-slate-500">✉️ {job.contactEmail || 'Chưa cập nhật email'}</div>
+                                  </div>
+                                </div>
+
+                                {job.description && (
+                                  <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                                    <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Mô tả công việc chi tiết:</span>
+                                    <p className="text-slate-600 dark:text-slate-300 whitespace-pre-line leading-relaxed">
+                                      {job.description}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -1168,13 +1418,25 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
       {/* SECTION 2: KHO HỒ SƠ CV CƯ DÂN */}
       {/* ========================================================================= */}
       {activeSection === 'candidates' && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
-              <Users className="w-4 h-4 text-emerald-600" />
-              <span>Kho CV Ứng Viên Cư Dân ({filteredCandidates.length} hồ sơ)</span>
-            </span>
-            <span className="text-xs text-emerald-600 font-bold">✓ Xem 100% SĐT & Zalo</span>
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm space-y-4">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                <Users className="w-4 h-4 text-emerald-600" />
+                <span>Kho CV Ứng Viên Cư Dân ({filteredCandidates.length} hồ sơ)</span>
+              </span>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Admin xem trực tiếp 100% SĐT, Zalo và có thể Thêm CV mới, Sửa hồ sơ, Xóa hồ sơ hoặc Đổi trạng thái tìm việc.
+              </p>
+            </div>
+
+            <button
+              onClick={handleOpenAddCandidate}
+              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer self-start sm:self-auto transition transform active:scale-95 shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ Thêm Hồ Sơ CV Mới</span>
+            </button>
           </div>
 
           {/* Mobile Compact & Expandable Candidates List */}
@@ -1189,15 +1451,19 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                 return (
                   <div
                     key={cand.id}
-                    className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-emerald-500/40 cursor-pointer"
+                    className={`border rounded-2xl p-3.5 transition cursor-pointer ${
+                      isExpanded 
+                        ? 'border-emerald-500/80 bg-emerald-50/30 dark:bg-slate-800/80 shadow-md ring-1 ring-emerald-500/30' 
+                        : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-emerald-500/40'
+                    }`}
                     onClick={() => setExpandedCandidateId(isExpanded ? null : cand.id)}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
                         <img
                           src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
                           alt={cand.fullName}
-                          className="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                          className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                         />
                         <div className="min-w-0">
                           <div className="font-black text-slate-900 dark:text-white text-xs truncate">
@@ -1217,7 +1483,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                         }`}>
                           {cand.isLookingForJob ? '🟢 Sẵn sàng' : '⚪ Đã có việc'}
                         </span>
-                        <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                        <span className={`text-[10px] text-emerald-600 font-bold transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
                           ▼
                         </span>
                       </div>
@@ -1239,65 +1505,95 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
 
                     {/* Expanded CV details */}
                     {isExpanded && (
-                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
-                        <div className="grid grid-cols-2 gap-2 text-[11px]">
+                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-3 text-xs" onClick={e => e.stopPropagation()}>
+                        <div className="grid grid-cols-2 gap-2 text-[11px] bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
                           <div>
-                            <span className="text-slate-400 block text-[10px]">Ngành Nghề:</span>
+                            <span className="text-slate-400 block text-[10px] font-bold">Ngành Nghề:</span>
                             <span className="font-bold text-slate-800 dark:text-slate-200">
                               {cand.primaryIndustry}
                             </span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[10px]">Kinh Nghiệm:</span>
+                            <span className="text-slate-400 block text-[10px] font-bold">Kinh Nghiệm:</span>
                             <span className="font-bold text-slate-800 dark:text-slate-200">
                               {cand.yearsOfExp ? `${cand.yearsOfExp} năm` : 'Mới ra trường'} • {cand.experienceLevel}
                             </span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[10px]">Nơi Cư Trú:</span>
+                            <span className="text-slate-400 block text-[10px] font-bold">Nơi Cư Trú:</span>
                             <span className="text-slate-800 dark:text-slate-200">
                               {cand.currentAddress || cand.projectName || 'Vinhomes'}
                             </span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[10px]">Zalo & Email:</span>
+                            <span className="text-slate-400 block text-[10px] font-bold">Zalo & Email:</span>
                             <span className="font-mono text-slate-800 dark:text-slate-200">
-                              {cand.zalo || cand.phone}
+                              {cand.zalo || cand.phone} • {cand.email}
                             </span>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-1.5 flex-wrap" onClick={e => e.stopPropagation()}>
+                        {cand.introduction && (
+                          <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Giới thiệu:</span>
+                            <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed">
+                              {cand.introduction}
+                            </p>
+                          </div>
+                        )}
+
+                        {cand.skills && cand.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {cand.skills.map((s, i) => (
+                              <span key={i} className="px-2 py-0.5 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 rounded text-[10px] font-bold border border-teal-200/50">
+                                {s}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Complete Action Toolbar */}
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-700 gap-1.5 flex-wrap">
                           <button
                             onClick={() => handleToggleCandidateStatus(cand)}
-                            className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold"
+                            className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-black border border-slate-300"
                           >
-                            {cand.isLookingForJob ? 'Đổi sang Đã có việc' : 'Đổi sang Đang tìm việc'}
+                            {cand.isLookingForJob ? 'Đổi: Đã có việc' : '🟢 Đổi: Đang tìm việc'}
                           </button>
 
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1.5">
                             <a
                               href={getCandidateCvUrl(cand)}
                               target="_blank"
                               rel="noreferrer"
-                              className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold flex items-center gap-0.5"
+                              className="px-2 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-black flex items-center gap-1 border border-emerald-300"
                             >
                               <ExternalLink className="w-3 h-3" />
                               <span>Soi CV</span>
                             </a>
                             <button
+                              onClick={() => handleOpenEditCandidate(cand)}
+                              className="p-1.5 bg-teal-50 text-teal-700 rounded-lg font-bold flex items-center gap-1 border border-teal-300"
+                              title="Sửa hồ sơ"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                              <span className="text-[10px]">Sửa</span>
+                            </button>
+                            <button
                               onClick={() => setSelectedCandidate(cand)}
-                              className="p-1 bg-teal-50 text-teal-600 rounded-lg"
+                              className="p-1.5 bg-sky-50 text-sky-700 rounded-lg font-bold flex items-center gap-1 border border-sky-300"
                               title="Xem chi tiết"
                             >
                               <Eye className="w-3.5 h-3.5" />
+                              <span className="text-[10px]">Xem</span>
                             </button>
                             <button
                               onClick={() => handleDeleteCandidate(cand.id, cand.fullName)}
-                              className="p-1 bg-rose-50 text-rose-600 rounded-lg"
+                              className="p-1.5 bg-rose-50 text-rose-600 rounded-lg font-bold flex items-center gap-1 border border-rose-300"
                               title="Xóa"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
+                              <span className="text-[10px]">Xóa</span>
                             </button>
                           </div>
                         </div>
@@ -1309,11 +1605,12 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
             )}
           </div>
 
-          {/* Desktop Table View */}
+          {/* Desktop Table View with Clickable Rows and Sub-row Details */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[880px]">
               <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
+                  <th className="p-3.5 w-10 text-center">#</th>
                   <th className="p-3.5 whitespace-nowrap">Ứng Viên</th>
                   <th className="p-3.5 whitespace-nowrap">Vị Trí & Ngành Nghề</th>
                   <th className="p-3.5 whitespace-nowrap">Kinh Nghiệm & Lương Kỳ Vọng</th>
@@ -1325,102 +1622,211 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredCandidates.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-400">
+                    <td colSpan={7} className="text-center py-12 text-slate-400">
                       Chưa có hồ sơ ứng viên nào phù hợp.
                     </td>
                   </tr>
                 ) : (
-                  filteredCandidates.map(cand => (
-                    <tr key={cand.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                      <td className="p-3.5">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
-                            alt={cand.fullName}
-                            className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
-                          />
-                          <div>
-                            <div className="font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
-                              {cand.fullName}
-                            </div>
-                            <div className="text-[11px] text-slate-400 whitespace-nowrap">
-                              Sinh năm: {cand.birthYear || 'N/A'} • {cand.currentAddress || cand.projectName || 'Vinhomes'}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-extrabold text-teal-700 dark:text-teal-400 text-sm whitespace-nowrap">
-                          {cand.targetJobTitle}
-                        </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 whitespace-nowrap">
-                          {cand.primaryIndustry}
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-black text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                          {cand.expectedSalary}
-                        </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">
-                          {cand.yearsOfExp ? `${cand.yearsOfExp} năm KN` : 'Chưa có KN'} • {cand.experienceLevel}
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-bold text-slate-900 dark:text-white font-mono flex items-center gap-1.5 whitespace-nowrap">
-                          <Phone className="w-3.5 h-3.5 text-emerald-500" />
-                          <span>{cand.phone}</span>
-                        </div>
-                        <div className="text-[11px] text-slate-400 font-mono mt-0.5 whitespace-nowrap">
-                          Zalo: {cand.zalo || cand.phone} • {cand.email}
-                        </div>
-                      </td>
-
-                      <td className="p-3.5 text-center">
-                        <button
-                          onClick={() => handleToggleCandidateStatus(cand)}
-                          className={`px-3 py-1 rounded-full text-[10px] font-black border transition cursor-pointer whitespace-nowrap ${
-                            cand.isLookingForJob
-                              ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300'
+                  filteredCandidates.map((cand, idx) => {
+                    const isExpanded = expandedCandidateId === cand.id;
+                    return (
+                      <React.Fragment key={cand.id}>
+                        <tr 
+                          onClick={() => setExpandedCandidateId(isExpanded ? null : cand.id)}
+                          className={`hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 transition cursor-pointer select-none ${
+                            isExpanded ? 'bg-emerald-50/60 dark:bg-slate-800/80 font-medium' : ''
                           }`}
                         >
-                          {cand.isLookingForJob ? '🟢 Sẵn Sàng Đi Làm' : '⚪ Đã Có Việc'}
-                        </button>
-                      </td>
+                          <td className="p-3.5 text-center text-slate-400 font-bold text-[11px]">
+                            <span className={`inline-block transition-transform duration-200 text-emerald-600 ${isExpanded ? 'rotate-90' : ''}`}>
+                              ▶
+                            </span>
+                          </td>
 
-                      <td className="p-3.5 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <a
-                            href={getCandidateCvUrl(cand)}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 font-bold text-[11px] border border-emerald-300 dark:border-emerald-800"
-                            title={`Soi link hồ sơ CV: ${getCandidateCvUrl(cand)}`}
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                            <span>Soi Link</span>
-                          </a>
-                          <button
-                            onClick={() => setSelectedCandidate(cand)}
-                            className="p-1.5 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 hover:bg-teal-100 rounded-lg transition"
-                            title="Xem chi tiết CV"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteCandidate(cand.id, cand.fullName)}
-                            className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
-                            title="Xóa hồ sơ"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                          <td className="p-3.5">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
+                                alt={cand.fullName}
+                                className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                              />
+                              <div>
+                                <div className="font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
+                                  {cand.fullName}
+                                </div>
+                                <div className="text-[11px] text-slate-400 whitespace-nowrap">
+                                  Sinh năm: {cand.birthYear || 'N/A'} • {cand.currentAddress || cand.projectName || 'Vinhomes'}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="p-3.5">
+                            <div className="font-extrabold text-teal-700 dark:text-teal-400 text-sm whitespace-nowrap">
+                              {cand.targetJobTitle}
+                            </div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 whitespace-nowrap">
+                              {cand.primaryIndustry}
+                            </div>
+                          </td>
+
+                          <td className="p-3.5">
+                            <div className="font-black text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                              {cand.expectedSalary}
+                            </div>
+                            <div className="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">
+                              {cand.yearsOfExp ? `${cand.yearsOfExp} năm KN` : 'Chưa có KN'} • {cand.experienceLevel}
+                            </div>
+                          </td>
+
+                          <td className="p-3.5">
+                            <div className="font-bold text-slate-900 dark:text-white font-mono flex items-center gap-1.5 whitespace-nowrap">
+                              <Phone className="w-3.5 h-3.5 text-emerald-500" />
+                              <span>{cand.phone}</span>
+                            </div>
+                            <div className="text-[11px] text-slate-400 font-mono mt-0.5 whitespace-nowrap">
+                              Zalo: {cand.zalo || cand.phone} • {cand.email}
+                            </div>
+                          </td>
+
+                          <td className="p-3.5 text-center" onClick={e => e.stopPropagation()}>
+                            <button
+                              onClick={() => handleToggleCandidateStatus(cand)}
+                              className={`px-3 py-1 rounded-full text-[10px] font-black border transition cursor-pointer whitespace-nowrap ${
+                                cand.isLookingForJob
+                                  ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300'
+                              }`}
+                            >
+                              {cand.isLookingForJob ? '🟢 Sẵn Sàng Đi Làm' : '⚪ Đã Có Việc'}
+                            </button>
+                          </td>
+
+                          <td className="p-3.5 text-right whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <a
+                                href={getCandidateCvUrl(cand)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 font-bold text-[11px] border border-emerald-300 dark:border-emerald-800"
+                                title={`Soi link hồ sơ CV: ${getCandidateCvUrl(cand)}`}
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                                <span>Soi Link</span>
+                              </a>
+                              <button
+                                onClick={() => handleOpenEditCandidate(cand)}
+                                className="p-1.5 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 hover:bg-teal-100 rounded-lg transition"
+                                title="Chỉnh sửa hồ sơ CV"
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => setSelectedCandidate(cand)}
+                                className="p-1.5 bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 hover:bg-sky-100 rounded-lg transition"
+                                title="Xem chi tiết CV"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteCandidate(cand.id, cand.fullName)}
+                                className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
+                                title="Xóa hồ sơ"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Detailed Expanded Sub-row for Candidate */}
+                        {isExpanded && (
+                          <tr className="bg-emerald-50/40 dark:bg-slate-800/70 border-b-2 border-emerald-500/30">
+                            <td colSpan={7} className="p-4.5">
+                              <div className="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-emerald-200 dark:border-emerald-900/50 shadow-inner">
+                                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                                  <div className="font-black text-emerald-800 dark:text-emerald-300 text-sm flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-emerald-500" />
+                                    <span>HỒ SƠ CV CƯ DÂN CHI TIẾT & THAO TÁC QUẢN TRỊ</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={() => handleOpenAddCandidate()}
+                                      className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Plus className="w-3.5 h-3.5" />
+                                      <span>+ Thêm CV Mới</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleOpenEditCandidate(cand)}
+                                      className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Edit3 className="w-3.5 h-3.5" />
+                                      <span>Chỉnh Sửa CV Này</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteCandidate(cand.id, cand.fullName)}
+                                      className="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <span>Xóa Hồ Sơ</span>
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                  <div className="space-y-1.5">
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block">Thông tin cá nhân:</span>
+                                    <div className="font-black text-slate-800 dark:text-slate-200 text-sm">{cand.fullName}</div>
+                                    <div className="text-slate-600 dark:text-slate-400">Sinh năm: {cand.birthYear || 'N/A'} • Giới tính: {cand.gender === 'male' ? 'Nam' : 'Nữ'}</div>
+                                    <div className="text-slate-600 dark:text-slate-400">📍 Nơi ở: {cand.currentAddress || cand.projectName}</div>
+                                  </div>
+
+                                  <div className="space-y-1.5">
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block">Chuyên môn & Kỳ vọng:</span>
+                                    <div className="font-extrabold text-teal-700 dark:text-teal-400 text-sm">{cand.targetJobTitle}</div>
+                                    <div className="text-slate-600 dark:text-slate-400">🏢 Ngành: {cand.primaryIndustry}</div>
+                                    <div className="font-black text-emerald-600 dark:text-emerald-400">💰 Kỳ vọng: {cand.expectedSalary}</div>
+                                  </div>
+
+                                  <div className="space-y-1.5">
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block">Liên hệ trực tiếp (Admin):</span>
+                                    <div className="font-mono font-bold text-emerald-600 text-sm">
+                                      📞 <a href={`tel:${cand.phone}`} className="hover:underline">{cand.phone}</a>
+                                    </div>
+                                    <div className="font-mono text-slate-600 dark:text-slate-300">Zalo: {cand.zalo || cand.phone}</div>
+                                    <div className="font-mono text-slate-500">✉️ {cand.email || 'Chưa cập nhật email'}</div>
+                                  </div>
+                                </div>
+
+                                {cand.introduction && (
+                                  <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                                    <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Giới thiệu bản thân:</span>
+                                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                                      {cand.introduction}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {cand.skills && cand.skills.length > 0 && (
+                                  <div>
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block mb-1.5">Kỹ năng thế mạnh:</span>
+                                    <div className="flex flex-wrap gap-1.5">
+                                      {cand.skills.map((skill, idx) => (
+                                        <span key={idx} className="px-2.5 py-1 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 font-bold rounded-lg border border-teal-200/50 text-[11px]">
+                                          {skill}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -1586,9 +1992,10 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
 
           {/* Desktop Table View */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[880px]">
               <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
+                  <th className="p-3.5 w-10 text-center">#</th>
                   <th className="p-3.5 whitespace-nowrap">Doanh Nghiệp / Logo</th>
                   <th className="p-3.5 whitespace-nowrap">Ngành Nghề & Dự Án</th>
                   <th className="p-3.5 whitespace-nowrap">Liên Hệ / Hotline</th>
@@ -1600,105 +2007,192 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {employers.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-400">
+                    <td colSpan={7} className="text-center py-12 text-slate-400">
                       Chưa có hồ sơ nhà tuyển dụng nào.
                     </td>
                   </tr>
                 ) : (
                   employers.map(emp => {
+                    const isExpanded = expandedEmployerId === emp.id;
                     const empJobsCount = jobs.filter(
                       j => (emp.userId && j.employerUserId === emp.userId) || 
                            j.companyName.toLowerCase() === emp.companyName.toLowerCase()
                     ).length;
 
                     return (
-                      <tr key={emp.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                        <td className="p-3.5">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={emp.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&auto=format&fit=crop&q=80'}
-                              alt={emp.companyName}
-                              className="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white shrink-0"
-                            />
-                            <div>
-                              <div className="font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
-                                {emp.companyName}
-                              </div>
-                              <div className="text-[11px] text-slate-400 flex items-center gap-1 whitespace-nowrap">
-                                <MapPin className="w-3 h-3 text-red-500 shrink-0" />
-                                <span className="truncate max-w-[200px]">{emp.address}</span>
+                      <React.Fragment key={emp.id}>
+                        <tr 
+                          onClick={() => setExpandedEmployerId(isExpanded ? null : emp.id)}
+                          className={`hover:bg-teal-50/40 dark:hover:bg-slate-800/60 transition cursor-pointer select-none ${
+                            isExpanded ? 'bg-teal-50/60 dark:bg-slate-800/80 font-medium' : ''
+                          }`}
+                        >
+                          <td className="p-3.5 text-center text-slate-400 font-bold text-[11px]">
+                            <span className={`inline-block transition-transform duration-200 text-teal-600 ${isExpanded ? 'rotate-90' : ''}`}>
+                              ▶
+                            </span>
+                          </td>
+
+                          <td className="p-3.5">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={emp.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&auto=format&fit=crop&q=80'}
+                                alt={emp.companyName}
+                                className="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white shrink-0"
+                              />
+                              <div>
+                                <div className="font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
+                                  {emp.companyName}
+                                </div>
+                                <div className="text-[11px] text-slate-400 flex items-center gap-1 whitespace-nowrap">
+                                  <MapPin className="w-3 h-3 text-red-500 shrink-0" />
+                                  <span className="truncate max-w-[200px]">{emp.address}</span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
+                          </td>
 
-                        <td className="p-3.5">
-                          <div className="font-extrabold text-teal-700 dark:text-teal-400 whitespace-nowrap">
-                            {emp.industry}
-                          </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 whitespace-nowrap">
-                            {emp.projectName || emp.project}
-                          </div>
-                        </td>
+                          <td className="p-3.5">
+                            <div className="font-extrabold text-teal-700 dark:text-teal-400 whitespace-nowrap">
+                              {emp.industry}
+                            </div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 whitespace-nowrap">
+                              {emp.projectName || emp.project}
+                            </div>
+                          </td>
 
-                        <td className="p-3.5">
-                          <div className="font-bold text-slate-900 dark:text-white font-mono flex items-center gap-1.5 whitespace-nowrap">
-                            <Phone className="w-3.5 h-3.5 text-emerald-500" />
-                            <span>{emp.contactPhone}</span>
-                          </div>
-                          <div className="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">
-                            Phụ trách: {emp.contactName}
-                          </div>
-                        </td>
+                          <td className="p-3.5">
+                            <div className="font-bold text-slate-900 dark:text-white font-mono flex items-center gap-1.5 whitespace-nowrap">
+                              <Phone className="w-3.5 h-3.5 text-emerald-500" />
+                              <span>{emp.contactPhone}</span>
+                            </div>
+                            <div className="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">
+                              Phụ trách: {emp.contactName}
+                            </div>
+                          </td>
 
-                        <td className="p-3.5 text-center">
-                          <button
-                            onClick={() => handleToggleEmployerVerified(emp)}
-                            className={`px-3 py-1 rounded-full text-[10px] font-black border transition cursor-pointer whitespace-nowrap ${
-                              emp.verified
-                                ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300'
-                            }`}
-                          >
-                            {emp.verified ? '🟢 Đã Xác Thực' : '⚪ Chưa Xác Thực'}
-                          </button>
-                        </td>
-
-                        <td className="p-3.5 text-center">
-                          <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-black rounded-lg text-xs whitespace-nowrap">
-                            {empJobsCount} tin tuyển
-                          </span>
-                        </td>
-
-                        <td className="p-3.5 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <a
-                              href={getEmployerProfileUrl(emp)}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 font-bold text-[11px] border border-emerald-300 dark:border-emerald-800"
-                              title={`Soi link hồ sơ DN: ${getEmployerProfileUrl(emp)}`}
-                            >
-                              <ExternalLink className="w-3.5 h-3.5" />
-                              <span>Soi Link</span>
-                            </a>
+                          <td className="p-3.5 text-center" onClick={e => e.stopPropagation()}>
                             <button
-                              onClick={() => handleOpenEditEmployer(emp)}
-                              className="p-1.5 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 hover:bg-teal-100 rounded-lg transition"
-                              title="Chỉnh sửa hồ sơ"
+                              onClick={() => handleToggleEmployerVerified(emp)}
+                              className={`px-3 py-1 rounded-full text-[10px] font-black border transition cursor-pointer whitespace-nowrap ${
+                                emp.verified
+                                  ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300'
+                              }`}
                             >
-                              <Edit3 className="w-4 h-4" />
+                              {emp.verified ? '🟢 Đã Xác Thực' : '⚪ Chưa Xác Thực'}
                             </button>
-                            <button
-                              onClick={() => handleDeleteEmployer(emp.id, emp.companyName)}
-                              className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
-                              title="Xóa hồ sơ"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                          </td>
+
+                          <td className="p-3.5 text-center">
+                            <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-black rounded-lg text-xs whitespace-nowrap">
+                              {empJobsCount} tin tuyển
+                            </span>
+                          </td>
+
+                          <td className="p-3.5 text-right whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <a
+                                href={getEmployerProfileUrl(emp)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 font-bold text-[11px] border border-emerald-300 dark:border-emerald-800"
+                                title={`Soi link hồ sơ DN: ${getEmployerProfileUrl(emp)}`}
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                                <span>Soi Link</span>
+                              </a>
+                              <button
+                                onClick={() => handleOpenEditEmployer(emp)}
+                                className="p-1.5 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 hover:bg-teal-100 rounded-lg transition"
+                                title="Chỉnh sửa hồ sơ"
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteEmployer(emp.id, emp.companyName)}
+                                className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
+                                title="Xóa hồ sơ"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Expanded Employer Sub-row */}
+                        {isExpanded && (
+                          <tr className="bg-teal-50/40 dark:bg-slate-800/70 border-b-2 border-teal-500/30">
+                            <td colSpan={7} className="p-4.5">
+                              <div className="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-teal-200 dark:border-teal-900/50 shadow-inner">
+                                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                                  <div className="font-black text-teal-800 dark:text-teal-300 text-sm flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-teal-500" />
+                                    <span>HỒ SƠ DOANH NGHIỆP CHI TIẾT & BỘ CÔNG CỤ QUẢN LÝ</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={() => handleOpenAddEmployer()}
+                                      className="px-3 py-1 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Plus className="w-3.5 h-3.5" />
+                                      <span>+ Thêm Nhà Tuyển Dụng</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleOpenEditEmployer(emp)}
+                                      className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Edit3 className="w-3.5 h-3.5" />
+                                      <span>Chỉnh Sửa Đơn Vị Này</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteEmployer(emp.id, emp.companyName)}
+                                      className="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <span>Xóa Đơn Vị</span>
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                  <div className="space-y-1.5">
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block">Tổ chức & Thương hiệu:</span>
+                                    <div className="font-black text-slate-800 dark:text-slate-200 text-sm">{emp.companyName}</div>
+                                    <div className="text-teal-700 dark:text-teal-400 font-bold">Thương hiệu: {emp.brandName || emp.companyName}</div>
+                                    <div className="text-slate-600 dark:text-slate-400">Quy mô: {emp.scaleSize || 'Chưa cập nhật'}</div>
+                                  </div>
+
+                                  <div className="space-y-1.5">
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block">Địa điểm & Ngành:</span>
+                                    <div className="font-bold text-slate-800 dark:text-slate-200">📍 {emp.address}</div>
+                                    <div className="text-slate-600 dark:text-slate-400">Khu đô thị: {emp.projectName || emp.project}</div>
+                                    <div className="text-slate-600 dark:text-slate-400">Ngành nghề: {emp.industry}</div>
+                                  </div>
+
+                                  <div className="space-y-1.5">
+                                    <span className="font-bold text-slate-400 text-[10px] uppercase block">Người đại diện liên hệ:</span>
+                                    <div className="font-bold text-slate-800 dark:text-slate-200">👤 {emp.contactName}</div>
+                                    <div className="font-mono text-emerald-600 font-bold">
+                                      📞 <a href={`tel:${emp.contactPhone}`} className="hover:underline">{emp.contactPhone}</a>
+                                    </div>
+                                    <div className="font-mono text-slate-500">✉️ {emp.contactEmail || 'Chưa cập nhật email'}</div>
+                                  </div>
+                                </div>
+
+                                {emp.introduction && (
+                                  <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                                    <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Giới thiệu về doanh nghiệp & môi trường:</span>
+                                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                                      {emp.introduction}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
                     );
                   })
                 )}
@@ -1748,129 +2242,358 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
               </span>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+            {/* Mobile View: Compact, Touch-friendly & Click-to-Expand */}
+            <div className="block md:hidden p-3 space-y-2.5">
+              {applications.length === 0 ? (
+                <div className="text-center py-8 text-slate-400 text-xs">
+                  Chưa có lượt ứng tuyển nào.
+                </div>
+              ) : (
+                applications.map(app => {
+                  const isExpanded = expandedApplicationId === app.id;
+                  const statusColors = {
+                    applied: 'bg-amber-100 text-amber-800 border-amber-300',
+                    reviewing: 'bg-sky-100 text-sky-800 border-sky-300',
+                    interview_scheduled: 'bg-purple-100 text-purple-800 border-purple-300',
+                    accepted: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                    rejected: 'bg-rose-100 text-rose-800 border-rose-300'
+                  };
+                  const statusLabels = {
+                    applied: '🟡 Đã Nộp',
+                    reviewing: '📞 Đã Liên Hệ',
+                    interview_scheduled: '📅 Hẹn Phỏng Vấn',
+                    accepted: '🟢 Đã Nhận Việc',
+                    rejected: '🔴 Từ Chối'
+                  };
+
+                  return (
+                    <div
+                      key={app.id}
+                      className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-sky-500/40 cursor-pointer"
+                      onClick={() => setExpandedApplicationId(isExpanded ? null : app.id)}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="font-black text-slate-900 dark:text-white text-xs truncate">
+                            {app.candidateName}
+                          </div>
+                          <div className="text-[11px] text-sky-600 dark:text-sky-400 font-bold truncate">
+                            {app.jobTitle}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border ${statusColors[app.status as keyof typeof statusColors] || 'bg-slate-100 text-slate-600'}`}>
+                            {statusLabels[app.status as keyof typeof statusLabels] || app.status}
+                          </span>
+                          <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                            ▼
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Quick summary row */}
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                        <span className="truncate max-w-[170px]">
+                          🏢 {app.companyName}
+                        </span>
+                        <span className="font-mono text-[10px] text-slate-400">
+                          {app.createdAt ? app.createdAt.slice(0, 10) : ''}
+                        </span>
+                      </div>
+
+                      {/* Expanded Details */}
+                      {isExpanded && (
+                        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
+                          <div className="grid grid-cols-2 gap-2 text-[11px]">
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Hotline Ứng Viên:</span>
+                              <a
+                                href={`tel:${app.candidatePhone}`}
+                                onClick={e => e.stopPropagation()}
+                                className="font-mono text-emerald-600 font-bold hover:underline"
+                              >
+                                📞 {app.candidatePhone}
+                              </a>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Email:</span>
+                              <span className="font-mono text-slate-700 dark:text-slate-300 truncate block">
+                                {app.candidateEmail || 'Chưa cập nhật'}
+                              </span>
+                            </div>
+                            {app.expectedSalary && (
+                              <div className="col-span-2">
+                                <span className="text-slate-400 block text-[10px]">Lương mong muốn:</span>
+                                <span className="font-bold text-emerald-600">
+                                  💰 {app.expectedSalary}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {app.message && (
+                            <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Lời nhắn ứng tuyển:</span>
+                              <p className="text-[11px] text-slate-700 dark:text-slate-300 italic">
+                                "{app.message}"
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Quick Actions & Status Changer */}
+                          <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <button
+                                onClick={() => handleUpdateApplicationStatus(app.id, 'accepted')}
+                                className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-[10px] font-black"
+                              >
+                                ✓ Nhận Việc
+                              </button>
+                              <button
+                                onClick={() => handleUpdateApplicationStatus(app.id, 'interview_scheduled')}
+                                className="px-2.5 py-1 bg-purple-600 text-white rounded-lg text-[10px] font-black"
+                              >
+                                📅 Hẹn PV
+                              </button>
+                              <button
+                                onClick={() => handleUpdateApplicationStatus(app.id, 'reviewing')}
+                                className="px-2.5 py-1 bg-sky-100 text-sky-800 rounded-lg text-[10px] font-black"
+                              >
+                                📞 Đã Liên Hệ
+                              </button>
+                              <button
+                                onClick={() => handleUpdateApplicationStatus(app.id, 'rejected')}
+                                className="px-2.5 py-1 bg-rose-100 text-rose-700 rounded-lg text-[10px] font-black"
+                              >
+                                ✕ Từ Chối
+                              </button>
+                              <button
+                                onClick={() => handleDeleteApplication(app.id)}
+                                className="p-1 bg-rose-50 text-rose-600 rounded-lg ml-auto"
+                                title="Xóa"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[880px]">
                 <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                   <tr>
-                    <th className="p-3.5">Ứng Viên Nộp Hồ Sơ</th>
-                    <th className="p-3.5">Vị Trí / Tin Tuyển Dụng</th>
-                    <th className="p-3.5">Lời Nhắn / Kinh Nghiệm</th>
-                    <th className="p-3.5">Thời Gian Nộp</th>
-                    <th className="p-3.5 text-center">Trạng Thái & Duyệt Nhanh</th>
-                    <th className="p-3.5 text-right">Thao Tác</th>
+                    <th className="p-3.5 w-10 text-center">#</th>
+                    <th className="p-3.5 whitespace-nowrap">Ứng Viên Nộp Hồ Sơ</th>
+                    <th className="p-3.5 whitespace-nowrap">Vị Trí / Tin Tuyển Dụng</th>
+                    <th className="p-3.5 whitespace-nowrap">Lời Nhắn / Kinh Nghiệm</th>
+                    <th className="p-3.5 whitespace-nowrap">Thời Gian Nộp</th>
+                    <th className="p-3.5 text-center whitespace-nowrap">Trạng Thái & Duyệt Nhanh</th>
+                    <th className="p-3.5 text-right whitespace-nowrap">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {applications.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="text-center py-12 text-slate-400">
+                      <td colSpan={7} className="text-center py-12 text-slate-400">
                         Chưa có lượt ứng tuyển nào.
                       </td>
                     </tr>
                   ) : (
-                    applications.map(app => (
-                      <tr key={app.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                        <td className="p-3.5">
-                          <div className="font-black text-slate-900 dark:text-white text-sm">
-                            {app.candidateName}
-                          </div>
-                          <div className="font-mono text-teal-600 dark:text-teal-400 font-bold mt-0.5">
-                            📞 {app.candidatePhone} • {app.candidateEmail || 'Chưa cập nhật email'}
-                          </div>
-                        </td>
-
-                        <td className="p-3.5">
-                          <div className="font-extrabold text-slate-800 dark:text-slate-200">
-                            {app.jobTitle}
-                          </div>
-                          <div className="text-[11px] text-slate-400 mt-0.5">
-                            Đơn vị: {app.companyName}
-                          </div>
-                        </td>
-
-                        <td className="p-3.5">
-                          <div className="text-slate-600 dark:text-slate-300 italic max-w-xs line-clamp-2">
-                            "{app.message || 'Xin chào, tôi rất quan tâm đến công việc này và mong muốn ứng tuyển!'}"
-                          </div>
-                          {app.expectedSalary && (
-                            <div className="text-[10px] text-emerald-600 font-bold mt-0.5">
-                              Lương mong muốn: {app.expectedSalary}
-                            </div>
-                          )}
-                        </td>
-
-                        <td className="p-3.5 text-slate-400 font-mono text-[11px]">
-                          {app.createdAt}
-                        </td>
-
-                        <td className="p-3.5 text-center">
-                          <div className="space-y-1.5">
-                            <select
-                              value={app.status}
-                              onChange={e => handleUpdateApplicationStatus(app.id, e.target.value)}
-                              className={`w-full px-2.5 py-1 rounded-xl text-[10px] font-black border cursor-pointer ${
-                                app.status === 'applied'
-                                  ? 'bg-amber-50 text-amber-700 border-amber-300'
-                                  : app.status === 'reviewing'
-                                  ? 'bg-sky-50 text-sky-700 border-sky-300'
-                                  : app.status === 'interview_scheduled'
-                                  ? 'bg-purple-50 text-purple-700 border-purple-300'
-                                  : app.status === 'accepted'
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                                  : 'bg-rose-50 text-rose-700 border-rose-300'
-                              }`}
-                            >
-                              <option value="applied">🟡 Đã Nộp (Mới)</option>
-                              <option value="reviewing">📞 Đã Liên Hệ</option>
-                              <option value="interview_scheduled">📅 Đã Hẹn Phỏng Vấn</option>
-                              <option value="accepted">🟢 Nhận Việc (Thành Công)</option>
-                              <option value="rejected">🔴 Từ Chối</option>
-                            </select>
-
-                            {/* 3 Nút Duyệt Nhanh Chuẩn Theo Yêu Cầu */}
-                            <div className="flex items-center justify-center gap-1">
-                              <button
-                                onClick={() => handleUpdateApplicationStatus(app.id, 'accepted')}
-                                className={`px-2 py-0.5 rounded text-[9px] font-bold transition cursor-pointer ${
-                                  app.status === 'accepted' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                                }`}
-                                title="Nhận việc"
-                              >
-                                ✓ Nhận
-                              </button>
-                              <button
-                                onClick={() => handleUpdateApplicationStatus(app.id, 'interview_scheduled')}
-                                className={`px-2 py-0.5 rounded text-[9px] font-bold transition cursor-pointer ${
-                                  app.status === 'interview_scheduled' ? 'bg-purple-600 text-white' : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
-                                }`}
-                                title="Hẹn phỏng vấn"
-                              >
-                                📅 PV
-                              </button>
-                              <button
-                                onClick={() => handleUpdateApplicationStatus(app.id, 'rejected')}
-                                className={`px-2 py-0.5 rounded text-[9px] font-bold transition cursor-pointer ${
-                                  app.status === 'rejected' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'
-                                }`}
-                                title="Từ chối"
-                              >
-                                ✕ Loại
-                              </button>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td className="p-3.5 text-right">
-                          <button
-                            onClick={() => handleDeleteApplication(app.id)}
-                            className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
-                            title="Xóa lượt nộp"
+                    applications.map(app => {
+                      const isExpanded = expandedApplicationId === app.id;
+                      return (
+                        <React.Fragment key={app.id}>
+                          <tr 
+                            onClick={() => setExpandedApplicationId(isExpanded ? null : app.id)}
+                            className={`hover:bg-sky-50/40 dark:hover:bg-slate-800/60 transition cursor-pointer select-none ${
+                              isExpanded ? 'bg-sky-50/60 dark:bg-slate-800/80 font-medium' : ''
+                            }`}
                           >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))
+                            <td className="p-3.5 text-center text-slate-400 font-bold text-[11px]">
+                              <span className={`inline-block transition-transform duration-200 text-sky-600 ${isExpanded ? 'rotate-90' : ''}`}>
+                                ▶
+                              </span>
+                            </td>
+
+                            <td className="p-3.5">
+                              <div className="font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
+                                {app.candidateName}
+                              </div>
+                              <div className="font-mono text-teal-600 dark:text-teal-400 font-bold mt-0.5 whitespace-nowrap">
+                                📞 {app.candidatePhone} • {app.candidateEmail || 'Chưa có email'}
+                              </div>
+                            </td>
+
+                            <td className="p-3.5">
+                              <div className="font-extrabold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                                {app.jobTitle}
+                              </div>
+                              <div className="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">
+                                Đơn vị: {app.companyName}
+                              </div>
+                            </td>
+
+                            <td className="p-3.5">
+                              <div className="text-slate-600 dark:text-slate-300 italic max-w-xs line-clamp-2">
+                                "{app.message || 'Xin chào, tôi rất quan tâm đến công việc này và mong muốn ứng tuyển!'}"
+                              </div>
+                              {app.expectedSalary && (
+                                <div className="text-[10px] text-emerald-600 font-bold mt-0.5">
+                                  Lương: {app.expectedSalary}
+                                </div>
+                              )}
+                            </td>
+
+                            <td className="p-3.5 text-slate-400 font-mono text-[11px] whitespace-nowrap">
+                              {app.createdAt}
+                            </td>
+
+                            <td className="p-3.5 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                              <div className="space-y-1.5">
+                                <select
+                                  value={app.status}
+                                  onChange={e => handleUpdateApplicationStatus(app.id, e.target.value)}
+                                  className={`w-full px-2.5 py-1 rounded-xl text-[10px] font-black border cursor-pointer ${
+                                    app.status === 'applied'
+                                      ? 'bg-amber-50 text-amber-700 border-amber-300'
+                                      : app.status === 'reviewing'
+                                      ? 'bg-sky-50 text-sky-700 border-sky-300'
+                                      : app.status === 'interview_scheduled'
+                                      ? 'bg-purple-50 text-purple-700 border-purple-300'
+                                      : app.status === 'accepted'
+                                      ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                      : 'bg-rose-50 text-rose-700 border-rose-300'
+                                  }`}
+                                >
+                                  <option value="applied">🟡 Đã Nộp (Mới)</option>
+                                  <option value="reviewing">📞 Đã Liên Hệ</option>
+                                  <option value="interview_scheduled">📅 Đã Hẹn Phỏng Vấn</option>
+                                  <option value="accepted">🟢 Nhận Việc (Thành Công)</option>
+                                  <option value="rejected">🔴 Từ Chối</option>
+                                </select>
+
+                                <div className="flex items-center justify-center gap-1">
+                                  <button
+                                    onClick={() => handleUpdateApplicationStatus(app.id, 'accepted')}
+                                    className={`px-2 py-0.5 rounded text-[9px] font-bold transition cursor-pointer ${
+                                      app.status === 'accepted' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                    }`}
+                                    title="Nhận việc"
+                                  >
+                                    ✓ Nhận
+                                  </button>
+                                  <button
+                                    onClick={() => handleUpdateApplicationStatus(app.id, 'interview_scheduled')}
+                                    className={`px-2 py-0.5 rounded text-[9px] font-bold transition cursor-pointer ${
+                                      app.status === 'interview_scheduled' ? 'bg-purple-600 text-white' : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
+                                    }`}
+                                    title="Hẹn phỏng vấn"
+                                  >
+                                    📅 PV
+                                  </button>
+                                  <button
+                                    onClick={() => handleUpdateApplicationStatus(app.id, 'rejected')}
+                                    className={`px-2 py-0.5 rounded text-[9px] font-bold transition cursor-pointer ${
+                                      app.status === 'rejected' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'
+                                    }`}
+                                    title="Từ chối"
+                                  >
+                                    ✕ Loại
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+
+                            <td className="p-3.5 text-right whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                              <button
+                                onClick={() => handleDeleteApplication(app.id)}
+                                className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition"
+                                title="Xóa lượt nộp"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+
+                          {/* Expanded Sub-row for Applications */}
+                          {isExpanded && (
+                            <tr className="bg-sky-50/40 dark:bg-slate-800/70 border-b-2 border-sky-500/30">
+                              <td colSpan={7} className="p-4.5">
+                                <div className="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-sky-200 dark:border-sky-900/50 shadow-inner">
+                                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                                    <div className="font-black text-sky-800 dark:text-sky-300 text-sm flex items-center gap-2">
+                                      <Sparkles className="w-4 h-4 text-sky-500" />
+                                      <span>CHI TIẾT ĐƠN ỨNG TUYỂN & DUYỆT HỒ SƠ</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <a
+                                        href={`tel:${app.candidatePhone}`}
+                                        className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                      >
+                                        <Phone className="w-3.5 h-3.5" />
+                                        <span>Gọi Ứng Viên: {app.candidatePhone}</span>
+                                      </a>
+                                      <button
+                                        onClick={() => handleDeleteApplication(app.id)}
+                                        className="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                        <span>Xóa Hồ Sơ Này</span>
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                    <div className="space-y-1">
+                                      <span className="font-bold text-slate-400 text-[10px] uppercase block">Ứng viên:</span>
+                                      <div className="font-black text-slate-800 dark:text-slate-200 text-sm">{app.candidateName}</div>
+                                      <div className="font-mono text-emerald-600 font-bold">📞 {app.candidatePhone}</div>
+                                      <div className="font-mono text-slate-500">✉️ {app.candidateEmail || 'Chưa cập nhật'}</div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                      <span className="font-bold text-slate-400 text-[10px] uppercase block">Công việc ứng tuyển:</span>
+                                      <div className="font-black text-sky-700 dark:text-sky-400 text-sm">{app.jobTitle}</div>
+                                      <div className="text-slate-600 dark:text-slate-400">Doanh nghiệp: {app.companyName}</div>
+                                      {app.expectedSalary && (
+                                        <div className="font-bold text-emerald-600">Lương kỳ vọng: {app.expectedSalary}</div>
+                                      )}
+                                    </div>
+
+                                    <div className="space-y-1">
+                                      <span className="font-bold text-slate-400 text-[10px] uppercase block">Trạng thái xử lý:</span>
+                                      <div className="font-bold text-slate-800 dark:text-slate-200">
+                                        Thời gian gửi: {app.createdAt}
+                                      </div>
+                                      <div className="text-slate-500">
+                                        ID đơn ứng tuyển: <span className="font-mono">{app.id}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {app.message && (
+                                    <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                                      <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Thư ngỏ / Lời nhắn từ ứng viên:</span>
+                                      <p className="text-slate-600 dark:text-slate-300 leading-relaxed italic">
+                                        "{app.message}"
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
@@ -1883,7 +2606,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
       {/* SECTION 4: NHẬT KÝ MỞ KHÓA CV & THU PHÍ (UNLOCK LOGS) */}
       {/* ========================================================================= */}
       {activeSection === 'unlocks' && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm space-y-3">
           <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
               <Unlock className="w-4 h-4 text-amber-500" />
@@ -1891,71 +2614,193 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
             </span>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          {/* Mobile View: Compact & Expandable */}
+          <div className="block md:hidden p-3 space-y-2.5">
+            {unlocks.length === 0 ? (
+              <div className="text-center py-8 text-slate-400 text-xs">
+                Chưa có giao dịch mở khóa CV nào được ghi nhận.
+              </div>
+            ) : (
+              unlocks.map(log => {
+                const isExpanded = expandedUnlockId === log.id;
+                return (
+                  <div
+                    key={log.id}
+                    className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-amber-500/40 cursor-pointer"
+                    onClick={() => setExpandedUnlockId(isExpanded ? null : log.id)}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="font-black text-slate-900 dark:text-white text-xs truncate">
+                          {log.recruiterName}
+                        </div>
+                        <div className="text-[11px] text-teal-600 dark:text-teal-400 font-bold truncate">
+                          Mở khóa CV: {log.candidateName}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-black rounded-full text-[9px] border border-emerald-300">
+                          ✓ Thành công
+                        </span>
+                        <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                          ▼
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                      <span className="font-black text-amber-600 dark:text-amber-400">
+                        🪙 {log.amountVnd.toLocaleString('vi-VN')} Token
+                      </span>
+                      <span className="font-mono text-[10px] text-slate-400">
+                        {log.createdAt ? log.createdAt.slice(0, 10) : ''}
+                      </span>
+                    </div>
+
+                    {isExpanded && (
+                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2 text-xs">
+                        <div className="grid grid-cols-2 gap-2 text-[11px]">
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Mã Giao Dịch:</span>
+                            <span className="font-mono text-slate-700 dark:text-slate-300">{log.id}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Phương thức:</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200 uppercase text-[10px]">
+                              {log.paymentMethod === 'vietqr' ? 'Ví Token VietQR' : 'Ví Token Cư Dân'}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Hotline Nhà Tuyển Dụng:</span>
+                            <span className="font-mono font-bold text-emerald-600">{log.recruiterPhone || 'Tài khoản cư dân'}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Mã Ứng Viên:</span>
+                            <span className="font-mono text-slate-600">{log.candidateId}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left text-xs min-w-[880px]">
               <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="p-3.5">Mã Giao Dịch</th>
-                  <th className="p-3.5">Nhà Tuyển Dụng Mua CV</th>
-                  <th className="p-3.5">Ứng Viên Được Mở Khóa</th>
-                  <th className="p-3.5">Số Tiền & Phương Thức</th>
-                  <th className="p-3.5">Thời Gian</th>
-                  <th className="p-3.5 text-center">Trạng Thái</th>
+                  <th className="p-3.5 w-10 text-center">#</th>
+                  <th className="p-3.5 whitespace-nowrap">Mã Giao Dịch</th>
+                  <th className="p-3.5 whitespace-nowrap">Nhà Tuyển Dụng Mua CV</th>
+                  <th className="p-3.5 whitespace-nowrap">Ứng Viên Được Mở Khóa</th>
+                  <th className="p-3.5 whitespace-nowrap">Số Tiền & Phương Thức</th>
+                  <th className="p-3.5 whitespace-nowrap">Thời Gian</th>
+                  <th className="p-3.5 text-center whitespace-nowrap">Trạng Thái</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {unlocks.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-400">
+                    <td colSpan={7} className="text-center py-12 text-slate-400">
                       Chưa có giao dịch mở khóa CV nào được ghi nhận.
                     </td>
                   </tr>
                 ) : (
-                  unlocks.map(log => (
-                    <tr key={log.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                      <td className="p-3.5 font-mono text-[11px] text-slate-400">
-                        {log.id}
-                      </td>
+                  unlocks.map(log => {
+                    const isExpanded = expandedUnlockId === log.id;
+                    return (
+                      <React.Fragment key={log.id}>
+                        <tr 
+                          onClick={() => setExpandedUnlockId(isExpanded ? null : log.id)}
+                          className={`hover:bg-amber-50/40 dark:hover:bg-slate-800/60 transition cursor-pointer select-none ${
+                            isExpanded ? 'bg-amber-50/60 dark:bg-slate-800/80 font-medium' : ''
+                          }`}
+                        >
+                          <td className="p-3.5 text-center text-slate-400 font-bold text-[11px]">
+                            <span className={`inline-block transition-transform duration-200 text-amber-600 ${isExpanded ? 'rotate-90' : ''}`}>
+                              ▶
+                            </span>
+                          </td>
 
-                      <td className="p-3.5">
-                        <div className="font-bold text-slate-900 dark:text-white">
-                          {log.recruiterName}
-                        </div>
-                        <div className="font-mono text-[11px] text-teal-600">
-                          {log.recruiterPhone || 'Tài khoản cư dân'}
-                        </div>
-                      </td>
+                          <td className="p-3.5 font-mono text-[11px] text-slate-400 whitespace-nowrap">
+                            {log.id}
+                          </td>
 
-                      <td className="p-3.5">
-                        <div className="font-extrabold text-slate-900 dark:text-white">
-                          {log.candidateName}
-                        </div>
-                        <div className="text-[11px] text-slate-400 font-mono">
-                          ID: {log.candidateId}
-                        </div>
-                      </td>
+                          <td className="p-3.5">
+                            <div className="font-bold text-slate-900 dark:text-white whitespace-nowrap">
+                              {log.recruiterName}
+                            </div>
+                            <div className="font-mono text-[11px] text-teal-600 whitespace-nowrap">
+                              {log.recruiterPhone || 'Tài khoản cư dân'}
+                            </div>
+                          </td>
 
-                      <td className="p-3.5">
-                        <div className="font-black text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                          <span>🪙 {log.amountVnd.toLocaleString('vi-VN')}</span>
-                          <span className="text-[10px] text-slate-400 font-bold">Token</span>
-                        </div>
-                        <div className="text-[10px] text-slate-400 uppercase font-bold mt-0.5">
-                          {log.paymentMethod === 'vietqr' ? 'Ví Token VietQR' : 'Ví Token Cư Dân'}
-                        </div>
-                      </td>
+                          <td className="p-3.5">
+                            <div className="font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
+                              {log.candidateName}
+                            </div>
+                            <div className="text-[11px] text-slate-400 font-mono whitespace-nowrap">
+                              ID: {log.candidateId}
+                            </div>
+                          </td>
 
-                      <td className="p-3.5 text-slate-400 font-mono text-[11px]">
-                        {log.createdAt}
-                      </td>
+                          <td className="p-3.5 whitespace-nowrap">
+                            <div className="font-black text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                              <span>🪙 {log.amountVnd.toLocaleString('vi-VN')}</span>
+                              <span className="text-[10px] text-slate-400 font-bold">Token</span>
+                            </div>
+                            <div className="text-[10px] text-slate-400 uppercase font-bold mt-0.5">
+                              {log.paymentMethod === 'vietqr' ? 'Ví Token VietQR' : 'Ví Token Cư Dân'}
+                            </div>
+                          </td>
 
-                      <td className="p-3.5 text-center">
-                        <span className="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-black rounded-full border border-emerald-300 text-[10px]">
-                          ✓ Thành Công
-                        </span>
-                      </td>
-                    </tr>
-                  ))
+                          <td className="p-3.5 text-slate-400 font-mono text-[11px] whitespace-nowrap">
+                            {log.createdAt}
+                          </td>
+
+                          <td className="p-3.5 text-center whitespace-nowrap">
+                            <span className="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-black rounded-full border border-emerald-300 text-[10px]">
+                              ✓ Thành Công
+                            </span>
+                          </td>
+                        </tr>
+
+                        {isExpanded && (
+                          <tr className="bg-amber-50/40 dark:bg-slate-800/70 border-b-2 border-amber-500/30">
+                            <td colSpan={7} className="p-4.5">
+                              <div className="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-amber-200 dark:border-amber-900/50 shadow-inner">
+                                <div className="font-black text-amber-800 dark:text-amber-300 text-sm flex items-center gap-2">
+                                  <Sparkles className="w-4 h-4 text-amber-500" />
+                                  <span>CHI TIẾT LỊCH SỬ GIAO DỊCH MỞ KHÓA CV</span>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                  <div>
+                                    <span className="text-slate-400 font-bold block text-[10px] uppercase">Nhà tuyển dụng:</span>
+                                    <div className="font-bold text-slate-800 dark:text-slate-200">{log.recruiterName}</div>
+                                    <div className="font-mono text-teal-600 font-bold">📞 {log.recruiterPhone || 'Tài khoản cư dân'}</div>
+                                  </div>
+                                  <div>
+                                    <span className="text-slate-400 font-bold block text-[10px] uppercase">Ứng viên đã mở:</span>
+                                    <div className="font-black text-slate-800 dark:text-slate-200">{log.candidateName}</div>
+                                    <div className="font-mono text-slate-500">Mã hồ sơ: {log.candidateId}</div>
+                                  </div>
+                                  <div>
+                                    <span className="text-slate-400 font-bold block text-[10px] uppercase">Giao dịch ví:</span>
+                                    <div className="font-black text-amber-600">🪙 {log.amountVnd.toLocaleString('vi-VN')} Token</div>
+                                    <div className="text-slate-400 font-mono text-[11px]">Thời gian: {log.createdAt}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -1989,123 +2834,278 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-black uppercase text-[10px] tracking-wider">
-                  <th className="p-3.5">Doanh Nghiệp / Chủ Shop</th>
-                  <th className="p-3.5">Gói Đăng Ký</th>
-                  <th className="p-3.5">Giá Trị Token</th>
-                  <th className="p-3.5">Khu Đô Thị</th>
-                  <th className="p-3.5">Liên Hệ / Mã Số Thuế</th>
-                  <th className="p-3.5">Thời Gian</th>
-                  <th className="p-3.5 text-center">Trạng Thái</th>
-                  <th className="p-3.5 text-center">Hành Động Admin</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {registrations.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="text-center py-12 text-slate-400">
-                      Chưa có yêu cầu đăng ký gói tuyển dụng nào.
-                    </td>
-                  </tr>
-                ) : (
-                  registrations.map(reg => (
-                    <tr key={reg.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                      <td className="p-3.5">
-                        <div className="font-black text-slate-900 dark:text-white text-xs">
-                          {reg.companyName}
-                        </div>
-                        {reg.brandName && (
-                          <div className="text-[11px] text-teal-600 font-bold">
-                            Thương hiệu: {reg.brandName}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden space-y-3">
+            {/* Mobile View: Compact & Expandable */}
+            <div className="block md:hidden p-3 space-y-2.5">
+              {registrations.length === 0 ? (
+                <div className="text-center py-8 text-slate-400 text-xs">
+                  Chưa có yêu cầu đăng ký gói tuyển dụng nào.
+                </div>
+              ) : (
+                registrations.map(reg => {
+                  const isExpanded = expandedRegistrationId === reg.id;
+                  return (
+                    <div
+                      key={reg.id}
+                      className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-amber-500/40 cursor-pointer"
+                      onClick={() => setExpandedRegistrationId(isExpanded ? null : reg.id)}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="font-black text-slate-900 dark:text-white text-xs truncate">
+                            {reg.companyName}
                           </div>
-                        )}
-                        <div className="text-[10px] text-slate-400">
-                          Ngành nghề: {reg.industry}
+                          <div className="text-[11px] text-amber-600 dark:text-amber-400 font-bold truncate">
+                            {reg.selectedPackageName}
+                          </div>
                         </div>
-                      </td>
 
-                      <td className="p-3.5">
-                        <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-black rounded-lg border border-amber-300 text-[11px]">
-                          {reg.selectedPackageName}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {reg.status === 'approved' ? (
+                            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-black rounded-full text-[9px]">
+                              ✓ Đã Duyệt
+                            </span>
+                          ) : reg.status === 'rejected' ? (
+                            <span className="px-2 py-0.5 bg-rose-100 text-rose-800 font-black rounded-full text-[9px]">
+                              ✕ Từ Chối
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 bg-amber-100 text-amber-800 font-black rounded-full text-[9px] animate-pulse">
+                              ⏳ Chờ Duyệt
+                            </span>
+                          )}
+                          <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                            ▼
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                          🪙 {(reg.tokenCost || 0).toLocaleString('vi-VN')} Token
                         </span>
-                      </td>
+                        <span className="font-mono text-[10px] text-slate-400">
+                          {reg.createdAt ? reg.createdAt.slice(0, 10) : ''}
+                        </span>
+                      </div>
 
-                      <td className="p-3.5">
-                        <div className="font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1 text-sm">
-                          <span>🪙 {(reg.tokenCost || 0).toLocaleString('vi-VN')}</span>
-                          <span className="text-[10px] text-slate-400 font-bold">Token</span>
-                        </div>
-                      </td>
-
-                      <td className="p-3.5 text-slate-600 dark:text-slate-300 font-medium">
-                        {reg.project}
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-mono font-bold text-slate-900 dark:text-white">
-                          📞 {reg.contactPhone}
-                        </div>
-                        <div className="text-[11px] text-slate-500">
-                          {reg.contactName}
-                        </div>
-                        {reg.taxCode && (
-                          <div className="text-[10px] font-mono text-slate-400">
-                            MST: {reg.taxCode}
+                      {isExpanded && (
+                        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
+                          <div className="grid grid-cols-2 gap-2 text-[11px]">
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Người Liên Hệ:</span>
+                              <span className="font-bold text-slate-800 dark:text-slate-200">{reg.contactName}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Hotline / Zalo:</span>
+                              <a href={`tel:${reg.contactPhone}`} onClick={e => e.stopPropagation()} className="font-mono text-emerald-600 font-bold hover:underline">
+                                📞 {reg.contactPhone}
+                              </a>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Khu Đô Thị:</span>
+                              <span className="text-slate-800 dark:text-slate-200">{reg.project}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Mã Số Thuế:</span>
+                              <span className="font-mono text-slate-700 dark:text-slate-300">{reg.taxCode || 'N/A'}</span>
+                            </div>
                           </div>
-                        )}
-                      </td>
 
-                      <td className="p-3.5 text-slate-400 font-mono text-[11px]">
-                        {reg.createdAt}
-                      </td>
+                          {reg.status === 'pending' && (
+                            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2" onClick={e => e.stopPropagation()}>
+                              <button
+                                onClick={() => handleApproveRegistration(reg)}
+                                className="flex-1 py-1.5 bg-emerald-600 text-white rounded-lg text-[10px] font-black flex items-center justify-center gap-1"
+                              >
+                                <Coins className="w-3.5 h-3.5" />
+                                <span>Duyệt & Bơm Token</span>
+                              </button>
+                              <button
+                                onClick={() => handleRejectRegistration(reg.id)}
+                                className="px-3 py-1.5 bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold"
+                              >
+                                Từ Chối
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
 
-                      <td className="p-3.5 text-center">
-                        {reg.status === 'approved' ? (
-                          <span className="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-black rounded-full border border-emerald-300 text-[10px]">
-                            ✓ Đã Duyệt & Bơm Ví
-                          </span>
-                        ) : reg.status === 'rejected' ? (
-                          <span className="px-2.5 py-1 bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 font-black rounded-full border border-rose-300 text-[10px]">
-                            ✕ Từ Chối
-                          </span>
-                        ) : (
-                          <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 font-black rounded-full border border-amber-300 text-[10px] animate-pulse">
-                            ⏳ Chờ Admin Duyệt
-                          </span>
-                        )}
-                      </td>
-
-                      <td className="p-3.5 text-center">
-                        {reg.status === 'pending' ? (
-                          <div className="flex items-center justify-center gap-1.5">
-                            <button
-                              onClick={() => handleApproveRegistration(reg)}
-                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer"
-                              title="Duyệt và Bơm Token trực tiếp"
-                            >
-                              <Coins className="w-3.5 h-3.5" />
-                              <span>Duyệt & Bơm Token</span>
-                            </button>
-                            <button
-                              onClick={() => handleRejectRegistration(reg.id)}
-                              className="p-1.5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-600 rounded-lg transition cursor-pointer"
-                              title="Từ chối"
-                            >
-                              <XCircle className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="text-[11px] text-slate-400 font-mono">Hoàn tất</span>
-                        )}
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse min-w-[880px]">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-black uppercase text-[10px] tracking-wider">
+                    <th className="p-3.5 w-10 text-center">#</th>
+                    <th className="p-3.5 whitespace-nowrap">Doanh Nghiệp / Chủ Shop</th>
+                    <th className="p-3.5 whitespace-nowrap">Gói Đăng Ký</th>
+                    <th className="p-3.5 whitespace-nowrap">Giá Trị Token</th>
+                    <th className="p-3.5 whitespace-nowrap">Khu Đô Thị</th>
+                    <th className="p-3.5 whitespace-nowrap">Liên Hệ / Mã Số Thuế</th>
+                    <th className="p-3.5 whitespace-nowrap">Thời Gian</th>
+                    <th className="p-3.5 text-center whitespace-nowrap">Trạng Thái</th>
+                    <th className="p-3.5 text-center whitespace-nowrap">Hành Động Admin</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {registrations.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="text-center py-12 text-slate-400">
+                        Chưa có yêu cầu đăng ký gói tuyển dụng nào.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    registrations.map(reg => {
+                      const isExpanded = expandedRegistrationId === reg.id;
+                      return (
+                        <React.Fragment key={reg.id}>
+                          <tr 
+                            onClick={() => setExpandedRegistrationId(isExpanded ? null : reg.id)}
+                            className={`hover:bg-amber-50/40 dark:hover:bg-slate-800/60 transition cursor-pointer select-none ${
+                              isExpanded ? 'bg-amber-50/60 dark:bg-slate-800/80 font-medium' : ''
+                            }`}
+                          >
+                            <td className="p-3.5 text-center text-slate-400 font-bold text-[11px]">
+                              <span className={`inline-block transition-transform duration-200 text-amber-600 ${isExpanded ? 'rotate-90' : ''}`}>
+                                ▶
+                              </span>
+                            </td>
+
+                            <td className="p-3.5">
+                              <div className="font-black text-slate-900 dark:text-white text-xs whitespace-nowrap">
+                                {reg.companyName}
+                              </div>
+                              {reg.brandName && (
+                                <div className="text-[11px] text-teal-600 font-bold whitespace-nowrap">
+                                  Thương hiệu: {reg.brandName}
+                                </div>
+                              )}
+                              <div className="text-[10px] text-slate-400 whitespace-nowrap">
+                                Ngành nghề: {reg.industry}
+                              </div>
+                            </td>
+
+                            <td className="p-3.5 whitespace-nowrap">
+                              <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-black rounded-lg border border-amber-300 text-[11px]">
+                                {reg.selectedPackageName}
+                              </span>
+                            </td>
+
+                            <td className="p-3.5 whitespace-nowrap">
+                              <div className="font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1 text-sm">
+                                <span>🪙 {(reg.tokenCost || 0).toLocaleString('vi-VN')}</span>
+                                <span className="text-[10px] text-slate-400 font-bold">Token</span>
+                              </div>
+                            </td>
+
+                            <td className="p-3.5 text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                              {reg.project}
+                            </td>
+
+                            <td className="p-3.5">
+                              <div className="font-mono font-bold text-slate-900 dark:text-white whitespace-nowrap">
+                                📞 {reg.contactPhone}
+                              </div>
+                              <div className="text-[11px] text-slate-500 whitespace-nowrap">
+                                {reg.contactName}
+                              </div>
+                              {reg.taxCode && (
+                                <div className="text-[10px] font-mono text-slate-400 whitespace-nowrap">
+                                  MST: {reg.taxCode}
+                                </div>
+                              )}
+                            </td>
+
+                            <td className="p-3.5 text-slate-400 font-mono text-[11px] whitespace-nowrap">
+                              {reg.createdAt}
+                            </td>
+
+                            <td className="p-3.5 text-center whitespace-nowrap">
+                              {reg.status === 'approved' ? (
+                                <span className="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-black rounded-full border border-emerald-300 text-[10px]">
+                                  ✓ Đã Duyệt & Bơm Ví
+                                </span>
+                              ) : reg.status === 'rejected' ? (
+                                <span className="px-2.5 py-1 bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 font-black rounded-full border border-rose-300 text-[10px]">
+                                  ✕ Từ Chối
+                                </span>
+                              ) : (
+                                <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 font-black rounded-full border border-amber-300 text-[10px] animate-pulse">
+                                  ⏳ Chờ Admin Duyệt
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="p-3.5 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                              {reg.status === 'pending' ? (
+                                <div className="flex items-center justify-center gap-1.5">
+                                  <button
+                                    onClick={() => handleApproveRegistration(reg)}
+                                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer"
+                                    title="Duyệt và Bơm Token trực tiếp"
+                                  >
+                                    <Coins className="w-3.5 h-3.5" />
+                                    <span>Duyệt & Bơm Token</span>
+                                  </button>
+                                  <button
+                                    onClick={() => handleRejectRegistration(reg.id)}
+                                    className="p-1.5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-600 rounded-lg transition cursor-pointer"
+                                    title="Từ chối"
+                                  >
+                                    <XCircle className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-[11px] text-slate-400 font-mono">Hoàn tất</span>
+                              )}
+                            </td>
+                          </tr>
+
+                          {isExpanded && (
+                            <tr className="bg-amber-50/40 dark:bg-slate-800/70 border-b-2 border-amber-500/30">
+                              <td colSpan={9} className="p-4.5">
+                                <div className="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-amber-200 dark:border-amber-900/50 shadow-inner">
+                                  <div className="font-black text-amber-800 dark:text-amber-300 text-sm flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-amber-500" />
+                                    <span>CHI TIẾT ĐĂNG KÝ GÓI & THAO TÁC DUYỆT B2B</span>
+                                  </div>
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                    <div>
+                                      <span className="text-slate-400 font-bold block text-[10px] uppercase">Doanh nghiệp:</span>
+                                      <div className="font-black text-slate-800 dark:text-slate-200">{reg.companyName}</div>
+                                      <div className="text-teal-600 font-bold">Thương hiệu: {reg.brandName || reg.companyName}</div>
+                                      <div className="text-slate-500">Ngành: {reg.industry}</div>
+                                    </div>
+                                    <div>
+                                      <span className="text-slate-400 font-bold block text-[10px] uppercase">Gói tuyển dụng:</span>
+                                      <div className="font-black text-amber-600">{reg.selectedPackageName}</div>
+                                      <div className="font-bold text-emerald-600">🪙 {(reg.tokenCost || 0).toLocaleString('vi-VN')} Token</div>
+                                      <div className="text-slate-500">Dự án: {reg.project}</div>
+                                    </div>
+                                    <div>
+                                      <span className="text-slate-400 font-bold block text-[10px] uppercase">Liên hệ & Mã số thuế:</span>
+                                      <div className="font-bold text-slate-800 dark:text-slate-200">👤 {reg.contactName}</div>
+                                      <div className="font-mono font-bold text-emerald-600">📞 {reg.contactPhone}</div>
+                                      <div className="font-mono text-slate-400">MST: {reg.taxCode || 'Chưa cung cấp'}</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -2155,127 +3155,322 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
             </button>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-black uppercase text-[10px] tracking-wider">
-                  <th className="p-3.5">Nhiệm Vụ & Phân Loại</th>
-                  <th className="p-3.5">Đối Tượng Phụ Trách</th>
-                  <th className="p-3.5">Người Được Gán</th>
-                  <th className="p-3.5">Mức Độ Ưu Tiên</th>
-                  <th className="p-3.5">Hạn Chót</th>
-                  <th className="p-3.5 text-center">Trạng Thái</th>
-                  <th className="p-3.5 text-center">Thao Tác</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {tasks.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="text-center py-12 text-slate-400">
-                      Chưa có nhiệm vụ giao việc nào. Nhấn "+ Tạo & Giao Nhiệm Vụ Mới" để bắt đầu.
-                    </td>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden space-y-3">
+            {/* Mobile View: Compact & Expandable */}
+            <div className="block md:hidden p-3 space-y-2.5">
+              {tasks.length === 0 ? (
+                <div className="text-center py-8 text-slate-400 text-xs">
+                  Chưa có nhiệm vụ giao việc nào. Nhấn "+ Tạo & Giao Nhiệm Vụ Mới" để bắt đầu.
+                </div>
+              ) : (
+                tasks.map(task => {
+                  const isExpanded = expandedTaskId === task.id;
+                  return (
+                    <div
+                      key={task.id}
+                      className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-sky-500/40 cursor-pointer"
+                      onClick={() => setExpandedTaskId(isExpanded ? null : task.id)}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="font-black text-slate-900 dark:text-white text-xs">
+                            {task.title}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[9px] rounded">
+                              {task.category === 'recruitment' ? '💼 Tuyển Dụng' : task.category === 'bds_realestate' ? '🏠 Bất Động Sản' : task.category === 'kyc_user' ? '🛡️ Duyệt KYC' : '📦 Dịch Vụ'}
+                            </span>
+                            {task.priority === 'urgent' ? (
+                              <span className="px-2 py-0.5 bg-rose-100 text-rose-700 font-black rounded text-[9px]">
+                                🔥 KHẨN
+                              </span>
+                            ) : task.priority === 'high' ? (
+                              <span className="px-2 py-0.5 bg-amber-100 text-amber-700 font-black rounded text-[9px]">
+                                ⚡ Cao
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1 shrink-0">
+                          <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                            ▼
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
+                        <span className="text-sky-600 dark:text-sky-400 font-bold truncate">
+                          👤 {task.assignedToAdminName}
+                        </span>
+                        <span className="font-mono text-[10px] text-slate-400 shrink-0">
+                          Hạn: {task.deadline || 'Không'}
+                        </span>
+                      </div>
+
+                      {isExpanded && (
+                        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
+                          <div className="grid grid-cols-2 gap-2 text-[11px]">
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Đối tượng phụ trách:</span>
+                              <span className="font-bold text-slate-800 dark:text-slate-200">{task.targetTitle || 'Toàn phân khu'}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Khu vực / Dự án:</span>
+                              <span className="font-mono text-slate-700 dark:text-slate-300">{task.targetProject}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Giao bởi:</span>
+                              <span className="text-slate-600 dark:text-slate-400">{task.assignedByAdminName}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[10px]">Trạng thái hiện tại:</span>
+                              <span className="font-bold text-slate-800 dark:text-slate-200">
+                                {task.status === 'completed' ? '✓ Hoàn thành' : task.status === 'in_progress' ? '⚙️ Đang thực hiện' : '⏳ Chờ xử lý'}
+                              </span>
+                            </div>
+                          </div>
+
+                          {task.notes && (
+                            <div className="p-2 bg-slate-100 dark:bg-slate-800/60 rounded-xl text-[11px] text-slate-600 dark:text-slate-300 italic">
+                              📝 {task.notes}
+                            </div>
+                          )}
+
+                          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2" onClick={e => e.stopPropagation()}>
+                            <select
+                              value={task.status}
+                              onChange={e => handleUpdateTaskStatus(task, e.target.value)}
+                              className="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-[10px] font-bold"
+                            >
+                              <option value="pending">⏳ Chờ Xử Lý</option>
+                              <option value="in_progress">⚙️ Đang Làm</option>
+                              <option value="completed">✓ Hoàn Thành</option>
+                              <option value="cancelled">✕ Hủy Bỏ</option>
+                            </select>
+
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => {
+                                  setEditingTask(task);
+                                  setTaskFormData(task);
+                                  setShowTaskModal(true);
+                                }}
+                                className="px-2.5 py-1 bg-sky-50 dark:bg-sky-950/50 text-sky-600 rounded-lg text-[10px] font-bold"
+                              >
+                                Sửa
+                              </button>
+                              <button
+                                onClick={() => handleDeleteTask(task.id)}
+                                className="px-2.5 py-1 bg-rose-50 dark:bg-rose-950/50 text-rose-600 rounded-lg text-[10px] font-bold"
+                              >
+                                Xóa
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse min-w-[880px]">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-black uppercase text-[10px] tracking-wider">
+                    <th className="p-3.5 w-10 text-center">#</th>
+                    <th className="p-3.5 whitespace-nowrap">Nhiệm Vụ & Phân Loại</th>
+                    <th className="p-3.5 whitespace-nowrap">Đối Tượng Phụ Trách</th>
+                    <th className="p-3.5 whitespace-nowrap">Người Được Gán</th>
+                    <th className="p-3.5 whitespace-nowrap">Mức Độ Ưu Tiên</th>
+                    <th className="p-3.5 whitespace-nowrap">Hạn Chót</th>
+                    <th className="p-3.5 text-center whitespace-nowrap">Trạng Thái</th>
+                    <th className="p-3.5 text-center whitespace-nowrap">Thao Tác</th>
                   </tr>
-                ) : (
-                  tasks.map(task => (
-                    <tr key={task.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                      <td className="p-3.5">
-                        <div className="font-black text-slate-900 dark:text-white text-xs">
-                          {task.title}
-                        </div>
-                        <div className="flex items-center gap-1.5 mt-1">
-                          <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] rounded">
-                            {task.category === 'recruitment' ? '💼 Tuyển Dụng' : task.category === 'bds_realestate' ? '🏠 Bất Động Sản' : task.category === 'kyc_user' ? '🛡️ Duyệt KYC' : '📦 Dịch Vụ Cư Dân'}
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-mono">
-                            {task.targetProject}
-                          </span>
-                        </div>
-                        {task.notes && (
-                          <p className="text-[11px] text-slate-500 mt-1 italic line-clamp-1">
-                            Ghi chú: {task.notes}
-                          </p>
-                        )}
-                      </td>
-
-                      <td className="p-3.5 text-slate-700 dark:text-slate-300 font-medium">
-                        {task.targetTitle || 'Toàn phân khu'}
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-bold text-sky-600 dark:text-sky-400">
-                          {task.assignedToAdminName}
-                        </div>
-                        <div className="text-[10px] text-slate-400">
-                          Giao bởi: {task.assignedByAdminName}
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        {task.priority === 'urgent' ? (
-                          <span className="px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 font-black rounded text-[10px]">
-                            🔥 KHẨN CẤP
-                          </span>
-                        ) : task.priority === 'high' ? (
-                          <span className="px-2.5 py-0.5 bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-black rounded text-[10px]">
-                            ⚡ Cao
-                          </span>
-                        ) : (
-                          <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold rounded text-[10px]">
-                            Bình thường
-                          </span>
-                        )}
-                      </td>
-
-                      <td className="p-3.5 font-mono text-[11px] text-slate-500">
-                        {task.deadline || 'Không giới hạn'}
-                      </td>
-
-                      <td className="p-3.5 text-center">
-                        <select
-                          value={task.status}
-                          onChange={e => handleUpdateTaskStatus(task, e.target.value)}
-                          className={`px-2.5 py-1 rounded-xl text-[10px] font-black border cursor-pointer ${
-                            task.status === 'completed'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                              : task.status === 'in_progress'
-                              ? 'bg-sky-50 text-sky-700 border-sky-300'
-                              : 'bg-amber-50 text-amber-700 border-amber-300'
-                          }`}
-                        >
-                          <option value="pending">⏳ Chờ Xử Lý</option>
-                          <option value="in_progress">⚙️ Đang Thực Hiện</option>
-                          <option value="completed">✓ Hoàn Thành</option>
-                          <option value="cancelled">✕ Hủy Bỏ</option>
-                        </select>
-                      </td>
-
-                      <td className="p-3.5 text-center">
-                        <div className="flex items-center justify-center gap-1">
-                          <button
-                            onClick={() => {
-                              setEditingTask(task);
-                              setTaskFormData(task);
-                              setShowTaskModal(true);
-                            }}
-                            className="p-1.5 text-slate-400 hover:text-sky-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                            title="Sửa nhiệm vụ"
-                          >
-                            <Edit3 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTask(task.id)}
-                            className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                            title="Xóa nhiệm vụ"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {tasks.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="text-center py-12 text-slate-400">
+                        Chưa có nhiệm vụ giao việc nào. Nhấn "+ Tạo & Giao Nhiệm Vụ Mới" để bắt đầu.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    tasks.map(task => {
+                      const isExpanded = expandedTaskId === task.id;
+                      return (
+                        <React.Fragment key={task.id}>
+                          <tr 
+                            onClick={() => setExpandedTaskId(isExpanded ? null : task.id)}
+                            className={`hover:bg-sky-50/40 dark:hover:bg-slate-800/60 transition cursor-pointer select-none ${
+                              isExpanded ? 'bg-sky-50/60 dark:bg-slate-800/80 font-medium' : ''
+                            }`}
+                          >
+                            <td className="p-3.5 text-center text-slate-400 font-bold text-[11px]">
+                              <span className={`inline-block transition-transform duration-200 text-sky-600 ${isExpanded ? 'rotate-90' : ''}`}>
+                                ▶
+                              </span>
+                            </td>
+
+                            <td className="p-3.5">
+                              <div className="font-black text-slate-900 dark:text-white text-xs whitespace-nowrap">
+                                {task.title}
+                              </div>
+                              <div className="flex items-center gap-1.5 mt-1 whitespace-nowrap">
+                                <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] rounded">
+                                  {task.category === 'recruitment' ? '💼 Tuyển Dụng' : task.category === 'bds_realestate' ? '🏠 Bất Động Sản' : task.category === 'kyc_user' ? '🛡️ Duyệt KYC' : '📦 Dịch Vụ Cư Dân'}
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-mono">
+                                  {task.targetProject}
+                                </span>
+                              </div>
+                            </td>
+
+                            <td className="p-3.5 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap">
+                              {task.targetTitle || 'Toàn phân khu'}
+                            </td>
+
+                            <td className="p-3.5 whitespace-nowrap">
+                              <div className="font-bold text-sky-600 dark:text-sky-400">
+                                {task.assignedToAdminName}
+                              </div>
+                              <div className="text-[10px] text-slate-400">
+                                Giao bởi: {task.assignedByAdminName}
+                              </div>
+                            </td>
+
+                            <td className="p-3.5 whitespace-nowrap">
+                              {task.priority === 'urgent' ? (
+                                <span className="px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 font-black rounded text-[10px]">
+                                  🔥 KHẨN CẤP
+                                </span>
+                              ) : task.priority === 'high' ? (
+                                <span className="px-2.5 py-0.5 bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-black rounded text-[10px]">
+                                  ⚡ Cao
+                                </span>
+                              ) : (
+                                <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold rounded text-[10px]">
+                                  Bình thường
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="p-3.5 font-mono text-[11px] text-slate-500 whitespace-nowrap">
+                              {task.deadline || 'Không giới hạn'}
+                            </td>
+
+                            <td className="p-3.5 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                              <select
+                                value={task.status}
+                                onChange={e => handleUpdateTaskStatus(task, e.target.value)}
+                                className={`px-2.5 py-1 rounded-xl text-[10px] font-black border cursor-pointer ${
+                                  task.status === 'completed'
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                    : task.status === 'in_progress'
+                                    ? 'bg-sky-50 text-sky-700 border-sky-300'
+                                    : 'bg-amber-50 text-amber-700 border-amber-300'
+                                }`}
+                              >
+                                <option value="pending">⏳ Chờ Xử Lý</option>
+                                <option value="in_progress">⚙️ Đang Thực Hiện</option>
+                                <option value="completed">✓ Hoàn Thành</option>
+                                <option value="cancelled">✕ Hủy Bỏ</option>
+                              </select>
+                            </td>
+
+                            <td className="p-3.5 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                              <div className="flex items-center justify-center gap-1">
+                                <button
+                                  onClick={() => {
+                                    setEditingTask(task);
+                                    setTaskFormData(task);
+                                    setShowTaskModal(true);
+                                  }}
+                                  className="p-1.5 text-slate-400 hover:text-sky-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                                  title="Sửa nhiệm vụ"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteTask(task.id)}
+                                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                                  title="Xóa nhiệm vụ"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+
+                          {isExpanded && (
+                            <tr className="bg-sky-50/40 dark:bg-slate-800/70 border-b-2 border-sky-500/30">
+                              <td colSpan={8} className="p-4.5">
+                                <div className="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-sky-200 dark:border-sky-900/50 shadow-inner">
+                                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                                    <div className="font-black text-sky-800 dark:text-sky-300 text-sm flex items-center gap-2">
+                                      <Sparkles className="w-4 h-4 text-sky-500" />
+                                      <span>CHI TIẾT PHÂN CÔNG & QUẢN TRỊ NHIỆM VỤ</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <button
+                                        onClick={() => {
+                                          setEditingTask(task);
+                                          setTaskFormData(task);
+                                          setShowTaskModal(true);
+                                        }}
+                                        className="px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                      >
+                                        <Edit3 className="w-3.5 h-3.5" />
+                                        <span>Chỉnh Sửa</span>
+                                      </button>
+                                      <button
+                                        onClick={() => handleDeleteTask(task.id)}
+                                        className="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg text-xs flex items-center gap-1"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                        <span>Xóa Nhiệm Vụ</span>
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                    <div>
+                                      <span className="text-slate-400 font-bold block text-[10px] uppercase">Nội dung nhiệm vụ:</span>
+                                      <div className="font-black text-slate-800 dark:text-slate-200 text-sm">{task.title}</div>
+                                      <div className="text-sky-600 font-bold mt-1">Phân loại: {task.category === 'recruitment' ? 'Tuyển Dụng' : task.category === 'bds_realestate' ? 'Bất Động Sản' : 'Dịch Vụ Cư Dân'}</div>
+                                    </div>
+                                    <div>
+                                      <span className="text-slate-400 font-bold block text-[10px] uppercase">Phụ trách & Phạm vi:</span>
+                                      <div className="font-bold text-slate-800 dark:text-slate-200">👤 {task.assignedToAdminName}</div>
+                                      <div className="text-slate-500">Khu vực: {task.targetProject} - {task.targetTitle || 'Tất cả'}</div>
+                                    </div>
+                                    <div>
+                                      <span className="text-slate-400 font-bold block text-[10px] uppercase">Hạn chót & Tiến độ:</span>
+                                      <div className="font-mono text-slate-700 dark:text-slate-300">📅 {task.deadline || 'Không giới hạn'}</div>
+                                      <div className="font-bold text-emerald-600">Trạng thái: {task.status === 'completed' ? 'Đã hoàn thành' : task.status === 'in_progress' ? 'Đang thực hiện' : 'Chờ xử lý'}</div>
+                                    </div>
+                                  </div>
+
+                                  {task.notes && (
+                                    <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                                      <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Ghi chú chỉ đạo từ Admin:</span>
+                                      <p className="text-slate-600 dark:text-slate-300 italic">{task.notes}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
