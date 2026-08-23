@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Shield, Eye, EyeOff, RotateCcw, Check, Sparkles, Image as ImageIcon, Lock } from 'lucide-react';
+import { Eye, EyeOff, RotateCcw, Check, Sparkles, Image as ImageIcon, Droplets, Sliders, Shield } from 'lucide-react';
 
 interface SoDoCensorEditorProps {
   originalImageUrl?: string;
@@ -14,8 +14,8 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [imageSrc, setImageSrc] = useState<string>(originalImageUrl || '');
-  const [censorType, setCensorType] = useState<'black' | 'blur'>('black');
-  const [boxes, setBoxes] = useState<Array<{ x: number; y: number; w: number; h: number; type: 'black' | 'blur' }>>([]);
+  const [mistIntensity, setMistIntensity] = useState<'medium' | 'deep'>('medium');
+  const [boxes, setBoxes] = useState<Array<{ x: number; y: number; w: number; h: number; intensity: 'medium' | 'deep' }>>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState<{ x: number; y: number } | null>(null);
   const [currentBox, setCurrentBox] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
@@ -35,6 +35,108 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
     };
   }, [imageSrc]);
 
+  // Apply ultra-smooth Frosted Mist blur (Sương Mờ - KHÔNG VIẾT CHỮ)
+  const applyFrostedMistBlur = (
+    ctx: CanvasRenderingContext2D,
+    bx: number,
+    by: number,
+    bw: number,
+    bh: number,
+    intensity: 'medium' | 'deep'
+  ) => {
+    if (bw <= 0 || bh <= 0) return;
+    const x = Math.max(0, Math.floor(bx));
+    const y = Math.max(0, Math.floor(by));
+    const w = Math.min(ctx.canvas.width - x, Math.floor(bw));
+    const h = Math.min(ctx.canvas.height - y, Math.floor(bh));
+    if (w <= 0 || h <= 0) return;
+
+    // 1. Multi-pass downscale & upscale interpolation for authentic Gaussian mist blur
+    const passes = intensity === 'deep' ? 4 : 3;
+    const shrinkFactor = intensity === 'deep' ? 0.08 : 0.12;
+
+    const tempCanvas = document.createElement('canvas');
+    const tempW = Math.max(2, Math.floor(w * shrinkFactor));
+    const tempH = Math.max(2, Math.floor(h * shrinkFactor));
+    tempCanvas.width = tempW;
+    tempCanvas.height = tempH;
+    const tempCtx = tempCanvas.getContext('2d');
+
+    if (tempCtx) {
+      tempCtx.imageSmoothingEnabled = true;
+      tempCtx.imageSmoothingQuality = 'high';
+
+      // Draw downscaled patch
+      tempCtx.drawImage(ctx.canvas, x, y, w, h, 0, 0, tempW, tempH);
+
+      // Perform iterative box-blur passes on tiny canvas
+      for (let p = 0; p < passes; p++) {
+        tempCtx.drawImage(tempCanvas, 0, 0, tempW, tempH);
+      }
+
+      // Draw back upscaled with high smoothing
+      ctx.save();
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(tempCanvas, 0, 0, tempW, tempH, x, y, w, h);
+
+      // 2. Add realistic Frosted Glass Mist layer (Sương mờ trong suốt)
+      ctx.fillStyle = intensity === 'deep' ? 'rgba(248, 250, 252, 0.28)' : 'rgba(255, 255, 255, 0.20)';
+      ctx.fillRect(x, y, w, h);
+
+      // Subtle soft border around mist zone for aesthetic finish
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, w, h);
+
+      ctx.restore();
+    }
+  };
+
+  // Draw platform watermark on canvas
+  const drawBrandingWatermark = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    ctx.save();
+    // Bottom-right watermark pill
+    const stampH = Math.max(26, Math.floor(height * 0.045));
+    const stampFontSize = Math.max(11, Math.floor(stampH * 0.42));
+    ctx.font = `bold ${stampFontSize}px sans-serif`;
+    
+    const textMain = '🏘️ CHỢ CƯ DÂN 24H';
+    const textSub = 'chocudan24h.com';
+    const textW1 = ctx.measureText(textMain).width;
+    const textW2 = ctx.measureText(textSub).width;
+    const pillW = textW1 + textW2 + 28;
+    const pillX = width - pillW - 12;
+    const pillY = height - stampH - 12;
+
+    // Pill background
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.82)';
+    ctx.strokeStyle = 'rgba(245, 158, 11, 0.75)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    const r = stampH / 2;
+    ctx.moveTo(pillX + r, pillY);
+    ctx.lineTo(pillX + pillW - r, pillY);
+    ctx.quadraticCurveTo(pillX + pillW, pillY, pillX + pillW, pillY + r);
+    ctx.lineTo(pillX + pillW, pillY + stampH - r);
+    ctx.quadraticCurveTo(pillX + pillW, pillY + stampH, pillX + pillW - r, pillY + stampH);
+    ctx.lineTo(pillX + r, pillY + stampH);
+    ctx.quadraticCurveTo(pillX, pillY + stampH, pillX, pillY + stampH - r);
+    ctx.lineTo(pillX, pillY + r);
+    ctx.quadraticCurveTo(pillX, pillY, pillX + r, pillY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Text inside pill
+    ctx.fillStyle = '#F59E0B';
+    ctx.fillText(textMain, pillX + 10, pillY + stampH / 2 + stampFontSize / 3);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText(textSub, pillX + 10 + textW1 + 8, pillY + stampH / 2 + stampFontSize / 3);
+
+    ctx.restore();
+  };
+
   // Redraw canvas whenever imgObj, boxes, or currentBox change
   useEffect(() => {
     if (!imgObj || !canvasRef.current) return;
@@ -48,37 +150,22 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
     // Draw base image
     ctx.drawImage(imgObj, 0, 0, canvas.width, canvas.height);
 
-    // Draw all saved censor boxes
+    // Draw all saved frosted mist censor boxes (KHÔNG VIẾT CHỮ)
     boxes.forEach((box) => {
-      if (box.type === 'black') {
-        ctx.fillStyle = '#0f172a'; // Deep slate slate-900 bôi đen
-        ctx.fillRect(box.x, box.y, box.w, box.h);
-        
-        // Add watermark label
-        ctx.fillStyle = '#e2e8f0';
-        ctx.font = 'bold 12px sans-serif';
-        ctx.fillText('🔒 [ĐÃ CHE BẢO MẬT]', box.x + 6, box.y + box.h / 2 + 4);
-      } else {
-        // Pixelate / Blur
-        const sampleSize = 10;
-        for (let y = box.y; y < box.y + box.h; y += sampleSize) {
-          for (let x = box.x; x < box.x + box.w; x += sampleSize) {
-            const p = ctx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
-            ctx.fillStyle = `rgba(${p[0]},${p[1]},${p[2]},0.9)`;
-            ctx.fillRect(x, y, sampleSize, sampleSize);
-          }
-        }
-      }
+      applyFrostedMistBlur(ctx, box.x, box.y, box.w, box.h, box.intensity);
     });
 
-    // Draw currently drawing box
+    // Always stamp the platform watermark
+    drawBrandingWatermark(ctx, canvas.width, canvas.height);
+
+    // Draw active drawing box preview
     if (currentBox) {
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([6, 6]);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
       ctx.strokeRect(currentBox.x, currentBox.y, currentBox.w, currentBox.h);
       ctx.setLineDash([]);
-      ctx.fillStyle = 'rgba(245, 158, 11, 0.3)';
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
       ctx.fillRect(currentBox.x, currentBox.y, currentBox.w, currentBox.h);
     }
   }, [imgObj, boxes, currentBox]);
@@ -126,8 +213,8 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
   };
 
   const handleMouseUp = () => {
-    if (isDrawing && currentBox && currentBox.w > 10 && currentBox.h > 10) {
-      setBoxes([...boxes, { ...currentBox, type: censorType }]);
+    if (isDrawing && currentBox && currentBox.w > 8 && currentBox.h > 8) {
+      setBoxes([...boxes, { ...currentBox, intensity: mistIntensity }]);
     }
     setIsDrawing(false);
     setStartPos(null);
@@ -145,25 +232,25 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 text-white rounded-3xl p-6 border border-slate-800 shadow-2xl space-y-6">
+    <div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-2xl space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-amber-400" />
-            <h3 className="text-lg font-black text-white uppercase tracking-wider">
-              CÔNG CỤ CHE THÔNG TIN SỔ ĐỎ BẢO MẬT
+            <Droplets className="w-5 h-5 text-sky-400" />
+            <h3 className="text-base sm:text-lg font-black text-white uppercase tracking-wider">
+              CÔNG CỤ CHE SƯƠNG MỜ BẢO MẬT & ĐÓNG DẤU WATERMARK
             </h3>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Chủ nhà kéo chuột khoanh vùng để <span className="text-amber-400 font-bold">bôi đen che số sổ đỏ, tên chủ cũ, số giấy tờ</span> nhạy cảm trước khi công khai.
+            Kéo chuột khoanh vùng để <span className="text-sky-400 font-bold">tạo lớp sương mờ tự nhiên (không chèn chữ)</span> che số sổ đỏ, thông tin nhạy cảm.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl cursor-pointer transition border border-slate-700 flex items-center gap-1">
+          <label className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl cursor-pointer transition border border-slate-700 flex items-center gap-1.5">
             <ImageIcon className="w-4 h-4 text-amber-400" />
-            <span>Tải Ảnh Sổ Khác</span>
+            <span>Tải Ảnh Khác</span>
             <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
           </label>
         </div>
@@ -172,31 +259,33 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
       {/* Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-950 rounded-2xl border border-slate-800">
         <div className="flex items-center gap-2 text-xs font-bold">
-          <span className="text-slate-400 mr-1">Chế độ che:</span>
+          <span className="text-slate-400 mr-1 flex items-center gap-1">
+            <Sliders className="w-3.5 h-3.5 text-sky-400" /> Cấp độ sương mờ:
+          </span>
           <button
             type="button"
-            onClick={() => setCensorType('black')}
-            className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 ${
-              censorType === 'black'
-                ? 'bg-amber-500 text-slate-950 font-black shadow'
+            onClick={() => setMistIntensity('medium')}
+            className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
+              mistIntensity === 'medium'
+                ? 'bg-sky-500 text-slate-950 font-black shadow'
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >
-            <Lock className="w-3.5 h-3.5" />
-            <span>Bôi Đen BẢO MẬT</span>
+            <Droplets className="w-3.5 h-3.5" />
+            <span>Sương Mờ Vừa</span>
           </button>
 
           <button
             type="button"
-            onClick={() => setCensorType('blur')}
-            className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 ${
-              censorType === 'blur'
-                ? 'bg-amber-500 text-slate-950 font-black shadow'
+            onClick={() => setMistIntensity('deep')}
+            className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
+              mistIntensity === 'deep'
+                ? 'bg-sky-500 text-slate-950 font-black shadow'
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >
             <EyeOff className="w-3.5 h-3.5" />
-            <span>Làm Mờ Pixel</span>
+            <span>Sương Mờ Dày (Bảo Mật Cao)</span>
           </button>
         </div>
 
@@ -205,7 +294,7 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
             type="button"
             onClick={handleUndo}
             disabled={boxes.length === 0}
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 rounded-xl transition flex items-center gap-1"
+            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 rounded-xl transition flex items-center gap-1 cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Hoàn Tác ({boxes.length})</span>
@@ -214,7 +303,7 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
           <button
             type="button"
             onClick={() => setPreviewMode(!previewMode)}
-            className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1 ${
+            className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1 cursor-pointer ${
               previewMode ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'
             }`}
           >
@@ -225,11 +314,11 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
       </div>
 
       {/* Canvas Area */}
-      <div className="relative bg-black rounded-2xl overflow-hidden border border-slate-800 flex items-center justify-center min-h-[350px] p-2">
+      <div className="relative bg-black rounded-2xl overflow-hidden border border-slate-800 flex items-center justify-center min-h-[340px] p-2">
         {!imgObj && (
           <div className="text-center p-8 text-slate-500 text-xs">
             <Sparkles className="w-8 h-8 text-amber-500 mx-auto mb-2 animate-bounce" />
-            <p className="font-bold">Đang tải hình ảnh Sổ Đỏ...</p>
+            <p className="font-bold">Đang tải hình ảnh...</p>
           </div>
         )}
         <canvas
@@ -242,10 +331,10 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
       </div>
 
       {/* Quick Tips */}
-      <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3 text-[11px] text-amber-300 flex items-center gap-2">
-        <Sparkles className="w-4 h-4 shrink-0 text-amber-400" />
+      <div className="bg-sky-500/10 border border-sky-500/30 rounded-2xl p-3 text-[11px] text-sky-200 flex items-center gap-2">
+        <Sparkles className="w-4 h-4 shrink-0 text-sky-400" />
         <p>
-          <strong>Mẹo cho Chủ Nhà:</strong> Hãy kéo chuột khoanh chữ nhật đè lên <strong>Số hiệu Sổ đỏ, Tên cá nhân cũ, Số CMND/CCCD cũ</strong>. Sau khi lưu, ảnh đã che sẽ tự động đính kèm vào tin đăng công khai.
+          <strong>Chế độ Sương Mờ Chuẩn:</strong> Toàn bộ vùng được khoanh sẽ được làm mờ quang học tự nhiên, không in đè chữ hay khối màu đen. Hệ thống tự động đóng dấu <strong>Watermark Chợ Cư Dân 24H</strong> chính chủ bảo vệ bản quyền.
         </p>
       </div>
 
@@ -255,7 +344,7 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
           <button
             type="button"
             onClick={onCancel}
-            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
+            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition cursor-pointer"
           >
             Hủy Bỏ
           </button>
@@ -264,12 +353,13 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
         <button
           type="button"
           onClick={handleSave}
-          className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl transition shadow-lg flex items-center gap-1.5 uppercase tracking-wider"
+          className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl transition shadow-lg flex items-center gap-1.5 uppercase tracking-wider cursor-pointer active:scale-[0.99]"
         >
           <Check className="w-4 h-4" />
-          <span>LƯU CẤU HÌNH & DÙNG ẢNH SỔ NÀY</span>
+          <span>LƯU ẢNH SƯƠNG MỜ & ĐÓNG WATERMARK</span>
         </button>
       </div>
     </div>
   );
 };
+

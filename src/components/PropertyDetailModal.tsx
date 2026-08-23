@@ -94,16 +94,24 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
         {/* Gallery Header Section */}
         <div className="relative bg-slate-950">
-          <div className="aspect-[16/9] w-full max-h-[420px] overflow-hidden">
+          <div className="aspect-[16/9] w-full max-h-[420px] overflow-hidden relative">
             <img
               src={property.images[selectedImgIndex] || property.images[0]}
               alt={property.title}
               className="w-full h-full object-cover"
             />
+
+            {/* Diagonal Brand Watermark Stamp */}
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-20 select-none overflow-hidden">
+              <div className="transform -rotate-12 whitespace-nowrap text-white font-black text-xl sm:text-3xl tracking-widest uppercase drop-shadow-md border-2 border-white/40 px-6 py-2 rounded-2xl">
+                CHỢ CƯ DÂN 24H • CHOCUDAN24H.COM
+              </div>
+            </div>
+
             {/* Watermark Official Badge Tag */}
-            <div className="absolute bottom-3 right-3 bg-slate-900/85 backdrop-blur-md text-amber-400 border border-amber-500/40 px-3 py-1 rounded-xl text-[10px] font-black uppercase flex items-center gap-1.5 shadow-lg pointer-events-none">
+            <div className="absolute bottom-3 right-3 bg-slate-900/85 backdrop-blur-md text-amber-400 border border-amber-500/40 px-3 py-1 rounded-xl text-[10px] sm:text-xs font-black uppercase flex items-center gap-1.5 shadow-lg pointer-events-none">
               <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span>🛡️ CHỢ CƯ DÂN 24H • ĐÃ ĐÓNG DẤU CHÍNH CHỦ</span>
+              <span>🛡️ CHỢ CƯ DÂN 24H • CHOCUDAN24H.COM</span>
             </div>
           </div>
 

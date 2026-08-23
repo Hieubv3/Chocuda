@@ -153,10 +153,10 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setCensorTargetIndex(idx)}
-                        className="px-2 py-1 bg-teal-600 hover:bg-teal-700 text-white font-bold text-[10px] rounded-lg transition flex items-center gap-1 shadow"
-                        title="Che mờ / bôi đen vị trí sensitive"
+                        className="px-2 py-1 bg-teal-600 hover:bg-teal-700 text-white font-bold text-[10px] rounded-lg transition flex items-center gap-1 shadow cursor-pointer"
+                        title="Che sương mờ bảo mật & đóng watermark"
                       >
-                        <Lock className="w-3 h-3" /> Che Mờ
+                        <Lock className="w-3 h-3" /> Che Sương Mờ
                       </button>
 
                       {idx !== 0 && (
