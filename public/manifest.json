@@ -1,0 +1,22 @@
+{
+  "short_name": "ChợCưDân24h",
+  "name": "Chợ Cư Dân 24h — Nền Tảng BĐS Vinhomes",
+  "icons": [
+    {
+      "src": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=192&h=192&fit=crop&crop=faces",
+      "type": "image/jpeg",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=512&h=512&fit=crop&crop=faces",
+      "type": "image/jpeg",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#10b981",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Nền tảng tra cứu giá bán, cho thuê BĐS Vinhomes & Sơ đồ quy hoạch Masterplan"
+}
