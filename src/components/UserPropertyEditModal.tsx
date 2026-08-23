@@ -42,7 +42,6 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
   const [sellerName, setSellerName] = useState(property.sellerName || '');
   const [sellerPhone, setSellerPhone] = useState(property.sellerPhone || '');
   const [images, setImages] = useState<string[]>(property.images && property.images.length > 0 ? [...property.images] : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80']);
-  const [newImageUrl, setNewImageUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handlePriceChange = (val: string) => {
@@ -59,25 +58,23 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const validation = validateImageSize(file);
-    if (!validation.valid) {
-      alert(validation.message || 'Kích thước ảnh vượt quá giới hạn 10MB.');
-      return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const validation = validateImageSize(file);
+      if (!validation.valid) {
+        alert(validation.message || 'Kích thước ảnh vượt quá giới hạn 10MB.');
+        continue;
+      }
+      try {
+        const preview = await createInstantPreview(file);
+        setImages(prev => [...prev, preview]);
+      } catch (err) {
+        console.error('Image preview error:', err);
+      }
     }
-    try {
-      const preview = await createInstantPreview(file);
-      setImages(prev => [...prev, preview]);
-    } catch (err) {
-      console.error('Image preview error:', err);
-    }
-  };
-
-  const handleAddImageUrl = () => {
-    if (!newImageUrl.trim()) return;
-    setImages(prev => [...prev, newImageUrl.trim()]);
-    setNewImageUrl('');
   };
 
   const handleRemoveImage = (indexToRemove: number) => {
@@ -167,10 +164,10 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-3xl max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col my-auto">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-3xl max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col my-auto overscroll-contain">
         
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-10">
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-20">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
               <Building2 className="w-5 h-5" />
@@ -193,7 +190,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5 pb-36 sm:pb-6">
           
           {/* Row 1: Title */}
           <div>
@@ -459,10 +456,10 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 hover:bg-rose-500 text-white rounded-lg flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer z-10"
+                    className="absolute top-1 right-1 w-8 h-8 bg-rose-600/90 hover:bg-rose-600 text-white rounded-lg flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer z-10"
                     title="Xóa ảnh này"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ))}
