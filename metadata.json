@@ -1,0 +1,6 @@
+{
+  "name": "Chợ Cư Dân 24h",
+  "description": "Chợ Cư Dân 24h (chocudan24h.com) — Nền tảng trao đổi thông tin giới thiệu sản phẩm bất động sản Vinhomes. Trao đổi thông tin chính chủ, mua bán, cho thuê, chuyển nhượng, pháp lý sổ đỏ, bảng giá biệt thự, shophouse, liền kề, chung cư Vinhomes toàn quốc.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
