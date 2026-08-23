@@ -317,7 +317,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   setSearchType('sale');
                   setCurrentTab('sale');
                 }}
-                className={`text-left p-2 rounded-xl border transition flex items-center gap-2 cursor-pointer ${
+                className={`text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 cursor-pointer ${
                   searchType === 'sale'
                     ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500/80 shadow-xs ring-1 ring-amber-500/40'
                     : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80'
@@ -345,7 +345,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   setSearchType('rent');
                   setCurrentTab('rent');
                 }}
-                className={`text-left p-2 rounded-xl border transition flex items-center gap-2 cursor-pointer ${
+                className={`text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 cursor-pointer ${
                   searchType === 'rent'
                     ? 'bg-sky-500/10 dark:bg-sky-500/20 border-sky-500/80 shadow-xs ring-1 ring-sky-500/40'
                     : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80'
@@ -370,7 +370,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               {/* Mobile Card 3: Dịch Vụ Cư Dân */}
               <button
                 onClick={() => setCurrentTab('services')}
-                className="text-left p-2 rounded-xl border transition flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
+                className="text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img
@@ -391,7 +391,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               {/* Mobile Card 4: Việc Làm & Tuyển Dụng */}
               <button
                 onClick={() => setCurrentTab('recruitment')}
-                className="text-left p-2 rounded-xl border transition flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
+                className="text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img

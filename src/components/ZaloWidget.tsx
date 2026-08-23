@@ -52,30 +52,35 @@ export const ZaloWidget: React.FC = () => {
     localStorage.setItem('chocudan24h_zalo_groups', JSON.stringify(updated));
   };
 
+  useEffect(() => {
+    const handleCustomOpen = () => setHubOpen(true);
+    window.addEventListener('open-zalo-hub', handleCustomOpen);
+    return () => window.removeEventListener('open-zalo-hub', handleCustomOpen);
+  }, []);
+
   return (
     <>
-      {/* Ultra-Compact Single Floating Zalo Widget Trigger */}
-      <div className="fixed bottom-5 right-5 z-40">
+      {/* Ultra-Compact 30% Mini Floating Zalo Widget Trigger */}
+      <div className="fixed bottom-20 sm:bottom-6 right-3 sm:right-5 z-40">
         <button
           onClick={handleOpenHub}
-          className="relative group p-2.5 sm:px-4 sm:py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white rounded-full flex items-center gap-2 shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 border border-blue-300/40"
+          className="relative group p-1.5 sm:p-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 border border-blue-300/40 cursor-pointer"
           title="Zalo Cư Dân & Chat Trực Tiếp"
+          aria-label="Mở Zalo và Kênh Chat"
         >
-          <span className="relative flex h-3 w-3 shrink-0">
+          {/* Live green dot indicator */}
+          <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400 border border-white dark:border-slate-900"></span>
           </span>
 
-          <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center font-black text-[10px] text-white shrink-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white/20 rounded-full flex items-center justify-center font-black text-xs text-white shrink-0">
             Z
           </div>
 
-          <div className="hidden sm:flex flex-col items-start text-left leading-tight">
-            <span className="font-black text-xs tracking-tight text-white">NHÓM ZALO CƯ DÂN</span>
-            <span className="text-[10px] text-emerald-300 font-bold">& Chat 24/7</span>
-          </div>
-
-          <span className="sm:hidden font-extrabold text-xs">ZALO</span>
+          <span className="hidden sm:inline-block font-black text-[11px] px-1.5 pr-2">
+            Zalo 24/7
+          </span>
         </button>
       </div>
 

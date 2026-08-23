@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Property, User, Language, UpTinPricingConfig, UpTinTransaction } from '../types';
 import {
-  Zap, Crown, Eye, MessageSquare, Trash2, ShieldCheck, CheckCircle2,
+  Zap, Crown, Eye, MessageSquare, MessageCircle, Trash2, ShieldCheck, CheckCircle2,
   Clock, Sparkles, AlertCircle, ArrowUpRight, Users, Share2,
   Gift, Wallet, Copy, Check, ExternalLink, Award, RefreshCw,
   Building2, FileText, ChevronDown, ChevronUp, Home,
@@ -590,6 +590,46 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               </span>
             </div>
             <Eye className="w-4 h-4 text-slate-400" />
+          </div>
+        </div>
+
+        {/* Row 3: Quick Live Chat & Zalo Group Support Bar (Gọn gàng trong Mục Cá Nhân) */}
+        <div className="bg-slate-900/90 border border-blue-500/40 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2 shadow-xs">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="relative flex h-3 w-3 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400"></span>
+            </span>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-black text-white truncate">
+                  💬 Hỗ Trợ Zalo Cư Dân &amp; Kênh Chat Trực Tiếp
+                </span>
+                <span className="bg-emerald-500/20 text-emerald-300 text-[9px] px-1.5 py-0.5 rounded border border-emerald-500/30 font-bold shrink-0">
+                  ● Đang trực tuyến
+                </span>
+              </div>
+              <span className="text-[10px] text-slate-300 block truncate mt-0.5">
+                Nhắn tin với BQT để được hỗ trợ đăng tin, nạp token, duyệt bài và tham gia nhóm Zalo cư dân
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-zalo-hub'))}
+              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-black transition flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>Mở Nhóm Zalo &amp; Chat</span>
+            </button>
+            <a
+              href="tel:0868499929"
+              className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-slate-700"
+            >
+              <Phone className="w-3.5 h-3.5" />
+              <span>0868.499.929</span>
+            </a>
           </div>
         </div>
 

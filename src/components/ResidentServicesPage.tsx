@@ -604,25 +604,111 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             </button>
           </div>
 
-          {/* Row 3: Action Buttons Bar */}
-          <div className="flex flex-wrap items-center gap-2 pt-0.5">
+          {/* Row 3: Action Buttons Bar - Tinh gọn dạng lưới biểu tượng & text ngăn nắp cho cả PC và Mobile */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-2 pt-1">
+            {/* Button 1: AI Quét Menu */}
             <button
               onClick={() => setIsAiMenuScannerOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 shadow-md transition active:scale-95 cursor-pointer ring-2 ring-amber-300 animate-pulse"
+              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-amber-500/50 hover:border-amber-400 text-amber-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              title="AI Quét Menu & Báo Giá (1-Click Đăng Bài)"
             >
-              <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950" />
-              <span>🤖 AI QUÉT MENU & BÁO GIÁ (1 CLICK ĐĂNG BÀI)</span>
+              <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <Sparkles className="w-4 h-4 fill-amber-400" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[11px] font-black text-white block truncate group-hover:text-amber-300">
+                  AI Quét Menu
+                </span>
+                <span className="text-[9px] text-amber-400/90 block truncate">1-Click Đăng Bài</span>
+              </div>
             </button>
 
+            {/* Button 2: Bảng Giá Quảng Bá */}
             <button
               onClick={() => setIsPricingModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 shadow-xs transition active:scale-95 cursor-pointer"
+              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              title="Bảng Giá Dịch Vụ & Quảng Bá Truyền Thông"
             >
-              <Sparkles className="w-3.5 h-3.5 text-slate-950 fill-slate-950" />
-              <span>BẢNG GIÁ QUẢNG BÁ</span>
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <ShoppingBag className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[11px] font-black text-white block truncate group-hover:text-emerald-300">
+                  Bảng Giá PR
+                </span>
+                <span className="text-[9px] text-emerald-400/90 block truncate">Quảng bá cư dân</span>
+              </div>
             </button>
 
-            {/* VÍ TỰ ĐỘNG & ESCROW THỢ KĨ THUẬT: Chỉ hiển thị trong tài khoản thợ / doanh nghiệp / đối tác có quyền kinh doanh */}
+            {/* Button 3: Đặt Xe Vận Tải */}
+            <button
+              onClick={() => setIsTransportModalOpen(true)}
+              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-amber-500/40 hover:border-amber-400 text-amber-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              title="Đặt Xe Vận Tải Nội & Ngoại Khu 24/7"
+            >
+              <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <Car className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[11px] font-black text-white block truncate group-hover:text-amber-300">
+                  Xe Cư Dân 24/7
+                </span>
+                <span className="text-[9px] text-slate-300 block truncate">Nội &amp; Ngoại khu</span>
+              </div>
+            </button>
+
+            {/* Button 4: Xây Lắp & Thang Máy */}
+            <button
+              onClick={() => setIsConstructionModalOpen(true)}
+              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-blue-500/40 hover:border-blue-400 text-blue-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              title="Báo Giá Xây Lắp, Nội Thất & Thang Máy"
+            >
+              <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <Hammer className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[11px] font-black text-white block truncate group-hover:text-blue-300">
+                  Xây Lắp & Thang Máy
+                </span>
+                <span className="text-[9px] text-slate-300 block truncate">Khảo sát báo giá</span>
+              </div>
+            </button>
+
+            {/* Button 5: Thỏa Thuận 3 Bên */}
+            <button
+              onClick={() => setIsTripartiteModalOpen(true)}
+              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-purple-500/40 hover:border-purple-400 text-purple-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              title="Thỏa Thuận 3 Bên Bảo Vệ Khách & Thợ"
+            >
+              <div className="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <FileText className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[11px] font-black text-white block truncate group-hover:text-purple-300">
+                  Thỏa Thuận 3 Bên
+                </span>
+                <span className="text-[9px] text-slate-300 block truncate">Hợp đồng bảo vệ</span>
+              </div>
+            </button>
+
+            {/* Button 6: Bản Đồ Định Vị */}
+            <button
+              onClick={() => setIsMapModalOpen(true)}
+              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-200 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              title="Bản Đồ Định Vị Gian Hàng & Dịch Vụ Cư Dân"
+            >
+              <div className="w-8 h-8 rounded-lg bg-slate-700 text-amber-300 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <Compass className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[11px] font-black text-white block truncate group-hover:text-amber-300">
+                  Bản Đồ Định Vị
+                </span>
+                <span className="text-[9px] text-slate-300 block truncate">Vị trí gian hàng</span>
+              </div>
+            </button>
+
+            {/* Optional Button 7: Ví & Escrow cho tài khoản thợ/kinh doanh */}
             {currentUser && (
               currentUser.role === 'admin' ||
               currentUser.role === 'partner' ||
@@ -633,44 +719,23 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             ) && (
               <button
                 onClick={() => setIsEscrowModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-slate-900 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md transition active:scale-95 cursor-pointer ring-1 ring-emerald-400/50"
+                className="col-span-2 sm:col-span-3 lg:col-span-6 p-2 rounded-xl bg-gradient-to-r from-emerald-950/80 to-slate-900 border border-emerald-500/50 hover:border-emerald-400 text-emerald-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-between gap-2 text-left"
+                title="Ví Tự Động & Escrow Thợ Kĩ Thuật"
               >
-                <Wallet className="w-3.5 h-3.5 text-emerald-300" />
-                <span>VÍ TỰ ĐỘNG &amp; ESCROW THỢ KĨ THUẬT</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0">
+                    <Wallet className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-black text-white">Ví Tự Động &amp; Ký Quỹ Escrow Kỹ Thuật</span>
+                    <span className="text-[10px] text-emerald-400 ml-2 font-medium">Bảo vệ dòng tiền đơn hàng &amp; tạm giữ tiền an toàn</span>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30 shrink-0">
+                  Mở ví →
+                </span>
               </button>
             )}
-
-            <button
-              onClick={() => setIsTransportModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md transition active:scale-95 cursor-pointer ring-1 ring-amber-400"
-            >
-              <Car className="w-3.5 h-3.5 text-slate-950" />
-              <span>ĐẶT XE VẬN TẢI NỘI & NGOẠI KHU 24/7</span>
-            </button>
-
-            <button
-              onClick={() => setIsConstructionModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md transition active:scale-95 cursor-pointer ring-1 ring-blue-400"
-            >
-              <Hammer className="w-3.5 h-3.5 text-amber-300" />
-              <span>BÁO GIÁ XÂY LẮP, NỘI THẤT & THANG MÁY</span>
-            </button>
-
-            <button
-              onClick={() => setIsTripartiteModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 shadow-xs transition active:scale-95 cursor-pointer"
-            >
-              <FileText className="w-3.5 h-3.5 text-amber-400" />
-              <span>THỎA THUẬN 3 BÊN</span>
-            </button>
-
-            <button
-              onClick={() => setIsMapModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs transition active:scale-95 cursor-pointer"
-            >
-              <Compass className="w-3.5 h-3.5 text-slate-950" />
-              <span>BẢN ĐỒ ĐỊNH VỊ</span>
-            </button>
           </div>
 
           {/* Combined Search Box & Project Dropdown Selector */}

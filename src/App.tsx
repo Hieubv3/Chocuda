@@ -1596,6 +1596,11 @@ export const App: React.FC = () => {
                   onOpenAiWriter={() => setAiWriterModalOpen(true)}
                   onRefreshData={refreshServerData}
                   onSeed1000Properties={handleSeed1000Properties}
+                  onLogout={() => {
+                    setUser(null);
+                    safeLocalStorageSet('hb_user', null);
+                    navigate('/');
+                  }}
                 />
               ) : (
                 <AdminLoginPage
@@ -1704,33 +1709,35 @@ export const App: React.FC = () => {
         onClose={() => setAndroidModalOpen(false)}
       />
 
-      {/* Mobile Bottom Navigation Bar - Standard Chợ Tốt / Nhà Tốt App Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1.5 py-1 flex items-center justify-around shadow-2xl">
+      {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-1 flex items-center justify-around shadow-2xl">
+        {/* 1. Trang Chủ */}
         <button
           onClick={() => navigate('/')}
-          className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
+          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
             location.pathname === '/'
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Home className="w-5 h-5" />
-          <span className="text-[10px] mt-0.5 font-medium">Trang Chủ</span>
+          <Home className="w-5 h-5 transition-transform" />
+          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Trang Chủ</span>
         </button>
 
+        {/* 2. Bất Động Sản */}
         <button
           onClick={() => navigate('/bat-dong-san')}
-          className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
+          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
             location.pathname.startsWith('/bat-dong-san') || location.pathname.startsWith('/mua-ban') || location.pathname.startsWith('/cho-thue')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Building2 className="w-5 h-5" />
-          <span className="text-[10px] mt-0.5 font-medium">Bất Động Sản</span>
+          <Building2 className="w-5 h-5 transition-transform" />
+          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Bất Động Sản</span>
         </button>
 
-        {/* Center Highlighted Post Button */}
+        {/* 3. Đăng Tin (Gọn gàng, bằng kích thước hàng menu, có hiệu ứng zoom khi chạm) */}
         <button
           onClick={() => {
             if (!user) {
@@ -1739,26 +1746,28 @@ export const App: React.FC = () => {
               navigate('/dang-tin');
             }
           }}
-          className="flex flex-col items-center -mt-4 group shrink-0"
+          className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer text-emerald-600 dark:text-emerald-400 font-black group"
         >
-          <div className="w-11 h-11 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 ring-4 ring-white dark:ring-slate-900 group-active:scale-95 transition transform">
-            <PlusCircle className="w-6 h-6 text-white" />
+          <div className="w-6 h-6 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <PlusCircle className="w-5 h-5" />
           </div>
-          <span className="text-[10px] mt-0.5 font-black text-emerald-600 dark:text-emerald-400">Đăng Tin</span>
+          <span className="text-[10px] mt-0.5 font-black whitespace-nowrap">Đăng Tin</span>
         </button>
 
+        {/* 4. Chợ Cư Dân */}
         <button
           onClick={() => navigate('/dich-vu-cu-dan')}
-          className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
+          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
             location.pathname.startsWith('/dich-vu-cu-dan')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <ShoppingBag className="w-5 h-5" />
-          <span className="text-[10px] mt-0.5 font-medium">Chợ Cư Dân</span>
+          <ShoppingBag className="w-5 h-5 transition-transform" />
+          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Chợ Cư Dân</span>
         </button>
 
+        {/* 5. Cá Nhân */}
         <button
           onClick={() => {
             if (!user) {
@@ -1767,16 +1776,23 @@ export const App: React.FC = () => {
               navigate('/tai-khoan');
             }
           }}
-          className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
+          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer relative group ${
             location.pathname.startsWith('/tai-khoan')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <UserIcon className="w-5 h-5" />
-          <span className="text-[10px] mt-0.5 font-medium">Cá Nhân</span>
+          <div className="relative">
+            <UserIcon className="w-5 h-5 transition-transform" />
+            {/* Live Chat / Notification ping badge */}
+            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-white dark:border-slate-900"></span>
+            </span>
+          </div>
+          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Cá Nhân</span>
         </button>
-      </div>
+      </nav>
 
       {/* Global Modals & Popup */}
       <AdBannerWidget ads={ads} position="popup_modal" />
