@@ -1619,205 +1619,63 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   return (
-    <div className="max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4">
+    <div className="max-w-[1550px] mx-auto px-2.5 sm:px-4 lg:px-6 py-2 sm:py-3 space-y-3">
       
-      {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Điều hướng nhanh trực tiếp bên trong Admin */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
-        <div className="flex items-center gap-1.5 flex-wrap font-bold text-slate-700 dark:text-slate-300">
-          <span className="text-slate-400 text-[11px] uppercase tracking-wider font-extrabold hidden md:inline">
-            ĐIỀU HƯỚNG NHANH PHÂN HỆ:
-          </span>
-          
-          <button
-            type="button"
-            onClick={() => {
-              handleSelectMainTab('bds');
-              setActiveTab('properties');
-              setPropertySubFilter('all');
-            }}
-            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
-              effectiveMainTab === 'bds' && activeTab === 'properties' && propertySubFilter === 'all'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
-            }`}
-            title="Quản lý toàn bộ Bất Động Sản"
-          >
-            <Home className="w-3.5 h-3.5 text-emerald-500" />
-            <span>Tổng Quan BĐS</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              handleSelectMainTab('bds');
-              setActiveTab('properties');
-              setPropertySubFilter('sale');
-            }}
-            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
-              effectiveMainTab === 'bds' && activeTab === 'properties' && propertySubFilter === 'sale'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
-            }`}
-            title="Lọc danh sách BĐS Mua Bán"
-          >
-            <Building2 className="w-3.5 h-3.5 text-blue-500" />
-            <span>BĐS Mua Bán</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              handleSelectMainTab('bds');
-              setActiveTab('properties');
-              setPropertySubFilter('rent');
-            }}
-            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
-              effectiveMainTab === 'bds' && activeTab === 'properties' && propertySubFilter === 'rent'
-                ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
-            }`}
-            title="Lọc danh sách BĐS Cho Thuê"
-          >
-            <Zap className="w-3.5 h-3.5 text-amber-500" />
-            <span>Cho Thuê</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              handleSelectMainTab('technicians');
-              setActiveTab('resident_services_mgmt');
-            }}
-            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
-              effectiveMainTab === 'technicians'
-                ? 'bg-orange-500 text-slate-950 font-black shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
-            }`}
-            title="Quản lý Thợ Dịch Vụ Cư Dân"
-          >
-            <Wrench className="w-3.5 h-3.5 text-orange-500" />
-            <span>Dịch Vụ &amp; Thợ</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              handleSelectMainTab('recruitment');
-              setActiveTab('recruitment_mgmt');
-            }}
-            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
-              effectiveMainTab === 'recruitment'
-                ? 'bg-teal-500 text-slate-950 font-black shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
-            }`}
-            title="Quản lý Việc Làm & Tuyển Dụng"
-          >
-            <Briefcase className="w-3.5 h-3.5 text-purple-500" />
-            <span>Tuyển Dụng &amp; CV</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              handleSelectMainTab('resident_market');
-              setActiveTab('stores_mgmt');
-            }}
-            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
-              effectiveMainTab === 'resident_market'
-                ? 'bg-amber-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
-            }`}
-            title="Quản lý Chợ Cư Dân & Gian Hàng"
-          >
-            <Store className="w-3.5 h-3.5 text-amber-500" />
-            <span>Chợ Cư Dân</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              handleSelectMainTab('users_leads');
-              setActiveTab('users');
-            }}
-            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
-              effectiveMainTab === 'users_leads'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
-            }`}
-            title="Quản lý Thành Viên & Khách Hàng"
-          >
-            <UserCheck className="w-3.5 h-3.5 text-blue-500" />
-            <span>Thành Viên</span>
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl flex items-center gap-1 transition cursor-pointer active:scale-95 border border-slate-200 dark:border-slate-700"
-            title="Mở xem website công khai ngoài trang chủ"
-          >
-            <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
-            <span className="hidden sm:inline">Xem Web Ngoài</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate('/tai-khoan')}
-            className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold rounded-xl flex items-center gap-1.5 transition cursor-pointer active:scale-95 border border-emerald-300 dark:border-emerald-700"
-            title="Xem Trang Cá Nhân của bạn"
-          >
-            <UserIcon className="w-3.5 h-3.5 text-emerald-500" />
-            <span className="hidden sm:inline">Dashboard Cá Nhân</span>
-          </button>
-
-          {/* NÚT ĐĂNG XUẤT ADMIN */}
-          <button
-            type="button"
-            onClick={() => {
-              if (onLogout) {
-                onLogout();
-              } else {
-                localStorage.removeItem('hb_user');
-                navigate('/');
-              }
-            }}
-            className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-xs"
-            title="Đăng xuất khỏi quyền Admin"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Đăng Xuất</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 1. TOP HEADER - Tinh gọn, hiện đại, không chiếm diện tích */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl border border-slate-800 shadow-xl">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-emerald-600/20 text-emerald-400 rounded-xl border border-emerald-500/30 shrink-0">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase bg-emerald-500 text-slate-950 px-2 py-0.5 rounded">ADMIN TỔNG</span>
-              <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                Hệ Thống Đang Hoạt Động Realtime
-              </span>
+      {/* 0. TOP COMPACT HEADER & QUICK SWITCHER */}
+      <div className="bg-slate-900 text-white p-2.5 sm:p-3.5 rounded-2xl border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-emerald-600/20 text-emerald-400 rounded-xl border border-emerald-500/30 shrink-0">
+              <ShieldCheck className="w-4 h-4" />
             </div>
-            <h1 className="text-sm sm:text-base font-black text-white tracking-tight mt-0.5">
-              TRUNG TÂM QUẢN TRỊ HỆ THỐNG CHỢ CƯ DÂN 24H
-            </h1>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] font-black uppercase bg-emerald-500 text-slate-950 px-1.5 py-0.5 rounded">ADMIN TỔNG</span>
+                <span className="text-[10px] text-emerald-400 font-bold hidden xs:inline-flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Realtime
+                </span>
+              </div>
+              <h1 className="text-xs sm:text-sm font-black text-white tracking-tight">
+                TRUNG TÂM QUẢN TRỊ CHỢ CƯ DÂN 24H
+              </h1>
+            </div>
+          </div>
+
+          {/* Direct exit/logout buttons on mobile */}
+          <div className="flex items-center gap-1 md:hidden">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="p-1.5 bg-slate-800 text-slate-300 rounded-xl hover:text-white border border-slate-700 transition"
+              title="Xem Trang Chủ"
+            >
+              <ArrowUpRight className="w-4 h-4 text-emerald-400" />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (onLogout) {
+                  onLogout();
+                } else {
+                  localStorage.removeItem('hb_user');
+                  navigate('/');
+                }
+              }}
+              className="p-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-xl transition"
+              title="Đăng xuất"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* Toolbar Nút Thao Tác Nhanh */}
-        <div className="flex items-center gap-1.5 flex-wrap">
+        {/* Action Toolbar buttons */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
           <button
             onClick={handleSyncToPublicWeb}
             disabled={isSyncingPublic}
-            className={`px-3.5 py-2 font-black rounded-xl text-xs flex items-center gap-1.5 transition shadow cursor-pointer ${
+            className={`px-3 py-1.5 font-black rounded-xl text-[11px] flex items-center gap-1 transition shadow cursor-pointer shrink-0 ${
               pendingProperties.length > 0
                 ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 ring-2 ring-amber-300 animate-pulse'
                 : 'bg-emerald-600 hover:bg-emerald-500 text-white'
@@ -1825,12 +1683,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             title="Phê duyệt tin & Xuất bản trực tiếp lên Website công khai"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSyncingPublic ? 'animate-spin' : ''}`} />
-            <span>{isSyncingPublic ? 'Đang đồng bộ...' : `🔄 Đồng Bộ Web ${pendingProperties.length > 0 ? `(${pendingProperties.length} Chờ Duyệt)` : 'Public'}`}</span>
+            <span>{isSyncingPublic ? 'Đang đồng bộ...' : `🔄 Đồng Bộ Web ${pendingProperties.length > 0 ? `(${pendingProperties.length})` : ''}`}</span>
           </button>
 
           <button
             onClick={() => setShowTaxModal(true)}
-            className="px-3 py-2 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/30 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+            className="px-2.5 py-1.5 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/30 font-bold rounded-xl text-[11px] flex items-center gap-1 transition cursor-pointer shrink-0"
             title="Khai báo thuế TMĐT Quốc Gia"
           >
             <Shield className="w-3.5 h-3.5 text-indigo-300" />
@@ -1839,26 +1697,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
           <button
             onClick={() => setShowAiUrlTracker(true)}
-            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+            className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold rounded-xl text-[11px] flex items-center gap-1 transition cursor-pointer shrink-0"
             title="Theo dõi Website & Google AI Index"
           >
             <Globe className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden sm:inline">Theo Dõi AI</span>
-          </button>
-
-          <button
-            onClick={handleSeed1000Click}
-            disabled={isSeeding}
-            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
-            title="Tạo nhanh 1,000 tin mẫu kiểm thử"
-          >
-            <Zap className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="hidden sm:inline">{isSeeding ? 'Đang tạo...' : 'Test 1K Tin'}</span>
+            <span className="hidden sm:inline">AI Index</span>
           </button>
 
           <button
             onClick={onOpenAiWriter}
-            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+            className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold rounded-xl text-[11px] flex items-center gap-1 transition cursor-pointer shrink-0"
             title="Viết bài tự động bằng AI"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
@@ -1867,11 +1715,40 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
           <button
             onClick={onRefreshData}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition cursor-pointer border border-slate-700"
+            className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition cursor-pointer border border-slate-700 shrink-0"
             title="Làm mới dữ liệu"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
+
+          <div className="hidden md:flex items-center gap-1.5 pl-1 border-l border-slate-800">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl flex items-center gap-1 transition cursor-pointer text-[11px] border border-slate-700"
+              title="Mở xem website công khai ngoài trang chủ"
+            >
+              <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Xem Web</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onLogout) {
+                  onLogout();
+                } else {
+                  localStorage.removeItem('hb_user');
+                  navigate('/');
+                }
+              }}
+              className="px-2.5 py-1.5 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl flex items-center gap-1 transition cursor-pointer text-[11px]"
+              title="Đăng xuất khỏi quyền Admin"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Thoát</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -2053,8 +1930,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* 3. MAIN ADMIN WORKSPACE: 2-COLUMN WITH PERSISTENT LEFT SIDEBAR + MAIN WORKSPACE */}
       <div className="flex flex-col lg:flex-row items-start gap-4">
         
-        {/* === CỘT TAB QUẢN TRỊ BÊN TRÁI (PERSISTENT LEFT SIDEBAR FOR DESKTOP) === */}
-        <aside className="w-full lg:w-64 xl:w-72 shrink-0 lg:sticky lg:top-3 bg-slate-900 text-white border border-slate-800 rounded-2xl p-3 shadow-xl space-y-3 lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin">
+        {/* === CỘT TAB QUẢN TRỊ BÊN TRÁI (PERSISTENT LEFT SIDEBAR FOR DESKTOP ONLY) === */}
+        <aside className="hidden lg:block lg:w-64 xl:w-72 shrink-0 lg:sticky lg:top-3 bg-slate-900 text-white border border-slate-800 rounded-2xl p-3 shadow-xl space-y-3 lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin">
           <div className="flex items-center justify-between px-2 py-1 border-b border-slate-800/80 pb-2">
             <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
               <Layers className="w-3.5 h-3.5 text-emerald-400" />
@@ -2492,18 +2369,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* === CỘT NỘI DUNG CHÍNH (MAIN WORKSPACE AREA) === */}
         <div className="flex-1 min-w-0 w-full space-y-4">
           
-          {/* Thanh chuyển đổi nhanh trên Mobile / Tablet (< lg) với 3 Chấm & Vuốt Ngang */}
-          <div className="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-md space-y-2">
-            <div className="flex items-center justify-between gap-2 px-1">
+          {/* Thanh chuyển đổi nhanh trên Mobile / Tablet (< lg) - Rút gọn tối đa, ưu tiên nội dung chính */}
+          <div className="lg:hidden sticky top-2 z-20 bg-slate-900/95 backdrop-blur-md border border-slate-800 rounded-2xl p-2.5 shadow-xl space-y-2">
+            <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5 min-w-0">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="text-xs font-black text-white truncate flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                <span className="text-xs font-black text-white truncate flex items-center gap-1.5">
                   {effectiveMainTab === 'bds' && '🏢 1. BĐS & Dự Án'}
                   {effectiveMainTab === 'technicians' && '🛠️ 2. Thợ & Dịch Vụ'}
-                  {effectiveMainTab === 'recruitment' && '💼 3. Tuyển Dụng'}
+                  {effectiveMainTab === 'recruitment' && '💼 3. Tuyển Dụng & Việc'}
                   {effectiveMainTab === 'resident_market' && '🏪 4. Chợ Cư Dân'}
-                  {effectiveMainTab === 'users_leads' && '👥 5. Thành Viên'}
-                  {effectiveMainTab === 'ads' && '📢 6. Banner QC'}
+                  {effectiveMainTab === 'users_leads' && '👥 5. Thành Viên & Khách'}
+                  {effectiveMainTab === 'ads' && '📢 6. Banner Quảng Cáo'}
                   {effectiveMainTab === 'tools' && '⚙️ 7. Công Cụ & Bot'}
                 </span>
               </div>
@@ -2512,40 +2389,40 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <button
                   type="button"
                   onClick={handlePrevTab}
-                  className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition cursor-pointer"
-                  title="Tab trước (Vuốt phải)"
+                  className="p-1.5 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 rounded-xl text-xs transition cursor-pointer border border-slate-700/60"
+                  title="Tab trước"
                 >
-                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
                   onClick={handleNextTab}
-                  className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition cursor-pointer"
-                  title="Tab sau (Vuốt trái)"
+                  className="p-1.5 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 rounded-xl text-xs transition cursor-pointer border border-slate-700/60"
+                  title="Tab sau"
                 >
-                  <ChevronRight className="w-3.5 h-3.5" />
+                  <ChevronRight className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsSubNavDropdownOpen(!isSubNavDropdownOpen)}
-                  className="py-1 px-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow-xs transition"
-                  title="Bấm nút 3 chấm để mở toàn bộ menu"
+                  onClick={() => setIsSubNavDropdownOpen(true)}
+                  className="py-1.5 px-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold text-xs rounded-xl cursor-pointer flex items-center gap-1.5 shadow-md transition"
+                  title="Mở toàn bộ Menu Quản Trị"
                 >
-                  <span>•••</span>
-                  <span>{isSubNavDropdownOpen ? 'Đóng' : 'Menu'}</span>
+                  <Menu className="w-3.5 h-3.5" />
+                  <span>Menu (7)</span>
                 </button>
               </div>
             </div>
 
             {/* Quick Horizontal Scrollable Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[11px]">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-[11px]">
               <button
                 type="button"
                 onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); }}
-                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                className={`py-1.5 px-3 rounded-xl font-bold shrink-0 transition cursor-pointer ${
                   effectiveMainTab === 'bds'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                    ? 'bg-emerald-600 text-white shadow-xs ring-1 ring-emerald-400'
+                    : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700/50'
                 }`}
               >
                 1. BĐS ({properties.length})
@@ -2553,10 +2430,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <button
                 type="button"
                 onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); }}
-                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                className={`py-1.5 px-3 rounded-xl font-bold shrink-0 transition cursor-pointer ${
                   effectiveMainTab === 'technicians'
-                    ? 'bg-orange-600 text-white shadow-xs'
-                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                    ? 'bg-orange-600 text-white shadow-xs ring-1 ring-orange-400'
+                    : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700/50'
                 }`}
               >
                 2. Thợ ({adminResidentServices.length})
@@ -2564,10 +2441,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <button
                 type="button"
                 onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); }}
-                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                className={`py-1.5 px-3 rounded-xl font-bold shrink-0 transition cursor-pointer ${
                   effectiveMainTab === 'recruitment'
-                    ? 'bg-teal-600 text-white shadow-xs'
-                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                    ? 'bg-teal-600 text-white shadow-xs ring-1 ring-teal-400'
+                    : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700/50'
                 }`}
               >
                 3. Việc Làm
@@ -2575,10 +2452,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <button
                 type="button"
                 onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); }}
-                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                className={`py-1.5 px-3 rounded-xl font-bold shrink-0 transition cursor-pointer ${
                   effectiveMainTab === 'resident_market'
-                    ? 'bg-amber-600 text-white shadow-xs'
-                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                    ? 'bg-purple-600 text-white shadow-xs ring-1 ring-purple-400'
+                    : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700/50'
                 }`}
               >
                 4. Chợ ({adminStores.length})
@@ -2586,10 +2463,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <button
                 type="button"
                 onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('users'); }}
-                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                className={`py-1.5 px-3 rounded-xl font-bold shrink-0 transition cursor-pointer ${
                   effectiveMainTab === 'users_leads'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                    ? 'bg-blue-600 text-white shadow-xs ring-1 ring-blue-400'
+                    : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700/50'
                 }`}
               >
                 5. Thành Viên
@@ -2597,72 +2474,284 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <button
                 type="button"
                 onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); }}
-                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                className={`py-1.5 px-3 rounded-xl font-bold shrink-0 transition cursor-pointer ${
                   effectiveMainTab === 'ads'
-                    ? 'bg-rose-600 text-white shadow-xs'
-                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                    ? 'bg-rose-600 text-white shadow-xs ring-1 ring-rose-400'
+                    : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700/50'
                 }`}
               >
-                6. Banner
+                6. Banner ({adsList.length})
               </button>
               <button
                 type="button"
                 onClick={() => { handleSelectMainTab('tools'); setActiveTab('analytics'); }}
-                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                className={`py-1.5 px-3 rounded-xl font-bold shrink-0 transition cursor-pointer ${
                   effectiveMainTab === 'tools'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                    ? 'bg-indigo-600 text-white shadow-xs ring-1 ring-indigo-400'
+                    : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700/50'
                 }`}
               >
-                7. Bot &amp; Công Cụ
+                7. Bot & Công Cụ
               </button>
             </div>
           </div>
 
+          {/* Full-Screen Drawer Modal on Mobile when clicked "Menu (7)" */}
           {isSubNavDropdownOpen && (
-            <div className="lg:hidden bg-slate-950 border border-slate-800 rounded-2xl p-3 shadow-xl grid grid-cols-2 gap-1.5 text-xs animate-in fade-in duration-150">
-              <button
-                onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-emerald-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+            <div className="lg:hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col justify-end animate-in fade-in duration-200">
+              <div
+                className="bg-slate-900 border-t border-slate-700 rounded-t-3xl p-4 max-h-[85vh] overflow-y-auto space-y-3.5 shadow-2xl animate-in slide-in-from-bottom duration-250 text-white"
+                onClick={(e) => e.stopPropagation()}
               >
-                <Building2 className="w-4 h-4" /> 1. BĐS ({properties.length})
-              </button>
-              <button
-                onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-orange-400 font-bold rounded-xl text-left flex items-center gap-1.5"
-              >
-                <Wrench className="w-4 h-4" /> 2. Thợ ({adminResidentServices.length})
-              </button>
-              <button
-                onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-teal-400 font-bold rounded-xl text-left flex items-center gap-1.5"
-              >
-                <Briefcase className="w-4 h-4" /> 3. Tuyển Dụng
-              </button>
-              <button
-                onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-amber-400 font-bold rounded-xl text-left flex items-center gap-1.5"
-              >
-                <Store className="w-4 h-4" /> 4. Chợ ({adminStores.length})
-              </button>
-              <button
-                onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('users'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-blue-400 font-bold rounded-xl text-left flex items-center gap-1.5"
-              >
-                <UserCheck className="w-4 h-4" /> 5. Thành Viên
-              </button>
-              <button
-                onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-rose-400 font-bold rounded-xl text-left flex items-center gap-1.5"
-              >
-                <Sparkles className="w-4 h-4" /> 6. Quảng Cáo
-              </button>
-              <button
-                onClick={() => { handleSelectMainTab('tools'); setActiveTab('analytics'); setIsSubNavDropdownOpen(false); }}
-                className="col-span-2 p-2 bg-slate-900 text-indigo-400 font-bold rounded-xl text-left flex items-center gap-1.5"
-              >
-                <Settings className="w-4 h-4" /> 7. Công Cụ & Bot Hệ Thống
-              </button>
+                {/* Header of Drawer */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800 sticky top-0 bg-slate-900 z-10">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 bg-emerald-500/20 text-emerald-400 rounded-xl font-black">
+                      <Layers className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <h3 className="font-extrabold text-sm text-white">MENU QUẢN TRỊ TOÀN DIỆN</h3>
+                      <p className="text-[11px] text-slate-400">Chọn mục cần xem hoặc thao tác nhanh</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsSubNavDropdownOpen(false)}
+                    className="p-2 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 hover:text-white rounded-xl transition cursor-pointer flex items-center gap-1 text-xs font-bold"
+                  >
+                    <X className="w-4 h-4" /> Đóng
+                  </button>
+                </div>
+
+                {/* 7 Group Categories with Direct Sub-item Click */}
+                <div className="space-y-3 text-xs">
+                  {/* 1. BĐS */}
+                  <div className="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-black text-emerald-400 flex items-center gap-2 text-xs">
+                        <Building2 className="w-4 h-4" /> 1. BẤT ĐỘNG SẢN & DỰ ÁN ({properties.length})
+                      </span>
+                      <span className="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded-full font-bold">
+                        BĐS
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 pt-1">
+                      <button
+                        onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('all'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Tất Cả BĐS</span>
+                        <span className="font-mono text-emerald-400">{properties.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Mua Bán</span>
+                        <span className="font-mono text-emerald-400">{saleProperties.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('rent'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Cho Thuê</span>
+                        <span className="font-mono text-teal-400">{rentProperties.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('pending'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-amber-300 flex items-center justify-between border border-amber-500/30 cursor-pointer"
+                      >
+                        <span>• Chờ Duyệt</span>
+                        <span className="font-mono font-black">{pendingProperties.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('bds'); setActiveTab('projects'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Dự Án Sơ Đồ</span>
+                        <span className="font-mono text-emerald-400">{projects.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('bds'); setActiveTab('news'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Tin Tức & SEO</span>
+                        <span className="font-mono text-emerald-400">{news.length}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 2. Thợ Dịch Vụ */}
+                  <div className="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-3 space-y-2">
+                    <span className="font-black text-orange-400 flex items-center gap-2 text-xs">
+                      <Wrench className="w-4 h-4" /> 2. THỢ KỸ THUẬT & DỊCH VỤ CƯ DÂN ({adminResidentServices.length})
+                    </span>
+                    <div className="grid grid-cols-2 gap-1.5 pt-1">
+                      <button
+                        onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); setIsSubNavDropdownOpen(false); }}
+                        className="col-span-2 p-2 bg-orange-600/20 hover:bg-orange-600/30 text-orange-300 border border-orange-500/40 rounded-xl text-[11px] font-bold text-left flex items-center justify-between cursor-pointer"
+                      >
+                        <span>🛠️ Quản Lý Đội Thợ & Cấp Nút Xanh KYC</span>
+                        <span className="font-mono font-black">{adminResidentServices.length}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 3. Tuyển Dụng */}
+                  <div className="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-3 space-y-2">
+                    <span className="font-black text-teal-400 flex items-center gap-2 text-xs">
+                      <Briefcase className="w-4 h-4" /> 3. VIỆC LÀM & TUYỂN DỤNG CƯ DÂN
+                    </span>
+                    <div className="grid grid-cols-2 gap-1.5 pt-1">
+                      <button
+                        onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); setIsSubNavDropdownOpen(false); }}
+                        className="col-span-2 p-2 bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/40 rounded-xl text-[11px] font-bold text-left flex items-center justify-between cursor-pointer"
+                      >
+                        <span>💼 Sàn Tuyển Dụng & Hồ Sơ Ứng Viên</span>
+                        <span className="font-mono">Mở Sàn</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 4. Chợ Cư Dân */}
+                  <div className="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-3 space-y-2">
+                    <span className="font-black text-purple-400 flex items-center gap-2 text-xs">
+                      <Store className="w-4 h-4" /> 4. CHỢ CƯ DÂN & GIAN HÀNG ({adminStores.length})
+                    </span>
+                    <div className="grid grid-cols-2 gap-1.5 pt-1">
+                      <button
+                        onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Gian Hàng Shop</span>
+                        <span className="font-mono text-purple-400">{adminStores.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('store_orders'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Đơn Hàng Shop</span>
+                        <span className="font-mono text-purple-400">{adminStoreOrders.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('store_packages'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Gói VIP Shop</span>
+                        <span className="font-mono text-purple-400">{adminStorePackages.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('package_orders'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Thu Phí VIP</span>
+                        <span className="font-mono text-purple-400">{adminPackageOrders.length}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 5. Thành Viên & Khách Hàng */}
+                  <div className="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-3 space-y-2">
+                    <span className="font-black text-blue-400 flex items-center gap-2 text-xs">
+                      <UserCheck className="w-4 h-4" /> 5. THÀNH VIÊN & KHÁCH HÀNG ({registeredUsers.length})
+                    </span>
+                    <div className="grid grid-cols-2 gap-1.5 pt-1">
+                      <button
+                        onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('users'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Danh Sách User</span>
+                        <span className="font-mono text-blue-400">{registeredUsers.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('leads'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Khách Xem Nhà</span>
+                        <span className="font-mono text-blue-400">{contacts.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('enterprise_core'); setIsSubNavDropdownOpen(false); }}
+                        className="col-span-2 p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Phân Quyền & Quản Trị Hệ Thống</span>
+                        <span className="font-mono text-blue-400 font-bold">Cấu hình</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 6. Banner Quảng Cáo */}
+                  <div className="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-3 space-y-2">
+                    <span className="font-black text-rose-400 flex items-center gap-2 text-xs">
+                      <Sparkles className="w-4 h-4" /> 6. QUẢNG CÁO & BANNER ({adsList.length})
+                    </span>
+                    <div className="grid grid-cols-2 gap-1.5 pt-1">
+                      <button
+                        onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
+                        className="col-span-2 p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Danh Sách & Phê Duyệt Banner</span>
+                        <span className="font-mono text-rose-400">{adsList.length}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 7. Công Cụ & Bot Hệ Thống */}
+                  <div className="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-3 space-y-2">
+                    <span className="font-black text-indigo-400 flex items-center gap-2 text-xs">
+                      <Settings className="w-4 h-4" /> 7. CÔNG CỤ, BOT & HỆ THỐNG
+                    </span>
+                    <div className="grid grid-cols-2 gap-1.5 pt-1">
+                      <button
+                        onClick={() => { handleSelectMainTab('tools'); setActiveTab('analytics'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 cursor-pointer"
+                      >
+                        • Thống Kê Truy Cập
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('tools'); setActiveTab('seo'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 cursor-pointer"
+                      >
+                        • Tối Ưu SEO Web
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('tools'); setActiveTab('marketing'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 cursor-pointer"
+                      >
+                        • Truyền Thông Social
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('tools'); setActiveTab('zalo'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 cursor-pointer"
+                      >
+                        • Cộng Đồng Zalo
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('tools'); setActiveTab('workspace_sync'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 cursor-pointer"
+                      >
+                        • Google Workspace
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('tools'); setActiveTab('n8n'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 cursor-pointer"
+                      >
+                        • Tự Động Hóa n8n
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsSubNavDropdownOpen(false)}
+                    className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-2xl text-xs transition cursor-pointer text-center"
+                  >
+                    Đóng Menu & Quay Lại Làm Việc
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
