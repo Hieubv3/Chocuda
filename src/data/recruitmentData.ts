@@ -366,6 +366,53 @@ export const INITIAL_RECRUITMENT_JOBS: RecruitmentJob[] = [
 
 export const INITIAL_CANDIDATE_PROFILES: CandidateProfile[] = [
   {
+    id: 'bui-van-hieu',
+    userId: 'u-cand-bui-van-hieu',
+    fullName: 'Bùi Văn Hiếu',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    birthYear: 1998,
+    gender: 'nam',
+    phone: '0868.499.929',
+    email: 'kinhdoanh1.fpt@gmail.com',
+    zalo: '0868.499.929',
+    currentProject: 'ocean-park-2',
+    projectName: 'Vinhomes Ocean Park 2',
+    currentAddress: 'Phân khu San Hô, Vinhomes Ocean Park 2',
+    targetJobTitle: 'Nhân viên kinh doanh BĐS / Quản lý cửa hàng',
+    primaryIndustry: 'bat-dong-san',
+    subIndustries: ['fb-am-thuc', 'dich-vu-cu-dan'],
+    workTypePreference: ['full-time', 'part-time'],
+    expectedSalary: '12 - 18 Triệu/tháng',
+    experienceLevel: '1-3y',
+    yearsOfExp: 2,
+    introduction: 'Cư dân sinh sống tại nội khu đô thị, năng động, nhiệt tình, có kinh nghiệm giao tiếp và phục vụ khách hàng chu đáo.',
+    skills: ['Giao tiếp đàm phán', 'Hiểu rõ nội khu Vinhomes', 'Tin học văn phòng', 'Chăm sóc khách hàng'],
+    workExperience: [
+      {
+        company: 'Đại lý BĐS Đất Vàng Vinhomes',
+        role: 'Chuyên viên tư vấn căn hộ',
+        period: '01/2023 - Hiện tại',
+        description: 'Tư vấn mua bán, chuyển nhượng và cho thuê căn hộ, shophouse Ocean Park 1, 2, 3.'
+      }
+    ],
+    education: [
+      {
+        school: 'Đại học Kinh Tế Quốc Dân',
+        major: 'Quản trị kinh doanh',
+        period: '2016 - 2020',
+        degree: 'Cử nhân'
+      }
+    ],
+    certificates: ['Chứng chỉ Môi giới BĐS', 'Chứng chỉ Tin học MOS'],
+    isLookingForJob: true,
+    isImmediate: true,
+    unlockPriceVnd: 20000,
+    unlockedByUserIds: ['admin', 'u-cand-bui-van-hieu'],
+    viewsCount: 350,
+    createdAt: '2026-08-01T08:00:00.000Z',
+    updatedAt: '2026-08-20T10:00:00.000Z'
+  },
+  {
     id: 'cand-1',
     userId: 'u-cand-101',
     fullName: 'Nguyễn Văn Minh',

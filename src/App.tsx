@@ -80,12 +80,32 @@ export const App: React.FC = () => {
         if (alt) raw = JSON.parse(alt);
       } catch (e) {}
     }
-    if (!raw) return null;
+    
+    // Check if admin session flag is present
+    const hasAdminSession = typeof window !== 'undefined' && localStorage.getItem('chocudan_admin_session') === 'true';
+
+    if (!raw) {
+      if (hasAdminSession) {
+        return {
+          id: 'user-admin-root',
+          name: 'Chợ Cư Dân 24h (Admin Tổng)',
+          email: 'hotro.chocudan24h@gmail.com',
+          phone: '0868.499.929',
+          role: 'admin',
+          provider: 'local',
+          balance: 10000000,
+          tier: 'kim-cuong',
+          upTinCredits: 9999
+        };
+      }
+      return null;
+    }
+
     return {
       ...raw,
       name: raw.name || (raw.email ? raw.email.split('@')[0] : 'Cư Dân Vinhomes'),
       email: raw.email || 'cudan@chocudan24h.com',
-      role: raw.role || 'visitor',
+      role: raw.role || (hasAdminSession ? 'admin' : 'visitor'),
       upTinCredits: typeof raw.upTinCredits === 'number' ? raw.upTinCredits : 20,
       tier: raw.tier || 'thuong',
       balance: raw.balance || 0
@@ -1313,6 +1333,33 @@ export const App: React.FC = () => {
             }
           />
           <Route
+            path="/ung-vien/:candidateId/:slug"
+            element={
+              <CandidateCvDetailPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/ung-vien/:candidateId"
+            element={
+              <CandidateCvDetailPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/cv/:candidateId"
+            element={
+              <CandidateCvDetailPage
+                currentUser={user}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            }
+          />
+          <Route
             path="/tuyen-dung/cv/:candidateId"
             element={
               <CandidateCvDetailPage
@@ -1684,6 +1731,12 @@ export const App: React.FC = () => {
         properties={properties}
         projects={projects}
         news={news}
+        currentUser={user}
+        isStoreContext={
+          location.pathname.startsWith('/gian-hang') || 
+          location.pathname.startsWith('/san-pham') || 
+          location.pathname.startsWith('/dich-vu-cu-dan')
+        }
         onOpenConsultation={() => setAuthModalOpen(true)}
         onOpenUpTin={() => navigate('/tai-khoan')}
       />

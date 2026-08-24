@@ -31,6 +31,7 @@ import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
 import { GoogleWorkspaceCenter } from '../components/GoogleWorkspaceCenter';
+import { getProjectSlug } from '../lib/slugs';
 
 interface AdminDashboardPageProps {
   properties: Property[];
@@ -204,12 +205,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [showMetricsDropdown, setShowMetricsDropdown] = useState<boolean>(false);
   const [isSubNavDropdownOpen, setIsSubNavDropdownOpen] = useState<boolean>(false);
   const [expandedAdminPropIds, setExpandedAdminPropIds] = useState<Record<string, boolean>>({});
+  const [expandedProjectIds, setExpandedProjectIds] = useState<Record<string, boolean>>({});
+  const [expandedNewsIds, setExpandedNewsIds] = useState<Record<string, boolean>>({});
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
 
   const toggleExpandAdminProp = (id: string) => {
     setExpandedAdminPropIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleExpandProject = (id: string) => {
+    setExpandedProjectIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleExpandNews = (id: string) => {
+    setExpandedNewsIds(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const toggleExpandAllAdminProps = (propsList: Property[]) => {
@@ -2436,25 +2447,131 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* === CỘT NỘI DUNG CHÍNH (MAIN WORKSPACE AREA) === */}
         <div className="flex-1 min-w-0 w-full space-y-4">
           
-          {/* Thanh chuyển đổi nhanh trên Mobile / Tablet (< lg) */}
-          <div className="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-2.5 shadow-md flex items-center justify-between gap-2">
-            <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5" />
-              {effectiveMainTab === 'bds' && '1. Bất Động Sản'}
-              {effectiveMainTab === 'technicians' && '2. Thợ & Dịch Vụ'}
-              {effectiveMainTab === 'recruitment' && '3. Tuyển Dụng'}
-              {effectiveMainTab === 'resident_market' && '4. Chợ Cư Dân'}
-              {effectiveMainTab === 'users_leads' && '5. Thành Viên'}
-              {effectiveMainTab === 'ads' && '6. Banner QC'}
-              {effectiveMainTab === 'tools' && '7. Công Cụ'}
-            </span>
-            <button
-              type="button"
-              onClick={() => setIsSubNavDropdownOpen(!isSubNavDropdownOpen)}
-              className="py-1 px-2.5 bg-amber-500 text-slate-950 font-black text-[11px] rounded-lg cursor-pointer"
-            >
-              {isSubNavDropdownOpen ? 'Đóng Menu ▲' : 'Chọn Phân Hệ ▼'}
-            </button>
+          {/* Thanh chuyển đổi nhanh trên Mobile / Tablet (< lg) với 3 Chấm & Vuốt Ngang */}
+          <div className="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-md space-y-2">
+            <div className="flex items-center justify-between gap-2 px-1">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="text-xs font-black text-white truncate flex items-center gap-1">
+                  {effectiveMainTab === 'bds' && '🏢 1. BĐS & Dự Án'}
+                  {effectiveMainTab === 'technicians' && '🛠️ 2. Thợ & Dịch Vụ'}
+                  {effectiveMainTab === 'recruitment' && '💼 3. Tuyển Dụng'}
+                  {effectiveMainTab === 'resident_market' && '🏪 4. Chợ Cư Dân'}
+                  {effectiveMainTab === 'users_leads' && '👥 5. Thành Viên'}
+                  {effectiveMainTab === 'ads' && '📢 6. Banner QC'}
+                  {effectiveMainTab === 'tools' && '⚙️ 7. Công Cụ & Bot'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={handlePrevTab}
+                  className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition cursor-pointer"
+                  title="Tab trước (Vuốt phải)"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextTab}
+                  className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition cursor-pointer"
+                  title="Tab sau (Vuốt trái)"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsSubNavDropdownOpen(!isSubNavDropdownOpen)}
+                  className="py-1 px-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow-xs transition"
+                  title="Bấm nút 3 chấm để mở toàn bộ menu"
+                >
+                  <span>•••</span>
+                  <span>{isSubNavDropdownOpen ? 'Đóng' : 'Menu'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Horizontal Scrollable Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[11px]">
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); }}
+                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                  effectiveMainTab === 'bds'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                1. BĐS ({properties.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); }}
+                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                  effectiveMainTab === 'technicians'
+                    ? 'bg-orange-600 text-white shadow-xs'
+                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                2. Thợ ({adminResidentServices.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); }}
+                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                  effectiveMainTab === 'recruitment'
+                    ? 'bg-teal-600 text-white shadow-xs'
+                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                3. Việc Làm
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); }}
+                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                  effectiveMainTab === 'resident_market'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                4. Chợ ({adminStores.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('users'); }}
+                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                  effectiveMainTab === 'users_leads'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                5. Thành Viên
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_mgmt'); }}
+                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                  effectiveMainTab === 'ads'
+                    ? 'bg-rose-600 text-white shadow-xs'
+                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                6. Banner
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('tools'); setActiveTab('analytics'); }}
+                className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
+                  effectiveMainTab === 'tools'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                7. Bot &amp; Công Cụ
+              </button>
+            </div>
           </div>
 
           {isSubNavDropdownOpen && (
@@ -4930,7 +5047,159 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </button>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile Optimized Projects Accordion List (< md) */}
+          <div className="md:hidden space-y-2.5">
+            {projects.map((proj) => {
+              const isExpanded = !!expandedProjectIds[proj.id];
+              return (
+                <div
+                  key={proj.id}
+                  className="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-sm transition-all"
+                >
+                  {/* Top Compact Summary Row */}
+                  <div
+                    onClick={() => toggleExpandProject(proj.id)}
+                    className="flex items-center justify-between gap-3 cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src={proj.image}
+                        alt={proj.title}
+                        className="w-14 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs"
+                      />
+                      <div className="min-w-0 space-y-0.5">
+                        <h4 className="font-black text-xs text-slate-900 dark:text-white truncate">
+                          {proj.title}
+                        </h4>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-emerald-500 shrink-0" />
+                          <span>{proj.location}</span>
+                        </p>
+                        <div className="flex items-center gap-1.5 text-[10px] flex-wrap">
+                          <span className="font-extrabold text-amber-600 dark:text-amber-400">
+                            {proj.priceRange}
+                          </span>
+                          <span className="text-slate-400">•</span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold text-[9px]">
+                            {proj.areaSize}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingProject(proj);
+                        }}
+                        className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                        title="Sửa dự án"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleExpandProject(proj.id);
+                        }}
+                        className="p-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl transition cursor-pointer"
+                      >
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Expandable Details & Action Bar on Mobile */}
+                  {isExpanded && (
+                    <div className="pt-3 mt-3 border-t border-slate-200 dark:border-slate-800 space-y-3 text-xs animate-in fade-in duration-150">
+                      {/* Masterplan / Banner Preview */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-500 block mb-1">Ảnh Banner:</span>
+                          <img
+                            src={proj.image}
+                            alt="Banner"
+                            className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs"
+                          />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-500 block mb-1">Sơ Đồ Masterplan:</span>
+                          {proj.masterplanUrl ? (
+                            <img
+                              src={proj.masterplanUrl}
+                              alt="Sơ đồ"
+                              className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs"
+                            />
+                          ) : (
+                            <div className="w-full h-24 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-[10px] text-slate-400">
+                              Chưa có sơ đồ
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Info badges */}
+                      <div className="grid grid-cols-2 gap-2 bg-white dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px]">
+                        <div>
+                          <span className="text-slate-400 block">Quy mô diện tích:</span>
+                          <strong className="text-slate-900 dark:text-white font-bold">{proj.areaSize}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block">Tổng số căn hộ/biệt thự:</span>
+                          <strong className="text-slate-900 dark:text-white font-bold">{proj.totalUnits}</strong>
+                        </div>
+                        <div className="col-span-2">
+                          <span className="text-slate-400 block">Khoảng giá giao dịch:</span>
+                          <strong className="text-amber-600 dark:text-amber-400 font-black">{proj.priceRange}</strong>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center justify-between gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setEditingProject(proj)}
+                          className="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow transition cursor-pointer"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>Sửa & Thay Ảnh</span>
+                        </button>
+                        <a
+                          href={`/du-an/${getProjectSlug(proj.id)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="py-2 px-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Xem Web</span>
+                        </a>
+                        {onDeleteProject && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm(`Bạn có chắc chắn muốn xóa dự án "${proj.title}"?`)) {
+                                onDeleteProject(proj.id);
+                              }
+                            }}
+                            className="py-2 px-3 bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-200 dark:hover:bg-rose-900 font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition cursor-pointer"
+                            title="Xóa dự án"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Full Projects Table (>= md) */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-xs text-left border-collapse">
               <thead className="bg-slate-100 dark:bg-slate-900">
                 <tr className="border-b border-slate-200 dark:border-slate-700">

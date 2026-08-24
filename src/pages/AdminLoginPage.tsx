@@ -43,9 +43,16 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
         balance: 10000000
       };
 
+      try {
+        localStorage.setItem('hb_user', JSON.stringify(loggedInAdmin));
+        localStorage.setItem('chocudan24h_user', JSON.stringify(loggedInAdmin));
+        localStorage.setItem('chocudan_admin_session', 'true');
+        sessionStorage.setItem('hb_user', JSON.stringify(loggedInAdmin));
+      } catch (e) {}
+
       setIsLoading(false);
       onLoginSuccess(loggedInAdmin);
-    }, 600);
+    }, 400);
   };
 
   return (
