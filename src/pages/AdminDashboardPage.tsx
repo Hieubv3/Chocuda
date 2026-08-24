@@ -900,6 +900,50 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newAdDisplayStyle, setNewAdDisplayStyle] = useState<'card_full' | 'image_only' | 'glowing_border' | 'minimal'>('glowing_border');
   const [newAdBadgeText, setNewAdBadgeText] = useState('QC CẠNH PHẢI');
   const [editingAd, setEditingAd] = useState<AdBanner | null>(null);
+  const [showAdFormMobile, setShowAdFormMobile] = useState(false);
+  const [previewingAd, setPreviewingAd] = useState<AdBanner | null>(null);
+  const [expandedAdIds, setExpandedAdIds] = useState<Record<string, boolean>>({});
+
+  const toggleExpandAd = (id: string) => {
+    setExpandedAdIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const getSafeAdUrl = (url?: string) => {
+    if (!url || url.trim() === '' || url === '#') return '/';
+    const trimmed = url.trim();
+    if (trimmed.startsWith('tel:') || trimmed.startsWith('mailto:') || trimmed.startsWith('/') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+    if (trimmed.startsWith('zalo.me') || trimmed.startsWith('facebook.com') || trimmed.startsWith('www.') || trimmed.includes('.')) {
+      return `https://${trimmed}`;
+    }
+    return `/${trimmed}`;
+  };
+
+  const handleTestAdClick = (ad: AdBanner) => {
+    const updated = adsList.map(a => a.id === ad.id ? { 
+      ...a, 
+      clickCount: (a.clickCount || a.clicks || 0) + 1,
+      clicks: (a.clicks || a.clickCount || 0) + 1
+    } : a);
+    setAdsList(updated);
+    
+    // Also trigger backend click track
+    try {
+      fetch('/api/ads/click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: ad.id })
+      });
+    } catch (e) {}
+
+    const targetUrl = getSafeAdUrl(ad.linkUrl || ad.targetUrl);
+    if (targetUrl.startsWith('http://') || targetUrl.startsWith('https://')) {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      window.open(targetUrl, '_blank');
+    }
+  };
 
   // Sync adsList to localStorage
   React.useEffect(() => {
@@ -920,6 +964,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewAdWidthSize(ad.widthSize || 'medium');
     setNewAdDisplayStyle(ad.displayStyle || 'card_full');
     setNewAdBadgeText(ad.badgeText || 'QC CẠNH PHẢI');
+    setShowAdFormMobile(true);
     
     // Scroll smoothly to form section
     window.scrollTo({ top: 120, behavior: 'smooth' });
@@ -3860,437 +3905,726 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
       {/* Tab: Quảng Cáo Management */}
       {activeTab === 'ads' && (
-        <div className="space-y-6">
-          <div className={`bg-white dark:bg-slate-800 rounded-3xl p-6 border transition-all shadow-xl space-y-4 ${
-            editingAd 
-              ? 'border-2 border-amber-500 ring-4 ring-amber-500/20' 
-              : 'border-slate-200 dark:border-slate-700'
-          }`}>
-            <div className="flex items-center justify-between">
-              <h3 className="font-black text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+        <div className="space-y-5">
+          {/* Top Control & Stats Header Bar */}
+          <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-700 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                <span className="text-amber-500">📢</span> QUẢN LÝ BANNER & QUẢNG CÁO
+              </h3>
+              <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                <span className="bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-md font-bold text-slate-700 dark:text-slate-300">
+                  Tổng {adsList.length} Banner
+                </span>
+                <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md font-bold">
+                  🟢 {adsList.filter(a => (a.active ?? a.isActive ?? true)).length} Đang Hiện
+                </span>
+                <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-md font-bold">
+                  👁️ {adsList.reduce((acc, a) => acc + (a.clickCount || a.clicks || 0), 0).toLocaleString('vi-VN')} Lượt Click
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  if (editingAd) handleCancelEditAd();
+                  setShowAdFormMobile(prev => !prev);
+                }}
+                className={`px-4 py-2.5 rounded-2xl font-black text-xs uppercase tracking-wider transition shadow flex items-center gap-1.5 ${
+                  showAdFormMobile || editingAd
+                    ? 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300'
+                    : 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:brightness-110'
+                }`}
+              >
                 {editingAd ? (
                   <>
-                    <Edit3 className="w-5 h-5 text-amber-500 animate-bounce" />
-                    <span>CHỈNH SỬA BANNER QUẢNG CÁO</span>
+                    <X className="w-4 h-4" /> Đóng Form Sửa
+                  </>
+                ) : showAdFormMobile ? (
+                  <>
+                    <ChevronUp className="w-4 h-4" /> Thu Gọn Form
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-5 h-5 text-amber-500" />
-                    <span>THÊM BANNER QUẢNG CÁO MỚI (DÀNH RIÊNG CHO ADMIN)</span>
+                    <Plus className="w-4 h-4" /> + Thêm Banner Mới
                   </>
                 )}
-              </h3>
-              {editingAd && (
-                <button
-                  type="button"
-                  onClick={handleCancelEditAd}
-                  className="px-3 py-1 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1"
-                >
-                  <X className="w-4 h-4" /> Hủy Sửa (Trở về Thêm Mới)
-                </button>
-              )}
+              </button>
             </div>
+          </div>
 
-            {editingAd && (
-              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-center justify-between text-xs font-bold text-amber-800 dark:text-amber-300">
-                <span>⚠️ Bạn đang chỉnh sửa Banner: <strong>"{editingAd.title}"</strong></span>
-                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal">Thay đổi thông tin bên dưới và nhấn "Lưu Cập Nhật Banner"</span>
-              </div>
-            )}
-            
-            <form onSubmit={handleSaveFormAd} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-bold">
-                {/* Column 1: Text details */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">1. Tiêu đề quảng cáo (*)</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Ví dụ: Quỹ căn Shophouse Chà Là cắt lỗ 2 tỷ..."
-                      value={newAdTitle}
-                      onChange={e => setNewAdTitle(e.target.value)}
-                      className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs font-bold"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">2. Đường dẫn liên kết (Link Web / Zalo)</label>
-                    <input
-                      type="text"
-                      placeholder="Ví dụ: https://zalo.me/0912345678"
-                      value={newAdLink}
-                      onChange={e => setNewAdLink(e.target.value)}
-                      className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">3. Vị trí hiển thị trên website (*)</label>
-                    <select
-                      value={newAdPos}
-                      onChange={e => setNewAdPos(e.target.value as any)}
-                      className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-amber-300 dark:border-slate-700 rounded-2xl text-amber-600 dark:text-amber-400 font-black text-xs focus:ring-2 focus:ring-amber-500 outline-none shadow-sm"
-                    >
-                      <option value="float_right_pc">📌 Cạnh Phải Web Bám Đuổi trên PC (Sticky Float Right - Có nút tắt ❌)</option>
-                      <option value="header_top">📌 Thanh trên cùng Header (Top Banner Bar)</option>
-                      <option value="float_left_pc">📌 Cạnh Trái Web Bám Đuổi trên PC (Sticky Float Left - Có nút tắt ❌)</option>
-                      <option value="home_middle">📌 Giữa Trang Chủ (Nằm giữa danh sách tin)</option>
-                      <option value="home_sidebar">📌 Cột Phải Trang Chủ (Sidebar Banner)</option>
-                      <option value="property_detail">📌 Trang Chi Tiết BĐS (Detail Page Banner)</option>
-                      <option value="popup_modal">📌 Pop-Up Nổi Trung Tâm Màn Hình (Center Popup - Có nút tắt ❌)</option>
-                    </select>
-                  </div>
-
-                  {/* Quản Trị Kích Thước & Kiểu Hiển Thị Banner Cạnh Phải */}
-                  <div className="bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-3.5 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-extrabold text-amber-600 dark:text-amber-400 text-xs flex items-center gap-1.5 uppercase">
-                        <Sparkles className="w-4 h-4 text-amber-500" /> TÙY CHỈNH KÍCH THƯỚC & KIỂU HIỂN THỊ CẠNH PHẢI:
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                      <div>
-                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">📐 Kích thước bề rộng (Size):</label>
-                        <select
-                          value={newAdWidthSize}
-                          onChange={(e) => setNewAdWidthSize(e.target.value as any)}
-                          className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
-                        >
-                          <option value="medium">Vừa (Medium - ~210px Chuẩn Web)</option>
-                          <option value="large">Rộng / Lớn (VIP Large - ~260px)</option>
-                          <option value="small">Nhỏ (Small - ~170px Tiết kiệm)</option>
-                          <option value="compact">Siêu Gọn (Compact - ~140px Mini)</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">🎨 Kiểu hiển thị (Style):</label>
-                        <select
-                          value={newAdDisplayStyle}
-                          onChange={(e) => setNewAdDisplayStyle(e.target.value as any)}
-                          className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
-                        >
-                          <option value="glowing_border">✨ VIP Viền Phát Sáng Gold Glow (Gây chú ý)</option>
-                          <option value="card_full">Thẻ Đầy Đủ (Hình + Tiêu đề + Nút bấm)</option>
-                          <option value="image_only">🖼️ Chỉ Hình Ảnh Banner (Tràn viền + Nút tắt ❌)</option>
-                          <option value="minimal">⚪ Tối Giản Sáng (Clean Light Minimalist)</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">🏷️ Nhãn Badge hiển thị:</label>
-                        <input
-                          type="text"
-                          value={newAdBadgeText}
-                          onChange={(e) => setNewAdBadgeText(e.target.value)}
-                          placeholder="Ví dụ: QUẢNG CÁO CẠNH PHẢI..."
-                          className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Interactive Visual Website Blueprint Setup Map */}
-                  <div className="bg-slate-900 border-2 border-amber-500/40 rounded-2xl p-3 space-y-2 text-white">
-                    <div className="flex items-center justify-between">
-                      <span className="font-extrabold text-amber-400 text-[11px] uppercase flex items-center gap-1">
-                        <Layout className="w-3.5 h-3.5" /> SƠ ĐỒ VỊ TRÍ TRỰC QUAN (BẤM VÀO ĐỂ CHỌN):
-                      </span>
-                      <span className="text-[10px] text-emerald-400 font-bold uppercase">
-                        {newAdPos === 'header_top' && 'Top Header'}
-                        {newAdPos === 'float_right_pc' && 'Cạnh Phải PC (Bám đuổi)'}
-                        {newAdPos === 'float_left_pc' && 'Cạnh Trái PC (Bám đuổi)'}
-                        {newAdPos === 'home_middle' && 'Giữa Trang Chủ'}
-                        {newAdPos === 'home_sidebar' && 'Sidebar Cột Phải'}
-                        {newAdPos === 'property_detail' && 'Trang Chi Tiết'}
-                        {newAdPos === 'popup_modal' && 'Pop-Up Nổi'}
-                      </span>
-                    </div>
-
-                    <div className="border border-slate-700 bg-slate-950 rounded-xl p-2 space-y-1.5 text-[10px] font-bold">
-                      {/* Top Header */}
-                      <div
-                        onClick={() => setNewAdPos('header_top')}
-                        className={`p-1.5 rounded text-center cursor-pointer transition border flex items-center justify-between ${
-                          newAdPos === 'header_top'
-                            ? 'bg-amber-500 text-slate-950 border-white font-black shadow-md'
-                            : 'bg-slate-800 text-amber-300 border-amber-500/30 hover:bg-slate-750'
-                        }`}
-                      >
-                        <span>📌 Thanh Trên Cùng Header</span>
-                        <span className="text-[9px] opacity-80">({adsList.filter(a => a.position === 'header_top').length})</span>
-                      </div>
-
-                      {/* Main Grid */}
-                      <div className="grid grid-cols-12 gap-1.5">
-                        <div
-                          onClick={() => setNewAdPos('float_left_pc')}
-                          className={`col-span-3 p-1.5 rounded text-center cursor-pointer transition border flex flex-col justify-center ${
-                            newAdPos === 'float_left_pc'
-                              ? 'bg-emerald-600 text-white border-white font-black shadow'
-                              : 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30 hover:bg-emerald-900/40'
-                          }`}
-                        >
-                          <span className="text-[9px]">📌 Cạnh Trái (PC)</span>
-                          <span className="text-[8px] text-emerald-200">Bám đuổi ❌</span>
-                        </div>
-
-                        <div className="col-span-6 space-y-1">
-                          <div
-                            onClick={() => setNewAdPos('home_middle')}
-                            className={`p-1.5 rounded text-center cursor-pointer transition border ${
-                              newAdPos === 'home_middle'
-                                ? 'bg-amber-500 text-slate-950 border-white font-black shadow'
-                                : 'bg-amber-950/40 text-amber-300 border-amber-500/30 hover:bg-amber-900/40'
-                            }`}
-                          >
-                            <span>📌 Giữa Trang Chủ</span>
-                          </div>
-                          <div
-                            onClick={() => setNewAdPos('property_detail')}
-                            className={`p-1 rounded text-center cursor-pointer transition border ${
-                              newAdPos === 'property_detail'
-                                ? 'bg-purple-600 text-white border-white font-black shadow'
-                                : 'bg-purple-950/40 text-purple-300 border-purple-500/30 hover:bg-purple-900/40'
-                            }`}
-                          >
-                            <span className="text-[9px]">📌 Trang Chi Tiết BĐS</span>
-                          </div>
-                        </div>
-
-                        <div className="col-span-3 space-y-1">
-                          <div
-                            onClick={() => setNewAdPos('home_sidebar')}
-                            className={`p-1 rounded text-center cursor-pointer transition border ${
-                              newAdPos === 'home_sidebar'
-                                ? 'bg-blue-600 text-white border-white font-black shadow'
-                                : 'bg-blue-950/40 text-blue-300 border-blue-500/30 hover:bg-blue-900/40'
-                            }`}
-                          >
-                            <span className="text-[9px]">📌 Sidebar Cột Phải</span>
-                          </div>
-                          <div
-                            onClick={() => setNewAdPos('float_right_pc')}
-                            className={`p-1 rounded text-center cursor-pointer transition border ${
-                              newAdPos === 'float_right_pc'
-                                ? 'bg-amber-500 text-slate-950 border-white font-black shadow'
-                                : 'bg-amber-950/40 text-amber-300 border-amber-500/30 hover:bg-amber-900/40'
-                            }`}
-                          >
-                            <span className="text-[9px]">📌 Cạnh Phải (PC) ❌</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Popup Modal */}
-                      <div
-                        onClick={() => setNewAdPos('popup_modal')}
-                        className={`p-1.5 rounded text-center cursor-pointer transition border flex items-center justify-between ${
-                          newAdPos === 'popup_modal'
-                            ? 'bg-rose-600 text-white border-white font-black shadow'
-                            : 'bg-rose-950/40 text-rose-300 border-rose-500/30 hover:bg-rose-900/40'
-                        }`}
-                      >
-                        <span>📌 Pop-Up Nổi Trung Tâm (Center Popup Modal)</span>
-                        <span className="text-[9px] opacity-80">({adsList.filter(a => a.position === 'popup_modal').length})</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 2: Image Upload & Preview */}
-                <div className="space-y-4">
-                  <label className="block text-slate-700 dark:text-slate-300 font-extrabold">4. Hình ảnh Banner (*)</label>
-
-                  {/* High visibility upload button */}
-                  <label className="flex flex-col items-center justify-center p-5 bg-gradient-to-br from-amber-50 to-amber-100/80 dark:from-amber-950/40 dark:to-slate-900 border-2 border-dashed border-amber-400 hover:border-amber-500 rounded-2xl cursor-pointer transition text-center group shadow-sm">
-                    <Upload className="w-8 h-8 text-amber-500 mb-1.5 group-hover:scale-110 transition-transform animate-pulse" />
-                    <span className="text-amber-950 dark:text-amber-300 font-black text-xs uppercase tracking-wider">
-                      📁 BẤM VÀO ĐÂY ĐỂ TẢI ẢNH TỪ MÁY TÍNH (PC)
-                    </span>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-normal">
-                      Hỗ trợ định dạng JPG, PNG, WEBP (Dung lượng max 8MB)
-                    </span>
-                    <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e)} />
-                  </label>
-
-                  {/* Fallback URL input */}
-                  <div>
-                    <label className="block text-slate-500 dark:text-slate-400 mb-1 text-[11px] font-medium">Hoặc dán URL link ảnh có sẵn:</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="https://images.unsplash.com/..."
-                      value={newAdImage}
-                      onChange={e => setNewAdImage(e.target.value)}
-                      className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs font-mono"
-                    />
-                  </div>
-
-                  {/* Image Live Preview */}
-                  {newAdImage && (
-                    <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-amber-300 dark:border-amber-800/60 shadow-sm space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                          <Check className="w-4 h-4" /> xem trước ảnh banner:
-                        </span>
-                        <label className="text-[10px] font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer">
-                          Đổi ảnh từ PC
-                          <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e)} />
-                        </label>
-                      </div>
-                      <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
-                        <img src={newAdImage} alt="Preview" className="h-24 w-full object-cover" />
-                      </div>
-                    </div>
+          {/* Form: Add / Edit Banner (Toggleable on Mobile, Always visible on Desktop or when editing) */}
+          {(showAdFormMobile || editingAd) && (
+            <div className={`bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-6 border transition-all shadow-xl space-y-4 animate-fade-in ${
+              editingAd 
+                ? 'border-2 border-amber-500 ring-4 ring-amber-500/20' 
+                : 'border-slate-200 dark:border-slate-700'
+            }`}>
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/60">
+                <h4 className="font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                  {editingAd ? (
+                    <>
+                      <Edit3 className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 animate-bounce" />
+                      <span>CHỈNH SỬA BANNER QUẢNG CÁO</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+                      <span>THÊM BANNER QUẢNG CÁO MỚI (ADMIN)</span>
+                    </>
                   )}
-                </div>
-              </div>
-
-              {/* Form submit bar */}
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <button
-                    type="submit"
-                    className={`px-7 py-3.5 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2 ${
-                      editingAd 
-                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:brightness-110' 
-                        : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:brightness-110'
-                    }`}
-                  >
-                    {editingAd ? (
-                      <>
-                        <Check className="w-5 h-5" /> 💾 LƯU CẬP NHẬT BANNER
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-5 h-5" /> + THÊM BANNER QUẢNG CÁO MỚI
-                      </>
-                    )}
-                  </button>
+                </h4>
+                <div className="flex items-center gap-2">
                   {editingAd && (
                     <button
                       type="button"
                       onClick={handleCancelEditAd}
-                      className="px-5 py-3.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-2xl text-xs transition flex items-center gap-1.5"
+                      className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1"
                     >
-                      <X className="w-4 h-4" /> HỦY SỬA (TRỞ VỀ THÊM MỚI)
+                      <X className="w-3.5 h-3.5" /> Hủy Sửa
                     </button>
                   )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editingAd) handleCancelEditAd();
+                      setShowAdFormMobile(false);
+                    }}
+                    className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg transition"
+                    title="Đóng form"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
-                <p className="text-[11px] text-slate-400 font-medium">
-                  * Banner mới đăng hoặc vừa cập nhật sẽ được hiển thị ngay lập tức ngoài trang chủ.
+              </div>
+
+              {editingAd && (
+                <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-bold text-amber-800 dark:text-amber-300">
+                  <span>⚠️ Đang sửa: <strong>"{editingAd.title}"</strong></span>
+                  <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal">Thay đổi thông tin và nhấn "Lưu Cập Nhật" bên dưới</span>
+                </div>
+              )}
+              
+              <form onSubmit={handleSaveFormAd} className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs font-bold">
+                  {/* Column 1: Text details & Position */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-slate-700 dark:text-slate-300 mb-1 font-extrabold">1. Tiêu đề quảng cáo (*)</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ví dụ: Quỹ căn Shophouse Vinhomes Chà Là cắt lỗ 2 tỷ..."
+                        value={newAdTitle}
+                        onChange={e => setNewAdTitle(e.target.value)}
+                        className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs font-bold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-slate-700 dark:text-slate-300 mb-1 font-extrabold">2. Đường dẫn liên kết khi Click (Web / Zalo / Phone)</label>
+                      <input
+                        type="text"
+                        placeholder="Ví dụ: https://zalo.me/0912345678 hoặc /mua-ban/can-ho"
+                        value={newAdLink}
+                        onChange={e => setNewAdLink(e.target.value)}
+                        className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs font-mono"
+                      />
+                      <p className="text-[10px] text-slate-400 mt-1">
+                        💡 Hỗ trợ: Link web ngoài (https://...), Link Zalo (https://zalo.me/...), Link nội bộ (/mua-ban), hoặc SĐT (tel:0912...)
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-slate-700 dark:text-slate-300 mb-1 font-extrabold">3. Vị trí hiển thị trên website (*)</label>
+                      <select
+                        value={newAdPos}
+                        onChange={e => setNewAdPos(e.target.value as any)}
+                        className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-amber-400 dark:border-slate-700 rounded-2xl text-amber-700 dark:text-amber-300 font-black text-xs focus:ring-2 focus:ring-amber-500 outline-none shadow-sm"
+                      >
+                        <option value="float_right_pc">📌 Cạnh Phải Web Bám Đuổi (Sticky Float Right - Có nút tắt ❌)</option>
+                        <option value="header_top">📌 Thanh trên cùng Header (Top Banner Bar)</option>
+                        <option value="float_left_pc">📌 Cạnh Trái Web Bám Đuổi (Sticky Float Left - Có nút tắt ❌)</option>
+                        <option value="home_middle">📌 Giữa Trang Chủ (Nằm giữa danh sách tin)</option>
+                        <option value="home_sidebar">📌 Cột Phải Trang Chủ (Sidebar Banner)</option>
+                        <option value="property_detail">📌 Trang Chi Tiết BĐS (Detail Page Banner)</option>
+                        <option value="popup_modal">📌 Pop-Up Nổi Trung Tâm (Center Modal Pop-up - Có nút tắt ❌)</option>
+                      </select>
+                    </div>
+
+                    {/* Custom styling options */}
+                    <div className="bg-amber-500/10 border border-amber-500/40 rounded-2xl p-3.5 space-y-3">
+                      <span className="font-extrabold text-amber-700 dark:text-amber-300 text-xs flex items-center gap-1.5 uppercase">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" /> TÙY CHỈNH KÍCH THƯỚC & KIỂU HIỂN THỊ:
+                      </span>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                        <div>
+                          <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">📐 Bề rộng:</label>
+                          <select
+                            value={newAdWidthSize}
+                            onChange={(e) => setNewAdWidthSize(e.target.value as any)}
+                            className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white text-xs"
+                          >
+                            <option value="medium">Vừa (Medium ~210px)</option>
+                            <option value="large">Rộng (Large ~260px)</option>
+                            <option value="small">Nhỏ (Small ~170px)</option>
+                            <option value="compact">Gọn (Compact ~140px)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">🎨 Kiểu dáng:</label>
+                          <select
+                            value={newAdDisplayStyle}
+                            onChange={(e) => setNewAdDisplayStyle(e.target.value as any)}
+                            className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white text-xs"
+                          >
+                            <option value="glowing_border">✨ VIP Viền Phát Sáng</option>
+                            <option value="card_full">Thẻ Đầy Đủ (Hình + Chữ)</option>
+                            <option value="image_only">🖼️ Chỉ Hình Ảnh Banner</option>
+                            <option value="minimal">⚪ Tối Giản Sáng</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">🏷️ Nhãn Badge:</label>
+                          <input
+                            type="text"
+                            value={newAdBadgeText}
+                            onChange={(e) => setNewAdBadgeText(e.target.value)}
+                            placeholder="Ví dụ: QUẢNG CÁO VIP..."
+                            className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white text-xs"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Column 2: Image Upload & Preview */}
+                  <div className="space-y-4">
+                    <label className="block text-slate-700 dark:text-slate-300 font-extrabold">4. Hình ảnh Banner (*)</label>
+
+                    <label className="flex flex-col items-center justify-center p-5 bg-gradient-to-br from-amber-50 to-amber-100/80 dark:from-amber-950/40 dark:to-slate-900 border-2 border-dashed border-amber-400 hover:border-amber-500 rounded-2xl cursor-pointer transition text-center group shadow-sm">
+                      <Upload className="w-7 h-7 text-amber-500 mb-1.5 group-hover:scale-110 transition-transform animate-pulse" />
+                      <span className="text-amber-950 dark:text-amber-300 font-black text-xs uppercase tracking-wider">
+                        📁 BẤM ĐỂ TẢI ẢNH TỪ MÁY
+                      </span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-normal">
+                        JPG, PNG, WEBP (Tối đa 8MB)
+                      </span>
+                      <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e)} />
+                    </label>
+
+                    <div>
+                      <label className="block text-slate-500 dark:text-slate-400 mb-1 text-[11px] font-medium">Hoặc dán URL ảnh trực tiếp:</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="https://images.unsplash.com/..."
+                        value={newAdImage}
+                        onChange={e => setNewAdImage(e.target.value)}
+                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs font-mono"
+                      />
+                    </div>
+
+                    {newAdImage && (
+                      <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-amber-300 dark:border-amber-800/60 shadow-sm space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                            <Check className="w-3.5 h-3.5" /> Xem trước ảnh banner:
+                          </span>
+                          <label className="text-[10px] font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer">
+                            Đổi ảnh khác
+                            <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e)} />
+                          </label>
+                        </div>
+                        <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-36 bg-slate-950 flex items-center justify-center">
+                          <img src={newAdImage} alt="Preview" className="max-h-36 w-full object-contain" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Form submit bar */}
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className={`px-6 py-3 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2 ${
+                        editingAd 
+                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:brightness-110' 
+                          : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:brightness-110'
+                      }`}
+                    >
+                      {editingAd ? (
+                        <>
+                          <Check className="w-4 h-4" /> 💾 LƯU CẬP NHẬT BANNER
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-4 h-4" /> + ĐĂNG BANNER MỚI
+                        </>
+                      )}
+                    </button>
+                    {editingAd && (
+                      <button
+                        type="button"
+                        onClick={handleCancelEditAd}
+                        className="px-4 py-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-2xl text-xs transition flex items-center gap-1"
+                      >
+                        <X className="w-4 h-4" /> HỦY
+                      </button>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-medium">
+                    * Banner hiển thị ngay lập tức ra toàn bộ trang web
+                  </span>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Banner List Section */}
+          <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h4 className="font-black text-xs sm:text-sm text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                  <span>📋</span> DANH SÁCH BANNER QUẢNG CÁO ({adsList.length})
+                </h4>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  Bấm vào thẻ hoặc nút <strong>[👁️ Test Click]</strong> để xem thử và kiểm tra chức năng click
                 </p>
               </div>
-            </form>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-black text-sm text-slate-900 dark:text-white uppercase tracking-wider">
-                DANH SÁCH BANNER QUẢNG CÁO ĐANG HOẠT ĐỘNG ({adsList.length})
-              </h3>
-              <span className="text-[11px] text-slate-400">Ấn nút ✏️ Sửa để chỉnh sửa trực tiếp thông tin ở khung trên</span>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 font-bold">
-                    <th className="p-3">Hình ảnh Banner</th>
-                    <th className="p-3">Tiêu đề quảng cáo</th>
-                    <th className="p-3">Vị trí</th>
-                    <th className="p-3">Lượt click</th>
-                    <th className="p-3">Trạng thái</th>
-                    <th className="p-3 text-right">Thao tác sửa</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {adsList.map(ad => {
+            {adsList.length === 0 ? (
+              <div className="text-center py-10 text-slate-400 text-xs">
+                Chưa có banner quảng cáo nào. Bấm "+ Thêm Banner Mới" ở trên để tạo banner đầu tiên.
+              </div>
+            ) : (
+              <>
+                {/* 1. Mobile Compact Accordion Card List (block md:hidden) */}
+                <div className="block md:hidden space-y-3">
+                  {adsList.map((ad, idx) => {
                     const isBeingEdited = editingAd?.id === ad.id;
+                    const isExpanded = !!expandedAdIds[ad.id];
+                    const isActive = ad.active ?? ad.isActive ?? true;
+                    const safeUrl = getSafeAdUrl(ad.linkUrl || ad.targetUrl);
+
                     return (
-                      <tr 
-                        key={ad.id} 
-                        className={`transition ${
-                          isBeingEdited 
-                            ? 'bg-amber-50/80 dark:bg-amber-950/30 border-l-4 border-amber-500' 
-                            : 'hover:bg-slate-50 dark:hover:bg-slate-900/50'
+                      <div
+                        key={ad.id}
+                        className={`rounded-2xl border transition-all overflow-hidden ${
+                          isBeingEdited
+                            ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/30 ring-2 ring-amber-500/30'
+                            : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 hover:border-amber-400'
                         }`}
                       >
-                        <td className="p-3">
-                          <div className="relative group w-24">
-                            <img src={ad.imageUrl} alt={ad.title} className="w-24 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm" />
-                            <label 
-                              className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center rounded-xl cursor-pointer text-white text-[9px] font-extrabold transition"
-                              title="Tải ảnh mới trực tiếp"
-                            >
-                              <Upload className="w-3.5 h-3.5 mb-0.5 text-amber-400" />
-                              <span>Đổi ảnh</span>
-                              <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e, ad.id)} />
-                            </label>
-                          </div>
-                        </td>
-                        <td className="p-3 font-bold text-slate-900 dark:text-white max-w-xs">
-                          <p className="line-clamp-2">{ad.title}</p>
-                          <a href={ad.linkUrl} target="_blank" rel="noreferrer" className="text-[10px] text-amber-500 hover:underline">
-                            {ad.linkUrl}
-                          </a>
-                        </td>
-                        <td className="p-3 font-extrabold text-amber-600 dark:text-amber-400">
-                          {ad.position === 'header_top' && '📌 Top Header'}
-                          {ad.position === 'float_right_pc' && '📌 Cạnh Phải PC (Bám đuổi ❌)'}
-                          {ad.position === 'float_left_pc' && '📌 Cạnh Trái PC (Bám đuổi ❌)'}
-                          {ad.position === 'home_middle' && '📌 Giữa Trang Chủ'}
-                          {ad.position === 'home_sidebar' && '📌 Sidebar Cột Phải'}
-                          {ad.position === 'property_detail' && '📌 Chi Tiết BĐS'}
-                          {ad.position === 'popup_modal' && '📌 Pop-Up Nổi (Modal ❌)'}
-                          {!['header_top','float_right_pc','float_left_pc','home_middle','home_sidebar','property_detail','popup_modal'].includes(ad.position) && ad.position}
-                        </td>
-                        <td className="p-3 font-black text-emerald-600">{(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} lượt</td>
-                        <td className="p-3">
-                          <button
-                            onClick={() => handleToggleAdActive(ad.id)}
-                            className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition ${
-                              (ad.active ?? ad.isActive ?? true)
-                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                                : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
-                            }`}
+                        {/* Main compact top row */}
+                        <div className="p-3 flex items-start gap-3">
+                          {/* Thumbnail: Clicking opens test preview */}
+                          <div 
+                            onClick={() => setPreviewingAd(ad)}
+                            className="relative w-20 h-16 rounded-xl overflow-hidden bg-slate-900 shrink-0 border border-slate-300 dark:border-slate-700 cursor-pointer group shadow-sm"
+                            title="Bấm để xem thử banner"
                           >
-                            {(ad.active ?? ad.isActive ?? true) ? '✓ Đang Hiện' : '✕ Đã Ẩn'}
-                          </button>
-                        </td>
-                        <td className="p-3 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => handleStartEditAd(ad)}
-                              className={`px-3 py-1.5 rounded-xl font-black text-xs flex items-center gap-1.5 transition shadow-sm border ${
-                                isBeingEdited
-                                  ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400'
-                                  : 'bg-amber-500 hover:bg-amber-600 text-slate-950 border-amber-400'
-                              }`}
-                              title="Sửa thông tin banner quảng cáo ở ô trên"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                              <span>{isBeingEdited ? '✏️ Đang Sửa...' : '✏️ SỬA BANNER'}</span>
-                            </button>
-                            <button
-                              onClick={() => handleDeleteAd(ad.id)}
-                              className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-xl transition"
-                              title="Xóa quảng cáo"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <img
+                              src={ad.imageUrl}
+                              alt={ad.title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                            />
+                            <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[9px] font-black transition">
+                              <Eye className="w-3.5 h-3.5 text-amber-400" />
+                            </div>
+                            <span className="absolute bottom-0.5 right-0.5 bg-slate-950/80 text-amber-400 text-[8px] font-black px-1 rounded">
+                              #{idx + 1}
+                            </span>
                           </div>
-                        </td>
-                      </tr>
+
+                          {/* Info column */}
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 truncate max-w-[150px]">
+                                {ad.position === 'header_top' && '📌 Top Header'}
+                                {ad.position === 'float_right_pc' && '📌 Cạnh Phải (Sticky)'}
+                                {ad.position === 'float_left_pc' && '📌 Cạnh Trái (Sticky)'}
+                                {ad.position === 'home_middle' && '📌 Giữa Trang Chủ'}
+                                {ad.position === 'home_sidebar' && '📌 Sidebar Phải'}
+                                {ad.position === 'property_detail' && '📌 Chi Tiết Căn'}
+                                {ad.position === 'popup_modal' && '📌 Pop-up Nổi'}
+                                {!['header_top','float_right_pc','float_left_pc','home_middle','home_sidebar','property_detail','popup_modal'].includes(ad.position) && ad.position}
+                              </span>
+
+                              {/* Active status pill */}
+                              <button
+                                type="button"
+                                onClick={() => handleToggleAdActive(ad.id)}
+                                className={`px-2 py-0.5 rounded-full text-[9px] font-black transition ${
+                                  isActive
+                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                    : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                }`}
+                              >
+                                {isActive ? '🟢 Hiện' : '⚫ Ẩn'}
+                              </button>
+                            </div>
+
+                            <h5 
+                              onClick={() => setPreviewingAd(ad)}
+                              className="text-xs font-bold text-slate-900 dark:text-white line-clamp-2 leading-tight cursor-pointer hover:text-amber-500 transition"
+                            >
+                              {ad.title}
+                            </h5>
+
+                            <div className="flex items-center justify-between text-[10px] text-slate-500 pt-0.5">
+                              <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                                👁️ {(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} Clicks
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => toggleExpandAd(ad.id)}
+                                className="text-slate-400 hover:text-amber-500 flex items-center gap-0.5 font-bold"
+                              >
+                                {isExpanded ? 'Gọn ▴' : 'Chi tiết ▾'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Collapsible details on mobile */}
+                        {isExpanded && (
+                          <div className="px-3 py-2.5 bg-slate-100/70 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700/60 text-[11px] space-y-1.5 font-medium animate-fade-in">
+                            <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                              <span>🔗 Link mở:</span>
+                              <a
+                                href={safeUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => handleTestAdClick(ad)}
+                                className="text-amber-600 dark:text-amber-400 hover:underline truncate max-w-[180px] font-mono text-[10px] flex items-center gap-1"
+                              >
+                                {ad.linkUrl || 'Chưa đặt link'} <ExternalLink className="w-2.5 h-2.5 shrink-0" />
+                              </a>
+                            </div>
+                            <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                              <span>📐 Kích thước / Kiểu:</span>
+                              <span className="font-bold text-slate-900 dark:text-white">
+                                {ad.widthSize || 'medium'} • {ad.displayStyle || 'glowing_border'}
+                              </span>
+                            </div>
+                            {ad.badgeText && (
+                              <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                                <span>🏷️ Nhãn Badge:</span>
+                                <span className="font-bold text-amber-600 dark:text-amber-400">{ad.badgeText}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Mobile Action Buttons Bar */}
+                        <div className="p-2 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700/60 grid grid-cols-4 gap-1.5 text-center">
+                          {/* 1. Test Click Preview */}
+                          <button
+                            type="button"
+                            onClick={() => setPreviewingAd(ad)}
+                            className="py-1.5 px-1 bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 text-amber-800 dark:text-amber-300 font-extrabold rounded-xl text-[10px] flex flex-col items-center justify-center gap-0.5 transition"
+                            title="Xem thử banner và test click"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Xem Thử</span>
+                          </button>
+
+                          {/* 2. Direct Open Link */}
+                          <button
+                            type="button"
+                            onClick={() => handleTestAdClick(ad)}
+                            className="py-1.5 px-1 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-xl text-[10px] flex flex-col items-center justify-center gap-0.5 transition"
+                            title="Mở link ngoài web & đếm click"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            <span>Mở Link</span>
+                          </button>
+
+                          {/* 3. Edit */}
+                          <button
+                            type="button"
+                            onClick={() => handleStartEditAd(ad)}
+                            className={`py-1.5 px-1 font-extrabold rounded-xl text-[10px] flex flex-col items-center justify-center gap-0.5 transition ${
+                              isBeingEdited
+                                ? 'bg-amber-400 text-slate-950 font-black'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-200'
+                            }`}
+                            title="Chỉnh sửa thông tin banner"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>{isBeingEdited ? 'Đang Sửa' : 'Sửa'}</span>
+                          </button>
+
+                          {/* 4. Delete */}
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAd(ad.id)}
+                            className="py-1.5 px-1 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-600 dark:text-rose-400 font-extrabold rounded-xl text-[10px] flex flex-col items-center justify-center gap-0.5 transition"
+                            title="Xóa banner"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Xóa</span>
+                          </button>
+                        </div>
+                      </div>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
+                </div>
+
+                {/* 2. Desktop High-Density Table (hidden md:block) */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-xs text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 font-bold">
+                        <th className="p-3">Hình ảnh Banner</th>
+                        <th className="p-3">Tiêu đề & Link liên kết</th>
+                        <th className="p-3">Vị trí hiển thị</th>
+                        <th className="p-3">Lượt click</th>
+                        <th className="p-3">Trạng thái</th>
+                        <th className="p-3 text-right">Thao tác quản trị</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      {adsList.map((ad, idx) => {
+                        const isBeingEdited = editingAd?.id === ad.id;
+                        const safeUrl = getSafeAdUrl(ad.linkUrl || ad.targetUrl);
+
+                        return (
+                          <tr 
+                            key={ad.id} 
+                            className={`transition cursor-pointer group ${
+                              isBeingEdited 
+                                ? 'bg-amber-50/80 dark:bg-amber-950/30 border-l-4 border-amber-500' 
+                                : 'hover:bg-slate-50 dark:hover:bg-slate-900/50'
+                            }`}
+                          >
+                            {/* Image Thumbnail with Upload overlay */}
+                            <td className="p-3" onClick={() => setPreviewingAd(ad)}>
+                              <div className="relative group/thumb w-24 h-14 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm bg-slate-950">
+                                <img 
+                                  src={ad.imageUrl} 
+                                  alt={ad.title} 
+                                  className="w-full h-full object-cover group-hover/thumb:scale-105 transition duration-300" 
+                                />
+                                <div className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover/thumb:opacity-100 flex flex-col items-center justify-center text-white text-[9px] font-extrabold transition">
+                                  <Eye className="w-3.5 h-3.5 mb-0.5 text-amber-400" />
+                                  <span>Xem thử</span>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Title and Safe Link */}
+                            <td className="p-3 font-bold text-slate-900 dark:text-white max-w-xs">
+                              <p 
+                                onClick={() => setPreviewingAd(ad)}
+                                className="line-clamp-2 hover:text-amber-500 transition cursor-pointer" 
+                                title={ad.title}
+                              >
+                                {ad.title}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <a 
+                                  href={safeUrl} 
+                                  target="_blank" 
+                                  rel="noreferrer" 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleTestAdClick(ad);
+                                  }}
+                                  className="text-[10px] text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 font-mono truncate max-w-[200px]"
+                                  title="Mở liên kết trực tiếp và ghi nhận click"
+                                >
+                                  {ad.linkUrl || 'Chưa đặt link'} <ExternalLink className="w-3 h-3 shrink-0" />
+                                </a>
+                              </div>
+                            </td>
+
+                            {/* Position */}
+                            <td className="p-3 font-extrabold text-amber-600 dark:text-amber-400">
+                              {ad.position === 'header_top' && '📌 Top Header'}
+                              {ad.position === 'float_right_pc' && '📌 Cạnh Phải PC (Sticky ❌)'}
+                              {ad.position === 'float_left_pc' && '📌 Cạnh Trái PC (Sticky ❌)'}
+                              {ad.position === 'home_middle' && '📌 Giữa Trang Chủ'}
+                              {ad.position === 'home_sidebar' && '📌 Sidebar Cột Phải'}
+                              {ad.position === 'property_detail' && '📌 Chi Tiết BĐS'}
+                              {ad.position === 'popup_modal' && '📌 Pop-Up Nổi (Modal ❌)'}
+                              {!['header_top','float_right_pc','float_left_pc','home_middle','home_sidebar','property_detail','popup_modal'].includes(ad.position) && ad.position}
+                            </td>
+
+                            {/* Clicks */}
+                            <td className="p-3 font-black text-emerald-600">
+                              {(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} lượt
+                            </td>
+
+                            {/* Status */}
+                            <td className="p-3">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleAdActive(ad.id);
+                                }}
+                                className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition cursor-pointer ${
+                                  (ad.active ?? ad.isActive ?? true)
+                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 hover:bg-emerald-200'
+                                    : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400 hover:bg-slate-300'
+                                }`}
+                              >
+                                {(ad.active ?? ad.isActive ?? true) ? '✓ Đang Hiện' : '✕ Đã Ẩn'}
+                              </button>
+                            </td>
+
+                            {/* Actions */}
+                            <td className="p-3 text-right">
+                              <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+                                {/* Quick Test / Live Preview */}
+                                <button
+                                  type="button"
+                                  onClick={() => setPreviewingAd(ad)}
+                                  className="px-2.5 py-1.5 bg-slate-100 hover:bg-amber-100 dark:bg-slate-700 dark:hover:bg-amber-950 text-slate-700 hover:text-amber-700 dark:text-slate-300 font-bold rounded-xl text-xs flex items-center gap-1 transition"
+                                  title="Xem thử banner và test click"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                  <span>Xem thử</span>
+                                </button>
+
+                                {/* Edit */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleStartEditAd(ad)}
+                                  className={`px-3 py-1.5 rounded-xl font-black text-xs flex items-center gap-1 transition shadow-sm border ${
+                                    isBeingEdited
+                                      ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400'
+                                      : 'bg-amber-500 hover:bg-amber-600 text-slate-950 border-amber-400'
+                                  }`}
+                                  title="Chỉnh sửa banner này"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                  <span>{isBeingEdited ? 'Đang Sửa' : 'Sửa'}</span>
+                                </button>
+
+                                {/* Direct Photo Upload */}
+                                <label 
+                                  className="p-1.5 text-slate-500 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition cursor-pointer"
+                                  title="Đổi ảnh banner từ máy tính"
+                                >
+                                  <Upload className="w-4 h-4" />
+                                  <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e, ad.id)} />
+                                </label>
+
+                                {/* Delete */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteAd(ad.id)}
+                                  className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-xl transition"
+                                  title="Xóa quảng cáo"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
           </div>
+
+          {/* Interactive Live Preview & Test-Click Modal */}
+          {previewingAd && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+              <div className="relative bg-white dark:bg-slate-900 border-2 border-amber-500/80 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 text-slate-900 dark:text-white">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase">
+                      XEM THỬ & TEST CLICK BANNER
+                    </span>
+                    <span className="text-xs text-slate-400 font-bold">
+                      {previewingAd.position}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewingAd(null)}
+                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition"
+                  >
+                    <X className="w-5 h-5 text-slate-400 hover:text-rose-500" />
+                  </button>
+                </div>
+
+                {/* Banner Render Simulator */}
+                <div className="bg-slate-950 rounded-2xl p-3 border border-slate-800 space-y-2">
+                  <div className="relative aspect-16/10 rounded-xl overflow-hidden bg-slate-900">
+                    <img
+                      src={previewingAd.imageUrl}
+                      alt={previewingAd.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {previewingAd.badgeText && (
+                      <span className="absolute top-2 left-2 px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[9px] uppercase tracking-wider rounded shadow">
+                        {previewingAd.badgeText}
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="text-sm font-black text-amber-400 leading-snug">
+                    {previewingAd.title}
+                  </h4>
+                  <p className="text-[11px] text-slate-400 font-mono break-all">
+                    Link đích: {previewingAd.linkUrl || 'Chưa đặt link'}
+                  </p>
+                </div>
+
+                {/* Test Actions */}
+                <div className="space-y-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleTestAdClick(previewingAd);
+                      setPreviewingAd(null);
+                    }}
+                    className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-emerald-500 hover:brightness-110 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>🚀 BẤM THỬ CLICK BANNER (TEST CLICK & MỞ LINK)</span>
+                  </button>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const adToEdit = previewingAd;
+                        setPreviewingAd(null);
+                        handleStartEditAd(adToEdit);
+                      }}
+                      className="py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5"
+                    >
+                      <Edit3 className="w-4 h-4 text-amber-500" />
+                      <span>Sửa Banner Này</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewingAd(null)}
+                      className="py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs transition"
+                    >
+                      Đóng Lại
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

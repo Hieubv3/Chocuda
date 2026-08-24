@@ -46,6 +46,18 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
     });
   };
 
+  const getSafeAdUrl = (url?: string) => {
+    if (!url || url.trim() === '' || url === '#') return '#';
+    const trimmed = url.trim();
+    if (trimmed.startsWith('tel:') || trimmed.startsWith('mailto:') || trimmed.startsWith('/') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+    if (trimmed.startsWith('zalo.me') || trimmed.startsWith('facebook.com') || trimmed.startsWith('www.') || trimmed.includes('.')) {
+      return `https://${trimmed}`;
+    }
+    return `/${trimmed}`;
+  };
+
   const handleAdClick = (ad: AdBanner) => {
     if (ad.linkUrl?.includes('zalo.me') || ad.targetUrl?.includes('zalo.me')) {
       recordZaloInteraction();
@@ -71,7 +83,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <a
-              href={currentAd.linkUrl}
+              href={getSafeAdUrl(currentAd.linkUrl || currentAd.targetUrl)}
               target="_blank"
               rel="noreferrer"
               onClick={() => handleAdClick(currentAd)}
@@ -135,7 +147,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
               </button>
 
               <a
-                href={ad.linkUrl}
+                href={getSafeAdUrl(ad.linkUrl || ad.targetUrl)}
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleAdClick(ad)}
@@ -202,7 +214,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
             </button>
 
             <a
-              href={ad.linkUrl}
+              href={getSafeAdUrl(ad.linkUrl || ad.targetUrl)}
               target="_blank"
               rel="noreferrer"
               onClick={() => handleAdClick(ad)}
@@ -270,7 +282,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
               Bỏ Qua
             </button>
             <a
-              href={currentAd.linkUrl}
+              href={getSafeAdUrl(currentAd.linkUrl || currentAd.targetUrl)}
               target="_blank"
               rel="noreferrer"
               onClick={() => {
@@ -295,7 +307,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
         {activeAds.map(ad => (
           <a
             key={ad.id}
-            href={ad.linkUrl}
+            href={getSafeAdUrl(ad.linkUrl || ad.targetUrl)}
             target="_blank"
             rel="noreferrer"
             onClick={() => handleAdClick(ad)}
@@ -331,7 +343,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
         {activeAds.map(ad => (
           <a
             key={ad.id}
-            href={ad.linkUrl}
+            href={getSafeAdUrl(ad.linkUrl || ad.targetUrl)}
             target="_blank"
             rel="noreferrer"
             onClick={() => handleAdClick(ad)}
