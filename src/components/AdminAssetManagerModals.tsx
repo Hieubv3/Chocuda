@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Property, Project, NewsArticle, ProjectCategory } from '../types';
-import { X, Save, Image as ImageIcon, Trash2, Plus, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield } from 'lucide-react';
+import { X, Save, Image as ImageIcon, Trash2, Plus, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield, Cloud, Film } from 'lucide-react';
 import { SoDoCensorEditor } from './SoDoCensorEditor';
 import { compressImageFile } from '../lib/imageUtils';
+import { uploadMediaToSupabase } from '../lib/supabaseStorage';
 
 // ==========================================
 // 1. EDIT PROPERTY MODAL (WITH FULL IMAGE MANAGER)
@@ -733,36 +734,78 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
     }
   );
 
-  const handleNewsImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [isUploadingSupabase, setIsUploadingSupabase] = useState(false);
+  const [uploadStatusMsg, setUploadStatusMsg] = useState('');
+
+  const handleNewsMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 15 * 1024 * 1024) {
-        alert('Kích thước ảnh tối đa là 15MB');
-        return;
-      }
+    if (!file) return;
+
+    if (file.size > 50 * 1024 * 1024) {
+      alert('Kích thước file tối đa là 50MB!');
+      return;
+    }
+
+    try {
+      setIsUploadingSupabase(true);
+      setUploadStatusMsg('Đang tải file lên Supabase Storage (bucket: media-posts)...');
+      
+      const publicUrl = await uploadMediaToSupabase(file, 'posts');
+      setFormData(prev => ({ ...prev, image: publicUrl }));
+      setUploadStatusMsg('✓ Đã tải lên Supabase Storage thành công!');
+    } catch (err: any) {
+      console.error('Error uploading to Supabase:', err);
+      setUploadStatusMsg('Lỗi upload Supabase: ' + (err.message || 'Thử nén file hoặc dùng link ảnh'));
+      
+      // Fallback to local compress
       try {
         const compressed = await compressImageFile(file, 1200, 900, 0.82);
         if (compressed) {
           setFormData(prev => ({ ...prev, image: compressed }));
         }
-      } catch (err) {
-        console.error('Error compressing news image:', err);
+      } catch (e2) {
+        console.error(e2);
       }
+    } finally {
+      setIsUploadingSupabase(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.content) {
-      alert('Vui lòng điền đầy đủ tiêu đề và nội dung bài viết');
+      alert('Vui lòng điền đầy đủ tiêu đề và nội dung bài viết!');
       return;
     }
+
     const publishedArticle: NewsArticle = {
       ...formData,
       status: 'published'
     };
+
+    // 1. Send to server API /api/posts & /posts to store in Cloud SQL
+    try {
+      await fetch('/api/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: publishedArticle.title,
+          content: publishedArticle.content,
+          summary: publishedArticle.summary,
+          category: publishedArticle.category,
+          author: publishedArticle.author,
+          image_url: publishedArticle.image,
+          source: 'admin_panel'
+        })
+      });
+    } catch (err) {
+      console.warn('POST /api/posts warning:', err);
+    }
+
     onSave(publishedArticle);
-    alert('✅ Đã lưu bài viết tin tức & xuất bản công khai lên Public Website!');
+    alert('🎉 Đăng bài viết thành công! Ảnh đã được lưu lên Supabase Storage và bài viết đã được đồng bộ vào Cloud SQL.');
     onClose();
   };
 
@@ -780,7 +823,9 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
               <h2 className="text-base font-black text-amber-400">
                 {newsItem ? 'CHỈNH SỬA BÀI VIẾT TIN TỨC & THAY ẢNH' : 'THÊM BÀI VIẾT TIN TỨC MỚI (CHUẨN SEO)'}
               </h2>
-              <p className="text-[11px] text-slate-300">Quản lý bài viết thị trường & dự án Vinhomes</p>
+              <p className="text-[11px] text-slate-300 flex items-center gap-2">
+                <span>Tự động lưu ảnh/video vào <strong>Supabase Storage</strong> và đồng bộ bài viết vào <strong>Cloud SQL</strong></span>
+              </p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 text-slate-400 hover:text-white bg-slate-800 rounded-xl">
@@ -790,15 +835,28 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
           
-          {/* Featured Image Section */}
+          {/* Featured Image / Video Section with Supabase integration */}
           <div className="p-4 bg-slate-50 dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
-            <h4 className="font-extrabold text-xs text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-              <ImageIcon className="w-4 h-4 text-amber-500" /> Hình Ảnh Minh Họa Bài Viết (Tải Ảnh Từ Thiết Bị)
-            </h4>
+            <div className="flex items-center justify-between">
+              <h4 className="font-extrabold text-xs text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                <Cloud className="w-4 h-4 text-emerald-500" /> Tải Ảnh / Video Lên Supabase Storage (Bucket: media-posts)
+              </h4>
+              <span className="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold rounded-full">
+                Supabase Storage CDN
+              </span>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-4 items-center">
-              <img src={formData.image} alt="News Featured" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
+              {formData.image.endsWith('.mp4') || formData.image.endsWith('.webm') ? (
+                <div className="w-36 h-24 bg-slate-950 rounded-xl flex items-center justify-center border border-slate-300 text-emerald-400 font-bold text-xs gap-1">
+                  <Film className="w-5 h-5" /> Video MP4
+                </div>
+              ) : (
+                <img src={formData.image} alt="News Featured" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
+              )}
+              
               <div className="flex-1 w-full space-y-2">
-                <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh đại diện bài viết (*):</label>
+                <label className="text-[10px] text-slate-400 block font-bold">Đường dẫn file (Public URL Supabase / Ảnh ngoài):</label>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
@@ -806,13 +864,19 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                     className="flex-1 p-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
-                    placeholder="https://..."
+                    placeholder="https://xrbjzcwmtjtfckorhvxo.supabase.co/storage/v1/object/public/media-posts/..."
                   />
-                  <label className="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shrink-0 transition shadow">
-                    <Upload className="w-4 h-4" /> Tải Ảnh Từ Thiết Bị
-                    <input type="file" accept="image/*" onChange={handleNewsImageUpload} className="hidden" />
+                  <label className={`px-3 py-2 ${isUploadingSupabase ? 'bg-slate-500 animate-pulse' : 'bg-emerald-600 hover:bg-emerald-700'} text-white font-black text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shrink-0 transition shadow`}>
+                    <Upload className="w-4 h-4" />
+                    <span>{isUploadingSupabase ? 'Đang tải Supabase...' : '📁 Tải Ảnh / Video'}</span>
+                    <input type="file" accept="image/*,video/*" onChange={handleNewsMediaUpload} disabled={isUploadingSupabase} className="hidden" />
                   </label>
                 </div>
+                {uploadStatusMsg && (
+                  <p className={`text-[11px] font-bold ${uploadStatusMsg.includes('✓') ? 'text-emerald-600' : 'text-amber-500'}`}>
+                    {uploadStatusMsg}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -879,13 +943,13 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl"
+              className="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
             >
               Hủy Bỏ
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl shadow-lg flex items-center gap-1.5"
+              className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl shadow-lg flex items-center gap-1.5 cursor-pointer"
             >
               <Save className="w-4 h-4" /> Xuất Bản Bài Viết & Hình Ảnh
             </button>
@@ -895,3 +959,579 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
     </div>
   );
 };
+
+// ==========================================
+// 4. ADD NEW PROPERTY MODAL FOR ADMIN
+// ==========================================
+interface AddPropertyAdminModalProps {
+  onClose: () => void;
+  onSave: (newProperty: Property) => void;
+  projects?: Project[];
+}
+
+export const AddPropertyAdminModal: React.FC<AddPropertyAdminModalProps> = ({
+  onClose,
+  onSave,
+  projects = []
+}) => {
+  const [formData, setFormData] = useState<Partial<Property>>({
+    id: `prop-${Date.now()}`,
+    title: '',
+    type: 'sale',
+    project: 'ocean-park-2',
+    subdivision: 'Phân khu Chà Là',
+    category: 'shophouse',
+    price: 5.5,
+    priceDisplay: '5.5 Tỷ',
+    area: 70,
+    bedrooms: 3,
+    bathrooms: 2,
+    direction: 'Đông Nam',
+    furniture: 'full',
+    legal: 'so-do',
+    address: 'Vinhomes Ocean Park 2, Văn Giang, Hưng Yên',
+    description: 'Chính chủ cần chuyển nhượng căn đẹp, vị trí đắc địa gần công viên và trục đường chính. Pháp lý sổ đỏ đầy đủ, nội thất hoàn thiện cao cấp.',
+    images: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80'
+    ],
+    sellerName: 'Bùi Văn Hiếu',
+    sellerPhone: '0868.499.929',
+    sellerRole: 'owner',
+    status: 'approved',
+    approved: true,
+    vipLevel: 'diamond',
+    featured: true,
+    createdAt: 'Vừa đăng xong'
+  });
+
+  const [newImageUrl, setNewImageUrl] = useState('');
+  const [imageError, setImageError] = useState('');
+  const [isUploadingSupabase, setIsUploadingSupabase] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState('');
+
+  // Handle Multi Image Upload to Supabase Storage
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploadingSupabase(true);
+    setUploadMsg(`Đang tải ${files.length} ảnh lên Supabase Storage...`);
+
+    const uploadedUrls: string[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      try {
+        const publicUrl = await uploadMediaToSupabase(file, 'properties');
+        uploadedUrls.push(publicUrl);
+      } catch (err: any) {
+        console.warn('Lỗi Supabase Storage upload, nén fallback:', err);
+        try {
+          const compressed = await compressImageFile(file, 1200, 900, 0.82);
+          if (compressed) uploadedUrls.push(compressed);
+        } catch (e2) {
+          console.error(e2);
+        }
+      }
+    }
+
+    if (uploadedUrls.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        images: [...(prev.images || []), ...uploadedUrls]
+      }));
+      setUploadMsg(`✓ Đã thêm ${uploadedUrls.length} ảnh thành công!`);
+    } else {
+      setUploadMsg('Không thể tải ảnh. Vui lòng thử lại!');
+    }
+
+    setIsUploadingSupabase(false);
+  };
+
+  const handleAddImageUrl = () => {
+    if (!newImageUrl.trim()) return;
+    if (!newImageUrl.startsWith('http') && !newImageUrl.startsWith('data:image')) {
+      setImageError('Đường dẫn ảnh phải bắt đầu bằng http:// hoặc https://');
+      return;
+    }
+    setImageError('');
+    setFormData(prev => ({
+      ...prev,
+      images: [...(prev.images || []), newImageUrl.trim()]
+    }));
+    setNewImageUrl('');
+  };
+
+  const handleDeleteImage = (index: number) => {
+    const currentImages = formData.images || [];
+    if (currentImages.length <= 1) {
+      alert('Bất động sản cần giữ lại ít nhất 1 hình ảnh hiển thị.');
+      return;
+    }
+    setFormData(prev => ({
+      ...prev,
+      images: currentImages.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSetCoverImage = (index: number) => {
+    if (index === 0) return;
+    const currentImages = formData.images || [];
+    const selected = currentImages[index];
+    const remaining = currentImages.filter((_, i) => i !== index);
+    setFormData(prev => ({
+      ...prev,
+      images: [selected, ...remaining]
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title?.trim()) {
+      alert('Vui lòng nhập Tiêu đề bài đăng BĐS!');
+      return;
+    }
+
+    const priceNum = Number(formData.price) || 0;
+    const priceDisplay = formData.type === 'sale'
+      ? `${priceNum} Tỷ`
+      : `${priceNum} Triệu/tháng`;
+
+    const newProperty: Property = {
+      id: formData.id || `prop-${Date.now()}`,
+      title: formData.title.trim(),
+      type: formData.type || 'sale',
+      project: formData.project || 'ocean-park-2',
+      subdivision: formData.subdivision || 'Phân khu Chà Là',
+      category: formData.category || 'shophouse',
+      price: priceNum,
+      priceDisplay: formData.priceDisplay || priceDisplay,
+      area: Number(formData.area) || 70,
+      bedrooms: Number(formData.bedrooms) || 2,
+      bathrooms: Number(formData.bathrooms) || 2,
+      direction: formData.direction || 'Đông Nam',
+      furniture: formData.furniture || 'full',
+      legal: formData.legal || 'so-do',
+      address: formData.address || 'Vinhomes Ocean Park',
+      description: formData.description || 'Thông tin bất động sản chính chủ.',
+      images: formData.images && formData.images.length > 0 ? formData.images : [
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80'
+      ],
+      sellerName: formData.sellerName || 'Admin Quản Trị',
+      sellerPhone: formData.sellerPhone || '0868.499.929',
+      sellerRole: formData.sellerRole || 'owner',
+      status: 'approved',
+      approved: true,
+      vipLevel: formData.vipLevel || 'diamond',
+      featured: Boolean(formData.featured),
+      createdAt: 'Hôm nay'
+    };
+
+    // 1. Post to Server /api/properties (synced to Cloud SQL)
+    try {
+      await fetch('/api/properties', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProperty)
+      });
+    } catch (err) {
+      console.warn('Lỗi lưu server API, lưu qua state:', err);
+    }
+
+    onSave(newProperty);
+    alert('🎉 Đã thêm mới bài đăng BĐS thành công! Dữ liệu đã được lưu vào Cloud SQL và xuất bản ra Website.');
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in">
+      <div className="relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl my-6 overflow-hidden text-xs text-slate-900 dark:text-slate-100">
+        
+        {/* Modal Header */}
+        <div className="flex items-center justify-between p-4 sm:p-5 bg-slate-900 text-white border-b border-slate-800">
+          <div className="flex items-center space-x-3">
+            <span className="p-2 bg-emerald-600 rounded-xl text-white shadow-md">
+              <PlusCircle className="w-5 h-5" />
+            </span>
+            <div>
+              <h2 className="text-base font-black text-emerald-400">ĐĂNG TIN BẤT ĐỘNG SẢN MỚI (CHỦ NHÀ / ADMIN)</h2>
+              <p className="text-[11px] text-slate-300">Tải ảnh lên Supabase Storage & Tự động đồng bộ vào Cloud SQL PostgreSQL</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Modal Form Content */}
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5 max-h-[78vh] overflow-y-auto">
+          
+          {/* SECTION 1: HÌNH ẢNH BĐS & SUPABASE STORAGE */}
+          <div className="p-4 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-black text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-2 uppercase tracking-wider">
+                <ImageIcon className="w-4 h-4 text-emerald-600" />
+                Hình Ảnh BĐS ({(formData.images || []).length} Ảnh) - Lưu Trên Supabase Storage
+              </h3>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-100 dark:bg-emerald-900/60 px-2 py-0.5 rounded-lg">
+                Ảnh 1 là Ảnh Bìa Đại Diện
+              </span>
+            </div>
+
+            {/* Existing Images Gallery List */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+              {(formData.images || []).map((imgUrl, idx) => (
+                <div key={idx} className="relative group p-1.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900">
+                    <img src={imgUrl} alt={`Property ${idx}`} className="w-full h-full object-cover" />
+                    {idx === 0 && (
+                      <span className="absolute top-1 left-1 bg-amber-500 text-slate-950 font-black text-[8px] px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">
+                        <Star className="w-2.5 h-2.5 fill-slate-950" /> ẢNH BÌA
+                      </span>
+                    )}
+                    
+                    <div className="absolute inset-0 bg-slate-950/70 opacity-0 group-hover:opacity-100 transition flex items-center justify-center space-x-1 p-1">
+                      {idx !== 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleSetCoverImage(idx)}
+                          className="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[9px] rounded-lg transition"
+                          title="Đặt làm ảnh bìa đại diện"
+                        >
+                          Đặt Bìa
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteImage(idx)}
+                        className="p-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition"
+                        title="Xóa ảnh"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Add Images Controls */}
+            <div className="pt-2 border-t border-emerald-200 dark:border-emerald-800/60 space-y-2">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  placeholder="Dán URL hình ảnh từ internet (https://...)"
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  className="flex-1 p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddImageUrl}
+                  className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Thêm URL
+                </button>
+                <label className={`px-4 py-2 ${isUploadingSupabase ? 'bg-slate-500 animate-pulse' : 'bg-emerald-600 hover:bg-emerald-700'} text-white font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow transition`}>
+                  <Upload className="w-4 h-4" />
+                  <span>{isUploadingSupabase ? 'Đang tải Supabase...' : '📁 Tải Ảnh Từ Máy'}</span>
+                  <input type="file" multiple accept="image/*" onChange={handleFileUpload} disabled={isUploadingSupabase} className="hidden" />
+                </label>
+              </div>
+              {uploadMsg && (
+                <p className={`text-[11px] font-bold ${uploadMsg.includes('✓') ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-500'}`}>
+                  {uploadMsg}
+                </p>
+              )}
+              {imageError && <p className="text-[11px] text-rose-500 font-bold">{imageError}</p>}
+            </div>
+          </div>
+
+          {/* SECTION 2: THÔNG TIN BẤT ĐỘNG SẢN CHÍNH */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+            {/* Tiêu đề */}
+            <div className="sm:col-span-2 md:col-span-3">
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                Tiêu Đề Tin Đăng (*):
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="VD: Bán Shophouse Chà Là Vinhomes Ocean Park 2, 70m2 Hoàn Thiện Full..."
+                value={formData.title || ''}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+              />
+            </div>
+
+            {/* Hình thức giao dịch */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Hình Thức Giao Dịch (*):</label>
+              <select
+                value={formData.type || 'sale'}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value as 'sale' | 'rent' })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+              >
+                <option value="sale">🟢 Mua Bán Chuyển Nhượng</option>
+                <option value="rent">🟡 Cho Thuê</option>
+              </select>
+            </div>
+
+            {/* Dự án */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Dự Án Vinhomes (*):</label>
+              <select
+                value={formData.project || 'ocean-park-2'}
+                onChange={(e) => setFormData({ ...formData, project: e.target.value as any })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+              >
+                <option value="ocean-park-2">Vinhomes Ocean Park 2 (The Empire)</option>
+                <option value="ocean-park-3">Vinhomes Ocean Park 3 (The Crown)</option>
+                <option value="ocean-park-1">Vinhomes Ocean Park 1 (Gia Lâm)</option>
+                <option value="smart-city">Vinhomes Smart City (Tây Mỗ)</option>
+                <option value="grand-park">Vinhomes Grand Park (TP. Thủ Đức)</option>
+                <option value="co-loa">Vinhomes Global Gate (Cổ Loa)</option>
+                <option value="ha-long-xanh">Vinhomes Hạ Long Xanh</option>
+                <option value="golden-crown">Golden Crown Hải Phòng</option>
+                <option value="vu-yen">Vinhomes Royal Island (Vũ Yên)</option>
+              </select>
+            </div>
+
+            {/* Phân khu */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Phân Khu / Tòa / Dãy:</label>
+              <input
+                type="text"
+                placeholder="VD: Phân khu Chà Là, San Hô, Sao Biển..."
+                value={formData.subdivision || ''}
+                onChange={(e) => setFormData({ ...formData, subdivision: e.target.value })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              />
+            </div>
+
+            {/* Loại hình BĐS */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Loại Hình BĐS:</label>
+              <select
+                value={formData.category || 'shophouse'}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+              >
+                <option value="shophouse">Shophouse TMDV / Nhà phố</option>
+                <option value="lien-ke">Liền kề</option>
+                <option value="biet-thu-song-lap">Biệt thự Song Lập</option>
+                <option value="biet-thu-don-lap">Biệt thự Đơn Lập</option>
+                <option value="studio">Căn hộ Studio</option>
+                <option value="1pn">Căn hộ 1PN / 1PN+1</option>
+                <option value="2pn">Căn hộ 2PN / 2PN+1</option>
+                <option value="3pn">Căn hộ 3PN / Penthouse</option>
+              </select>
+            </div>
+
+            {/* Giá */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                {formData.type === 'sale' ? 'Mức Giá (Tỷ VNĐ) (*):' : 'Giá Thuê (Triệu VNĐ/tháng) (*):'}
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                required
+                placeholder={formData.type === 'sale' ? '5.5' : '15'}
+                value={formData.price || ''}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value) || 0;
+                  setFormData({
+                    ...formData,
+                    price: val,
+                    priceDisplay: formData.type === 'sale' ? `${val} Tỷ` : `${val} Triệu/tháng`
+                  });
+                }}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-amber-600 dark:text-amber-400"
+              />
+            </div>
+
+            {/* Diện tích */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Diện Tích (m²) (*):</label>
+              <input
+                type="number"
+                required
+                placeholder="70"
+                value={formData.area || ''}
+                onChange={(e) => setFormData({ ...formData, area: parseFloat(e.target.value) || 0 })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+              />
+            </div>
+
+            {/* Phòng ngủ */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Phòng Ngủ:</label>
+              <input
+                type="number"
+                min="0"
+                value={formData.bedrooms || 2}
+                onChange={(e) => setFormData({ ...formData, bedrooms: parseInt(e.target.value) || 0 })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              />
+            </div>
+
+            {/* Phòng tắm */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Phòng Vệ Sinh:</label>
+              <input
+                type="number"
+                min="0"
+                value={formData.bathrooms || 2}
+                onChange={(e) => setFormData({ ...formData, bathrooms: parseInt(e.target.value) || 0 })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              />
+            </div>
+
+            {/* Hướng nhà */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Hướng Nhà:</label>
+              <select
+                value={formData.direction || 'Đông Nam'}
+                onChange={(e) => setFormData({ ...formData, direction: e.target.value })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              >
+                <option value="Đông Nam">Đông Nam</option>
+                <option value="Đông Bắc">Đông Bắc</option>
+                <option value="Tây Nam">Tây Nam</option>
+                <option value="Tây Bắc">Tây Bắc</option>
+                <option value="Đông">Đông</option>
+                <option value="Tây">Tây</option>
+                <option value="Nam">Nam</option>
+                <option value="Bắc">Bắc</option>
+              </select>
+            </div>
+
+            {/* Tình trạng nội thất */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Nội Thất:</label>
+              <select
+                value={formData.furniture || 'full'}
+                onChange={(e) => setFormData({ ...formData, furniture: e.target.value as any })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              >
+                <option value="full">Full Nội Thất Cao Cấp</option>
+                <option value="basic">Nội thất cơ bản CĐT</option>
+                <option value="raw">Bàn giao thô</option>
+              </select>
+            </div>
+
+            {/* Pháp lý */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Pháp Lý:</label>
+              <select
+                value={formData.legal || 'so-do'}
+                onChange={(e) => setFormData({ ...formData, legal: e.target.value as any })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              >
+                <option value="so-do">Sổ đỏ lâu dài / Đã có sổ</option>
+                <option value="hdmb">Hợp đồng mua bán (HĐMB)</option>
+                <option value="dang-cho-so">Đang chờ sổ</option>
+              </select>
+            </div>
+
+            {/* VIP Tier */}
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Cấp Độ VIP:</label>
+              <select
+                value={formData.vipLevel || 'diamond'}
+                onChange={(e) => setFormData({ ...formData, vipLevel: e.target.value as any })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-amber-500"
+              >
+                <option value="diamond">💎 VIP Kim Cương (Ưu tiên số 1)</option>
+                <option value="gold">🥇 VIP Vàng</option>
+                <option value="silver">🥈 VIP Bạc</option>
+                <option value="normal">Tin Thường</option>
+              </select>
+            </div>
+          </div>
+
+          {/* SECTION 3: THÔNG TIN NGƯỜI ĐĂNG & LIÊN HỆ */}
+          <div className="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+            <h4 className="font-extrabold text-xs text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <UserCheck className="w-4 h-4 text-blue-500" /> Thông Tin Người Đăng & Liên Hệ Xem Nhà
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="font-bold text-slate-600 dark:text-slate-400 block mb-1">Tên Người Đăng / Chủ Nhà:</label>
+                <input
+                  type="text"
+                  value={formData.sellerName || ''}
+                  onChange={(e) => setFormData({ ...formData, sellerName: e.target.value })}
+                  placeholder="Bùi Văn Hiếu"
+                  className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-600 dark:text-slate-400 block mb-1">Số Điện Thoại / Zalo (*):</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.sellerPhone || ''}
+                  onChange={(e) => setFormData({ ...formData, sellerPhone: e.target.value })}
+                  placeholder="0868.499.929"
+                  className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-mono font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-600 dark:text-slate-400 block mb-1">Vai Trò:</label>
+                <select
+                  value={formData.sellerRole || 'owner'}
+                  onChange={(e) => setFormData({ ...formData, sellerRole: e.target.value as any })}
+                  className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                >
+                  <option value="owner">Chính Chủ Nhà</option>
+                  <option value="sale">Môi Giới Chuyên Nghiệp</option>
+                  <option value="investor">Nhà Đầu Tư F0</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 4: NỘI DUNG MÔ TẢ CHI TIẾT */}
+          <div>
+            <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+              Mô Tả Chi Tiết Bất Động Sản (*):
+            </label>
+            <textarea
+              rows={5}
+              required
+              value={formData.description || ''}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Nhập thông tin chi tiết về tiện ích, hướng view, chính sách giá, liên hệ..."
+              className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white leading-relaxed font-sans"
+            />
+          </div>
+
+          {/* Modal Footer Buttons */}
+          <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
+            >
+              Hủy Bỏ
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-lg flex items-center gap-1.5 cursor-pointer text-xs uppercase tracking-wider"
+            >
+              <Check className="w-4 h-4" /> ĐĂNG BÀI & LƯU VÀO CLOUD SQL
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+

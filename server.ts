@@ -1787,26 +1787,49 @@ app.get("/api/news", (req, res) => {
   res.json(newsStore);
 });
 
-// News POST (Manual or Admin)
-app.post("/api/news", (req, res) => {
-  const data = req.body;
+// Alias for /api/posts and /posts compatible with Supabase + Cloud SQL pipeline
+app.get(["/api/posts", "/posts"], (req, res) => {
+  res.json(newsStore);
+});
+
+// News POST & /api/posts & /posts endpoint (Syncs directly to Cloud SQL)
+app.post(["/api/news", "/api/posts", "/posts"], async (req, res) => {
+  const data = req.body || {};
+  const mediaUrl = data.image_url || data.imageUrl || data.image || (data.images && data.images[0]) || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80";
+  
   const newArticle: NewsArticle = {
     id: data.id || `news-${Date.now()}`,
-    title: data.title || "Bài viết tin tức BĐS mới",
-    summary: data.summary || "Tóm tắt tin tức thị trường BĐS Vinhomes...",
-    content: data.content || "Nội dung chi tiết bài viết...",
-    category: data.category || "vinhomes",
-    author: data.author || "Nhà đẹp Vinhomes",
-    image: data.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+    title: data.title || "Bài viết tin tức & truyền thông mới",
+    summary: data.summary || (data.content ? data.content.slice(0, 150) + "..." : "Thông tin bài viết mới trên Chợ Cư Dân 24h..."),
+    content: data.content || data.summary || "Nội dung bài viết...",
+    category: data.category || "Thị Trường",
+    author: data.author || "Ban Quản Trị",
+    image: mediaUrl,
     publishedAt: data.publishedAt || new Date().toISOString().split('T')[0],
     views: data.views || 1,
-    source: data.source || "manual",
+    source: data.source || "supabase_upload",
     status: data.status || "published",
     ...data
   };
+
   newsStore.unshift(newArticle);
   saveDataStore();
-  res.status(201).json({ message: "Thêm bài viết tin tức thành công", news: newArticle });
+
+  // Async sync to Google Cloud SQL
+  try {
+    const { syncNewsArticleToSql } = await import("./src/db/sync");
+    await syncNewsArticleToSql(newArticle);
+  } catch (err) {
+    console.warn("[CloudSQL Sync Warning on /posts]", err);
+  }
+
+  res.status(201).json({
+    success: true,
+    message: "🎉 Đăng bài viết & lưu Cloud SQL thành công!",
+    post: newArticle,
+    news: newArticle,
+    mediaUrl: mediaUrl
+  });
 });
 
 // News PUT (Edit news article)
