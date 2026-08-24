@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
-import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut } from 'lucide-react';
+import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, ExternalLink } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { calculateExpiryInfo } from '../lib/expiration';
 
@@ -91,7 +91,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (activeTab === 'recruitment_mgmt') return 'recruitment';
     if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
     if (['users', 'leads', 'enterprise_core'].includes(activeTab)) return 'users_leads';
-    if (activeTab === 'ads') return 'ads';
+    if (activeTab === 'ads' || (activeTab as string) === 'ads_mgmt') return 'ads';
     return 'tools';
   })();
 
@@ -2380,7 +2380,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 type="button"
                 onClick={() => {
                   handleSelectMainTab('ads');
-                  setActiveTab('ads_mgmt');
+                  setActiveTab('ads');
                 }}
                 className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
                   effectiveMainTab === 'ads'
@@ -2596,7 +2596,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
               <button
                 type="button"
-                onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_mgmt'); }}
+                onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); }}
                 className={`py-1 px-2.5 rounded-lg font-bold shrink-0 transition ${
                   effectiveMainTab === 'ads'
                     ? 'bg-rose-600 text-white shadow-xs'
@@ -2652,7 +2652,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <UserCheck className="w-4 h-4" /> 5. Thành Viên
               </button>
               <button
-                onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_mgmt'); setIsSubNavDropdownOpen(false); }}
+                onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-rose-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <Sparkles className="w-4 h-4" /> 6. Quảng Cáo
@@ -3904,7 +3904,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       )}
 
       {/* Tab: Quảng Cáo Management */}
-      {activeTab === 'ads' && (
+      {(activeTab === 'ads' || (activeTab as string) === 'ads_mgmt') && (
         <div className="space-y-5">
           {/* Top Control & Stats Header Bar */}
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-700 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -5363,167 +5363,148 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
       {/* Tab: Projects Management */}
       {activeTab === 'projects' && (
-        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-xl">
+        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 space-y-4 shadow-xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
                 QUẢN LÝ DỰ ÁN VINHOMES & SƠ ĐỒ QUY HOẠCH ({projects.length} DỰ ÁN)
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Chỉnh sửa thông tin thương mại, hình ảnh banner chính, sơ đồ quy hoạch masterplan hoặc thêm dự án / tòa nhà mới vào hệ thống.
+                Cập nhật thông tin quy hoạch, bảng giá và sơ đồ masterplan các dự án.
               </p>
             </div>
             <button
               onClick={() => setIsAddingProject(true)}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0"
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0 text-xs cursor-pointer"
             >
-              <Plus className="w-4 h-4" /> + Thêm Dự Án / Tòa Nhà Mới
+              <Plus className="w-4 h-4" /> Thêm Dự Án Mới
             </button>
           </div>
 
-          {/* Mobile Optimized Projects Accordion List (< md) */}
-          <div className="md:hidden space-y-2.5">
+          {/* Mobile & Tablet Compact Card List (< lg) */}
+          <div className="lg:hidden space-y-2.5">
             {projects.map((proj) => {
               const isExpanded = !!expandedProjectIds[proj.id];
               return (
                 <div
                   key={proj.id}
-                  className="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-sm transition-all"
+                  className="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-2xs transition-all"
                 >
                   {/* Top Compact Summary Row */}
-                  <div
-                    onClick={() => toggleExpandProject(proj.id)}
-                    className="flex items-center justify-between gap-3 cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-start gap-3">
+                    <div className="relative shrink-0">
                       <img
                         src={proj.image}
                         alt={proj.title}
-                        className="w-14 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs"
+                        className="w-16 h-16 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs"
                       />
-                      <div className="min-w-0 space-y-0.5">
+                      {proj.masterplanUrl && (
+                        <span className="absolute -bottom-1 -right-1 px-1.5 py-0.5 bg-emerald-700 text-white text-[8px] font-bold rounded-md shadow-xs">
+                          Sơ đồ
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
                         <h4 className="font-black text-xs text-slate-900 dark:text-white truncate">
                           {proj.title}
                         </h4>
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-emerald-500 shrink-0" />
-                          <span>{proj.location}</span>
-                        </p>
-                        <div className="flex items-center gap-1.5 text-[10px] flex-wrap">
-                          <span className="font-extrabold text-amber-600 dark:text-amber-400">
-                            {proj.priceRange}
-                          </span>
-                          <span className="text-slate-400">•</span>
-                          <span className="text-emerald-600 dark:text-emerald-400 font-bold text-[9px]">
-                            {proj.areaSize}
-                          </span>
-                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingProject(proj);
-                        }}
-                        className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
-                        title="Sửa dự án"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleExpandProject(proj.id);
-                        }}
-                        className="p-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl transition cursor-pointer"
-                      >
-                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                      </button>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1 mt-0.5">
+                        <MapPin className="w-3 h-3 text-emerald-500 shrink-0" />
+                        <span className="truncate">{proj.location}</span>
+                      </p>
+
+                      <div className="flex items-center gap-2 text-[10px] mt-1">
+                        <span className="font-extrabold text-amber-600 dark:text-amber-400 font-mono">
+                          {proj.priceRange}
+                        </span>
+                        <span className="text-slate-300 dark:text-slate-700">•</span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold text-[9px]">
+                          {proj.areaSize}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Expandable Details & Action Bar on Mobile */}
+                  {/* Compact Quick Action Row */}
+                  <div className="flex items-center justify-between gap-2 pt-2.5 mt-2.5 border-t border-slate-200/80 dark:border-slate-800">
+                    <button
+                      type="button"
+                      onClick={() => setEditingProject(proj)}
+                      className="flex-1 py-1.5 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 shadow-2xs transition cursor-pointer"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>Sửa & Đổi Ảnh</span>
+                    </button>
+
+                    <a
+                      href={`/du-an/${getProjectSlug(proj.id)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="py-1.5 px-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 transition"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Xem</span>
+                    </a>
+
+                    <button
+                      type="button"
+                      onClick={() => toggleExpandProject(proj.id)}
+                      className="py-1.5 px-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-[11px] flex items-center gap-1 transition cursor-pointer"
+                      title={isExpanded ? "Thu gọn" : "Xem thêm"}
+                    >
+                      {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    </button>
+
+                    {onDeleteProject && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`Bạn có chắc chắn muốn xóa dự án "${proj.title}"?`)) {
+                            onDeleteProject(proj.id);
+                          }
+                        }}
+                        className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-xl transition cursor-pointer"
+                        title="Xóa dự án"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Expandable Preview Details */}
                   {isExpanded && (
-                    <div className="pt-3 mt-3 border-t border-slate-200 dark:border-slate-800 space-y-3 text-xs animate-in fade-in duration-150">
-                      {/* Masterplan / Banner Preview */}
+                    <div className="pt-2.5 mt-2.5 border-t border-slate-200 dark:border-slate-800 space-y-2 text-[11px] animate-in fade-in duration-150">
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <span className="text-[10px] font-bold text-slate-500 block mb-1">Ảnh Banner:</span>
+                          <span className="text-[9px] font-bold text-slate-400 block mb-1">Ảnh Bìa Dự Án:</span>
                           <img
                             src={proj.image}
                             alt="Banner"
-                            className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs"
+                            className="w-full h-20 object-cover rounded-lg border border-slate-200 dark:border-slate-700"
                           />
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold text-slate-500 block mb-1">Sơ Đồ Masterplan:</span>
+                          <span className="text-[9px] font-bold text-slate-400 block mb-1">Sơ Đồ Masterplan:</span>
                           {proj.masterplanUrl ? (
                             <img
                               src={proj.masterplanUrl}
                               alt="Sơ đồ"
-                              className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs"
+                              className="w-full h-20 object-cover rounded-lg border border-slate-200 dark:border-slate-700"
                             />
                           ) : (
-                            <div className="w-full h-24 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-[10px] text-slate-400">
+                            <div className="w-full h-20 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-[9px] text-slate-400">
                               Chưa có sơ đồ
                             </div>
                           )}
                         </div>
                       </div>
-
-                      {/* Info badges */}
-                      <div className="grid grid-cols-2 gap-2 bg-white dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px]">
-                        <div>
-                          <span className="text-slate-400 block">Quy mô diện tích:</span>
-                          <strong className="text-slate-900 dark:text-white font-bold">{proj.areaSize}</strong>
-                        </div>
-                        <div>
-                          <span className="text-slate-400 block">Tổng số căn hộ/biệt thự:</span>
-                          <strong className="text-slate-900 dark:text-white font-bold">{proj.totalUnits}</strong>
-                        </div>
-                        <div className="col-span-2">
-                          <span className="text-slate-400 block">Khoảng giá giao dịch:</span>
-                          <strong className="text-amber-600 dark:text-amber-400 font-black">{proj.priceRange}</strong>
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex items-center justify-between gap-2 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => setEditingProject(proj)}
-                          className="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow transition cursor-pointer"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                          <span>Sửa & Thay Ảnh</span>
-                        </button>
-                        <a
-                          href={`/du-an/${getProjectSlug(proj.id)}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="py-2 px-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>Xem Web</span>
-                        </a>
-                        {onDeleteProject && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (confirm(`Bạn có chắc chắn muốn xóa dự án "${proj.title}"?`)) {
-                                onDeleteProject(proj.id);
-                              }
-                            }}
-                            className="py-2 px-3 bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-200 dark:hover:bg-rose-900 font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition cursor-pointer"
-                            title="Xóa dự án"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
+                      <div className="bg-white dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px] flex items-center justify-between">
+                        <span className="text-slate-500">Quy mô: <strong>{proj.totalUnits}</strong></span>
+                        <span className="text-slate-500">Diện tích: <strong>{proj.areaSize}</strong></span>
                       </div>
                     </div>
                   )}
@@ -5532,16 +5513,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             })}
           </div>
 
-          {/* Desktop Full Projects Table (>= md) */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse">
+          {/* Desktop Full Projects Table (>= lg) */}
+          <div className="hidden lg:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+            <table className="w-full text-xs text-left border-collapse min-w-[760px]">
               <thead className="bg-slate-100 dark:bg-slate-900">
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  <th className="p-3 font-bold text-slate-500">Banner / Sơ đồ</th>
-                  <th className="p-3 font-bold text-slate-500">Dự án & Vị trí</th>
-                  <th className="p-3 font-bold text-slate-500">Quy mô & Căn hộ</th>
-                  <th className="p-3 font-bold text-slate-500">Khoảng giá</th>
-                  <th className="p-3 font-bold text-slate-500">Thao tác</th>
+                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold uppercase text-[10px] tracking-wider">
+                  <th className="p-3">Banner / Sơ đồ</th>
+                  <th className="p-3">Dự án & Vị trí</th>
+                  <th className="p-3">Quy mô & Căn hộ</th>
+                  <th className="p-3">Khoảng giá</th>
+                  <th className="p-3 text-right">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -5549,39 +5530,47 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <tr key={proj.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
                     <td className="p-3">
                       <div className="flex gap-2">
-                        <img src={proj.image} alt={proj.title} className="w-16 h-12 object-cover rounded-lg border shadow-sm" title="Banner chính" />
+                        <img src={proj.image} alt={proj.title} className="w-14 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs" title="Banner chính" />
                         {proj.masterplanUrl && (
-                          <img src={proj.masterplanUrl} alt="Sơ đồ" className="w-12 h-12 object-cover rounded-lg border shadow-sm" title="Sơ đồ quy hoạch" />
+                          <img src={proj.masterplanUrl} alt="Sơ đồ" className="w-10 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs" title="Sơ đồ quy hoạch" />
                         )}
                       </div>
                     </td>
                     <td className="p-3 max-w-xs">
-                      <span className="font-bold text-slate-900 dark:text-white block">{proj.title}</span>
-                      <span className="text-[10px] text-slate-500 block">{proj.location}</span>
+                      <span className="font-bold text-slate-900 dark:text-white block truncate">{proj.title}</span>
+                      <span className="text-[10px] text-slate-500 block truncate">{proj.location}</span>
                     </td>
                     <td className="p-3">
                       <span className="font-bold text-emerald-600 block">{proj.areaSize}</span>
                       <span className="text-[10px] text-slate-500">{proj.totalUnits}</span>
                     </td>
-                    <td className="p-3 font-black text-amber-600 dark:text-amber-400">
+                    <td className="p-3 font-black text-amber-600 dark:text-amber-400 font-mono">
                       {proj.priceRange}
                     </td>
-                    <td className="p-3">
-                      <div className="flex items-center gap-1.5">
+                    <td className="p-3 text-right">
+                      <div className="inline-flex items-center gap-1.5">
                         <button
                           onClick={() => setEditingProject(proj)}
-                          className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[11px]"
+                          className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[11px] cursor-pointer"
                           title="Sửa thông tin & Thay ảnh"
                         >
-                          <Edit3 className="w-3.5 h-3.5" /> Sửa & Thay Ảnh
+                          <Edit3 className="w-3.5 h-3.5" /> Sửa
                         </button>
+                        <a
+                          href={`/du-an/${getProjectSlug(proj.id)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-[11px] flex items-center gap-1 transition"
+                        >
+                          <Eye className="w-3.5 h-3.5" /> Xem
+                        </a>
                         {onDeleteProject && (
                           <button
                             onClick={() => onDeleteProject(proj.id)}
-                            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[11px]"
+                            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[11px] cursor-pointer"
                             title="Xóa dự án này"
                           >
-                            <Trash2 className="w-3.5 h-3.5" /> Xóa
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         )}
                       </div>
@@ -5596,45 +5585,126 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
       {/* Tab: News Articles Management */}
       {activeTab === 'news' && (
-        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-xl">
-          <div className="flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
                 QUẢN LÝ BÀI VIẾT & TIN TỨC BĐS CHUẨN SEO ({news.length} BÀI)
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Soạn bài viết tin tức, cập nhật thông tin dự án, chỉnh sửa nội dung và thay đổi hình ảnh đại diện.
+                Biên tập bài viết tin tức, cập nhật thông tin dự án và xuất bản bài viết.
               </p>
             </div>
             <button
               onClick={() => setIsAddingNews(true)}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow"
+              className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow transition cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" /> Thêm Bài Viết Mới
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse">
+          {/* Mobile & Tablet Compact Card List (< lg) */}
+          <div className="lg:hidden space-y-2.5">
+            {news.map((item) => (
+              <div
+                key={item.id}
+                className="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-2xs space-y-2.5"
+              >
+                <div className="flex items-start gap-3">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-16 h-16 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0 shadow-2xs"
+                  />
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <h4 className="font-bold text-xs text-slate-900 dark:text-white line-clamp-2 leading-snug">
+                      {item.title}
+                    </h4>
+
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-extrabold rounded text-[9px]">
+                        {item.category.toUpperCase()}
+                      </span>
+                      {item.status === 'published' ? (
+                        <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 font-bold rounded text-[9px]">
+                          🟢 Đã Public
+                        </span>
+                      ) : (
+                        <span className="px-1.5 py-0.5 bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-bold rounded text-[9px]">
+                          🟡 Chờ Duyệt
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/80 dark:border-slate-800">
+                  <span className="truncate">✍️ {item.author || 'Admin'} • {item.publishedAt || 'Hôm nay'}</span>
+                </div>
+
+                <div className="flex items-center justify-between gap-1.5 pt-1">
+                  {item.status === 'published' ? (
+                    <button
+                      onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'draft' })}
+                      className="flex-1 py-1.5 px-2 bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 font-bold rounded-xl transition text-[10px] text-center cursor-pointer"
+                      title="Chuyển về trạng thái Chờ Duyệt"
+                    >
+                      🟡 Trả Chờ Duyệt
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'published' })}
+                      className="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl transition shadow-2xs text-[10px] text-center cursor-pointer"
+                      title="Phê duyệt bài viết và xuất bản public"
+                    >
+                      🟢 Duyệt Public
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => setEditingNews(item)}
+                    className="py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition flex items-center gap-1 text-[10px] cursor-pointer"
+                    title="Sửa bài & Thay ảnh"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Sửa
+                  </button>
+
+                  {onDeleteNews && (
+                    <button
+                      onClick={() => onDeleteNews(item.id)}
+                      className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-xl transition cursor-pointer"
+                      title="Xóa bài viết"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Full News Table (>= lg) */}
+          <div className="hidden lg:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+            <table className="w-full text-xs text-left border-collapse min-w-[780px]">
               <thead className="bg-slate-100 dark:bg-slate-900">
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  <th className="p-3 font-bold text-slate-500">Ảnh bìa</th>
-                  <th className="p-3 font-bold text-slate-500">Tiêu đề bài viết</th>
-                  <th className="p-3 font-bold text-slate-500">Chuyên mục</th>
-                  <th className="p-3 font-bold text-slate-500">Trạng Thái Duyệt</th>
-                  <th className="p-3 font-bold text-slate-500">Tác giả & Ngày đăng</th>
-                  <th className="p-3 font-bold text-slate-500">Thao tác Phê Duyệt</th>
+                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold uppercase text-[10px] tracking-wider">
+                  <th className="p-3">Ảnh bìa</th>
+                  <th className="p-3">Tiêu đề bài viết</th>
+                  <th className="p-3">Chuyên mục</th>
+                  <th className="p-3">Trạng Thái</th>
+                  <th className="p-3">Tác giả</th>
+                  <th className="p-3 text-right">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {news.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
                     <td className="p-3">
-                      <img src={item.image} alt={item.title} className="w-16 h-12 object-cover rounded-lg border shadow-sm" />
+                      <img src={item.image} alt={item.title} className="w-14 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs" />
                     </td>
                     <td className="p-3 max-w-sm">
-                      <span className="font-bold text-slate-900 dark:text-white line-clamp-1">{item.title}</span>
-                      <span className="text-[10px] text-slate-500 line-clamp-1 block">{item.summary}</span>
+                      <span className="font-bold text-slate-900 dark:text-white block truncate">{item.title}</span>
+                      <span className="text-[10px] text-slate-500 block truncate">{item.summary}</span>
                     </td>
                     <td className="p-3">
                       <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-md text-[10px]">
@@ -5644,11 +5714,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <td className="p-3">
                       {item.status === 'published' ? (
                         <span className="px-2 py-1 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-lg text-[10px] inline-flex items-center gap-1">
-                          🟢 Đã Đồng Bộ Public
+                          🟢 Đã Public
                         </span>
                       ) : (
                         <span className="px-2 py-1 bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-extrabold rounded-lg text-[10px] inline-flex items-center gap-1">
-                          🟡 Chờ Duyệt (Nháp)
+                          🟡 Chờ Duyệt
                         </span>
                       )}
                     </td>
@@ -5656,37 +5726,37 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       <div>{item.author}</div>
                       <div className="text-[10px] text-slate-400">{item.publishedAt}</div>
                     </td>
-                    <td className="p-3">
-                      <div className="flex items-center gap-1.5 flex-wrap">
+                    <td className="p-3 text-right">
+                      <div className="inline-flex items-center gap-1.5">
                         {item.status === 'published' ? (
                           <button
                             onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'draft' })}
-                            className="px-2 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg transition text-[10px]"
-                            title="Chuyển bài này về trạng thái Chờ Duyệt (Sub-admin kiểm duyệt lại)"
+                            className="px-2 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg transition text-[10px] cursor-pointer"
+                            title="Trả về Chờ Duyệt"
                           >
                             🟡 Trả Chờ Duyệt
                           </button>
                         ) : (
                           <button
                             onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'published' })}
-                            className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg transition shadow text-[10px]"
-                            title="Phê duyệt bài viết và xuất bản lên Web Public"
+                            className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg transition shadow-2xs text-[10px] cursor-pointer"
+                            title="Phê duyệt bài viết"
                           >
-                            🟢 Duyệt & Đăng Public
+                            🟢 Duyệt Public
                           </button>
                         )}
 
                         <button
                           onClick={() => setEditingNews(item)}
-                          className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[10px]"
-                          title="Sửa bài & Thay ảnh"
+                          className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[10px] cursor-pointer"
+                          title="Sửa bài"
                         >
                           <Edit3 className="w-3.5 h-3.5" /> Sửa
                         </button>
                         {onDeleteNews && (
                           <button
                             onClick={() => onDeleteNews(item.id)}
-                            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition"
+                            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition cursor-pointer"
                             title="Xóa bài viết"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
