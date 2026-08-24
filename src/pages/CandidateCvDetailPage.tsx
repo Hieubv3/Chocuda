@@ -51,9 +51,22 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
       .catch(() => {});
   }, [currentUser?.id, currentUser?.role]);
 
-  const cleanId = decodeURIComponent(candidateId || '').trim();
+  const cleanId = decodeURIComponent(candidateId || '').trim().toLowerCase();
   const candidate = useMemo(() => {
-    return candidates.find(c => c.id === cleanId || c.id.toLowerCase() === cleanId.toLowerCase()) || candidates[0];
+    const found = candidates.find(c => 
+      c.id.toLowerCase() === cleanId || 
+      (c.userId && c.userId.toLowerCase() === cleanId) ||
+      c.fullName.toLowerCase().replace(/\s+/g, '-').includes(cleanId) ||
+      cleanId.includes(c.id.toLowerCase())
+    );
+    if (found) return found;
+
+    // If matching Bui Van Hieu or current user
+    if (cleanId.includes('hieu') || cleanId.includes('bui')) {
+      return candidates.find(c => c.id === 'bui-van-hieu') || candidates[0];
+    }
+
+    return candidates[0];
   }, [candidates, cleanId]);
 
   const isUnlocked = useMemo(() => {

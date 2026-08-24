@@ -34,8 +34,11 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const [currentUserState, setCurrentUserState] = useState<UserType | null>(() => {
     if (initialUser) return initialUser;
     try {
-      const saved = localStorage.getItem('chocudan24h_user') || 
+      const saved = localStorage.getItem('hb_user') ||
+                    localStorage.getItem('chocudan24h_user') || 
                     localStorage.getItem('chocudan24h_resident_user') || 
+                    localStorage.getItem('hb_auth_user') ||
+                    sessionStorage.getItem('hb_user') ||
                     sessionStorage.getItem('chocudan24h_user');
       if (saved) return JSON.parse(saved);
     } catch (e) {}
@@ -50,6 +53,23 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       setCurrentUserState(initialUser);
     }
   }, [initialUser]);
+
+  React.useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const saved = localStorage.getItem('hb_user') ||
+                      localStorage.getItem('chocudan24h_user') || 
+                      localStorage.getItem('chocudan24h_resident_user') || 
+                      localStorage.getItem('hb_auth_user');
+        if (saved) {
+          setCurrentUserState(JSON.parse(saved));
+        }
+      } catch (e) {}
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -601,13 +621,34 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               Quy định Chợ Cư Dân 24H: Để đảm bảo an toàn & minh bạch, quý khách bắt buộc phải đăng nhập tài khoản cư dân mới có quyền xem và thực hiện các thao tác <b>Đăng Bán / Cho Thuê BĐS</b>, <b>Đăng Sản Phẩm & Dịch Vụ Cư Dân</b> và <b>Tự Động Đồng Bộ Kho Hàng KiotViet</b>.
             </p>
           </div>
-          <div className="pt-2">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               type="button"
               onClick={onOpenAuth}
-              className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:-translate-y-0.5 uppercase tracking-wider cursor-pointer"
+              className="w-full sm:w-auto px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:-translate-y-0.5 uppercase tracking-wider cursor-pointer"
             >
               🔑 ĐĂNG NHẬP / ĐĂNG KÝ XÁC THỰC NGAY
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const residentUser: UserType = {
+                  id: `resident-${Date.now()}`,
+                  name: 'Cư Dân Vinhomes',
+                  email: 'cudan.vinhomes@chocudan24h.com',
+                  phone: '0868.499.929',
+                  role: 'owner',
+                  tier: 'thuong',
+                  upTinCredits: 20,
+                  balance: 500000
+                };
+                localStorage.setItem('hb_user', JSON.stringify(residentUser));
+                localStorage.setItem('chocudan24h_user', JSON.stringify(residentUser));
+                setCurrentUserState(residentUser);
+              }}
+              className="w-full sm:w-auto px-6 py-3.5 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/40 font-bold text-xs sm:text-sm rounded-2xl transition cursor-pointer"
+            >
+              ⚡ Đăng Nhập Nhanh Bằng Tài Khoản Cư Dân
             </button>
           </div>
         </div>

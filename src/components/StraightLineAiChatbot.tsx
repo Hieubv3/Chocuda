@@ -58,6 +58,8 @@ interface StraightLineAiChatbotProps {
   onOpenConsultation?: () => void;
   onOpenUpTin?: () => void;
   currentUser?: any;
+  isStoreContext?: boolean;
+  storeName?: string;
 }
 
 const DEFAULT_FOOD_CATALOG: ChatOrderItem[] = [
@@ -96,7 +98,9 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
   news,
   onOpenConsultation,
   onOpenUpTin,
-  currentUser: propUser
+  currentUser: propUser,
+  isStoreContext = false,
+  storeName = ''
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'chat' | 'order_food' | 'order_goods' | 'order_transport' | 'order_repair' | 'my_orders'>('chat');
@@ -138,18 +142,35 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
   // Initial Welcome Messages
   const getInitialMessages = (): Message[] => {
     const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    if (isStoreContext) {
+      return [
+        {
+          id: 'welcome-1',
+          sender: 'bot',
+          text: `Dạ em chào Anh/Chị! Em là Trợ Lý Tư Vấn Đặt Hàng Gian Hàng Cư Dân ${storeName ? `"${storeName}"` : ''}.\n\nAnh/Chị muốn xem thực đơn, đặt món giao tận sảnh hoặc cần tư vấn sản phẩm nào ạ?`,
+          timestamp: time,
+          options: [
+            '🍲 Đặt Đồ Ăn & Cafe',
+            '📦 Đặt Bách Hóa & Đồ Dùng',
+            '🚗 Đặt Xe Buggy Cư Dân',
+            '🛠️ Đặt Lịch Thợ Dịch Vụ'
+          ]
+        }
+      ];
+    }
+
     return [
       {
         id: 'welcome-1',
         sender: 'bot',
-        text: `Dạ em chào Anh/Chị! Em là Trợ Lý AI Chợ Cư Dân 24H (Hotline/Zalo: 0868.499.929).\n\nEm hỗ trợ Anh/Chị:\n1. 🍲 Đặt Cơm, Cafe, Trà sữa & Đồ ăn vặt (Giao tận cửa 15-20 phút)\n2. 📦 Đặt Hàng Vật Lý, Bách hóa & Nông sản sạch từ Gian Hàng Cư Dân\n3. 🚗 Đặt Xe Buggy / Taxi Sân Bay 24/7\n4. 🛠️ Gọi Thợ Sửa Điện Nước, Máy Tính, Thang Máy\n5. 🏠 Mua bán & Cho thuê BĐS Vinhomes chính chủ\n\nAnh/Chị muốn đặt dịch vụ nào hoặc cần em hỗ trợ gì ạ?`,
+        text: `Dạ em chào Anh/Chị! Em là Trợ Lý BĐS & Cư Dân Vinhomes 24H (Hotline/Zalo: 0868.499.929).\n\nEm hỗ trợ Anh/Chị:\n1. 🏠 Mua bán & Cho thuê BĐS Vinhomes chính chủ\n2. 🔍 Tra cứu giá căn, quy hoạch & sơ đồ phân khu\n3. 🛠️ Kết nối thợ sửa điện nước, kỹ thuật nội khu\n4. 💼 Tra cứu hồ sơ ứng viên & tin tuyển dụng cư dân\n\nAnh/Chị cần em tìm quỹ căn hoặc hỗ trợ thông tin gì ạ?`,
         timestamp: time,
         options: [
-          '🍲 Đặt Đồ Ăn & Cafe',
-          '📦 Đặt Hàng Vật Lý',
-          '🚗 Đặt Xe Cư Dân 24/7',
-          '🛠️ Gọi Thợ Sửa Chữa',
-          '🔍 Lọc Căn Ocean Park 2'
+          '🔍 Quỹ Căn Ocean Park 2',
+          '🏢 Căn Hộ Smart City',
+          '🛠️ Danh Sách Thợ Cư Dân',
+          '💼 Hồ Sơ Ứng Viên / Tuyển Dụng',
+          '📞 Gặp Chuyên Viên Tư Vấn'
         ]
       }
     ];
