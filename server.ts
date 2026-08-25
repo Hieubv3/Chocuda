@@ -429,7 +429,7 @@ let upTinTransactionsStore: any[] = [
   }
 ];
 
-let pricingConfigStore = {
+let pricingConfigStore: any = {
   singlePushPrice: 20000,
   autoPush5Price: 90000,
   vipSilverPriceDay: 50000,
@@ -437,8 +437,27 @@ let pricingConfigStore = {
   vipDiamondPriceDay: 200000,
   bankName: 'MSB (Ngân hàng Hàng Hải Việt Nam)',
   accountNumber: '3028031988',
-  accountHolder: 'BUI VAN HIEU'
+  accountHolder: 'BUI VAN HIEU',
+  sepayApiKey: '',
+  webhookSecret: '',
+  autoApprove: true
 };
+
+interface BankWebhookLog {
+  id: string;
+  receivedAt: string;
+  gateway: string;
+  transferType: string;
+  amount: number;
+  content: string;
+  accountNumber?: string;
+  referenceCode?: string;
+  matchedStatus: 'matched' | 'no_match' | 'ignored';
+  matchedType?: 'bds_uptin' | 'store_package' | 'store_order' | 'tech_escrow';
+  matchedTitle?: string;
+  rawPayload: any;
+}
+let bankWebhookLogsStore: BankWebhookLog[] = [];
 
 // Technical Orders & Escrow Store
 let techOrdersStore: any[] = [
@@ -5998,28 +6017,60 @@ app.post("/api/properties/:id/push", (req, res) => {
   });
 });
 
+// --- PRICING & BANK CONFIG APIS ---
+app.get("/api/pricing/config", (req, res) => {
+  res.json(pricingConfigStore);
+});
+
+app.put("/api/pricing/config", (req, res) => {
+  const update = req.body || {};
+  pricingConfigStore = { ...pricingConfigStore, ...update };
+  saveDataStore();
+  res.json({ success: true, message: "Cập nhật cấu hình bảng giá & Ngân hàng/SePay thành công!", config: pricingConfigStore });
+});
+
+app.post("/api/pricing/config", (req, res) => {
+  const update = req.body || {};
+  pricingConfigStore = { ...pricingConfigStore, ...update };
+  saveDataStore();
+  res.json({ success: true, message: "Cập nhật cấu hình bảng giá & Ngân hàng/SePay thành công!", config: pricingConfigStore });
+});
+
+// --- BANK WEBHOOK LOGS APIS ---
+app.get("/api/webhook/logs", (req, res) => {
+  res.json(bankWebhookLogsStore);
+});
+
+app.delete("/api/webhook/logs", (req, res) => {
+  bankWebhookLogsStore = [];
+  res.json({ success: true, message: "Đã xóa toàn bộ nhật ký Webhook." });
+});
+
 // 4. Standard Webhook for Payment Intermediaries (SePay, Casso, MBBank, MSB Open API, VietQR Webhook)
 app.post(["/api/webhook/payment", "/api/webhook/sepay", "/api/webhook/casso"], (req, res) => {
-  console.log("🔔 [Payment Webhook] Received webhook payload:", JSON.stringify(req.body));
+  console.log("🔔 [Payment Webhook / SePay] Received payload:", JSON.stringify(req.body));
   
-  // Extract transfer description & amount from various webhook schemas
   const body = req.body || {};
   let transferContent = '';
   let transferAmount = 0;
   let referenceCode = '';
+  let gateway = body.gateway || 'SePay/Bank';
+  let transferType = body.transferType || 'in';
 
   // Case 1: Casso schema
   if (Array.isArray(body.data) && body.data.length > 0) {
     const item = body.data[0];
-    transferContent = item.description || '';
+    transferContent = item.description || item.content || '';
     transferAmount = Number(item.amount || 0);
     referenceCode = String(item.tid || item.id || '');
+    gateway = 'Casso';
   } 
-  // Case 2: SePay schema
-  else if (body.content || body.description) {
-    transferContent = body.content || body.description || '';
+  // Case 2: SePay schema (id, gateway, transactionDate, accountNumber, code, content, transferType, transferAmount, accumulated, subAccount, referenceCode, description)
+  else if (body.content || body.description || body.code) {
+    transferContent = body.content || body.description || body.code || '';
     transferAmount = Number(body.transferAmount || body.amount || 0);
-    referenceCode = String(body.referenceCode || body.id || '');
+    referenceCode = String(body.referenceCode || body.code || body.id || '');
+    gateway = body.gateway || 'SePay';
   }
   // Case 3: Generic / Open API schema
   else {
@@ -6028,28 +6079,123 @@ app.post(["/api/webhook/payment", "/api/webhook/sepay", "/api/webhook/casso"], (
     referenceCode = String(body.transactionId || body.refNo || Date.now());
   }
 
-  // Find matching payment code in transfer content
+  const cleanContent = transferContent.toUpperCase().replace(/\s+/g, '');
+  let matchedStatus: 'matched' | 'no_match' | 'ignored' = 'no_match';
+  let matchedType: 'bds_uptin' | 'store_package' | 'store_order' | 'tech_escrow' | undefined;
+  let matchedTitle: string | undefined;
+
+  // --- ENTITY 1: Up-Tin & VIP BĐS (upTinTransactionsStore) ---
   const matchedTx = upTinTransactionsStore.find(t => {
-    if (!t.paymentCode) return false;
-    const cleanContent = transferContent.toUpperCase().replace(/\s+/g, '');
-    const cleanCode = t.paymentCode.toUpperCase().replace(/\s+/g, '');
-    return cleanContent.includes(cleanCode) || cleanCode.includes(cleanContent);
+    if (!t.paymentCode && !t.id) return false;
+    const code1 = (t.paymentCode || '').toUpperCase().replace(/\s+/g, '');
+    const code2 = (t.id || '').toUpperCase().replace(/\s+/g, '');
+    return (code1 && (cleanContent.includes(code1) || code1.includes(cleanContent))) ||
+           (code2 && (cleanContent.includes(code2) || code2.includes(cleanContent)));
   });
 
-  if (!matchedTx) {
-    console.warn(`[Payment Webhook] No matching pending transaction for content: "${transferContent}"`);
-    return res.status(200).json({ success: true, message: "Webhook received but no matching transaction code found." });
+  if (matchedTx) {
+    const result = processSuccessfulPayment(matchedTx, `${gateway} Ref:${referenceCode}`);
+    matchedStatus = 'matched';
+    matchedType = 'bds_uptin';
+    matchedTitle = result.property?.title || matchedTx.propertyTitle || 'Gói Up-Tin / VIP BĐS';
+    console.log(`✅ [Payment Webhook] Matched & Activated Up-Tin/VIP for "${matchedTitle}" (Code: ${matchedTx.paymentCode})`);
   }
 
-  // Check amount (allow small tolerance if needed or >= required price)
-  const result = processSuccessfulPayment(matchedTx, `VietQR Gateway (${body.gateway || 'Bank Webhook'}) Ref:${referenceCode}`);
-  console.log(`✅ [Payment Webhook] Matched & Activated Up-Tin/VIP for property "${result.property?.title}" (Code: ${matchedTx.paymentCode})`);
+  // --- ENTITY 2: Mua Gói Gian Hàng Dịch Vụ Cư Dân (packageOrdersStore) ---
+  if (!matchedTx && Array.isArray(packageOrdersStore)) {
+    const matchedPkgOrder = packageOrdersStore.find(o => {
+      if (!o.id && !(o as any).orderCode) return false;
+      const code1 = (o.id || '').toUpperCase().replace(/\s+/g, '');
+      const code2 = ((o as any).orderCode || '').toUpperCase().replace(/\s+/g, '');
+      return (code1 && cleanContent.includes(code1)) || (code2 && cleanContent.includes(code2));
+    });
+
+    if (matchedPkgOrder) {
+      matchedPkgOrder.status = 'approved';
+      (matchedPkgOrder as any).paymentStatus = 'paid';
+      (matchedPkgOrder as any).approvedAt = new Date().toISOString();
+      (matchedPkgOrder as any).approvedBy = `${gateway} Webhook`;
+      matchedStatus = 'matched';
+      matchedType = 'store_package';
+      matchedTitle = `Gói Gian Hàng: ${matchedPkgOrder.packageName} (${matchedPkgOrder.storeName || matchedPkgOrder.contactName})`;
+      saveDataStore();
+      console.log(`✅ [Payment Webhook] Matched & Activated Store Package for "${matchedTitle}"`);
+    }
+  }
+
+  // --- ENTITY 3: Đơn Hàng Mua Bán Chợ Cư Dân (storeOrdersStore) ---
+  if (!matchedTx && matchedStatus === 'no_match' && Array.isArray(storeOrdersStore)) {
+    const matchedStoreOrder = storeOrdersStore.find(o => {
+      if (!o.id && !(o as any).orderCode) return false;
+      const code1 = (o.id || '').toUpperCase().replace(/\s+/g, '');
+      const code2 = ((o as any).orderCode || '').toUpperCase().replace(/\s+/g, '');
+      return (code1 && cleanContent.includes(code1)) || (code2 && cleanContent.includes(code2));
+    });
+
+    if (matchedStoreOrder) {
+      matchedStoreOrder.paymentStatus = 'paid';
+      matchedStoreOrder.orderStatus = 'confirmed';
+      matchedStatus = 'matched';
+      matchedType = 'store_order';
+      matchedTitle = `Đơn Chợ Cư Dân #${matchedStoreOrder.id} (${matchedStoreOrder.customerName})`;
+      saveDataStore();
+      console.log(`✅ [Payment Webhook] Matched & Confirmed Store Order #${matchedStoreOrder.id}`);
+    }
+  }
+
+  // --- ENTITY 4: Đơn Thợ Kỹ Thuật Ký Quỹ Escrow (techOrdersStore) ---
+  if (!matchedTx && matchedStatus === 'no_match' && Array.isArray(techOrdersStore)) {
+    const matchedTechOrder = techOrdersStore.find(o => {
+      if (!o.id && !o.orderCode) return false;
+      const code1 = (o.id || '').toUpperCase().replace(/\s+/g, '');
+      const code2 = (o.orderCode || '').toUpperCase().replace(/\s+/g, '');
+      return (code1 && cleanContent.includes(code1)) || (code2 && cleanContent.includes(code2));
+    });
+
+    if (matchedTechOrder) {
+      matchedTechOrder.status = 'escrow_funded';
+      matchedTechOrder.escrowPaid = true;
+      matchedStatus = 'matched';
+      matchedType = 'tech_escrow';
+      matchedTitle = `Ký Quỹ Dịch Vụ Thợ #${matchedTechOrder.orderCode || matchedTechOrder.id}`;
+      saveDataStore();
+      console.log(`✅ [Payment Webhook] Matched & Funded Escrow for Tech Order #${matchedTechOrder.orderCode}`);
+    }
+  }
+
+  // Record into Webhook Logs
+  const newLog: BankWebhookLog = {
+    id: `log-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`,
+    receivedAt: new Date().toISOString(),
+    gateway,
+    transferType,
+    amount: transferAmount,
+    content: transferContent,
+    accountNumber: body.accountNumber || '',
+    referenceCode,
+    matchedStatus,
+    matchedType,
+    matchedTitle,
+    rawPayload: body
+  };
+  bankWebhookLogsStore.unshift(newLog);
+  if (bankWebhookLogsStore.length > 200) bankWebhookLogsStore = bankWebhookLogsStore.slice(0, 200);
+
+  if (matchedStatus === 'no_match') {
+    console.warn(`[Payment Webhook / SePay] No matching pending transaction found for content: "${transferContent}"`);
+    return res.status(200).json({
+      success: true,
+      message: "Webhook SePay đã nhận thành công. Chưa tìm thấy mã đơn hàng trùng khớp trong hệ thống.",
+      logId: newLog.id
+    });
+  }
 
   return res.status(200).json({
     success: true,
-    message: "Giao dịch đã được xác nhận và tự động nâng cấp trạng thái thành công!",
-    transaction: result.transaction,
-    property: result.property
+    message: `Giao dịch đã được xác nhận và tự động nâng cấp/kích hoạt thành công cho ${matchedTitle}!`,
+    matchedType,
+    matchedTitle,
+    logId: newLog.id
   });
 });
 
@@ -6060,7 +6206,6 @@ app.post("/api/payments/simulate-webhook", (req, res) => {
   if (!tx) {
     return res.status(404).json({ error: "Không tìm thấy mã giao dịch để mô phỏng." });
   }
-
   const result = processSuccessfulPayment(tx, 'Mô Phỏng Intermediary Webhook');
   res.json({
     success: true,
@@ -6075,7 +6220,6 @@ app.get("/api/payments/transactions", (req, res) => {
   res.json(upTinTransactionsStore);
 });
 
-
 async function startServer() {
   // Vite middleware setup for development
   if (process.env.NODE_ENV !== "production") {
@@ -6085,19 +6229,15 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
+    const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
     });
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`====================================================`);
-    console.log(`🚀 Chợ Cư Dân 24h Server running on http://localhost:${PORT}`);
-    console.log(`🌐 Target Domain: chocudan24h.com`);
-    console.log(`📡 n8n Webhook Endpoint: http://localhost:${PORT}/api/webhooks/n8n-news`);
-    console.log(`====================================================`);
+    console.log(`Server is running at http://0.0.0.0:${PORT}`);
   });
 }
 
