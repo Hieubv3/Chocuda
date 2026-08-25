@@ -1717,10 +1717,13 @@ export const App: React.FC = () => {
               localStorage.setItem('hb_user', JSON.stringify(u));
             } catch (e) {}
             setAuthModalOpen(false);
-            if (u.role === 'admin' || u.role === 'manager') {
-              navigate('/admin');
-            } else {
-              navigate('/tai-khoan');
+            // Không tự động cưỡng chế chuyển trang nếu người dùng đang ở trang chợ hoặc chi tiết sản phẩm
+            if (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/dang-nhap') {
+              if (u.role === 'admin' || u.role === 'manager') {
+                navigate('/admin');
+              } else {
+                navigate('/tai-khoan');
+              }
             }
           }}
         />

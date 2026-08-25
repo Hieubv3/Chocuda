@@ -22,7 +22,7 @@ interface ReputationPost {
 }
 import { AiUrlTrackerModal } from '../components/AiUrlTrackerModal';
 import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
-import { EditPropertyModal, EditProjectModal, EditNewsModal } from '../components/AdminAssetManagerModals';
+import { EditPropertyModal, EditProjectModal, EditNewsModal, AddPropertyAdminModal } from '../components/AdminAssetManagerModals';
 import { AdminMarketingCenter } from '../components/AdminMarketingCenter';
 import { AdminSeoCenter } from '../components/AdminSeoCenter';
 import { AdminZaloGroupCenter } from '../components/AdminZaloGroupCenter';
@@ -81,7 +81,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
     | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync'
-    | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
+    | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'all_products_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
   >('properties');
 
   // Compute active main category (Ph√¢n r√µ c√°c tab ri√™ng bi·ªát kh√¥ng b·ªã g·ªôp chung)
@@ -89,7 +89,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt'].includes(activeTab)) return 'bds';
     if (activeTab === 'resident_services_mgmt') return 'technicians';
     if (activeTab === 'recruitment_mgmt') return 'recruitment';
-    if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
+    if (['stores_mgmt', 'all_products_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
     if (['users', 'leads', 'enterprise_core'].includes(activeTab)) return 'users_leads';
     if (activeTab === 'ads' || (activeTab as string) === 'ads_mgmt') return 'ads';
     return 'tools';
@@ -788,6 +788,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // Asset Modals State
   const [showTaxModal, setShowTaxModal] = useState<boolean>(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
+  const [isAddingProperty, setIsAddingProperty] = useState<boolean>(false);
+  const [expandedNavSections, setExpandedNavSections] = useState<Record<string, boolean>>({
+    bds: true,
+    resident_market: true,
+    users_leads: true,
+    tools: true
+  });
+  const toggleNavSection = (section: string) => {
+    setExpandedNavSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
@@ -1196,6 +1206,44 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   // Resident Services & Store Handlers
+    const handleToggleServiceApproval = async (srv: ResidentServiceItem) => {
+    const isApproved = srv.status === 'approved' || (srv as any).approved;
+    const nextStatus = isApproved ? 'pending' : 'approved';
+    const updated = { ...srv, status: nextStatus as any, approved: nextStatus === 'approved' };
+    setAdminResidentServices(prev => prev.map(s => s.id === srv.id ? updated : s));
+    try {
+      await fetch(`/api/resident-services/${srv.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      });
+      alert(nextStatus === 'approved' ? `‚úì ƒê√£ ph√™ duy·ªát v√† hi·ªÉn th·ªã d·ªãch v·ª• "${srv.title}" l√™n website!` : `‚è≥ ƒê√£ t·∫°m ·∫©n d·ªãch v·ª• "${srv.title}".`);
+    } catch (e) {
+      console.error('Error toggling service approval:', e);
+    }
+  };
+
+  const handleApproveAllPendingServices = async () => {
+    const pendingServices = adminResidentServices.filter(s => s.status === 'pending');
+    if (pendingServices.length === 0) {
+      alert('Kh√¥ng c√≥ b√†i d·ªãch v·ª• n√†o ƒëang ch·ªù duy·ªát!');
+      return;
+    }
+    if (!confirm(`B·∫°n c√≥ ch·∫Øc mu·ªën duy·ªát t·∫•t c·∫£ ${pendingServices.length} b√†i d·ªãch v·ª• c∆∞ d√¢n ƒëang ch·ªù?`)) return;
+    for (const srv of pendingServices) {
+      const updated = { ...srv, status: 'approved' as const, approved: true };
+      try {
+        await fetch(`/api/resident-services/${srv.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated)
+        });
+      } catch (e) {}
+    }
+    setAdminResidentServices(prev => prev.map(s => ({ ...s, status: 'approved', approved: true })));
+    alert(`‚úì ƒê√£ duy·ªát to√†n b·ªô ${pendingServices.length} d·ªãch v·ª• c∆∞ d√¢n th√†nh c√¥ng!`);
+  };
+
   const handleToggleServiceKyc = async (srv: ResidentServiceItem) => {
     const isCurrentlyVerified = srv.kycStatus === 'verified' || srv.verified;
     const newKycStatus = isCurrentlyVerified ? 'unverified' : 'verified';
@@ -1942,114 +1990,136 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </span>
           </div>
 
-          <nav className="space-y-1 text-xs" aria-label="Admin Navigation">
+          <nav className="space-y-1.5 text-xs" aria-label="Admin Navigation">
             {/* 1. B·∫•t ƒê·ªông S·∫£n */}
-            <div className="space-y-0.5">
-              <button
-                type="button"
-                onClick={() => {
-                  handleSelectMainTab('bds');
-                  setActiveTab('properties');
-                }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
-                  effectiveMainTab === 'bds'
-                    ? 'bg-emerald-600 text-white shadow-md ring-1 ring-emerald-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Building2 className={`w-4 h-4 ${effectiveMainTab === 'bds' ? 'text-white' : 'text-emerald-400'}`} />
-                  <span className="text-[12px] font-extrabold">1. B·∫•t ƒê·ªông S·∫£n</span>
-                </div>
-                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
-                  {properties.length}
-                </span>
-              </button>
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60 transition-all duration-200">
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSelectMainTab('bds');
+                    setActiveTab('properties');
+                  }}
+                  className={`flex-1 p-2.5 font-bold flex items-center justify-between transition cursor-pointer text-left ${
+                    effectiveMainTab === 'bds'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Building2 className={`w-4 h-4 ${effectiveMainTab === 'bds' ? 'text-white' : 'text-emerald-400'}`} />
+                    <span className="text-[12px] font-extrabold">1. B·∫•t ƒê·ªông S·∫£n</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                    {properties.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleNavSection('bds');
+                  }}
+                  className={`p-2.5 transition cursor-pointer flex items-center justify-center border-l border-white/10 ${
+                    effectiveMainTab === 'bds' ? 'bg-emerald-700 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                  title={expandedNavSections.bds ? "Thu g·ªçn m·ª•c con" : "M·ªü r·ªông m·ª•c con"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedNavSections.bds ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
 
-              {/* Sub-items if BDS active */}
-              {effectiveMainTab === 'bds' && (
-                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-emerald-500/40 ml-3.5 animate-in fade-in duration-150">
+              {/* Sub-items for BDS */}
+              {expandedNavSections.bds && (
+                <div className="p-1.5 space-y-0.5 bg-slate-950/70 border-t border-slate-800/60">
                   <button
                     onClick={() => { setActiveTab('properties'); setPropertySubFilter('all'); }}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'properties' && propertySubFilter === 'all'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ T·∫•t C·∫£ BƒêS</span>
                     <span className="font-mono text-[10px]">{properties.length}</span>
                   </button>
+
                   <button
                     onClick={() => { setActiveTab('properties'); setPropertySubFilter('sale'); }}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'properties' && propertySubFilter === 'sale'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ Mua B√°n</span>
                     <span className="font-mono text-[10px]">{saleProperties.length}</span>
                   </button>
+
                   <button
                     onClick={() => { setActiveTab('properties'); setPropertySubFilter('rent'); }}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'properties' && propertySubFilter === 'rent'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ Cho Thu√™</span>
                     <span className="font-mono text-[10px]">{rentProperties.length}</span>
                   </button>
+
                   <button
                     onClick={() => { setActiveTab('properties'); setPropertySubFilter('pending'); }}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'properties' && propertySubFilter === 'pending'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ Ch·ªù Duy·ªát</span>
                     <span className="font-mono text-[10px] text-amber-400 font-bold">{pendingProperties.length}</span>
                   </button>
+
                   <button
                     onClick={() => setActiveTab('projects')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'projects'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ D·ª± √Ån & M·∫∑t B·∫±ng</span>
                     <span className="font-mono text-[10px]">{projects.length}</span>
                   </button>
+
                   <button
                     onClick={() => setActiveTab('news')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'news'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ Tin T·ª©c & B√†i Vi·∫øt</span>
                     <span className="font-mono text-[10px]">{news.length}</span>
                   </button>
+
                   <button
                     onClick={() => setActiveTab('pricing')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'pricing'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     ‚Ä¢ B·∫£ng Gi√° D·ªãch V·ª•
                   </button>
+
                   <button
                     onClick={() => setActiveTab('affiliate_mgmt')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'affiliate_mgmt'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
@@ -2060,16 +2130,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
 
             {/* 2. Th·ª£ D·ªãch V·ª• & K·ªπ Thu·∫≠t */}
-            <div className="space-y-0.5">
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60">
               <button
                 type="button"
                 onClick={() => {
                   handleSelectMainTab('technicians');
                   setActiveTab('resident_services_mgmt');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                className={`w-full p-2.5 font-bold flex items-center justify-between transition cursor-pointer ${
                   effectiveMainTab === 'technicians'
-                    ? 'bg-orange-500 text-slate-950 font-black shadow-md ring-1 ring-orange-400'
+                    ? 'bg-orange-500 text-slate-950 font-black shadow-md'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
@@ -2084,16 +2154,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
 
             {/* 3. Tuy·ªÉn D·ª•ng & Vi·ªác L√†m */}
-            <div className="space-y-0.5">
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60">
               <button
                 type="button"
                 onClick={() => {
                   handleSelectMainTab('recruitment');
                   setActiveTab('recruitment_mgmt');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                className={`w-full p-2.5 font-bold flex items-center justify-between transition cursor-pointer ${
                   effectiveMainTab === 'recruitment'
-                    ? 'bg-teal-500 text-slate-950 font-black shadow-md ring-1 ring-teal-400'
+                    ? 'bg-teal-500 text-slate-950 font-black shadow-md'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
@@ -2108,78 +2178,109 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
 
             {/* 4. Ch·ª£ C∆∞ D√¢n */}
-            <div className="space-y-0.5">
-              <button
-                type="button"
-                onClick={() => {
-                  handleSelectMainTab('resident_market');
-                  setActiveTab('stores_mgmt');
-                }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
-                  effectiveMainTab === 'resident_market'
-                    ? 'bg-amber-500 text-slate-950 font-black shadow-md ring-1 ring-amber-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Store className={`w-4 h-4 ${effectiveMainTab === 'resident_market' ? 'text-slate-950' : 'text-amber-400'}`} />
-                  <span className="text-[12px] font-extrabold">4. Ch·ª£ C∆∞ D√¢n</span>
-                </div>
-                <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
-                  {adminStores.length}
-                </span>
-              </button>
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60 transition-all duration-200">
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSelectMainTab('resident_market');
+                    setActiveTab('stores_mgmt');
+                  }}
+                  className={`flex-1 p-2.5 font-bold flex items-center justify-between transition cursor-pointer text-left ${
+                    effectiveMainTab === 'resident_market'
+                      ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Store className={`w-4 h-4 ${effectiveMainTab === 'resident_market' ? 'text-slate-950' : 'text-amber-400'}`} />
+                    <span className="text-[12px] font-extrabold">4. Ch·ª£ C∆∞ D√¢n</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
+                    {adminStores.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleNavSection('resident_market');
+                  }}
+                  className={`p-2.5 transition cursor-pointer flex items-center justify-center border-l border-white/10 ${
+                    effectiveMainTab === 'resident_market' ? 'bg-amber-600 text-slate-950' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                  title={expandedNavSections.resident_market ? "Thu g·ªçn m·ª•c con" : "M·ªü r·ªông m·ª•c con"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedNavSections.resident_market ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
 
-              {effectiveMainTab === 'resident_market' && (
-                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-amber-500/40 ml-3.5 animate-in fade-in duration-150">
+              {expandedNavSections.resident_market && (
+                <div className="p-1.5 space-y-0.5 bg-slate-950/70 border-t border-slate-800/60">
                   <button
                     onClick={() => setActiveTab('stores_mgmt')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'stores_mgmt'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>‚Ä¢ Gian H√†ng & Shop</span>
+                    <span>‚Ä¢ Gian H√†ng & C·ª≠a H√†ng</span>
                     <span className="font-mono text-[10px]">{adminStores.length}</span>
                   </button>
+
+                  <button
+                    onClick={() => setActiveTab('all_products_mgmt')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
+                      activeTab === 'all_products_mgmt'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>‚Ä¢ T·∫•t C·∫£ S·∫£n Ph·∫©m & M√≥n</span>
+                    <span className="font-mono text-[10px]">{adminStores.reduce((acc, s) => acc + (s.products?.length || 0), 0)}</span>
+                  </button>
+
                   <button
                     onClick={() => setActiveTab('orders_mgmt')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'orders_mgmt'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ Qu·∫£n L√Ω ƒê∆°n H√†ng</span>
                     <span className="font-mono text-[10px]">{adminStoreOrders.length}</span>
                   </button>
+
                   <button
                     onClick={() => setActiveTab('package_orders_mgmt')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'package_orders_mgmt'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ G√≥i Ti·ªán √çch C∆∞ D√¢n</span>
                     <span className="font-mono text-[10px]">{adminPackageOrders.length}</span>
                   </button>
+
                   <button
                     onClick={() => setActiveTab('resident_finance')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'resident_finance'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     ‚Ä¢ Doanh Thu & Quy·∫øt To√°n
                   </button>
+
                   <button
                     onClick={() => setActiveTab('partners_reputation')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'partners_reputation'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
@@ -2191,57 +2292,74 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
 
             {/* 5. Th√†nh Vi√™n & Kh√°ch H√†ng */}
-            <div className="space-y-0.5">
-              <button
-                type="button"
-                onClick={() => {
-                  handleSelectMainTab('users_leads');
-                  setActiveTab('users');
-                }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
-                  effectiveMainTab === 'users_leads'
-                    ? 'bg-blue-600 text-white shadow-md ring-1 ring-blue-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <UserCheck className={`w-4 h-4 ${effectiveMainTab === 'users_leads' ? 'text-white' : 'text-blue-400'}`} />
-                  <span className="text-[12px] font-extrabold">5. Th√†nh Vi√™n & Kh√°ch</span>
-                </div>
-                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
-                  {registeredUsers.length}
-                </span>
-              </button>
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60 transition-all duration-200">
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSelectMainTab('users_leads');
+                    setActiveTab('users');
+                  }}
+                  className={`flex-1 p-2.5 font-bold flex items-center justify-between transition cursor-pointer text-left ${
+                    effectiveMainTab === 'users_leads'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <UserCheck className={`w-4 h-4 ${effectiveMainTab === 'users_leads' ? 'text-white' : 'text-blue-400'}`} />
+                    <span className="text-[12px] font-extrabold">5. Th√†nh Vi√™n & Kh√°ch</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                    {registeredUsers.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleNavSection('users_leads');
+                  }}
+                  className={`p-2.5 transition cursor-pointer flex items-center justify-center border-l border-white/10 ${
+                    effectiveMainTab === 'users_leads' ? 'bg-blue-700 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                  title={expandedNavSections.users_leads ? "Thu g·ªçn m·ª•c con" : "M·ªü r·ªông m·ª•c con"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedNavSections.users_leads ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
 
-              {effectiveMainTab === 'users_leads' && (
-                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-blue-500/40 ml-3.5 animate-in fade-in duration-150">
+              {expandedNavSections.users_leads && (
+                <div className="p-1.5 space-y-0.5 bg-slate-950/70 border-t border-slate-800/60">
                   <button
                     onClick={() => setActiveTab('users')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'users'
-                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
+                        ? 'bg-blue-500/20 text-blue-300 font-extrabold border border-blue-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ Danh S√°ch Th√†nh Vi√™n</span>
                     <span className="font-mono text-[10px]">{registeredUsers.length}</span>
                   </button>
+
                   <button
                     onClick={() => setActiveTab('leads')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'leads'
-                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
+                        ? 'bg-blue-500/20 text-blue-300 font-extrabold border border-blue-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span>‚Ä¢ Kh√°ch H·∫πn Xem Nh√†</span>
                     <span className="font-mono text-[10px]">{contacts.length}</span>
                   </button>
+
                   <button
                     onClick={() => setActiveTab('enterprise_core')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'enterprise_core'
-                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
+                        ? 'bg-blue-500/20 text-blue-300 font-extrabold border border-blue-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
@@ -2252,14 +2370,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
 
             {/* 6. Banner & Qu·∫£ng C√°o */}
-            <div className="space-y-0.5">
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60">
               <button
                 type="button"
                 onClick={() => {
                   handleSelectMainTab('ads');
                   setActiveTab('ads');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                className={`w-full p-2.5 font-bold flex items-center justify-between transition cursor-pointer ${
                   effectiveMainTab === 'ads'
                     ? 'bg-rose-600 text-white shadow-md ring-1 ring-rose-400'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
@@ -2275,36 +2393,51 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
             </div>
 
-            {/* 7. C√¥ng C·ª• & H·ªá Th·ªëng */}
-            <div className="space-y-0.5">
-              <button
-                type="button"
-                onClick={() => {
-                  handleSelectMainTab('tools');
-                  setActiveTab('analytics');
-                }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
-                  effectiveMainTab === 'tools'
-                    ? 'bg-indigo-600 text-white shadow-md ring-1 ring-indigo-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Settings className={`w-4 h-4 ${effectiveMainTab === 'tools' ? 'text-white' : 'text-indigo-400'}`} />
-                  <span className="text-[12px] font-extrabold">7. C√¥ng C·ª• &amp; Bot</span>
-                </div>
-                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-bold">
-                  SEO
-                </span>
-              </button>
+            {/* 7. C√¥ng C·ª• & Bot H·ªá Th·ªëng */}
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60 transition-all duration-200">
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSelectMainTab('tools');
+                    setActiveTab('analytics');
+                  }}
+                  className={`flex-1 p-2.5 font-bold flex items-center justify-between transition cursor-pointer text-left ${
+                    effectiveMainTab === 'tools'
+                      ? 'bg-indigo-600 text-white shadow-md'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Settings className={`w-4 h-4 ${effectiveMainTab === 'tools' ? 'text-white' : 'text-indigo-400'}`} />
+                    <span className="text-[12px] font-extrabold">7. C√¥ng C·ª• & Bot</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-bold">
+                    SEO
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleNavSection('tools');
+                  }}
+                  className={`p-2.5 transition cursor-pointer flex items-center justify-center border-l border-white/10 ${
+                    effectiveMainTab === 'tools' ? 'bg-indigo-700 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                  title={expandedNavSections.tools ? "Thu g·ªçn m·ª•c con" : "M·ªü r·ªông m·ª•c con"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedNavSections.tools ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
 
-              {effectiveMainTab === 'tools' && (
-                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-indigo-500/40 ml-3.5 animate-in fade-in duration-150">
+              {expandedNavSections.tools && (
+                <div className="p-1.5 space-y-0.5 bg-slate-950/70 border-t border-slate-800/60">
                   <button
                     onClick={() => setActiveTab('analytics')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'analytics'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold border border-indigo-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
@@ -2312,9 +2445,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </button>
                   <button
                     onClick={() => setActiveTab('seo')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'seo'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold border border-indigo-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
@@ -2322,9 +2455,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </button>
                   <button
                     onClick={() => setActiveTab('marketing')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'marketing'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold border border-indigo-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
@@ -2332,9 +2465,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </button>
                   <button
                     onClick={() => setActiveTab('zalo')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'zalo'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold border border-indigo-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
@@ -2342,9 +2475,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </button>
                   <button
                     onClick={() => setActiveTab('workspace_sync')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'workspace_sync'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold border border-indigo-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
@@ -2352,9 +2485,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </button>
                   <button
                     onClick={() => setActiveTab('n8n')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition cursor-pointer ${
                       activeTab === 'n8n'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold border border-indigo-500/30'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
@@ -2365,7 +2498,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
           </nav>
         </aside>
-
         {/* === C·ªòT N·ªòI DUNG CH√çNH (MAIN WORKSPACE AREA) === */}
         <div className="flex-1 min-w-0 w-full space-y-4">
           
@@ -3002,6 +3134,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                       <div className="grid grid-cols-2 gap-2">
                         <button
+                          onClick={() => handleToggleServiceApproval(srv)}
+                          className={`py-2.5 rounded-xl font-black text-[11px] transition flex items-center justify-center gap-1 shadow-md cursor-pointer ${
+                            srv.status === 'approved' || (srv as any).approved
+                              ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                              : 'bg-amber-500 hover:bg-amber-400 text-slate-950 animate-pulse'
+                          }`}
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>{srv.status === 'approved' || (srv as any).approved ? '‚úì ƒê√£ Duy·ªát Web' : '‚è≥ Ch·ªù Duy·ªát (Duy·ªát)'}</span>
+                        </button>
+                        <button
                           onClick={() => handleToggleServiceKyc(srv)}
                           className={`py-2.5 rounded-xl font-black text-[11px] transition flex items-center justify-center gap-1 shadow-md cursor-pointer ${
                             isVerified
@@ -3054,7 +3197,375 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       )}
 
       {/* ==================== M·∫¢NG 2: TAB 2 - GIAN H√ÄNG & D·ªäCH V·ª§ C∆Ø D√ÇN ==================== */}
-      {activeTab === 'stores_mgmt' && (() => {
+            {/* ==================== TAB T·∫§T C·∫¢ S·∫¢N PH·∫®M & M√ìN ƒÇN TO√ÄN H·ªÜ TH·ªêNG ==================== */}
+      {activeTab === 'all_products_mgmt' && (() => {
+        // Collect all products with their parent store metadata
+        const allProductsList: Array<StoreProduct & { storeId: string; storeName: string; ownerName?: string; ownerPhone?: string; project?: string }> = [];
+        adminStores.forEach(st => {
+          (st.products || []).forEach(p => {
+            allProductsList.push({
+              ...p,
+              storeId: st.id,
+              storeName: st.storeName,
+              ownerName: st.ownerName,
+              ownerPhone: st.ownerPhone || (st as any).phone,
+              project: st.project
+            });
+          });
+        });
+
+        const pendingCount = allProductsList.filter(p => p.status === 'pending').length;
+        const approvedCount = allProductsList.filter(p => p.status === 'approved' || p.status === undefined).length;
+
+        // Filter products
+        const filteredProducts = allProductsList.filter(p => {
+          if (storeProjectFilter !== 'all' && p.project !== storeProjectFilter) return false;
+          if (storeModerationFilter === 'pending' && p.status !== 'pending') return false;
+          if (storeModerationFilter === 'approved' && p.status === 'pending') return false;
+          if (storeSearchQuery.trim()) {
+            const q = storeSearchQuery.toLowerCase().trim();
+            const matchName = (p.name || '').toLowerCase().includes(q);
+            const matchStore = (p.storeName || '').toLowerCase().includes(q);
+            const matchCat = (p.category || '').toLowerCase().includes(q);
+            const matchOwner = (p.ownerName || '').toLowerCase().includes(q);
+            const matchPhone = (p.ownerPhone || '').includes(q);
+            if (!matchName && !matchStore && !matchCat && !matchOwner && !matchPhone) return false;
+          }
+          return true;
+        });
+
+        const toggleSingleProductStatus = async (item: typeof allProductsList[0]) => {
+          const newStatus = (item.status === 'approved' || item.status === undefined) ? 'pending' : 'approved';
+          const targetStore = adminStores.find(s => s.id === item.storeId);
+          if (!targetStore) return;
+
+          const updatedProducts = (targetStore.products || []).map(p => 
+            p.id === item.id ? { ...p, status: newStatus as any } : p
+          );
+
+          const updatedStore = { ...targetStore, products: updatedProducts };
+          setAdminStores(prev => prev.map(s => s.id === targetStore.id ? updatedStore : s));
+
+          try {
+            await fetch(`/api/stores/${targetStore.id}/products/${item.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: newStatus })
+            });
+          } catch (e) {
+            console.error('Error toggling product status:', e);
+          }
+        };
+
+        const deleteSingleProduct = async (item: typeof allProductsList[0]) => {
+          if (!confirm(`B·∫°n c√≥ ch·∫Øc ch·∫Øn mu·ªën x√≥a s·∫£n ph·∫©m "${item.name}" kh·ªèi gian h√†ng "${item.storeName}"?`)) return;
+          const targetStore = adminStores.find(s => s.id === item.storeId);
+          if (!targetStore) return;
+
+          const updatedProducts = (targetStore.products || []).filter(p => p.id !== item.id);
+          const updatedStore = { ...targetStore, products: updatedProducts };
+          setAdminStores(prev => prev.map(s => s.id === targetStore.id ? updatedStore : s));
+
+          try {
+            await fetch(`/api/stores/${targetStore.id}/products/${item.id}`, {
+              method: 'DELETE'
+            });
+          } catch (e) {
+            console.error('Error deleting product:', e);
+          }
+        };
+
+        const approveAllPendingProducts = async () => {
+          if (!confirm(`Duy·ªát hi·ªÉn th·ªã t·∫•t c·∫£ ${pendingCount} s·∫£n ph·∫©m ƒëang ch·ªù l√™n website?`)) return;
+          for (const st of adminStores) {
+            const hasPending = (st.products || []).some(p => p.status === 'pending');
+            if (hasPending) {
+              const updatedProds = (st.products || []).map(p => ({ ...p, status: 'approved' as const }));
+              const updatedSt = { ...st, products: updatedProds };
+              setAdminStores(prev => prev.map(s => s.id === st.id ? updatedSt : s));
+              try {
+                await fetch(`/api/stores/${st.id}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(updatedSt)
+                });
+              } catch (e) {}
+            }
+          }
+          alert('‚úì ƒê√£ ph√™ duy·ªát to√†n b·ªô s·∫£n ph·∫©m th√†nh c√¥ng!');
+        };
+
+        return (
+          <div className="space-y-5 animate-in fade-in duration-200">
+            {/* Header Banner */}
+            <div className="bg-gradient-to-r from-slate-900 via-amber-950/70 to-slate-900 p-5 sm:p-6 rounded-3xl border-2 border-amber-500/40 shadow-2xl text-white flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                    QU·∫¢N L√ù T·∫§T C·∫¢ S·∫¢N PH·∫®M & M√ìN ƒÇN C∆Ø D√ÇN
+                  </span>
+                  <span className="px-2.5 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-[10px] rounded-full">
+                    TO√ÄN B·ªò GIAN H√ÄNG ({allProductsList.length} S·∫¢N PH·∫®M)
+                  </span>
+                  {pendingCount > 0 && (
+                    <span className="px-2.5 py-0.5 bg-rose-500 text-white font-black text-[10px] rounded-full animate-pulse flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {pendingCount} S·∫¢N PH·∫®M CH·ªú DUY·ªÜT
+                    </span>
+                  )}
+                </div>
+                <h2 className="text-xl font-black text-amber-400 mt-1.5 flex items-center gap-2">
+                  <ShoppingBag className="w-6 h-6 text-amber-400" />
+                  <span>DANH M·ª§C TO√ÄN B·ªò S·∫¢N PH·∫®M, M√ìN ƒÇN & H√ÄNG H√ìA C∆Ø D√ÇN</span>
+                </h2>
+                <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                  Ki·ªÉm duy·ªát, ch·ªânh s·ª≠a gi√°, ph√¢n lo·∫°i ho·∫∑c x√≥a nhanh m·ªçi m·∫∑t h√†ng t·ª´ t·∫•t c·∫£ c√°c gian h√†ng trong to√†n b·ªô h·ªá th·ªëng ƒë√¥ th·ªã Vinhomes.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5">
+                {pendingCount > 0 && (
+                  <button
+                    onClick={approveAllPendingProducts}
+                    className="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-black text-xs flex items-center gap-1.5 shadow-lg cursor-pointer border border-emerald-400/40"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>‚úì DUY·ªÜT NHANH T·∫§T C·∫¢ ({pendingCount})</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    if (adminStores.length > 0) {
+                      setSelectedAdminStore(adminStores[0]);
+                      handleOpenAddProduct(adminStores[0].id);
+                    } else {
+                      alert('Vui l√≤ng t·∫°o √≠t nh·∫•t 1 gian h√†ng tr∆∞·ªõc khi th√™m s·∫£n ph·∫©m!');
+                    }
+                  }}
+                  className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow-lg cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>‚ûï Th√™m M√≥n / S·∫£n Ph·∫©m M·ªõi</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Filter & Search Bar */}
+            <div className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-3">
+              <div className="flex flex-col md:flex-row items-center gap-3">
+                <div className="relative flex-1 w-full">
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="T√¨m theo t√™n s·∫£n ph·∫©m, gian h√†ng, ch·ªß shop, s·ªë ƒëi·ªán tho·∫°i..."
+                    value={storeSearchQuery}
+                    onChange={(e) => setStoreSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                  {storeSearchQuery && (
+                    <button
+                      onClick={() => setStoreSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs font-bold"
+                    >
+                      ‚úï
+                    </button>
+                  )}
+                </div>
+
+                <div className="w-full md:w-56 shrink-0">
+                  <select
+                    value={storeProjectFilter}
+                    onChange={(e) => setStoreProjectFilter(e.target.value)}
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-bold"
+                  >
+                    <option value="all">üè¢ T·∫•t C·∫£ D·ª± √Ån Vinhomes</option>
+                    <option value="ocean-park-1">Ocean Park 1 (Gia L√¢m)</option>
+                    <option value="ocean-park-2">Ocean Park 2 (The Empire)</option>
+                    <option value="ocean-park-3">Ocean Park 3 (The Crown)</option>
+                    <option value="smart-city">Smart City (T√¢y M·ªó)</option>
+                    <option value="grand-park">Grand Park (TP. Th·ªß ƒê·ª©c)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Status Filter Chips */}
+              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                  <Filter className="w-3.5 h-3.5" /> Tr·∫°ng th√°i:
+                </span>
+                <button
+                  onClick={() => setStoreModerationFilter('all')}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer ${
+                    storeModerationFilter === 'all'
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                  }`}
+                >
+                  T·∫•t c·∫£ ({allProductsList.length})
+                </button>
+                <button
+                  onClick={() => setStoreModerationFilter('pending')}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer flex items-center gap-1 ${
+                    storeModerationFilter === 'pending'
+                      ? 'bg-rose-500 text-white shadow'
+                      : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20'
+                  }`}
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Ch·ªù duy·ªát ({pendingCount})</span>
+                </button>
+                <button
+                  onClick={() => setStoreModerationFilter('approved')}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer flex items-center gap-1 ${
+                    storeModerationFilter === 'approved'
+                      ? 'bg-emerald-600 text-white shadow'
+                      : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
+                  }`}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>ƒêang hi·ªÉn th·ªã Web ({approvedCount})</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Products Table */}
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-extrabold uppercase text-[10px] border-b border-slate-200 dark:border-slate-800">
+                      <th className="p-3.5">H√¨nh ·∫£nh & T√™n S·∫£n Ph·∫©m</th>
+                      <th className="p-3.5">Gian H√†ng / Ch·ªß Shop</th>
+                      <th className="p-3.5">Danh M·ª•c</th>
+                      <th className="p-3.5">Gi√° B√°n</th>
+                      <th className="p-3.5">Tr·∫°ng Th√°i</th>
+                      <th className="p-3.5 text-right">Thao T√°c Admin</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                    {filteredProducts.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="p-12 text-center text-slate-400">
+                          <ShoppingBag className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-2" />
+                          <p className="font-bold">Kh√¥ng t√¨m th·∫•y s·∫£n ph·∫©m n√†o ph√π h·ª£p b·ªô l·ªçc.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredProducts.map((prod) => {
+                        const isApproved = prod.status === 'approved' || prod.status === undefined;
+                        const parentStore = adminStores.find(s => s.id === prod.storeId);
+
+                        return (
+                          <tr key={`${prod.storeId}-${prod.id}`} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+                            {/* Image & Title */}
+                            <td className="p-3.5">
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={prod.images && prod.images.length > 0 ? prod.images[0] : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'}
+                                  alt={prod.name}
+                                  className="w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                                />
+                                <div className="min-w-0">
+                                  <span className="font-extrabold text-slate-900 dark:text-white block truncate max-w-xs sm:max-w-md">
+                                    {prod.name}
+                                  </span>
+                                  <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
+                                    <span className="font-mono">{prod.code || 'SKU-Auto'}</span>
+                                    {prod.stockQuantity !== undefined && (
+                                      <span>‚Ä¢ Kho: <strong>{prod.stockQuantity} {prod.unit || 'm√≥n'}</strong></span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Store Name & Owner */}
+                            <td className="p-3.5">
+                              <div className="text-xs">
+                                <span className="font-black text-emerald-600 dark:text-emerald-400 block truncate max-w-[180px]">
+                                  üè™ {prod.storeName}
+                                </span>
+                                <span className="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5">
+                                  üë§ {prod.ownerName || 'C∆∞ d√¢n'} {prod.ownerPhone && `‚Ä¢ ${prod.ownerPhone}`}
+                                </span>
+                              </div>
+                            </td>
+
+                            {/* Category */}
+                            <td className="p-3.5">
+                              <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] rounded-lg border border-slate-200 dark:border-slate-700">
+                                {prod.category || 'M√≥n ƒÇn & ƒê·ªì U·ªëng'}
+                              </span>
+                            </td>
+
+                            {/* Price */}
+                            <td className="p-3.5">
+                              <span className="font-black text-amber-600 dark:text-amber-400 text-sm">
+                                {Number(prod.price || 0).toLocaleString('vi-VN')} ƒë
+                              </span>
+                              {prod.unit && <span className="text-[10px] text-slate-400 block">/{prod.unit}</span>}
+                            </td>
+
+                            {/* Status */}
+                            <td className="p-3.5">
+                              <button
+                                onClick={() => toggleSingleProductStatus(prod)}
+                                className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer transition flex items-center gap-1 ${
+                                  isApproved
+                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 hover:bg-emerald-200'
+                                    : 'bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 hover:bg-rose-200 animate-pulse'
+                                }`}
+                              >
+                                {isApproved ? (
+                                  <>
+                                    <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                                    <span>‚úì ƒê√£ Duy·ªát Web</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Clock className="w-3 h-3 text-rose-500" />
+                                    <span>‚è≥ Ch·ªù Duy·ªát (Click ƒë·ªÉ duy·ªát)</span>
+                                  </>
+                                )}
+                              </button>
+                            </td>
+
+                            {/* Action Buttons */}
+                            <td className="p-3.5 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => {
+                                    if (parentStore) {
+                                      setSelectedAdminStore(parentStore);
+                                      handleOpenEditProduct(prod);
+                                    }
+                                  }}
+                                  className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition cursor-pointer"
+                                  title="Ch·ªânh s·ª≠a s·∫£n ph·∫©m"
+                                >
+                                  <Edit3 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => deleteSingleProduct(prod)}
+                                  className="p-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 rounded-lg transition cursor-pointer"
+                                  title="X√≥a s·∫£n ph·∫©m"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+{activeTab === 'stores_mgmt' && (() => {
         // Calculate dynamic stats
         const allStoreProds = adminStores.flatMap(s => s.products || []);
         const totalProds = allStoreProds.length;
@@ -3964,10 +4475,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ==================== M·∫¢NG 2: TAB QU·∫¢N TR·ªä TUY·ªÇN D·ª§NG & VI·ªÜC L√ÄM ==================== */}
-      {activeTab === 'recruitment_mgmt' && (
-        <AdminRecruitmentManager onRefresh={onRefreshData} />
-      )}
+
 
       {/* Tab: Zalo Groups Community Center */}
       {activeTab === 'zalo' && (
@@ -4778,6 +5286,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 M·ªü r·ªông / Thu g·ªçn ‚ñæ
               </button>
 
+              <button
+                onClick={() => setIsAddingProperty(true)}
+                className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-[11px] shrink-0 transition flex items-center gap-1.5 shadow-md border border-emerald-400/40 cursor-pointer"
+                title="Th√™m b√†i ƒëƒÉng BƒêS m·ªõi v√† t·∫£i ·∫£nh l√™n Supabase Storage"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span>+ ƒêƒÇNG TIN BƒêS M·ªöI</span>
+              </button>
               <button
                 onClick={handleSeed1000Click}
                 className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-extrabold rounded-xl text-[11px] shrink-0 transition flex items-center gap-1"
@@ -7932,6 +8448,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         />
       )}
 
+      {/* Add New Property Modal for Admin */}
+      {isAddingProperty && (
+        <AddPropertyAdminModal
+          projects={projects}
+          onClose={() => setIsAddingProperty(false)}
+          onSave={(newProp) => {
+            if (onApproveProperty) {
+              onApproveProperty(newProp);
+            } else if (onUpdateProperty) {
+              onUpdateProperty(newProp);
+            }
+            setIsAddingProperty(false);
+          }}
+        />
+      )}
+
       {/* Edit Property Modal */}
       {editingProperty && (
         <EditPropertyModal
@@ -8812,726 +9344,21 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {storeProds.map(prod => {
                           const isApproved = prod.status === 'approved' || prod.status === undefined;
-                          const isPending = prod.status === 'pending';
+                          const isxúÏ][oGñ~œØ®òE],1¢]2ñ`K÷D¥3ªAÄ4ªKÏım∫õí5ì	ŸMv{≥¡nÊ≤cŸk‰≤	íÅÁeƒáy†‡ˇ¡¸Ç˘	[ß™ªŸMVıÖ¶)$ˆ≠™∫Œ©s˝Ípõäf6QŸé•î\OÚZ.™’jh‹fó∆_{Â$¸8ÿk9&*$‹Ç–¢¢Ì%ﬁÄ–.>®“!h Q Ω≤.πÓ¶d‡⁄·;çfq_’<å…Ÿ≠í#Wó<\ú/óëcµL+≈ }5,G¡≤ã3»U%≈⁄/∫⁄—Ò}˙ß([:˙EÀı¥ùÉb{˚õ®)Ÿ≈i‰9íÈjûfôËS∆ÖêÊn±IKΩ°húç™(ÚwÜôΩDÙÏºi∞Xaˇ¬{'+e‘égÈa0Ï‹99Uœ0íj86yïæë∞≥◊ ©çΩìL∫Î)œüD®;F	Dàk∏E¬òé«h2ñ÷iH3≤ê¿u‰ÄÈ©â›•∑ o£_ˇç´ûgª’…Ivæ‘2]õK-…ñ1i´ñgßfgÊ sÂ©bCZò]XêÆ·πi˘Ü‘Ú¨⁄éÂíweGÛj≤cŸWˆkÑéW~Yõ/èß17|$›Û«eíy»ÚDd“ˆãSsHÖ?¡ ¸o5~Åeè˘Y˛b»Fs≤^„ÌÀc©√òÃ@ò>
+öY‹/ñŸ*úBÆ-…∏xPú @c“ò:„ÀÙä¯>Y±KWêGæÔªÏ?{ùÖ‡%È9&7tÕƒE“äagÏ°|§YúTg2Ωçò˘elzÑ`¿˝S•Ÿ‡Õ2évëL™90O]íwYKÅ)gl0ò €—d\Ú¨€ñ,Èx€˘Tﬂ”ä˜6«'éNf›$/œº∑LÕCWÆæWÑ– KÈ·[Se˚˛€c◊'#˘}f#° 0‘ãÙÂ¿ŸˆÀ'v%âØ◊ªÌèÕ*9Àl^?Ù∫%Ô˛¨%ôûÊ¿õ≥ãy¶ùµ˛›oÁàçA&oŸ¥úÉ£Ïdú˜L∑˘7•‹u8˘*⁄∞àËì®≤ﬂfÜP]j¢W'”8•ü¯∂G‘µ/HΩ∏úù…Ÿ…9åí,\±òëmCãÖÿ#…F\ÿtˇ∫≥Ôì∑µäe"ö"	5I"f.∆˙=õá'∂˝Ö(0CÈ”YΩ>¶Ek'´0GËªèû°µ€˛#RZ›ˆ˚*¿·ø"˘˘∑HÈ<6ëßvOûLåX†M√Ksól≤Fˆ∞2≤˘«·a]âQ 8ßApvX*D{˛1:}–yíÅà¥¶ëØÑNÁKΩâg@É—LªÉ„S«ÒÈÜ3√Nu–˙(¶˘èˇÜÍ›ìcuOæ0G=üÈJ5õ8¥ΩLD2h˚,D‚[o-¿Ã“I7,”B}ö7t{íπ±~	ï¡‰ÚÈÏ”'óùoêÕ‘»6…©Sú]ﬂ-)ƒ˛FK2’xÀ-œ≥Lwu◊t4¡£]‚4Ü*—ÉY¯r±AªŒ0GﬁÅM˙c∑ß˚#YÊäÆ…ªµ√¬™]G™d*:Æ[Õ¶é∑mZ≤«ƒØ§\¨	+tN∂=À¡%Mπä¸êDæ&£”<◊c2}lEiˆûâˆ∫Ìw˚ÙÃdd!éI4∂Í_P5˙—;ÌëÓã>ó,˙±|Œ‡·;Ñqßzå[‘õÅºô
+WìBΩ8áÿ
+â $∑◊rä∂•—ì¢#ÈMNFqaí¿®à.—^êc.ff\„ò”‰ú
+Æo5jü¯ßzæ`ñX	|™tHQù6Qâ(‚d≤òSñˆ”B(…hÿE∏pº{Úπâˆqcä÷Á¥·à≈I∂ﬁ2àÏóºêÔÿÿ|]—<)`≠fZ®Q-Œ÷GäÈ€,È;?PΩ˜dø≥7	LûŸbLü—L>ÃÌt<¥4çTä¬®zã˙≥cY‚>ÅC∏›m-e’tÁóÛVâ≤0’Ûç@pŸíY~!O¬!ΩôS¶fø<K3D/
+÷…U+FÃ≈z?Ô<ÇÛ“ÓKı≥SoôxMxÒH»6	≠rü‹OÓ8Üa}iU™hµ€˛`e›Î∂ˇ≠<ˇ≠v~ªânØw>ÿD?ªª¥…5]‡˝UÏIöñÂÆKñPr±≥ß…ÿÙ˝ÜeûëáÜ‰…™f6∑IÀnI«f”Si_Âwö™Ûπ÷]•ßf˚ï¡|ô.Ω¡‘R/‡£f≈JÊË∫ˇäIYç≈7l j_êøA˛rø;c‹/B"qe,⁄É·‡–uçhìs¸xe¢Qø¢>ˇVBrÁjtiH!6,<1üˆ"*fÁëÖN>ˇ∂€~"#]w∑{Ú7Ó˚ΩÜ‹n˚!πÓ;ˇ™EÃd:(âﬂj“NxÂT˝–'Áì≠Y{†}Œ#<]0[∫û∞í·„`Úÿ&ﬁﬂvˆ~j9F!Âˆf¢aˆ4¬5@.ûö±ˆMv1oÉ[™eí©ÉØyüˇ'I∑ÑÇãêJÀﬂ¸í¢ê©ry-KÏRéÅB⁄ã◊íÕ.!…Eíyêﬁ‡∂jÌìÅ˘‰ﬁ∞‚2zN+˘•éí¥~<î4¢áJjWÕ≈˝áæ5zﬂçÊˆòs—3B√Lÿy“Í˝Ó>AuµÛ•“Ó=X∏∞*ñ^≤∫L“V	∏î8√rçjÔ∞BMë™ÄOü∫0$ª‡:{i´]∂L◊ãjkà<CJH˛•q ‰¢ﬁK.õ"O˝v4+It~;⁄évæ˙ÕÓ»€ëÒó_"tFqæê?…ç∏l|æ¿eµ!ÛSÂÖ Bejfn™à•∆\/\ìÆÕóEêç˘‹ê^B626&9–Ê˜…Ê–óü	¥‚d`3áz∂gﬂ“S}ÿÅ˛tMæ ¯C ˆ[ç?	àÏ )æû*4˝˜Àîà(ååπ⁄g
+√‰á–6ÈO≤0dâ?MÇl°IÊ	$„Zñî&^Q1i7∂j*dp*¸w›˙«ï¨/öc.3En≤√DFY ä…'öÜÖ,FëÜG—Sà—™¬<\8Ù˙uµ€˛H"Óa´{ÚµôIL?∏íìdÖ†!A'£ì\¢Çœ≈F3\ÇxFxHΩçè^ÄÜ”m`Ekôfà
+SŸ¡A<*<©GèNûæg63e≥ÃHË¸h–~‹à)ÇsñØF"9ÛCóy˝Àº˛7Ø°u¡–´∞^.Û˙óy˝ƒœÛ˙o`WSÇ‹◊ó)|˛Á2ÖnS¯”UT_Î¸ÁÊMT_ﬂD7◊ó6—ZÁ7‰
+∫µ~ß~o˝ı:⁄∫≥ù7èØô;V˛~zV›.ŒÚBˇŸÇûÀ/5ád(É9§‘V…q⁄Œ§ﬁÍlËñºãåÆu	oj‰…µŒ#≥YMct^ønGè¸,ˇÿıCNZîZ<JHß'Æá≥ò‰>CD«¸	≠u€ﬂ¥ˇnü>®ü˝%¨yﬁÏÖô¯#ÍÌˆrﬂb›qûÊ˘ÙA∑˝°Ñò„ºE˛>ïi˙wòâfﬁi≥âœà~¶ˇ\±·j∑˝g‘y◊$Ï∑•BH·ñ⁄:„©……Ä>™·F…≥Ó⁄6vV$&n‰,˜VÉÃìÊÇy AÅÕn˚SÌ™≠ˇ·E(À#)U"sã0{âaÏ·hµ—˘ÄÎü/Q3¸:ñ`Î±∆tÈ>‰Ñxs¨`Wv4L∞!π9)™¬Ÿz8#àãÛÖ©!ÊDEòûœÀCﬁ√w …≤NS°9∞”“ı0=‰â—	1v5Àªßao≈2w¥Êçí{`∆ê≤eöÙôdüû/ÏñcÎÃµ§CÛèØE\Mˇ‘¬lîÅ¸ì”i˘yèËè«ë1wñ√£‚éﬁ9 +^≤œÃ–wø;F∑¸'®ôyõëh•wy?Üd»?≥€~®°•≠uzsd¢$JZœ…¬(≈ØL‹o@'É*KE`Ø>$ƒƒDåë~¢/ıõ2q@s"-bxkﬁi<ÍfÛÓƒåAmSE‘·†ÿ_Ã&™kQÀUHè$áLH-±€√ΩØÔ¨ø´[“—≤E:7–O-§“†«3 HS=ñ˘r.A;⁄∑‰U˙›±ˆ”|<7ˇœè¢‡¿"MΩØhé¨„>~Ü¯3Ò¨ú8tƒú¯çn˚ﬂ5‰©“:}ÿm¢ıp¿XpÚS¬Tr˜‰kô*˘GdCì‹Œ“fÑﬂß;„íõÄü†ïÁﬂ¢U0»*3k%ëTi—å*Ì3%Dà∂O!÷!ï∞…GÉ$…ò>˘ ”q¬0≈|ô¬ì'—pgÖ´2ò4âH”æ∞(‹ü.O¯Î˝ÙAÁWT$ââ3*≤ò$ﬂ&äkI◊Îñø≠Rå≈N†ˇÊ7N∞Ÿ¡Ú‰íÂæèè‘õ~;˛q,Ö>+V¢li6;Yﬂ¿;ƒoSWˆ9rBÎcÇa•{Ú’⁄\#ˇÍƒ≈gÙ?6o¢Ân˚ø—mÿsÚÊÎÀ€Îı◊≈j_Ã;\-¬ì7ˆù©~4QËÖﬁ@Õ‘8¥qguÈ6ç¬}∞Å&Ak~µD˛û<ﬁD[‰E?ﬂàFÂ∏-Ù4’°´Z˚—=gL±≈‚p¬L#~	“L¬∆≈»^w?É˙"å§8ñ1ÙøMó'’∂£Ó:`¬P25Z&ñ¿é§–ˇJã’Raê˝É Å¡* å‚Üß…b0§˚E∫|πmÁÇ±E—÷¢¸Ëç,ê§›‡ËÚEu:)T’ ~|Z–*ªF_‹V-€&éÎ≤‘å/SÄ”ÕfSÁ~ÅÏoÉâ∞%ÿ˛+k›ˆølÆqûö˝l=ƒ÷1~∑>.(¥8©Nú(éjÂ≠õ¬é§ª<ì]ià$g˙vG§mB5⁄/:'Úª?|2∂<1∆ïVÄZ&oº›jöW;Ùµõ¥€õ ÆÒ¢Ú”	Âƒ¯!¥E]j`=∂|iÿÖá J65"ao¬	OLà8û|a†¬´ãì¥NÔöi∑<éËgÈ?ËÅß¨¸ÀñÊp±	6YeX%C∆NmÏ^ÁkÿØˆ¥JL c›Ï<B?ß^)·Œc`Êá19[⁄l+ñ€’û§∑pÕ˝≤˘á›^¬rqÑ]	’ö‰ë∂Ô·Ç
+á®T*ŸW4UE∏‰IN{%⁄#—G\S1∂ºô º_ú∞yNN–yƒIìT¢≈¡¡£Û≠ˆî¨N%—c‚Z#ÊÍçŒ¥}ÎÆêè89çó≈,&Æ43ìAcYô,ëÕŒä…∏}8Ï∆õCû>Kp_«¨J¶
+bÊ©úƒ4,Ëîè+ÇÍ{#„ø¡Ûœ˝»»'≈¢1|û«6àˇäNk˙û «Ë.çH¿“Á^XúdœgjêÌñÖX˛ÌÛcç™Ë ·bÆNh∞’µŒó-¥⁄˘+˘~Ö÷#≤â;ÚLªû|=WWl"njl*}J[b©¶:Är=ñyL∏!Wg—}´Adà&ÔŒ&5KQ∫÷^¿óÃà]ÕŸ3e|ÑÎ®Ö—M≠såñ;«&*‹€<}0ëhìe–ef¿ô|mñ`õ!dhfmL∞èÕı∞]#éñ‡∫H “$#ìÜ¥µ*⁄§oXàKƒâs(9;rBº√≈–îßû∆$˘√≥1ØbÅ€˘s¢ŒüÇÓÎkÑÓ˘éøAcÁZÛ˛ ¨1ZK›R≠≥ízIÇMƒGÒZŒ£b®X´BêÔ^&Ò˜d∂êHÓò!c≤≥‰c0ﬂæ"E˜‰1Õ÷F„+´ên˚ΩÜ¶ Àâj}`0Qh∆P©ã»Ê∞©ËÊ0Ωô1T;Èe1D¿œª∂nIJ»1i˛˝OøK°Cƒ¯Ï∂ˇmtéíê	b ;öŒ|ëd€^måV.ò|Ut[‰5TMQ∞„ﬁì ¿3ê/ƒ8VbÜàj=Ω«¨æÇ€¨Ì†‹7ë°~äLwo◊@∂i
+·—ux›mÌWòµêT∫˘	}æDüNÓJ1`«+∞Ï∫§£‘ LP	%±íOÍ⁄ﬁ”˛]G'o…∂⁄≠ìÛD¨n±+È/ö.´Yyã*z´◊€€ öÎºHäÚ&çc)Q∑Ëƒ≥±î<õŸ2lÄZBqô¥∫W@äﬁ˝iÑ»ıFΩf˝7Jj7âGÚê’–≈“q	;éÂ$AÙWô\>¥A∞Ê√W^7ójw¥=ÉeîL…mŒ2íïW¯¨!ëê‚∂«€ÁœˆH/—'3⁄ ¡~˛<kx$îÕa•rÑmäòÍÿå˘+É.Í’!åhÚ3´\√ù8oº∏E7ÚtÄèFébbômHDÖ2Y÷æ[;¨»[›–£=∫¥GõˆxyjÁ±·3BπFØÏ‚˚»’»5…DûEÓ»ëTà¬úGìÊä¥8Çl◊˜+ÜŒtÒñÜÖ&≠l8∆ÈîWèºLŒ≈î~‚VÛ°+√°Ùñ⁄˘2ÿÏLÀjºgB¨∏˝aP)ø ë
+¢ıñ%õ(–≈	à¥Ù©®BöØ‰ØF+fPé¥Z@Ö-ÖàòÊÄ…ŒÆZ 'ò¡©ü(¥—nlÕœ±øG?0íﬂ:Wø¿O£hßi´iV«*¡5k å_ ûü»ã;G¸∫ËÇÅÉóI·ﬂ˛à{àÁø(L¯p¨÷Á	yó÷Æ» πÉWÜN¬—BYbÓ §ÙﬂyäiÕsıîxq•-≠E±•m9¨á1Á"^ÂÔ8@<b7§°¿y¥]Î∂?; tÔG‚
+…û2°.Ö∫Ò&î¿~¯ı Ï⁄PÜöÜ€œøπCBfûŒXú@`|9v8,~9Y 3vdÁ%p˘∏<p8hîêÂu“Ì ^ô√‡∂‹=yt'zıeÄñ√Ûc@,√Àû∏roØ„˘ +/wO˛f˜v¡›#2¨»ÃõΩµMÿ]≤…Ù¶t`˙W%Oä‘…À	Ã0≥∆.AÀÁ¥Ly€Øµ¢ZˆK@◊l6¡¯g¬≤ßÔôh)=2hØ‘JæÙÉÄE√Ê.0¥fX‡√˜∆o€ÙG~∞F›ˇëüDzXê˚JÑ∆ÂÍjï¶*•ÈôŸ“‹µ˘º\ôPg(∂§Ì]xæ§H˝3ÜÊúkÈV"ÍYµÏé Á2û_¯g4\Á76¿rÏ∑íŒÁù9Ãﬂí±dm“–°-rÑ¶P‡Í∑;èçâ\ÙHãïXãT®´ΩnÿDN›Êt¨Õi÷ÊäC$Iæ&]Crº"T!Çæ£Úù4◊y| ~œÂkÆÈCüépÏ˙M¯Œ∆W®oïhﬁÊ3∫Y‚9±’TL˛˜∂∏7õ4ØJ}ÇQÆÎ!7ÔˆÂŒù¡Õ5WË^ùª‹Ω5—kπ∏=∫wÖ¥“€◊B8Et)Wƒ„{b°∫”˘
+j!“Z<`∏#ç]^ ’¡äz˙ûÅ∂;œd“ ÌŒ#÷Á…_m(∆»øí´˘{ã> Ú
 
-                          return (
-                            <div
-                              key={prod.id}
-                              className={`bg-white dark:bg-slate-800 rounded-2xl border p-4 shadow-sm flex flex-col justify-between gap-3 transition ${
-                                isPending
-                                  ? 'border-amber-400 dark:border-amber-600 ring-2 ring-amber-400/20 bg-amber-50/20 dark:bg-amber-950/10'
-                                  : 'border-slate-200 dark:border-slate-700'
-                              }`}
-                            >
-                              <div className="flex items-start gap-3">
-                                <img
-                                  src={prod.images?.[0] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'}
-                                  alt={prod.name}
-                                  className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
-                                />
-                                <div className="min-w-0 flex-1 space-y-1">
-                                  <h4 className="font-extrabold text-xs text-slate-900 dark:text-white line-clamp-1">
-                                    {prod.name}
-                                  </h4>
-                                  <div className="flex items-center gap-1.5 text-xs">
-                                    <span className="font-black text-amber-500">
-                                      {prod.price.toLocaleString('vi-VN')}ƒë
-                                    </span>
-                                    {prod.unit && <span className="text-slate-400 text-[10px]">/ {prod.unit}</span>}
-                                  </div>
-                                  <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                                    <span>T·ªìn: <strong>{prod.stockQuantity}</strong></span>
-                                    <span>‚Ä¢</span>
-                                    <span>{prod.category}</span>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Moderation Status Tag */}
-                              <div className="pt-2 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2">
-                                <div>
-                                  {isPending ? (
-                                    <span className="px-2 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold text-[10px] rounded-md border border-amber-500/30 flex items-center gap-1">
-                                      ‚è≥ Ch·ªù duy·ªát (Ch·ªâ c∆∞ d√¢n th·∫•y)
-                                    </span>
-                                  ) : isApproved ? (
-                                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-md border border-emerald-500/30 flex items-center gap-1">
-                                      ‚úì ƒê√£ duy·ªát ‚Ä¢ Hi·ªán tr√™n Web
-                                    </span>
-                                  ) : (
-                                    <span className="px-2 py-0.5 bg-red-500/20 text-red-600 dark:text-red-400 font-extrabold text-[10px] rounded-md border border-red-500/30 flex items-center gap-1">
-                                      ‚ùå T·∫°m ·∫©n
-                                    </span>
-                                  )}
-                                </div>
-
-                                {prod.code && (
-                                  <span className="text-[9px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
-                                    {prod.code}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Admin Action Buttons */}
-                              <div className="grid grid-cols-3 gap-1.5 pt-1">
-                                <button
-                                  type="button"
-                                  onClick={() => handleToggleProductApproval(selectedAdminStore.id, prod.id)}
-                                  title={isApproved ? "Chuy·ªÉn v·ªÅ Ch·ªù duy·ªát / T·∫°m ·∫©n" : "Duy·ªát hi·ªÉn th·ªã l√™n Website"}
-                                  className={`py-1.5 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
-                                    isApproved
-                                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white'
-                                      : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'
-                                  }`}
-                                >
-                                  {isApproved ? '·∫®n web' : '‚úì Duy·ªát'}
-                                </button>
-
-                                <button
-                                  type="button"
-                                  onClick={() => handleOpenEditProduct(prod)}
-                                  className="py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
-                                >
-                                  <Edit3 className="w-3 h-3 text-blue-500" />
-                                  <span>S·ª≠a</span>
-                                </button>
-
-                                <button
-                                  type="button"
-                                  onClick={() => handleDeleteStoreProduct(selectedAdminStore.id, prod.id)}
-                                  className="py-1.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                  <span>X√≥a</span>
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* TAB 2: D·ªäCH V·ª§ C∆Ø D√ÇN LI√äN QUAN */}
-                {storeDetailActiveTab === 'services' && (
-                  <div className="space-y-4">
-                    {matchingServs.length === 0 ? (
-                      <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 space-y-3">
-                        <Wrench className="w-10 h-10 text-slate-400 mx-auto" />
-                        <p className="font-bold text-sm text-slate-600 dark:text-slate-400">
-                          Ch∆∞a c√≥ b√†i d·ªãch v·ª• c∆∞ d√¢n n√†o ƒë∆∞·ª£c li√™n k·∫øt v·ªõi s·ªë ƒëi·ªán tho·∫°i n√†y.
-                        </p>
-                        <button
-                          onClick={() => {
-                            setEditingService(null);
-                            resetNewSrvForm();
-                            setNewSrvProviderName(selectedAdminStore.ownerName);
-                            setNewSrvProviderPhone(storePhone);
-                            setNewSrvProviderZalo(selectedAdminStore.ownerZalo || storePhone);
-                            setNewSrvAddress(selectedAdminStore.address);
-                            setNewSrvProject(selectedAdminStore.project as any);
-                            setShowAddServiceModal(true);
-                          }}
-                          className="px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow hover:bg-blue-500"
-                        >
-                          ‚ûï Th√™m D·ªãch V·ª• M·ªõi
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {matchingServs.map(srv => {
-                          const isApproved = srv.status === 'approved' || srv.approved === true || srv.status === undefined;
-                          const isVerified = srv.verified || srv.kycStatus === 'verified';
-
-                          return (
-                            <div
-                              key={srv.id}
-                              className={`bg-white dark:bg-slate-800 rounded-2xl border p-4 shadow-sm flex flex-col justify-between gap-3 ${
-                                !isApproved
-                                  ? 'border-amber-400 dark:border-amber-600 ring-2 ring-amber-400/20 bg-amber-50/20 dark:bg-amber-950/10'
-                                  : 'border-slate-200 dark:border-slate-700'
-                              }`}
-                            >
-                              <div className="flex items-start gap-3">
-                                <img
-                                  src={srv.images?.[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
-                                  alt={srv.title}
-                                  className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
-                                />
-                                <div className="min-w-0 flex-1 space-y-1">
-                                  <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-extrabold rounded">
-                                      {srv.subCategory || srv.categoryId}
-                                    </span>
-                                    {isVerified && (
-                                      <span className="px-1.5 py-0.2 bg-blue-600 text-white text-[9px] font-black rounded flex items-center gap-0.5">
-                                        <BadgeCheck className="w-2.5 h-2.5" /> KYC
-                                      </span>
-                                    )}
-                                  </div>
-                                  <h4 className="font-extrabold text-xs text-slate-900 dark:text-white line-clamp-2">
-                                    {srv.title}
-                                  </h4>
-                                  <div className="text-[11px] font-black text-amber-500">
-                                    {srv.priceDisplay || srv.price || 'Th·ªèa thu·∫≠n'}
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Status Tag */}
-                              <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/60">
-                                <div>
-                                  {isApproved ? (
-                                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-md border border-emerald-500/30 flex items-center gap-1">
-                                      ‚úì ƒê√£ duy·ªát ‚Ä¢ Hi·ªán tr√™n Web
-                                    </span>
-                                  ) : (
-                                    <span className="px-2 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold text-[10px] rounded-md border border-amber-500/30 flex items-center gap-1">
-                                      ‚è≥ Ch·ªù duy·ªát (Ch·ªâ c∆∞ d√¢n th·∫•y)
-                                    </span>
-                                  )}
-                                </div>
-                                <span className="text-[10px] text-slate-400 font-medium">
-                                  {srv.createdAt || 'M·ªõi ƒëƒÉng'}
-                                </span>
-                              </div>
-
-                              {/* Actions */}
-                              <div className="grid grid-cols-3 gap-1.5 pt-1">
-                                <button
-                                  type="button"
-                                  onClick={() => handleToggleServiceStatus(srv.id, srv.status)}
-                                  className={`py-1.5 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
-                                    isApproved
-                                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white'
-                                      : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'
-                                  }`}
-                                >
-                                  {isApproved ? '·∫®n web' : '‚úì Duy·ªát'}
-                                </button>
-
-                                <button
-                                  type="button"
-                                  onClick={() => handleEditServiceClick(srv)}
-                                  className="py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
-                                >
-                                  <Edit3 className="w-3 h-3 text-blue-500" />
-                                  <span>S·ª≠a</span>
-                                </button>
-
-                                <button
-                                  type="button"
-                                  onClick={() => handleDeleteResidentService(srv.id)}
-                                  className="py-1.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                  <span>X√≥a</span>
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* TAB 3: TH√îNG TIN GIAN H√ÄNG & KIOTVIET POS */}
-                {storeDetailActiveTab === 'info' && (
-                  <div className="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                      <div>
-                        <span className="text-slate-400 font-bold block mb-1">T√™n Gian H√†ng:</span>
-                        <p className="font-black text-slate-900 dark:text-white text-sm">{selectedAdminStore.storeName}</p>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 font-bold block mb-1">Ch·ªß S·ªü H·ªØu & SƒêT:</span>
-                        <p className="font-black text-slate-900 dark:text-white text-sm">
-                          {selectedAdminStore.ownerName} ‚Ä¢ {storePhone}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 font-bold block mb-1">ƒê·ªãa Ch·ªâ Ph·ª•c V·ª•:</span>
-                        <p className="font-medium text-slate-700 dark:text-slate-300">{selectedAdminStore.address}</p>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 font-bold block mb-1">D·ª± √Ån & Ph√¢n Khu:</span>
-                        <p className="font-medium text-slate-700 dark:text-slate-300">
-                          {selectedAdminStore.project?.toUpperCase()} ‚Ä¢ {selectedAdminStore.subdivision || 'N·ªôi khu'}
-                        </p>
-                      </div>
-                      <div className="md:col-span-2">
-                        <span className="text-slate-400 font-bold block mb-1">M√¥ T·∫£ Gian H√†ng:</span>
-                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{selectedAdminStore.description}</p>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-black ${
-                          selectedAdminStore.kiotVietConfig?.syncStatus === 'connected'
-                            ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
-                            : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
-                        }`}>
-                          {selectedAdminStore.kiotVietConfig?.syncStatus === 'connected' ? '‚ö° KiotViet POS Live Connected' : 'Ch∆∞a k·∫øt n·ªëi API POS KiotViet'}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleOpenEditStore(selectedAdminStore)}
-                        className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs rounded-xl hover:opacity-90 transition cursor-pointer"
-                      >
-                        Ch·ªânh S·ª≠a Th√¥ng Tin Gian H√†ng
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Modal Bottom Footer */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span>M·ªçi thay ƒë·ªïi ƒë∆∞·ª£c t·ª± ƒë·ªông c·∫≠p nh·∫≠t ngay tr√™n h·ªá th·ªëng Ch·ª£ C∆∞ D√¢n 24H.</span>
-                </div>
-
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                  <button
-                    onClick={() => setSelectedAdminStore(null)}
-                    className="px-4 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl hover:bg-slate-300 cursor-pointer"
-                  >
-                    ƒê√≥ng
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleSyncAllToWebsite();
-                      setSelectedAdminStore(null);
-                    }}
-                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg hover:shadow-emerald-500/25 transition cursor-pointer flex items-center gap-1.5"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    <span>C·∫¨P NH·∫¨T & ƒê·ªíNG B·ªò L√äN WEBSITE</span>
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* ==================== MODAL: TH√äM / S·ª¨A S·∫¢N PH·∫®M GIAN H√ÄNG ==================== */}
-      {showStoreProductModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-emerald-500" />
-                <span>{editingStoreProduct ? 'CH·ªàNH S·ª¨A S·∫¢N PH·∫®M' : 'TH√äM S·∫¢N PH·∫®M M·ªöI'}</span>
-              </h3>
-              <button
-                onClick={() => setShowStoreProductModal(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
-              >
-                ‚úï
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveStoreProductSubmit} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">T√™n S·∫£n Ph·∫©m (*)</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="V√≠ d·ª•: C∆°m G√† X·ªëi M·ª° S·ªët Chua Ng·ªçt"
-                  value={storeProductForm.name}
-                  onChange={(e) => setStoreProductForm(p => ({ ...p, name: e.target.value }))}
-                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">M√£ SKU</label>
-                  <input
-                    type="text"
-                    value={storeProductForm.code}
-                    onChange={(e) => setStoreProductForm(p => ({ ...p, code: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Danh M·ª•c</label>
-                  <select
-                    value={storeProductForm.category}
-                    onChange={(e) => setStoreProductForm(p => ({ ...p, category: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
-                  >
-                    <option value="M√≥n ƒÇn & ƒê·ªì U·ªëng">M√≥n ƒÇn & ƒê·ªì U·ªëng</option>
-                    <option value="Th·ª±c Ph·∫©m T∆∞∆°i S·ªëng">Th·ª±c Ph·∫©m T∆∞∆°i S·ªëng</option>
-                    <option value="H√†ng Ti√™u D√πng & T·∫°p H√≥a">H√†ng Ti√™u D√πng & T·∫°p H√≥a</option>
-                    <option value="ƒê·ªì Gia D·ª•ng & N·ªôi Th·∫•t">ƒê·ªì Gia D·ª•ng & N·ªôi Th·∫•t</option>
-                    <option value="D·ªãch V·ª• C∆∞ D√¢n">D·ªãch V·ª• C∆∞ D√¢n</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div className="col-span-1">
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Gi√° B√°n (VNƒê) (*)</label>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    step="1000"
-                    value={storeProductForm.price}
-                    onChange={(e) => setStoreProductForm(p => ({ ...p, price: Number(e.target.value) }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-amber-500 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">ƒê∆°n V·ªã</label>
-                  <input
-                    type="text"
-                    placeholder="su·∫•t, h·ªôp, c√°i..."
-                    value={storeProductForm.unit}
-                    onChange={(e) => setStoreProductForm(p => ({ ...p, unit: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">T·ªìn Kho</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={storeProductForm.stockQuantity}
-                    onChange={(e) => setStoreProductForm(p => ({ ...p, stockQuantity: Number(e.target.value) }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">H√¨nh ·∫¢nh S·∫£n Ph·∫©m (D∆∞·ªõi 10MB)</label>
-                  <label className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
-                    <Upload className="w-3 h-3" />
-                    <span>üìÅ T·∫£i T·ª´ M√°y</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const check = validateImageSize(file);
-                          if (!check.valid) {
-                            alert(check.message);
-                            return;
-                          }
-                          const previewUrl = createInstantPreview(file);
-                          setStoreProductForm(p => ({ ...p, images: [previewUrl] }));
-
-                          addWatermarkToImage(file).then(compressed => {
-                            if (compressed) {
-                              setStoreProductForm(p => ({ ...p, images: [compressed] }));
-                            }
-                          }).catch(console.error);
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="url"
-                    placeholder="https://..."
-                    value={storeProductForm.images[0] || ''}
-                    onChange={(e) => setStoreProductForm(p => ({ ...p, images: [e.target.value] }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-mono"
-                  />
-                  {storeProductForm.images[0] && (
-                    <img
-                      src={storeProductForm.images[0]}
-                      alt="Preview"
-                      className="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0"
-                    />
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">M√¥ T·∫£ S·∫£n Ph·∫©m</label>
-                <textarea
-                  rows={2}
-                  placeholder="M√¥ t·∫£ s·∫£n ph·∫©m, th√†nh ph·∫ßn, cam k·∫øt v·ªá sinh an to√†n..."
-                  value={storeProductForm.description}
-                  onChange={(e) => setStoreProductForm(p => ({ ...p, description: e.target.value }))}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
-                />
-              </div>
-
-              {/* Moderation Status selector */}
-              <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300">
-                  Ph√™ Duy·ªát Hi·ªÉn Th·ªã Website:
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setStoreProductForm(p => ({ ...p, status: 'approved' }))}
-                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
-                      storeProductForm.status === 'approved'
-                        ? 'bg-emerald-600 text-white shadow'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                    }`}
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>‚úì ƒê√£ Duy·ªát (Hi·ªán Web)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setStoreProductForm(p => ({ ...p, status: 'pending' }))}
-                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
-                      storeProductForm.status === 'pending'
-                        ? 'bg-amber-500 text-slate-950 shadow'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                    }`}
-                  >
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>‚è≥ Ch·ªù Duy·ªát (·∫®n Web)</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setShowStoreProductModal(false)}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
-                >
-                  H·ªßy B·ªè
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
-                >
-                  L∆ØU S·∫¢N PH·∫®M
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ==================== MODAL: TH√äM / S·ª¨A GIAN H√ÄNG C∆Ø D√ÇN ==================== */}
-      {showStoreFormModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
-                <Store className="w-5 h-5 text-emerald-500" />
-                <span>{editingStoreItem ? 'CH·ªàNH S·ª¨A GIAN H√ÄNG C∆Ø D√ÇN' : 'T·∫†O GIAN H√ÄNG M·ªöI'}</span>
-              </h3>
-              <button
-                onClick={() => setShowStoreFormModal(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
-              >
-                ‚úï
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveStoreFormSubmit} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">T√™n Gian H√†ng (*)</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="V√≠ d·ª•: B·∫øp C∆∞ D√¢n Vin - C∆°m Ni√™u Singapore"
-                  value={storeFormData.storeName}
-                  onChange={(e) => setStoreFormData(p => ({ ...p, storeName: e.target.value }))}
-                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">T√™n Ch·ªß Shop</label>
-                  <input
-                    type="text"
-                    placeholder="Nguy·ªÖn VƒÉn A"
-                    value={storeFormData.ownerName}
-                    onChange={(e) => setStoreFormData(p => ({ ...p, ownerName: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">S·ªë ƒêi·ªán Tho·∫°i (*)</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="VD: 0912.345.678"
-                    value={storeFormData.ownerPhone}
-                    onChange={(e) => setStoreFormData(p => ({ ...p, ownerPhone: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-mono font-bold"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">D·ª± √Ån Vinhomes</label>
-                  <select
-                    value={storeFormData.project}
-                    onChange={(e) => setStoreFormData(p => ({ ...p, project: e.target.value as any }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
-                  >
-                    <option value="ocean-park-1">Ocean Park 1 (Gia L√¢m)</option>
-                    <option value="ocean-park-2">Ocean Park 2 (The Empire)</option>
-                    <option value="ocean-park-3">Ocean Park 3 (The Crown)</option>
-                    <option value="smart-city">Smart City (T√¢y M·ªó)</option>
-                    <option value="grand-park">Grand Park (TP. Th·ªß ƒê·ª©c)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Ng√†nh H√†ng</label>
-                  <select
-                    value={storeFormData.category}
-                    onChange={(e) => setStoreFormData(p => ({ ...p, category: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
-                  >
-                    <option value="Th·ª±c Ph·∫©m & ƒÇn U·ªëng">Th·ª±c Ph·∫©m & ƒÇn U·ªëng</option>
-                    <option value="N·ªôi Th·∫•t & Gia D·ª•ng">N·ªôi Th·∫•t & Gia D·ª•ng</option>
-                    <option value="B·∫£o Tr√¨ & S·ª≠a Ch·ªØa">B·∫£o Tr√¨ & S·ª≠a Ch·ªØa</option>
-                    <option value="ChƒÉm S√≥c & L√†m ƒê·∫πp">ChƒÉm S√≥c & L√†m ƒê·∫πp</option>
-                    <option value="V·∫≠n T·∫£i & Chuy·ªÉn Nh√†">V·∫≠n T·∫£i & Chuy·ªÉn Nh√†</option>
-                    <option value="Gi√°o D·ª•c & R√®n Luy·ªán">Gi√°o D·ª•c & R√®n Luy·ªán</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">ƒê·ªãa Ch·ªâ Ph·ª•c V·ª•</label>
-                <input
-                  type="text"
-                  placeholder="V√≠ d·ª•: Shophouse Sao Bi·ªÉn 12-34, Vinhomes Ocean Park 2"
-                  value={storeFormData.address}
-                  onChange={(e) => setStoreFormData(p => ({ ...p, address: e.target.value }))}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">Logo Gian H√†ng (D∆∞·ªõi 10MB)</label>
-                  <label className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
-                    <Upload className="w-3 h-3" />
-                    <span>üìÅ T·∫£i Logo</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const check = validateImageSize(file);
-                          if (!check.valid) {
-                            alert(check.message);
-                            return;
-                          }
-                          const previewUrl = createInstantPreview(file);
-                          setStoreFormData(p => ({ ...p, logoUrl: previewUrl }));
-
-                          addWatermarkToImage(file, { skipWatermark: true, maxDim: 600 }).then(compressed => {
-                            if (compressed) {
-                              setStoreFormData(p => ({ ...p, logoUrl: compressed }));
-                            }
-                          }).catch(console.error);
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-                <input
-                  type="url"
-                  placeholder="https://..."
-                  value={storeFormData.logoUrl}
-                  onChange={(e) => setStoreFormData(p => ({ ...p, logoUrl: e.target.value }))}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">M√¥ T·∫£ Gian H√†ng</label>
-                <textarea
-                  rows={2}
-                  placeholder="M√¥ t·∫£ phong c√°ch, s·∫£n ph·∫©m ch√≠nh, uy t√≠n..."
-                  value={storeFormData.description}
-                  onChange={(e) => setStoreFormData(p => ({ ...p, description: e.target.value }))}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
-                />
-              </div>
-
-              {/* Status toggle */}
-              <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300">
-                  Tr·∫°ng Th√°i Ph√™ Duy·ªát Gian H√†ng:
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setStoreFormData(p => ({ ...p, status: 'approved' }))}
-                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
-                      storeFormData.status === 'approved'
-                        ? 'bg-emerald-600 text-white shadow'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                    }`}
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>‚úì ƒê√£ Duy·ªát (Hi·ªán Web)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setStoreFormData(p => ({ ...p, status: 'pending' }))}
-                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
-                      storeFormData.status === 'pending'
-                        ? 'bg-amber-500 text-slate-950 shadow'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                    }`}
-                  >
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>‚è≥ Ch·ªù Duy·ªát (T·∫°m ·∫®n)</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setShowStoreFormModal(false)}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
-                >
-                  H·ªßy B·ªè
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
-                >
-                  L∆ØU GIAN H√ÄNG
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-    </div>
-  );
-};
+#}SÌ<ªûp1W'∞ã≈¢≥C}£Ûπân”‰É…v∏ØΩîMAg®’ru¥Bí RµZ.F€íÖñYÇ~™Rúûπ@(™¸2á&Ç ê#L¯Mùwt…ËQ%	«~€jZ±à€%|=#|fÓπŒ˚\"◊#/8B‰∫@ŒÍÑIÛ’hW√¢÷Ø¢C‰Ójvx±J`ı*‰ÕV5£ä`5ΩDl{⁄;G∆#¿µ'dz\:◊&'{6AH∑Ûmº˝≈¨Ñ≥¬F˜t¸ÀAF˚ Lvéeıj&MD~Ákìúl è|À√â√¬†‹xâÅF±üPÙËØi˝xaœuß{rU9‘Œ±AG
+ùs§ıÅ>3»˜I´_Çû∞†Á4ﬁΩêàg.Î^¬ùáÄ;CÈ$Ë˘Ã∑åÜG¿]¢ùß„ú°ù{  Ãs12¨sxí8ŒGØΩÚˇ   ˇˇ <ΩÍJ
