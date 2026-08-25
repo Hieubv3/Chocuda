@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Property, UpTinPricingConfig, UpTinTransaction, User } from '../types';
-import { X, Zap, Crown, CheckCircle2, QrCode, Copy, ShieldCheck, ArrowRight, Sparkles, Building2, CreditCard } from 'lucide-react';
+import { 
+  X, Zap, Crown, CheckCircle2, QrCode, Copy, ShieldCheck, ArrowRight, 
+  Sparkles, Building2, CreditCard, ExternalLink, Smartphone, RefreshCw,
+  Radio, Check, AlertCircle, Loader2, ArrowUpRight
+} from 'lucide-react';
 
 interface UpTinPaymentModalProps {
   property: Property;
@@ -32,8 +36,21 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
   const [days, setDays] = useState<number>(3); // For VIP packages
   const [isCopiedCode, setIsCopiedCode] = useState(false);
   const [isCopiedAccount, setIsCopiedAccount] = useState(false);
+  const [isCopiedAmount, setIsCopiedAmount] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'select' | 'qr' | 'success'>('select');
+  const [isSimulatingWebhook, setIsSimulatingWebhook] = useState(false);
+
+  // Unique payment code for this session
+  const [paymentCode, setPaymentCode] = useState<string>(() => {
+    const rawPropId = (property.id || '').replace('prop-', '').replace(/[^a-zA-Z0-9]/g, '');
+    const randomSuffix = Math.floor(100 + Math.random() * 900);
+    return `UPTIN-${rawPropId.slice(0, 5).toUpperCase() || 'HB'}-${randomSuffix}`;
+  });
+
+  const [confirmedTransaction, setConfirmedTransaction] = useState<UpTinTransaction | null>(null);
+  const [confirmedProperty, setConfirmedProperty] = useState<Property | null>(null);
+  const pollingRef = useRef<any>(null);
 
   // Direct Free Push in Donate Mode
   const handleFreeDonatePush = async () => {
@@ -70,7 +87,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
         })
       });
     } catch (err) {
-      console.warn('Donate push API call completed fallback:', err);
+      console.warn('Donate push API call fallback:', err);
     }
 
     setIsSubmitting(false);
@@ -141,9 +158,6 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
     }, 1500);
   };
 
-  // Payment Memo unique code
-  const paymentCode = `UPTIN-${property.id.replace('prop-', '')}-${Math.floor(100 + Math.random() * 900)}`;
-
   // Calculate amount based on selection
   const getPackageInfo = () => {
     switch (selectedType) {
@@ -192,75 +206,150 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
 
   const packageInfo = getPackageInfo();
 
-  // VietQR Auto URL
-  const bankAccountClean = pricingConfig.accountNumber.replace(/[^0-9]/g, '');
-  const bankCodeRaw = pricingConfig.bankName.toUpperCase();
+  // Bank & VietQR configuration
+  const bankAccountClean = (pricingConfig.accountNumber || '3028031988').replace(/[^0-9]/g, '');
+  const bankCodeRaw = (pricingConfig.bankName || 'MSB').toUpperCase();
   const bankCode = bankCodeRaw.includes('MSB') ? 'MSB' : bankCodeRaw.includes('MB') ? 'MB' : 'MSB';
-  const vietQrUrl = `https://img.vietqr.io/image/${bankCode}-${bankAccountClean}-compact2.png?amount=${packageInfo.price}&addInfo=${paymentCode}&accountName=${encodeURIComponent(pricingConfig.accountHolder)}`;
+  const vietQrUrl = `https://img.vietqr.io/image/${bankCode}-${bankAccountClean}-compact2.png?amount=${packageInfo.price}&addInfo=${paymentCode}&accountName=${encodeURIComponent(pricingConfig.accountHolder || 'BUI VAN HIEU')}`;
 
-  const handleCopy = (text: string, type: 'account' | 'code') => {
+  // Start Payment Intent and Webhook Polling when moving to QR step
+  const handleProceedToQr = async () => {
+    setPaymentStep('qr');
+
+    try {
+      // Register payment intent on server
+      await fetch('/api/payments/create-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          propertyId: property.id,
+          propertyTitle: property.title,
+          userId: user?.id || 'guest-user',
+          userName: user?.name || property.sellerName,
+          userPhone: user?.phone || property.sellerPhone,
+          packageType: selectedType,
+          packageName: packageInfo.name,
+          amount: packageInfo.price,
+          paymentCode,
+          days
+        })
+      });
+    } catch (err) {
+      console.warn('Create intent warning:', err);
+    }
+  };
+
+  // Automated Webhook & Intermediary Gateway Polling Listener
+  useEffect(() => {
+    if (paymentStep !== 'qr') {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+      return;
+    }
+
+    const checkPaymentStatus = async () => {
+      try {
+        const res = await fetch(`/api/payments/status/${paymentCode}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === 'approved' || data.status === 'paid') {
+            // Payment detected and approved automatically!
+            if (pollingRef.current) clearInterval(pollingRef.current);
+            
+            const finalTx: UpTinTransaction = data.transaction || {
+              id: `tx-${Date.now()}`,
+              propertyId: property.id,
+              propertyTitle: property.title,
+              userId: user?.id || 'guest-user',
+              userName: user?.name || property.sellerName,
+              userPhone: user?.phone || property.sellerPhone,
+              packageType: selectedType,
+              packageName: packageInfo.name,
+              amount: packageInfo.price,
+              paymentCode,
+              status: 'approved',
+              createdAt: new Date().toISOString()
+            };
+
+            const nowIso = new Date().toISOString();
+            let updatedVipLevel = property.vipLevel || 'normal';
+            if (selectedType === 'vip_silver') updatedVipLevel = 'silver';
+            if (selectedType === 'vip_gold') updatedVipLevel = 'gold';
+            if (selectedType === 'vip_diamond') updatedVipLevel = 'diamond';
+
+            const finalProp: Property = data.property || {
+              ...property,
+              pushedAt: nowIso,
+              pushedCount: (property.pushedCount || 0) + 1,
+              vipLevel: updatedVipLevel,
+              featured: selectedType === 'vip_gold' || selectedType === 'vip_diamond' ? true : property.featured
+            };
+
+            setConfirmedTransaction(finalTx);
+            setConfirmedProperty(finalProp);
+            setPaymentStep('success');
+
+            setTimeout(() => {
+              onSuccessPush(finalProp, finalTx);
+            }, 2500);
+          }
+        }
+      } catch (e) {
+        // Silent polling fail
+      }
+    };
+
+    // Initial check
+    checkPaymentStatus();
+    // Poll every 2 seconds
+    pollingRef.current = setInterval(checkPaymentStatus, 2000);
+
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, [paymentStep, paymentCode, property, selectedType, packageInfo, days, user, onSuccessPush]);
+
+  // Open Banking App Handler (Universal Link & Deep Links)
+  const handleOpenBankingApp = () => {
+    // Attempt standard VietQR universal link / mobile banking scheme
+    const deeplinkUrl = `https://dl.vietqr.io/pay?bank=${bankCode}&account=${bankAccountClean}&amount=${packageInfo.price}&memo=${encodeURIComponent(paymentCode)}`;
+    window.open(deeplinkUrl, '_blank');
+  };
+
+  // Test Webhook Simulation Trigger
+  const handleSimulateWebhook = async () => {
+    setIsSimulatingWebhook(true);
+    try {
+      const res = await fetch('/api/payments/simulate-webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentCode,
+          amount: packageInfo.price
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Polling will detect in the next tick or update immediately
+      }
+    } catch (e) {
+      console.error('Simulate webhook error:', e);
+    } finally {
+      setIsSimulatingWebhook(false);
+    }
+  };
+
+  const handleCopy = (text: string, type: 'account' | 'code' | 'amount') => {
     navigator.clipboard.writeText(text);
     if (type === 'code') {
       setIsCopiedCode(true);
       setTimeout(() => setIsCopiedCode(false), 2000);
+    } else if (type === 'amount') {
+      setIsCopiedAmount(true);
+      setTimeout(() => setIsCopiedAmount(false), 2000);
     } else {
       setIsCopiedAccount(true);
       setTimeout(() => setIsCopiedAccount(false), 2000);
     }
-  };
-
-  const handleConfirmPayment = async () => {
-    setIsSubmitting(true);
-
-    const newTx: UpTinTransaction = {
-      id: `tx-${Date.now()}`,
-      propertyId: property.id,
-      propertyTitle: property.title,
-      userId: user?.id || 'guest-user',
-      userName: user?.name || property.sellerName,
-      userPhone: user?.phone || property.sellerPhone,
-      packageType: selectedType,
-      packageName: packageInfo.name,
-      amount: packageInfo.price,
-      paymentCode: paymentCode,
-      status: 'approved', // Auto-approve in preview/test mode
-      createdAt: new Date().toISOString()
-    };
-
-    // Calculate updated property
-    const nowIso = new Date().toISOString();
-    let updatedVipLevel = property.vipLevel || 'normal';
-    if (selectedType === 'vip_silver') updatedVipLevel = 'silver';
-    if (selectedType === 'vip_gold') updatedVipLevel = 'gold';
-    if (selectedType === 'vip_diamond') updatedVipLevel = 'diamond';
-
-    const updatedProperty: Property = {
-      ...property,
-      pushedAt: nowIso,
-      pushedCount: (property.pushedCount || 0) + 1,
-      vipLevel: updatedVipLevel,
-      featured: selectedType === 'vip_gold' || selectedType === 'vip_diamond' ? true : property.featured
-    };
-
-    try {
-      // Send to server API
-      await fetch(`/api/properties/${property.id}/push`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          transaction: newTx,
-          updatedProperty
-        })
-      });
-    } catch (err) {
-      console.warn('Push API call completed or fallback active:', err);
-    }
-
-    setIsSubmitting(false);
-    setPaymentStep('success');
-    setTimeout(() => {
-      onSuccessPush(updatedProperty, newTx);
-    }, 1500);
   };
 
   return (
@@ -274,12 +363,12 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
         <X className="w-5 h-5 text-white" />
       </button>
 
-      <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-emerald-500/20 overflow-hidden my-auto max-h-[88vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-emerald-500/30 overflow-hidden my-auto max-h-[90vh] flex flex-col">
         
         {/* Top Header - Mệnh Mộc Styling */}
         <div className="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white p-5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-600/50 rounded-xl border border-emerald-400/30">
+            <div className="p-2.5 bg-emerald-600/50 rounded-2xl border border-emerald-400/30 shadow-inner">
               <Zap className="w-6 h-6 text-emerald-300 animate-pulse" />
             </div>
             <div>
@@ -306,7 +395,6 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
           {/* DONATE MODE / PAYMENT OFF SCREEN */}
           {pricingConfig.paymentEnabled === false ? (
             <div className="space-y-6">
-              {/* DONATE MODE BANNER */}
               <div className="bg-gradient-to-r from-amber-500/20 via-emerald-500/15 to-teal-500/20 border-2 border-amber-500/50 p-5 rounded-2xl space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="bg-amber-500 text-slate-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -329,7 +417,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleFreeDonatePush}
-                  className="w-full py-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-xl shadow-emerald-600/30 transition transform active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-xl shadow-emerald-600/30 transition transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Zap className="w-5 h-5 text-amber-300 animate-bounce" />
                   {isSubmitting ? 'Đang thực thi Up Tin lên Top 1...' : '⚡ THỰC THI UP TIN LÊN TOP 1 NGAY (MIỄN PHÍ 100%)'}
@@ -344,7 +432,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                     ỦNG HỘ / DONATE TÙY TÂM DUY TRÌ SERVER (KHÔNG BẮT BUỘC)
                   </h5>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                    Nếu bạn hài lòng với dịch vụ, bạn có thể quét mã VietQR chuyển khoản tùy tâm (10k, 20k, 50k...) để ủng hộ Admin duy trì máy chủ:
+                    Nếu bạn hài lòng với dịch vụ, bạn có thể quét mã VietQR chuyển khoản tùy tâm để ủng hộ Admin duy trì máy chủ:
                   </p>
                 </div>
 
@@ -353,9 +441,6 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                     src={`https://img.vietqr.io/image/${pricingConfig.bankName.includes('MSB') ? 'MSB' : 'Vietcombank'}-${pricingConfig.accountNumber}-compact2.png?amount=20000&addInfo=${encodeURIComponent('DONATE UNG HO SERVER HIEU BUI')}&accountName=${encodeURIComponent(pricingConfig.accountHolder)}`}
                     alt="VietQR Donate"
                     className="w-44 h-auto rounded-xl border border-white bg-white p-2 shadow-md"
-                    onError={(e) => {
-                      e.currentTarget.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`STK:${pricingConfig.accountNumber}|ND:DONATE UNG HO SERVER`)}`;
-                    }}
                   />
 
                   <div className="space-y-2 text-xs">
@@ -378,18 +463,18 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setPayMethod('vietqr')}
-                  className={`py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 ${
+                  className={`py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer ${
                     payMethod === 'vietqr'
                       ? 'bg-emerald-600 text-white shadow-md'
                       : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
                 >
-                  <CreditCard className="w-4 h-4" /> 💳 Nạp Phí VietQR MSB
+                  <CreditCard className="w-4 h-4" /> 💳 Chuyển Khoản Ngân Hàng VietQR
                 </button>
                 <button
                   type="button"
                   onClick={() => setPayMethod('social_points')}
-                  className={`py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 ${
+                  className={`py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 cursor-pointer ${
                     payMethod === 'social_points'
                       ? 'bg-amber-500 text-slate-950 shadow-md'
                       : 'text-amber-600 dark:text-amber-400 hover:text-amber-500 bg-amber-500/10'
@@ -428,7 +513,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                   type="button"
                   disabled={isSubmitting || userPoints < 1}
                   onClick={handleRedeemPointPush}
-                  className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Zap className="w-4 h-4" />
                   {isSubmitting
@@ -450,7 +535,6 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  {/* Task 1: Zalo */}
                   <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                     <div>
                       <span className="font-bold text-sky-600 block">Zalo Official Account</span>
@@ -460,7 +544,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       type="button"
                       onClick={() => handleClaimSocialTask('zalo', 5, 'https://zalo.me/')}
                       disabled={completedTasks.zalo}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black transition cursor-pointer ${
                         completedTasks.zalo
                           ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
                           : 'bg-sky-600 hover:bg-sky-700 text-white shadow'
@@ -470,7 +554,6 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                     </button>
                   </div>
 
-                  {/* Task 2: Facebook */}
                   <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                     <div>
                       <span className="font-bold text-blue-600 block">Fanpage Facebook</span>
@@ -480,7 +563,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       type="button"
                       onClick={() => handleClaimSocialTask('facebook', 5, 'https://www.facebook.com/chocudan24h')}
                       disabled={completedTasks.facebook}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black transition cursor-pointer ${
                         completedTasks.facebook
                           ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
                           : 'bg-blue-600 hover:bg-blue-700 text-white shadow'
@@ -489,104 +572,24 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       {completedTasks.facebook ? '✓ Đã Nhận +5' : '+5 Điểm'}
                     </button>
                   </div>
-
-                  {/* Task 3: YouTube */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                    <div>
-                      <span className="font-bold text-rose-600 block">YouTube Nhà đẹp Vinhomes</span>
-                      <span className="text-[10px] text-slate-500">Subscribe kênh YouTube</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleClaimSocialTask('youtube', 5, 'https://www.youtube.com/@chocudan24h')}
-                      disabled={completedTasks.youtube}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
-                        completedTasks.youtube
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                          : 'bg-rose-600 hover:bg-rose-700 text-white shadow'
-                      }`}
-                    >
-                      {completedTasks.youtube ? '✓ Đã Nhận +5' : '+5 Điểm'}
-                    </button>
-                  </div>
-
-                  {/* Task 4: TikTok */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                    <div>
-                      <span className="font-bold text-slate-900 dark:text-slate-100 block">TikTok BĐS 24h</span>
-                      <span className="text-[10px] text-slate-500">Follow xem video thực tế</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleClaimSocialTask('tiktok', 5, 'https://www.tiktok.com/@chocudan24h')}
-                      disabled={completedTasks.tiktok}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
-                        completedTasks.tiktok
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                          : 'bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white shadow'
-                      }`}
-                    >
-                      {completedTasks.tiktok ? '✓ Đã Nhận +5' : '+5 Điểm'}
-                    </button>
-                  </div>
-
-                  {/* Task 5: Google Maps Review 5 Star */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                    <div>
-                      <span className="font-bold text-amber-500 block">Đánh giá 5★ Google Maps</span>
-                      <span className="text-[10px] text-slate-500">Đánh giá uy tín 5 sao</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleClaimSocialTask('google', 10, 'https://maps.google.com')}
-                      disabled={completedTasks.google}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
-                        completedTasks.google
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                          : 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow'
-                      }`}
-                    >
-                      {completedTasks.google ? '✓ Đã Nhận +10' : '+10 Điểm'}
-                    </button>
-                  </div>
-
-                  {/* Task 6: Telegram */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                    <div>
-                      <span className="font-bold text-indigo-600 block">Telegram Group</span>
-                      <span className="text-[10px] text-slate-500">Tham gia nhóm BĐS 24h</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleClaimSocialTask('telegram', 5, 'https://t.me')}
-                      disabled={completedTasks.telegram}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
-                        completedTasks.telegram
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                          : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow'
-                      }`}
-                    >
-                      {completedTasks.telegram ? '✓ Đã Nhận +5' : '+5 Điểm'}
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* MODE 2: VietQR Standard Payment */}
+          {/* MODE 2: VietQR Automated Payment */}
           {payMethod === 'vietqr' && paymentStep === 'select' && (
             <div className="space-y-6">
               <div>
                 <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-3">
-                  1. Chọn Gói Dịch Vụ Up Tin & Đẩy Top
+                  1. Chọn Gói Dịch Vụ Up Tin & Đẩy Top Bất Động Sản
                 </label>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {/* Gói 1: Single Push */}
                   <div
                     onClick={() => setSelectedType('single_push')}
-                    className={`cursor-pointer p-4 rounded-xl border transition-all ${
+                    className={`cursor-pointer p-4 rounded-2xl border transition-all ${
                       selectedType === 'single_push'
                         ? 'border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20'
                         : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-slate-700'
@@ -607,7 +610,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                   {/* Gói 2: Auto Push 5 */}
                   <div
                     onClick={() => setSelectedType('auto_push_5')}
-                    className={`cursor-pointer p-4 rounded-xl border transition-all ${
+                    className={`cursor-pointer p-4 rounded-2xl border transition-all ${
                       selectedType === 'auto_push_5'
                         ? 'border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20'
                         : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-slate-700'
@@ -628,7 +631,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                   {/* Gói 3: VIP Bạc */}
                   <div
                     onClick={() => setSelectedType('vip_silver')}
-                    className={`cursor-pointer p-4 rounded-xl border transition-all ${
+                    className={`cursor-pointer p-4 rounded-2xl border transition-all ${
                       selectedType === 'vip_silver'
                         ? 'border-slate-500 bg-slate-50 dark:bg-slate-800/40 ring-2 ring-slate-400/20'
                         : 'border-slate-200 dark:border-slate-800 hover:border-slate-400'
@@ -649,7 +652,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                   {/* Gói 4: VIP Vàng */}
                   <div
                     onClick={() => setSelectedType('vip_gold')}
-                    className={`cursor-pointer p-4 rounded-xl border transition-all ${
+                    className={`cursor-pointer p-4 rounded-2xl border transition-all ${
                       selectedType === 'vip_gold'
                         ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30 ring-2 ring-amber-500/20'
                         : 'border-slate-200 dark:border-slate-800 hover:border-amber-400'
@@ -670,7 +673,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                   {/* Gói 5: VIP Kim Cương */}
                   <div
                     onClick={() => setSelectedType('vip_diamond')}
-                    className={`col-span-1 md:col-span-2 cursor-pointer p-4 rounded-xl border transition-all ${
+                    className={`col-span-1 md:col-span-2 cursor-pointer p-4 rounded-2xl border transition-all ${
                       selectedType === 'vip_diamond'
                         ? 'border-purple-500 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 dark:from-purple-950/40 dark:to-blue-950/40 ring-2 ring-purple-500/30'
                         : 'border-slate-200 dark:border-slate-800 hover:border-purple-400'
@@ -693,7 +696,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
 
               {/* Day Selector for VIP packages */}
               {['vip_silver', 'vip_gold', 'vip_diamond'].includes(selectedType) && (
-                <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Thời gian duy trì VIP:</span>
                   <div className="flex items-center gap-2">
                     {[3, 7, 15, 30].map(d => (
@@ -701,7 +704,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                         key={d}
                         type="button"
                         onClick={() => setDays(d)}
-                        className={`px-3 py-1 text-xs font-bold rounded-lg transition ${
+                        className={`px-3 py-1.5 text-xs font-bold rounded-xl transition cursor-pointer ${
                           days === d
                             ? 'bg-emerald-600 text-white shadow-sm'
                             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-emerald-500'
@@ -715,65 +718,86 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
               )}
 
               {/* Order Summary */}
-              <div className="bg-emerald-50/70 dark:bg-emerald-950/30 p-4 rounded-xl border border-emerald-200 dark:border-emerald-900/60 flex items-center justify-between">
+              <div className="bg-emerald-50/70 dark:bg-emerald-950/30 p-5 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-emerald-800 dark:text-emerald-300 font-medium">Tổng tiền cần thanh toán:</span>
+                  <span className="text-xs text-emerald-800 dark:text-emerald-300 font-medium block">Tổng phí dịch vụ:</span>
                   <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400">
                     {packageInfo.price.toLocaleString('vi-VN')} VNĐ
                   </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setPaymentStep('qr')}
-                  className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition transform active:scale-95"
+                  onClick={handleProceedToQr}
+                  className="px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition transform active:scale-95 cursor-pointer"
                 >
                   <QrCode className="w-5 h-5" />
-                  Tiếp Tục Quét Mã VietQR
+                  Tiếp Tục Chuyển Khoản VietQR
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
           )}
 
+          {/* STEP 2: Real Automated VietQR & Webhook Intermediary Detection */}
           {paymentStep === 'qr' && (
             <div className="space-y-6">
-              <div className="text-center">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs font-bold rounded-full mb-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" /> Cổng Thanh Toán VietQR Tự Động 24/7
-                </span>
-                <h4 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                  Quét Mã QR Để Chuyển Khoản & Up Tin Tự Động
+              
+              {/* Header Badge */}
+              <div className="text-center space-y-1">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs font-black rounded-full border border-emerald-300 dark:border-emerald-700">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>CỔNG THANH TOÁN TỰ ĐỘNG INTERMEDIARY WEBHOOK (MSB / SEPAY / CASSO)</span>
+                </div>
+                <h4 className="text-base font-black text-slate-900 dark:text-slate-100">
+                  Mở App Ngân Hàng Hoặc Quét Mã Để Tự Động Kích Hoạt
                 </h4>
               </div>
 
+              {/* Main Grid: QR & Bank Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                 {/* VietQR Image Container */}
-                <div className="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
-                  <img
-                    src={vietQrUrl}
-                    alt="VietQR Transfer"
-                    className="w-56 h-auto rounded-xl shadow-md border border-white bg-white p-2"
-                    onError={(e) => {
-                      // Fallback QR generator if external API fails
-                      e.currentTarget.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`STK:${pricingConfig.accountNumber}|ST:${packageInfo.price}|ND:${paymentCode}`)}`;
-                    }}
-                  />
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 text-center">
-                    Sử dụng ứng dụng Ngân hàng (MB, Vietcombank, Momo, VPBank...) để quét mã
+                <div className="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-800/60 rounded-3xl border border-slate-200 dark:border-slate-700 space-y-3">
+                  <div className="relative p-2 bg-white rounded-2xl shadow-md border border-slate-200">
+                    <img
+                      src={vietQrUrl}
+                      alt="VietQR Transfer"
+                      className="w-52 h-auto rounded-xl"
+                      onError={(e) => {
+                        e.currentTarget.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`STK:${pricingConfig.accountNumber}|ST:${packageInfo.price}|ND:${paymentCode}`)}`;
+                      }}
+                    />
+                  </div>
+
+                  {/* Primary Direct Banking Action */}
+                  <button
+                    type="button"
+                    onClick={handleOpenBankingApp}
+                    className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer"
+                  >
+                    <Smartphone className="w-4 h-4 animate-bounce" />
+                    <span>Mở App Ngân Hàng Chuyển Khoản</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </button>
+
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
+                    Hỗ trợ quét mã qua <strong>MB, Techcombank, VCB, MSB, VPBank, Momo, ZaloPay...</strong>
                   </p>
                 </div>
 
-                {/* Transfer Details */}
+                {/* Transfer Details with 1-Tap Copy */}
                 <div className="space-y-3">
-                  <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2 text-xs">
+                  <div className="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
+                    
+                    {/* Bank */}
                     <div className="flex items-center justify-between text-slate-500">
                       <span>Ngân hàng:</span>
                       <span className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1">
                         <Building2 className="w-3.5 h-3.5 text-emerald-600" />
-                        {pricingConfig.bankName}
+                        {pricingConfig.bankName || 'MSB (Ngân hàng Hàng Hải)'}
                       </span>
                     </div>
 
+                    {/* Account Number */}
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500">Số tài khoản:</span>
                       <div className="flex items-center gap-2">
@@ -781,94 +805,165 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                           {pricingConfig.accountNumber}
                         </span>
                         <button
+                          type="button"
                           onClick={() => handleCopy(pricingConfig.accountNumber, 'account')}
-                          className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-500 hover:text-emerald-600 transition"
+                          className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-500 hover:text-emerald-600 transition cursor-pointer"
                           title="Sao chép số tài khoản"
                         >
-                          <Copy className="w-3.5 h-3.5" />
+                          {isCopiedAccount ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                     </div>
-                    {isCopiedAccount && <p className="text-[10px] text-emerald-600 font-bold text-right">Đã chép số tài khoản!</p>}
+                    {isCopiedAccount && <p className="text-[10px] text-emerald-600 font-bold text-right">✓ Đã sao chép số tài khoản!</p>}
 
+                    {/* Account Holder */}
                     <div className="flex items-center justify-between text-slate-500">
                       <span>Chủ tài khoản:</span>
-                      <span className="font-bold text-slate-900 dark:text-slate-100 uppercase">
+                      <span className="font-black text-slate-900 dark:text-slate-100 uppercase">
                         {pricingConfig.accountHolder}
                       </span>
                     </div>
 
+                    {/* Amount */}
                     <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-700/60">
                       <span className="text-slate-500">Số tiền:</span>
-                      <span className="font-extrabold text-base text-emerald-600">
-                        {packageInfo.price.toLocaleString('vi-VN')} VNĐ
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-1 bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-lg border border-emerald-200 dark:border-emerald-900/40">
-                      <span className="text-emerald-800 dark:text-emerald-300 font-semibold">Nội dung chuyển:</span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-mono font-black text-slate-900 dark:text-slate-100">
-                          {paymentCode}
+                      <div className="flex items-center gap-2">
+                        <span className="font-black text-base text-emerald-600 dark:text-emerald-400">
+                          {packageInfo.price.toLocaleString('vi-VN')} VNĐ
                         </span>
                         <button
-                          onClick={() => handleCopy(paymentCode, 'code')}
-                          className="p-1 hover:bg-emerald-200 dark:hover:bg-emerald-800 rounded text-emerald-700 transition"
-                          title="Sao chép nội dung chuyển khoản"
+                          type="button"
+                          onClick={() => handleCopy(String(packageInfo.price), 'amount')}
+                          className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-500 hover:text-emerald-600 transition cursor-pointer"
+                          title="Sao chép số tiền"
                         >
-                          <Copy className="w-3.5 h-3.5" />
+                          {isCopiedAmount ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                     </div>
-                    {isCopiedCode && <p className="text-[10px] text-emerald-600 font-bold text-right">Đã chép nội dung!</p>}
+                    {isCopiedAmount && <p className="text-[10px] text-emerald-600 font-bold text-right">✓ Đã sao chép số tiền!</p>}
+
+                    {/* Transfer Content */}
+                    <div className="pt-2 bg-emerald-50 dark:bg-emerald-950/40 p-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800/60 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-emerald-800 dark:text-emerald-300 font-bold text-[11px]">Nội dung chuyển khoản (Bắt buộc):</span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(paymentCode, 'code')}
+                          className="px-2 py-0.5 bg-emerald-600 text-white rounded-md text-[10px] font-bold hover:bg-emerald-500 transition flex items-center gap-1 cursor-pointer"
+                          title="Sao chép nội dung chuyển khoản"
+                        >
+                          {isCopiedCode ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                          <span>{isCopiedCode ? 'Đã chép' : 'Sao chép'}</span>
+                        </button>
+                      </div>
+                      <div className="font-mono font-black text-base text-emerald-700 dark:text-emerald-300 tracking-wider bg-white dark:bg-slate-900 p-2 rounded-lg border border-emerald-300 dark:border-emerald-700 text-center">
+                        {paymentCode}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="pt-2 flex flex-col gap-2">
-                    <button
-                      type="button"
-                      disabled={isSubmitting}
-                      onClick={handleConfirmPayment}
-                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition disabled:opacity-50"
-                    >
-                      {isSubmitting ? (
-                        <span>Đang xử lý hệ thống...</span>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="w-5 h-5 text-emerald-200" />
-                          Xác Nhận Đã Chuyển Khoản & Up Tin
-                        </>
-                      )}
-                    </button>
+                  {/* REAL-TIME RADAR STATUS MONITOR (No manual button) */}
+                  <div className="p-3.5 bg-emerald-950/10 dark:bg-emerald-950/30 rounded-2xl border-2 border-dashed border-emerald-500/50 space-y-2">
+                    <div className="flex items-center gap-2.5">
+                      <span className="relative flex h-3.5 w-3.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                      </span>
+                      <span className="text-xs font-black text-emerald-700 dark:text-emerald-300">
+                        Đang lắng nghe biến động số dư từ Ngân hàng...
+                      </span>
+                    </div>
 
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                      ⚡ Ngay khi bạn chuyển khoản thành công trên app ngân hàng, nền tảng trung gian sẽ gửi Webhook khớp lệnh và <strong>tự động chuyển trạng thái bài đăng lên Top 1 ngay lập tức</strong> mà không cần thao tác thêm.
+                    </p>
+                  </div>
+
+                  {/* Secondary Actions & Back Button */}
+                  <div className="pt-1 flex items-center justify-between">
                     <button
                       type="button"
                       onClick={() => setPaymentStep('select')}
-                      className="w-full py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition"
+                      className="text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition cursor-pointer"
                     >
-                       Quay lại chọn gói khác
+                      ← Đổi gói khác
+                    </button>
+
+                    {/* Developer / Test Simulation Webhook Trigger */}
+                    <button
+                      type="button"
+                      disabled={isSimulatingWebhook}
+                      onClick={handleSimulateWebhook}
+                      className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer bg-emerald-100/70 dark:bg-emerald-950/70 px-2.5 py-1 rounded-lg border border-emerald-300 dark:border-emerald-700"
+                      title="Mô phỏng Webhook ngân hàng bắn tín hiệu thành công"
+                    >
+                      {isSimulatingWebhook ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                      <span>Mô Phỏng Webhook Khớp Lệnh</span>
                     </button>
                   </div>
+
                 </div>
               </div>
             </div>
           )}
 
+          {/* STEP 3: Automated Success Screen */}
           {paymentStep === 'success' && (
-            <div className="py-8 text-center space-y-4">
-              <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-300 rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
-                <Sparkles className="w-8 h-8" />
+            <div className="py-8 text-center space-y-4 animate-fadeIn">
+              <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-300 rounded-full flex items-center justify-center mx-auto shadow-xl ring-4 ring-emerald-500/20 animate-bounce">
+                <CheckCircle2 className="w-10 h-10" />
               </div>
-              <h3 className="text-xl font-black text-slate-900 dark:text-slate-100">
-                Thanh Toán Up Tin Thành Công!
-              </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                Bất động sản <span className="font-bold text-emerald-600">{property.title}</span> đã được đẩy lên TOP 1 danh mục và kích hoạt gói <span className="font-bold">{packageInfo.name}</span>.
-              </p>
-              <div className="pt-4">
-                <span className="text-xs text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-4 py-2 rounded-full border border-emerald-200">
-                  ⚡ Đang cập nhật thứ tự hiển thị...
+
+              <div className="space-y-1">
+                <span className="text-[11px] font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-3 py-1 rounded-full border border-emerald-300">
+                  ✓ GIAO DỊCH ĐÃ XÁC NHẬN TỰ ĐỘNG QUA WEBHOOK
                 </span>
+                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 pt-2">
+                  Thanh Toán & Nâng Cấp Thành Công!
+                </h3>
+              </div>
+
+              <div className="p-4 bg-emerald-50/70 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 max-w-md mx-auto text-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Mã giao dịch:</span>
+                  <span className="font-mono font-black text-slate-900 dark:text-white">{paymentCode}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Gói dịch vụ:</span>
+                  <span className="font-black text-emerald-700 dark:text-emerald-300">{packageInfo.name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Số tiền đã nhận:</span>
+                  <span className="font-black text-slate-900 dark:text-white">{packageInfo.price.toLocaleString('vi-VN')} VNĐ</span>
+                </div>
+                <div className="flex items-center justify-between pt-1 border-t border-emerald-200 dark:border-emerald-800/60">
+                  <span className="text-slate-500">Trạng thái BĐS:</span>
+                  <span className="font-black text-emerald-600 flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5 fill-emerald-500" />
+                    Đã đẩy lên TOP 1 Danh Mục
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Bất động sản <strong className="text-emerald-600">{property.title}</strong> đang được hiển thị ưu tiên cao nhất trên toàn hệ thống.
+              </p>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirmedProperty && confirmedTransaction) {
+                      onSuccessPush(confirmedProperty, confirmedTransaction);
+                    } else {
+                      onClose();
+                    }
+                  }}
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer"
+                >
+                  Hoàn Tất & Xem Bài Đăng
+                </button>
               </div>
             </div>
           )}

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, ExternalLink } from 'lucide-react';
+import { AdminAdsManager } from '../components/AdminAdsManager';
+import { INITIAL_ADS } from '../data/initialData';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { calculateExpiryInfo } from '../lib/expiration';
 
@@ -872,35 +874,21 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     } catch (e) {
       console.warn('Failed to parse ads from localStorage:', e);
     }
-    return [
-      {
-        id: 'ad-1',
-        title: 'M·ªü B√°n Qu·ªπ CƒÉn ƒê·ªôc Quy·ªÅn Ocean Park 2 - Chi·∫øt Kh·∫•u 15%',
-        imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
-        linkUrl: '/project/ocean-park-2',
-        targetUrl: '/project/ocean-park-2',
-        position: 'home_top',
-        active: true,
-        isActive: true,
-        clickCount: 1420,
-        clicks: 1420,
-        createdAt: '2026-07-28'
-      },
-      {
-        id: 'ad-2',
-        title: 'Vinhomes H·∫° Long Xanh - C∆° H·ªôi ƒê·∫ßu T∆∞ X2 T√†i S·∫£n',
-        imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
-        linkUrl: '/news/news-ha-long-xanh',
-        targetUrl: '/news/news-ha-long-xanh',
-        position: 'sidebar',
-        active: true,
-        isActive: true,
-        clickCount: 890,
-        clicks: 890,
-        createdAt: '2026-07-28'
-      }
-    ];
+    return INITIAL_ADS;
   });
+
+  // Fetch live ads list for navigation counters and admin widgets
+  React.useEffect(() => {
+    fetch('/api/ads')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setAdsList(data);
+          try { localStorage.setItem('chocudan24h_ads', JSON.stringify(data)); } catch (e) {}
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const [newAdTitle, setNewAdTitle] = useState('');
   const [newAdImage, setNewAdImage] = useState('');
@@ -4500,2973 +4488,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         />
       )}
 
-      {/* Tab: Qu·∫£ng C√°o Management */}
+      {/* Tab: Qu·∫£ng C√°o & Banner Management */}
       {(activeTab === 'ads' || (activeTab as string) === 'ads_mgmt') && (
-        <div className="space-y-5">
-          {/* Top Control & Stats Header Bar */}
-          <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-700 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <span className="text-amber-500">üì¢</span> QU·∫¢N L√ù BANNER & QU·∫¢NG C√ÅO
-              </h3>
-              <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                <span className="bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-md font-bold text-slate-700 dark:text-slate-300">
-                  T·ªïng {adsList.length} Banner
-                </span>
-                <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md font-bold">
-                  üü¢ {adsList.filter(a => (a.active ?? a.isActive ?? true)).length} ƒêang Hi·ªán
-                </span>
-                <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-md font-bold">
-                  üëÅÔ∏è {adsList.reduce((acc, a) => acc + (a.clickCount || a.clicks || 0), 0).toLocaleString('vi-VN')} L∆∞·ª£t Click
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={() => {
-                  if (editingAd) handleCancelEditAd();
-                  setShowAdFormMobile(prev => !prev);
-                }}
-                className={`px-4 py-2.5 rounded-2xl font-black text-xs uppercase tracking-wider transition shadow flex items-center gap-1.5 ${
-                  showAdFormMobile || editingAd
-                    ? 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300'
-                    : 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:brightness-110'
-                }`}
-              >
-                {editingAd ? (
-                  <>
-                    <X className="w-4 h-4" /> ƒê√≥ng Form S·ª≠a
-                  </>
-                ) : showAdFormMobile ? (
-                  <>
-                    <ChevronUp className="w-4 h-4" /> Thu G·ªçn Form
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4" /> + Th√™m Banner M·ªõi
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Form: Add / Edit Banner (Toggleable on Mobile, Always visible on Desktop or when editing) */}
-          {(showAdFormMobile || editingAd) && (
-            <div className={`bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-6 border transition-all shadow-xl space-y-4 animate-fade-in ${
-              editingAd 
-                ? 'border-2 border-amber-500 ring-4 ring-amber-500/20' 
-                : 'border-slate-200 dark:border-slate-700'
-            }`}>
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/60">
-                <h4 className="font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                  {editingAd ? (
-                    <>
-                      <Edit3 className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 animate-bounce" />
-                      <span>CH·ªàNH S·ª¨A BANNER QU·∫¢NG C√ÅO</span>
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
-                      <span>TH√äM BANNER QU·∫¢NG C√ÅO M·ªöI (ADMIN)</span>
-                    </>
-                  )}
-                </h4>
-                <div className="flex items-center gap-2">
-                  {editingAd && (
-                    <button
-                      type="button"
-                      onClick={handleCancelEditAd}
-                      className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1"
-                    >
-                      <X className="w-3.5 h-3.5" /> H·ªßy S·ª≠a
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (editingAd) handleCancelEditAd();
-                      setShowAdFormMobile(false);
-                    }}
-                    className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg transition"
-                    title="ƒê√≥ng form"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {editingAd && (
-                <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-bold text-amber-800 dark:text-amber-300">
-                  <span>‚ö†Ô∏è ƒêang s·ª≠a: <strong>"{editingAd.title}"</strong></span>
-                  <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal">Thay ƒë·ªïi th√¥ng tin v√† nh·∫•n "L∆∞u C·∫≠p Nh·∫≠t" b√™n d∆∞·ªõi</span>
-                </div>
-              )}
-              
-              <form onSubmit={handleSaveFormAd} className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs font-bold">
-                  {/* Column 1: Text details & Position */}
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 mb-1 font-extrabold">1. Ti√™u ƒë·ªÅ qu·∫£ng c√°o (*)</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="V√≠ d·ª•: Qu·ªπ cƒÉn Shophouse Vinhomes Ch√† L√† c·∫Øt l·ªó 2 t·ª∑..."
-                        value={newAdTitle}
-                        onChange={e => setNewAdTitle(e.target.value)}
-                        className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs font-bold"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 mb-1 font-extrabold">2. ƒê∆∞·ªùng d·∫´n li√™n k·∫øt khi Click (Web / Zalo / Phone)</label>
-                      <input
-                        type="text"
-                        placeholder="V√≠ d·ª•: https://zalo.me/0912345678 ho·∫∑c /mua-ban/can-ho"
-                        value={newAdLink}
-                        onChange={e => setNewAdLink(e.target.value)}
-                        className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs font-mono"
-                      />
-                      <p className="text-[10px] text-slate-400 mt-1">
-                        üí° H·ªó tr·ª£: Link web ngo√†i (https://...), Link Zalo (https://zalo.me/...), Link n·ªôi b·ªô (/mua-ban), ho·∫∑c SƒêT (tel:0912...)
-                      </p>
-                    </div>
-
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 mb-1 font-extrabold">3. V·ªã tr√≠ hi·ªÉn th·ªã tr√™n website (*)</label>
-                      <select
-                        value={newAdPos}
-                        onChange={e => setNewAdPos(e.target.value as any)}
-                        className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-amber-400 dark:border-slate-700 rounded-2xl text-amber-700 dark:text-amber-300 font-black text-xs focus:ring-2 focus:ring-amber-500 outline-none shadow-sm"
-                      >
-                        <option value="float_right_pc">üìå C·∫°nh Ph·∫£i Web B√°m ƒêu·ªïi (Sticky Float Right - C√≥ n√∫t t·∫Øt ‚ùå)</option>
-                        <option value="header_top">üìå Thanh tr√™n c√πng Header (Top Banner Bar)</option>
-                        <option value="float_left_pc">üìå C·∫°nh Tr√°i Web B√°m ƒêu·ªïi (Sticky Float Left - C√≥ n√∫t t·∫Øt ‚ùå)</option>
-                        <option value="home_middle">üìå Gi·ªØa Trang Ch·ªß (N·∫±m gi·ªØa danh s√°ch tin)</option>
-                        <option value="home_sidebar">üìå C·ªôt Ph·∫£i Trang Ch·ªß (Sidebar Banner)</option>
-                        <option value="property_detail">üìå Trang Chi Ti·∫øt BƒêS (Detail Page Banner)</option>
-                        <option value="popup_modal">üìå Pop-Up N·ªïi Trung T√¢m (Center Modal Pop-up - C√≥ n√∫t t·∫Øt ‚ùå)</option>
-                      </select>
-                    </div>
-
-                    {/* Custom styling options */}
-                    <div className="bg-amber-500/10 border border-amber-500/40 rounded-2xl p-3.5 space-y-3">
-                      <span className="font-extrabold text-amber-700 dark:text-amber-300 text-xs flex items-center gap-1.5 uppercase">
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" /> T√ôY CH·ªàNH K√çCH TH∆Ø·ªöC & KI·ªÇU HI·ªÇN TH·ªä:
-                      </span>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-                        <div>
-                          <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">üìê B·ªÅ r·ªông:</label>
-                          <select
-                            value={newAdWidthSize}
-                            onChange={(e) => setNewAdWidthSize(e.target.value as any)}
-                            className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white text-xs"
-                          >
-                            <option value="medium">V·ª´a (Medium ~210px)</option>
-                            <option value="large">R·ªông (Large ~260px)</option>
-                            <option value="small">Nh·ªè (Small ~170px)</option>
-                            <option value="compact">G·ªçn (Compact ~140px)</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">üé® Ki·ªÉu d√°ng:</label>
-                          <select
-                            value={newAdDisplayStyle}
-                            onChange={(e) => setNewAdDisplayStyle(e.target.value as any)}
-                            className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white text-xs"
-                          >
-                            <option value="glowing_border">‚ú® VIP Vi·ªÅn Ph√°t S√°ng</option>
-                            <option value="card_full">Th·∫ª ƒê·∫ßy ƒê·ªß (H√¨nh + Ch·ªØ)</option>
-                            <option value="image_only">üñºÔ∏è Ch·ªâ H√¨nh ·∫¢nh Banner</option>
-                            <option value="minimal">‚ö™ T·ªëi Gi·∫£n S√°ng</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">üè∑Ô∏è Nh√£n Badge:</label>
-                          <input
-                            type="text"
-                            value={newAdBadgeText}
-                            onChange={(e) => setNewAdBadgeText(e.target.value)}
-                            placeholder="V√≠ d·ª•: QU·∫¢NG C√ÅO VIP..."
-                            className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white text-xs"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Column 2: Image Upload & Preview */}
-                  <div className="space-y-4">
-                    <label className="block text-slate-700 dark:text-slate-300 font-extrabold">4. H√¨nh ·∫£nh Banner (*)</label>
-
-                    <label className="flex flex-col items-center justify-center p-5 bg-gradient-to-br from-amber-50 to-amber-100/80 dark:from-amber-950/40 dark:to-slate-900 border-2 border-dashed border-amber-400 hover:border-amber-500 rounded-2xl cursor-pointer transition text-center group shadow-sm">
-                      <Upload className="w-7 h-7 text-amber-500 mb-1.5 group-hover:scale-110 transition-transform animate-pulse" />
-                      <span className="text-amber-950 dark:text-amber-300 font-black text-xs uppercase tracking-wider">
-                        üìÅ B·∫§M ƒê·ªÇ T·∫¢I ·∫¢NH T·ª™ M√ÅY
-                      </span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-normal">
-                        JPG, PNG, WEBP (T·ªëi ƒëa 8MB)
-                      </span>
-                      <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e)} />
-                    </label>
-
-                    <div>
-                      <label className="block text-slate-500 dark:text-slate-400 mb-1 text-[11px] font-medium">Ho·∫∑c d√°n URL ·∫£nh tr·ª±c ti·∫øp:</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="https://images.unsplash.com/..."
-                        value={newAdImage}
-                        onChange={e => setNewAdImage(e.target.value)}
-                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs font-mono"
-                      />
-                    </div>
-
-                    {newAdImage && (
-                      <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-amber-300 dark:border-amber-800/60 shadow-sm space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                            <Check className="w-3.5 h-3.5" /> Xem tr∆∞·ªõc ·∫£nh banner:
-                          </span>
-                          <label className="text-[10px] font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer">
-                            ƒê·ªïi ·∫£nh kh√°c
-                            <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e)} />
-                          </label>
-                        </div>
-                        <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-36 bg-slate-950 flex items-center justify-center">
-                          <img src={newAdImage} alt="Preview" className="max-h-36 w-full object-contain" />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Form submit bar */}
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="submit"
-                      className={`px-6 py-3 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2 ${
-                        editingAd 
-                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:brightness-110' 
-                          : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:brightness-110'
-                      }`}
-                    >
-                      {editingAd ? (
-                        <>
-                          <Check className="w-4 h-4" /> üíæ L∆ØU C·∫¨P NH·∫¨T BANNER
-                        </>
-                      ) : (
-                        <>
-                          <Plus className="w-4 h-4" /> + ƒêƒÇNG BANNER M·ªöI
-                        </>
-                      )}
-                    </button>
-                    {editingAd && (
-                      <button
-                        type="button"
-                        onClick={handleCancelEditAd}
-                        className="px-4 py-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-2xl text-xs transition flex items-center gap-1"
-                      >
-                        <X className="w-4 h-4" /> H·ª¶Y
-                      </button>
-                    )}
-                  </div>
-                  <span className="text-[11px] text-slate-400 font-medium">
-                    * Banner hi·ªÉn th·ªã ngay l·∫≠p t·ª©c ra to√†n b·ªô trang web
-                  </span>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* Banner List Section */}
-          <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h4 className="font-black text-xs sm:text-sm text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                  <span>üìã</span> DANH S√ÅCH BANNER QU·∫¢NG C√ÅO ({adsList.length})
-                </h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  B·∫•m v√†o th·∫ª ho·∫∑c n√∫t <strong>[üëÅÔ∏è Test Click]</strong> ƒë·ªÉ xem th·ª≠ v√† ki·ªÉm tra ch·ª©c nƒÉng click
-                </p>
-              </div>
-            </div>
-
-            {adsList.length === 0 ? (
-              <div className="text-center py-10 text-slate-400 text-xs">
-                Ch∆∞a c√≥ banner qu·∫£ng c√°o n√†o. B·∫•m "+ Th√™m Banner M·ªõi" ·ªü tr√™n ƒë·ªÉ t·∫°o banner ƒë·∫ßu ti√™n.
-              </div>
-            ) : (
-              <>
-                {/* 1. Mobile Compact Accordion Card List (block md:hidden) */}
-                <div className="block md:hidden space-y-3">
-                  {adsList.map((ad, idx) => {
-                    const isBeingEdited = editingAd?.id === ad.id;
-                    const isExpanded = !!expandedAdIds[ad.id];
-                    const isActive = ad.active ?? ad.isActive ?? true;
-                    const safeUrl = getSafeAdUrl(ad.linkUrl || ad.targetUrl);
-
-                    return (
-                      <div
-                        key={ad.id}
-                        className={`rounded-2xl border transition-all overflow-hidden ${
-                          isBeingEdited
-                            ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/30 ring-2 ring-amber-500/30'
-                            : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 hover:border-amber-400'
-                        }`}
-                      >
-                        {/* Main compact top row */}
-                        <div className="p-3 flex items-start gap-3">
-                          {/* Thumbnail: Clicking opens test preview */}
-                          <div 
-                            onClick={() => setPreviewingAd(ad)}
-                            className="relative w-20 h-16 rounded-xl overflow-hidden bg-slate-900 shrink-0 border border-slate-300 dark:border-slate-700 cursor-pointer group shadow-sm"
-                            title="B·∫•m ƒë·ªÉ xem th·ª≠ banner"
-                          >
-                            <img
-                              src={ad.imageUrl}
-                              alt={ad.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
-                            />
-                            <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[9px] font-black transition">
-                              <Eye className="w-3.5 h-3.5 text-amber-400" />
-                            </div>
-                            <span className="absolute bottom-0.5 right-0.5 bg-slate-950/80 text-amber-400 text-[8px] font-black px-1 rounded">
-                              #{idx + 1}
-                            </span>
-                          </div>
-
-                          {/* Info column */}
-                          <div className="flex-1 min-w-0 space-y-1">
-                            <div className="flex items-center justify-between gap-1">
-                              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 truncate max-w-[150px]">
-                                {ad.position === 'header_top' && 'üìå Top Header'}
-                                {ad.position === 'float_right_pc' && 'üìå C·∫°nh Ph·∫£i (Sticky)'}
-                                {ad.position === 'float_left_pc' && 'üìå C·∫°nh Tr√°i (Sticky)'}
-                                {ad.position === 'home_middle' && 'üìå Gi·ªØa Trang Ch·ªß'}
-                                {ad.position === 'home_sidebar' && 'üìå Sidebar Ph·∫£i'}
-                                {ad.position === 'property_detail' && 'üìå Chi Ti·∫øt CƒÉn'}
-                                {ad.position === 'popup_modal' && 'üìå Pop-up N·ªïi'}
-                                {!['header_top','float_right_pc','float_left_pc','home_middle','home_sidebar','property_detail','popup_modal'].includes(ad.position) && ad.position}
-                              </span>
-
-                              {/* Active status pill */}
-                              <button
-                                type="button"
-                                onClick={() => handleToggleAdActive(ad.id)}
-                                className={`px-2 py-0.5 rounded-full text-[9px] font-black transition ${
-                                  isActive
-                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                                    : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                                }`}
-                              >
-                                {isActive ? 'üü¢ Hi·ªán' : '‚ö´ ·∫®n'}
-                              </button>
-                            </div>
-
-                            <h5 
-                              onClick={() => setPreviewingAd(ad)}
-                              className="text-xs font-bold text-slate-900 dark:text-white line-clamp-2 leading-tight cursor-pointer hover:text-amber-500 transition"
-                            >
-                              {ad.title}
-                            </h5>
-
-                            <div className="flex items-center justify-between text-[10px] text-slate-500 pt-0.5">
-                              <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                                üëÅÔ∏è {(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} Clicks
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => toggleExpandAd(ad.id)}
-                                className="text-slate-400 hover:text-amber-500 flex items-center gap-0.5 font-bold"
-                              >
-                                {isExpanded ? 'G·ªçn ‚ñ¥' : 'Chi ti·∫øt ‚ñæ'}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Collapsible details on mobile */}
-                        {isExpanded && (
-                          <div className="px-3 py-2.5 bg-slate-100/70 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700/60 text-[11px] space-y-1.5 font-medium animate-fade-in">
-                            <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                              <span>üîó Link m·ªü:</span>
-                              <a
-                                href={safeUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={() => handleTestAdClick(ad)}
-                                className="text-amber-600 dark:text-amber-400 hover:underline truncate max-w-[180px] font-mono text-[10px] flex items-center gap-1"
-                              >
-                                {ad.linkUrl || 'Ch∆∞a ƒë·∫∑t link'} <ExternalLink className="w-2.5 h-2.5 shrink-0" />
-                              </a>
-                            </div>
-                            <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                              <span>üìê K√≠ch th∆∞·ªõc / Ki·ªÉu:</span>
-                              <span className="font-bold text-slate-900 dark:text-white">
-                                {ad.widthSize || 'medium'} ‚Ä¢ {ad.displayStyle || 'glowing_border'}
-                              </span>
-                            </div>
-                            {ad.badgeText && (
-                              <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                                <span>üè∑Ô∏è Nh√£n Badge:</span>
-                                <span className="font-bold text-amber-600 dark:text-amber-400">{ad.badgeText}</span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Mobile Action Buttons Bar */}
-                        <div className="p-2 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700/60 grid grid-cols-4 gap-1.5 text-center">
-                          {/* 1. Test Click Preview */}
-                          <button
-                            type="button"
-                            onClick={() => setPreviewingAd(ad)}
-                            className="py-1.5 px-1 bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 text-amber-800 dark:text-amber-300 font-extrabold rounded-xl text-[10px] flex flex-col items-center justify-center gap-0.5 transition"
-                            title="Xem th·ª≠ banner v√† test click"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>Xem Th·ª≠</span>
-                          </button>
-
-                          {/* 2. Direct Open Link */}
-                          <button
-                            type="button"
-                            onClick={() => handleTestAdClick(ad)}
-                            className="py-1.5 px-1 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-xl text-[10px] flex flex-col items-center justify-center gap-0.5 transition"
-                            title="M·ªü link ngo√†i web & ƒë·∫øm click"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                            <span>M·ªü Link</span>
-                          </button>
-
-                          {/* 3. Edit */}
-                          <button
-                            type="button"
-                            onClick={() => handleStartEditAd(ad)}
-                            className={`py-1.5 px-1 font-extrabold rounded-xl text-[10px] flex flex-col items-center justify-center gap-0.5 transition ${
-                              isBeingEdited
-                                ? 'bg-amber-400 text-slate-950 font-black'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-200'
-                            }`}
-                            title="Ch·ªânh s·ª≠a th√¥ng tin banner"
-                          >
-                            <Edit3 className="w-3.5 h-3.5" />
-                            <span>{isBeingEdited ? 'ƒêang S·ª≠a' : 'S·ª≠a'}</span>
-                          </button>
-
-                          {/* 4. Delete */}
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteAd(ad.id)}
-                            className="py-1.5 px-1 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-600 dark:text-rose-400 font-extrabold rounded-xl text-[10px] flex flex-col items-center justify-center gap-0.5 transition"
-                            title="X√≥a banner"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>X√≥a</span>
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* 2. Desktop High-Density Table (hidden md:block) */}
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full text-xs text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 font-bold">
-                        <th className="p-3">H√¨nh ·∫£nh Banner</th>
-                        <th className="p-3">Ti√™u ƒë·ªÅ & Link li√™n k·∫øt</th>
-                        <th className="p-3">V·ªã tr√≠ hi·ªÉn th·ªã</th>
-                        <th className="p-3">L∆∞·ª£t click</th>
-                        <th className="p-3">Tr·∫°ng th√°i</th>
-                        <th className="p-3 text-right">Thao t√°c qu·∫£n tr·ªã</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      {adsList.map((ad, idx) => {
-                        const isBeingEdited = editingAd?.id === ad.id;
-                        const safeUrl = getSafeAdUrl(ad.linkUrl || ad.targetUrl);
-
-                        return (
-                          <tr 
-                            key={ad.id} 
-                            className={`transition cursor-pointer group ${
-                              isBeingEdited 
-                                ? 'bg-amber-50/80 dark:bg-amber-950/30 border-l-4 border-amber-500' 
-                                : 'hover:bg-slate-50 dark:hover:bg-slate-900/50'
-                            }`}
-                          >
-                            {/* Image Thumbnail with Upload overlay */}
-                            <td className="p-3" onClick={() => setPreviewingAd(ad)}>
-                              <div className="relative group/thumb w-24 h-14 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm bg-slate-950">
-                                <img 
-                                  src={ad.imageUrl} 
-                                  alt={ad.title} 
-                                  className="w-full h-full object-cover group-hover/thumb:scale-105 transition duration-300" 
-                                />
-                                <div className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover/thumb:opacity-100 flex flex-col items-center justify-center text-white text-[9px] font-extrabold transition">
-                                  <Eye className="w-3.5 h-3.5 mb-0.5 text-amber-400" />
-                                  <span>Xem th·ª≠</span>
-                                </div>
-                              </div>
-                            </td>
-
-                            {/* Title and Safe Link */}
-                            <td className="p-3 font-bold text-slate-900 dark:text-white max-w-xs">
-                              <p 
-                                onClick={() => setPreviewingAd(ad)}
-                                className="line-clamp-2 hover:text-amber-500 transition cursor-pointer" 
-                                title={ad.title}
-                              >
-                                {ad.title}
-                              </p>
-                              <div className="flex items-center gap-2 mt-1">
-                                <a 
-                                  href={safeUrl} 
-                                  target="_blank" 
-                                  rel="noreferrer" 
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleTestAdClick(ad);
-                                  }}
-                                  className="text-[10px] text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 font-mono truncate max-w-[200px]"
-                                  title="M·ªü li√™n k·∫øt tr·ª±c ti·∫øp v√† ghi nh·∫≠n click"
-                                >
-                                  {ad.linkUrl || 'Ch∆∞a ƒë·∫∑t link'} <ExternalLink className="w-3 h-3 shrink-0" />
-                                </a>
-                              </div>
-                            </td>
-
-                            {/* Position */}
-                            <td className="p-3 font-extrabold text-amber-600 dark:text-amber-400">
-                              {ad.position === 'header_top' && 'üìå Top Header'}
-                              {ad.position === 'float_right_pc' && 'üìå C·∫°nh Ph·∫£i PC (Sticky ‚ùå)'}
-                              {ad.position === 'float_left_pc' && 'üìå C·∫°nh Tr√°i PC (Sticky ‚ùå)'}
-                              {ad.position === 'home_middle' && 'üìå Gi·ªØa Trang Ch·ªß'}
-                              {ad.position === 'home_sidebar' && 'üìå Sidebar C·ªôt Ph·∫£i'}
-                              {ad.position === 'property_detail' && 'üìå Chi Ti·∫øt BƒêS'}
-                              {ad.position === 'popup_modal' && 'üìå Pop-Up N·ªïi (Modal ‚ùå)'}
-                              {!['header_top','float_right_pc','float_left_pc','home_middle','home_sidebar','property_detail','popup_modal'].includes(ad.position) && ad.position}
-                            </td>
-
-                            {/* Clicks */}
-                            <td className="p-3 font-black text-emerald-600">
-                              {(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} l∆∞·ª£t
-                            </td>
-
-                            {/* Status */}
-                            <td className="p-3">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleToggleAdActive(ad.id);
-                                }}
-                                className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition cursor-pointer ${
-                                  (ad.active ?? ad.isActive ?? true)
-                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 hover:bg-emerald-200'
-                                    : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400 hover:bg-slate-300'
-                                }`}
-                              >
-                                {(ad.active ?? ad.isActive ?? true) ? '‚úì ƒêang Hi·ªán' : '‚úï ƒê√£ ·∫®n'}
-                              </button>
-                            </td>
-
-                            {/* Actions */}
-                            <td className="p-3 text-right">
-                              <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-                                {/* Quick Test / Live Preview */}
-                                <button
-                                  type="button"
-                                  onClick={() => setPreviewingAd(ad)}
-                                  className="px-2.5 py-1.5 bg-slate-100 hover:bg-amber-100 dark:bg-slate-700 dark:hover:bg-amber-950 text-slate-700 hover:text-amber-700 dark:text-slate-300 font-bold rounded-xl text-xs flex items-center gap-1 transition"
-                                  title="Xem th·ª≠ banner v√† test click"
-                                >
-                                  <Eye className="w-3.5 h-3.5" />
-                                  <span>Xem th·ª≠</span>
-                                </button>
-
-                                {/* Edit */}
-                                <button
-                                  type="button"
-                                  onClick={() => handleStartEditAd(ad)}
-                                  className={`px-3 py-1.5 rounded-xl font-black text-xs flex items-center gap-1 transition shadow-sm border ${
-                                    isBeingEdited
-                                      ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400'
-                                      : 'bg-amber-500 hover:bg-amber-600 text-slate-950 border-amber-400'
-                                  }`}
-                                  title="Ch·ªânh s·ª≠a banner n√†y"
-                                >
-                                  <Edit3 className="w-3.5 h-3.5" />
-                                  <span>{isBeingEdited ? 'ƒêang S·ª≠a' : 'S·ª≠a'}</span>
-                                </button>
-
-                                {/* Direct Photo Upload */}
-                                <label 
-                                  className="p-1.5 text-slate-500 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition cursor-pointer"
-                                  title="ƒê·ªïi ·∫£nh banner t·ª´ m√°y t√≠nh"
-                                >
-                                  <Upload className="w-4 h-4" />
-                                  <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e, ad.id)} />
-                                </label>
-
-                                {/* Delete */}
-                                <button
-                                  type="button"
-                                  onClick={() => handleDeleteAd(ad.id)}
-                                  className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-xl transition"
-                                  title="X√≥a qu·∫£ng c√°o"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Interactive Live Preview & Test-Click Modal */}
-          {previewingAd && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-              <div className="relative bg-white dark:bg-slate-900 border-2 border-amber-500/80 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 text-slate-900 dark:text-white">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase">
-                      XEM TH·ª¨ & TEST CLICK BANNER
-                    </span>
-                    <span className="text-xs text-slate-400 font-bold">
-                      {previewingAd.position}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewingAd(null)}
-                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition"
-                  >
-                    <X className="w-5 h-5 text-slate-400 hover:text-rose-500" />
-                  </button>
-                </div>
-
-                {/* Banner Render Simulator */}
-                <div className="bg-slate-950 rounded-2xl p-3 border border-slate-800 space-y-2">
-                  <div className="relative aspect-16/10 rounded-xl overflow-hidden bg-slate-900">
-                    <img
-                      src={previewingAd.imageUrl}
-                      alt={previewingAd.title}
-                      className="w-full h-full object-cover"
-                    />
-                    {previewingAd.badgeText && (
-                      <span className="absolute top-2 left-2 px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[9px] uppercase tracking-wider rounded shadow">
-                        {previewingAd.badgeText}
-                      </span>
-                    )}
-                  </div>
-                  <h4 className="text-sm font-black text-amber-400 leading-snug">
-                    {previewingAd.title}
-                  </h4>
-                  <p className="text-[11px] text-slate-400 font-mono break-all">
-                    Link ƒë√≠ch: {previewingAd.linkUrl || 'Ch∆∞a ƒë·∫∑t link'}
-                  </p>
-                </div>
-
-                {/* Test Actions */}
-                <div className="space-y-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleTestAdClick(previewingAd);
-                      setPreviewingAd(null);
-                    }}
-                    className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-emerald-500 hover:brightness-110 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>üöÄ B·∫§M TH·ª¨ CLICK BANNER (TEST CLICK & M·ªû LINK)</span>
-                  </button>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const adToEdit = previewingAd;
-                        setPreviewingAd(null);
-                        handleStartEditAd(adToEdit);
-                      }}
-                      className="py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5"
-                    >
-                      <Edit3 className="w-4 h-4 text-amber-500" />
-                      <span>S·ª≠a Banner N√†y</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPreviewingAd(null)}
-                      className="py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs transition"
-                    >
-                      ƒê√≥ng L·∫°i
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Tab 1: Properties Table */}
-      {activeTab === 'properties' && (
-        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 space-y-4 shadow-xl">
-          {/* Header & Title */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-700/60">
-            <div>
-              <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <span>üè¢</span> QU·∫¢N L√ù T·∫§T C·∫¢ B·∫§T ƒê·ªòNG S·∫¢N ({properties.length} CƒÇN)
-              </h3>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                T·ª± ƒë·ªông h·∫øt h·∫°n hi·ªÉn th·ªã sau 15‚Äì25 ng√†y. D·ªØ li·ªáu Ng∆∞·ªùi ƒëƒÉng & Chi ti·∫øt cƒÉn ƒë∆∞·ª£c b·∫£o l∆∞u ƒë·∫ßy ƒë·ªß trong Kho L∆∞u Tr·ªØ.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 flex-wrap">
-              {/* Density View Switcher */}
-              <div className="bg-slate-100 dark:bg-slate-700/60 p-0.5 rounded-xl flex items-center gap-0.5 text-[11px] font-bold">
-                <button
-                  onClick={() => setAdminViewMode('icon_compact')}
-                  className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
-                    adminViewMode === 'icon_compact'
-                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                  title="Ch·∫ø ƒë·ªô bi·ªÉu t∆∞·ª£ng thu g·ªçn"
-                >
-                  <span>‚ö° Icon Thu G·ªçn</span>
-                </button>
-                <button
-                  onClick={() => setAdminViewMode('detailed')}
-                  className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
-                    adminViewMode === 'detailed'
-                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                  title="Ch·∫ø ƒë·ªô chi ti·∫øt ƒë·∫ßy ƒë·ªß"
-                >
-                  <span>üìã Chi Ti·∫øt</span>
-                </button>
-              </div>
-
-              <button
-                onClick={() => {
-                  const currentFiltered = properties.filter((p) => {
-                    const expiryInfo = getPropertyExpiryInfo(p);
-                    if (propertySubFilter === 'sale') return p.type === 'sale' || (p as any).category === 'ban';
-                    if (propertySubFilter === 'rent') return p.type === 'rent' || (p as any).category === 'cho-thue';
-                    if (propertySubFilter === 'pushed') return !!p.pushedAt;
-                    if (propertySubFilter === 'expiring') return !expiryInfo.isExpired && expiryInfo.daysRemaining <= 5;
-                    if (propertySubFilter === 'archived') return expiryInfo.isExpired || p.status === 'sold';
-                    if (propertySubFilter === 'pending') return (!p.approved && p.status !== 'approved' && p.status !== 'rejected');
-                    return true;
-                  }).slice(0, 150);
-                  toggleExpandAllAdminProps(currentFiltered);
-                }}
-                className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold text-[11px] rounded-xl transition cursor-pointer"
-                title="M·ªü r·ªông ho·∫∑c thu g·ªçn t·∫•t c·∫£ d√≤ng"
-              >
-                M·ªü r·ªông / Thu g·ªçn ‚ñæ
-              </button>
-
-              <button
-                onClick={() => setIsAddingProperty(true)}
-                className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-[11px] shrink-0 transition flex items-center gap-1.5 shadow-md border border-emerald-400/40 cursor-pointer"
-                title="Th√™m b√†i ƒëƒÉng BƒêS m·ªõi v√† t·∫£i ·∫£nh l√™n Supabase Storage"
-              >
-                <PlusCircle className="w-4 h-4" />
-                <span>+ ƒêƒÇNG TIN BƒêS M·ªöI</span>
-              </button>
-              <button
-                onClick={handleSeed1000Click}
-                className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-extrabold rounded-xl text-[11px] shrink-0 transition flex items-center gap-1"
-              >
-                <span>‚ú®</span> + 1,000 Tin Test
-              </button>
-            </div>
-          </div>
-
-          {/* Sub-Filters Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-bold scrollbar-none">
-            <button
-              onClick={() => setPropertySubFilter('all')}
-              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 ${
-                propertySubFilter === 'all'
-                  ? 'bg-slate-900 text-white dark:bg-emerald-500 dark:text-slate-950 shadow'
-                  : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-              }`}
-            >
-              T·∫•t C·∫£ ({properties.length})
-            </button>
-
-            <button
-              onClick={() => setPropertySubFilter('sale')}
-              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
-                propertySubFilter === 'sale'
-                  ? 'bg-emerald-600 text-white shadow'
-                  : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100'
-              }`}
-            >
-              üè† B√°n ({saleProperties.length})
-            </button>
-
-            <button
-              onClick={() => setPropertySubFilter('rent')}
-              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
-                propertySubFilter === 'rent'
-                  ? 'bg-teal-600 text-white shadow'
-                  : 'bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100'
-              }`}
-            >
-              üîë Thu√™ ({rentProperties.length})
-            </button>
-
-            <button
-              onClick={() => setPropertySubFilter('pushed')}
-              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
-                propertySubFilter === 'pushed'
-                  ? 'bg-blue-600 text-white shadow'
-                  : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100'
-              }`}
-            >
-              ‚ö° Tin N·ªïi B·∫≠t ({pushedProperties.length})
-            </button>
-
-            <button
-              onClick={() => setPropertySubFilter('expiring')}
-              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
-                propertySubFilter === 'expiring'
-                  ? 'bg-amber-500 text-slate-950 font-black shadow'
-                  : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100'
-              }`}
-            >
-              ‚è∞ S·∫Øp H·∫øt H·∫°n ({expiringSoonProperties.length})
-            </button>
-
-            <button
-              onClick={() => setPropertySubFilter('archived')}
-              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
-                propertySubFilter === 'archived'
-                  ? 'bg-purple-700 text-white shadow'
-                  : 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 hover:bg-purple-100'
-              }`}
-            >
-              üìÅ Tin ƒê√£ ƒê√≥ng ({archivedProperties.length})
-            </button>
-
-            <button
-              onClick={() => setPropertySubFilter('pending')}
-              className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 flex items-center gap-1 ${
-                propertySubFilter === 'pending'
-                  ? 'bg-rose-600 text-white shadow'
-                  : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100'
-              }`}
-            >
-              ‚è≥ Ch·ªù Ph√™ Duy·ªát ({pendingProperties.length})
-            </button>
-          </div>
-
-          {/* Properties Mobile Compact Icon List (< md) */}
-          <div className="block md:hidden space-y-2 max-h-[660px] overflow-y-auto pr-0.5">
-            {properties
-              .filter((p) => {
-                const expiryInfo = getPropertyExpiryInfo(p);
-                if (propertySubFilter === 'sale') return p.type === 'sale' || (p as any).category === 'ban';
-                if (propertySubFilter === 'rent') return p.type === 'rent' || (p as any).category === 'cho-thue';
-                if (propertySubFilter === 'pushed') return !!p.pushedAt;
-                if (propertySubFilter === 'expiring') return !expiryInfo.isExpired && expiryInfo.daysRemaining <= 5;
-                if (propertySubFilter === 'archived') return expiryInfo.isExpired || p.status === 'sold';
-                if (propertySubFilter === 'pending') return (!p.approved && p.status !== 'approved' && p.status !== 'rejected');
-                return true;
+        <AdminAdsManager
+          onRefreshData={() => {
+            if (onRefreshData) onRefreshData();
+            fetch('/api/ads')
+              .then(res => res.json())
+              .then(data => {
+                if (Array.isArray(data)) setAdsList(data);
               })
-              .slice(0, 150)
-              .map((p) => {
-                const expiryInfo = getPropertyExpiryInfo(p);
-                const sellerPhoneFormatted = p.sellerPhone || 'Ch∆∞a c√≥ s·ªë li√™n h·ªá';
-                const sellerNameFormatted = p.sellerName || 'Ch√≠nh Ch·ªß / Chuy√™n Vi√™n BƒêS';
-                const isApproved = p.status === 'approved' || p.approved || p.approvalStatus === 'approved';
-                const isRejected = p.status === 'rejected' || p.approvalStatus === 'rejected';
-                const isExpanded = adminViewMode === 'detailed' || Boolean(expandedAdminPropIds[p.id]);
-
-                return (
-                  <div
-                    key={`mob-${p.id}`}
-                    className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-2.5 shadow-xs transition hover:border-emerald-500/40"
-                  >
-                    {/* Compact Top Row: Thumbnail + Core Specs + Price */}
-                    <div
-                      onClick={() => toggleExpandAdminProp(p.id)}
-                      className="flex items-start gap-2.5 cursor-pointer"
-                    >
-                      <div className="relative shrink-0">
-                        <img
-                          src={p.images[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
-                          alt={p.title}
-                          className="w-14 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700"
-                        />
-                        <span className="absolute bottom-0 right-0 px-1 py-0.2 bg-slate-950/80 text-white text-[8px] font-bold rounded">
-                          {p.images?.length || 1}üì∑
-                        </span>
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="font-extrabold text-[11px] text-slate-900 dark:text-white truncate">
-                            {p.title}
-                          </span>
-                          <span className="font-black text-xs text-emerald-600 dark:text-emerald-400 shrink-0 font-mono">
-                            {p.priceDisplay}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 text-[9px] text-slate-500 dark:text-slate-400 mt-0.5 flex-wrap">
-                          <span className="text-emerald-600 dark:text-emerald-400 font-bold uppercase">
-                            üìç {p.project}
-                          </span>
-                          <span>‚Ä¢</span>
-                          <span className="font-mono">üìê {p.area}m¬≤</span>
-                          {p.bedrooms && (
-                            <>
-                              <span>‚Ä¢</span>
-                              <span>üõèÔ∏è {p.bedrooms}PN</span>
-                            </>
-                          )}
-                          <span>‚Ä¢</span>
-                          <span>{p.type === 'sale' ? 'üè† B√°n' : 'üîë Thu√™'}</span>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-1 mt-1 text-[10px]">
-                          <span className="text-slate-600 dark:text-slate-300 truncate font-semibold">
-                            üë§ {sellerNameFormatted}
-                          </span>
-                          <span className={`text-[8px] font-black px-1.5 py-0.2 rounded-full shrink-0 ${
-                            isApproved
-                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                              : isRejected
-                              ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
-                              : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                          }`}>
-                            {isApproved ? 'üü¢ ƒê√£ duy·ªát' : isRejected ? 'üî¥ T·ª´ ch·ªëi' : 'üü° Ch·ªù duy·ªát'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Quick Mobile Action Bar */}
-                    <div className="flex items-center justify-between gap-1 pt-2 mt-2 border-t border-slate-100 dark:border-slate-800 text-[10px]">
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handlePushPropertyNow(p)}
-                          className="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg text-[9px] flex items-center gap-0.5 cursor-pointer shadow-xs"
-                          title="ƒê·∫©y tin l√™n ƒë·∫ßu (+20 ng√†y)"
-                        >
-                          <Zap className="w-2.5 h-2.5 fill-slate-950" />
-                          <span>ƒê·∫©y Tin</span>
-                        </button>
-                        <a
-                          href={`tel:${sellerPhoneFormatted.replace(/\D/g, '')}`}
-                          className="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold rounded-lg text-[9px] flex items-center gap-0.5"
-                        >
-                          <Phone className="w-2.5 h-2.5" />
-                          <span>G·ªçi ƒêi·ªán</span>
-                        </a>
-                        <a
-                          href={`https://zalo.me/${sellerPhoneFormatted.replace(/\D/g, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="px-2 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold rounded-lg text-[9px] flex items-center gap-0.5"
-                        >
-                          <span>Nh·∫Øn Zalo</span>
-                        </a>
-                      </div>
-
-                      <div className="flex items-center gap-1">
-                        {!isApproved && (
-                          <button
-                            onClick={() => onApproveProperty(p.id)}
-                            className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg text-[9px] flex items-center gap-0.5 cursor-pointer shadow-xs"
-                          >
-                            <Check className="w-2.5 h-2.5" /> Duy·ªát
-                          </button>
-                        )}
-                        {!isRejected && (
-                          <button
-                            onClick={() => handleRejectProperty(p)}
-                            className="px-1.5 py-1 bg-rose-600 text-white font-bold rounded-lg text-[9px] cursor-pointer"
-                          >
-                            ‚úï
-                          </button>
-                        )}
-                        <button
-                          onClick={() => setEditingProperty(p)}
-                          className="p-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg"
-                        >
-                          <Edit3 className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={() => toggleExpandAdminProp(p.id)}
-                          className="p-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg"
-                        >
-                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Expandable Details for Mobile */}
-                    {isExpanded && (
-                      <div className="pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-800 space-y-2 text-[10px] animate-in fade-in duration-150">
-                        {p.images && p.images.length > 0 && (
-                          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                            {p.images.map((imgUrl, idx) => (
-                              <img
-                                key={idx}
-                                src={imgUrl}
-                                alt="CƒÉn h·ªô"
-                                className="w-20 h-14 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shrink-0"
-                              />
-                            ))}
-                          </div>
-                        )}
-                        <div className="grid grid-cols-2 gap-1.5 text-[9px] bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
-                          <div>üìç V·ªã tr√≠: <strong>{p.address || p.location || p.project}</strong></div>
-                          <div>üß≠ H∆∞·ªõng: <strong>{p.direction || 'ƒê√¥ng Nam'}</strong></div>
-                          <div>üìú Ph√°p l√Ω: <strong>{p.legalStatus || 'S·ªï ƒë·ªè'}</strong></div>
-                          <div>üõãÔ∏è N·ªôi th·∫•t: <strong>{p.furniture || 'ƒê·∫ßy ƒë·ªß'}</strong></div>
-                        </div>
-                        {p.description && (
-                          <p className="text-[10px] text-slate-600 dark:text-slate-400 line-clamp-3 bg-slate-50 dark:bg-slate-950 p-2 rounded-xl">
-                            {p.description}
-                          </p>
-                        )}
-                        <div className="flex items-center justify-between gap-1 pt-1">
-                          <button
-                            onClick={() => setSelectedSellerDetail(p)}
-                            className="px-2.5 py-1 bg-blue-600 text-white font-bold rounded-lg text-[9px] flex items-center gap-1"
-                          >
-                            <Eye className="w-3 h-3" /> Xem Th√¥ng Tin Li√™n H·ªá
-                          </button>
-                          <button
-                            onClick={() => onDeleteProperty(p.id)}
-                            className="px-2 py-1 bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 font-bold rounded-lg text-[9px] flex items-center gap-0.5"
-                          >
-                            <Trash2 className="w-3 h-3" /> X√≥a
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-          </div>
-
-          {/* Properties Desktop Full Data Table (>= md) */}
-          <div className="hidden md:block overflow-x-auto max-h-[680px] overflow-y-auto rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <table className="w-full text-xs text-left border-collapse">
-              <thead className="sticky top-0 bg-slate-100 dark:bg-slate-900 z-10 shadow-xs">
-                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
-                  <th className="p-2.5 w-14">·∫¢nh</th>
-                  <th className="p-2.5 min-w-[220px]">B·∫•t ƒê·ªông S·∫£n & D·ª± √Ån</th>
-                  <th className="p-2.5 min-w-[140px]">Ng∆∞·ªùi ƒêƒÉng</th>
-                  <th className="p-2.5 w-28">Gi√° & Lo·∫°i</th>
-                  <th className="p-2.5 w-28">Tr·∫°ng Th√°i</th>
-                  <th className="p-2.5 w-28">Th·ªùi H·∫°n</th>
-                  <th className="p-2.5 text-center min-w-[260px]">Thao T√°c</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {properties
-                  .filter((p) => {
-                    const expiryInfo = getPropertyExpiryInfo(p);
-                    if (propertySubFilter === 'sale') return p.type === 'sale' || (p as any).category === 'ban';
-                    if (propertySubFilter === 'rent') return p.type === 'rent' || (p as any).category === 'cho-thue';
-                    if (propertySubFilter === 'pushed') return !!p.pushedAt;
-                    if (propertySubFilter === 'expiring') return !expiryInfo.isExpired && expiryInfo.daysRemaining <= 5;
-                    if (propertySubFilter === 'archived') return expiryInfo.isExpired || p.status === 'sold';
-                    if (propertySubFilter === 'pending') return (!p.approved && p.status !== 'approved' && p.status !== 'rejected');
-                    return true;
-                  })
-                  .slice(0, 150)
-                  .map((p) => {
-                    const expiryInfo = getPropertyExpiryInfo(p);
-                    const sellerPhoneFormatted = p.sellerPhone || 'Ch∆∞a c·∫≠p nh·∫≠t SƒêT';
-                    const sellerNameFormatted = p.sellerName || 'Ch·ªß H·ªô / Sale BƒêS';
-                    const isApproved = p.status === 'approved' || p.approved || p.approvalStatus === 'approved';
-                    const isRejected = p.status === 'rejected' || p.approvalStatus === 'rejected';
-                    const isExpanded = adminViewMode === 'detailed' || Boolean(expandedAdminPropIds[p.id]);
-
-                    return (
-                      <React.Fragment key={p.id}>
-                        <tr className="hover:bg-slate-50/90 dark:hover:bg-slate-900/60 transition text-xs">
-                          {/* 1. Thumbnail */}
-                          <td className="p-2">
-                            <div 
-                              onClick={() => toggleExpandAdminProp(p.id)}
-                              className="relative cursor-pointer group"
-                              title="B·∫•m ƒë·ªÉ xem album ·∫£nh"
-                            >
-                              <img
-                                src={p.images[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
-                                alt={p.title}
-                                className="w-12 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:opacity-85 transition"
-                              />
-                              <span className="absolute bottom-0.5 right-0.5 px-1 py-0.2 bg-slate-950/80 text-white text-[7px] font-bold rounded">
-                                {p.images?.length || 1}üì∑
-                              </span>
-                            </div>
-                          </td>
-
-                          {/* 2. Title & Specs */}
-                          <td className="p-2 max-w-xs">
-                            <button
-                              onClick={() => toggleExpandAdminProp(p.id)}
-                              className="font-bold text-slate-900 dark:text-white line-clamp-1 text-left hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer text-xs"
-                              title={p.title}
-                            >
-                              {p.title}
-                            </button>
-                            <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                              <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-extrabold uppercase">
-                                üìç {p.project}
-                              </span>
-                              <span className="text-slate-300 dark:text-slate-600">‚Ä¢</span>
-                              <span className="text-[9px] text-slate-500 font-medium font-mono">üìê {p.area} m¬≤</span>
-                              {p.bedrooms && (
-                                <>
-                                  <span className="text-slate-300 dark:text-slate-600">‚Ä¢</span>
-                                  <span className="text-[9px] text-slate-500 font-medium">üõèÔ∏è {p.bedrooms}PN</span>
-                                </>
-                              )}
-                            </div>
-                          </td>
-
-                          {/* 3. Poster Info */}
-                          <td className="p-2">
-                            <div className="space-y-0.5 text-[11px]">
-                              <div className="flex items-center gap-1">
-                                {p.sellerRole === 'owner' ? (
-                                  <span className="px-1.5 py-0.5 bg-amber-500/15 text-amber-700 dark:text-amber-400 font-bold rounded text-[9px]">
-                                    üè† Ch·ªß Nh√†
-                                  </span>
-                                ) : (
-                                  <span className="px-1.5 py-0.5 bg-teal-500/15 text-teal-700 dark:text-teal-400 font-bold rounded text-[9px]">
-                                    üíº M√¥i Gi·ªõi
-                                  </span>
-                                )}
-                              </div>
-                              <span className="font-bold text-slate-800 dark:text-slate-200 block text-[11px] truncate max-w-[130px]" title={sellerNameFormatted}>
-                                {sellerNameFormatted}
-                              </span>
-                              <a
-                                href={`https://zalo.me/${sellerPhoneFormatted.replace(/\D/g, '')}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-0.5"
-                              >
-                                üìû {sellerPhoneFormatted}
-                              </a>
-                            </div>
-                          </td>
-
-                          {/* 4. Price & Type */}
-                          <td className="p-2">
-                            <span className="font-black text-emerald-600 dark:text-emerald-400 block text-xs font-mono">
-                              üí∞ {p.priceDisplay}
-                            </span>
-                            <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold inline-block mt-0.5 ${
-                              p.type === 'sale' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300'
-                            }`}>
-                              {p.type === 'sale' ? 'üè† B√ÅN' : 'üîë CHO THU√ä'}
-                            </span>
-                          </td>
-
-                          {/* 5. Status Badge */}
-                          <td className="p-2">
-                            <div className="space-y-1">
-                              <span className={`text-[9px] font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${
-                                isApproved
-                                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-500/30'
-                                  : isRejected
-                                  ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-500/30'
-                                  : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-500/30'
-                              }`}>
-                                {isApproved && 'üü¢ ƒêang hi·ªán'}
-                                {isRejected && 'üî¥ T·ª´ ch·ªëi'}
-                                {!isApproved && !isRejected && 'üü° Ch·ªù duy·ªát'}
-                              </span>
-                              {p.rejectionReason && (
-                                <div className="text-[9px] text-rose-600 dark:text-rose-400 font-medium line-clamp-1 max-w-[110px]" title={p.rejectionReason}>
-                                  {p.rejectionReason}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-
-                          {/* 6. Expiry / Archive Info */}
-                          <td className="p-2">
-                            <div className="space-y-0.5 text-[10px]">
-                              <div className="text-slate-500 dark:text-slate-400 text-[9px]">
-                                ƒêƒÉng: <span className="font-semibold text-slate-700 dark:text-slate-300">{expiryInfo.postDateFormatted}</span>
-                              </div>
-
-                              {expiryInfo.isExpired ? (
-                                <span className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-950/70 border border-purple-300 dark:border-purple-800 rounded text-purple-900 dark:text-purple-300 text-[9px] font-bold block">
-                                  üìÅ L∆∞u tr·ªØ: {expiryInfo.archiveDaysLeft}d
-                                </span>
-                              ) : expiryInfo.daysRemaining <= 5 ? (
-                                <span className="px-1.5 py-0.5 bg-amber-100 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-800 rounded text-amber-900 dark:text-amber-300 text-[9px] font-bold block">
-                                  ‚è∞ C√≤n {expiryInfo.daysRemaining} ng√†y
-                                </span>
-                              ) : (
-                                <span className="text-emerald-700 dark:text-emerald-400 text-[9px] font-bold block">
-                                  ‚ö° C√≤n <b>{expiryInfo.daysRemaining} ng√†y</b>
-                                </span>
-                              )}
-                            </div>
-                          </td>
-
-                          {/* 7. Action Icons Bar - Clean & Standardized */}
-                          <td className="p-2 text-center whitespace-nowrap">
-                            <div className="inline-flex items-center justify-center gap-1 bg-slate-50 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-                              {/* Up Tin Button */}
-                              <button
-                                type="button"
-                                onClick={() => handlePushPropertyNow(p)}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-amber-500/15 hover:bg-amber-500 text-amber-600 dark:text-amber-400 hover:text-slate-950 transition cursor-pointer"
-                                title="ƒê·∫©y tin l√™n ƒë·∫ßu & gia h·∫°n (+20 ng√†y)"
-                              >
-                                <Zap className="w-3.5 h-3.5 fill-current" />
-                              </button>
-
-                              {/* View Details Modal Button */}
-                              <button
-                                type="button"
-                                onClick={() => setSelectedSellerDetail(p)}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-blue-500/15 hover:bg-blue-600 text-blue-600 dark:text-blue-400 hover:text-white transition cursor-pointer"
-                                title="Xem chi ti·∫øt cƒÉn & SƒêT ch√≠nh ch·ªß"
-                              >
-                                <Eye className="w-3.5 h-3.5" />
-                              </button>
-
-                              {/* Edit Property */}
-                              <button
-                                type="button"
-                                onClick={() => setEditingProperty(p)}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-700/70 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition cursor-pointer"
-                                title="Ch·ªânh s·ª≠a n·ªôi dung & che m·ªù ·∫£nh"
-                              >
-                                <Edit3 className="w-3.5 h-3.5" />
-                              </button>
-
-                              {/* Share Button */}
-                              <button
-                                type="button"
-                                onClick={() => setSharingProperty(p)}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-sky-500/15 hover:bg-sky-500 text-sky-600 dark:text-sky-400 hover:text-white transition cursor-pointer"
-                                title="Chia s·∫ª tin l√™n Zalo, Facebook"
-                              >
-                                <Share2 className="w-3.5 h-3.5" />
-                              </button>
-
-                              {/* Approval Status Toggle Buttons */}
-                              {!isApproved ? (
-                                <button
-                                  type="button"
-                                  onClick={() => onApproveProperty(p.id)}
-                                  className="h-7 px-2 flex items-center gap-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] transition shadow-xs cursor-pointer"
-                                  title="Ph√™ duy·ªát tin ƒëƒÉng"
-                                >
-                                  <Check className="w-3 h-3" />
-                                  <span>Duy·ªát</span>
-                                </button>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => handleRejectProperty(p)}
-                                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-rose-500/15 hover:bg-rose-600 text-rose-600 dark:text-rose-400 hover:text-white transition cursor-pointer"
-                                  title="T·ª´ ch·ªëi / G·ª° tin"
-                                >
-                                  <X className="w-3.5 h-3.5" />
-                                </button>
-                              )}
-
-                              {/* Pending button if approved or rejected */}
-                              {(isApproved || isRejected) && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleUnapproveProperty(p)}
-                                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-amber-500/15 hover:bg-amber-500 text-amber-600 dark:text-amber-400 hover:text-slate-950 transition cursor-pointer"
-                                  title="ƒê∆∞a v·ªÅ tr·∫°ng th√°i Ch·ªù Duy·ªát"
-                                >
-                                  <Clock className="w-3.5 h-3.5" />
-                                </button>
-                              )}
-
-                              {/* Archive / Restore Button */}
-                              <button
-                                type="button"
-                                onClick={() => handleToggleArchiveProperty(p)}
-                                className={`w-7 h-7 flex items-center justify-center rounded-lg transition cursor-pointer ${
-                                  expiryInfo.isExpired
-                                    ? 'bg-emerald-500/15 hover:bg-emerald-600 text-emerald-600 dark:text-emerald-400 hover:text-white'
-                                    : 'bg-purple-500/15 hover:bg-purple-600 text-purple-600 dark:text-purple-400 hover:text-white'
-                                }`}
-                                title={expiryInfo.isExpired ? 'Ph·ª•c h·ªìi hi·ªÉn th·ªã tin' : 'Chuy·ªÉn v√†o Kho L∆∞u Tr·ªØ'}
-                              >
-                                {expiryInfo.isExpired ? <RotateCcw className="w-3.5 h-3.5" /> : <Archive className="w-3.5 h-3.5" />}
-                              </button>
-
-                              {/* Delete Property */}
-                              <button
-                                type="button"
-                                onClick={() => onDeleteProperty(p.id)}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-rose-500/15 hover:bg-rose-600 text-rose-600 dark:text-rose-400 hover:text-white transition cursor-pointer"
-                                title="X√≥a vƒ©nh vi·ªÖn"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-
-                              {/* Expand / Collapse Button */}
-                              <button
-                                type="button"
-                                onClick={() => toggleExpandAdminProp(p.id)}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition cursor-pointer"
-                                title={isExpanded ? 'Thu g·ªçn chi ti·∫øt' : 'M·ªü r·ªông album ·∫£nh & th√¥ng s·ªë'}
-                              >
-                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-
-                        {/* EXPANDED ACCORDION ROW */}
-                        {isExpanded && (
-                          <tr className="bg-slate-50/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-700">
-                            <td colSpan={7} className="p-3 sm:p-4">
-                              <div className="space-y-3 text-xs animate-in fade-in duration-150">
-                                {/* Photo Gallery */}
-                                {p.images && p.images.length > 0 && (
-                                  <div>
-                                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1.5">
-                                      üì∑ To√†n B·ªô Album ·∫¢nh CƒÉn H·ªô / Bi·ªát Th·ª± ({p.images.length} ·∫£nh):
-                                    </span>
-                                    <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                                      {p.images.map((imgUrl, imgIndex) => (
-                                        <img
-                                          key={imgIndex}
-                                          src={imgUrl}
-                                          alt={`${p.title} - ·∫£nh ${imgIndex + 1}`}
-                                          className="w-24 h-16 sm:w-28 sm:h-20 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs"
-                                        />
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Technical Specs Grid */}
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-                                  <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <span className="text-slate-400 block text-[10px]">D·ª± √Ån / V·ªã Tr√≠:</span>
-                                    <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
-                                      üìç {p.project} ‚Ä¢ {p.address || p.location || 'Vinhomes'}
-                                    </span>
-                                  </div>
-
-                                  <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <span className="text-slate-400 block text-[10px]">C∆° C·∫•u / Ph√≤ng:</span>
-                                    <span className="font-bold text-slate-800 dark:text-slate-200 block">
-                                      üõèÔ∏è {p.bedrooms || 1} PN ‚Ä¢ üöø {p.bathrooms || 1} WC ‚Ä¢ üìê {p.area} m¬≤
-                                    </span>
-                                  </div>
-
-                                  <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <span className="text-slate-400 block text-[10px]">H∆∞·ªõng / T·∫ßng:</span>
-                                    <span className="font-bold text-slate-800 dark:text-slate-200 block">
-                                      üß≠ {p.direction || 'ƒê√¥ng Nam'} {p.floor ? `‚Ä¢ T·∫ßng ${p.floor}` : ''}
-                                    </span>
-                                  </div>
-
-                                  <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <span className="text-slate-400 block text-[10px]">Ph√°p L√Ω & N·ªôi Th·∫•t:</span>
-                                    <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
-                                      üìú {p.legalStatus || 'S·ªï ƒë·ªè l√¢u d√†i'} ‚Ä¢ {p.furniture || 'ƒê·∫ßy ƒë·ªß'}
-                                    </span>
-                                  </div>
-                                </div>
-
-                                {/* Full Description */}
-                                {p.description && (
-                                  <div className="bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
-                                      üìù N·ªôi Dung B√†i ƒêƒÉng ƒê·∫ßy ƒê·ªß:
-                                    </span>
-                                    <p className="text-slate-700 dark:text-slate-300 text-xs whitespace-pre-line leading-relaxed">
-                                      {p.description}
-                                    </p>
-                                  </div>
-                                )}
-
-                                {/* Direct Actions bar inside accordion */}
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
-                                  <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                                    <span>üë§ Ng∆∞·ªùi ƒëƒÉng: <strong>{sellerNameFormatted}</strong></span>
-                                    <span>‚Ä¢</span>
-                                    <a
-                                      href={`tel:${sellerPhoneFormatted}`}
-                                      className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                                    >
-                                      üìû {sellerPhoneFormatted}
-                                    </a>
-                                  </div>
-
-                                  <div className="flex items-center gap-2">
-                                    <button
-                                      onClick={() => setSelectedSellerDetail(p)}
-                                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl flex items-center gap-1 shadow-xs"
-                                    >
-                                      <Eye className="w-3.5 h-3.5" />
-                                      <span>Xem SƒêT G·ªëc & CƒÉn H·ªô</span>
-                                    </button>
-
-                                    <button
-                                      onClick={() => setEditingProperty(p)}
-                                      className="px-2.5 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl flex items-center gap-1"
-                                    >
-                                      <Edit3 className="w-3.5 h-3.5" />
-                                      <span>S·ª≠a N·ªôi Dung & ·∫¢nh</span>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Tab: Projects Management */}
-      {activeTab === 'projects' && (
-        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 space-y-4 shadow-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
-                QU·∫¢N L√ù D·ª∞ √ÅN VINHOMES & S∆† ƒê·ªí QUY HO·∫†CH ({projects.length} D·ª∞ √ÅN)
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                C·∫≠p nh·∫≠t th√¥ng tin quy ho·∫°ch, b·∫£ng gi√° v√† s∆° ƒë·ªì masterplan c√°c d·ª± √°n.
-              </p>
-            </div>
-            <button
-              onClick={() => setIsAddingProject(true)}
-              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0 text-xs cursor-pointer"
-            >
-              <Plus className="w-4 h-4" /> Th√™m D·ª± √Ån M·ªõi
-            </button>
-          </div>
-
-          {/* Mobile & Tablet Compact Card List (< lg) */}
-          <div className="lg:hidden space-y-2.5">
-            {projects.map((proj) => {
-              const isExpanded = !!expandedProjectIds[proj.id];
-              return (
-                <div
-                  key={proj.id}
-                  className="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-2xs transition-all"
-                >
-                  {/* Top Compact Summary Row */}
-                  <div className="flex items-start gap-3">
-                    <div className="relative shrink-0">
-                      <img
-                        src={proj.image}
-                        alt={proj.title}
-                        className="w-16 h-16 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs"
-                      />
-                      {proj.masterplanUrl && (
-                        <span className="absolute -bottom-1 -right-1 px-1.5 py-0.5 bg-emerald-700 text-white text-[8px] font-bold rounded-md shadow-xs">
-                          S∆° ƒë·ªì
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1">
-                        <h4 className="font-black text-xs text-slate-900 dark:text-white truncate">
-                          {proj.title}
-                        </h4>
-                      </div>
-
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1 mt-0.5">
-                        <MapPin className="w-3 h-3 text-emerald-500 shrink-0" />
-                        <span className="truncate">{proj.location}</span>
-                      </p>
-
-                      <div className="flex items-center gap-2 text-[10px] mt-1">
-                        <span className="font-extrabold text-amber-600 dark:text-amber-400 font-mono">
-                          {proj.priceRange}
-                        </span>
-                        <span className="text-slate-300 dark:text-slate-700">‚Ä¢</span>
-                        <span className="text-emerald-600 dark:text-emerald-400 font-bold text-[9px]">
-                          {proj.areaSize}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Compact Quick Action Row */}
-                  <div className="flex items-center justify-between gap-2 pt-2.5 mt-2.5 border-t border-slate-200/80 dark:border-slate-800">
-                    <button
-                      type="button"
-                      onClick={() => setEditingProject(proj)}
-                      className="flex-1 py-1.5 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 shadow-2xs transition cursor-pointer"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                      <span>S·ª≠a & ƒê·ªïi ·∫¢nh</span>
-                    </button>
-
-                    <a
-                      href={`/du-an/${getProjectSlug(proj.id)}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="py-1.5 px-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 transition"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>Xem</span>
-                    </a>
-
-                    <button
-                      type="button"
-                      onClick={() => toggleExpandProject(proj.id)}
-                      className="py-1.5 px-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-[11px] flex items-center gap-1 transition cursor-pointer"
-                      title={isExpanded ? "Thu g·ªçn" : "Xem th√™m"}
-                    >
-                      {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                    </button>
-
-                    {onDeleteProject && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (confirm(`B·∫°n c√≥ ch·∫Øc ch·∫Øn mu·ªën x√≥a d·ª± √°n "${proj.title}"?`)) {
-                            onDeleteProject(proj.id);
-                          }
-                        }}
-                        className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-xl transition cursor-pointer"
-                        title="X√≥a d·ª± √°n"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Expandable Preview Details */}
-                  {isExpanded && (
-                    <div className="pt-2.5 mt-2.5 border-t border-slate-200 dark:border-slate-800 space-y-2 text-[11px] animate-in fade-in duration-150">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <span className="text-[9px] font-bold text-slate-400 block mb-1">·∫¢nh B√¨a D·ª± √Ån:</span>
-                          <img
-                            src={proj.image}
-                            alt="Banner"
-                            className="w-full h-20 object-cover rounded-lg border border-slate-200 dark:border-slate-700"
-                          />
-                        </div>
-                        <div>
-                          <span className="text-[9px] font-bold text-slate-400 block mb-1">S∆° ƒê·ªì Masterplan:</span>
-                          {proj.masterplanUrl ? (
-                            <img
-                              src={proj.masterplanUrl}
-                              alt="S∆° ƒë·ªì"
-                              className="w-full h-20 object-cover rounded-lg border border-slate-200 dark:border-slate-700"
-                            />
-                          ) : (
-                            <div className="w-full h-20 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-[9px] text-slate-400">
-                              Ch∆∞a c√≥ s∆° ƒë·ªì
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="bg-white dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px] flex items-center justify-between">
-                        <span className="text-slate-500">Quy m√¥: <strong>{proj.totalUnits}</strong></span>
-                        <span className="text-slate-500">Di·ªán t√≠ch: <strong>{proj.areaSize}</strong></span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Desktop Full Projects Table (>= lg) */}
-          <div className="hidden lg:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
-            <table className="w-full text-xs text-left border-collapse min-w-[760px]">
-              <thead className="bg-slate-100 dark:bg-slate-900">
-                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold uppercase text-[10px] tracking-wider">
-                  <th className="p-3">Banner / S∆° ƒë·ªì</th>
-                  <th className="p-3">D·ª± √°n & V·ªã tr√≠</th>
-                  <th className="p-3">Quy m√¥ & CƒÉn h·ªô</th>
-                  <th className="p-3">Kho·∫£ng gi√°</th>
-                  <th className="p-3 text-right">Thao t√°c</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {projects.map((proj) => (
-                  <tr key={proj.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
-                    <td className="p-3">
-                      <div className="flex gap-2">
-                        <img src={proj.image} alt={proj.title} className="w-14 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs" title="Banner ch√≠nh" />
-                        {proj.masterplanUrl && (
-                          <img src={proj.masterplanUrl} alt="S∆° ƒë·ªì" className="w-10 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs" title="S∆° ƒë·ªì quy ho·∫°ch" />
-                        )}
-                      </div>
-                    </td>
-                    <td className="p-3 max-w-xs">
-                      <span className="font-bold text-slate-900 dark:text-white block truncate">{proj.title}</span>
-                      <span className="text-[10px] text-slate-500 block truncate">{proj.location}</span>
-                    </td>
-                    <td className="p-3">
-                      <span className="font-bold text-emerald-600 block">{proj.areaSize}</span>
-                      <span className="text-[10px] text-slate-500">{proj.totalUnits}</span>
-                    </td>
-                    <td className="p-3 font-black text-amber-600 dark:text-amber-400 font-mono">
-                      {proj.priceRange}
-                    </td>
-                    <td className="p-3 text-right">
-                      <div className="inline-flex items-center gap-1.5">
-                        <button
-                          onClick={() => setEditingProject(proj)}
-                          className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[11px] cursor-pointer"
-                          title="S·ª≠a th√¥ng tin & Thay ·∫£nh"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" /> S·ª≠a
-                        </button>
-                        <a
-                          href={`/du-an/${getProjectSlug(proj.id)}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-[11px] flex items-center gap-1 transition"
-                        >
-                          <Eye className="w-3.5 h-3.5" /> Xem
-                        </a>
-                        {onDeleteProject && (
-                          <button
-                            onClick={() => onDeleteProject(proj.id)}
-                            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[11px] cursor-pointer"
-                            title="X√≥a d·ª± √°n n√†y"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Tab: News Articles Management */}
-      {activeTab === 'news' && (
-        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 space-y-4 shadow-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
-                QU·∫¢N L√ù B√ÄI VI·∫æT & TIN T·ª®C BƒêS CHU·∫®N SEO ({news.length} B√ÄI)
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Bi√™n t·∫≠p b√†i vi·∫øt tin t·ª©c, c·∫≠p nh·∫≠t th√¥ng tin d·ª± √°n v√† xu·∫•t b·∫£n b√†i vi·∫øt.
-              </p>
-            </div>
-            <button
-              onClick={() => setIsAddingNews(true)}
-              className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow transition cursor-pointer shrink-0"
-            >
-              <Plus className="w-4 h-4" /> Th√™m B√†i Vi·∫øt M·ªõi
-            </button>
-          </div>
-
-          {/* Mobile & Tablet Compact Card List (< lg) */}
-          <div className="lg:hidden space-y-2.5">
-            {news.map((item) => (
-              <div
-                key={item.id}
-                className="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-2xs space-y-2.5"
-              >
-                <div className="flex items-start gap-3">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-16 h-16 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0 shadow-2xs"
-                  />
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <h4 className="font-bold text-xs text-slate-900 dark:text-white line-clamp-2 leading-snug">
-                      {item.title}
-                    </h4>
-
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-extrabold rounded text-[9px]">
-                        {item.category.toUpperCase()}
-                      </span>
-                      {item.status === 'published' ? (
-                        <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 font-bold rounded text-[9px]">
-                          üü¢ ƒê√£ Public
-                        </span>
-                      ) : (
-                        <span className="px-1.5 py-0.5 bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-bold rounded text-[9px]">
-                          üü° Ch·ªù Duy·ªát
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/80 dark:border-slate-800">
-                  <span className="truncate">‚úçÔ∏è {item.author || 'Admin'} ‚Ä¢ {item.publishedAt || 'H√¥m nay'}</span>
-                </div>
-
-                <div className="flex items-center justify-between gap-1.5 pt-1">
-                  {item.status === 'published' ? (
-                    <button
-                      onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'draft' })}
-                      className="flex-1 py-1.5 px-2 bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 font-bold rounded-xl transition text-[10px] text-center cursor-pointer"
-                      title="Chuy·ªÉn v·ªÅ tr·∫°ng th√°i Ch·ªù Duy·ªát"
-                    >
-                      üü° Tr·∫£ Ch·ªù Duy·ªát
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'published' })}
-                      className="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl transition shadow-2xs text-[10px] text-center cursor-pointer"
-                      title="Ph√™ duy·ªát b√†i vi·∫øt v√† xu·∫•t b·∫£n public"
-                    >
-                      üü¢ Duy·ªát Public
-                    </button>
-                  )}
-
-                  <button
-                    onClick={() => setEditingNews(item)}
-                    className="py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition flex items-center gap-1 text-[10px] cursor-pointer"
-                    title="S·ª≠a b√†i & Thay ·∫£nh"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" /> S·ª≠a
-                  </button>
-
-                  {onDeleteNews && (
-                    <button
-                      onClick={() => onDeleteNews(item.id)}
-                      className="p-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-xl transition cursor-pointer"
-                      title="X√≥a b√†i vi·∫øt"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Desktop Full News Table (>= lg) */}
-          <div className="hidden lg:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
-            <table className="w-full text-xs text-left border-collapse min-w-[780px]">
-              <thead className="bg-slate-100 dark:bg-slate-900">
-                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold uppercase text-[10px] tracking-wider">
-                  <th className="p-3">·∫¢nh b√¨a</th>
-                  <th className="p-3">Ti√™u ƒë·ªÅ b√†i vi·∫øt</th>
-                  <th className="p-3">Chuy√™n m·ª•c</th>
-                  <th className="p-3">Tr·∫°ng Th√°i</th>
-                  <th className="p-3">T√°c gi·∫£</th>
-                  <th className="p-3 text-right">Thao t√°c</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {news.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
-                    <td className="p-3">
-                      <img src={item.image} alt={item.title} className="w-14 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs" />
-                    </td>
-                    <td className="p-3 max-w-sm">
-                      <span className="font-bold text-slate-900 dark:text-white block truncate">{item.title}</span>
-                      <span className="text-[10px] text-slate-500 block truncate">{item.summary}</span>
-                    </td>
-                    <td className="p-3">
-                      <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-md text-[10px]">
-                        {item.category.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="p-3">
-                      {item.status === 'published' ? (
-                        <span className="px-2 py-1 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-lg text-[10px] inline-flex items-center gap-1">
-                          üü¢ ƒê√£ Public
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-extrabold rounded-lg text-[10px] inline-flex items-center gap-1">
-                          üü° Ch·ªù Duy·ªát
-                        </span>
-                      )}
-                    </td>
-                    <td className="p-3 text-[11px] text-slate-500">
-                      <div>{item.author}</div>
-                      <div className="text-[10px] text-slate-400">{item.publishedAt}</div>
-                    </td>
-                    <td className="p-3 text-right">
-                      <div className="inline-flex items-center gap-1.5">
-                        {item.status === 'published' ? (
-                          <button
-                            onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'draft' })}
-                            className="px-2 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg transition text-[10px] cursor-pointer"
-                            title="Tr·∫£ v·ªÅ Ch·ªù Duy·ªát"
-                          >
-                            üü° Tr·∫£ Ch·ªù Duy·ªát
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'published' })}
-                            className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg transition shadow-2xs text-[10px] cursor-pointer"
-                            title="Ph√™ duy·ªát b√†i vi·∫øt"
-                          >
-                            üü¢ Duy·ªát Public
-                          </button>
-                        )}
-
-                        <button
-                          onClick={() => setEditingNews(item)}
-                          className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[10px] cursor-pointer"
-                          title="S·ª≠a b√†i"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" /> S·ª≠a
-                        </button>
-                        {onDeleteNews && (
-                          <button
-                            onClick={() => onDeleteNews(item.id)}
-                            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition cursor-pointer"
-                            title="X√≥a b√†i vi·∫øt"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2: Pricing Setup Form */}
-      {activeTab === 'pricing' && (
-        <form onSubmit={handleSavePricing} className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 space-y-6 shadow-xl">
-          <div>
-            <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-              ‚öôÔ∏è C·∫§U H√åNH B·∫¨T/T·∫ÆT THANH TO√ÅN & B·∫¢NG GI√Å UP TIN / VIETQR DONATE
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Admin thi·∫øt l·∫≠p B·∫≠t/T·∫Øt ch·∫ø ƒë·ªô thu ph√≠. Khi T·∫Øt thanh to√°n, h·ªá th·ªëng chuy·ªÉn sang ch·∫ø ƒë·ªô <strong>Donate Mi·ªÖn Ph√≠ t√πy t√¢m</strong> cho kh√°ch h√†ng.
-            </p>
-          </div>
-
-          {savedSuccess && (
-            <div className="p-4 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-bold rounded-2xl border border-emerald-300 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-              ƒê√£ l∆∞u thay ƒë·ªïi c·∫•u h√¨nh Thanh to√°n & VietQR Donate th√†nh c√¥ng!
-            </div>
-          )}
-
-          {/* ADMIN TOGGLE: PAYMENT VS DONATE MODE */}
-          <div className="bg-gradient-to-r from-amber-500/15 via-emerald-500/10 to-sky-500/15 p-5 rounded-2xl border-2 border-amber-500/40 space-y-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div>
-                <span className="bg-amber-500 text-slate-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                  C√ÄI ƒê·∫∂T C·ªîNG C∆† CH·∫æ B·∫¨T / T·∫ÆT THANH TO√ÅN
-                </span>
-                <h4 className="text-sm font-black text-slate-900 dark:text-white mt-1">
-                  Ch·∫ø ƒê·ªô Hi·ªán T·∫°i: {localConfig.paymentEnabled !== false ? 'üí≥ B·∫¨T THU PH√ç THEO B·∫¢NG GI√Å' : 'üéÅ T·∫ÆT THU PH√ç ‚Äî CHUY·ªÇN SANG DONATE T√ôY T√ÇM (MI·ªÑN PH√ç)'}
-                </h4>
-              </div>
-
-              <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                <button
-                  type="button"
-                  onClick={() => setLocalConfig({ ...localConfig, paymentEnabled: true, donateModeEnabled: false })}
-                  className={`px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
-                    localConfig.paymentEnabled !== false
-                      ? 'bg-emerald-600 text-white shadow'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  üí≥ B·∫≠t Thanh To√°n
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLocalConfig({ ...localConfig, paymentEnabled: false, donateModeEnabled: true })}
-                  className={`px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
-                    localConfig.paymentEnabled === false
-                      ? 'bg-amber-500 text-slate-950 shadow'
-                      : 'text-slate-500 hover:text-amber-500'
-                  }`}
-                >
-                  üéÅ T·∫Øt Thanh To√°n (B·∫≠t Donate)
-                </button>
-              </div>
-            </div>
-
-            {localConfig.paymentEnabled === false && (
-              <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-amber-500/30 space-y-3">
-                <label className="font-bold text-xs text-slate-800 dark:text-slate-200 block">
-                  L·ªùi nh·∫Øn Donate hi·ªÉn th·ªã khi kh√°ch b·∫•m Up-Tin / N·∫°p Ph√≠:
-                </label>
-                <textarea
-                  rows={2}
-                  value={localConfig.donateMessage || ''}
-                  onChange={(e) => setLocalConfig({ ...localConfig, donateMessage: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-xs font-medium text-slate-900 dark:text-slate-100"
-                  placeholder="Nh·∫≠p th√¥ng ƒëi·ªáp Donate t√πy t√¢m..."
-                />
-                <p className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">
-                  ‚ö° Khi T·∫Øt Thanh To√°n, ng∆∞·ªùi d√πng b·∫•m "Up Tin" ho·∫∑c "N·∫°p ti·ªÅn" s·∫Ω ƒë∆∞·ª£c Up-Tin th√†nh c√¥ng ngay l·∫≠p t·ª©c MI·ªÑN PH√ç, ƒë·ªìng th·ªùi hi·ªÉn th·ªã t√πy ch·ªçn Donate chuy·ªÉn kho·∫£n t√πy t√¢m.
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Pricing Section */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-              1. B·∫£ng Gi√° G√≥i D·ªãch V·ª• Up Tin Khi B·∫≠t Thu Ph√≠ (VNƒê)
-            </h4>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Gi√° Up Tin 1 L∆∞·ª£t (VNƒê):
-                </label>
-                <input
-                  type="number"
-                  value={localConfig.singlePushPrice}
-                  onChange={(e) => setLocalConfig({ ...localConfig, singlePushPrice: Number(e.target.value) })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-3 font-bold text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  G√≥i Auto-Push 5 L∆∞·ª£t (VNƒê):
-                </label>
-                <input
-                  type="number"
-                  value={localConfig.autoPush5Price}
-                  onChange={(e) => setLocalConfig({ ...localConfig, autoPush5Price: Number(e.target.value) })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-3 font-bold text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  VIP B·∫°c (VNƒê / Ng√†y):
-                </label>
-                <input
-                  type="number"
-                  value={localConfig.vipSilverPriceDay}
-                  onChange={(e) => setLocalConfig({ ...localConfig, vipSilverPriceDay: Number(e.target.value) })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-3 font-bold text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  VIP V√†ng (VNƒê / Ng√†y):
-                </label>
-                <input
-                  type="number"
-                  value={localConfig.vipGoldPriceDay}
-                  onChange={(e) => setLocalConfig({ ...localConfig, vipGoldPriceDay: Number(e.target.value) })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-3 font-bold text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  VIP Kim C∆∞∆°ng (VNƒê / Ng√†y):
-                </label>
-                <input
-                  type="number"
-                  value={localConfig.vipDiamondPriceDay}
-                  onChange={(e) => setLocalConfig({ ...localConfig, vipDiamondPriceDay: Number(e.target.value) })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-3 font-bold text-slate-900 dark:text-white"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Bank Details Section */}
-          <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-              2. Th√¥ng Tin T√†i Kho·∫£n Nh·∫≠n Chuy·ªÉn Kho·∫£n VietQR / Donate
-            </h4>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  T√™n Ng√¢n H√†ng:
-                </label>
-                <input
-                  type="text"
-                  value={localConfig.bankName}
-                  onChange={(e) => setLocalConfig({ ...localConfig, bankName: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-3 font-bold text-slate-900 dark:text-white"
-                  placeholder="Vietcombank / MB Bank / Techcombank"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  S·ªë T√†i Kho·∫£n:
-                </label>
-                <input
-                  type="text"
-                  value={localConfig.accountNumber}
-                  onChange={(e) => setLocalConfig({ ...localConfig, accountNumber: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-3 font-mono font-bold text-emerald-600 dark:text-emerald-400"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  T√™n Ch·ªß T√†i Kho·∫£n:
-                </label>
-                <input
-                  type="text"
-                  value={localConfig.accountHolder}
-                  onChange={(e) => setLocalConfig({ ...localConfig, accountHolder: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-3 font-bold uppercase text-slate-900 dark:text-white"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-4 flex justify-end">
-            <button
-              type="submit"
-              className="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-emerald-600/30 transition transform active:scale-95"
-            >
-              L∆∞u C·∫•u H√¨nh Gi√° & Ng√¢n H√†ng
-            </button>
-          </div>
-        </form>
-      )}
-
-      {/* Tab 3: Leads */}
-      {activeTab === 'leads' && (
-        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-6 shadow-xl">
-          {/* Header */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200 dark:border-slate-700 pb-4">
-            <div>
-              <h3 className="font-black text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-amber-500" />
-                DANH S√ÅCH Y√äU C·∫¶U ƒê·∫∂T L·ªäCH XEM NH√Ä & T∆Ø V·∫§N (QU·∫¢N TR·ªä LEADS CH·ª¶ NH√Ä & ADMIN)
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                T·∫•t c·∫£ l∆∞·ª£t ƒë·∫∑t l·ªãch xem nh√† c·ªßa kh√°ch h√†ng (g·ª≠i t·ªõi ng∆∞·ªùi ƒëƒÉng tin/ch·ªß nh√† & h·ªá th·ªëng) ƒë∆∞·ª£c t·ªïng h·ª£p chi ti·∫øt v√† c√≥ th·ªÉ xu·∫•t ra file Excel/CSV.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => handleExportLeadsCSV(filteredContacts)}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl flex items-center gap-2 transition text-xs shadow-md"
-              >
-                <Download className="w-4 h-4" />
-                Xu·∫•t File Excel / CSV ({filteredContacts.length})
-              </button>
-              <button
-                onClick={onRefreshData}
-                className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl flex items-center gap-1.5 transition text-xs"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                L√†m M·ªõi D·ªØ Li·ªáu
-              </button>
-            </div>
-          </div>
-
-          {/* Metrics Summary Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl">
-              <span className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 tracking-wider">T·ªîNG Y√äU C·∫¶U</span>
-              <div className="text-xl font-black text-emerald-700 dark:text-emerald-300 mt-1">{localContacts.length}</div>
-            </div>
-            <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-2xl">
-              <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 tracking-wider">Y√äU C·∫¶U M·ªöI (CH·ªú G·ªåI)</span>
-              <div className="text-xl font-black text-amber-700 dark:text-amber-300 mt-1">
-                {localContacts.filter(c => c.status === 'new' || !c.status).length}
-              </div>
-            </div>
-            <div className="p-3.5 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/50 rounded-2xl">
-              <span className="text-[10px] font-black uppercase text-sky-600 dark:text-sky-400 tracking-wider">L·ªäCH H·∫∏N XEM NH√Ä</span>
-              <div className="text-xl font-black text-sky-700 dark:text-sky-300 mt-1">
-                {localContacts.filter(c => c.type === 'viewing').length}
-              </div>
-            </div>
-            <div className="p-3.5 bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/50 rounded-2xl">
-              <span className="text-[10px] font-black uppercase text-purple-600 dark:text-purple-400 tracking-wider">ƒê√É LI√äN H·ªÜ / X·ª¨ L√ù</span>
-              <div className="text-xl font-black text-purple-700 dark:text-purple-300 mt-1">
-                {localContacts.filter(c => c.status === 'done' || c.status === 'contacted').length}
-              </div>
-            </div>
-          </div>
-
-          {/* Search & Filters */}
-          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
-              <input
-                type="text"
-                value={leadSearch}
-                onChange={(e) => setLeadSearch(e.target.value)}
-                placeholder="T√¨m t√™n kh√°ch, SƒêT, t√™n cƒÉn, ng∆∞·ªùi ƒëƒÉng tin..."
-                className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
-              />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-              <select
-                value={leadStatusFilter}
-                onChange={(e) => setLeadStatusFilter(e.target.value)}
-                className="p-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200"
-              >
-                <option value="all">T·∫•t c·∫£ tr·∫°ng th√°i</option>
-                <option value="new">üî¥ Y√™u c·∫ßu m·ªõi</option>
-                <option value="contacted">üü° ƒê√£ li√™n h·ªá</option>
-                <option value="done">üü¢ Ho√†n t·∫•t</option>
-              </select>
-
-              <select
-                value={leadTypeFilter}
-                onChange={(e) => setLeadTypeFilter(e.target.value)}
-                className="p-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200"
-              >
-                <option value="all">T·∫•t c·∫£ lo·∫°i y√™u c·∫ßu</option>
-                <option value="viewing">üìÖ ƒê·∫∑t l·ªãch xem nh√†</option>
-                <option value="consultation">üí¨ T∆∞ v·∫•n chung</option>
-                <option value="deposit">üí∞ C·ªçc gi·ªØ ch·ªó</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Table Display */}
-          {filteredContacts.length === 0 ? (
-            <div className="py-12 text-center space-y-2 border border-dashed border-slate-200 dark:border-slate-700 rounded-2xl">
-              <Calendar className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">Ch∆∞a c√≥ d·ªØ li·ªáu ƒë·∫∑t l·ªãch xem nh√† n√†o ph√π h·ª£p v·ªõi b·ªô l·ªçc.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {/* Mobile Compact & Expandable Leads List */}
-              <div className="block md:hidden space-y-2.5">
-                {filteredContacts.map((c, idx) => {
-                  const isExpanded = expandedLeadId === c.id;
-                  return (
-                    <div
-                      key={c.id}
-                      className="border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-amber-500/40 cursor-pointer"
-                      onClick={() => setExpandedLeadId(isExpanded ? null : c.id)}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-black text-[10px] flex items-center justify-center shrink-0">
-                            {idx + 1}
-                          </span>
-                          <span className="font-extrabold text-slate-900 dark:text-white text-xs truncate">
-                            {c.fullName}
-                          </span>
-                          {c.type === 'viewing' && (
-                            <span className="px-1.5 py-0.2 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[9px] rounded font-bold shrink-0">
-                              Xem Nh√†
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            c.status === 'done'
-                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                              : c.status === 'contacted'
-                              ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300'
-                              : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                          }`}>
-                            {c.status === 'done' ? 'üü¢ Ho√†n t·∫•t' : c.status === 'contacted' ? 'üü° ƒê√£ li√™n h·ªá' : 'üî¥ M·ªõi'}
-                          </span>
-                          <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-                            ‚ñº
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Summary line */}
-                      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
-                        <span className="truncate max-w-[170px] text-slate-800 dark:text-slate-200 font-semibold">
-                          üè¢ {c.propertyTitle || c.projectInterest}
-                        </span>
-                        <a
-                          href={`tel:${c.phone}`}
-                          onClick={e => e.stopPropagation()}
-                          className="font-mono text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1"
-                        >
-                          üìû {c.phone}
-                        </a>
-                      </div>
-
-                      {/* Expanded Details */}
-                      {isExpanded && (
-                        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
-                          <div className="grid grid-cols-2 gap-2 text-[11px]">
-                            <div>
-                              <span className="text-slate-400 block text-[10px]">Ng∆∞·ªùi ƒêƒÉng / Ch·ªß Nh√†:</span>
-                              <span className="font-bold text-slate-800 dark:text-slate-200">
-                                {c.sellerName || 'Admin / Ban Qu·∫£n Tr·ªã'}
-                              </span>
-                              {c.sellerPhone && (
-                                <span className="block text-slate-500 font-mono text-[10px]">
-                                  SƒêT: {c.sellerPhone}
-                                </span>
-                              )}
-                            </div>
-
-                            <div>
-                              <span className="text-slate-400 block text-[10px]">L·ªãch H·∫πn Xem:</span>
-                              <span className="font-bold text-amber-600 dark:text-amber-400">
-                                {c.preferredTime || 'C√†ng s·ªõm c√†ng t·ªët'}
-                              </span>
-                            </div>
-                          </div>
-
-                          {c.note && (
-                            <div className="bg-slate-100 dark:bg-slate-900 p-2 rounded-xl text-[11px] italic text-slate-600 dark:text-slate-300">
-                              "{c.note}"
-                            </div>
-                          )}
-
-                          <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-2 flex-wrap" onClick={e => e.stopPropagation()}>
-                            <div className="flex items-center gap-2">
-                              <select
-                                value={c.status || 'new'}
-                                onChange={(e) => handleUpdateLeadStatus(c.id, e.target.value as any)}
-                                className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold"
-                              >
-                                <option value="new">üî¥ Y√™u c·∫ßu m·ªõi</option>
-                                <option value="contacted">üü° ƒê√£ li√™n h·ªá</option>
-                                <option value="done">üü¢ Ho√†n t·∫•t</option>
-                              </select>
-                            </div>
-
-                            <div className="flex items-center gap-1.5">
-                              <a
-                                href={`tel:${c.phone}`}
-                                className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl font-bold text-xs flex items-center gap-1"
-                              >
-                                <Phone className="w-3 h-3" />
-                                <span>G·ªçi</span>
-                              </a>
-                              <a
-                                href={`https://zalo.me/${c.phone.replace(/\D/g, '')}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="px-3 py-1.5 bg-blue-600 text-white rounded-xl font-bold text-xs"
-                              >
-                                Zalo
-                              </a>
-                              <button
-                                onClick={() => handleDeleteLead(c.id)}
-                                className="p-1.5 bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-300 rounded-xl"
-                                title="X√≥a"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Desktop Table View */}
-              <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold uppercase text-[10px] tracking-wider">
-                      <th className="py-3 px-3">STT</th>
-                      <th className="py-3 px-3">Kh√°ch H√†ng ƒê·∫∑t L·ªãch</th>
-                      <th className="py-3 px-3">CƒÉn BƒêS Quan T√¢m</th>
-                      <th className="py-3 px-3">Ng∆∞·ªùi ƒêƒÉng Tin (Ch·ªß Nh√† / Admin)</th>
-                      <th className="py-3 px-3">L·ªãch H·∫πn & Ghi Ch√∫</th>
-                      <th className="py-3 px-3">Tr·∫°ng Th√°i</th>
-                      <th className="py-3 px-3 text-right">Thao T√°c</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-800/40">
-                    {filteredContacts.map((c, idx) => (
-                      <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition">
-                        <td className="py-3.5 px-3 font-bold text-slate-400">{idx + 1}</td>
-                        
-                        {/* Customer info */}
-                        <td className="py-3.5 px-3">
-                          <div className="font-extrabold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
-                            {c.fullName}
-                            {c.type === 'viewing' && (
-                              <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[9px] rounded-md font-bold">
-                                Xem Nh√†
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <a href={`tel:${c.phone}`} className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1">
-                              <Phone className="w-3 h-3" />
-                              {c.phone}
-                            </a>
-                            <a
-                              href={`https://zalo.me/${c.phone.replace(/\D/g, '')}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-[10px] bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 px-1.5 py-0.5 rounded font-semibold hover:underline"
-                            >
-                              Zalo
-                            </a>
-                          </div>
-                          {c.email && <div className="text-[10px] text-slate-400 mt-0.5">{c.email}</div>}
-                        </td>
-
-                        {/* Property title */}
-                        <td className="py-3.5 px-3 max-w-xs">
-                          {c.propertyTitle ? (
-                            <div>
-                              <p className="font-bold text-slate-800 dark:text-slate-200 line-clamp-2">{c.propertyTitle}</p>
-                              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">{c.projectInterest}</span>
-                            </div>
-                          ) : (
-                            <span className="text-slate-400 italic">Y√™u c·∫ßu t∆∞ v·∫•n d·ª± √°n {c.projectInterest}</span>
-                          )}
-                        </td>
-
-                        {/* Seller info */}
-                        <td className="py-3.5 px-3">
-                          <div className="font-bold text-slate-800 dark:text-slate-200">{c.sellerName || 'Ng∆∞·ªùi ƒëƒÉng tin'}</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                            {c.sellerPhone ? (
-                              <>
-                                <span>SƒêT: {c.sellerPhone}</span>
-                                <a
-                                  href={`https://zalo.me/${c.sellerPhone.replace(/\D/g, '')}?text=B√°o%20l·ªãch%20xem%20nh√†%3A%20${encodeURIComponent(c.fullName)}%20(${c.phone})`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="text-[9px] text-blue-500 font-bold hover:underline"
-                                >
-                                  (B√°o Ch·ªß)
-                                </a>
-                              </>
-                            ) : (
-                              <span className="italic text-slate-400">Ch∆∞a c√≥ SƒêT</span>
-                            )}
-                          </div>
-                        </td>
-
-                        {/* Viewing time & Note */}
-                        <td className="py-3.5 px-3 max-w-xs">
-                          {c.preferredTime && (
-                            <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 font-bold text-[10px] rounded-lg mb-1 border border-amber-200 dark:border-amber-800">
-                              <Clock className="w-3 h-3" />
-                              {c.preferredTime}
-                            </div>
-                          )}
-                          {c.note ? (
-                            <p className="text-[11px] text-slate-600 dark:text-slate-300 italic bg-slate-50 dark:bg-slate-900 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
-                              "{c.note}"
-                            </p>
-                          ) : (
-                            <span className="text-slate-400 text-[10px]">Kh√¥ng c√≥ ghi ch√∫</span>
-                          )}
-                          <div className="text-[9px] text-slate-400 mt-1">
-                            {new Date(c.createdAt).toLocaleString('vi-VN')}
-                          </div>
-                        </td>
-
-                        {/* Status Dropdown */}
-                        <td className="py-3.5 px-3">
-                          <select
-                            value={c.status || 'new'}
-                            onChange={(e) => handleUpdateLeadStatus(c.id, e.target.value as any)}
-                            className={`p-1.5 rounded-xl text-[11px] font-bold border transition cursor-pointer ${
-                              c.status === 'done'
-                                ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
-                                : c.status === 'contacted'
-                                ? 'bg-sky-50 text-sky-700 border-sky-300 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800'
-                                : 'bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800'
-                            }`}
-                          >
-                            <option value="new">üî¥ Y√™u c·∫ßu m·ªõi</option>
-                            <option value="contacted">üü° ƒê√£ li√™n h·ªá</option>
-                            <option value="done">üü¢ Ho√†n t·∫•t</option>
-                          </select>
-                        </td>
-
-                        {/* Action buttons */}
-                        <td className="py-3.5 px-3 text-right">
-                          <div className="flex items-center justify-end space-x-1.5">
-                            <a
-                              href={`tel:${c.phone}`}
-                              className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[11px] flex items-center gap-1 transition"
-                              title="G·ªçi ngay cho kh√°ch"
-                            >
-                              <Phone className="w-3.5 h-3.5" />
-                            </a>
-                            <button
-                              onClick={() => handleDeleteLead(c.id)}
-                              className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-lg transition"
-                              title="X√≥a y√™u c·∫ßu"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Tab: Users Management */}
-      {activeTab === 'users' && (
-        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-6 shadow-xl text-xs">
-          {/* Header & KPI Metrics for Users */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200 dark:border-slate-700 pb-5">
-            <div>
-              <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
-                <UserCheck className="w-5 h-5 text-amber-500" />
-                QU·∫¢N L√ù TH√ÄNH VI√äN, C∆Ø D√ÇN & PH√ÇN C·∫§P QU·∫¢N TR·ªä
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Xem th·ªëng k√™ t√†i kho·∫£n, t·∫°o m·ªõi user, ph√¢n vai tr√≤ (Admin / C∆∞ D√¢n / M√¥i Gi·ªõi), c·ªông l∆∞·ª£t Up Tin & t·∫°m kh√≥a t√†i kho·∫£n
-              </p>
-            </div>
-
-            {/* Quick User Stats Pills & Add Button */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                üë• T·ªïng: <strong className="text-amber-500">{registeredUsers.length}</strong>
-              </span>
-              <span className="px-3 py-1.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                üè¢ Doanh Nghi·ªáp: <strong>{registeredUsers.filter(u => u.accountType === 'business_enterprise' || u.role === 'partner' || u.companyName).length}</strong>
-              </span>
-              <span className="px-3 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                üè† C∆∞ D√¢n: <strong>{registeredUsers.filter(u => u.role === 'owner' || (!u.companyName && u.accountType !== 'business_enterprise' && u.role !== 'sale' && u.role !== 'admin')).length}</strong>
-              </span>
-              <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                üíº M√¥i Gi·ªõi/Sale: <strong>{registeredUsers.filter(u => u.role === 'sale').length}</strong>
-              </span>
-              <span className="px-3 py-1.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                üëë Admin: <strong>{registeredUsers.filter(u => u.role === 'admin').length}</strong>
-              </span>
-
-              <button
-                onClick={() => setIsAddingUser(true)}
-                className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <UserPlus className="w-4 h-4" />
-                <span>+ TH√äM TH√ÄNH VI√äN M·ªöI</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Controls: Search & Role Filter */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
-            {/* Search input */}
-            <div className="relative flex-1 max-w-md">
-              <input
-                type="text"
-                placeholder="T√¨m theo T√™n, SƒêT, Email, MST, T√™n C√¥ng Ty..."
-                value={userSearch}
-                onChange={(e) => setUserSearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs"
-              />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5 pointer-events-none" />
-            </div>
-
-            {/* Role Filter Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-              <button
-                onClick={() => setUserRoleFilter('all')}
-                className={`px-3 py-1.5 rounded-xl font-extrabold text-[11px] transition ${
-                  userRoleFilter === 'all'
-                    ? 'bg-slate-900 text-white dark:bg-amber-500 dark:text-slate-950 shadow-xs'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                T·∫•t C·∫£ ({registeredUsers.length})
-              </button>
-              <button
-                onClick={() => setUserRoleFilter('business')}
-                className={`px-3 py-1.5 rounded-xl font-extrabold text-[11px] transition ${
-                  userRoleFilter === 'business'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                üè¢ Doanh Nghi·ªáp (B2B)
-              </button>
-              <button
-                onClick={() => setUserRoleFilter('owner')}
-                className={`px-3 py-1.5 rounded-xl font-extrabold text-[11px] transition ${
-                  userRoleFilter === 'owner'
-                    ? 'bg-amber-500 text-slate-950 shadow-xs'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                üè† C∆∞ D√¢n / Ch√≠nh Ch·ªß
-              </button>
-              <button
-                onClick={() => setUserRoleFilter('sale')}
-                className={`px-3 py-1.5 rounded-xl font-extrabold text-[11px] transition ${
-                  userRoleFilter === 'sale'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                üíº M√¥i Gi·ªõi / Sale
-              </button>
-              <button
-                onClick={() => setUserRoleFilter('admin')}
-                className={`px-3 py-1.5 rounded-xl font-extrabold text-[11px] transition ${
-                  userRoleFilter === 'admin'
-                    ? 'bg-rose-600 text-white shadow-xs'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                üëë Qu·∫£n Tr·ªã Vi√™n
-              </button>
-              <button
-                onClick={fetchUsers}
-                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center gap-1 transition text-xs shadow-xs shrink-0"
-                title="L√†m m·ªõi danh s√°ch"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {registeredUsers.length === 0 ? (
-            <div className="text-center py-12 space-y-2">
-              <UserX className="w-8 h-8 text-slate-400 mx-auto" />
-              <p className="text-xs text-slate-400 font-medium">Ch∆∞a c√≥ d·ªØ li·ªáu th√†nh vi√™n ph√π h·ª£p.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {/* Mobile Compact & Expandable Users List */}
-              <div className="block md:hidden space-y-2.5">
-                {registeredUsers
-                  .filter(u => {
-                    const matchesSearch = !userSearch || 
-                      (u.name && u.name.toLowerCase().includes(userSearch.toLowerCase())) ||
-                      (u.email && u.email.toLowerCase().includes(userSearch.toLowerCase())) ||
-                      (u.phone && u.phone.includes(userSearch)) ||
-                      (u.companyName && u.companyName.toLowerCase().includes(userSearch.toLowerCase())) ||
-                      (u.taxCode && u.taxCode.includes(userSearch));
-                    
-                    const isBusinessUser = u.accountType === 'business_enterprise' || u.role === 'partner' || !!u.companyName || !!u.taxCode;
-                    const matchesRole = userRoleFilter === 'all' 
-                      ? true 
-                      : userRoleFilter === 'business'
-                      ? isBusinessUser
-                      : userRoleFilter === 'owner'
-                      ? (u.role === 'owner' || (!isBusinessUser && u.role !== 'sale' && u.role !== 'admin'))
-                      : u.role === userRoleFilter;
-                    return matchesSearch && matchesRole;
-                  })
-                  .map((u) => {
-                    const isExpanded = expandedUserId === u.id;
-                    const userPropertiesList = properties.filter(p => 
-                      (p.userId && p.userId === u.id) ||
-                      (p.contactEmail && u.email && p.contactEmail.toLowerCase() === u.email.toLowerCase()) ||
-                      (p.contactPhone && u.phone && p.contactPhone.replace(/\D/g, '') === u.phone.replace(/\D/g, ''))
-                    );
-                    const isUserBlocked = (u as any).isBlocked;
-
-                    return (
-                      <div
-                        key={u.id}
-                        className={`border border-slate-200 dark:border-slate-800 rounded-2xl p-3 bg-slate-50/50 dark:bg-slate-800/40 transition hover:border-amber-500/40 cursor-pointer ${isUserBlocked ? 'opacity-70 bg-rose-50/20' : ''}`}
-                        onClick={() => setExpandedUserId(isExpanded ? null : u.id)}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            {u.avatar ? (
-                              <img src={u.avatar} alt={u.name} className="w-7 h-7 rounded-full object-cover border border-amber-500/30 shrink-0" />
-                            ) : (
-                              <div className="w-7 h-7 bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black rounded-full flex items-center justify-center text-[11px] shrink-0">
-                                {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
-                              </div>
-                            )}
-                            <div className="min-w-0">
-                              <span className="font-extrabold text-slate-900 dark:text-white text-xs block truncate">
-                                {u.name || 'Ng∆∞·ªùi d√πng'}
-                              </span>
-                              <span className="text-[10px] text-slate-400 block truncate">
-                                {u.email || u.phone || 'Ch∆∞a c·∫≠p nh·∫≠t email'}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                              u.role === 'admin'
-                                ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
-                                : u.role === 'owner'
-                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                                : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                            }`}>
-                              {u.role === 'admin' ? 'üëë Admin' : u.role === 'owner' ? 'üè† C∆∞ D√¢n' : 'üíº M√¥i Gi·ªõi'}
-                            </span>
-                            <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-                              ‚ñº
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Brief summary row */}
-                        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
-                          <span>üì¶ <b>{userPropertiesList.length}</b> BƒêS ‚Ä¢ ‚ö° <b>{u.upTinCredits || 10}</b> L∆∞·ª£t Up</span>
-                          <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                            {(u.balance || 0).toLocaleString('vi-VN')} ƒë
-                          </span>
-                        </div>
-
-                        {/* Expanded details */}
-                        {isExpanded && (
-                          <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
-                            <div className="grid grid-cols-2 gap-2 text-[11px]">
-                              <div>
-                                <span className="text-slate-400 block text-[10px]">SƒêT / Zalo:</span>
-                                {u.phone ? (
-                                  <a
-                                    href={`tel:${u.phone}`}
-                                    onClick={e => e.stopPropagation()}
-                                    className="font-mono font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                                  >
-                                    üìû {u.phone}
-                                  </a>
-                                ) : (
-                                  <span className="text-slate-400 italic">Ch∆∞a c√≥ SƒêT</span>
-                                )}
-                              </div>
-                              <div>
-                                <span className="text-slate-400 block text-[10px]">Tr·∫°ng Th√°i:</span>
-                                <span className={isUserBlocked ? 'font-bold text-rose-600' : 'font-bold text-emerald-600'}>
-                                  {isUserBlocked ? 'üî¥ T·∫°m Kh√≥a' : 'üü¢ Ho·∫°t ƒê·ªông'}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-1.5 flex-wrap" onClick={e => e.stopPropagation()}>
-                              <select
-                                value={u.role}
-                                onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
-                                className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold"
-                              >
-                                <option value="owner">üè† Ch·ªß Nh√† / C∆∞ D√¢n</option>
-                                <option value="sale">üíº M√¥i Gi·ªõi / Sale</option>
-                                <option value="admin">üëë Qu·∫£n Tr·ªã Vi√™n (Admin)</option>
-                              </select>
-
-                              <div className="flex items-center gap-1">
-                                <button
-                                  onClick={() => setUserForCreditInjector(u)}
-                                  className="px-2 py-1 bg-amber-500 text-slate-950 rounded-lg font-bold text-[10px]"
-                                >
-                                  üíµ B∆°m V√≠/L∆∞·ª£t
-                                </button>
-                                <button
-                                  onClick={() => handleToggleBlockUser(u.id, !!isUserBlocked)}
-                                  className={`px-2 py-1 rounded-lg font-bold text-[10px] ${
-                                    isUserBlocked ? 'bg-emerald-600 text-white' : 'bg-amber-100 text-amber-800'
-                                  }`}
-                                >
-                                  {isUserBlocked ? 'M·ªü Kh√≥a' : 'Kh√≥a'}
-                                </button>
-                                <button
-                                  onClick={() => setEditingUser(u)}
-                                  className="p-1 bg-blue-50 text-blue-600 rounded-lg"
-                                  title="S·ª≠a"
-                                >
-                                  <Edit3 className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteUser(u.id)}
-                                  className="p-1 bg-rose-50 text-rose-600 rounded-lg"
-                                  title="X√≥a"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-              </div>
-
-              {/* Desktop Table View */}
-              <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700/80">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-extrabold uppercase text-[10px] tracking-wider">
-                      <th className="py-3 px-3.5">H·ªç & T√™n</th>
-                      <th className="py-3 px-3">Email li√™n h·ªá</th>
-                      <th className="py-3 px-3">SƒêT / Zalo</th>
-                      <th className="py-3 px-3 text-center">BƒêS ƒê√£ ƒêƒÉng</th>
-                      <th className="py-3 px-3 text-center">L∆∞·ª£t Up Tin</th>
-                      <th className="py-3 px-3 text-center">V√≠ VNƒê & ƒêi·ªÉm</th>
-                      <th className="py-3 px-3">Vai Tr√≤ / C·∫•p B·∫≠c</th>
-                      <th className="py-3 px-3 text-center">Tr·∫°ng Th√°i</th>
-                      <th className="py-3 px-3.5 text-right">Thao T√°c Admin</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                    {registeredUsers
-                      .filter(u => {
-                        const matchesSearch = !userSearch || 
-                          (u.name && u.name.toLowerCase().includes(userSearch.toLowerCase())) ||
-                          (u.email && u.email.toLowerCase().includes(userSearch.toLowerCase())) ||
-                          (u.phone && u.phone.includes(userSearch)) ||
-                          (u.companyName && u.companyName.toLowerCase().includes(userSearch.toLowerCase())) ||
-                          (u.taxCode && u.taxCode.includes(userSearch));
-                        
-                        const isBusinessUser = u.accountType === 'business_enterprise' || u.role === 'partner' || !!u.companyName || !!u.taxCode;
-                        const matchesRole = userRoleFilter === 'all' 
-                          ? true 
-                          : userRoleFilter === 'business'
-                          ? isBusinessUser
-                          : userRoleFilter === 'owner'
-                          ? (u.role === 'owner' || (!isBusinessUser && u.role !== 'sale' && u.role !== 'admin'))
-                          : u.role === userRoleFilter;
-                        return matchesSearch && matchesRole;
-                      })
-                      .map((u) => {
-                        const userPropertiesList = properties.filter(p => 
-                          (p.userId && p.userId === u.id) ||
-                          (p.contactEmail && u.email && p.contactEmail.toLowerCase() === u.email.toLowerCase()) ||
-                          (p.contactPhone && u.phone && p.contactPhone.replace(/\D/g, '') === u.phone.replace(/\D/g, ''))
-                        );
-
-                        const isUserBlocked = (u as any).isBlocked;
-
-                        return (
-                          <tr key={u.id} className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition ${isUserBlocked ? 'opacity-60 bg-rose-50/20 dark:bg-rose-950/20' : ''}`}>
-                            {/* User Info */}
-                            <td className="py-3.5 px-3.5 font-extrabold text-slate-900 dark:text-white flex items-center gap-2.5">
-                              {u.avatar ? (
-                                <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover border border-amber-500/30 shrink-0" />
-                              ) : (
-                                <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black rounded-full flex items-center justify-center text-xs shadow-xs shrink-0">
-                                  {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
-                                </div>
-                              )}
-                              <div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className="font-extrabold text-slate-900 dark:text-white">{u.name}</span>
-                                  {u.provider === 'google' && (
-                                    <span className="text-[9px] px-1.5 py-0.2 bg-blue-500/10 text-blue-600 font-bold rounded border border-blue-500/20">Google</span>
-                                  )}
-                                  {(u.companyName || u.accountType === 'business_enterprise') && (
-                                    <span className="text-[9px] px-1.5 py-0.2 bg-blue-600 text-white font-bold rounded">DN</span>
-                                  )}
-                                  {u.businessLicenseUrl && (
-                                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-600 text-white font-bold rounded" title="ƒê√£ c√≥ Gi·∫•y ph√©p ƒêKKD">ƒêKKD ‚úì</span>
-                                  )}
-                                </div>
-                                {u.companyName && (
-                                  <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold block truncate max-w-[180px]">
-                                    üè¢ {u.companyName} {u.taxCode ? `(MST: ${u.taxCode})` : ''}
-                                  </span>
-                                )}
-                                <span className="text-[10px] text-slate-400 block font-normal">
-                                  ƒêƒÉng k√Ω: {u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('vi-VN') : 'M·ªõi t·∫°o'}
-                                </span>
-                              </div>
-                            </td>
-
-                            {/* Email */}
-                            <td className="py-3 px-3 text-slate-700 dark:text-slate-300 font-medium">
-                              {u.email}
-                            </td>
-
-                            {/* Phone / Zalo */}
-                            <td className="py-3 px-3">
-                              {u.phone ? (
-                                <div className="flex items-center gap-1.5">
-                                  <a 
-                                    href={`tel:${u.phone}`} 
-                                    className="font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
-                                  >
-                                    <PhoneCall className="w-3 h-3 text-emerald-500" />
-                                    {u.phone}
-                                  </a>
-                                  <a
-                                    href={`https://zalo.me/${u.phone.replace(/\D/g, '')}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="px-1.5 py-0.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 font-bold rounded text-[9px] transition"
-                                  >
-                                    Zalo
-                                  </a>
-                                </div>
-                              ) : (
-                                <span className="text-slate-400 italic text-xs">Ch∆∞a c·∫≠p nh·∫≠t SƒêT</span>
-                              )}
-                            </td>
-
-                            {/* Posted Listings */}
-                            <td className="py-3 px-3 text-center">
-                              <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-extrabold rounded-lg border border-amber-500/30 text-xs inline-flex items-center gap-1">
-                                <Building2 className="w-3.5 h-3.5 text-amber-500" />
-                                <span>{userPropertiesList.length} tin</span>
-                              </span>
-                            </td>
-
-                            {/* UpTin Credits */}
-                            <td className="py-3 px-3 text-center">
-                              <div className="inline-flex items-center gap-1.5">
-                                <span className="font-black text-amber-500 text-xs">{u.upTinCredits || 10} l∆∞·ª£t</span>
-                                <button
-                                  onClick={() => setUserForCreditInjector(u)}
-                                  className="p-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-lg transition text-[10px] shadow-xs"
-                                  title="C·ªông ho·∫∑c ƒëi·ªÅu ch·ªânh l∆∞·ª£t Up Tin"
-                                >
-                                  + T·∫∑ng
-                                </button>
-                              </div>
-                            </td>
-
-                            {/* Wallet Balance & Social Points */}
-                            <td className="py-3 px-3 text-center">
-                              <div className="flex flex-col items-center gap-1">
-                                <span className="font-black text-emerald-600 dark:text-emerald-400 text-xs">
-                                  {(u.balance || 0).toLocaleString('vi-VN')}ƒë
-                                </span>
-                                <button
-                                  onClick={() => setUserForCreditInjector(u)}
-                                  className="px-2 py-0.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-md text-[10px] shadow-xs flex items-center gap-1 transition cursor-pointer"
-                                  title="M·ªü c√¥ng c·ª• b∆°m ti·ªÅn v√≠, l∆∞·ª£t Up-Tin v√† ƒëi·ªÉm th∆∞·ªüng"
-                                >
-                                  <Wallet className="w-2.5 h-2.5 text-emerald-200" />
-                                  <span>üíµ B∆°m V√≠</span>
-                                </button>
-                              </div>
-                            </td>
-
-                            {/* Role Selector */}
-                            <td className="py-3 px-3">
-                              <select
-                                value={u.role}
-                                onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
-                                className={`px-2.5 py-1.5 rounded-xl font-extrabold text-[11px] border focus:outline-none cursor-pointer transition ${
-                                  u.role === 'admin'
-                                    ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
-                                    : u.role === 'owner'
-                                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
-                                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                                }`}
-                              >
-                                <option value="owner">üè† Ch·ªß Nh√† / C∆∞ D√¢n</option>
-                                <option value="sale">üíº M√¥i Gi·ªõi / Sale</option>
-                                <option value="admin">üëë Qu·∫£n Tr·ªã Vi√™n (Admin)</option>
-                              </select>
-                            </td>
-
-                            {/* Blocked Status */}
-                            <td className="py-3 px-3 text-center">
-                              {isUserBlocked ? (
-                                <span className="px-2.5 py-1 bg-rose-500/20 text-rose-600 dark:text-rose-400 font-extrabold rounded-lg border border-rose-500/40 text-[10px] inline-flex items-center gap-1">
-                                  <Ban className="w-3 h-3 text-rose-500" />
-                                  T·∫°m Kh√≥a
-                                </span>
-                              ) : (
-                                <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold rounded-lg border border-emerald-500/30 text-[10px] inline-flex items-center gap-1">
-                                  <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                  Ho·∫°t ƒê·ªông
-                                </span>
-                              )}
-                            </td>
-
-                            {/* Admin Actions */}
-                            <td className="py-3 px-3.5 text-right">
-                              <div className="flex items-center justify-end gap-1.5">
-                                <button
-                                  onClick={() => setEditingUser(u)}
-                                  className="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:hover:bg-blue-900 dark:text-blue-300 rounded-xl transition cursor-pointer"
-                                  title="S·ª≠a th√¥ng tin t√†i kho·∫£n"
-                                >
-                                  <Edit3 className="w-3.5 h-3.5" />
-                                </button>
-
-                                <button
-                                  onClick={() => handleToggleBlockUser(u.id, !!isUserBlocked)}
-                                  className={`px-2 py-1.5 rounded-xl font-bold transition text-[10px] flex items-center gap-1 cursor-pointer ${
-                                    isUserBlocked
-                                      ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                                      : 'bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 border border-amber-500/30'
-                                  }`}
-                                  title={isUserBlocked ? 'M·ªü kh√≥a t√†i kho·∫£n' : 'Kh√≥a t·∫°m th·ªùi'}
-                                >
-                                  {isUserBlocked ? <ShieldCheck className="w-3 h-3" /> : <Ban className="w-3 h-3" />}
-                                  {isUserBlocked ? 'M·ªü Kh√≥a' : 'Kh√≥a TK'}
-                                </button>
-
-                                <button
-                                  onClick={() => handleDeleteUser(u.id)}
-                                  className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-xl transition cursor-pointer"
-                                  title="X√≥a ng∆∞·ªùi d√πng"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
+              .catch(() => {});
+          }}
+        />
       )}
 
       {/* Tab: Traffic Analytics */}
@@ -9344,21 +6378,726 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {storeProds.map(prod => {
                           const isApproved = prod.status === 'approved' || prod.status === undefined;
-                          const isxúÏ][oGñ~œØ®òE],1¢]2ñ`K÷D¥3ªAÄ4ªKÏım∫õí5ì	ŸMv{≥¡nÊ≤cŸk‰≤	íÅÁeƒáy†‡ˇ¡¸Ç˘	[ß™ªŸMVıÖ¶)$ˆ≠™∫Œ©s˝Ípõäf6QŸé•î\OÚZ.™’jh‹fó∆_{Â$¸8ÿk9&*$‹Ç–¢¢Ì%ﬁÄ–.>®“!h Q Ω≤.πÓ¶d‡⁄·;çfq_’<å…Ÿ≠í#Wó<\ú/óëcµL+≈ }5,G¡≤ã3»U%≈⁄/∫⁄—Ò}˙ß([:˙EÀı¥ùÉb{˚õ®)Ÿ≈i‰9íÈjûfôËS∆ÖêÊn±IKΩ°húç™(ÚwÜôΩDÙÏºi∞Xaˇ¬{'+e‘égÈa0Ï‹99Uœ0íj86yïæë∞≥◊ ©çΩìL∫Î)œüD®;F	Dàk∏E¬òé«h2ñ÷iH3≤ê¿u‰ÄÈ©â›•∑ o£_ˇç´ûgª’…Ivæ‘2]õK-…ñ1i´ñgßfgÊ sÂ©bCZò]XêÆ·πi˘Ü‘Ú¨⁄éÂíweGÛj≤cŸWˆkÑéW~Yõ/èß17|$›Û«eíy»ÚDd“ˆãSsHÖ?¡ ¸o5~Åeè˘Y˛b»Fs≤^„ÌÀc©√òÃ@ò>
-öY‹/ñŸ*úBÆ-…∏xPú @c“ò:„ÀÙä¯>Y±KWêGæÔªÏ?{ùÖ‡%È9&7tÕƒE“äagÏ°|§YúTg2Ωçò˘elzÑ`¿˝S•Ÿ‡Õ2évëL™90O]íwYKÅ)gl0ò €—d\Ú¨€ñ,Èx€˘Tﬂ”ä˜6«'éNf›$/œº∑LÕCWÆæWÑ– KÈ·[Se˚˛€c◊'#˘}f#° 0‘ãÙÂ¿ŸˆÀ'v%âØ◊ªÌèÕ*9Àl^?Ù∫%Ô˛¨%ôûÊ¿õ≥ãy¶ùµ˛›oÁàçA&oŸ¥úÉ£Ïdú˜L∑˘7•‹u8˘*⁄∞àËì®≤ﬂfÜP]j¢W'”8•ü¯∂G‘µ/HΩ∏úù…Ÿ…9åí,\±òëmCãÖÿ#…F\ÿtˇ∫≥Ôì∑µäe"ö"	5I"f.∆˙=õá'∂˝Ö(0CÈ”YΩ>¶Ek'´0GËªèû°µ€˛#RZ›ˆ˚*¿·ø"˘˘∑HÈ<6ëßvOûLåX†M√Ksól≤Fˆ∞2≤˘«·a]âQ 8ßApvX*D{˛1:}–yíÅà¥¶ëØÑNÁKΩâg@É—LªÉ„S«ÒÈÜ3√Nu–˙(¶˘èˇÜÍ›ìcuOæ0G=üÈJ5õ8¥ΩLD2h˚,D‚[o-¿Ã“I7,”B}ö7t{íπ±~	ï¡‰ÚÈÏ”'óùoêÕ‘»6…©Sú]ﬂ-)ƒ˛FK2’xÀ-œ≥Lwu◊t4¡£]‚4Ü*—ÉY¯r±AªŒ0GﬁÅM˙c∑ß˚#YÊäÆ…ªµ√¬™]G™d*:Æ[Õ¶é∑mZ≤«ƒØ§\¨	+tN∂=À¡%Mπä¸êDæ&£”<◊c2}lEiˆûâˆ∫Ìw˚ÙÃdd!éI4∂Í_P5˙—;ÌëÓã>ó,˙±|Œ‡·;Ñqßzå[‘õÅºô
-WìBΩ8áÿ
-â $∑◊rä∂•—ì¢#ÈMNFqaí¿®à.—^êc.ff\„ò”‰ú
-Æo5jü¯ßzæ`ñX	|™tHQù6Qâ(‚d≤òSñˆ”B(…hÿE∏pº{Úπâˆqcä÷Á¥·à≈I∂ﬁ2àÏóºêÔÿÿ|]—<)`≠fZ®Q-Œ÷GäÈ€,È;?PΩ˜dø≥7	LûŸbLü—L>ÃÌt<¥4çTä¬®zã˙≥cY‚>ÅC∏›m-e’tÁóÛVâ≤0’Ûç@pŸíY~!O¬!ΩôS¶fø<K3D/
-÷…U+FÃ≈z?Ô<ÇÛ“ÓKı≥SoôxMxÒH»6	≠rü‹OÓ8Üa}iU™hµ€˛`e›Î∂ˇ≠<ˇ≠v~ªânØw>ÿD?ªª¥…5]‡˝UÏIöñÂÆKñPr±≥ß…ÿÙ˝ÜeûëáÜ‰…™f6∑IÀnI«f”Si_Âwö™Ûπ÷]•ßf˚ï¡|ô.Ω¡‘R/‡£f≈JÊË∫ˇäIYç≈7l j_êøA˛rø;c‹/B"qe,⁄É·‡–uçhìs¸xe¢Qø¢>ˇVBrÁjtiH!6,<1üˆ"*fÁëÖN>ˇ∂€~"#]w∑{Ú7Ó˚ΩÜ‹n˚!πÓ;ˇ™EÃd:(âﬂj“NxÂT˝–'Áì≠Y{†}Œ#<]0[∫û∞í·„`Úÿ&ﬁﬂvˆ~j9F!Âˆf¢aˆ4¬5@.ûö±ˆMv1oÉ[™eí©ÉØyüˇ'I∑ÑÇãêJÀﬂ¸í¢ê©ry-KÏRéÅB⁄ã◊íÕ.!…Eíyêﬁ‡∂jÌìÅ˘‰ﬁ∞‚2zN+˘•éí¥~<î4¢áJjWÕ≈˝áæ5zﬂçÊˆòs—3B√Lÿy“Í˝Ó>AuµÛ•“Ó=X∏∞*ñ^≤∫L“V	∏î8√rçjÔ∞BMë™ÄOü∫0$ª‡:{i´]∂L◊ãjkà<CJH˛•q ‰¢ﬁK.õ"O˝v4+It~;⁄évæ˙ÕÓ»€ëÒó_"tFqæê?…ç∏l|æ¿eµ!ÛSÂÖ Bejfn™à•∆\/\ìÆÕóEêç˘‹ê^B626&9–Ê˜…Ê–óü	¥‚d`3áz∂gﬂ“S}ÿÅ˛tMæ ¯C ˆ[ç?	àÏ )æû*4˝˜Àîà(ååπ⁄g
-√‰á–6ÈO≤0dâ?MÇl°IÊ	$„Zñî&^Q1i7∂j*dp*¸w›˙«ï¨/öc.3En≤√DFY ä…'öÜÖ,FëÜG—Sà—™¬<\8Ù˙uµ€˛H"Óa´{ÚµôIL?∏íìdÖ†!A'£ì\¢Çœ≈F3\ÇxFxHΩçè^ÄÜ”m`Ekôfà
-SŸ¡A<*<©GèNûæg63e≥ÃHË¸h–~‹à)ÇsñØF"9ÛCóy˝Àº˛7Ø°u¡–´∞^.Û˙óy˝ƒœÛ˙o`WSÇ‹◊ó)|˛Á2ÖnS¯”UT_Î¸ÁÊMT_ﬂD7◊ó6—ZÁ7‰
-∫µ~ß~o˝ı:⁄∫≥ù7èØô;V˛~zV›.ŒÚBˇŸÇûÀ/5ád(É9§‘V…q⁄Œ§ﬁÍlËñºãåÆu	oj‰…µŒ#≥YMct^ønGè¸,ˇÿıCNZîZ<JHß'Æá≥ò‰>CD«¸	≠u€ﬂ¥ˇnü>®ü˝%¨yﬁÏÖô¯#ÍÌˆrﬂb›qûÊ˘ÙA∑˝°Ñò„ºE˛>ïi˙wòâfﬁi≥âœà~¶ˇ\±·j∑˝g‘y◊$Ï∑•BH·ñ⁄:„©……Ä>™·F…≥Ó⁄6vV$&n‰,˜VÉÃìÊÇy AÅÕn˚SÌ™≠ˇ·E(À#)U"sã0{âaÏ·hµ—˘ÄÎü/Q3¸:ñ`Î±∆tÈ>‰Ñxs¨`Wv4L∞!π9)™¬Ÿz8#àãÛÖ©!ÊDEòûœÀCﬁ√w …≤NS°9∞”“ı0=‰â—	1v5Àªßao≈2w¥Êçí{`∆ê≤eöÙôdüû/ÏñcÎÃµ§CÛèØE\Mˇ‘¬lîÅ¸ì”i˘yèËè«ë1wñ√£‚éﬁ9 +^≤œÃ–wø;F∑¸'®ôyõëh•wy?Üd»?≥€~®°•≠uzsd¢$JZœ…¬(≈ØL‹o@'É*KE`Ø>$ƒƒDåë~¢/ıõ2q@s"-bxkﬁi<ÍfÛÓƒåAmSE‘·†ÿ_Ã&™kQÀUHè$áLH-±€√ΩØÔ¨ø´[“—≤E:7–O-§“†«3 HS=ñ˘r.A;⁄∑‰U˙›±ˆ”|<7ˇœè¢‡¿"MΩØhé¨„>~Ü¯3Ò¨ú8tƒú¯çn˚ﬂ5‰©“:}ÿm¢ıp¿XpÚS¬Tr˜‰kô*˘GdCì‹Œ“fÑﬂß;„íõÄü†ïÁﬂ¢U0»*3k%ëTi—å*Ì3%Dà∂O!÷!ï∞…GÉ$…ò>˘ ”q¬0≈|ô¬ì'—pgÖ´2ò4âH”æ∞(‹ü.O¯Î˝ÙAÁWT$ââ3*≤ò$ﬂ&äkI◊Îñø≠Rå≈N†ˇÊ7N∞Ÿ¡Ú‰íÂæèè‘õ~;˛q,Ö>+V¢li6;Yﬂ¿;ƒoSWˆ9rBÎcÇa•{Ú’⁄\#ˇÍƒ≈gÙ?6o¢Ân˚ø—mÿsÚÊÎÀ€Îı◊≈j_Ã;\-¬ì7ˆù©~4QËÖﬁ@Õ‘8¥qguÈ6ç¬}∞Å&Ak~µD˛û<ﬁD[‰E?ﬂàFÂ∏-Ù4’°´Z˚—=gL±≈‚p¬L#~	“L¬∆≈»^w?É˙"å§8ñ1ÙøMó'’∂£Ó:`¬P25Z&ñ¿é§–ˇJã’Raê˝É Å¡* å‚Üß…b0§˚E∫|πmÁÇ±E—÷¢¸Ëç,ê§›‡ËÚEu:)T’ ~|Z–*ªF_‹V-€&éÎ≤‘å/SÄ”ÕfSÁ~ÅÏoÉâ∞%ÿ˛+k›ˆølÆqûö˝l=ƒ÷1~∑>.(¥8©Nú(éjÂ≠õ¬é§ª<ì]ià$g˙vG§mB5⁄/:'Úª?|2∂<1∆ïVÄZ&oº›jöW;Ùµõ¥€õ ÆÒ¢Ú”	Âƒ¯!¥E]j`=∂|iÿÖá J65"ao¬	OLà8û|a†¬´ãì¥NÔöi∑<éËgÈ?ËÅß¨¸ÀñÊp±	6YeX%C∆NmÏ^ÁkÿØˆ¥JL c›Ï<B?ß^)·Œc`Êá19[⁄l+ñ€’û§∑pÕ˝≤˘á›^¬rqÑ]	’ö‰ë∂Ô·Ç
-á®T*ŸW4UE∏‰IN{%⁄#—G\S1∂ºô º_ú∞yNN–yƒIìT¢≈¡¡£Û≠ˆî¨N%—c‚Z#ÊÍçŒ¥}ÎÆêè89çó≈,&Æ43ìAcYô,ëÕŒä…∏}8Ï∆õCû>Kp_«¨J¶
-bÊ©úƒ4,Ëîè+ÇÍ{#„ø¡Ûœ˝»»'≈¢1|û«6àˇäNk˙û «Ë.çH¿“Á^XúdœgjêÌñÖX˛ÌÛcç™Ë ·bÆNh∞’µŒó-¥⁄˘+˘~Ö÷#≤â;ÚLªû|=WWl"njl*}J[b©¶:Är=ñyL∏!Wg—}´Adà&ÔŒ&5KQ∫÷^¿óÃà]ÕŸ3e|ÑÎ®Ö—M≠såñ;«&*‹€<}0ëhìe–ef¿ô|mñ`õ!dhfmL∞èÕı∞]#éñ‡∫H “$#ìÜ¥µ*⁄§oXàKƒâs(9;rBº√≈–îßû∆$˘√≥1ØbÅ€˘s¢ŒüÇÓÎkÑÓ˘éøAcÁZÛ˛ ¨1ZK›R≠≥ízIÇMƒGÒZŒ£b®X´BêÔ^&Ò˜d∂êHÓò!c≤≥‰c0ﬂæ"E˜‰1Õ÷F„+´ên˚ΩÜ¶ Àâj}`0Qh∆P©ã»Ê∞©ËÊ0Ωô1T;Èe1D¿œª∂nIJ»1i˛˝OøK°Cƒ¯Ï∂ˇmtéíê	b ;öŒ|ëd€^måV.ò|Ut[‰5TMQ∞„ﬁì ¿3ê/ƒ8VbÜàj=Ω«¨æÇ€¨Ì†‹7ë°~äLwo◊@∂i
-·—ux›mÌWòµêT∫˘	}æDüNÓJ1`«+∞Ï∫§£‘ LP	%±íOÍ⁄ﬁ”˛]G'o…∂⁄≠ìÛD¨n±+È/ö.´Yyã*z´◊€€ öÎºHäÚ&çc)Q∑Ëƒ≥±î<õŸ2lÄZBqô¥∫W@äﬁ˝iÑ»ıFΩf˝7Jj7âGÚê’–≈“q	;éÂ$AÙWô\>¥A∞Ê√W^7ójw¥=ÉeîL…mŒ2íïW¯¨!ëê‚∂«€ÁœˆH/—'3⁄ ¡~˛<kx$îÕa•rÑmäòÍÿå˘+É.Í’!åhÚ3´\√ù8oº∏E7ÚtÄèFébbômHDÖ2Y÷æ[;¨»[›–£=∫¥GõˆxyjÁ±·3BπFØÏ‚˚»’»5…DûEÓ»ëTà¬úGìÊä¥8Çl◊˜+ÜŒtÒñÜÖ&≠l8∆ÈîWèºLŒ≈î~‚VÛ°+√°Ùñ⁄˘2ÿÏLÀjºgB¨∏˝aP)ø ë
-¢ıñ%õ(–≈	à¥Ù©®BöØ‰ØF+fPé¥Z@Ö-ÖàòÊÄ…ŒÆZ 'ò¡©ü(¥—nlÕœ±øG?0íﬂ:Wø¿O£hßi´iV«*¡5k å_ ûü»ã;G¸∫ËÇÅÉóI·ﬂ˛à{àÁø(L¯p¨÷Á	yó÷Æ» πÉWÜN¬—BYbÓ §ÙﬂyäiÕsıîxq•-≠E±•m9¨á1Á"^ÂÔ8@<b7§°¿y¥]Î∂?; tÔG‚
-…û2°.Ö∫Ò&î¿~¯ı Ï⁄PÜöÜ€œøπCBfûŒXú@`|9v8,~9Y 3vdÁ%p˘∏<p8hîêÂu“Ì ^ô√‡∂‹=yt'zıeÄñ√Ûc@,√Àû∏roØ„˘ +/wO˛f˜v¡›#2¨»ÃõΩµMÿ]≤…Ù¶t`˙W%Oä‘…À	Ã0≥∆.AÀÁ¥Ly€Øµ¢ZˆK@◊l6¡¯g¬≤ßÔôh)=2hØ‘JæÙÉÄE√Ê.0¥fX‡√˜∆o€ÙG~∞F›ˇëüDzXê˚JÑ∆ÂÍjï¶*•ÈôŸ“‹µ˘º\ôPg(∂§Ì]xæ§H˝3ÜÊúkÈV"ÍYµÏé Á2û_¯g4\Á76¿rÏ∑íŒÁù9Ãﬂí±dm“–°-rÑ¶P‡Í∑;èçâ\ÙHãïXãT®´ΩnÿDN›Êt¨Õi÷ÊäC$Iæ&]Crº"T!Çæ£Úù4◊y| ~œÂkÆÈCüépÏ˙M¯Œ∆W®oïhﬁÊ3∫Y‚9±’TL˛˜∂∏7õ4ØJ}ÇQÆÎ!7ÔˆÂŒù¡Õ5WË^ùª‹Ω5—kπ∏=∫wÖ¥“€◊B8Et)Wƒ„{b°∫”˘
-j!“Z<`∏#ç]^ ’¡äz˙ûÅ∂;œd“ ÌŒ#÷Á…_m(∆»øí´˘{ã> Ú
+                          const isPending = prod.status === 'pending';
 
-#}SÌ<ªûp1W'∞ã≈¢≥C}£Ûπân”‰É…v∏ØΩîMAg®’ru¥Bí RµZ.F€íÖñYÇ~™Rúûπ@(™¸2á&Ç ê#L¯Mùwt…ËQ%	«~€jZ±à€%|=#|fÓπŒ˚\"◊#/8B‰∫@ŒÍÑIÛ’hW√¢÷Ø¢C‰Ójvx±J`ı*‰ÕV5£ä`5ΩDl{⁄;G∆#¿µ'dz\:◊&'{6AH∑Ûmº˝≈¨Ñ≥¬F˜t¸ÀAF˚ Lvéeıj&MD~Ákìúl è|À√â√¬†‹xâÅF±üPÙËØi˝xaœuß{rU9‘Œ±AG
-ùs§ıÅ>3»˜I´_Çû∞†Á4ﬁΩêàg.Î^¬ùáÄ;CÈ$Ë˘Ã∑åÜG¿]¢ùß„ú°ù{  Ãs12¨sxí8ŒGØΩÚˇ   ˇˇ <ΩÍJ
+                          return (
+                            <div
+                              key={prod.id}
+                              className={`bg-white dark:bg-slate-800 rounded-2xl border p-4 shadow-sm flex flex-col justify-between gap-3 transition ${
+                                isPending
+                                  ? 'border-amber-400 dark:border-amber-600 ring-2 ring-amber-400/20 bg-amber-50/20 dark:bg-amber-950/10'
+                                  : 'border-slate-200 dark:border-slate-700'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <img
+                                  src={prod.images?.[0] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'}
+                                  alt={prod.name}
+                                  className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                                />
+                                <div className="min-w-0 flex-1 space-y-1">
+                                  <h4 className="font-extrabold text-xs text-slate-900 dark:text-white line-clamp-1">
+                                    {prod.name}
+                                  </h4>
+                                  <div className="flex items-center gap-1.5 text-xs">
+                                    <span className="font-black text-amber-500">
+                                      {prod.price.toLocaleString('vi-VN')}ƒë
+                                    </span>
+                                    {prod.unit && <span className="text-slate-400 text-[10px]">/ {prod.unit}</span>}
+                                  </div>
+                                  <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                                    <span>T·ªìn: <strong>{prod.stockQuantity}</strong></span>
+                                    <span>‚Ä¢</span>
+                                    <span>{prod.category}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Moderation Status Tag */}
+                              <div className="pt-2 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2">
+                                <div>
+                                  {isPending ? (
+                                    <span className="px-2 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold text-[10px] rounded-md border border-amber-500/30 flex items-center gap-1">
+                                      ‚è≥ Ch·ªù duy·ªát (Ch·ªâ c∆∞ d√¢n th·∫•y)
+                                    </span>
+                                  ) : isApproved ? (
+                                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-md border border-emerald-500/30 flex items-center gap-1">
+                                      ‚úì ƒê√£ duy·ªát ‚Ä¢ Hi·ªán tr√™n Web
+                                    </span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 bg-red-500/20 text-red-600 dark:text-red-400 font-extrabold text-[10px] rounded-md border border-red-500/30 flex items-center gap-1">
+                                      ‚ùå T·∫°m ·∫©n
+                                    </span>
+                                  )}
+                                </div>
+
+                                {prod.code && (
+                                  <span className="text-[9px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
+                                    {prod.code}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Admin Action Buttons */}
+                              <div className="grid grid-cols-3 gap-1.5 pt-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleProductApproval(selectedAdminStore.id, prod.id)}
+                                  title={isApproved ? "Chuy·ªÉn v·ªÅ Ch·ªù duy·ªát / T·∫°m ·∫©n" : "Duy·ªát hi·ªÉn th·ªã l√™n Website"}
+                                  className={`py-1.5 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                                    isApproved
+                                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white'
+                                      : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'
+                                  }`}
+                                >
+                                  {isApproved ? '·∫®n web' : '‚úì Duy·ªát'}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditProduct(prod)}
+                                  className="py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Edit3 className="w-3 h-3 text-blue-500" />
+                                  <span>S·ª≠a</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteStoreProduct(selectedAdminStore.id, prod.id)}
+                                  className="py-1.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                  <span>X√≥a</span>
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 2: D·ªäCH V·ª§ C∆Ø D√ÇN LI√äN QUAN */}
+                {storeDetailActiveTab === 'services' && (
+                  <div className="space-y-4">
+                    {matchingServs.length === 0 ? (
+                      <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 space-y-3">
+                        <Wrench className="w-10 h-10 text-slate-400 mx-auto" />
+                        <p className="font-bold text-sm text-slate-600 dark:text-slate-400">
+                          Ch∆∞a c√≥ b√†i d·ªãch v·ª• c∆∞ d√¢n n√†o ƒë∆∞·ª£c li√™n k·∫øt v·ªõi s·ªë ƒëi·ªán tho·∫°i n√†y.
+                        </p>
+                        <button
+                          onClick={() => {
+                            setEditingService(null);
+                            resetNewSrvForm();
+                            setNewSrvProviderName(selectedAdminStore.ownerName);
+                            setNewSrvProviderPhone(storePhone);
+                            setNewSrvProviderZalo(selectedAdminStore.ownerZalo || storePhone);
+                            setNewSrvAddress(selectedAdminStore.address);
+                            setNewSrvProject(selectedAdminStore.project as any);
+                            setShowAddServiceModal(true);
+                          }}
+                          className="px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow hover:bg-blue-500"
+                        >
+                          ‚ûï Th√™m D·ªãch V·ª• M·ªõi
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {matchingServs.map(srv => {
+                          const isApproved = srv.status === 'approved' || srv.approved === true || srv.status === undefined;
+                          const isVerified = srv.verified || srv.kycStatus === 'verified';
+
+                          return (
+                            <div
+                              key={srv.id}
+                              className={`bg-white dark:bg-slate-800 rounded-2xl border p-4 shadow-sm flex flex-col justify-between gap-3 ${
+                                !isApproved
+                                  ? 'border-amber-400 dark:border-amber-600 ring-2 ring-amber-400/20 bg-amber-50/20 dark:bg-amber-950/10'
+                                  : 'border-slate-200 dark:border-slate-700'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <img
+                                  src={srv.images?.[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
+                                  alt={srv.title}
+                                  className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                                />
+                                <div className="min-w-0 flex-1 space-y-1">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-extrabold rounded">
+                                      {srv.subCategory || srv.categoryId}
+                                    </span>
+                                    {isVerified && (
+                                      <span className="px-1.5 py-0.2 bg-blue-600 text-white text-[9px] font-black rounded flex items-center gap-0.5">
+                                        <BadgeCheck className="w-2.5 h-2.5" /> KYC
+                                      </span>
+                                    )}
+                                  </div>
+                                  <h4 className="font-extrabold text-xs text-slate-900 dark:text-white line-clamp-2">
+                                    {srv.title}
+                                  </h4>
+                                  <div className="text-[11px] font-black text-amber-500">
+                                    {srv.priceDisplay || srv.price || 'Th·ªèa thu·∫≠n'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Status Tag */}
+                              <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                                <div>
+                                  {isApproved ? (
+                                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-md border border-emerald-500/30 flex items-center gap-1">
+                                      ‚úì ƒê√£ duy·ªát ‚Ä¢ Hi·ªán tr√™n Web
+                                    </span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold text-[10px] rounded-md border border-amber-500/30 flex items-center gap-1">
+                                      ‚è≥ Ch·ªù duy·ªát (Ch·ªâ c∆∞ d√¢n th·∫•y)
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-[10px] text-slate-400 font-medium">
+                                  {srv.createdAt || 'M·ªõi ƒëƒÉng'}
+                                </span>
+                              </div>
+
+                              {/* Actions */}
+                              <div className="grid grid-cols-3 gap-1.5 pt-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleServiceStatus(srv.id, srv.status)}
+                                  className={`py-1.5 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                                    isApproved
+                                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white'
+                                      : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'
+                                  }`}
+                                >
+                                  {isApproved ? '·∫®n web' : '‚úì Duy·ªát'}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditServiceClick(srv)}
+                                  className="py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Edit3 className="w-3 h-3 text-blue-500" />
+                                  <span>S·ª≠a</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteResidentService(srv.id)}
+                                  className="py-1.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                  <span>X√≥a</span>
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 3: TH√îNG TIN GIAN H√ÄNG & KIOTVIET POS */}
+                {storeDetailActiveTab === 'info' && (
+                  <div className="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                      <div>
+                        <span className="text-slate-400 font-bold block mb-1">T√™n Gian H√†ng:</span>
+                        <p className="font-black text-slate-900 dark:text-white text-sm">{selectedAdminStore.storeName}</p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 font-bold block mb-1">Ch·ªß S·ªü H·ªØu & SƒêT:</span>
+                        <p className="font-black text-slate-900 dark:text-white text-sm">
+                          {selectedAdminStore.ownerName} ‚Ä¢ {storePhone}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 font-bold block mb-1">ƒê·ªãa Ch·ªâ Ph·ª•c V·ª•:</span>
+                        <p className="font-medium text-slate-700 dark:text-slate-300">{selectedAdminStore.address}</p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 font-bold block mb-1">D·ª± √Ån & Ph√¢n Khu:</span>
+                        <p className="font-medium text-slate-700 dark:text-slate-300">
+                          {selectedAdminStore.project?.toUpperCase()} ‚Ä¢ {selectedAdminStore.subdivision || 'N·ªôi khu'}
+                        </p>
+                      </div>
+                      <div className="md:col-span-2">
+                        <span className="text-slate-400 font-bold block mb-1">M√¥ T·∫£ Gian H√†ng:</span>
+                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{selectedAdminStore.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-black ${
+                          selectedAdminStore.kiotVietConfig?.syncStatus === 'connected'
+                            ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
+                            : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
+                        }`}>
+                          {selectedAdminStore.kiotVietConfig?.syncStatus === 'connected' ? '‚ö° KiotViet POS Live Connected' : 'Ch∆∞a k·∫øt n·ªëi API POS KiotViet'}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleOpenEditStore(selectedAdminStore)}
+                        className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs rounded-xl hover:opacity-90 transition cursor-pointer"
+                      >
+                        Ch·ªânh S·ª≠a Th√¥ng Tin Gian H√†ng
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Bottom Footer */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <span>M·ªçi thay ƒë·ªïi ƒë∆∞·ª£c t·ª± ƒë·ªông c·∫≠p nh·∫≠t ngay tr√™n h·ªá th·ªëng Ch·ª£ C∆∞ D√¢n 24H.</span>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <button
+                    onClick={() => setSelectedAdminStore(null)}
+                    className="px-4 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl hover:bg-slate-300 cursor-pointer"
+                  >
+                    ƒê√≥ng
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleSyncAllToWebsite();
+                      setSelectedAdminStore(null);
+                    }}
+                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg hover:shadow-emerald-500/25 transition cursor-pointer flex items-center gap-1.5"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    <span>C·∫¨P NH·∫¨T & ƒê·ªíNG B·ªò L√äN WEBSITE</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ==================== MODAL: TH√äM / S·ª¨A S·∫¢N PH·∫®M GIAN H√ÄNG ==================== */}
+      {showStoreProductModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-emerald-500" />
+                <span>{editingStoreProduct ? 'CH·ªàNH S·ª¨A S·∫¢N PH·∫®M' : 'TH√äM S·∫¢N PH·∫®M M·ªöI'}</span>
+              </h3>
+              <button
+                onClick={() => setShowStoreProductModal(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
+              >
+                ‚úï
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStoreProductSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">T√™n S·∫£n Ph·∫©m (*)</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="V√≠ d·ª•: C∆°m G√† X·ªëi M·ª° S·ªët Chua Ng·ªçt"
+                  value={storeProductForm.name}
+                  onChange={(e) => setStoreProductForm(p => ({ ...p, name: e.target.value }))}
+                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">M√£ SKU</label>
+                  <input
+                    type="text"
+                    value={storeProductForm.code}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, code: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Danh M·ª•c</label>
+                  <select
+                    value={storeProductForm.category}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, category: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  >
+                    <option value="M√≥n ƒÇn & ƒê·ªì U·ªëng">M√≥n ƒÇn & ƒê·ªì U·ªëng</option>
+                    <option value="Th·ª±c Ph·∫©m T∆∞∆°i S·ªëng">Th·ª±c Ph·∫©m T∆∞∆°i S·ªëng</option>
+                    <option value="H√†ng Ti√™u D√πng & T·∫°p H√≥a">H√†ng Ti√™u D√πng & T·∫°p H√≥a</option>
+                    <option value="ƒê·ªì Gia D·ª•ng & N·ªôi Th·∫•t">ƒê·ªì Gia D·ª•ng & N·ªôi Th·∫•t</option>
+                    <option value="D·ªãch V·ª• C∆∞ D√¢n">D·ªãch V·ª• C∆∞ D√¢n</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div className="col-span-1">
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Gi√° B√°n (VNƒê) (*)</label>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    step="1000"
+                    value={storeProductForm.price}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, price: Number(e.target.value) }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-amber-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">ƒê∆°n V·ªã</label>
+                  <input
+                    type="text"
+                    placeholder="su·∫•t, h·ªôp, c√°i..."
+                    value={storeProductForm.unit}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, unit: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">T·ªìn Kho</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={storeProductForm.stockQuantity}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, stockQuantity: Number(e.target.value) }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">H√¨nh ·∫¢nh S·∫£n Ph·∫©m (D∆∞·ªõi 10MB)</label>
+                  <label className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
+                    <Upload className="w-3 h-3" />
+                    <span>üìÅ T·∫£i T·ª´ M√°y</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const check = validateImageSize(file);
+                          if (!check.valid) {
+                            alert(check.message);
+                            return;
+                          }
+                          const previewUrl = createInstantPreview(file);
+                          setStoreProductForm(p => ({ ...p, images: [previewUrl] }));
+
+                          addWatermarkToImage(file).then(compressed => {
+                            if (compressed) {
+                              setStoreProductForm(p => ({ ...p, images: [compressed] }));
+                            }
+                          }).catch(console.error);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={storeProductForm.images[0] || ''}
+                    onChange={(e) => setStoreProductForm(p => ({ ...p, images: [e.target.value] }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-mono"
+                  />
+                  {storeProductForm.images[0] && (
+                    <img
+                      src={storeProductForm.images[0]}
+                      alt="Preview"
+                      className="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">M√¥ T·∫£ S·∫£n Ph·∫©m</label>
+                <textarea
+                  rows={2}
+                  placeholder="M√¥ t·∫£ s·∫£n ph·∫©m, th√†nh ph·∫ßn, cam k·∫øt v·ªá sinh an to√†n..."
+                  value={storeProductForm.description}
+                  onChange={(e) => setStoreProductForm(p => ({ ...p, description: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                />
+              </div>
+
+              {/* Moderation Status selector */}
+              <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300">
+                  Ph√™ Duy·ªát Hi·ªÉn Th·ªã Website:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setStoreProductForm(p => ({ ...p, status: 'approved' }))}
+                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
+                      storeProductForm.status === 'approved'
+                        ? 'bg-emerald-600 text-white shadow'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>‚úì ƒê√£ Duy·ªát (Hi·ªán Web)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setStoreProductForm(p => ({ ...p, status: 'pending' }))}
+                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
+                      storeProductForm.status === 'pending'
+                        ? 'bg-amber-500 text-slate-950 shadow'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>‚è≥ Ch·ªù Duy·ªát (·∫®n Web)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowStoreProductModal(false)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
+                >
+                  H·ªßy B·ªè
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
+                >
+                  L∆ØU S·∫¢N PH·∫®M
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MODAL: TH√äM / S·ª¨A GIAN H√ÄNG C∆Ø D√ÇN ==================== */}
+      {showStoreFormModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <Store className="w-5 h-5 text-emerald-500" />
+                <span>{editingStoreItem ? 'CH·ªàNH S·ª¨A GIAN H√ÄNG C∆Ø D√ÇN' : 'T·∫†O GIAN H√ÄNG M·ªöI'}</span>
+              </h3>
+              <button
+                onClick={() => setShowStoreFormModal(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
+              >
+                ‚úï
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStoreFormSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">T√™n Gian H√†ng (*)</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="V√≠ d·ª•: B·∫øp C∆∞ D√¢n Vin - C∆°m Ni√™u Singapore"
+                  value={storeFormData.storeName}
+                  onChange={(e) => setStoreFormData(p => ({ ...p, storeName: e.target.value }))}
+                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">T√™n Ch·ªß Shop</label>
+                  <input
+                    type="text"
+                    placeholder="Nguy·ªÖn VƒÉn A"
+                    value={storeFormData.ownerName}
+                    onChange={(e) => setStoreFormData(p => ({ ...p, ownerName: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">S·ªë ƒêi·ªán Tho·∫°i (*)</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="VD: 0912.345.678"
+                    value={storeFormData.ownerPhone}
+                    onChange={(e) => setStoreFormData(p => ({ ...p, ownerPhone: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-mono font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">D·ª± √Ån Vinhomes</label>
+                  <select
+                    value={storeFormData.project}
+                    onChange={(e) => setStoreFormData(p => ({ ...p, project: e.target.value as any }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  >
+                    <option value="ocean-park-1">Ocean Park 1 (Gia L√¢m)</option>
+                    <option value="ocean-park-2">Ocean Park 2 (The Empire)</option>
+                    <option value="ocean-park-3">Ocean Park 3 (The Crown)</option>
+                    <option value="smart-city">Smart City (T√¢y M·ªó)</option>
+                    <option value="grand-park">Grand Park (TP. Th·ªß ƒê·ª©c)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Ng√†nh H√†ng</label>
+                  <select
+                    value={storeFormData.category}
+                    onChange={(e) => setStoreFormData(p => ({ ...p, category: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  >
+                    <option value="Th·ª±c Ph·∫©m & ƒÇn U·ªëng">Th·ª±c Ph·∫©m & ƒÇn U·ªëng</option>
+                    <option value="N·ªôi Th·∫•t & Gia D·ª•ng">N·ªôi Th·∫•t & Gia D·ª•ng</option>
+                    <option value="B·∫£o Tr√¨ & S·ª≠a Ch·ªØa">B·∫£o Tr√¨ & S·ª≠a Ch·ªØa</option>
+                    <option value="ChƒÉm S√≥c & L√†m ƒê·∫πp">ChƒÉm S√≥c & L√†m ƒê·∫πp</option>
+                    <option value="V·∫≠n T·∫£i & Chuy·ªÉn Nh√†">V·∫≠n T·∫£i & Chuy·ªÉn Nh√†</option>
+                    <option value="Gi√°o D·ª•c & R√®n Luy·ªán">Gi√°o D·ª•c & R√®n Luy·ªán</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">ƒê·ªãa Ch·ªâ Ph·ª•c V·ª•</label>
+                <input
+                  type="text"
+                  placeholder="V√≠ d·ª•: Shophouse Sao Bi·ªÉn 12-34, Vinhomes Ocean Park 2"
+                  value={storeFormData.address}
+                  onChange={(e) => setStoreFormData(p => ({ ...p, address: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">Logo Gian H√†ng (D∆∞·ªõi 10MB)</label>
+                  <label className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
+                    <Upload className="w-3 h-3" />
+                    <span>üìÅ T·∫£i Logo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const check = validateImageSize(file);
+                          if (!check.valid) {
+                            alert(check.message);
+                            return;
+                          }
+                          const previewUrl = createInstantPreview(file);
+                          setStoreFormData(p => ({ ...p, logoUrl: previewUrl }));
+
+                          addWatermarkToImage(file, { skipWatermark: true, maxDim: 600 }).then(compressed => {
+                            if (compressed) {
+                              setStoreFormData(p => ({ ...p, logoUrl: compressed }));
+                            }
+                          }).catch(console.error);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+                <input
+                  type="url"
+                  placeholder="https://..."
+                  value={storeFormData.logoUrl}
+                  onChange={(e) => setStoreFormData(p => ({ ...p, logoUrl: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">M√¥ T·∫£ Gian H√†ng</label>
+                <textarea
+                  rows={2}
+                  placeholder="M√¥ t·∫£ phong c√°ch, s·∫£n ph·∫©m ch√≠nh, uy t√≠n..."
+                  value={storeFormData.description}
+                  onChange={(e) => setStoreFormData(p => ({ ...p, description: e.target.value }))}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                />
+              </div>
+
+              {/* Status toggle */}
+              <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300">
+                  Tr·∫°ng Th√°i Ph√™ Duy·ªát Gian H√†ng:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setStoreFormData(p => ({ ...p, status: 'approved' }))}
+                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
+                      storeFormData.status === 'approved'
+                        ? 'bg-emerald-600 text-white shadow'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>‚úì ƒê√£ Duy·ªát (Hi·ªán Web)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setStoreFormData(p => ({ ...p, status: 'pending' }))}
+                    className={`py-2 px-3 rounded-lg font-black text-xs transition flex items-center justify-center gap-1 cursor-pointer ${
+                      storeFormData.status === 'pending'
+                        ? 'bg-amber-500 text-slate-950 shadow'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>‚è≥ Ch·ªù Duy·ªát (T·∫°m ·∫®n)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowStoreFormModal(false)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
+                >
+                  H·ªßy B·ªè
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
+                >
+                  L∆ØU GIAN H√ÄNG
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+};

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Property, Project, NewsArticle, ProjectCategory } from '../types';
-import { X, Save, Image as ImageIcon, Trash2, Plus, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield, Cloud, Film } from 'lucide-react';
+import { X, Save, Image as ImageIcon, Trash2, Plus, PlusCircle, UserCheck, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield, Cloud, Film } from 'lucide-react';
 import { SoDoCensorEditor } from './SoDoCensorEditor';
 import { compressImageFile } from '../lib/imageUtils';
 import { uploadMediaToSupabase } from '../lib/supabaseStorage';
