@@ -32,6 +32,7 @@ import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
+import { AdminBankWebhookCenter } from '../components/AdminBankWebhookCenter';
 import { GoogleWorkspaceCenter } from '../components/GoogleWorkspaceCenter';
 import { getProjectSlug } from '../lib/slugs';
 
@@ -5090,6 +5091,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       )}
 
       {/* Tab: Admin Affiliate & Platform Fee Management */}
+      {/* Tab: SePay & Bank Webhook Center / Bảng Giá */}
+      {(activeTab === 'pricing' || (activeTab as string) === 'sepay' || (activeTab as string) === 'bank_webhook') && (
+        <AdminBankWebhookCenter onRefreshData={onRefreshData} />
+      )}
+
       {activeTab === 'affiliate_mgmt' && (
         <div className="space-y-6">
           {/* Header Banner */}
