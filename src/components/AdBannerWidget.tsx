@@ -368,5 +368,41 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
     );
   }
 
+  // 7. BANNER CHỢ CƯ DÂN, THỢ & TUYỂN DỤNG (Resident Market, Services, Recruitment)
+  if (position === 'resident_market_top' || position === 'resident_services' || position === 'recruitment' || activeAds.length > 0) {
+    return (
+      <div className={`my-4 space-y-3 ${className}`}>
+        {activeAds.map(ad => (
+          <a
+            key={ad.id}
+            href={getSafeAdUrl(ad.linkUrl || ad.targetUrl)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => handleAdClick(ad)}
+            className="group block relative rounded-2xl overflow-hidden border border-rose-500/30 shadow-lg transition-transform hover:scale-[1.01]"
+          >
+            <div className="relative h-28 sm:h-36 w-full">
+              <img
+                src={ad.imageUrl}
+                alt={ad.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent flex items-end p-3 sm:p-4">
+                <div className="space-y-1">
+                  <span className="bg-rose-500 text-white font-black text-[10px] px-2 py-0.5 rounded uppercase inline-flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> {ad.badgeText || 'QUẢNG CÁO NỔI BẬT'}
+                  </span>
+                  <h4 className="text-xs sm:text-sm font-black text-white group-hover:text-rose-300 transition line-clamp-1">
+                    {ad.title}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    );
+  }
+
   return null;
 };

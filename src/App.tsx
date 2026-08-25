@@ -746,7 +746,7 @@ export const App: React.FC = () => {
       <ScrollToTop />
 
       {/* Top Banner (If active) */}
-      <AdBannerWidget ads={INITIAL_ADS} position="header_top" />
+      <AdBannerWidget ads={ads} position="header_top" />
 
       {/* Navigation Header */}
       <Header
