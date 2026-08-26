@@ -1,0 +1,16 @@
+name: Keep Render Awake
+
+on:
+  schedule:
+    # Mỗi 5 phút, khung UTC 0h-16h59 = 7h sáng - 23h59 giờ VN
+    - cron: '*/5 0-16 * * *'
+  workflow_dispatch:  # cho phép bấm chạy tay để test ngay
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping website
+        run: |
+          echo "Pinging chocudan24h.com at $(date)"
+          curl -sSf -o /dev/null -w "Status: %{http_code}\n" https://chocudan24h.com || echo "Ping failed, but job continues"
