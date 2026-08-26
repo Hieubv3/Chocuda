@@ -2,9 +2,9 @@ name: Keep Render Awake
 
 on:
   schedule:
-    # Mỗi 5 phút, khung UTC 0h-16h59 = 7h sáng - 23h59 giờ VN
-    - cron: '*/5 0-16 * * *'
-  workflow_dispatch:  # cho phép bấm chạy tay để test ngay
+    # Mỗi 10 phút, khung UTC 11h-16h59 = 18h - 23h55 giờ VN
+    - cron: '*/10 11-16 * * *'
+  workflow_dispatch:
 
 jobs:
   ping:
