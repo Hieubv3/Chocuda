@@ -634,12 +634,12 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <button
                 onClick={() => {
-                  setCurrentTab(currentUser?.role === 'admin' ? 'admin' : 'user_dashboard');
+                  setCurrentTab('user_dashboard');
                   setMobileMenuOpen(false);
                 }}
                 className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-bold"
               >
-                Quản Lý
+                Trang Cá Nhân
               </button>
             </div>
           ) : (
