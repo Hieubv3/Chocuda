@@ -173,6 +173,15 @@ export interface NewsArticle {
   status: 'published' | 'draft';
 }
 
+export interface LeadCareLog {
+  id: string;
+  timestamp: string;
+  note: string;
+  authorId?: string;
+  authorName?: string;
+  actionType?: 'call' | 'zalo' | 'meet' | 'note' | 'status_change';
+}
+
 export interface LeadContact {
   id: string;
   fullName: string;
@@ -181,13 +190,28 @@ export interface LeadContact {
   projectInterest: string;
   propertyId?: string;
   propertyTitle?: string;
+  serviceId?: string;
+  serviceTitle?: string;
+  storeId?: string;
+  storeName?: string;
+  userId?: string; // ID người sở hữu lead (môi giới, chủ nhà, chủ shop, thợ)
   sellerName?: string;
   sellerPhone?: string;
   note: string;
   preferredTime?: string;
-  type: 'viewing' | 'consultation' | 'deposit';
-  status: 'new' | 'contacted' | 'done';
+  type: 'viewing' | 'consultation' | 'deposit' | 'service_booking' | 'store_order' | 'general';
+  source?: 'bds' | 'resident_market' | 'technician' | 'recruitment' | 'direct' | 'manual';
+  status: 'new' | 'contacted' | 'consulting' | 'appointment' | 'done' | 'cancelled' | 'issue';
+  dealValueVnd?: number;
+  nextAppointment?: string;
+  careLogs?: LeadCareLog[];
+  hasIncident?: boolean;
+  incidentDescription?: string;
+  adminInterventionNote?: string;
+  assignedStaffId?: string;
+  assignedStaffName?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export type UserRole = 
@@ -1008,4 +1032,31 @@ export interface AdminTaskDelegation {
   createdAt: string;
   updatedAt: string;
 }
+
+// ------------------- NOTIFICATIONS & WALLET INTENTS -------------------
+export interface AppNotification {
+  id: string;
+  userId: string | 'all' | 'admin';
+  title: string;
+  message: string;
+  type: 'deposit_success' | 'payout_success' | 'payout_rejected' | 'admin_pump' | 'escrow_update' | 'order_update' | 'system';
+  amount?: number;
+  read: boolean;
+  createdAt: string;
+  link?: string;
+}
+
+export interface DepositIntent {
+  id: string;
+  code: string; // E.g. NAP 84920 or NAP 0988123456
+  userId: string;
+  userName: string;
+  userPhone?: string;
+  userEmail?: string;
+  amount: number;
+  status: 'pending' | 'completed' | 'expired';
+  createdAt: string;
+  completedAt?: string;
+}
+
 

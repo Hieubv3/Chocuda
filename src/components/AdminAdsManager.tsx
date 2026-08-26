@@ -10,6 +10,8 @@ import { AdBanner } from '../types';
 
 interface AdminAdsManagerProps {
   onRefreshData?: () => void;
+  initialFilterPosition?: string;
+  autoOpenCreateModal?: boolean;
 }
 
 // Pre-curated High-Converting Banner Templates for Vinhomes & Local Ecosystem
@@ -127,11 +129,34 @@ const POSITION_LABELS: Record<string, { label: string; icon: string; desc: strin
   }
 };
 
-export const AdminAdsManager: React.FC<AdminAdsManagerProps> = ({ onRefreshData }) => {
-  const [ads, setAds] = useState<AdBanner[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+const DEFAULT_PRESET_ADS: AdBanner[] = SAMPLE_BANNER_PRESETS.map((p, idx) => ({
+  id: `preset_ad_${idx + 1}`,
+  title: p.title,
+  position: p.position,
+  imageUrl: p.imageUrl,
+  linkUrl: p.linkUrl,
+  badgeText: p.badgeText,
+  displayStyle: p.displayStyle,
+  widthSize: p.widthSize,
+  active: true,
+  isActive: true,
+  clicks: 28 + idx * 12,
+  views: 350 + idx * 85,
+  startDate: new Date().toISOString().split('T')[0],
+  clientName: 'Ban Quản Trị Hệ Thống',
+  clientPhone: '0988.247.247',
+  clientNote: 'Banner mẫu hệ thống tự động khởi tạo'
+}));
+
+export const AdminAdsManager: React.FC<AdminAdsManagerProps> = ({
+  onRefreshData,
+  initialFilterPosition,
+  autoOpenCreateModal
+}) => {
+  const [ads, setAds] = useState<AdBanner[]>(DEFAULT_PRESET_ADS);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [filterPosition, setFilterPosition] = useState<string>('all');
+  const [filterPosition, setFilterPosition] = useState<string>(initialFilterPosition || 'all');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
@@ -174,12 +199,25 @@ export const AdminAdsManager: React.FC<AdminAdsManagerProps> = ({ onRefreshData 
       const res = await fetch('/api/ads');
       if (res.ok) {
         const data: AdBanner[] = await res.json();
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           setAds(data);
           try {
             localStorage.setItem('chocudan24h_ads', JSON.stringify(data));
             localStorage.setItem('hb_ads', JSON.stringify(data));
           } catch (e) {}
+        } else if (Array.isArray(data) && data.length === 0) {
+          // If server has no ads yet, check localStorage or fallback to default preset ads
+          const saved = localStorage.getItem('chocudan24h_ads') || localStorage.getItem('hb_ads');
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                setAds(parsed);
+                return;
+              }
+            } catch (e) {}
+          }
+          setAds(DEFAULT_PRESET_ADS);
         }
       }
     } catch (err) {
@@ -201,6 +239,18 @@ export const AdminAdsManager: React.FC<AdminAdsManagerProps> = ({ onRefreshData 
   useEffect(() => {
     fetchAdsFromServer();
   }, []);
+
+  useEffect(() => {
+    if (initialFilterPosition) {
+      setFilterPosition(initialFilterPosition);
+    }
+  }, [initialFilterPosition]);
+
+  useEffect(() => {
+    if (autoOpenCreateModal) {
+      handleOpenAddForm();
+    }
+  }, [autoOpenCreateModal]);
 
   const syncStateAndLocal = (newAds: AdBanner[]) => {
     setAds(newAds);

@@ -17,10 +17,12 @@ import { InteractionProofChatModal } from '../components/InteractionProofChatMod
 import { UserCvManagement } from '../components/UserCvManagement';
 import { UserEmployerRegistrationModal } from '../components/UserEmployerRegistrationModal';
 import { UserWalletSection } from '../components/UserWalletSection';
+import { NotificationBellDropdown } from '../components/NotificationBellDropdown';
 import { UserProfileEditModal } from '../components/UserProfileEditModal';
 import { UserPropertyEditModal } from '../components/UserPropertyEditModal';
 import { UserResidentServicesManager } from '../components/UserResidentServicesManager';
 import { TechnicalServiceEscrowModal } from '../components/TechnicalServiceEscrowModal';
+import { UserLeadsCRM } from '../components/UserLeadsCRM';
 import { playMessageRingtone } from '../lib/audioRingtone';
 import { RECRUITMENT_PACKAGES } from '../data/recruitmentData';
 import { getPropertyDetailUrl, getProjectSlug } from '../lib/slugs';
@@ -76,7 +78,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const handleSelectProp = onSelectProperty || ((p: Property) => navigate(getPropertyDetailUrl(p)));
   const handleDeleteProp = onDeleteProperty || (() => {});
 
-  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_services' | 'my_store' | 'wallet_tokens' | 'my_cv' | 'recruiter_packages' | 'affiliate' | 'account_profile' | 'transactions'>('my_properties');
+  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_leads' | 'my_services' | 'my_store' | 'wallet_tokens' | 'my_cv' | 'recruiter_packages' | 'affiliate' | 'account_profile' | 'transactions'>('my_properties');
   const [propertyFilter, setPropertyFilter] = useState<'all' | 'approved' | 'pending' | 'expired'>('all');
   const [selectedPropertyForUpTin, setSelectedPropertyForUpTin] = useState<Property | null>(null);
   const [localTransactions, setLocalTransactions] = useState<UpTinTransaction[]>([]);
@@ -744,6 +746,18 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('my_leads')}
+          className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'my_leads'
+              ? 'bg-blue-600 text-white shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Users className="w-3.5 h-3.5" />
+          <span>Khách Hàng & Leads Của Tôi</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('my_services')}
           className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'my_services'
@@ -787,8 +801,8 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <span>{isBusinessAllowed ? '🪙' : '🔒'}</span>
-          <span>{isBusinessAllowed ? `Ví Token B2B (${(userState.balance || 0).toLocaleString('vi-VN')})` : 'Ví Kinh Doanh'}</span>
+          <span>🪙</span>
+          <span>Ví Tiền & Nạp Rút VietQR ({(userState.balance || 0).toLocaleString('vi-VN')}đ)</span>
         </button>
 
         <button
@@ -1244,6 +1258,16 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             </div>
           )}
         </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB: MY LEADS & CRM (KHÁCH HÀNG & LEADS RIÊNG CỦA TÔI) */}
+      {/* ========================================================================= */}
+      {activeTab === 'my_leads' && (
+        <UserLeadsCRM
+          currentUser={userState}
+          onRefreshParent={onRefreshData}
+        />
       )}
 
       {/* ========================================================================= */}

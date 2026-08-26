@@ -105,7 +105,7 @@ export const App: React.FC = () => {
       ...raw,
       name: raw.name || (raw.email ? raw.email.split('@')[0] : 'Cư Dân Vinhomes'),
       email: raw.email || 'cudan@chocudan24h.com',
-      role: raw.role || (hasAdminSession ? 'admin' : 'visitor'),
+      role: raw.role || 'visitor',
       upTinCredits: typeof raw.upTinCredits === 'number' ? raw.upTinCredits : 20,
       tier: raw.tier || 'thuong',
       balance: raw.balance || 0
@@ -207,20 +207,52 @@ export const App: React.FC = () => {
 
     fetch('/api/projects')
       .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          setProjects(data);
-          safeLocalStorageSet('hb_projects', data);
+      .then((data: Project[]) => {
+        if (Array.isArray(data)) {
+          const localProjects = safeLocalStorageGet<Project[]>('hb_projects', INITIAL_PROJECTS);
+          const projectMap = new Map<string, Project>();
+          // 1. Add server projects
+          data.forEach(p => projectMap.set(p.id, p));
+          // 2. Add local projects if not yet on server
+          localProjects.forEach(lp => {
+            if (!projectMap.has(lp.id)) {
+              projectMap.set(lp.id, lp);
+              fetch('/api/projects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(lp)
+              }).catch(() => {});
+            }
+          });
+          const finalProjects = Array.from(projectMap.values());
+          setProjects(finalProjects);
+          safeLocalStorageSet('hb_projects', finalProjects);
         }
       })
       .catch(err => console.warn('Using initial projects fallback:', err));
 
     fetch('/api/news')
       .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          setNews(data);
-          safeLocalStorageSet('hb_news', data);
+      .then((data: NewsArticle[]) => {
+        if (Array.isArray(data)) {
+          const localNews = safeLocalStorageGet<NewsArticle[]>('hb_news', INITIAL_NEWS);
+          const newsMap = new Map<string, NewsArticle>();
+          // 1. Add server news articles
+          data.forEach(n => newsMap.set(n.id, n));
+          // 2. Add local news articles if not yet on server
+          localNews.forEach(ln => {
+            if (!newsMap.has(ln.id)) {
+              newsMap.set(ln.id, ln);
+              fetch('/api/news', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ln)
+              }).catch(() => {});
+            }
+          });
+          const finalNews = Array.from(newsMap.values());
+          setNews(finalNews);
+          safeLocalStorageSet('hb_news', finalNews);
         }
       })
       .catch(err => console.warn('Using initial news fallback:', err));

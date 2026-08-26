@@ -33,7 +33,10 @@ import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
 import { AdminBankWebhookCenter } from '../components/AdminBankWebhookCenter';
+import { AdminFinanceHub } from '../components/AdminFinanceHub';
+import { NotificationBellDropdown } from '../components/NotificationBellDropdown';
 import { GoogleWorkspaceCenter } from '../components/GoogleWorkspaceCenter';
+import { AdminLeadsSupervisionCRM } from '../components/AdminLeadsSupervisionCRM';
 import { getProjectSlug } from '../lib/slugs';
 
 interface AdminDashboardPageProps {
@@ -83,18 +86,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // 7 Mảng Quản Trị Chuyên Biệt Tách Rời (1. BĐS, 2. Thợ Dịch Vụ, 3. Tuyển Dụng, 4. Dịch Vụ Cư Dân, 5. Người Dùng, 6. Quảng Cáo, 7. Công Cụ)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
-    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync'
-    | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'all_products_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
+    | 'properties' | 'projects' | 'news' | 'ads' | 'ads_float' | 'ads_header' | 'ads_popup' | 'ads_create' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync'
+    | 'resident_services_mgmt' | 'resident_services_add' | 'recruitment_mgmt' | 'recruitment_add' | 'stores_mgmt' | 'all_products_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
   >('properties');
 
   // Compute active main category (Phân rõ các tab riêng biệt không bị gộp chung)
   const effectiveMainTab: 'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' = (() => {
     if (['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt'].includes(activeTab)) return 'bds';
-    if (activeTab === 'resident_services_mgmt') return 'technicians';
-    if (activeTab === 'recruitment_mgmt') return 'recruitment';
+    if (activeTab === 'resident_services_mgmt' || activeTab === 'resident_services_add') return 'technicians';
+    if (activeTab === 'recruitment_mgmt' || activeTab === 'recruitment_add') return 'recruitment';
     if (['stores_mgmt', 'all_products_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
     if (['users', 'leads', 'enterprise_core'].includes(activeTab)) return 'users_leads';
-    if (activeTab === 'ads' || (activeTab as string) === 'ads_mgmt') return 'ads';
+    if (activeTab === 'ads' || activeTab.startsWith('ads') || (activeTab as string) === 'ads_mgmt') return 'ads';
     return 'tools';
   })();
 
@@ -213,6 +216,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
+
+  // User management and token recharge state
+  const [selectedUserForCredit, setSelectedUserForCredit] = useState<User | null>(null);
+  const [creditFundType, setCreditFundType] = useState<'balance' | 'upTinCredits' | 'affiliatePoints'>('balance');
+  const [creditAmount, setCreditAmount] = useState<number>(50000);
+  const [creditReason, setCreditReason] = useState<string>('Thưởng / Nạp trực tiếp từ Ban Quản Trị');
+  const [isProcessingCredit, setIsProcessingCredit] = useState<boolean>(false);
 
   const toggleExpandAdminProp = (id: string) => {
     setExpandedAdminPropIds(prev => ({ ...prev, [id]: !prev[id] }));
@@ -526,6 +536,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [selectedSellerDetail, setSelectedSellerDetail] = useState<Property | null>(null);
   const [sharingProperty, setSharingProperty] = useState<Property | null>(null);
   const [userForCreditInjector, setUserForCreditInjector] = useState<User | null>(null);
+  const [adminPropSearch, setAdminPropSearch] = useState<string>('');
+  const [adminPropProjectFilter, setAdminPropProjectFilter] = useState<string>('all');
+  const [adminProjectSearch, setAdminProjectSearch] = useState<string>('');
+  const [adminNewsSearch, setAdminNewsSearch] = useState<string>('');
+  const [adminNewsCatFilter, setAdminNewsCatFilter] = useState<string>('all');
 
   // Admin Affiliate & Platform Fee Config State
   const [affiliateF1Rate, setAffiliateF1Rate] = useState<number>(15); // 15%
@@ -794,8 +809,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [isAddingProperty, setIsAddingProperty] = useState<boolean>(false);
   const [expandedNavSections, setExpandedNavSections] = useState<Record<string, boolean>>({
     bds: true,
+    technicians: true,
+    recruitment: true,
     resident_market: true,
     users_leads: true,
+    ads: true,
     tools: true
   });
   const toggleNavSection = (section: string) => {
@@ -2119,51 +2137,113 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
 
             {/* 2. Thợ Dịch Vụ & Kỹ Thuật */}
-            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60">
-              <button
-                type="button"
-                onClick={() => {
-                  handleSelectMainTab('technicians');
-                  setActiveTab('resident_services_mgmt');
-                }}
-                className={`w-full p-2.5 font-bold flex items-center justify-between transition cursor-pointer ${
-                  effectiveMainTab === 'technicians'
-                    ? 'bg-orange-500 text-slate-950 font-black shadow-md'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Wrench className={`w-4 h-4 ${effectiveMainTab === 'technicians' ? 'text-slate-950' : 'text-orange-400'}`} />
-                  <span className="text-[12px] font-extrabold">2. Thợ & Dịch Vụ</span>
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60 transition-all duration-200">
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSelectMainTab('technicians');
+                    setActiveTab('resident_services_mgmt');
+                  }}
+                  className={`flex-1 p-2.5 font-bold flex items-center justify-between transition cursor-pointer text-left ${
+                    effectiveMainTab === 'technicians'
+                      ? 'bg-orange-500 text-slate-950 font-black shadow-md'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Wrench className={`w-4 h-4 ${effectiveMainTab === 'technicians' ? 'text-slate-950' : 'text-orange-400'}`} />
+                    <span className="text-[12px] font-extrabold">2. Thợ & Dịch Vụ</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
+                    {adminResidentServices.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleNavSection('technicians');
+                  }}
+                  className={`p-2.5 transition cursor-pointer flex items-center justify-center border-l border-white/10 ${
+                    effectiveMainTab === 'technicians' ? 'bg-orange-600 text-slate-950' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                  title={expandedNavSections.technicians ? "Thu gọn mục con" : "Mở rộng mục con"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedNavSections.technicians ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+
+              {expandedNavSections.technicians && (
+                <div className="p-1.5 space-y-0.5 bg-slate-950/70 border-t border-slate-800/60">
+                  <button
+                    onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
+                      activeTab === 'resident_services_mgmt'
+                        ? 'bg-orange-500/20 text-orange-300 font-extrabold border border-orange-500/30'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Danh Sách Thợ & KYC</span>
+                    <span className="font-mono text-[10px]">{adminResidentServices.length}</span>
+                  </button>
                 </div>
-                <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
-                  {adminResidentServices.length}
-                </span>
-              </button>
+              )}
             </div>
 
             {/* 3. Tuyển Dụng & Việc Làm */}
-            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60">
-              <button
-                type="button"
-                onClick={() => {
-                  handleSelectMainTab('recruitment');
-                  setActiveTab('recruitment_mgmt');
-                }}
-                className={`w-full p-2.5 font-bold flex items-center justify-between transition cursor-pointer ${
-                  effectiveMainTab === 'recruitment'
-                    ? 'bg-teal-500 text-slate-950 font-black shadow-md'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Briefcase className={`w-4 h-4 ${effectiveMainTab === 'recruitment' ? 'text-slate-950' : 'text-teal-400'}`} />
-                  <span className="text-[12px] font-extrabold">3. Tuyển Dụng & CV</span>
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60 transition-all duration-200">
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSelectMainTab('recruitment');
+                    setActiveTab('recruitment_mgmt');
+                  }}
+                  className={`flex-1 p-2.5 font-bold flex items-center justify-between transition cursor-pointer text-left ${
+                    effectiveMainTab === 'recruitment'
+                      ? 'bg-teal-500 text-slate-950 font-black shadow-md'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Briefcase className={`w-4 h-4 ${effectiveMainTab === 'recruitment' ? 'text-slate-950' : 'text-teal-400'}`} />
+                    <span className="text-[12px] font-extrabold">3. Tuyển Dụng & CV</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-bold">
+                    Việc làm
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleNavSection('recruitment');
+                  }}
+                  className={`p-2.5 transition cursor-pointer flex items-center justify-center border-l border-white/10 ${
+                    effectiveMainTab === 'recruitment' ? 'bg-teal-600 text-slate-950' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                  title={expandedNavSections.recruitment ? "Thu gọn mục con" : "Mở rộng mục con"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedNavSections.recruitment ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+
+              {expandedNavSections.recruitment && (
+                <div className="p-1.5 space-y-0.5 bg-slate-950/70 border-t border-slate-800/60">
+                  <button
+                    onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
+                      activeTab === 'recruitment_mgmt'
+                        ? 'bg-teal-500/20 text-teal-300 font-extrabold border border-teal-500/30'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Sàn Việc Làm & CV</span>
+                    <span className="font-mono text-[10px]">Mở Sàn</span>
+                  </button>
                 </div>
-                <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-bold">
-                  Việc làm
-                </span>
-              </button>
+              )}
             </div>
 
             {/* 4. Chợ Cư Dân */}
@@ -2359,27 +2439,106 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
 
             {/* 6. Banner & Quảng Cáo */}
-            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60">
-              <button
-                type="button"
-                onClick={() => {
-                  handleSelectMainTab('ads');
-                  setActiveTab('ads');
-                }}
-                className={`w-full p-2.5 font-bold flex items-center justify-between transition cursor-pointer ${
-                  effectiveMainTab === 'ads'
-                    ? 'bg-rose-600 text-white shadow-md ring-1 ring-rose-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Sparkles className={`w-4 h-4 ${effectiveMainTab === 'ads' ? 'text-white' : 'text-rose-400'}`} />
-                  <span className="text-[12px] font-extrabold">6. Quảng Cáo Banner</span>
+            <div className="rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/60 transition-all duration-200">
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSelectMainTab('ads');
+                    setActiveTab('ads');
+                  }}
+                  className={`flex-1 p-2.5 font-bold flex items-center justify-between transition cursor-pointer text-left ${
+                    effectiveMainTab === 'ads'
+                      ? 'bg-rose-600 text-white shadow-md ring-1 ring-rose-400'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Sparkles className={`w-4 h-4 ${effectiveMainTab === 'ads' ? 'text-white' : 'text-rose-400'}`} />
+                    <span className="text-[12px] font-extrabold">6. Quảng Cáo Banner</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                    {adsList.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleNavSection('ads');
+                  }}
+                  className={`p-2.5 transition cursor-pointer flex items-center justify-center border-l border-white/10 ${
+                    effectiveMainTab === 'ads' ? 'bg-rose-700 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                  title={expandedNavSections.ads ? "Thu gọn mục con" : "Mở rộng mục con"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedNavSections.ads ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+
+              {expandedNavSections.ads && (
+                <div className="p-1.5 space-y-0.5 bg-slate-950/70 border-t border-slate-800/60">
+                  <button
+                    onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
+                      activeTab === 'ads'
+                        ? 'bg-rose-500/20 text-rose-300 font-extrabold border border-rose-500/30'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Tất Cả Banner Quảng Cáo</span>
+                    <span className="font-mono text-[10px]">{adsList.length}</span>
+                  </button>
+
+                  <button
+                    onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_float'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
+                      activeTab === 'ads_float'
+                        ? 'bg-rose-500/20 text-rose-300 font-extrabold border border-rose-500/30'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Banner Bám Đuổi Phải & Trái</span>
+                    <span className="font-mono text-[10px]">Float PC</span>
+                  </button>
+
+                  <button
+                    onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_header'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
+                      activeTab === 'ads_header'
+                        ? 'bg-rose-500/20 text-rose-300 font-extrabold border border-rose-500/30'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Banner Top Header & Trang Chủ</span>
+                    <span className="font-mono text-[10px]">Header</span>
+                  </button>
+
+                  <button
+                    onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_popup'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
+                      activeTab === 'ads_popup'
+                        ? 'bg-rose-500/20 text-rose-300 font-extrabold border border-rose-500/30'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Pop-Up Nổi Trung Tâm</span>
+                    <span className="font-mono text-[10px]">Pop-up</span>
+                  </button>
+
+                  <button
+                    onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_create'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
+                      activeTab === 'ads_create'
+                        ? 'bg-rose-500/20 text-rose-300 font-extrabold border border-rose-500/30'
+                        : 'text-rose-400 hover:text-white hover:bg-slate-800/60 font-bold'
+                    }`}
+                  >
+                    <span>➕ Thêm Banner Mới</span>
+                    <span className="text-[10px] bg-rose-500/20 px-1 rounded text-rose-300">Tạo</span>
+                  </button>
                 </div>
-                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
-                  {adsList.length}
-                </span>
-              </button>
+              )}
             </div>
 
             {/* 7. Công Cụ & Bot Hệ Thống */}
@@ -2811,8 +2970,36 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
                         className="col-span-2 p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
                       >
-                        <span>• Danh Sách & Phê Duyệt Banner</span>
+                        <span>• Tất Cả Banner Toàn Sàn</span>
                         <span className="font-mono text-rose-400">{adsList.length}</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_float'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Bám Đuổi 2 Bên</span>
+                        <span className="text-[10px] text-rose-400">Float</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_header'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Header & Trang Chủ</span>
+                        <span className="text-[10px] text-rose-400">Top</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_popup'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-left rounded-xl text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer"
+                      >
+                        <span>• Pop-Up Nổi Trung Tâm</span>
+                        <span className="text-[10px] text-rose-400">Popup</span>
+                      </button>
+                      <button
+                        onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_create'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-rose-600/30 hover:bg-rose-600/40 text-left rounded-xl text-[11px] font-extrabold text-rose-300 flex items-center justify-between border border-rose-500/40 cursor-pointer"
+                      >
+                        <span>➕ Thêm Mới Banner</span>
+                        <span className="text-[10px] bg-rose-500 text-white px-1.5 py-0.5 rounded font-black">Tạo</span>
                       </button>
                     </div>
                   </div>
@@ -2875,6 +3062,665 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </div>
             </div>
           )}
+
+      {/* ==================== TAB 1.1: BẤT ĐỘNG SẢN QUẢN TRỊ ==================== */}
+      {(activeTab === 'properties' || (effectiveMainTab === 'bds' && !['projects', 'news', 'pricing', 'affiliate_mgmt'].includes(activeTab))) && (() => {
+        const filteredProps = properties.filter(p => {
+          // Sub filter
+          if (propertySubFilter === 'sale' && p.type !== 'sale') return false;
+          if (propertySubFilter === 'rent' && p.type !== 'rent') return false;
+          if (propertySubFilter === 'pending' && (p.approved || p.status === 'approved')) return false;
+
+          // Project filter
+          if (adminPropProjectFilter !== 'all' && p.project !== adminPropProjectFilter) return false;
+
+          // Search query
+          if (adminPropSearch.trim()) {
+            const q = adminPropSearch.toLowerCase();
+            const titleMatch = (p.title || '').toLowerCase().includes(q);
+            const locMatch = (p.location || '').toLowerCase().includes(q);
+            const phoneMatch = (p.sellerPhone || '').toLowerCase().includes(q);
+            const nameMatch = (p.sellerName || '').toLowerCase().includes(q);
+            if (!titleMatch && !locMatch && !phoneMatch && !nameMatch) return false;
+          }
+          return true;
+        });
+
+        return (
+          <div className="space-y-4">
+            {/* Header Banner */}
+            <div className="bg-gradient-to-r from-slate-900 via-emerald-950/70 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">
+                    🏢 BẤT ĐỘNG SẢN & TIN ĐĂNG
+                  </span>
+                  <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[10px] rounded">
+                    {properties.length} Tin Live
+                  </span>
+                </div>
+                <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-emerald-400" />
+                  <span>QUẢN LÝ BẤT ĐỘNG SẢN, DUYỆT BÀI & ĐỒNG BỘ TOÀN SÀN</span>
+                </h2>
+                <p className="text-xs text-slate-300 mt-0.5 max-w-2xl">
+                  Quản lý danh sách tin mua bán, cho thuê, phê duyệt tin chờ duyệt, chỉnh sửa hình ảnh demo, giá bán và xuất bản trực tiếp lên website.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsAddingProperty(true)}
+                  className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 cursor-pointer"
+                >
+                  <PlusCircle className="w-4 h-4 text-slate-950" />
+                  <span>+ Đăng Tin BĐS</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={onOpenAiWriter}
+                  className="px-3 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-1.5 cursor-pointer"
+                  title="Soạn tin đăng tự động bằng Gemini AI"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  <span>AI Soạn Tin</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={onRefreshData}
+                  className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition cursor-pointer border border-slate-700"
+                  title="Tải lại và đồng bộ dữ liệu"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Filter and Sub-nav Pills */}
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow space-y-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                {/* Sub filter tabs */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setPropertySubFilter('all')}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 ${
+                      propertySubFilter === 'all'
+                        ? 'bg-emerald-600 text-white shadow'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    }`}
+                  >
+                    Tất Cả ({properties.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPropertySubFilter('sale')}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 ${
+                      propertySubFilter === 'sale'
+                        ? 'bg-emerald-600 text-white shadow'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    }`}
+                  >
+                    Mua Bán ({saleProperties.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPropertySubFilter('rent')}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 ${
+                      propertySubFilter === 'rent'
+                        ? 'bg-teal-600 text-white shadow'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    }`}
+                  >
+                    Cho Thuê ({rentProperties.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPropertySubFilter('pending')}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 ${
+                      propertySubFilter === 'pending'
+                        ? 'bg-amber-500 text-slate-950 shadow'
+                        : 'bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/30'
+                    }`}
+                  >
+                    ⏳ Chờ Duyệt ({pendingProperties.length})
+                  </button>
+                </div>
+
+                {/* Project Filter */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <select
+                    value={adminPropProjectFilter}
+                    onChange={(e) => setAdminPropProjectFilter(e.target.value)}
+                    className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-emerald-500 outline-none"
+                  >
+                    <option value="all">Tất cả Đại Dự Án</option>
+                    <option value="ocean-park-1">Vinhomes Ocean Park 1</option>
+                    <option value="ocean-park-2">Vinhomes Ocean Park 2</option>
+                    <option value="ocean-park-3">Vinhomes Ocean Park 3</option>
+                    <option value="smart-city">Vinhomes Smart City</option>
+                    <option value="grand-park">Vinhomes Grand Park</option>
+                    <option value="co-loa">Vinhomes Cổ Loa</option>
+                    <option value="vu-yen">Vinhomes Vũ Yên</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Tìm theo tiêu đề căn, vị trí, phân khu, SĐT chính chủ..."
+                  value={adminPropSearch}
+                  onChange={(e) => setAdminPropSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Properties List */}
+            {filteredProps.length === 0 ? (
+              <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-400 space-y-2">
+                <Building2 className="w-10 h-10 mx-auto text-slate-400 opacity-40" />
+                <p className="font-bold text-sm">Không tìm thấy bất động sản nào khớp với bộ lọc.</p>
+                <button
+                  onClick={() => { setAdminPropSearch(''); setAdminPropProjectFilter('all'); setPropertySubFilter('all'); }}
+                  className="px-4 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-500"
+                >
+                  Xóa Bộ Lọc
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredProps.map(prop => {
+                  const isApproved = prop.approved || prop.status === 'approved';
+                  return (
+                    <div
+                      key={prop.id}
+                      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden flex flex-col justify-between hover:border-emerald-500/50 transition duration-150"
+                    >
+                      <div>
+                        {/* Image Preview */}
+                        <div className="relative aspect-video bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                          <img
+                            src={prop.images && prop.images[0] ? prop.images[0] : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'}
+                            alt={prop.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute top-2 left-2 flex items-center gap-1.5">
+                            <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase ${
+                              prop.type === 'sale' ? 'bg-emerald-600 text-white' : 'bg-teal-600 text-white'
+                            }`}>
+                              {prop.type === 'sale' ? 'Mua Bán' : 'Cho Thuê'}
+                            </span>
+                            <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold ${
+                              isApproved ? 'bg-emerald-500/90 text-white' : 'bg-amber-500 text-slate-950 font-black'
+                            }`}>
+                              {isApproved ? '✓ Đã Duyệt Live' : '⏳ Chờ Duyệt'}
+                            </span>
+                          </div>
+                          <span className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/70 backdrop-blur-xs text-white text-[10px] font-bold rounded-md">
+                            📷 {prop.images ? prop.images.length : 1} ảnh
+                          </span>
+                        </div>
+
+                        {/* Card Info */}
+                        <div className="p-3.5 space-y-2">
+                          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                            <span className="font-bold flex items-center gap-1 truncate">
+                              <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                              {prop.location}
+                            </span>
+                            <span className="font-mono text-emerald-600 dark:text-emerald-400 font-extrabold text-xs shrink-0">
+                              {prop.priceDisplay}
+                            </span>
+                          </div>
+
+                          <h3 className="font-black text-xs text-slate-900 dark:text-white line-clamp-2 leading-snug">
+                            {prop.title}
+                          </h3>
+
+                          {prop.sellerName && (
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800">
+                              <span>Chính chủ: <strong>{prop.sellerName}</strong></span>
+                              <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{prop.sellerPhone}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Card Actions */}
+                      <div className="p-3 pt-0 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-1.5">
+                        {!isApproved && (
+                          <button
+                            type="button"
+                            onClick={() => onApproveProperty(prop.id)}
+                            className="col-span-2 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black transition flex items-center justify-center gap-1 cursor-pointer shadow-xs"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>Phê Duyệt & Xuất Bản</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setEditingProperty(prop)}
+                          className="py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          <Edit3 className="w-3.5 h-3.5 text-emerald-500" />
+                          <span>Sửa & Ảnh</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSharingProperty(prop)}
+                          className="py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          <Share2 className="w-3.5 h-3.5" />
+                          <span>Chia Sẻ</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm(`Bạn có chắc chắn muốn xóa tin BĐS "${prop.title}"?`)) {
+                              onDeleteProperty(prop.id);
+                            }
+                          }}
+                          className="col-span-2 py-1 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Xóa Tin BĐS</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
+      {/* ==================== TAB 1.2: QUẢN LÝ DỰ ÁN & SƠ ĐỒ MẶT BẰNG ==================== */}
+      {activeTab === 'projects' && (() => {
+        const filteredProjects = projects.filter(proj => {
+          if (!adminProjectSearch.trim()) return true;
+          const q = adminProjectSearch.toLowerCase();
+          return (proj.title || proj.name || '').toLowerCase().includes(q) || (proj.location || '').toLowerCase().includes(q);
+        });
+
+        return (
+          <div className="space-y-4">
+            {/* Header Banner */}
+            <div className="bg-gradient-to-r from-slate-900 via-emerald-950/70 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">
+                    🗺️ DỰ ÁN & MẶT BẰNG QUY HOẠCH
+                  </span>
+                  <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[10px] rounded">
+                    {projects.length} Đại Dự Án
+                  </span>
+                </div>
+                <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-emerald-400" />
+                  <span>QUẢN LÝ ĐẠI DỰ ÁN, BANNER CHÍNH & SƠ ĐỒ MASTERPLAN</span>
+                </h2>
+                <p className="text-xs text-slate-300 mt-0.5 max-w-2xl">
+                  Thêm mới hoặc chỉnh sửa đại dự án Vinhomes, thay đổi hình ảnh banner trang chủ, tải lên sơ đồ quy hoạch chi tiết phân khu và đồng bộ lưu trữ.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingProject(null);
+                    setIsAddingProject(true);
+                  }}
+                  className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 cursor-pointer"
+                >
+                  <PlusCircle className="w-4 h-4 text-slate-950" />
+                  <span>+ Thêm Dự Án Mới</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Search */}
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow flex items-center gap-3">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Tìm theo tên dự án, vị trí..."
+                  value={adminProjectSearch}
+                  onChange={(e) => setAdminProjectSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+                />
+              </div>
+              <span className="text-xs font-bold text-slate-500">
+                Hiển thị {filteredProjects.length} / {projects.length} dự án
+              </span>
+            </div>
+
+            {/* Projects Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredProjects.map(proj => (
+                <div
+                  key={proj.id}
+                  className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden flex flex-col justify-between hover:border-emerald-500/50 transition"
+                >
+                  <div>
+                    {/* Banner Image */}
+                    <div className="relative aspect-video bg-slate-100 dark:bg-slate-800 overflow-hidden group">
+                      <img
+                        src={proj.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'}
+                        alt={proj.title || proj.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      />
+                      <span className="absolute top-2 left-2 px-2 py-0.5 bg-emerald-600 text-white font-black text-[10px] rounded-md shadow">
+                        DỰ ÁN LIVE
+                      </span>
+                      {proj.masterplanUrl && (
+                        <span className="absolute bottom-2 right-2 px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-md shadow">
+                          🗺️ Có Sơ Đồ Masterplan
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Details */}
+                    <div className="p-4 space-y-2.5">
+                      <h3 className="font-black text-sm text-slate-900 dark:text-white">
+                        {proj.title || proj.name}
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                        <span>{proj.location}</span>
+                      </p>
+
+                      <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">Quy mô:</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-200">{proj.areaSize || 'Đang cập nhật'}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">Khoảng giá:</span>
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">{proj.priceRange || 'Liên hệ'}</span>
+                        </div>
+                      </div>
+
+                      {proj.subdivisions && proj.subdivisions.length > 0 && (
+                        <div className="pt-2">
+                          <span className="text-[10px] text-slate-400 font-bold block mb-1">Phân khu ({proj.subdivisions.length}):</span>
+                          <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
+                            {proj.subdivisions.slice(0, 4).map((sub, i) => (
+                              <span key={i} className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-[10px] rounded text-slate-600 dark:text-slate-300">
+                                {sub}
+                              </span>
+                            ))}
+                            {proj.subdivisions.length > 4 && (
+                              <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-[10px] rounded text-slate-400">
+                                +{proj.subdivisions.length - 4} phân khu
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="p-3 pt-0 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingProject(false);
+                        setEditingProject(proj);
+                      }}
+                      className="flex-1 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1 cursor-pointer border border-emerald-200 dark:border-emerald-800/60"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>Sửa & Sơ Đồ</span>
+                    </button>
+
+                    <Link
+                      to={`/projects/${getProjectSlug(proj)}`}
+                      className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl transition cursor-pointer"
+                      title="Xem dự án trên Web"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`Bạn có chắc muốn xóa dự án "${proj.title || proj.name}"?`)) {
+                          if (onDeleteProject) onDeleteProject(proj.id);
+                        }
+                      }}
+                      className="p-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-xl transition cursor-pointer border border-rose-200 dark:border-rose-800/60"
+                      title="Xóa dự án"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ==================== TAB 1.3: QUẢN LÝ TIN TỨC & BẢN TIN THỊ TRƯỜNG ==================== */}
+      {activeTab === 'news' && (() => {
+        const filteredArticles = news.filter(art => {
+          if (adminNewsCatFilter !== 'all' && art.category !== adminNewsCatFilter) return false;
+          if (adminNewsSearch.trim()) {
+            const q = adminNewsSearch.toLowerCase();
+            const titleMatch = (art.title || '').toLowerCase().includes(q);
+            const contentMatch = (art.content || '').toLowerCase().includes(q);
+            const authorMatch = (art.author || '').toLowerCase().includes(q);
+            if (!titleMatch && !contentMatch && !authorMatch) return false;
+          }
+          return true;
+        });
+
+        return (
+          <div className="space-y-4">
+            {/* Header Banner */}
+            <div className="bg-gradient-to-r from-slate-900 via-amber-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-amber-500/40 shadow-lg text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">
+                    📰 TIN TỨC & THỊ TRƯỜNG BĐS
+                  </span>
+                  <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-[10px] rounded">
+                    {news.length} Bài Viết Live
+                  </span>
+                </div>
+                <h2 className="text-base sm:text-lg font-black text-amber-400 mt-1 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-amber-400" />
+                  <span>QUẢN TRỊ BẢN TIN THỊ TRƯỜNG, BÀI VIẾT SEO & TỰ ĐỘNG HÓA</span>
+                </h2>
+                <p className="text-xs text-slate-300 mt-0.5 max-w-2xl">
+                  Soạn thảo và đăng bài viết thị trường Vinhomes, lưu trữ hình ảnh trực tiếp lên Supabase Media và đồng bộ n8n Webhook tự động.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingNews(null);
+                    setIsAddingNews(true);
+                  }}
+                  className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 cursor-pointer"
+                >
+                  <PlusCircle className="w-4 h-4 text-slate-950" />
+                  <span>+ Đăng Tin Thị Trường Mới</span>
+                </button>
+              </div>
+            </div>
+
+            {/* n8n Webhook Automation Guide for Admin */}
+            <div className="p-3.5 bg-blue-950/40 border border-blue-500/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-300">
+              <div className="flex items-center gap-2.5">
+                <span className="p-1.5 bg-blue-600 text-white font-black rounded-lg text-[10px]">n8n</span>
+                <div>
+                  <span className="font-bold text-blue-300">Webhook Tự Động Đồng Bộ Tin Tức (n8n Workflow):</span>
+                  <code className="ml-2 px-2 py-0.5 bg-slate-950 text-amber-300 font-mono text-[11px] rounded border border-slate-800">
+                    POST /api/webhooks/n8n-news
+                  </code>
+                </div>
+              </div>
+              <span className="text-[11px] text-emerald-400 font-bold bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30">
+                ✓ Sẵn sàng nhận bài tự động
+              </span>
+            </div>
+
+            {/* Filter & Search Bar */}
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              {/* Category Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs">
+                <button
+                  type="button"
+                  onClick={() => setAdminNewsCatFilter('all')}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 ${
+                    adminNewsCatFilter === 'all'
+                      ? 'bg-amber-500 text-slate-950 shadow'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  Tất Cả ({news.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAdminNewsCatFilter('vinhomes')}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 ${
+                    adminNewsCatFilter === 'vinhomes'
+                      ? 'bg-amber-500 text-slate-950 shadow'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  Tin Vinhomes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAdminNewsCatFilter('thi-truong')}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 ${
+                    adminNewsCatFilter === 'thi-truong'
+                      ? 'bg-amber-500 text-slate-950 shadow'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  Thị Trường
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAdminNewsCatFilter('quy-hoach')}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 ${
+                    adminNewsCatFilter === 'quy-hoach'
+                      ? 'bg-amber-500 text-slate-950 shadow'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  Quy Hoạch
+                </button>
+              </div>
+
+              {/* Search */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Tìm theo tiêu đề, nội dung, tác giả..."
+                  value={adminNewsSearch}
+                  onChange={(e) => setAdminNewsSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-amber-500 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* News Articles Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredArticles.map(art => (
+                <div
+                  key={art.id}
+                  className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden flex flex-col justify-between hover:border-amber-500/50 transition"
+                >
+                  <div>
+                    {/* Thumbnail */}
+                    <div className="relative aspect-video bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      <img
+                        src={art.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'}
+                        alt={art.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute top-2 left-2 px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-md shadow uppercase">
+                        {art.category || 'Tin Tức'}
+                      </span>
+                      <span className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/70 text-white font-mono text-[10px] rounded">
+                        {art.publishedAt}
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-4 space-y-2">
+                      <h3 className="font-black text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug">
+                        {art.title}
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">
+                        {art.summary || art.content}
+                      </p>
+
+                      <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <span className="truncate">✍️ {art.author || 'Ban Quản Trị'}</span>
+                        <span className="font-mono text-amber-500 font-bold shrink-0">👁️ {art.views || 1} views</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="p-3 pt-0 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingNews(false);
+                        setEditingNews(art);
+                      }}
+                      className="flex-1 py-2 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1 cursor-pointer border border-amber-200 dark:border-amber-800/60"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>Sửa Bài & Upload Ảnh</span>
+                    </button>
+
+                    <Link
+                      to={`/news/${art.id}`}
+                      className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl transition cursor-pointer"
+                      title="Xem bài viết trên Web"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`Bạn có chắc muốn xóa bài viết "${art.title}"?`)) {
+                          if (onDeleteNews) onDeleteNews(art.id);
+                        }
+                      }}
+                      className="p-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-xl transition cursor-pointer border border-rose-200 dark:border-rose-800/60"
+                      title="Xóa bài viết"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ==================== TAB THỢ DỊCH VỤ & KỸ THUẬT CƯ DÂN ==================== */}
       {activeTab === 'resident_services_mgmt' && (
@@ -4490,8 +5336,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       )}
 
       {/* Tab: Quảng Cáo & Banner Management */}
-      {(activeTab === 'ads' || (activeTab as string) === 'ads_mgmt') && (
+      {(effectiveMainTab === 'ads' || activeTab === 'ads' || activeTab.startsWith('ads') || (activeTab as string) === 'ads_mgmt') && (
         <AdminAdsManager
+          initialFilterPosition={
+            activeTab === 'ads_float'
+              ? 'floating_right'
+              : activeTab === 'ads_header'
+              ? 'header_top'
+              : activeTab === 'ads_popup'
+              ? 'popup_center'
+              : 'all'
+          }
+          autoOpenCreateModal={activeTab === 'ads_create'}
           onRefreshData={() => {
             if (onRefreshData) onRefreshData();
             fetch('/api/ads')
@@ -4857,6 +5713,124 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Tab Danh Sách Thành Viên (Users Management) */}
+      {activeTab === 'users' && (
+        <div className="space-y-4 text-xs font-sans">
+          <div className="bg-gradient-to-r from-slate-900 via-blue-950/70 to-slate-900 border border-blue-500/40 rounded-3xl p-5 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-500/30 border border-blue-400 text-blue-300 text-[10px] font-black uppercase tracking-wider">
+                  👥 QUẢN TRỊ THÀNH VIÊN HỆ THỐNG
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold">
+                  {registeredUsers.length} Tài khoản
+                </span>
+              </div>
+              <h2 className="text-lg font-black tracking-tight">Danh Sách Thành Viên & Cấu Hình Quyền Hạn</h2>
+              <p className="text-slate-300 text-xs max-w-2xl">
+                Quản lý tất cả tài khoản cư dân, môi giới, chủ gian hàng, thợ kỹ thuật. Xem số dư Token, lượt Up tin và phân bổ quyền hạn chuyên trách.
+              </p>
+            </div>
+            <button
+              onClick={() => setSelectedUserForCredit(registeredUsers[0] || null)}
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-2xl flex items-center justify-center gap-1.5 shadow-md transition cursor-pointer shrink-0"
+            >
+              <Zap className="w-4 h-4" />
+              <span>Nạp / Thưởng Token Cư Dân</span>
+            </button>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2">
+            <div className="relative flex-1 min-w-[220px]">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={userSearch}
+                onChange={e => setUserSearch(e.target.value)}
+                placeholder="Tìm user theo tên, email, SĐT, phân khu..."
+                className="w-full pl-8 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-hidden focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-950 text-slate-400 font-black text-[11px] uppercase tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th className="p-3.5">Thành Viên</th>
+                    <th className="p-3.5">Vai Trò & Quyền</th>
+                    <th className="p-3.5 text-right">Số Dư Token (VNĐ)</th>
+                    <th className="p-3.5 text-center">Lượt Up Tin</th>
+                    <th className="p-3.5 text-center">Hạng Nạp</th>
+                    <th className="p-3.5 text-center">Hành Động</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/80 text-slate-200">
+                  {registeredUsers
+                    .filter(u => {
+                      if (!userSearch.trim()) return true;
+                      const q = userSearch.toLowerCase();
+                      return u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q) || u.phone?.includes(q);
+                    })
+                    .map(u => (
+                      <tr key={u.id} className="hover:bg-slate-800/50 transition">
+                        <td className="p-3.5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-amber-400">
+                              {u.name?.charAt(0).toUpperCase() || 'U'}
+                            </div>
+                            <div>
+                              <p className="font-extrabold text-white">{u.name}</p>
+                              <p className="text-[10px] text-slate-400 font-mono">{u.email} {u.phone ? `• ${u.phone}` : ''}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-3.5">
+                          <span className={`px-2 py-0.5 rounded-md text-[10px] font-black border ${
+                            u.role === 'admin' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' :
+                            u.role === 'sale' ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' :
+                            'bg-blue-500/20 text-blue-300 border-blue-500/40'
+                          }`}>
+                            {u.role === 'admin' ? '👑 Admin' : u.role === 'sale' ? '💼 Môi Giới BĐS' : '🏠 Cư Dân / Chủ Nhà'}
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-right font-mono font-black text-amber-400">
+                          {(u.balance || 0).toLocaleString('vi-VN')} Token
+                        </td>
+                        <td className="p-3.5 text-center font-mono font-black text-sky-400">
+                          {u.upTinCredits || 0} lượt
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <span className="px-2 py-0.5 rounded-md bg-slate-800 text-[10px] font-bold uppercase text-slate-300">
+                            {u.tier || 'Thường'}
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <button
+                            onClick={() => setSelectedUserForCredit(u)}
+                            className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-[10px] transition cursor-pointer"
+                          >
+                            ⚡ Nạp / Tặng Token
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab CRM Quản Trị & Xử Lý Sự Cố Khách Hàng (Leads Supervision) */}
+      {activeTab === 'leads' && (
+        <AdminLeadsSupervisionCRM
+          contacts={contacts}
+          onRefreshData={onRefreshData}
+        />
       )}
 
       {/* Tab Enterprise Admin Core */}
@@ -7100,6 +8074,162 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: NẠP / TẶNG TOKEN CƯ DÂN */}
+      {selectedUserForCredit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-md p-6 space-y-4 text-white shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                  <Zap className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-black text-sm">Nạp / Tặng Token Thành Viên</h3>
+                  <p className="text-[10px] text-slate-400">Cấp thêm số dư Token hoặc Lượt Up tin cho User</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedUserForCredit(null)}
+                className="p-1 text-slate-400 hover:text-white rounded-lg cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Thành viên:</span>
+                <span className="font-extrabold text-white">{selectedUserForCredit.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Email:</span>
+                <span className="font-mono text-slate-300">{selectedUserForCredit.email}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Số dư hiện tại:</span>
+                <span className="font-mono font-bold text-amber-400">{(selectedUserForCredit.balance || 0).toLocaleString('vi-VN')} Token</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Lượt Up tin hiện có:</span>
+                <span className="font-mono font-bold text-sky-400">{selectedUserForCredit.upTinCredits || 0} lượt</span>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">Loại tài nguyên cộng thưởng:</label>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setCreditFundType('balance')}
+                    className={`py-1.5 px-2 rounded-xl text-center font-extrabold transition cursor-pointer border ${
+                      creditFundType === 'balance'
+                        ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-xs'
+                        : 'bg-slate-800 text-slate-300 border-slate-700'
+                    }`}
+                  >
+                    🪙 Token VNĐ
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCreditFundType('upTinCredits')}
+                    className={`py-1.5 px-2 rounded-xl text-center font-extrabold transition cursor-pointer border ${
+                      creditFundType === 'upTinCredits'
+                        ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-xs'
+                        : 'bg-slate-800 text-slate-300 border-slate-700'
+                    }`}
+                  >
+                    🚀 Lượt Up Tin
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCreditFundType('affiliatePoints')}
+                    className={`py-1.5 px-2 rounded-xl text-center font-extrabold transition cursor-pointer border ${
+                      creditFundType === 'affiliatePoints'
+                        ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-xs'
+                        : 'bg-slate-800 text-slate-300 border-slate-700'
+                    }`}
+                  >
+                    💸 Hoa Hồng
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">
+                  {creditFundType === 'upTinCredits' ? 'Số lượt Up tin cấp phát:' : 'Số tiền / Token nạp (VNĐ):'}
+                </label>
+                <input
+                  type="number"
+                  value={creditAmount}
+                  onChange={e => setCreditAmount(Number(e.target.value))}
+                  placeholder={creditFundType === 'upTinCredits' ? '10' : '50000'}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono font-bold focus:outline-hidden focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">Lý do nạp / ghi chú quản trị:</label>
+                <input
+                  type="text"
+                  value={creditReason}
+                  onChange={e => setCreditReason(e.target.value)}
+                  placeholder="Thưởng sự kiện, nạp tiền trực tiếp..."
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-hidden focus:border-amber-500"
+                />
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedUserForCredit(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition cursor-pointer"
+              >
+                Hủy Bỏ
+              </button>
+              <button
+                type="button"
+                disabled={isProcessingCredit || creditAmount <= 0}
+                onClick={async () => {
+                  if (!selectedUserForCredit) return;
+                  setIsProcessingCredit(true);
+                  try {
+                    const res = await fetch('/api/admin/finance/pump-balance', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        userId: selectedUserForCredit.id,
+                        amount: creditAmount,
+                        actionType: 'credit',
+                        fundType: creditFundType,
+                        reason: creditReason,
+                        adminName: 'Super Admin'
+                      })
+                    });
+                    if (res.ok) {
+                      alert(`🎉 Đã cấp thành công ${creditAmount.toLocaleString('vi-VN')} ${creditFundType === 'upTinCredits' ? 'lượt' : 'Token'} cho ${selectedUserForCredit.name}!`);
+                      setSelectedUserForCredit(null);
+                      if (onRefreshData) onRefreshData();
+                    } else {
+                      alert('Có lỗi xảy ra khi nạp điểm.');
+                    }
+                  } catch (e) {
+                    alert('Lỗi kết nối máy chủ.');
+                  } finally {
+                    setIsProcessingCredit(false);
+                  }
+                }}
+                className="px-5 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-slate-950 font-black rounded-xl text-xs shadow-md transition cursor-pointer flex items-center gap-1.5"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>{isProcessingCredit ? 'Đang Xử Lý...' : 'XÁC NHẬN CỘNG ĐIỂM'}</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

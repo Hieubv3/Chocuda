@@ -783,29 +783,21 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
       status: 'published'
     };
 
-    // 1. Send to server API /api/posts & /posts to store in Cloud SQL
+    // 1. Send to server API /api/news to store and persist in data store & Cloud SQL
     try {
-      await fetch('/api/posts', {
+      await fetch('/api/news', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          title: publishedArticle.title,
-          content: publishedArticle.content,
-          summary: publishedArticle.summary,
-          category: publishedArticle.category,
-          author: publishedArticle.author,
-          image_url: publishedArticle.image,
-          source: 'admin_panel'
-        })
+        body: JSON.stringify(publishedArticle)
       });
     } catch (err) {
-      console.warn('POST /api/posts warning:', err);
+      console.warn('POST /api/news warning:', err);
     }
 
     onSave(publishedArticle);
-    alert('🎉 Đăng bài viết thành công! Ảnh đã được lưu lên Supabase Storage và bài viết đã được đồng bộ vào Cloud SQL.');
+    alert('🎉 Đã lưu bài viết tin tức / tin thị trường thành công! Dữ liệu đã được đồng bộ vào hệ thống & Public Website.');
     onClose();
   };
 
