@@ -47,6 +47,7 @@ interface AdminDashboardPageProps {
   pricingConfig: UpTinPricingConfig;
   onSavePricingConfig: (newConfig: UpTinPricingConfig) => void;
   onApproveProperty: (id: string) => void;
+  onAddProperty?: (property: Property) => void;
   onUpdateProperty?: (property: Property) => void;
   onDeleteProperty: (id: string) => void;
   onUpdateProject?: (project: Project) => void;
@@ -69,6 +70,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   pricingConfig,
   onSavePricingConfig,
   onApproveProperty,
+  onAddProperty,
   onUpdateProperty,
   onDeleteProperty,
   onUpdateProject,
@@ -807,6 +809,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [showTaxModal, setShowTaxModal] = useState<boolean>(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [isAddingProperty, setIsAddingProperty] = useState<boolean>(false);
+  const [addingPropertyType, setAddingPropertyType] = useState<'sale' | 'rent'>('sale');
+
+  const openAddProperty = (type: 'sale' | 'rent' = 'sale') => {
+    setAddingPropertyType(type);
+    setIsAddingProperty(true);
+  };
   const [expandedNavSections, setExpandedNavSections] = useState<Record<string, boolean>>({
     bds: true,
     technicians: true,
@@ -2088,6 +2096,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </button>
 
                   <button
+                    onClick={() => openAddProperty('sale')}
+                    className="w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer text-emerald-400 hover:bg-emerald-500/20 font-bold border border-emerald-500/20"
+                  >
+                    <span>➕ Đăng Căn Bán Mới</span>
+                    <span className="text-[10px] bg-emerald-500/20 px-1 rounded">Bán</span>
+                  </button>
+
+                  <button
+                    onClick={() => openAddProperty('rent')}
+                    className="w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer text-teal-400 hover:bg-teal-500/20 font-bold border border-teal-500/20"
+                  >
+                    <span>➕ Đăng Căn Thuê Mới</span>
+                    <span className="text-[10px] bg-teal-500/20 px-1 rounded">Thuê</span>
+                  </button>
+
+                  <button
                     onClick={() => setActiveTab('projects')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between cursor-pointer ${
                       activeTab === 'projects'
@@ -3111,11 +3135,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <div className="flex flex-wrap items-center gap-2 shrink-0">
                 <button
                   type="button"
-                  onClick={() => setIsAddingProperty(true)}
-                  className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 cursor-pointer"
+                  onClick={() => openAddProperty('sale')}
+                  className="px-3.5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <PlusCircle className="w-4 h-4 text-slate-950" />
-                  <span>+ Đăng Tin BĐS</span>
+                  <span>+ Đăng Căn Bán</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openAddProperty('rent')}
+                  className="px-3.5 py-2.5 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4 text-slate-950" />
+                  <span>+ Đăng Căn Cho Thuê</span>
                 </button>
                 <button
                   type="button"
@@ -6466,12 +6498,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {isAddingProperty && (
         <AddPropertyAdminModal
           projects={projects}
+          initialType={addingPropertyType}
           onClose={() => setIsAddingProperty(false)}
           onSave={(newProp) => {
-            if (onApproveProperty) {
-              onApproveProperty(newProp);
+            if (onAddProperty) {
+              onAddProperty(newProp);
             } else if (onUpdateProperty) {
               onUpdateProperty(newProp);
+            }
+            if (onRefreshData) {
+              onRefreshData();
             }
             setIsAddingProperty(false);
           }}

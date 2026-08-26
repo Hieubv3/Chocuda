@@ -140,12 +140,15 @@ const DEFAULT_PRESET_ADS: AdBanner[] = SAMPLE_BANNER_PRESETS.map((p, idx) => ({
   widthSize: p.widthSize,
   active: true,
   isActive: true,
+  clickCount: 28 + idx * 12,
   clicks: 28 + idx * 12,
+  viewCount: 350 + idx * 85,
   views: 350 + idx * 85,
   startDate: new Date().toISOString().split('T')[0],
   clientName: 'Ban Quản Trị Hệ Thống',
   clientPhone: '0988.247.247',
-  clientNote: 'Banner mẫu hệ thống tự động khởi tạo'
+  clientNote: 'Banner mẫu hệ thống tự động khởi tạo',
+  createdAt: new Date().toISOString()
 }));
 
 export const AdminAdsManager: React.FC<AdminAdsManagerProps> = ({

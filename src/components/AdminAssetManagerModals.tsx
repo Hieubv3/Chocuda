@@ -959,22 +959,24 @@ interface AddPropertyAdminModalProps {
   onClose: () => void;
   onSave: (newProperty: Property) => void;
   projects?: Project[];
+  initialType?: 'sale' | 'rent';
 }
 
 export const AddPropertyAdminModal: React.FC<AddPropertyAdminModalProps> = ({
   onClose,
   onSave,
-  projects = []
+  projects = [],
+  initialType = 'sale'
 }) => {
   const [formData, setFormData] = useState<Partial<Property>>({
     id: `prop-${Date.now()}`,
     title: '',
-    type: 'sale',
+    type: initialType,
     project: 'ocean-park-2',
     subdivision: 'Phân khu Chà Là',
     category: 'shophouse',
-    price: 5.5,
-    priceDisplay: '5.5 Tỷ',
+    price: initialType === 'sale' ? 5.5 : 18,
+    priceDisplay: initialType === 'sale' ? '5.5 Tỷ' : '18 Triệu/tháng',
     area: 70,
     bedrooms: 3,
     bathrooms: 2,
@@ -982,7 +984,9 @@ export const AddPropertyAdminModal: React.FC<AddPropertyAdminModalProps> = ({
     furniture: 'full',
     legal: 'so-do',
     address: 'Vinhomes Ocean Park 2, Văn Giang, Hưng Yên',
-    description: 'Chính chủ cần chuyển nhượng căn đẹp, vị trí đắc địa gần công viên và trục đường chính. Pháp lý sổ đỏ đầy đủ, nội thất hoàn thiện cao cấp.',
+    description: initialType === 'sale'
+      ? 'Chính chủ cần chuyển nhượng căn đẹp, vị trí đắc địa gần công viên và trục đường chính. Pháp lý sổ đỏ đầy đủ, nội thất hoàn thiện cao cấp.'
+      : 'Cho thuê căn đẹp full nội thất sang trọng, xách vali về ở ngay. Tiện ích đẳng cấp 5 sao ngay dưới chân tòa nhà.',
     images: [
       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80'
     ],

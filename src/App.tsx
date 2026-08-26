@@ -554,7 +554,8 @@ export const App: React.FC = () => {
   // Property Update handler
   const handleUpdateProperty = async (updatedProperty: Property) => {
     setProperties(prev => {
-      const updated = prev.map(p => p.id === updatedProperty.id ? updatedProperty : p);
+      const exists = prev.some(p => p.id === updatedProperty.id);
+      const updated = exists ? prev.map(p => p.id === updatedProperty.id ? updatedProperty : p) : [updatedProperty, ...prev];
       safeLocalStorageSet('hb_properties', updated);
       return updated;
     });
@@ -566,6 +567,33 @@ export const App: React.FC = () => {
       });
     } catch (e) {
       console.warn('Updated property locally:', updatedProperty.id);
+    }
+  };
+
+  // Property Add handler for Admin & Users
+  const handleAddProperty = async (newProperty: Property) => {
+    const approvedProperty: Property = {
+      ...newProperty,
+      approved: true,
+      status: 'approved'
+    };
+    setProperties(prev => {
+      const exists = prev.some(p => p.id === approvedProperty.id);
+      const updated = exists
+        ? prev.map(p => p.id === approvedProperty.id ? approvedProperty : p)
+        : [approvedProperty, ...prev];
+      safeLocalStorageSet('hb_properties', updated);
+      return updated;
+    });
+
+    try {
+      await fetch('/api/properties', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(approvedProperty)
+      });
+    } catch (e) {
+      console.warn('Added property locally:', approvedProperty.id);
     }
   };
 
@@ -744,6 +772,7 @@ export const App: React.FC = () => {
             pricingConfig={pricingConfig}
             onSavePricingConfig={handleSavePricingConfig}
             onApproveProperty={handleApproveProperty}
+            onAddProperty={handleAddProperty}
             onUpdateProperty={handleUpdateProperty}
             onDeleteProperty={handleDeleteProperty}
             onUpdateProject={handleUpdateProject}
@@ -1664,6 +1693,7 @@ export const App: React.FC = () => {
                   pricingConfig={pricingConfig}
                   onSavePricingConfig={handleSavePricingConfig}
                   onApproveProperty={handleApproveProperty}
+                  onAddProperty={handleAddProperty}
                   onUpdateProperty={handleUpdateProperty}
                   onDeleteProperty={handleDeleteProperty}
                   onUpdateProject={handleUpdateProject}

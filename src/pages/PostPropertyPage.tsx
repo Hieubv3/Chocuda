@@ -19,19 +19,28 @@ import { dispatchCustomerLead } from '../lib/leadNotifier';
 interface PostPropertyPageProps {
   language: Language;
   user?: UserType | null;
+  currentUser?: UserType | null;
   onOpenAuth?: () => void;
   onPropertySubmitted?: () => void;
+  onAddProperty?: (property: Property) => void;
+  onCancel?: () => void;
+  pricingConfig?: any;
   existingProperties?: Property[];
 }
 
 export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   language,
   user: initialUser,
+  currentUser,
   onOpenAuth,
   onPropertySubmitted,
+  onAddProperty,
+  onCancel,
+  pricingConfig,
   existingProperties = []
 }) => {
   const [currentUserState, setCurrentUserState] = useState<UserType | null>(() => {
+    if (currentUser) return currentUser;
     if (initialUser) return initialUser;
     try {
       const saved = localStorage.getItem('hb_user') ||
@@ -445,6 +454,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         } catch (e) {}
 
         setSubmitted(true);
+        if (onAddProperty) onAddProperty(createdProp);
         if (onPropertySubmitted) onPropertySubmitted();
       } else {
         alert(data.error || data.message || `Lỗi khi gửi thông tin đăng tin (HTTP ${res.status}). Vui lòng thử lại!`);
