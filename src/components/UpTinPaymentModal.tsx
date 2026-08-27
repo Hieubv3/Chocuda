@@ -266,7 +266,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
               packageName: packageInfo.name,
               amount: packageInfo.price,
               paymentCode,
-              status: 'approved',
+              status: 'pending', // Will be approved by webhook/admin
               createdAt: new Date().toISOString()
             };
 

@@ -6,7 +6,7 @@ import { TripartiteAgreementModal } from './TripartiteAgreementModal';
 
 interface AuthModalProps {
   onClose: () => void;
-  onLoginSuccess: (user: UserType) => void;
+  onLoginSuccess: (user: UserType, token?: string) => void;
 }
 
 const DEFAULT_GOOGLE_CLIENT_ID = '676805214069-67li6kv4ppmc1jmff5u29lcns84idk6a.apps.googleusercontent.com';
@@ -444,11 +444,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           setErrorMsg(data.error || 'Đăng ký không thành công.');
         } else {
           setSuccessMsg('✓ Xác thực Email OTP thành công! Đang kích hoạt tài khoản...');
+          // Store JWT token for API calls
+          if (data.token) {
+            localStorage.setItem('auth_token', data.token);
+          }
           setTimeout(() => {
             onLoginSuccess({
               ...data.user,
               emailVerified: true
-            });
+            }, data.token);
           }, 600);
         }
       } catch (err) {
@@ -481,8 +485,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           setErrorMsg(data.error || 'Đăng nhập không thành công.');
         } else {
           setSuccessMsg('Đăng nhập thành công! Đang chuyển hướng...');
+          // Store JWT token for API calls
+          if (data.token) {
+            localStorage.setItem('auth_token', data.token);
+          }
           setTimeout(() => {
-            onLoginSuccess(data.user);
+            onLoginSuccess(data.user, data.token);
           }, 500);
         }
       } catch (err) {

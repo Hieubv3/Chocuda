@@ -357,12 +357,13 @@ export const App: React.FC = () => {
 
     const fetchLatestUserProfile = async () => {
       try {
-        const queryParams = new URLSearchParams();
-        if (user.id) queryParams.set('userId', user.id);
-        if (user.email) queryParams.set('email', user.email);
-        if (user.phone) queryParams.set('phone', user.phone);
-
-        const res = await fetch(`/api/auth/me?${queryParams.toString()}`);
+        // SECURITY: Use JWT token for /api/auth/me
+        const token = localStorage.getItem('auth_token');
+        if (!token) return;
+        
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         if (res.ok) {
           const freshUser = await res.json();
           if (freshUser) {
@@ -820,8 +821,17 @@ export const App: React.FC = () => {
         currentUser={user}
         onOpenAuth={() => setAuthModalOpen(true)}
         onLogout={() => {
+          // SECURITY: Invalidate token server-side
+          const token = localStorage.getItem('auth_token');
+          if (token) {
+            fetch('/api/auth/logout', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${token}` }
+            }).catch(() => {});
+          }
           setUser(null);
           localStorage.removeItem('hb_user');
+          localStorage.removeItem('auth_token'); // Clear JWT token
           navigate('/');
         }}
         savedCount={savedIds.length}
@@ -1630,6 +1640,7 @@ export const App: React.FC = () => {
                   onLogout={() => {
                     setUser(null);
                     safeLocalStorageSet('hb_user', null);
+                    localStorage.removeItem('auth_token'); // Clear JWT token
                     navigate('/');
                   }}
                 />
@@ -1708,6 +1719,7 @@ export const App: React.FC = () => {
                   onLogout={() => {
                     setUser(null);
                     safeLocalStorageSet('hb_user', null);
+                    localStorage.removeItem('auth_token'); // Clear JWT token
                     navigate('/');
                   }}
                 />
@@ -1773,10 +1785,14 @@ export const App: React.FC = () => {
       {authModalOpen && (
         <AuthModal
           onClose={() => setAuthModalOpen(false)}
-          onLoginSuccess={(u) => {
+          onLoginSuccess={(u, token) => {
             setUser(u);
             try {
               localStorage.setItem('hb_user', JSON.stringify(u));
+              // Store JWT token for API authentication
+              if (token) {
+                localStorage.setItem('auth_token', token);
+              }
             } catch (e) {}
             setAuthModalOpen(false);
             // Không tự động cưỡng chế chuyển trang nếu người dùng đang ở trang chợ hoặc chi tiết sản phẩm
