@@ -229,7 +229,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
           
           {/* Banner cover */}
           <div className="relative h-48 sm:h-64 bg-slate-950 overflow-hidden">
-            <img
+            <img loading="lazy"
               src={employer.bannerUrl || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80'}
               alt={employer.companyName}
               className="w-full h-full object-cover opacity-60"
@@ -248,7 +248,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
             <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">
               
               <div className="flex items-start gap-4 sm:gap-6">
-                <img
+                <img loading="lazy"
                   src={employer.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80'}
                   alt={employer.companyName}
                   className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-2xl bg-white shrink-0"

@@ -896,7 +896,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               </div>
               {serviceImg && (
                 <div className="relative w-32 h-24 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 mt-2 group">
-                  <img src={serviceImg} alt="Preview" className="w-full h-full object-cover" />
+                  <img loading="lazy" src={serviceImg} alt="Preview" className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() => setServiceImg('')}
@@ -1206,7 +1206,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
             {aiImagePreviewUrl && (
               <div className="flex items-center gap-3 pt-2 border-t border-emerald-800/60">
-                <img src={aiImagePreviewUrl} alt="Preview BĐS" className="w-14 h-14 object-cover rounded-xl border border-amber-400" />
+                <img loading="lazy" src={aiImagePreviewUrl} alt="Preview BĐS" className="w-14 h-14 object-cover rounded-xl border border-amber-400" />
                 <span className="text-[11px] text-amber-200 font-normal">
                   📷 Đã đính kèm ảnh BĐS. Bấm <strong className="text-white">"AI Đọc Ảnh & Điền Form"</strong> để tạo nội dung bài đăng hoàn chỉnh.
                 </span>
@@ -1725,7 +1725,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {imagesList.map((img, idx) => (
                       <div key={idx} className="relative group rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 aspect-video bg-black shadow-sm">
-                        <img src={img} alt={`Img ${idx}`} className="w-full h-full object-cover" />
+                        <img loading="lazy" src={img} alt={`Img ${idx}`} className="w-full h-full object-cover" />
                         <button
                           type="button"
                           onClick={() => handleRemoveImage(idx)}
@@ -1814,7 +1814,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   </div>
                   {soDoImage && (
                     <div className="relative w-40 h-28 rounded-xl overflow-hidden border border-amber-500/40 shadow-sm mt-2 group">
-                      <img src={soDoImage} alt="Sổ đỏ gốc" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={soDoImage} alt="Sổ đỏ gốc" className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={() => {
@@ -1874,7 +1874,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   </div>
                   {brokerCertImage && (
                     <div className="relative w-40 h-28 rounded-xl overflow-hidden border border-teal-500/40 shadow-sm mt-2 group">
-                      <img src={brokerCertImage} alt="Giấy tờ môi giới" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={brokerCertImage} alt="Giấy tờ môi giới" className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={() => setBrokerCertImage('')}
@@ -1916,11 +1916,11 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <div className="space-y-1">
                     <span className="text-[10px] text-slate-400 font-bold block">Ảnh Gốc Chưa Che:</span>
-                    <img src={soDoImage} alt="Gốc" className="w-full h-24 object-cover rounded-xl border border-slate-300 dark:border-slate-700" />
+                    <img loading="lazy" src={soDoImage} alt="Gốc" className="w-full h-24 object-cover rounded-xl border border-slate-300 dark:border-slate-700" />
                   </div>
                   <div className="space-y-1">
                     <span className="text-[10px] text-teal-600 dark:text-teal-400 font-extrabold block">Ảnh Đã Che Mờ (Công khai):</span>
-                    <img src={soDoRedactedImage || soDoImage} alt="Đã Che" className="w-full h-24 object-cover rounded-xl border-2 border-teal-500/60" />
+                    <img loading="lazy" src={soDoRedactedImage || soDoImage} alt="Đã Che" className="w-full h-24 object-cover rounded-xl border-2 border-teal-500/60" />
                   </div>
                 </div>
 

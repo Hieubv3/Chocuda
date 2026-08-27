@@ -224,7 +224,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
             {/* Candidate Identity */}
             <div className="flex items-start gap-4">
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-3xl overflow-hidden border-2 border-emerald-500 shadow-md shrink-0 bg-slate-100 dark:bg-slate-800">
-                <img
+                <img loading="lazy"
                   src={candidate.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
                   alt={candidate.fullName}
                   className="w-full h-full object-cover"

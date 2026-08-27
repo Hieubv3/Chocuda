@@ -391,7 +391,7 @@ export const RealestateVideoChannelSection: React.FC<RealestateVideoChannelSecti
                     }`}
                   >
                     <div className="relative w-28 aspect-video rounded-xl overflow-hidden bg-slate-950 shrink-0">
-                      <img
+                      <img loading="lazy"
                         src={`https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`}
                         alt={vid.title}
                         className="w-full h-full object-cover"
@@ -457,7 +457,7 @@ export const RealestateVideoChannelSection: React.FC<RealestateVideoChannelSecti
               className="p-4 bg-slate-800/80 border border-slate-700/80 rounded-2xl space-y-3 hover:border-amber-500/50 transition group"
             >
               <div className="aspect-[9/14] bg-slate-950 rounded-xl overflow-hidden relative border border-slate-700 flex items-center justify-center">
-                <img
+                <img loading="lazy"
                   src={`https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=400&q=80`}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-300"

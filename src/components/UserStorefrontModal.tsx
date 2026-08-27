@@ -323,7 +323,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
         {/* Store Banner & Header */}
         <div className="relative h-44 sm:h-56 bg-slate-800 shrink-0 overflow-hidden">
-          <img 
+          <img loading="lazy" 
             src={storeState.bannerUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80'} 
             alt={storeState.storeName}
             className="w-full h-full object-cover opacity-85"
@@ -332,7 +332,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
           
           <div className="absolute bottom-4 left-4 right-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
             <div className="flex items-center gap-3.5">
-              <img 
+              <img loading="lazy" 
                 src={storeState.logoUrl || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=200&q=80'} 
                 alt={storeState.storeName}
                 className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-2 border-amber-400 shadow-xl object-cover shrink-0"
@@ -512,7 +512,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                 )}
 
                 <div className="flex gap-3">
-                  <img 
+                  <img loading="lazy" 
                     src={product.images[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80'} 
                     alt={product.name}
                     className="w-24 h-24 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700"
@@ -1042,7 +1042,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
               {placedOrder.paymentMethod === 'vietqr' && (
                 <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-left space-y-2 text-xs">
                   <div className="text-center font-bold text-amber-500 mb-1"> Quét Mã QR Thanh Toán Ngân Hàng</div>
-                  <img 
+                  <img loading="lazy" 
                     src={`https://img.vietqr.io/image/MB-0868499929-compact2.png?amount=${placedOrder.totalAmount}&addInfo=${encodeURIComponent(placedOrder.orderCode)}&accountName=STORE_${encodeURIComponent(storeState.storeName)}`}
                     alt="VietQR"
                     className="w-48 h-48 mx-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-md"

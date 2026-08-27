@@ -889,7 +889,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
               className="bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-3.5 flex flex-col justify-between gap-3 shadow-xs"
             >
               <div className="flex gap-3 items-center">
-                <img 
+                <img loading="lazy" 
                   src={prod.images[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80'} 
                   alt={prod.name}
                   className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700"
@@ -1495,7 +1495,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
 
               {photoMenuUrl && (
                 <div className="h-40 bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 relative">
-                  <img src={photoMenuUrl} alt="Menu preview" className="w-full h-full object-cover opacity-80" />
+                  <img loading="lazy" src={photoMenuUrl} alt="Menu preview" className="w-full h-full object-cover opacity-80" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-3">
                     <span className="px-2.5 py-1 bg-amber-500 text-slate-950 font-black text-[10px] rounded-md uppercase">
                       ẢNH MENU THỰC TẾ ĐÃ CHỤP

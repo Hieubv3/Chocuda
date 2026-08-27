@@ -871,7 +871,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
                         
                         {/* Top Candidate Avatar & Status */}
                         <div className="flex items-start gap-3">
-                          <img
+                          <img loading="lazy"
                             src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
                             alt={cand.fullName}
                             className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
@@ -1935,7 +1935,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
 
             {/* Candidate Summary */}
             <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-              <img
+              <img loading="lazy"
                 src={candidateToUnlock.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
                 alt={candidateToUnlock.fullName}
                 className="w-12 h-12 rounded-xl object-cover"
@@ -1959,7 +1959,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
             {/* QR Scan Code Preview */}
             <div className="text-center space-y-2">
               <div className="inline-block p-2 bg-white rounded-2xl border border-slate-200 shadow-xs">
-                <img
+                <img loading="lazy"
                   src={`https://img.vietqr.io/image/MSB-3028031988-compact2.png?amount=${candidateToUnlock.unlockPriceVnd || 50000}&addInfo=${encodeURIComponent(`MOKHOA CV ${candidateToUnlock.id}`)}&accountName=BUI%20VAN%20HIEU`}
                   alt="VietQR Mở Khóa CV"
                   className="w-40 h-40 mx-auto object-contain"
@@ -1997,7 +1997,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full p-5 sm:p-6 space-y-4 my-8">
             <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
               <div className="flex items-center gap-3">
-                <img
+                <img loading="lazy"
                   src={selectedCandidateModal.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
                   alt={selectedCandidateModal.fullName}
                   className="w-14 h-14 rounded-2xl object-cover border"

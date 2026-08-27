@@ -44,7 +44,7 @@ export const SubdivisionDetailModal: React.FC<SubdivisionDetailModalProps> = ({
         {/* Hero Image Preview */}
         {subdivision.images && subdivision.images[0] && (
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 aspect-[16/9] max-h-64 shadow-md">
-            <img
+            <img loading="lazy"
               src={subdivision.images[0]}
               alt={subdivision.name}
               className="w-full h-full object-cover"

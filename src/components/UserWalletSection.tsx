@@ -221,7 +221,7 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
           {/* QR Code */}
           <div className="flex flex-col items-center justify-center p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
-            <img
+            <img loading="lazy"
               src={`https://img.vietqr.io/image/MB-0988888888-compact2.png?amount=${customAmount}&addInfo=${encodeURIComponent(transferMemo)}&accountName=CHO%20CU%20DAN%2024H`}
               alt="Mã VietQR nạp Token"
               className="w-48 h-48 object-contain rounded-lg bg-white p-2 border border-slate-200 shadow-xs"

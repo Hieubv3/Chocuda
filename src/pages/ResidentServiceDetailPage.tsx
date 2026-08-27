@@ -126,7 +126,7 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5">
               
               <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-950 relative">
-                <img
+                <img loading="lazy"
                   src={service.images && service.images[0] ? service.images[0] : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80'}
                   alt={service.title}
                   className="w-full h-full object-cover"

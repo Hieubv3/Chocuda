@@ -157,7 +157,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                   to={p.url}
                   className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-amber-500/10 dark:hover:bg-amber-500/10 border border-slate-200 dark:border-slate-700/80 rounded-2xl flex items-center gap-3 group transition"
                 >
-                  <img src={p.images[0]} alt={p.name} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                  <img loading="lazy" src={p.images[0]} alt={p.name} className="w-12 h-12 rounded-xl object-cover shrink-0" />
                   <div className="min-w-0 flex-1">
                     <h3 className="font-black text-xs text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition truncate">
                       {p.name}
@@ -193,7 +193,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                   to={getStoreDetailUrl(store)}
                   className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-emerald-500/10 dark:hover:bg-emerald-500/10 border border-slate-200 dark:border-slate-700/80 rounded-2xl flex items-center gap-3 group transition"
                 >
-                  <img src={store.logoUrl} alt={store.storeName} className="w-12 h-12 rounded-xl object-cover shrink-0 border border-amber-500" />
+                  <img loading="lazy" src={store.logoUrl} alt={store.storeName} className="w-12 h-12 rounded-xl object-cover shrink-0 border border-amber-500" />
                   <div className="min-w-0 flex-1">
                     <h3 className="font-black text-xs text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition truncate">
                       {store.storeName}
@@ -229,7 +229,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                   to={getServiceDetailUrl(service)}
                   className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-500/10 dark:hover:bg-blue-500/10 border border-slate-200 dark:border-slate-700/80 rounded-2xl flex items-center gap-3 group transition"
                 >
-                  <img src={service.images[0]} alt={service.title} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                  <img loading="lazy" src={service.images[0]} alt={service.title} className="w-12 h-12 rounded-xl object-cover shrink-0" />
                   <div className="min-w-0 flex-1">
                     <h3 className="font-black text-xs text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition truncate">
                       {service.title}
@@ -298,7 +298,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                   to={getCandidateCvUrl(cand)}
                   className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-teal-500/10 dark:hover:bg-teal-500/10 border border-slate-200 dark:border-slate-700/80 rounded-2xl flex items-center gap-3 group transition"
                 >
-                  <img 
+                  <img loading="lazy" 
                     src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'} 
                     alt={cand.fullName} 
                     className="w-10 h-10 rounded-full object-cover shrink-0" 
@@ -338,7 +338,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                   to={getPropertyDetailUrl(prop)}
                   className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-red-500/10 dark:hover:bg-red-500/10 border border-slate-200 dark:border-slate-700/80 rounded-2xl flex items-center gap-3 group transition"
                 >
-                  <img src={prop.images[0]} alt={prop.title} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                  <img loading="lazy" src={prop.images[0]} alt={prop.title} className="w-12 h-12 rounded-xl object-cover shrink-0" />
                   <div className="min-w-0 flex-1">
                     <h3 className="font-black text-xs text-slate-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition truncate">
                       {prop.title}
@@ -374,7 +374,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                   to={getNewsDetailUrl(art)}
                   className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-emerald-500/10 dark:hover:bg-emerald-500/10 border border-slate-200 dark:border-slate-700/80 rounded-2xl flex items-center gap-3 group transition"
                 >
-                  <img src={art.image} alt={art.title} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                  <img loading="lazy" src={art.image} alt={art.title} className="w-12 h-12 rounded-xl object-cover shrink-0" />
                   <div className="min-w-0 flex-1">
                     <h3 className="font-black text-xs text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition truncate">
                       {art.title}

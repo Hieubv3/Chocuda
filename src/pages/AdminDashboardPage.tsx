@@ -2654,7 +2654,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <div className="space-y-3">
                       {/* Image & Badges */}
                       <div className="relative h-44 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
-                        <img
+                        <img loading="lazy"
                           src={srv.images && srv.images.length > 0 ? srv.images[0] : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80'}
                           alt={srv.title}
                           className="w-full h-full object-cover"
@@ -3063,7 +3063,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       <div className="space-y-3">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-center gap-3">
-                            <img
+                            <img loading="lazy"
                               src={st.logoUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80'}
                               alt={st.storeName}
                               className="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shadow-sm shrink-0"
@@ -4025,7 +4025,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         </label>
                       </div>
                       <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
-                        <img src={newAdImage} alt="Preview" className="h-24 w-full object-cover" />
+                        <img loading="lazy" src={newAdImage} alt="Preview" className="h-24 w-full object-cover" />
                       </div>
                     </div>
                   )}
@@ -4104,7 +4104,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       >
                         <td className="p-3">
                           <div className="relative group w-24">
-                            <img src={ad.imageUrl} alt={ad.title} className="w-24 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm" />
+                            <img loading="lazy" src={ad.imageUrl} alt={ad.title} className="w-24 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm" />
                             <label 
                               className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center rounded-xl cursor-pointer text-white text-[9px] font-extrabold transition"
                               title="Tải ảnh mới trực tiếp"
@@ -4360,7 +4360,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       className="flex items-start gap-2.5 cursor-pointer"
                     >
                       <div className="relative shrink-0">
-                        <img
+                        <img loading="lazy"
                           src={p.images[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
                           alt={p.title}
                           className="w-14 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700"
@@ -4479,7 +4479,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         {p.images && p.images.length > 0 && (
                           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                             {p.images.map((imgUrl, idx) => (
-                              <img
+                              <img loading="lazy"
                                 key={idx}
                                 src={imgUrl}
                                 alt="Căn hộ"
@@ -4565,7 +4565,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               className="relative cursor-pointer group"
                               title="Bấm để xem album ảnh"
                             >
-                              <img
+                              <img loading="lazy"
                                 src={p.images[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
                                 alt={p.title}
                                 className="w-12 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:opacity-85 transition"
@@ -4812,7 +4812,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                     </span>
                                     <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                                       {p.images.map((imgUrl, imgIndex) => (
-                                        <img
+                                        <img loading="lazy"
                                           key={imgIndex}
                                           src={imgUrl}
                                           alt={`${p.title} - ảnh ${imgIndex + 1}`}
@@ -4946,9 +4946,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <tr key={proj.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
                     <td className="p-3">
                       <div className="flex gap-2">
-                        <img src={proj.image} alt={proj.title} className="w-16 h-12 object-cover rounded-lg border shadow-sm" title="Banner chính" />
+                        <img loading="lazy" src={proj.image} alt={proj.title} className="w-16 h-12 object-cover rounded-lg border shadow-sm" title="Banner chính" />
                         {proj.masterplanUrl && (
-                          <img src={proj.masterplanUrl} alt="Sơ đồ" className="w-12 h-12 object-cover rounded-lg border shadow-sm" title="Sơ đồ quy hoạch" />
+                          <img loading="lazy" src={proj.masterplanUrl} alt="Sơ đồ" className="w-12 h-12 object-cover rounded-lg border shadow-sm" title="Sơ đồ quy hoạch" />
                         )}
                       </div>
                     </td>
@@ -5027,7 +5027,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 {news.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
                     <td className="p-3">
-                      <img src={item.image} alt={item.title} className="w-16 h-12 object-cover rounded-lg border shadow-sm" />
+                      <img loading="lazy" src={item.image} alt={item.title} className="w-16 h-12 object-cover rounded-lg border shadow-sm" />
                     </td>
                     <td className="p-3 max-w-sm">
                       <span className="font-bold text-slate-900 dark:text-white line-clamp-1">{item.title}</span>
@@ -5849,7 +5849,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2.5 min-w-0">
                             {u.avatar ? (
-                              <img src={u.avatar} alt={u.name} className="w-7 h-7 rounded-full object-cover border border-amber-500/30 shrink-0" />
+                              <img loading="lazy" src={u.avatar} alt={u.name} className="w-7 h-7 rounded-full object-cover border border-amber-500/30 shrink-0" />
                             ) : (
                               <div className="w-7 h-7 bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black rounded-full flex items-center justify-center text-[11px] shrink-0">
                                 {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
@@ -6014,7 +6014,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             {/* User Info */}
                             <td className="py-3.5 px-3.5 font-extrabold text-slate-900 dark:text-white flex items-center gap-2.5">
                               {u.avatar ? (
-                                <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover border border-amber-500/30 shrink-0" />
+                                <img loading="lazy" src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover border border-amber-500/30 shrink-0" />
                               ) : (
                                 <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black rounded-full flex items-center justify-center text-xs shadow-xs shrink-0">
                                   {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
@@ -6695,7 +6695,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </h4>
 
               <div className="flex gap-3">
-                <img
+                <img loading="lazy"
                   src={selectedSellerDetail.images[0]}
                   alt={selectedSellerDetail.title}
                   className="w-28 h-20 object-cover rounded-xl border shadow-sm shrink-0"
@@ -6738,7 +6738,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <span className="font-extrabold text-amber-800 dark:text-amber-300 text-[11px] block">
                     📜 SỔ ĐỎ / PHÁP LÝ ĐÃ CHE THÔNG TIN RIÊNG
                   </span>
-                  <img
+                  <img loading="lazy"
                     src={selectedSellerDetail.redactedRedBookUrl}
                     alt="Sổ đỏ"
                     className="w-full max-h-48 object-contain rounded-lg border shadow-sm"
@@ -7719,7 +7719,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
                 {newSrvImage && (
                   <div className="relative rounded-xl overflow-hidden aspect-video max-w-xs bg-slate-900 border border-slate-300 dark:border-slate-700">
-                    <img src={newSrvImage} alt="Service preview" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={newSrvImage} alt="Service preview" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setNewSrvImage('')}
@@ -7907,7 +7907,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               {/* Modal Top Header */}
               <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white p-5 sm:p-6 flex items-start justify-between gap-4 border-b border-emerald-500/30">
                 <div className="flex items-center gap-4">
-                  <img
+                  <img loading="lazy"
                     src={selectedAdminStore.logoUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80'}
                     alt={selectedAdminStore.storeName}
                     className="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-400 shadow-md shrink-0"
@@ -8062,7 +8062,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               }`}
                             >
                               <div className="flex items-start gap-3">
-                                <img
+                                <img loading="lazy"
                                   src={prod.images?.[0] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'}
                                   alt={prod.name}
                                   className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
@@ -8192,7 +8192,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               }`}
                             >
                               <div className="flex items-start gap-3">
-                                <img
+                                <img loading="lazy"
                                   src={srv.images?.[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
                                   alt={srv.title}
                                   className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
@@ -8492,7 +8492,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-mono"
                   />
                   {storeProductForm.images[0] && (
-                    <img
+                    <img loading="lazy"
                       src={storeProductForm.images[0]}
                       alt="Preview"
                       className="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0"

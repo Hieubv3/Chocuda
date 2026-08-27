@@ -392,7 +392,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
 
                     {imagePreviewUrl ? (
                       <div className="relative inline-block group">
-                        <img
+                        <img loading="lazy"
                           src={imagePreviewUrl}
                           alt="Menu Preview"
                           className="max-h-60 max-w-full rounded-xl object-contain shadow-lg border border-slate-700 mx-auto"
@@ -458,7 +458,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                         onClick={() => handleSelectSample(sample)}
                         className="p-3.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 rounded-xl cursor-pointer transition-all flex items-start gap-3 group"
                       >
-                        <img
+                        <img loading="lazy"
                           src={sample.image}
                           alt={sample.name}
                           className="w-14 h-14 rounded-lg object-cover border border-slate-700 shrink-0"

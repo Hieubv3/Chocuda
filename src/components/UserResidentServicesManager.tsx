@@ -497,7 +497,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                       onClick={() => toggleExpandSvc(svc.id)}
                       className="relative shrink-0 cursor-pointer group"
                     >
-                      <img
+                      <img loading="lazy"
                         src={svc.images?.[0] || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=200&q=80'}
                         alt={svc.title}
                         className="w-14 h-12 sm:w-16 sm:h-14 rounded-xl object-cover border border-slate-200 dark:border-slate-800 group-hover:opacity-90 transition"
@@ -582,7 +582,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                         </span>
                         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                           {svc.images.map((img, i) => (
-                            <img
+                            <img loading="lazy"
                               key={i}
                               src={img}
                               alt={`${svc.title} - ${i + 1}`}
@@ -885,7 +885,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
                   {images.map((img, idx) => (
                     <div key={idx} className="relative rounded-xl overflow-hidden aspect-4/3 bg-slate-900 border border-slate-300 dark:border-slate-700 group">
-                      <img src={img} alt="Preview" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={img} alt="Preview" className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(idx)}

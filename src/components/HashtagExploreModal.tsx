@@ -252,7 +252,7 @@ export const HashtagExploreModal: React.FC<HashtagExploreModalProps> = ({
                         onClick={() => handleNavigate(getPropertyDetailUrl(p))}
                         className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 transition cursor-pointer flex gap-3 group"
                       >
-                        <img
+                        <img loading="lazy"
                           src={p.images[0] || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80'}
                           alt={p.title}
                           className="w-20 h-20 rounded-xl object-cover shrink-0"
@@ -290,7 +290,7 @@ export const HashtagExploreModal: React.FC<HashtagExploreModalProps> = ({
                         onClick={() => handleNavigate(getServiceDetailUrl(s))}
                         className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-amber-50 dark:hover:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 transition cursor-pointer flex gap-3 group"
                       >
-                        <img
+                        <img loading="lazy"
                           src={s.images?.[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=600&q=80'}
                           alt={s.title}
                           className="w-20 h-20 rounded-xl object-cover shrink-0"
@@ -363,7 +363,7 @@ export const HashtagExploreModal: React.FC<HashtagExploreModalProps> = ({
                         onClick={() => handleNavigate(getNewsDetailUrl(n))}
                         className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-purple-50 dark:hover:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 transition cursor-pointer flex gap-3 group"
                       >
-                        <img
+                        <img loading="lazy"
                           src={n.imageUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80'}
                           alt={n.title}
                           className="w-20 h-20 rounded-xl object-cover shrink-0"

@@ -313,7 +313,7 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                     }`}
                   >
                     {item.imageUrl ? (
-                      <img 
+                      <img loading="lazy" 
                         src={item.imageUrl} 
                         alt={item.title} 
                         className="w-12 h-12 rounded-xl object-cover shrink-0 border border-slate-700" 
@@ -472,7 +472,7 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
 
                 <div className="flex gap-3 items-start pr-6">
                   {activeItem.imageUrl ? (
-                    <img 
+                    <img loading="lazy" 
                       src={activeItem.imageUrl} 
                       alt={activeItem.title} 
                       className="w-14 h-14 rounded-2xl object-cover shrink-0 border border-slate-700 shadow"

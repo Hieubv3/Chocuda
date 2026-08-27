@@ -42,7 +42,7 @@ export const AmenityDetailModal: React.FC<AmenityDetailModalProps> = ({
         {/* Amenity Image */}
         {amenity.image && (
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 aspect-[16/9] max-h-64 shadow-md">
-            <img
+            <img loading="lazy"
               src={amenity.image}
               alt={amenity.name}
               className="w-full h-full object-cover"

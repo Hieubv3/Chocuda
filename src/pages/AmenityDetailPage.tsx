@@ -135,7 +135,7 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
       {/* Hero Header */}
       <div className="relative bg-slate-950 text-white overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <img loading="lazy"
             src={amenity.image || project?.image}
             alt={amenity.name}
             className="w-full h-full object-cover opacity-35 filter brightness-90"
@@ -226,7 +226,7 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
             {/* Image Box */}
             {amenity.image && (
               <div className="rounded-3xl overflow-hidden aspect-[16/10] bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-lg relative">
-                <img
+                <img loading="lazy"
                   src={amenity.image}
                   alt={amenity.name}
                   className="w-full h-full object-cover"

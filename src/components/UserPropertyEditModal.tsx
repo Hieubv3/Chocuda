@@ -443,7 +443,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
               {images.map((imgUrl, idx) => (
                 <div key={idx} className="relative group rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 aspect-4/3 bg-slate-900">
-                  <img
+                  <img loading="lazy"
                     src={imgUrl}
                     alt={`Ảnh ${idx + 1}`}
                     className="w-full h-full object-cover"

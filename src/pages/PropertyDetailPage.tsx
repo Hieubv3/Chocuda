@@ -230,7 +230,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
             {/* Gallery Card */}
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
               <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-950">
-                <img
+                <img loading="lazy"
                   src={property.images[selectedImgIndex] || property.images[0]}
                   alt={property.title}
                   className="w-full h-full object-cover"
@@ -282,7 +282,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                         selectedImgIndex === idx ? 'border-emerald-500 scale-95 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
                       }`}
                     >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={img} alt="" className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>

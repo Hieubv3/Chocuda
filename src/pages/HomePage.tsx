@@ -80,7 +80,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         
         {/* Background Image Overlay */}
         <div className="absolute inset-0 opacity-30">
-          <img
+          <img loading="lazy"
             src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1800&q=80"
             alt="Vinhomes Ocean Park"
             className="w-full h-full object-cover"
@@ -136,7 +136,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-                  <img
+                  <img loading="lazy"
                     src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
@@ -186,7 +186,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-                  <img
+                  <img loading="lazy"
                     src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
@@ -229,7 +229,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-                  <img
+                  <img loading="lazy"
                     src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
@@ -272,7 +272,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-                  <img
+                  <img loading="lazy"
                     src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80"
                     alt="Tuyển Dụng Việc Làm"
                     referrerPolicy="no-referrer"
@@ -324,7 +324,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 }`}
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
-                  <img
+                  <img loading="lazy"
                     src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=300&q=80"
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
@@ -352,7 +352,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 }`}
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
-                  <img
+                  <img loading="lazy"
                     src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=300&q=80"
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
@@ -373,7 +373,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 className="text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
-                  <img
+                  <img loading="lazy"
                     src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=80"
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
@@ -394,7 +394,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 className="text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
-                  <img
+                  <img loading="lazy"
                     src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=300&q=80"
                     alt="Việc Làm"
                     referrerPolicy="no-referrer"
@@ -552,7 +552,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               className="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
-                <img
+                <img loading="lazy"
                   src={proj.image}
                   alt={proj.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -639,7 +639,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="lg:col-span-4 text-center space-y-4">
               <div className="relative inline-block">
                 <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-3xl bg-white p-3 border-4 border-amber-500/50 shadow-2xl mx-auto flex items-center justify-center overflow-hidden">
-                  <img
+                  <img loading="lazy"
                     src={logoImg}
                     alt="Logo Chợ Cư Dân 24H Vinhomes"
                     className="w-full h-full object-contain"
@@ -752,7 +752,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl transition duration-300 cursor-pointer flex flex-col justify-between"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
-                <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                <img loading="lazy" src={item.image} alt={item.title} className="w-full h-full object-cover" />
                 {item.source === 'n8n' && (
                   <span className="absolute top-3 left-3 bg-blue-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow">
                     n8n Sync

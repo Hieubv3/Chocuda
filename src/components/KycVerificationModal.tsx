@@ -156,7 +156,7 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
               <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 block">
                 📷 Ảnh CCCD Mặt Trước
               </span>
-              <img src={idCardFrontUrl} alt="CCCD Front" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
+              <img loading="lazy" src={idCardFrontUrl} alt="CCCD Front" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
               <label className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1.5 cursor-pointer shadow transition">
                 <Upload className="w-3.5 h-3.5" />
                 <span>📁 CHỌN ẢNH (DƯỚI 10MB)</span>
@@ -192,7 +192,7 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
               <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 block">
                 📷 Ảnh CCCD Mặt Sau
               </span>
-              <img src={idCardBackUrl} alt="CCCD Back" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
+              <img loading="lazy" src={idCardBackUrl} alt="CCCD Back" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
               <label className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1.5 cursor-pointer shadow transition">
                 <Upload className="w-3.5 h-3.5" />
                 <span>📁 CHỌN ẢNH (DƯỚI 10MB)</span>
@@ -235,7 +235,7 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                     YÊU CẦU TRONG 7 NGÀY
                   </span>
                 </div>
-                <img src={brokerLicenseUrl} alt="Broker License" className="w-full h-32 object-cover rounded-xl border border-amber-500/30" />
+                <img loading="lazy" src={brokerLicenseUrl} alt="Broker License" className="w-full h-32 object-cover rounded-xl border border-amber-500/30" />
                 <label className="w-full py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition">
                   <Upload className="w-4 h-4" />
                   <span>📁 CHỌN CHỨNG CHỈ (DƯỚI 10MB)</span>

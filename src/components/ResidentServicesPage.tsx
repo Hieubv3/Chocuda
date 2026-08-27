@@ -1240,7 +1240,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       className="bg-slate-950 text-white rounded-2xl border border-slate-800 p-3.5 space-y-3 hover:border-amber-500 transition group flex flex-col justify-between"
                     >
                       <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(getStoreDetailUrl(st))}>
-                        <img 
+                        <img loading="lazy" 
                           src={st.logoUrl} 
                           alt={st.storeName}
                           className="w-12 h-12 rounded-xl object-cover border-2 border-amber-400 shadow-sm shrink-0"
@@ -1325,7 +1325,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                         className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition duration-200 flex flex-col sm:flex-row items-stretch group"
                       >
                         <div className="relative w-full sm:w-48 md:w-56 h-36 sm:h-auto bg-slate-100 dark:bg-slate-800 shrink-0 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
-                          <img
+                          <img loading="lazy"
                             src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -1428,7 +1428,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                         className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between group"
                       >
                         <div className="relative h-28 sm:h-36 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
-                          <img
+                          <img loading="lazy"
                             src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -1535,7 +1535,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       >
                         {/* Thumbnail Header */}
                         <div className="relative h-48 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
-                          <img
+                          <img loading="lazy"
                             src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -1862,7 +1862,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 rounded-2xl overflow-hidden">
                   {selectedServiceModal.images.map((img, idx) => (
-                    <img
+                    <img loading="lazy"
                       key={idx}
                       src={img}
                       alt={`mô tả ${idx}`}
@@ -2706,7 +2706,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   />
                   {newPRForm.imageUrl && (
                     <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-purple-400">
-                      <img src={newPRForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={newPRForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                     </div>
                   )}
                 </div>
@@ -2771,7 +2771,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               </div>
             ) : (
               selectedPRArticle.images?.[0] && (
-                <img
+                <img loading="lazy"
                   src={selectedPRArticle.images[0]}
                   alt={selectedPRArticle.partnerName}
                   className="w-full h-48 object-cover rounded-2xl border border-slate-200 dark:border-slate-800"
@@ -3090,7 +3090,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     <div className="flex gap-2 overflow-x-auto py-1">
                       {transportImages.map((img, idx) => (
                         <div key={idx} className="relative w-14 h-14 rounded-lg overflow-hidden border border-amber-500/40 shrink-0">
-                          <img src={img} alt="Transport luggage" className="w-full h-full object-cover" />
+                          <img loading="lazy" src={img} alt="Transport luggage" className="w-full h-full object-cover" />
                           <button
                             type="button"
                             onClick={() => setTransportImages(prev => prev.filter((_, i) => i !== idx))}
@@ -3338,7 +3338,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     <div className="flex gap-2 overflow-x-auto py-1">
                       {constructionImages.map((img, idx) => (
                         <div key={idx} className="relative w-14 h-14 rounded-lg overflow-hidden border border-blue-500/40 shrink-0">
-                          <img src={img} alt="Construction blueprint / site" className="w-full h-full object-cover" />
+                          <img loading="lazy" src={img} alt="Construction blueprint / site" className="w-full h-full object-cover" />
                           <button
                             type="button"
                             onClick={() => setConstructionImages(prev => prev.filter((_, i) => i !== idx))}

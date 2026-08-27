@@ -122,7 +122,7 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
             className="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
           >
             <div className="relative aspect-[16/10] overflow-hidden">
-              <img
+              <img loading="lazy"
                 src={article.image}
                 alt={article.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

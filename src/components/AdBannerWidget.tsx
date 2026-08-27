@@ -143,7 +143,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
               >
                 {/* Image Container */}
                 <div className={`relative rounded-xl overflow-hidden bg-slate-950 ${isImageOnly ? 'h-52 sm:h-60' : 'h-40 sm:h-44 mb-2'}`}>
-                  <img
+                  <img loading="lazy"
                     src={ad.imageUrl}
                     alt={ad.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -209,7 +209,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
               className="block"
             >
               <div className="relative h-44 rounded-xl overflow-hidden mb-2 bg-slate-950">
-                <img
+                <img loading="lazy"
                   src={ad.imageUrl}
                   alt={ad.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -255,7 +255,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
           </div>
 
           <div className="relative h-60 sm:h-72 rounded-2xl overflow-hidden border border-slate-700 shadow-inner">
-            <img
+            <img loading="lazy"
               src={currentAd.imageUrl}
               alt={currentAd.title}
               className="w-full h-full object-cover"
@@ -302,7 +302,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
             className="group block relative rounded-2xl overflow-hidden border border-amber-500/30 shadow-xl transition-transform hover:scale-[1.01]"
           >
             <div className="relative h-36 sm:h-48 w-full">
-              <img
+              <img loading="lazy"
                 src={ad.imageUrl}
                 alt={ad.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -338,7 +338,7 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
             className="group block bg-white dark:bg-slate-800 rounded-2xl p-3 border border-amber-500/30 shadow-md hover:border-amber-500 transition"
           >
             <div className="relative h-28 rounded-xl overflow-hidden mb-2">
-              <img
+              <img loading="lazy"
                 src={ad.imageUrl}
                 alt={ad.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-300"

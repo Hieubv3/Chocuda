@@ -640,7 +640,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                         }`}
                       >
                         {item.image && (
-                          <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                          <img loading="lazy" src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover shrink-0" />
                         )}
                         <div className="flex-1 min-w-0">
                           <h5 className="font-extrabold text-slate-900 dark:text-white text-xs truncate">{item.name}</h5>

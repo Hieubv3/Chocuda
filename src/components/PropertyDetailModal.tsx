@@ -95,7 +95,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
         {/* Gallery Header Section */}
         <div className="relative bg-slate-950">
           <div className="aspect-[16/9] w-full max-h-[420px] overflow-hidden relative">
-            <img
+            <img loading="lazy"
               src={property.images[selectedImgIndex] || property.images[0]}
               alt={property.title}
               className="w-full h-full object-cover"
@@ -126,7 +126,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                     selectedImgIndex === idx ? 'border-amber-500 scale-105' : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
-                  <img src={img} alt="thumb" className="w-full h-full object-cover" />
+                  <img loading="lazy" src={img} alt="thumb" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -235,7 +235,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               VỊ TRÍ & TIỆN ÍCH XUNG QUANH
             </h3>
             <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-48 bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-center p-4">
-              <img
+              <img loading="lazy"
                 src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80"
                 alt="Bản đồ vị trí"
                 className="absolute inset-0 w-full h-full object-cover opacity-40"

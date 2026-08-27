@@ -511,13 +511,13 @@ export const TechnicalServiceEscrowModal: React.FC<TechnicalServiceEscrowModalPr
                                 {ord.imagesBefore && ord.imagesBefore[0] && (
                                   <div>
                                     <span className="text-[10px] text-slate-400 block mb-1">Ảnh trước thi công:</span>
-                                    <img src={ord.imagesBefore[0]} alt="Before" className="w-16 h-16 rounded-lg object-cover border border-slate-200" />
+                                    <img loading="lazy" src={ord.imagesBefore[0]} alt="Before" className="w-16 h-16 rounded-lg object-cover border border-slate-200" />
                                   </div>
                                 )}
                                 {ord.imagesAfter && ord.imagesAfter[0] && (
                                   <div>
                                     <span className="text-[10px] text-emerald-600 font-bold block mb-1">Ảnh đã nghiệm thu:</span>
-                                    <img src={ord.imagesAfter[0]} alt="After" className="w-16 h-16 rounded-lg object-cover border border-emerald-300" />
+                                    <img loading="lazy" src={ord.imagesAfter[0]} alt="After" className="w-16 h-16 rounded-lg object-cover border border-emerald-300" />
                                   </div>
                                 )}
                               </div>
@@ -661,7 +661,7 @@ export const TechnicalServiceEscrowModal: React.FC<TechnicalServiceEscrowModalPr
                   {/* VietQR Quick Code Box */}
                   <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-center space-y-2">
                     <p className="text-xs text-slate-600 font-medium">Mã VietQR Tự Động Nhận Tiền Nạp chocudan24h:</p>
-                    <img 
+                    <img loading="lazy" 
                       src={`https://img.vietqr.io/image/MB-3028031988-compact2.png?amount=${depositAmount}&addInfo=NAP%20VI%20${userId}`}
                       alt="VietQR Deposit"
                       className="w-44 h-44 mx-auto rounded-lg shadow border border-slate-200 object-contain"

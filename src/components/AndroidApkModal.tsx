@@ -222,7 +222,7 @@ export const AndroidApkModal: React.FC<AndroidApkModalProps> = ({ isOpen, onClos
               {/* QR Code Scan Section */}
               <div className="p-5 bg-slate-800/90 rounded-2xl border border-emerald-500/40 flex flex-col sm:flex-row items-center gap-5 shadow-lg">
                 <div className="w-32 h-32 bg-white p-2 rounded-2xl shrink-0 flex flex-col items-center justify-center border-2 border-emerald-500 shadow-lg relative group">
-                  <img
+                  <img loading="lazy"
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.href)}`}
                     alt="Mã QR Tải & Cài Đặt App Android"
                     className="w-full h-full object-contain"

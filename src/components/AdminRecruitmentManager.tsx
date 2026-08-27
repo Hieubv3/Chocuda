@@ -1460,7 +1460,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                        <img
+                        <img loading="lazy"
                           src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
                           alt={cand.fullName}
                           className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
@@ -1645,7 +1645,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
 
                           <td className="p-3.5">
                             <div className="flex items-center gap-3">
-                              <img
+                              <img loading="lazy"
                                 src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
                                 alt={cand.fullName}
                                 className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
@@ -1881,7 +1881,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <img
+                        <img loading="lazy"
                           src={emp.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&auto=format&fit=crop&q=80'}
                           alt={emp.companyName}
                           className="w-8 h-8 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white shrink-0"
@@ -2035,7 +2035,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
 
                           <td className="p-3.5">
                             <div className="flex items-center gap-3">
-                              <img
+                              <img loading="lazy"
                                 src={emp.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&auto=format&fit=crop&q=80'}
                                 alt={emp.companyName}
                                 className="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white shrink-0"
@@ -4046,7 +4046,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 max-w-2xl w-full shadow-2xl space-y-4 my-8">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
-                <img
+                <img loading="lazy"
                   src={selectedCandidate.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
                   alt={selectedCandidate.fullName}
                   className="w-12 h-12 rounded-full object-cover border-2 border-teal-500"

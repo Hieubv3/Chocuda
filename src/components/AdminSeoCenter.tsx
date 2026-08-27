@@ -686,7 +686,7 @@ Sitemap: https://chocudan24h.com/sitemap.xml`;
                 2. Xem Trước Card Chia Sẻ Zalo / Facebook Message
               </span>
               <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-                <img src={ogImage} alt="OG Preview" className="w-full h-36 object-cover" />
+                <img loading="lazy" src={ogImage} alt="OG Preview" className="w-full h-36 object-cover" />
                 <div className="p-3 space-y-1">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">NHADEPVINHOMES.COM</span>
                   <h5 className="font-extrabold text-xs text-slate-900 dark:text-white line-clamp-1">

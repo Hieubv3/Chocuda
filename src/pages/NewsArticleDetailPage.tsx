@@ -148,7 +148,7 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
         {/* Featured Image */}
         {article.image && (
           <div className="aspect-[16/9] rounded-3xl overflow-hidden shadow-xl bg-slate-950">
-            <img
+            <img loading="lazy"
               src={article.image}
               alt={article.title}
               className="w-full h-full object-cover"
@@ -198,7 +198,7 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
                   className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 shadow-sm hover:shadow-lg transition space-y-2 p-3"
                 >
                   <div className="aspect-[16/10] rounded-xl overflow-hidden bg-slate-950">
-                    <img
+                    <img loading="lazy"
                       src={rel.image}
                       alt={rel.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-300"

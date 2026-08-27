@@ -349,7 +349,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-2">
-                  <img
+                  <img loading="lazy"
                     src={`https://img.vietqr.io/image/${pricingConfig.bankName.includes('MSB') ? 'MSB' : 'Vietcombank'}-${pricingConfig.accountNumber}-compact2.png?amount=20000&addInfo=${encodeURIComponent('DONATE UNG HO SERVER HIEU BUI')}&accountName=${encodeURIComponent(pricingConfig.accountHolder)}`}
                     alt="VietQR Donate"
                     className="w-44 h-auto rounded-xl border border-white bg-white p-2 shadow-md"
@@ -749,7 +749,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                 {/* VietQR Image Container */}
                 <div className="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
-                  <img
+                  <img loading="lazy"
                     src={vietQrUrl}
                     alt="VietQR Transfer"
                     className="w-56 h-auto rounded-xl shadow-md border border-white bg-white p-2"

@@ -205,7 +205,7 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
         <div className="p-4 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700/80 flex items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-3">
             {user?.avatar ? (
-              <img src={user.avatar} alt={user?.name || 'User'} className="w-10 h-10 rounded-full object-cover border border-amber-500/40 shrink-0" />
+              <img loading="lazy" src={user.avatar} alt={user?.name || 'User'} className="w-10 h-10 rounded-full object-cover border border-amber-500/40 shrink-0" />
             ) : (
               <div className="w-10 h-10 bg-amber-500 text-slate-950 font-black rounded-full flex items-center justify-center text-sm">
                 {user?.name ? user.name.charAt(0).toUpperCase() : user?.email ? user.email.charAt(0).toUpperCase() : 'U'}

@@ -142,7 +142,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               {formData.images.map((imgUrl, idx) => (
                 <div key={idx} className="relative group p-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2 shadow-sm">
                   <div className="relative aspect-video rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900">
-                    <img src={imgUrl} alt={`Property ${idx}`} className="w-full h-full object-cover" />
+                    <img loading="lazy" src={imgUrl} alt={`Property ${idx}`} className="w-full h-full object-cover" />
                     {idx === 0 && (
                       <span className="absolute top-1.5 left-1.5 bg-amber-500 text-slate-950 font-black text-[9px] px-2 py-0.5 rounded-md flex items-center gap-1 shadow">
                         <Star className="w-3 h-3 fill-slate-950" /> ÁNH BÌA
@@ -579,7 +579,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
               <ImageIcon className="w-4 h-4 text-emerald-500" /> 1. Hình Ảnh Banner Chính Dự Án
             </h4>
             <div className="flex flex-col sm:flex-row gap-4 items-center">
-              <img src={formData.image} alt="Project Main" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
+              <img loading="lazy" src={formData.image} alt="Project Main" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
               <div className="flex-1 w-full space-y-2">
                 <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh banner chính (*):</label>
                 <div className="flex flex-col sm:flex-row gap-2">
@@ -606,7 +606,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
               <ImageIcon className="w-4 h-4 text-amber-500" /> 2. Hình Ảnh Sơ Đồ Quy Hoạch / Mặt Bằng Masterplan
             </h4>
             <div className="flex flex-col sm:flex-row gap-4 items-center">
-              <img src={formData.masterplanUrl || formData.image} alt="Masterplan" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
+              <img loading="lazy" src={formData.masterplanUrl || formData.image} alt="Masterplan" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
               <div className="flex-1 w-full space-y-2">
                 <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh sơ đồ quy hoạch:</label>
                 <div className="flex flex-col sm:flex-row gap-2">
@@ -796,7 +796,7 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
               <ImageIcon className="w-4 h-4 text-amber-500" /> Hình Ảnh Minh Họa Bài Viết (Tải Ảnh Từ Thiết Bị)
             </h4>
             <div className="flex flex-col sm:flex-row gap-4 items-center">
-              <img src={formData.image} alt="News Featured" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
+              <img loading="lazy" src={formData.image} alt="News Featured" className="w-32 h-20 object-cover rounded-xl border border-slate-300 shadow" />
               <div className="flex-1 w-full space-y-2">
                 <label className="text-[10px] text-slate-400 block font-bold">URL hoặc Tải tệp ảnh đại diện bài viết (*):</label>
                 <div className="flex flex-col sm:flex-row gap-2">

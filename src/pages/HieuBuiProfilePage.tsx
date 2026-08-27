@@ -38,7 +38,7 @@ export const HieuBuiProfilePage: React.FC<{ language: Language }> = () => {
           <div className="lg:col-span-4 text-center space-y-4">
             <div className="relative inline-block">
               <div className="w-52 h-52 rounded-3xl bg-white p-3 border-4 border-amber-500/50 shadow-2xl mx-auto flex items-center justify-center overflow-hidden">
-                <img
+                <img loading="lazy"
                   src={logoImg}
                   alt="Logo Chợ Cư Dân 24H Vinhomes"
                   className="w-full h-full object-contain"

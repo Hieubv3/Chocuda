@@ -165,7 +165,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
         <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-indigo-950 text-white p-4 flex items-center justify-between border-b border-slate-800 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <div className="relative shrink-0">
-              <img 
+              <img loading="lazy" 
                 src={store.logoUrl || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=150&q=80'} 
                 alt={store.storeName}
                 className="w-11 h-11 rounded-2xl border border-amber-400 object-cover shadow-md"
@@ -241,7 +241,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
         {selectedProduct && (
           <div className="bg-amber-500/10 dark:bg-amber-500/15 border-b border-amber-500/30 p-2.5 px-4 flex items-center justify-between gap-3 text-xs shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
-              <img 
+              <img loading="lazy" 
                 src={selectedProduct.images[0] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=150&q=80'} 
                 alt={selectedProduct.name}
                 className="w-10 h-10 rounded-lg object-cover shrink-0 border border-amber-500/40"
@@ -294,7 +294,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
                   {/* Attached Product inside Message */}
                   {msg.product && (
                     <div className="mb-2 p-2 bg-slate-900/10 dark:bg-slate-950/40 rounded-xl border border-slate-900/20 dark:border-slate-700 flex items-center gap-2 text-[11px]">
-                      <img 
+                      <img loading="lazy" 
                         src={msg.product.images[0]} 
                         alt={msg.product.name}
                         className="w-8 h-8 rounded object-cover shrink-0" 

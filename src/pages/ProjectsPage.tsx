@@ -120,7 +120,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
           
           {/* Main Visual Banner */}
           <div className="relative rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl aspect-[21/9] max-h-[420px]">
-            <img
+            <img loading="lazy"
               src={currentProject.image}
               alt={currentProject.name}
               className="w-full h-full object-cover"
@@ -231,7 +231,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
               SƠ ĐỒ MẶT BẰNG QUY HOẠCH TỔNG THỂ {currentProject.name.toUpperCase()}
             </h3>
             <div className="rounded-2xl overflow-hidden border border-slate-700 max-h-96">
-              <img
+              <img loading="lazy"
                 src={currentProject.masterplanUrl}
                 alt="Masterplan"
                 className="w-full h-full object-cover"

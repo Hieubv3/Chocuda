@@ -202,7 +202,7 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
             className="cursor-pointer relative overflow-hidden bg-slate-950 p-2.5 space-y-2 group/ad"
           >
             <div className="relative aspect-16/10 rounded-xl overflow-hidden bg-slate-800 border border-slate-700/80">
-              <img
+              <img loading="lazy"
                 src={currentAd.imageUrl || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80'}
                 alt={currentAd.title}
                 className="w-full h-full object-cover group-hover/ad:scale-105 transition-transform duration-300"

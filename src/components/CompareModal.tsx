@@ -66,7 +66,7 @@ export const CompareModal: React.FC<CompareModalProps> = ({
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
-                        <img
+                        <img loading="lazy"
                           src={prop.images[0]}
                           alt={prop.title}
                           className="w-full h-28 object-cover rounded-xl"

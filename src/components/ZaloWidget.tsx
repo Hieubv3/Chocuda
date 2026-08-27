@@ -146,7 +146,7 @@ export const ZaloWidget: React.FC = () => {
             {/* QR Code Collapsible View */}
             {showQr && (
               <div className="p-4 bg-slate-800/90 rounded-2xl border border-amber-500/30 text-center space-y-2 animate-in zoom-in-95 duration-200">
-                <img
+                <img loading="lazy"
                   src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://zalo.me/0868499929"
                   alt="QR Zalo Admin"
                   className="w-36 h-36 mx-auto rounded-xl shadow-lg border border-white/20"

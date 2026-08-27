@@ -181,7 +181,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {/* Project Hero Banner */}
       <div className="relative bg-slate-950 text-white overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <img loading="lazy"
             src={project.image}
             alt={projectName}
             className="w-full h-full object-cover opacity-35 filter brightness-90"
@@ -251,7 +251,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
                 className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 shadow-md hover:shadow-xl transition cursor-pointer"
               >
                 <div className="aspect-[16/10] overflow-hidden relative bg-slate-950">
-                  <img
+                  <img loading="lazy"
                     src={sub.images && sub.images[0] ? sub.images[0] : project.image}
                     alt={sub.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"

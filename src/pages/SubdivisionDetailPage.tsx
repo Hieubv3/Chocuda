@@ -167,7 +167,7 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
       {/* Hero Header Section */}
       <div className="relative bg-slate-950 text-white overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <img loading="lazy"
             src={subdivision.images[0] || project?.image}
             alt={subdivision.name}
             className="w-full h-full object-cover opacity-30 filter brightness-90"
@@ -341,7 +341,7 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {subdivision.images.map((imgUrl, i) => (
                     <div key={i} className="rounded-2xl overflow-hidden aspect-[16/10] bg-slate-950 relative border border-slate-200 dark:border-slate-700">
-                      <img src={imgUrl} alt={`${subdivision.name} ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition duration-500" />
+                      <img loading="lazy" src={imgUrl} alt={`${subdivision.name} ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition duration-500" />
                     </div>
                   ))}
                 </div>

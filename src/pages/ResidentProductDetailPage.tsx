@@ -271,7 +271,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
             {/* Left: Gallery (5 Cols) */}
             <div className="lg:col-span-5 space-y-4">
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-inner group">
-                <img
+                <img loading="lazy"
                   src={currentImageUrl}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -305,7 +305,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                         activeImageIndex === idx ? 'border-amber-500 scale-105 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
                       }`}
                     >
-                      <img src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
+                      <img loading="lazy" src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -428,7 +428,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
               {/* Verified Store Banner Box */}
               <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
-                  <img
+                  <img loading="lazy"
                     src={store.logoUrl || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80'}
                     alt={store.storeName}
                     className="w-12 h-12 rounded-xl object-cover border border-amber-500 shadow-sm shrink-0"
@@ -538,7 +538,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                   className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-amber-500 transition shadow-sm hover:shadow-md flex flex-col justify-between"
                 >
                   <div className="aspect-[4/3] bg-slate-950 overflow-hidden relative">
-                    <img
+                    <img loading="lazy"
                       src={rp.images && rp.images[0] ? rp.images[0] : store.logoUrl}
                       alt={rp.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -629,7 +629,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                 {/* Product Summary Box */}
                 <div className="p-3 bg-slate-100 dark:bg-slate-800/80 rounded-2xl flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <img src={currentImageUrl} alt={product.name} className="w-11 h-11 rounded-xl object-cover shrink-0" />
+                    <img loading="lazy" src={currentImageUrl} alt={product.name} className="w-11 h-11 rounded-xl object-cover shrink-0" />
                     <div className="min-w-0">
                       <div className="font-bold text-slate-900 dark:text-white truncate">{product.name}</div>
                       <div className="text-amber-500 font-black">{product.price.toLocaleString('vi-VN')}₫ / {product.unit}</div>

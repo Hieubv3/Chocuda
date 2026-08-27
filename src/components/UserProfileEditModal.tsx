@@ -195,7 +195,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
               Ảnh Đại Diện (Avatar)
             </label>
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <img
+              <img loading="lazy"
                 src={avatar}
                 alt="Avatar preview"
                 className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-emerald-500 shadow-md shrink-0"
@@ -224,7 +224,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                         avatar === presetUrl ? 'border-emerald-500 ring-2 ring-emerald-400/40 scale-105' : 'border-slate-300 opacity-70 hover:opacity-100'
                       }`}
                     >
-                      <img src={presetUrl} alt={`Preset ${idx}`} className="w-full h-full object-cover" />
+                      <img loading="lazy" src={presetUrl} alt={`Preset ${idx}`} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -452,7 +452,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                 </div>
                 {businessLicenseUrl ? (
                   <div className="relative rounded-lg overflow-hidden h-20 bg-slate-900 border border-slate-300 dark:border-slate-700">
-                    <img src={businessLicenseUrl} alt="Giấy phép ĐKKD" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={businessLicenseUrl} alt="Giấy phép ĐKKD" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setBusinessLicenseUrl('')}
@@ -491,7 +491,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                 </div>
                 {brokerLicenseUrl ? (
                   <div className="relative rounded-lg overflow-hidden h-20 bg-slate-900 border border-slate-300 dark:border-slate-700">
-                    <img src={brokerLicenseUrl} alt="Chứng chỉ nghề" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={brokerLicenseUrl} alt="Chứng chỉ nghề" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setBrokerLicenseUrl('')}
@@ -580,7 +580,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                 <div className="flex flex-wrap gap-2 pt-2">
                   {specializedCertificates.map((cert) => (
                     <div key={cert.id} className="flex items-center gap-2 p-1.5 bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-800 rounded-lg text-[11px]">
-                      <img src={cert.certImageUrl} alt={cert.certName} className="w-8 h-8 object-cover rounded" />
+                      <img loading="lazy" src={cert.certImageUrl} alt={cert.certName} className="w-8 h-8 object-cover rounded" />
                       <div>
                         <span className="font-bold block text-slate-900 dark:text-white">{cert.certName}</span>
                         {cert.certNumber && <span className="text-[10px] text-slate-400 font-mono">{cert.certNumber}</span>}

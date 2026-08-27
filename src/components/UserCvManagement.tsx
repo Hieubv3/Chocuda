@@ -271,7 +271,7 @@ export const UserCvManagement: React.FC<UserCvManagementProps> = ({
           {/* Header Info */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-4">
-              <img
+              <img loading="lazy"
                 src={cvProfile.avatarUrl || currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
                 alt={cvProfile.fullName}
                 className="w-16 h-16 rounded-2xl object-cover border-2 border-teal-500/40 shadow-sm"

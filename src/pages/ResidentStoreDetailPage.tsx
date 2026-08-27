@@ -153,7 +153,7 @@ export const ResidentStoreDetailPage: React.FC<ResidentStoreDetailPageProps> = (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
         <div className="relative rounded-3xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl">
           <div className="h-44 sm:h-60 w-full overflow-hidden relative">
-            <img
+            <img loading="lazy"
               src={store.bannerUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80'}
               alt={store.storeName}
               className="w-full h-full object-cover opacity-75"
@@ -163,7 +163,7 @@ export const ResidentStoreDetailPage: React.FC<ResidentStoreDetailPageProps> = (
 
           <div className="p-6 sm:p-8 relative -mt-16 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 bg-slate-900/90 backdrop-blur-md">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              <img
+              <img loading="lazy"
                 src={store.logoUrl || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80'}
                 alt={store.storeName}
                 className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-4 border-amber-500 shadow-2xl bg-white shrink-0"
@@ -244,7 +244,7 @@ export const ResidentStoreDetailPage: React.FC<ResidentStoreDetailPageProps> = (
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-slate-950">
-                <img
+                <img loading="lazy"
                   src={selectedProduct.images && selectedProduct.images[0] ? selectedProduct.images[0] : store.logoUrl}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover"
@@ -321,7 +321,7 @@ export const ResidentStoreDetailPage: React.FC<ResidentStoreDetailPageProps> = (
                 className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-amber-500 transition shadow-md hover:shadow-xl flex flex-col justify-between cursor-pointer"
               >
                 <div className="aspect-[4/3] overflow-hidden bg-slate-950 relative">
-                  <img
+                  <img loading="lazy"
                     src={prod.images && prod.images[0] ? prod.images[0] : store.logoUrl}
                     alt={prod.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
