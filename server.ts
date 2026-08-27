@@ -2826,8 +2826,20 @@ app.get("/api/stores/:id", (req, res) => {
 });
 
 // Create or update store config
-app.post("/api/stores", (req, res) => {
+app.post("/api/stores", authenticateToken, (req, res) => {
   const storeData: UserStorefront = req.body;
+  const jwtUser = (req as any).user;
+  
+  // SECURITY: Verify user owns this store or is admin
+  if (storeData.userId && jwtUser.userId !== storeData.userId && jwtUser.role !== 'admin') {
+    return res.status(403).json({ error: "Không có quyền tạo/giữ chỗ gian hàng cho người khác!" });
+  }
+  
+  // SECURITY: Use JWT userId if not admin
+  if (jwtUser.role !== 'admin' && !storeData.userId) {
+    storeData.userId = jwtUser.userId;
+  }
+  
   if (!storeData.storeName || !storeData.userId) {
     return res.status(400).json({ error: "Thiếu tên gian hàng hoặc thông tin người sở hữu." });
   }
@@ -2854,16 +2866,22 @@ app.post("/api/stores", (req, res) => {
 });
 
 // Sync products from KiotViet API endpoint (simulated & API ready)
-app.post("/api/stores/:id/sync-kiotviet", (req, res) => {
+app.post("/api/stores/:id/sync-kiotviet", authenticateToken, (req, res) => {
   const { id } = req.params;
-  const { clientId, clientSecret, storeDomain, branchId } = req.body;
-
+  const jwtUser = (req as any).user;
+  
   const storeIdx = storesStore.findIndex(s => s.id === id || s.userId === id);
   if (storeIdx === -1) {
     return res.status(404).json({ error: "Không tìm thấy gian hàng cư dân để đồng bộ KiotViet." });
   }
-
+  
+  // SECURITY: Verify ownership
   const store = storesStore[storeIdx];
+  if (jwtUser.userId !== store.userId && jwtUser.role !== 'admin') {
+    return res.status(403).json({ error: "Không có quyền đồng bộ gian hàng này!" });
+  }
+
+  const { clientId, clientSecret, storeDomain, branchId } = req.body;
 
   // Simulated live connection & product pull from KiotViet Retailer API
   const kiotVietProducts = [
@@ -2936,22 +2954,47 @@ app.post("/api/stores/:id/sync-kiotviet", (req, res) => {
   });
 });
 
-// Get ALL store orders across all stores (Admin)
-app.get("/api/store-orders", (req, res) => {
+// Get ALL store orders across all stores (Admin only)
+app.get("/api/store-orders", authenticateToken, requireAdmin, (req, res) => {
   res.json(storeOrdersStore);
 });
 
 // Delete store
-app.delete("/api/stores/:id", (req, res) => {
+app.delete("/api/stores/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
+  const jwtUser = (req as any).user;
+  
+  const storeIdx = storesStore.findIndex(s => s.id === id || s.userId === id);
+  if (storeIdx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy gian hàng." });
+  }
+  
+  // SECURITY: Verify ownership
+  const store = storesStore[storeIdx];
+  if (jwtUser.userId !== store.userId && jwtUser.role !== 'admin') {
+    return res.status(403).json({ error: "Không có quyền xóa gian hàng này!" });
+  }
+  
   storesStore = storesStore.filter(s => s.id !== id && s.userId !== id);
   saveDataStore();
   res.json({ message: "Đã xóa gian hàng cư dân." });
 });
 
 // Get store orders
-app.get("/api/stores/:id/orders", (req, res) => {
+app.get("/api/stores/:id/orders", authenticateToken, (req, res) => {
   const { id } = req.params;
+  const jwtUser = (req as any).user;
+  
+  const store = storesStore.find(s => s.id === id || s.userId === id);
+  if (!store) {
+    return res.status(404).json({ error: "Không tìm thấy gian hàng." });
+  }
+  
+  // SECURITY: Verify ownership
+  if (jwtUser.userId !== store.userId && jwtUser.role !== 'admin') {
+    return res.status(403).json({ error: "Không có quyền xem đơn hàng gian hàng này!" });
+  }
+  
   const orders = storeOrdersStore.filter(o => o.storeId === id);
   res.json(orders);
 });
@@ -3086,8 +3129,14 @@ app.get("/api/admin/package-orders", authenticateToken, requireAdmin, (req, res)
 });
 
 // 6. User submits Package Subscription Order
-app.post("/api/package-orders", (req, res) => {
+app.post("/api/package-orders", authenticateToken, (req, res) => {
   const orderData = req.body;
+  const jwtUser = (req as any).user;
+  
+  // SECURITY: Use JWT userId, ignore client-provided
+  orderData.userId = jwtUser.userId;
+  orderData.userRole = jwtUser.role;
+  
   if (!orderData || !orderData.packageId || !orderData.userName || !orderData.userPhone) {
     return res.status(400).json({ error: "Thắc mắc/Yêu cầu đăng ký thiếu Họ tên hoặc SĐT liên hệ." });
   }
@@ -7424,7 +7473,7 @@ app.post("/api/payments/simulate-webhook", authenticateToken, requireAdmin, (req
 });
 
 // 6. Get all transactions history
-app.get("/api/payments/transactions", (req, res) => {
+app.get("/api/payments/transactions", authenticateToken, requireAdmin, (req, res) => {
   res.json(upTinTransactionsStore);
 });
 
@@ -7607,7 +7656,7 @@ app.get("/api/admin/finance/summary", (req, res) => {
 });
 
 // Admin Approve / Confirm Payout
-app.post("/api/admin/finance/withdrawals/:id/approve", (req, res) => {
+app.post("/api/admin/finance/withdrawals/:id/approve", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const { adminName, transferRef } = req.body;
   
@@ -7637,7 +7686,7 @@ app.post("/api/admin/finance/withdrawals/:id/approve", (req, res) => {
 });
 
 // Admin Reject Payout & Refund
-app.post("/api/admin/finance/withdrawals/:id/reject", (req, res) => {
+app.post("/api/admin/finance/withdrawals/:id/reject", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const { reason, adminName } = req.body;
   
