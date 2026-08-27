@@ -80,24 +80,8 @@ export const App: React.FC = () => {
         if (alt) raw = JSON.parse(alt);
       } catch (e) {}
     }
-    
-    // Check if admin session flag is present
-    const hasAdminSession = typeof window !== 'undefined' && localStorage.getItem('chocudan_admin_session') === 'true';
 
     if (!raw) {
-      if (hasAdminSession) {
-        return {
-          id: 'user-admin-root',
-          name: 'Chợ Cư Dân 24h (Admin Tổng)',
-          email: 'hotro.chocudan24h@gmail.com',
-          phone: '0868.499.929',
-          role: 'admin',
-          provider: 'local',
-          balance: 10000000,
-          tier: 'kim-cuong',
-          upTinCredits: 9999
-        };
-      }
       return null;
     }
 

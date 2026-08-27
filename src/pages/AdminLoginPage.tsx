@@ -16,43 +16,66 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
 }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'admin' | 'manager'>('admin');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAdminSubmit = (e: React.FormEvent) => {
+  const handleAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!username.trim() || !password.trim()) {
+      setError('Vui lòng nhập đầy đủ Tài khoản/Email/SĐT và Mật khẩu quản trị.');
+      return;
+    }
+
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (password.length < 4) {
-        setError('Mật khẩu không đúng. Vui lòng thử lại.');
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          identifier: username.trim(),
+          password: password.trim()
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.');
         setIsLoading(false);
         return;
       }
 
-      const loggedInAdmin: User = {
-        id: `user-admin-${Date.now()}`,
-        name: role === 'admin' ? 'Chợ Cư Dân 24h (Admin Tổng)' : 'Quản Lý Cấp Cao',
-        email: 'hotro.chocudan24h@gmail.com',
-        phone: '0868.499.929',
-        role: role,
-        avatar: logoImg,
-        provider: 'local',
-        balance: 10000000
-      };
+      const loggedInUser: User = data.user;
 
-      try {
-        localStorage.setItem('hb_user', JSON.stringify(loggedInAdmin));
-        localStorage.setItem('chocudan24h_user', JSON.stringify(loggedInAdmin));
-        localStorage.setItem('chocudan_admin_session', 'true');
-        sessionStorage.setItem('hb_user', JSON.stringify(loggedInAdmin));
-      } catch (e) {}
+      // Strict role check: must be admin or manager
+      if (loggedInUser.role !== 'admin' && (loggedInUser as any).role !== 'manager') {
+        setError('Tài khoản này không có quyền truy cập Cổng Quản Trị Hệ Thống. Chỉ Admin hoặc Quản lý được phân quyền mới có thể đăng nhập.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (data.token) {
+        localStorage.setItem('chocudan_token', data.token);
+        localStorage.setItem('token', data.token);
+      }
+
+      localStorage.setItem('hb_user', JSON.stringify(loggedInUser));
+      localStorage.setItem('chocudan24h_user', JSON.stringify(loggedInUser));
+      localStorage.setItem('chocudan_admin_session', 'true');
+      sessionStorage.setItem('hb_user', JSON.stringify(loggedInUser));
 
       setIsLoading(false);
-      onLoginSuccess(loggedInAdmin);
-    }, 400);
+      onLoginSuccess(loggedInUser);
+    } catch (err: any) {
+      console.error("Admin login error:", err);
+      setError('Không thể kết nối đến máy chủ xác thực. Vui lòng thử lại sau.');
+      setIsLoading(false);
+    }
   };
 
   return (

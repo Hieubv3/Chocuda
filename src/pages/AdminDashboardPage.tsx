@@ -2882,6 +2882,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         <span>• Tin Tức & SEO</span>
                         <span className="font-mono text-emerald-400">{news.length}</span>
                       </button>
+                      <button
+                        onClick={() => { openAddProperty('sale'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-left rounded-xl text-[11px] font-extrabold flex items-center justify-between cursor-pointer"
+                      >
+                        <span>➕ Đăng Căn Bán Mới</span>
+                        <span className="text-[10px] bg-emerald-500 text-slate-950 font-black px-1.5 py-0.2 rounded">Bán</span>
+                      </button>
+                      <button
+                        onClick={() => { openAddProperty('rent'); setIsSubNavDropdownOpen(false); }}
+                        className="p-2 bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/30 text-left rounded-xl text-[11px] font-extrabold flex items-center justify-between cursor-pointer"
+                      >
+                        <span>➕ Đăng Căn Thuê Mới</span>
+                        <span className="text-[10px] bg-teal-500 text-slate-950 font-black px-1.5 py-0.2 rounded">Thuê</span>
+                      </button>
                     </div>
                   </div>
 

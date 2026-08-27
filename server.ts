@@ -4,6 +4,10 @@ import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import nodemailer from "nodemailer";
+import helmet from "helmet";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import rateLimit from "express-rate-limit";
 import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS, INITIAL_ADS } from "./src/data/initialData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
@@ -12,9 +16,34 @@ import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, Stor
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'chocudan24h_jwt_super_security_token_2026';
 
-app.use(express.json({ limit: "100mb" }));
-app.use(express.urlencoded({ limit: "100mb", extended: true }));
+// ------------------- SECURITY HEADERS & BODY LIMIT (MAX 10MB) -------------------
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: false
+}));
+
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
+// Rate Limiters
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Quá nhiều yêu cầu xác thực từ địa chỉ này. Vui lòng thử lại sau 15 phút!" }
+});
+
+const aiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Bạn đã vượt quá giới hạn yêu cầu AI trong 1 phút. Vui lòng thử lại sau giây lát!" }
+});
 
 // Express JSON Body Parser & Payload Error Middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -23,7 +52,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     if (err.type === 'entity.too.large' || err.status === 413) {
       return res.status(413).json({
         success: false,
-        error: 'Kích thước dữ liệu hoặc hình ảnh đăng tải quá lớn. Vui lòng giảm bớt hoặc chọn hình ảnh khác!'
+        error: 'Kích thước dữ liệu hoặc hình ảnh đăng tải quá lớn. Vui lòng nén bớt hình ảnh (tối đa 10MB)!'
       });
     }
     return res.status(err.status || 500).json({
@@ -33,6 +62,105 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   }
   next();
 });
+
+// ------------------- JWT & AUTH HELPER FUNCTIONS -------------------
+export interface AuthUserTokenPayload {
+  id: string;
+  email: string;
+  role: string;
+  name?: string;
+  phone?: string;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: AuthUserTokenPayload;
+    }
+  }
+}
+
+function hashPassword(plain: string): string {
+  return bcrypt.hashSync(plain, 10);
+}
+
+function verifyPassword(plain: string, hashOrPlain?: string): boolean {
+  if (!hashOrPlain) return false;
+  if (hashOrPlain.startsWith('$2a$') || hashOrPlain.startsWith('$2b$')) {
+    try {
+      return bcrypt.compareSync(plain, hashOrPlain);
+    } catch {
+      return false;
+    }
+  }
+  return plain === hashOrPlain;
+}
+
+function generateAuthToken(user: StoredUser | User): string {
+  return jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role || 'owner',
+      name: user.name,
+      phone: user.phone
+    },
+    JWT_SECRET,
+    { expiresIn: '30d' }
+  );
+}
+
+function verifyAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const authHeader = req.headers.authorization;
+  let token = '';
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.substring(7).trim();
+  } else if (req.query && req.query.token) {
+    token = String(req.query.token).trim();
+  }
+
+  if (!token) {
+    return res.status(401).json({ error: "Yêu cầu đăng nhập để thực hiện thao tác này (Thiếu Auth Token)." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as AuthUserTokenPayload;
+    req.user = decoded;
+    next();
+  } catch {
+    return res.status(401).json({ error: "Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại!" });
+  }
+}
+
+function optionalAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const authHeader = req.headers.authorization;
+  let token = '';
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.substring(7).trim();
+  } else if (req.query && req.query.token) {
+    token = String(req.query.token).trim();
+  }
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as AuthUserTokenPayload;
+      req.user = decoded;
+    } catch {
+      // ignore optional auth token failure
+    }
+  }
+  next();
+}
+
+function requireAdmin(req: express.Request, res: express.Response, next: express.NextFunction) {
+  verifyAuth(req, res, () => {
+    const u = req.user;
+    if (!u || (u.role !== 'admin' && u.role !== 'manager' && u.id !== 'user-admin' && u.id !== 'user-admin-root')) {
+      return res.status(403).json({ error: "Truy cập bị từ chối: Yêu cầu quyền Quản trị viên (Admin)." });
+    }
+    next();
+  });
+}
 
 // In-Memory OTP Store
 const otpStore = new Map<string, { code: string; expiresAt: number }>();
@@ -910,7 +1038,7 @@ function checkUserUniqueness(email?: string, phone?: string, name?: string): { i
 // ------------------- AUTH API ROUTES -------------------
 
 // Send Email OTP API
-app.post("/api/auth/send-otp", async (req, res) => {
+app.post("/api/auth/send-otp", authLimiter, async (req, res) => {
   const { email, phone, name } = req.body;
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: "Địa chỉ Email không hợp lệ." });
@@ -938,16 +1066,15 @@ app.post("/api/auth/send-otp", async (req, res) => {
   return res.json({
     success: true,
     email: normalizedEmail,
-    code: otpCode, // Provided for instant visual feedback in UI / testing
     sentLive: emailRes.sent,
     message: emailRes.sent 
       ? `Mã OTP đã được gửi trực tiếp tới email ${normalizedEmail}. Vui lòng kiểm tra hộp thư đến!` 
-      : `Mã OTP xác thực đã khởi tạo cho ${normalizedEmail}. ${emailRes.message}`
+      : `Mã OTP xác thực đã được gửi tới ${normalizedEmail}. ${emailRes.message}`
   });
 });
 
 // Verify OTP API
-app.post("/api/auth/verify-otp", (req, res) => {
+app.post("/api/auth/verify-otp", authLimiter, (req, res) => {
   const { email, otpCode } = req.body;
   if (!email || !otpCode) {
     return res.status(400).json({ error: "Thiếu Email hoặc mã OTP xác nhận." });
@@ -973,11 +1100,15 @@ app.post("/api/auth/verify-otp", (req, res) => {
 });
 
 // Account Registration API
-app.post("/api/auth/register", (req, res) => {
+app.post("/api/auth/register", authLimiter, (req, res) => {
   const { name, email, phone, password, role, businessCategories, otpCode } = req.body;
 
   if (!email || !password || !name) {
     return res.status(400).json({ error: "Vui lòng nhập đầy đủ Họ tên, Email và Mật khẩu!" });
+  }
+
+  if (String(password).length < 6) {
+    return res.status(400).json({ error: "Mật khẩu phải có độ dài tối thiểu 6 ký tự!" });
   }
 
   const normalizedEmail = String(email).trim().toLowerCase();
@@ -1003,7 +1134,7 @@ app.post("/api/auth/register", (req, res) => {
     email: normalizedEmail,
     phone: phone ? String(phone).trim() : '0868.499.929',
     role: role || 'owner',
-    password: String(password),
+    password: hashPassword(String(password)),
     provider: 'local',
     upTinCredits: 10,
     tier: 'thuong',
@@ -1018,14 +1149,17 @@ app.post("/api/auth/register", (req, res) => {
   saveDataStore();
 
   const { password: _, ...userWithoutPassword } = newUser;
+  const token = generateAuthToken(newUser);
+
   return res.status(201).json({
     message: "Đăng ký tài khoản thành công!",
-    user: userWithoutPassword
+    user: userWithoutPassword,
+    token
   });
 });
 
 // Account Login API
-app.post("/api/auth/login", (req, res) => {
+app.post("/api/auth/login", authLimiter, (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -1047,16 +1181,25 @@ app.post("/api/auth/login", (req, res) => {
     });
   }
 
-  if (user.password && user.password !== String(password)) {
+  if (user.password && !verifyPassword(String(password), user.password)) {
     return res.status(400).json({ 
       error: "Mật khẩu không chính xác. Vui lòng kiểm tra lại mật khẩu!" 
     });
   }
 
+  // Auto-upgrade plaintext passwords to bcrypt hash
+  if (user.password && !user.password.startsWith('$2a$') && !user.password.startsWith('$2b$')) {
+    user.password = hashPassword(user.password);
+    saveDataStore();
+  }
+
   const { password: _, ...userWithoutPassword } = user;
+  const token = generateAuthToken(user);
+
   return res.json({
     message: "Đăng nhập thành công!",
-    user: userWithoutPassword
+    user: userWithoutPassword,
+    token
   });
 });
 
@@ -1095,9 +1238,11 @@ app.post("/api/auth/google", (req, res) => {
   saveDataStore();
 
   const { password: _, ...userWithoutPassword } = user;
+  const token = generateAuthToken(user);
   return res.json({
     message: "Đăng nhập bằng tài khoản Google thành công!",
-    user: userWithoutPassword
+    user: userWithoutPassword,
+    token
   });
 });
 
@@ -1136,9 +1281,11 @@ app.post("/api/auth/facebook", (req, res) => {
   saveDataStore();
 
   const { password: _, ...userWithoutPassword } = user;
+  const token = generateAuthToken(user);
   return res.json({
     message: "Đăng nhập bằng tài khoản Facebook thành công!",
-    user: userWithoutPassword
+    user: userWithoutPassword,
+    token
   });
 });
 
@@ -1175,20 +1322,22 @@ app.post("/api/auth/zalo", (req, res) => {
   saveDataStore();
 
   const { password: _, ...userWithoutPassword } = user;
+  const token = generateAuthToken(user);
   return res.json({
     message: "Đăng nhập bằng Zalo thành công!",
-    user: userWithoutPassword
+    user: userWithoutPassword,
+    token
   });
 });
 
-// All Users Endpoint
-app.get("/api/auth/users", (req, res) => {
+// All Users Endpoint (Restricted to Admin/Manager)
+app.get("/api/auth/users", requireAdmin, (req, res) => {
   const safeUsers = usersStore.map(({ password, ...u }) => u);
   res.json(safeUsers);
 });
 
-// Admin Create User Endpoint
-app.post("/api/auth/users", (req, res) => {
+// Admin Create User Endpoint (Restricted to Admin)
+app.post("/api/auth/users", requireAdmin, (req, res) => {
   const { name, email, phone, role, upTinCredits, balance, password } = req.body;
   if (!name || !email) {
     return res.status(400).json({ error: "Họ tên và email là bắt buộc!" });
@@ -1199,6 +1348,7 @@ app.post("/api/auth/users", (req, res) => {
     return res.status(400).json({ error: "Email này đã được đăng ký trên hệ thống!" });
   }
 
+  const rawPassword = password ? String(password) : '123456';
   const newUser = {
     id: `usr-admin-created-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     name: String(name),
@@ -1210,7 +1360,7 @@ app.post("/api/auth/users", (req, res) => {
     balance: Number(balance) || 0,
     socialPoints: 100,
     totalTopup: Number(balance) || 0,
-    password: password ? String(password) : '123456',
+    password: hashPassword(rawPassword),
     provider: 'local'
   };
 
@@ -1221,7 +1371,7 @@ app.post("/api/auth/users", (req, res) => {
 });
 
 // Get Single User by ID, Email or Phone (Live Profile & Balance Sync)
-app.get(["/api/auth/users/:id", "/api/users/:id"], (req, res) => {
+app.get(["/api/auth/users/:id", "/api/users/:id"], optionalAuth, (req, res) => {
   const { id } = req.params;
   const { email, phone, userId } = req.query;
 
@@ -1255,12 +1405,13 @@ app.get(["/api/auth/users/:id", "/api/users/:id"], (req, res) => {
 });
 
 // Current User Me Endpoint
-app.get(["/api/auth/me", "/api/users/current"], (req, res) => {
-  const { userId, email, phone } = req.query;
+app.get(["/api/auth/me", "/api/users/current"], optionalAuth, (req, res) => {
+  const targetId = req.user?.id || req.query.userId;
+  const { email, phone } = req.query;
   let user: any = null;
 
-  if (userId) {
-    user = usersStore.find(u => u.id === String(userId));
+  if (targetId) {
+    user = usersStore.find(u => u.id === String(targetId));
   }
   if (!user && email) {
     user = usersStore.find(u => u.email && u.email.toLowerCase() === String(email).toLowerCase());
@@ -1285,9 +1436,12 @@ app.get(["/api/auth/me", "/api/users/current"], (req, res) => {
 });
 
 // Update User (Role, UpTin credits, Balance, Tokens, Affiliate points, Phone, Name, Block status)
-app.all(["/api/auth/users/:id", "/api/users/:id"], (req, res, next) => {
+app.all(["/api/auth/users/:id", "/api/users/:id"], verifyAuth, (req, res, next) => {
   if (req.method !== 'PATCH' && req.method !== 'PUT') return next();
   const { id } = req.params;
+  const caller = req.user!;
+  const isCallerAdmin = caller.role === 'admin' || caller.role === 'manager' || caller.id === 'user-admin' || caller.id === 'user-admin-root';
+
   let userIndex = usersStore.findIndex(u => u.id === id);
 
   // Fallback search by email or phone if id differed slightly
@@ -1303,25 +1457,15 @@ app.all(["/api/auth/users/:id", "/api/users/:id"], (req, res, next) => {
     userIndex = usersStore.findIndex(u => u.id === req.body.userId);
   }
 
-  // If still not found, auto create account so no funds are ever lost
   if (userIndex === -1) {
-    const newId = id || req.body.userId || `user-${Date.now()}`;
-    const autoUser: StoredUser = {
-      id: newId,
-      name: req.body.name || req.body.userName || 'Cư Dân',
-      email: req.body.email || (id.includes('@') ? id : `cudan_${Date.now()}@chocudan24h.com`),
-      phone: req.body.phone || '0868499929',
-      role: req.body.role || 'owner',
-      provider: 'local',
-      upTinCredits: Number(req.body.upTinCredits) || 10,
-      balance: Number(req.body.balance) || Number(req.body.tokenBalance) || 0,
-      tokenBalance: Number(req.body.balance) || Number(req.body.tokenBalance) || 0,
-      affiliatePoints: Number(req.body.affiliatePoints) || 0,
-      tier: req.body.tier || 'thuong',
-      registeredAt: new Date().toISOString()
-    };
-    usersStore.unshift(autoUser);
-    userIndex = 0;
+    return res.status(404).json({ error: "Không tìm thấy người dùng cần cập nhật!" });
+  }
+
+  const targetUser = usersStore[userIndex];
+
+  // Authorization check: non-admin can only update their own profile
+  if (!isCallerAdmin && caller.id !== targetUser.id) {
+    return res.status(403).json({ error: "Bạn không có quyền chỉnh sửa tài khoản của người khác!" });
   }
 
   const { 
@@ -1336,30 +1480,46 @@ app.all(["/api/auth/users/:id", "/api/users/:id"], (req, res, next) => {
     name, 
     isBlocked, 
     tier, 
-    businessCategories 
+    businessCategories,
+    password
   } = req.body;
 
-  const targetUser = usersStore[userIndex];
-  const oldBalance = targetUser.balance || 0;
+  // Sensitive fields check: only Admin/Manager can adjust role, balance, credits, points, or block status
+  const hasSensitiveChanges = role !== undefined || upTinCredits !== undefined || balance !== undefined || 
+    tokenBalance !== undefined || affiliatePoints !== undefined || socialPoints !== undefined || 
+    totalTopup !== undefined || isBlocked !== undefined;
 
-  if (role !== undefined) targetUser.role = role;
-  if (upTinCredits !== undefined) targetUser.upTinCredits = Number(upTinCredits);
-  
-  if (balance !== undefined) {
-    targetUser.balance = Number(balance);
-    (targetUser as any).tokenBalance = Number(balance);
-  } else if (tokenBalance !== undefined) {
-    targetUser.balance = Number(tokenBalance);
-    (targetUser as any).tokenBalance = Number(tokenBalance);
+  if (hasSensitiveChanges && !isCallerAdmin) {
+    return res.status(403).json({ error: "Chỉ Quản trị viên mới có quyền cập nhật vai trò, số dư hoặc quyền tài khoản!" });
   }
-  if (affiliatePoints !== undefined) (targetUser as any).affiliatePoints = Number(affiliatePoints);
-  if (socialPoints !== undefined) targetUser.socialPoints = Number(socialPoints);
-  if (totalTopup !== undefined) targetUser.totalTopup = Number(totalTopup);
+
+  if (isCallerAdmin) {
+    if (role !== undefined) targetUser.role = role;
+    if (upTinCredits !== undefined) targetUser.upTinCredits = Number(upTinCredits);
+    
+    if (balance !== undefined) {
+      targetUser.balance = Number(balance);
+      (targetUser as any).tokenBalance = Number(balance);
+    } else if (tokenBalance !== undefined) {
+      targetUser.balance = Number(tokenBalance);
+      (targetUser as any).tokenBalance = Number(tokenBalance);
+    }
+    if (affiliatePoints !== undefined) (targetUser as any).affiliatePoints = Number(affiliatePoints);
+    if (socialPoints !== undefined) targetUser.socialPoints = Number(socialPoints);
+    if (totalTopup !== undefined) targetUser.totalTopup = Number(totalTopup);
+    if (isBlocked !== undefined) (targetUser as any).isBlocked = Boolean(isBlocked);
+  }
+
+  // Profile fields safe for user themselves or admin
   if (phone !== undefined) targetUser.phone = String(phone);
   if (name !== undefined) targetUser.name = String(name);
-  if (tier !== undefined) targetUser.tier = tier;
+  if (tier !== undefined && isCallerAdmin) targetUser.tier = tier;
   if (businessCategories !== undefined && Array.isArray(businessCategories)) targetUser.businessCategories = businessCategories;
-  if (isBlocked !== undefined) (targetUser as any).isBlocked = Boolean(isBlocked);
+  if (password && (isCallerAdmin || caller.id === targetUser.id)) {
+    if (String(password).length >= 6) {
+      targetUser.password = hashPassword(String(password));
+    }
+  }
 
   // Sync to walletsStore
   if (walletsStore.has(targetUser.id)) {
@@ -1386,7 +1546,7 @@ app.all(["/api/auth/users/:id", "/api/users/:id"], (req, res, next) => {
   });
 
   saveDataStore();
-  const { password, ...safeUser } = targetUser;
+  const { password: _, ...safeUser } = targetUser;
   return res.json({ 
     success: true, 
     message: "Cập nhật tài khoản thành công!", 
@@ -1400,8 +1560,8 @@ app.all(["/api/auth/users/:id", "/api/users/:id"], (req, res, next) => {
   });
 });
 
-// Delete User Endpoint
-app.delete("/api/auth/users/:id", (req, res) => {
+// Delete User Endpoint (Restricted to Admin)
+app.delete("/api/auth/users/:id", requireAdmin, (req, res) => {
   const { id } = req.params;
   const initialLen = usersStore.length;
   usersStore = usersStore.filter(u => u.id !== id);
@@ -1919,10 +2079,14 @@ app.delete("/api/news/:id", (req, res) => {
   res.json({ message: "Đã xóa bài viết thành công." });
 });
 
-// Admin Data Backup & Restore Endpoints (Comprehensive Multi-Collection Backup)
-app.get("/api/admin/export-data-store", (req, res) => {
+// Admin Data Backup & Restore Endpoints (Comprehensive Multi-Collection Backup - Admin Only)
+app.get("/api/admin/export-data-store", requireAdmin, (req, res) => {
   res.setHeader("Content-Disposition", 'attachment; filename="chocudan24h_full_backup.json"');
   res.setHeader("Content-Type", "application/json");
+
+  // Sanitize users: redact passwords completely
+  const sanitizedUsers = usersStore.map(({ password: _, ...u }) => u);
+
   res.send(JSON.stringify({
     properties: propertiesStore,
     residentServices: residentServicesStore,
@@ -1934,10 +2098,10 @@ app.get("/api/admin/export-data-store", (req, res) => {
     ads: adsStore,
     projects: projectsStore,
     news: newsStore,
-    users: usersStore,
+    users: sanitizedUsers,
     contacts: contactsStore,
     pricingConfig: pricingConfigStore,
-      upTinTransactions: upTinTransactionsStore,
+    upTinTransactions: upTinTransactionsStore,
     techOrders: techOrdersStore,
     walletTransactions: walletTransactionsStore,
     taxConfig: taxConfigStore,
@@ -1947,9 +2111,12 @@ app.get("/api/admin/export-data-store", (req, res) => {
   }, null, 2));
 });
 
-app.post("/api/admin/import-data-store", (req, res) => {
+app.post("/api/admin/import-data-store", requireAdmin, (req, res) => {
   try {
     const data = req.body;
+    if (!data || typeof data !== 'object') {
+      return res.status(400).json({ error: "Dữ liệu phục hồi không đúng định dạng JSON!" });
+    }
     if (Array.isArray(data.properties)) propertiesStore = data.properties;
     if (Array.isArray(data.residentServices)) residentServicesStore = data.residentServices;
     if (Array.isArray(data.stores)) storesStore = data.stores;
@@ -1960,7 +2127,13 @@ app.post("/api/admin/import-data-store", (req, res) => {
     if (Array.isArray(data.ads)) adsStore = data.ads;
     if (Array.isArray(data.projects)) projectsStore = data.projects;
     if (Array.isArray(data.news)) newsStore = data.news;
-    if (Array.isArray(data.users)) usersStore = data.users;
+    if (Array.isArray(data.users)) {
+      // Ensure users maintain valid hashes
+      usersStore = data.users.map((u: any) => ({
+        ...u,
+        password: u.password ? (u.password.startsWith('$2') ? u.password : hashPassword(u.password)) : undefined
+      }));
+    }
     if (Array.isArray(data.contacts)) contactsStore = data.contacts;
     if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
     if (Array.isArray(data.techOrders)) techOrdersStore = data.techOrders;
@@ -2610,12 +2783,20 @@ app.post("/api/webhooks/n8n-news", (req, res) => {
 // Lead Contacts POST & GET
 // ==================== LEADS & CUSTOMER CRM (User Private CRM & Admin Supervised) ====================
 // Get leads (Filtered by User for personal CRM, or full list for Admin)
-app.get(["/api/leads", "/api/contacts"], (req, res) => {
-  const { userId, phone, sellerPhone, status, search, isAdmin, source } = req.query as Record<string, string>;
+app.get(["/api/leads", "/api/contacts"], verifyAuth, (req, res) => {
+  const { userId, phone, sellerPhone, status, search, source } = req.query as Record<string, string>;
+  const caller = req.user!;
+  const isAdmin = caller.role === 'admin';
+
   let result = [...contactsStore];
 
-  // If specific user requested, return only their customer leads
-  if (userId || sellerPhone || phone) {
+  // Access control: non-admins can only see their own assigned leads
+  if (!isAdmin) {
+    result = result.filter(c => 
+      c.userId === caller.id || 
+      (caller.phone && (c.sellerPhone === caller.phone || c.phone === caller.phone))
+    );
+  } else if (userId || sellerPhone || phone) {
     result = result.filter(c => {
       const matchUser = userId && (c.userId === userId || c.assignedStaffId === userId);
       const matchPhone = (sellerPhone && c.sellerPhone === sellerPhone) || (phone && (c.sellerPhone === phone || c.phone === phone));
@@ -4378,16 +4559,20 @@ app.get("/api/tech-orders", (req, res) => {
 });
 
 // 2. POST Technical Order & Escrow Hold (Tiền tự động chuyển vào Ví Tạm Giữ Escrow)
-app.post("/api/tech-orders", (req, res) => {
+app.post("/api/tech-orders", verifyAuth, (req, res) => {
   const { 
     serviceId, serviceTitle, categoryId, subCategory, 
-    customerUserId, customerName, customerPhone, customerAddress, 
+    customerName, customerPhone, customerAddress, 
     project, subdivision, techUserId, techName, techPhone, 
     agreedPrice, warrantyDays, note, bankInfoForPayout
   } = req.body;
 
-  if (!customerUserId || !agreedPrice || agreedPrice <= 0) {
-    return res.status(400).json({ error: "Thiếu thông tin người đặt hoặc giá trị dịch vụ thỏa thuận." });
+  const customerUserId = req.user!.id;
+  const callerName = req.user!.name || customerName || 'Cư Dân Vin';
+  const callerPhone = req.user!.phone || customerPhone || '';
+
+  if (!agreedPrice || Number(agreedPrice) <= 0) {
+    return res.status(400).json({ error: "Thiếu giá trị dịch vụ thỏa thuận hợp lệ." });
   }
 
   const priceNum = Number(agreedPrice);
@@ -4650,9 +4835,14 @@ app.post("/api/wallets/:userId/bank-details", (req, res) => {
 });
 
 // 7. POST Automated Withdrawal Request for Technician
-app.post("/api/wallets/:userId/withdraw", (req, res) => {
+app.post("/api/wallets/:userId/withdraw", verifyAuth, (req, res) => {
   const { userId } = req.params;
   const { amount } = req.body;
+  const caller = req.user!;
+
+  if (caller.id !== userId && caller.role !== 'admin') {
+    return res.status(403).json({ error: "Bạn không có quyền thực hiện lệnh rút tiền từ tài khoản khác!" });
+  }
 
   const withdrawNum = Number(amount);
   const wallet = getUserWallet(userId);
@@ -4696,17 +4886,17 @@ app.post("/api/wallets/:userId/withdraw", (req, res) => {
 });
 
 // 8. Tax Withholding & E-Commerce Tax Declaration Endpoints (Nghị định 91/2022/NĐ-CP & Thông tư 40/2021/TT-BTC)
-app.get("/api/admin/tax-config", (req, res) => {
+app.get("/api/admin/tax-config", requireAdmin, (req, res) => {
   res.json(taxConfigStore);
 });
 
-app.post("/api/admin/tax-config", (req, res) => {
+app.post("/api/admin/tax-config", requireAdmin, (req, res) => {
   taxConfigStore = { ...taxConfigStore, ...req.body };
   saveDataStore();
   res.json({ success: true, message: "Cập nhật cấu hình thuế TMĐT thành công!", config: taxConfigStore });
 });
 
-app.get("/api/admin/tax-ledger", (req, res) => {
+app.get("/api/admin/tax-ledger", requireAdmin, (req, res) => {
   const totalTaxCollected = taxLedgerStore.reduce((acc, cur) => acc + (cur.totalTaxWithheld || 0), 0);
   const totalRevenueManaged = taxLedgerStore.reduce((acc, cur) => acc + (cur.grossRevenue || 0), 0);
   res.json({
@@ -4717,7 +4907,7 @@ app.get("/api/admin/tax-ledger", (req, res) => {
   });
 });
 
-app.post("/api/admin/tax-declare-gdt", (req, res) => {
+app.post("/api/admin/tax-declare-gdt", requireAdmin, (req, res) => {
   const { period } = req.body;
   taxLedgerStore.forEach(r => {
     if (r.status === 'withheld_in_vault') {
@@ -4889,8 +5079,9 @@ app.get("/api/recruitment/jobs/:id", (req, res) => {
 });
 
 // ------------------- ADMIN TOKEN INJECTION (BƠM TOKEN CƯ DÂN & HOA HỒNG AFFILIATE) -------------------
-app.post("/api/admin/pump-tokens", (req, res) => {
+app.post("/api/admin/pump-tokens", requireAdmin, (req, res) => {
   const { userId, email, phone, tokenAmount, affiliatePointsAmount, reason, adminName } = req.body;
+  const adminActor = req.user?.name || req.user?.email || adminName || 'Admin Tổng';
 
   if (!userId && !email && !phone) {
     return res.status(400).json({ error: "Thiếu thông tin nhận diện cư dân (userId, email hoặc phone) để bơm Token/Điểm!" });
@@ -5296,13 +5487,10 @@ app.post("/api/recruitment/candidates", (req, res) => {
 });
 
 // 9. POST Unlock Candidate CV Contact Details (Nhà tuyển dụng trả phí mở khóa CV)
-app.post("/api/recruitment/candidates/:id/unlock", (req, res) => {
+app.post("/api/recruitment/candidates/:id/unlock", verifyAuth, (req, res) => {
   const { id } = req.params;
-  const { recruiterUserId, recruiterName, recruiterPhone, paymentMethod, amountVnd } = req.body;
-
-  if (!recruiterUserId) {
-    return res.status(400).json({ error: "Vui lòng đăng nhập tài khoản Nhà Tuyển Dụng để mở khóa CV!" });
-  }
+  const { recruiterName, recruiterPhone, paymentMethod } = req.body;
+  const recruiterUserId = req.user!.id;
 
   const candidate = candidateProfilesStore.find(c => c.id === id);
   if (!candidate) {
@@ -5313,9 +5501,9 @@ app.post("/api/recruitment/candidates/:id/unlock", (req, res) => {
     candidate.unlockedByUserIds = [];
   }
 
-  const unlockAmount = amountVnd || candidate.unlockPriceVnd || 50000;
+  const unlockAmount = candidate.unlockPriceVnd || 50000;
   const user = usersStore.find(u => u.id === recruiterUserId);
-  const isAdmin = recruiterUserId === 'user-admin' || user?.role === 'admin';
+  const isAdmin = req.user!.role === 'admin';
 
   // If already unlocked, simply return candidate
   if (candidate.unlockedByUserIds.includes(recruiterUserId)) {
@@ -6220,17 +6408,28 @@ app.post("/api/pricing/config", (req, res) => {
 });
 
 // --- BANK WEBHOOK LOGS APIS ---
-app.get("/api/webhook/logs", (req, res) => {
+app.get("/api/webhook/logs", requireAdmin, (req, res) => {
   res.json(bankWebhookLogsStore);
 });
 
-app.delete("/api/webhook/logs", (req, res) => {
+app.delete("/api/webhook/logs", requireAdmin, (req, res) => {
   bankWebhookLogsStore = [];
   res.json({ success: true, message: "Đã xóa toàn bộ nhật ký Webhook." });
 });
 
 // 4. Standard Webhook for Payment Intermediaries (SePay, Casso, MBBank, MSB Open API, VietQR Webhook)
 app.post(["/api/webhook/payment", "/api/webhook/sepay", "/api/webhook/casso"], (req, res) => {
+  // Webhook Secret Verification if configured
+  const configuredSecret = process.env.SEPAY_WEBHOOK_SECRET || pricingConfigStore?.webhookSecret;
+  if (configuredSecret) {
+    const authHeader = req.headers.authorization || req.headers['x-secret-key'] || req.headers['x-api-key'] || req.query.secret;
+    const token = typeof authHeader === 'string' && authHeader.startsWith('Bearer ') ? authHeader.substring(7).trim() : String(authHeader || '').trim();
+    if (token !== configuredSecret) {
+      console.warn("⚠️ [Payment Webhook] Unauthorized attempt with invalid secret key.");
+      return res.status(401).json({ error: "Xác thực Webhook không hợp lệ (Sai Secret Key)." });
+    }
+  }
+
   console.log("🔔 [Payment Webhook / SePay] Received payload:", JSON.stringify(req.body));
   
   const body = req.body || {};
@@ -6468,8 +6667,8 @@ app.post(["/api/webhook/payment", "/api/webhook/sepay", "/api/webhook/casso"], (
   });
 });
 
-// 5. Test/Simulate Webhook (Allows testing real-time webhook flow instantly)
-app.post("/api/payments/simulate-webhook", (req, res) => {
+// 5. Test/Simulate Webhook (Allows testing real-time webhook flow instantly - Admin Only)
+app.post("/api/payments/simulate-webhook", requireAdmin, (req, res) => {
   const { paymentCode, amount } = req.body;
   const tx = upTinTransactionsStore.find(t => t.paymentCode === paymentCode);
   if (!tx) {
@@ -6485,7 +6684,7 @@ app.post("/api/payments/simulate-webhook", (req, res) => {
 });
 
 // 6. Get all transactions history
-app.get("/api/payments/transactions", (req, res) => {
+app.get("/api/payments/transactions", requireAdmin, (req, res) => {
   res.json(upTinTransactionsStore);
 });
 
@@ -6561,10 +6760,11 @@ app.get("/api/wallets/:userId/check-deposit-status", (req, res) => {
   });
 });
 
-// Admin Adjust/Pump User Balance
-app.post("/api/admin/users/:userId/adjust-balance", (req, res) => {
+// Admin Adjust/Pump User Balance (Admin Only)
+app.post("/api/admin/users/:userId/adjust-balance", requireAdmin, (req, res) => {
   const { userId } = req.params;
   const { amount, actionType, fundType, reason, adminName } = req.body;
+  const adminActor = req.user?.name || req.user?.email || adminName || 'Admin Quản Trị';
   const delta = Number(amount);
   
   if (!delta || delta <= 0) {

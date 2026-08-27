@@ -107,16 +107,6 @@ export const Header: React.FC<HeaderProps> = ({
               <Phone className="w-3 h-3 mr-1 text-emerald-400" />
               Hotline: 0868.499.929
             </a>
-
-            {currentUser?.role === 'admin' && (
-              <button
-                onClick={onOpenAiWriter}
-                className="flex items-center text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-0.5 rounded transition shadow-xs"
-              >
-                <Sparkles className="w-3 h-3 mr-1" />
-                AI Studio
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -437,51 +427,8 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </button>
 
-            {/* User Account Button / Admin Panel */}
-            {currentUser?.role === 'admin' ? (
-              <div className="relative group shrink-0 flex items-center gap-1.5">
-                <button
-                  onClick={() => setCurrentTab('user_dashboard')}
-                  className="hidden md:flex items-center gap-1 px-2 py-1 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-600 dark:text-amber-300 rounded-xl text-xs font-black transition cursor-pointer"
-                  title="Số dư Token Cư Dân"
-                >
-                  <span>🪙</span>
-                  <span>{(currentUser.balance || 0).toLocaleString('vi-VN')} Token</span>
-                </button>
-                <button
-                  onClick={() => setCurrentTab('admin')}
-                  className="px-2 sm:px-3 py-1.5 bg-slate-900 text-emerald-400 border border-emerald-500/40 hover:bg-slate-800 rounded-xl text-xs font-bold flex items-center space-x-1 shadow"
-                >
-                  <Building2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Admin</span>
-                </button>
-                <div className="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block z-50 text-xs font-bold">
-                  <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 py-1">
-                    <button
-                      onClick={() => setCurrentTab('admin')}
-                      className="w-full text-left px-3 py-2 text-slate-800 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-slate-700 transition"
-                    >
-                      👑 Bảng Quản Trị Admin
-                    </button>
-                    <button
-                      onClick={() => setCurrentTab('user_dashboard')}
-                      className="w-full text-left px-3 py-2 text-slate-800 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-slate-700 transition"
-                    >
-                      ⚡ Quản Lý Tin & Ví Token
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (onLogout) onLogout();
-                        else onOpenAuth();
-                      }}
-                      className="w-full text-left px-3 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition border-t border-slate-100 dark:border-slate-700"
-                    >
-                      🚪 Đăng Xuất Admin
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : currentUser ? (
+            {/* User Account Button */}
+            {currentUser ? (
               <div className="relative group shrink-0 flex items-center gap-1.5">
                 <button
                   onClick={() => setCurrentTab('user_dashboard')}
