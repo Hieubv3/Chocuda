@@ -5223,6 +5223,12 @@ app.post("/api/wallets/:userId/deposit", authenticateToken, (req, res) => {
   const { userId } = req.params;
   const { amount, referenceCode } = req.body;
 
+  // SECURITY: Verify JWT userId matches URL userId
+  const jwtUser = (req as any).user;
+  if (jwtUser.userId !== userId && jwtUser.role !== 'admin') {
+    return res.status(403).json({ error: "Không có quyền nạp tiền vào ví của người khác!" });
+  }
+
   const depositNum = Number(amount);
   if (!depositNum || depositNum < 10000) {
     return res.status(400).json({ error: "Số tiền nạp tối thiểu là 10.000đ." });
@@ -5254,9 +5260,15 @@ app.post("/api/wallets/:userId/deposit", authenticateToken, (req, res) => {
 });
 
 // 6. POST Update Bank Details for Technician Payout
-app.post("/api/wallets/:userId/bank-details", (req, res) => {
+app.post("/api/wallets/:userId/bank-details", authenticateToken, (req, res) => {
   const { userId } = req.params;
   const { bankName, accountNumber, accountHolder, branch } = req.body;
+
+  // SECURITY: Verify JWT userId matches URL userId
+  const jwtUser = (req as any).user;
+  if (jwtUser.userId !== userId && jwtUser.role !== 'admin') {
+    return res.status(403).json({ error: "Không có quyền cập nhật tài khoản ngân hàng của người khác!" });
+  }
 
   if (!bankName || !accountNumber || !accountHolder) {
     return res.status(400).json({ error: "Vui lòng nhập đầy đủ Tên Ngân Hàng, Số Tài Khoản và Tên Chủ Tài Khoản!" });
@@ -7422,9 +7434,16 @@ app.get("/api/payments/transactions", (req, res) => {
 // ==========================================
 
 // Create Dynamic Deposit Intent (Generates Unique Topup Code + VietQR)
-app.post("/api/wallets/:userId/create-deposit-intent", (req, res) => {
+app.post("/api/wallets/:userId/create-deposit-intent", authenticateToken, (req, res) => {
   const { userId } = req.params;
   const { amount } = req.body;
+
+  // SECURITY: Verify JWT userId matches URL userId
+  const jwtUser = (req as any).user;
+  if (jwtUser.userId !== userId && jwtUser.role !== 'admin') {
+    return res.status(403).json({ error: "Không có quyền tạo nạp tiền cho ví của người khác!" });
+  }
+
   const topupAmount = Number(amount) || 50000;
   
   let targetUser = usersStore.find(u => u.id === userId || u.phone === userId || u.email === userId);
@@ -7470,10 +7489,16 @@ app.post("/api/wallets/:userId/create-deposit-intent", (req, res) => {
 });
 
 // Check Deposit Status (Polling from UI)
-app.get("/api/wallets/:userId/check-deposit-status", (req, res) => {
+app.get("/api/wallets/:userId/check-deposit-status", authenticateToken, (req, res) => {
   const { userId } = req.params;
   const { code } = req.query;
-  
+
+  // SECURITY: Verify JWT userId matches URL userId
+  const jwtUser = (req as any).user;
+  if (jwtUser.userId !== userId && jwtUser.role !== 'admin') {
+    return res.status(403).json({ error: "Không có quyền xem ví của người khác!" });
+  }
+
   let targetUser = usersStore.find(u => u.id === userId || u.phone === userId || u.email === userId);
   const effectiveUserId = targetUser?.id || userId;
   const wallet = getUserWallet(effectiveUserId);
