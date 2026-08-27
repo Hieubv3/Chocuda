@@ -1865,49 +1865,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </button>
         </div>
 
-        {/* Collapsible Expanded Metrics Cards */}
-        {showMetricsDropdown && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs pt-2.5 mt-2 border-t border-slate-200 dark:border-slate-800 animate-in fade-in duration-150">
-            {/* BĐS Bán */}
-            <button
-              onClick={() => {
-                handleSelectMainTab('bds');
-                setActiveTab('properties');
-                setPropertySubFilter('sale');
-              }}
-              className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all duration-150 cursor-pointer shadow-xs hover:scale-[1.02] active:scale-[0.98] ${
-                effectiveMainTab === 'bds' && activeTab === 'properties' && propertySubFilter === 'sale'
-                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-2 ring-emerald-500/30'
-                  : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 hover:border-emerald-400'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span className="p-1 bg-emerald-500/10 text-emerald-500 rounded-md font-bold text-sm">🏠</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">BĐS Bán</span>
-              </div>
-              <span className="font-mono font-black text-slate-900 dark:text-emerald-400 text-sm">{saleProperties.length}</span>
-            </button>
-
-            {/* Cho Thuê */}
-            <button
-              onClick={() => {
-                handleSelectMainTab('bds');
-                setActiveTab('properties');
-                setPropertySubFilter('rent');
-              }}
-              className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all duration-150 cursor-pointer shadow-xs hover:scale-[1.02] active:scale-[0.98] ${
-                effectiveMainTab === 'bds' && activeTab === 'properties' && propertySubFilter === 'rent'
-                  ? 'bg-teal-50 dark:bg-teal-950/40 border-teal-500 ring-2 ring-teal-500/30'
-                  : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 hover:border-teal-400'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span className="p-1 bg-teal-500/10 text-teal-500 rounded-md font-bold text-sm">🔑</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Cho Thuê</span>
-              </div>
-              <span className="font-mono font-black text-slate-900 dark:text-teal-400 text-sm">{rentProperties.length}</span>
-            </button>
-
+          {/* Collapsible Expanded Metrics Cards */}
+          {showMetricsDropdown && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs pt-2.5 mt-2 border-t border-slate-200 dark:border-slate-800 animate-in fade-in duration-150">
             {/* Chờ Duyệt */}
             <button
               onClick={() => {
