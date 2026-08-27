@@ -7013,8 +7013,27 @@ app.post("/api/properties/:id/push", optionalAuth, (req, res) => {
   }
   
   const property = propertiesStore[propIndex];
+  
+  // SECURITY: If user is authenticated, verify ownership
   if (jwtUser && jwtUser.userId !== property.userId && jwtUser.role !== 'admin') {
     return res.status(403).json({ error: "Không có quyền up tin bất động sản này!" });
+  }
+  
+  // SECURITY: If no authenticated user, require valid pending transaction for this property
+  if (!jwtUser && transaction) {
+    const tx = upTinTransactionsStore.find(t => 
+      (t.paymentCode === transaction.paymentCode || t.id === transaction.id) &&
+      t.propertyId === id &&
+      (t.status === 'pending' || t.status === 'approved')
+    );
+    if (!tx) {
+      return res.status(403).json({ error: "Giao dịch thanh toán không hợp lệ cho bất động sản này!" });
+    }
+  }
+  
+  // SECURITY: If no authenticated user and no transaction, reject
+  if (!jwtUser && !transaction) {
+    return res.status(401).json({ error: "Yêu cầu đăng nhập hoặc giao dịch thanh toán hợp lệ!" });
   }
 
   // SECURITY: Server-side price validation
