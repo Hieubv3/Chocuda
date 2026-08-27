@@ -420,6 +420,14 @@ let pricingConfigStore = {
   accountHolder: 'BUI VAN HIEU'
 };
 
+let affiliateConfigStore = {
+  affiliateF1Rate: 15,
+  affiliateF2Rate: 5,
+  refBonusUpTin: 5,
+  servicePackageMonthPrice: 199000,
+  servicePackage3MonthPrice: 499000
+};
+
 // Technical Orders & Escrow Store
 let techOrdersStore: any[] = [
   {
@@ -553,6 +561,9 @@ let walletTransactionsStore: any[] = [
   }
 ];
 
+// Real pending withdrawal requests requiring admin approval before payout is final
+let withdrawalRequestsStore: any[] = [];
+
 let taxConfigStore = {
   autoWithholdEnabled: true,
   pitRateServices: 1.5,
@@ -683,12 +694,14 @@ function loadDataStore() {
 
       if (Array.isArray(data.contacts) && data.contacts.length > 0) contactsStore = data.contacts;
       if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
+      if (data.affiliateConfig) affiliateConfigStore = { ...affiliateConfigStore, ...data.affiliateConfig };
       if (Array.isArray(data.storeOrders) && data.storeOrders.length > 0) storeOrdersStore = data.storeOrders;
       if (Array.isArray(data.reputationPosts) && data.reputationPosts.length > 0) reputationPostsStore = data.reputationPosts;
       if (Array.isArray(data.storePackages) && data.storePackages.length > 0) storePackagesStore = data.storePackages;
       if (Array.isArray(data.packageOrders) && data.packageOrders.length > 0) packageOrdersStore = data.packageOrders;
       if (Array.isArray(data.techOrders) && data.techOrders.length > 0) techOrdersStore = data.techOrders;
       if (Array.isArray(data.walletTransactions) && data.walletTransactions.length > 0) walletTransactionsStore = data.walletTransactions;
+      if (Array.isArray(data.withdrawalRequests)) withdrawalRequestsStore = data.withdrawalRequests;
       if (data.taxConfig) taxConfigStore = data.taxConfig;
       if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
 
@@ -760,6 +773,7 @@ function saveDataStore() {
       users: usersStore,
       contacts: contactsStore,
       pricingConfig: pricingConfigStore,
+      affiliateConfig: affiliateConfigStore,
       residentServices: residentServicesStore,
       stores: storesStore,
       storeOrders: storeOrdersStore,
@@ -769,6 +783,7 @@ function saveDataStore() {
       ads: adsStore,
       techOrders: techOrdersStore,
       walletTransactions: walletTransactionsStore,
+      withdrawalRequests: withdrawalRequestsStore,
       taxConfig: taxConfigStore,
       taxLedger: taxLedgerStore,
       recruitmentJobs: recruitmentJobsStore,
@@ -1421,6 +1436,17 @@ app.post("/api/admin/pricing", (req, res) => {
   res.json({ success: true, pricing: pricingConfigStore });
 });
 
+// Admin Affiliate & Platform Fee Config GET & POST — actually persists now
+app.get("/api/admin/affiliate-config", (req, res) => {
+  res.json(affiliateConfigStore);
+});
+
+app.post("/api/admin/affiliate-config", (req, res) => {
+  affiliateConfigStore = { ...affiliateConfigStore, ...req.body };
+  saveDataStore();
+  res.json({ success: true, config: affiliateConfigStore });
+});
+
 // Seed 1,000 listings endpoint for testing ("tets 1000 chạy")
 app.post("/api/seed-1000", (req, res) => {
   const seedList: Property[] = Array.from({ length: 1000 }, (_, i) => {
@@ -1636,7 +1662,10 @@ app.post("/api/workspace/sync-all", (req, res) => {
 
 app.post("/api/properties", (req, res) => {
   const data = req.body;
-  const isAutoApproved = Boolean(data.approved) || Boolean(data.isAdmin) || data.status === 'approved';
+  // Never trust client-sent approved/isAdmin/status flags — verify the poster is
+  // actually an admin against our own user records instead.
+  const posterUser = data.userId ? usersStore.find(u => u.id === data.userId) : undefined;
+  const isVerifiedAdmin = posterUser?.role === 'admin' || data.userId === 'user-admin';
   const newProperty: Property = {
     id: data.id || `prop-${Date.now()}`,
     title: data.title || "Bất động sản mới đăng",
@@ -1657,19 +1686,25 @@ app.post("/api/properties", (req, res) => {
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80"
     ],
     featured: Boolean(data.featured),
-    status: isAutoApproved ? 'approved' : 'pending',
-    approved: isAutoApproved,
     createdAt: data.createdAt || new Date().toISOString().split('T')[0],
     sellerName: data.sellerName || "Khách đăng tin",
     sellerPhone: data.sellerPhone || "0868.499.929",
     sellerRole: data.sellerRole || "owner",
     subdivision: data.subdivision || "Phân khu trung tâm",
-    ...data
+    ...data,
+    // Locked AFTER the spread so a client can never smuggle approved:true / status:'approved'
+    // through the request body — only a verified admin poster gets auto-approval.
+    status: isVerifiedAdmin ? 'approved' : 'pending',
+    approved: isVerifiedAdmin,
   };
 
   propertiesStore.unshift(newProperty);
   saveDataStore();
-  res.status(201).json({ success: true, message: "Đăng tin thành công!", property: newProperty });
+  res.status(201).json({
+    success: true,
+    message: isVerifiedAdmin ? "Đăng tin thành công!" : "Đăng tin thành công! Tin đang chờ admin duyệt trước khi hiển thị công khai.",
+    property: newProperty
+  });
 });
 
 // Property PUT (Approve / Edit with Upsert fallback)
@@ -1845,6 +1880,7 @@ app.get("/api/admin/export-data-store", (req, res) => {
     users: usersStore,
     contacts: contactsStore,
     pricingConfig: pricingConfigStore,
+    affiliateConfig: affiliateConfigStore,
     techOrders: techOrdersStore,
     walletTransactions: walletTransactionsStore,
     taxConfig: taxConfigStore,
@@ -1870,6 +1906,7 @@ app.post("/api/admin/import-data-store", (req, res) => {
     if (Array.isArray(data.users)) usersStore = data.users;
     if (Array.isArray(data.contacts)) contactsStore = data.contacts;
     if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
+    if (data.affiliateConfig) affiliateConfigStore = { ...affiliateConfigStore, ...data.affiliateConfig };
     if (Array.isArray(data.techOrders)) techOrdersStore = data.techOrders;
     if (Array.isArray(data.walletTransactions)) walletTransactionsStore = data.walletTransactions;
     if (data.taxConfig) taxConfigStore = data.taxConfig;
@@ -2060,16 +2097,23 @@ app.post("/api/resident-services", (req, res) => {
   if (!item || !item.title) {
     return res.status(400).json({ error: "Dữ liệu không hợp lệ." });
   }
+  const posterUser = item.userId ? usersStore.find(u => u.id === item.userId) : undefined;
+  const isVerifiedAdmin = posterUser?.role === 'admin' || item.userId === 'user-admin';
   const newService = {
     ...item,
     id: item.id || `srv-${Date.now()}`,
-    status: item.status || 'approved',
-    approved: item.approved ?? true,
-    createdAt: item.createdAt || new Date().toISOString().split('T')[0]
+    createdAt: item.createdAt || new Date().toISOString().split('T')[0],
+    // Locked after the spread — client-sent status/approved is never trusted.
+    status: isVerifiedAdmin ? 'approved' : 'pending',
+    approved: isVerifiedAdmin
   };
   residentServicesStore.unshift(newService);
   saveDataStore();
-  res.status(201).json({ message: "Đã đăng bài dịch vụ cư dân thành công!", item: newService, service: newService });
+  res.status(201).json({
+    message: isVerifiedAdmin ? "Đã đăng bài dịch vụ cư dân thành công!" : "Đã gửi bài dịch vụ cư dân! Đang chờ admin duyệt trước khi hiển thị.",
+    item: newService,
+    service: newService
+  });
 });
 
 app.put("/api/resident-services/:id", (req, res) => {
@@ -4368,7 +4412,8 @@ app.post("/api/wallets/:userId/bank-details", (req, res) => {
   });
 });
 
-// 7. POST Automated Withdrawal Request for Technician
+// 7. Withdrawal Request for Technician — creates a PENDING request and holds the funds;
+// money only actually leaves when an admin approves it via /api/admin/withdrawals/:id/approve
 app.post("/api/wallets/:userId/withdraw", (req, res) => {
   const { userId } = req.params;
   const { amount } = req.body;
@@ -4388,30 +4433,112 @@ app.post("/api/wallets/:userId/withdraw", (req, res) => {
     return res.status(400).json({ error: `Số dư Ví khả dụng (${wallet.availableBalance.toLocaleString('vi-VN')}đ) không đủ để rút ${withdrawNum.toLocaleString('vi-VN')}đ.` });
   }
 
-  // Deduct available balance
+  // Hold the funds immediately so the user can't spend/withdraw them twice,
+  // but do NOT mark the payout as complete — that only happens on admin approval.
   wallet.availableBalance -= withdrawNum;
 
   const refCode = `RUT-NH-${Math.floor(1000 + Math.random() * 9000)}`;
+  const withdrawalId = `wdr-${Date.now()}`;
+  const txId = `wtx-${Date.now()}`;
+
+  withdrawalRequestsStore.unshift({
+    id: withdrawalId,
+    userId,
+    amount: withdrawNum,
+    bankDetails: { ...wallet.bankDetails },
+    status: 'pending', // pending | approved | rejected
+    referenceCode: refCode,
+    transactionId: txId,
+    requestedAt: new Date().toISOString(),
+    requestedAtDisplay: new Date().toLocaleString('vi-VN'),
+    decidedAt: null,
+    decidedBy: null,
+    rejectionReason: null
+  });
 
   walletTransactionsStore.unshift({
-    id: `wtx-${Date.now()}`,
+    id: txId,
     userId,
     type: 'payout_withdraw',
     amount: withdrawNum,
-    description: `[RÚT TIỀN TỰ ĐỘNG VỀ NH] Chuyển ${withdrawNum.toLocaleString('vi-VN')}đ về STK ${wallet.bankDetails.accountNumber} (${wallet.bankDetails.bankName} - ${wallet.bankDetails.accountHolder})`,
-    status: 'success',
+    description: `[YÊU CẦU RÚT TIỀN — CHỜ DUYỆT] ${withdrawNum.toLocaleString('vi-VN')}đ về STK ${wallet.bankDetails.accountNumber} (${wallet.bankDetails.bankName} - ${wallet.bankDetails.accountHolder})`,
+    status: 'pending',
     createdAt: new Date().toLocaleString('vi-VN'),
-    referenceCode: refCode
+    referenceCode: refCode,
+    withdrawalId
   });
 
   saveDataStore();
 
   res.json({
     success: true,
-    message: `🚀 LỆNH RÚT TIỀN TỰ ĐỘNG THÀNH CÔNG!\n\nHệ thống đã thực thi chuyển ${withdrawNum.toLocaleString('vi-VN')}đ từ Ví Thợ trực tiếp về Số Tài Khoản ${wallet.bankDetails.accountNumber} (${wallet.bankDetails.bankName} - ${wallet.bankDetails.accountHolder}).`,
+    message: `✅ ĐÃ GHI NHẬN YÊU CẦU RÚT TIỀN!\n\nSố tiền ${withdrawNum.toLocaleString('vi-VN')}đ đã được tạm giữ và đang chờ admin duyệt. Tiền sẽ được chuyển về STK ${wallet.bankDetails.accountNumber} (${wallet.bankDetails.bankName}) sau khi được duyệt.`,
     wallet,
-    referenceCode: refCode
+    referenceCode: refCode,
+    withdrawalId,
+    status: 'pending'
   });
+});
+
+// 7b. Admin: list withdrawal requests (default: pending only)
+app.get("/api/admin/withdrawals", (req, res) => {
+  const { status } = req.query;
+  let list = withdrawalRequestsStore;
+  if (status && status !== 'all') {
+    list = list.filter((w: any) => w.status === status);
+  }
+  res.json(list);
+});
+
+// 7c. Admin: approve a withdrawal request — finalizes the payout
+app.post("/api/admin/withdrawals/:id/approve", (req, res) => {
+  const { id } = req.params;
+  const request = withdrawalRequestsStore.find((w: any) => w.id === id);
+  if (!request) return res.status(404).json({ error: "Không tìm thấy yêu cầu rút tiền." });
+  if (request.status !== 'pending') {
+    return res.status(400).json({ error: `Yêu cầu này đã ở trạng thái "${request.status}", không thể duyệt lại.` });
+  }
+
+  request.status = 'approved';
+  request.decidedAt = new Date().toISOString();
+  request.decidedBy = 'admin';
+
+  const tx = walletTransactionsStore.find((t: any) => t.id === request.transactionId);
+  if (tx) {
+    tx.status = 'success';
+    tx.description = `[RÚT TIỀN ĐÃ DUYỆT] ${request.amount.toLocaleString('vi-VN')}đ về STK ${request.bankDetails.accountNumber} (${request.bankDetails.bankName} - ${request.bankDetails.accountHolder})`;
+  }
+
+  saveDataStore();
+  res.json({ success: true, message: "Đã duyệt và hoàn tất lệnh rút tiền.", request });
+});
+
+// 7d. Admin: reject a withdrawal request — refunds the held balance back to the user
+app.post("/api/admin/withdrawals/:id/reject", (req, res) => {
+  const { id } = req.params;
+  const { reason } = req.body;
+  const request = withdrawalRequestsStore.find((w: any) => w.id === id);
+  if (!request) return res.status(404).json({ error: "Không tìm thấy yêu cầu rút tiền." });
+  if (request.status !== 'pending') {
+    return res.status(400).json({ error: `Yêu cầu này đã ở trạng thái "${request.status}", không thể từ chối.` });
+  }
+
+  const wallet = getUserWallet(request.userId);
+  wallet.availableBalance += request.amount;
+
+  request.status = 'rejected';
+  request.decidedAt = new Date().toISOString();
+  request.decidedBy = 'admin';
+  request.rejectionReason = reason || 'Không có lý do cụ thể';
+
+  const tx = walletTransactionsStore.find((t: any) => t.id === request.transactionId);
+  if (tx) {
+    tx.status = 'failed';
+    tx.description = `[RÚT TIỀN BỊ TỪ CHỐI] ${request.amount.toLocaleString('vi-VN')}đ đã được hoàn lại vào Ví. Lý do: ${request.rejectionReason}`;
+  }
+
+  saveDataStore();
+  res.json({ success: true, message: "Đã từ chối yêu cầu và hoàn tiền về ví người dùng.", request, wallet });
 });
 
 // 8. Tax Withholding & E-Commerce Tax Declaration Endpoints (Nghị định 91/2022/NĐ-CP & Thông tư 40/2021/TT-BTC)

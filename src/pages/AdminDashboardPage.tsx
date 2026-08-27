@@ -519,10 +519,129 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [refBonusUpTin, setRefBonusUpTin] = useState<number>(5); // +5 Up-Tin per referral
   const [servicePackageMonthPrice, setServicePackageMonthPrice] = useState<number>(199000); // 199k VNĐ/tháng
   const [servicePackage3MonthPrice, setServicePackage3MonthPrice] = useState<number>(499000); // 499k VNĐ/3 tháng
-  const [payoutRequests, setPayoutRequests] = useState([
-    { id: 'po-1', userName: 'Bùi Trung Hiếu', userPhone: '0988112233', amount: 300000, bank: 'Vietcombank', bankAccount: '0988112233', status: 'pending', requestedAt: '2026-08-02 09:15' },
-    { id: 'po-2', userName: 'Nguyễn Văn Anh', userPhone: '0912345678', amount: 500000, bank: 'MB Bank', bankAccount: '0912345678', status: 'approved', requestedAt: '2026-08-01 14:20' },
-  ]);
+  const [isSavingAffiliateConfig, setIsSavingAffiliateConfig] = useState(false);
+
+  const fetchAffiliateConfig = async () => {
+    try {
+      const res = await fetch('/api/admin/affiliate-config');
+      const cfg = await res.json();
+      if (cfg) {
+        if (typeof cfg.affiliateF1Rate === 'number') setAffiliateF1Rate(cfg.affiliateF1Rate);
+        if (typeof cfg.affiliateF2Rate === 'number') setAffiliateF2Rate(cfg.affiliateF2Rate);
+        if (typeof cfg.refBonusUpTin === 'number') setRefBonusUpTin(cfg.refBonusUpTin);
+        if (typeof cfg.servicePackageMonthPrice === 'number') setServicePackageMonthPrice(cfg.servicePackageMonthPrice);
+        if (typeof cfg.servicePackage3MonthPrice === 'number') setServicePackage3MonthPrice(cfg.servicePackage3MonthPrice);
+      }
+    } catch (err) {
+      console.warn('Không thể tải cấu hình affiliate:', err);
+    }
+  };
+
+  const handleSaveAffiliateConfig = async () => {
+    setIsSavingAffiliateConfig(true);
+    try {
+      const res = await fetch('/api/admin/affiliate-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          affiliateF1Rate,
+          affiliateF2Rate,
+          refBonusUpTin,
+          servicePackageMonthPrice,
+          servicePackage3MonthPrice
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert('🎉 Đã lưu cấu hình Hoa Hồng & Thu Phí Nền Tảng xuống server thành công!');
+      } else {
+        alert(data.error || 'Lưu cấu hình thất bại.');
+      }
+    } catch (err) {
+      alert('Lỗi máy chủ khi lưu cấu hình.');
+    } finally {
+      setIsSavingAffiliateConfig(false);
+    }
+  };
+  const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
+  const [payoutRequestsLoading, setPayoutRequestsLoading] = useState(false);
+  const [payoutActionId, setPayoutActionId] = useState<string | null>(null);
+  const [affiliateStats, setAffiliateStats] = useState<{ totalPaid: number; refUserCount: number } | null>(null);
+
+  const fetchAffiliateStats = async () => {
+    try {
+      const res = await fetch('/api/auth/users');
+      const users = await res.json();
+      if (Array.isArray(users)) {
+        const totalPaid = users.reduce((sum: number, u: any) => sum + (Number(u.totalAffiliateEarned) || 0), 0);
+        const refUserCount = users.filter((u: any) => (Number(u.affiliatePoints) || 0) > 0 || (Number(u.totalAffiliateEarned) || 0) > 0).length;
+        setAffiliateStats({ totalPaid, refUserCount });
+      }
+    } catch (err) {
+      console.warn('Không thể tải số liệu affiliate:', err);
+    }
+  };
+
+  const fetchPayoutRequests = async () => {
+    setPayoutRequestsLoading(true);
+    try {
+      const res = await fetch('/api/admin/withdrawals?status=all');
+      const data = await res.json();
+      if (Array.isArray(data)) setPayoutRequests(data);
+    } catch (err) {
+      console.warn('Không thể tải danh sách yêu cầu rút tiền:', err);
+    } finally {
+      setPayoutRequestsLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    if (activeTab === 'affiliate_mgmt') {
+      fetchPayoutRequests();
+      fetchAffiliateStats();
+      fetchAffiliateConfig();
+    }
+  }, [activeTab]);
+
+  const handleApprovePayout = async (id: string) => {
+    setPayoutActionId(id);
+    try {
+      const res = await fetch(`/api/admin/withdrawals/${id}/approve`, { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        await fetchPayoutRequests();
+      } else {
+        alert(data.error || 'Duyệt lệnh rút tiền thất bại.');
+      }
+    } catch (err) {
+      alert('Lỗi máy chủ khi duyệt lệnh rút tiền.');
+    } finally {
+      setPayoutActionId(null);
+    }
+  };
+
+  const handleRejectPayout = async (id: string) => {
+    const reason = window.prompt('Lý do từ chối (tiền sẽ được hoàn lại vào ví cư dân):', 'Thông tin ngân hàng không khớp');
+    if (reason === null) return;
+    setPayoutActionId(id);
+    try {
+      const res = await fetch(`/api/admin/withdrawals/${id}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        await fetchPayoutRequests();
+      } else {
+        alert(data.error || 'Từ chối lệnh rút tiền thất bại.');
+      }
+    } catch (err) {
+      alert('Lỗi máy chủ khi từ chối lệnh rút tiền.');
+    } finally {
+      setPayoutActionId(null);
+    }
+  };
 
   // Leads filter & local sync state
   // Multi-level approval & Public Synchronization state
@@ -6796,11 +6915,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </div>
 
               <button
-                onClick={() => alert('🎉 Cấu hình Tỉ lệ Hoa Hồng & Thu Phí Nền Tảng đã được lưu thành công trên toàn bộ hệ thống!')}
-                className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-lg transition uppercase tracking-wider shrink-0 flex items-center gap-1.5"
+                onClick={handleSaveAffiliateConfig}
+                disabled={isSavingAffiliateConfig}
+                className="px-5 py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-black text-xs rounded-xl shadow-lg transition uppercase tracking-wider shrink-0 flex items-center gap-1.5"
               >
                 <Check className="w-4 h-4" />
-                <span>LƯU CẤU HÌNH HỆ THỐNG</span>
+                <span>{isSavingAffiliateConfig ? 'ĐANG LƯU...' : 'LƯU CẤU HÌNH HỆ THỐNG'}</span>
               </button>
             </div>
 
@@ -6808,15 +6928,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-slate-700/80 text-xs">
               <div className="bg-slate-900/80 p-3 rounded-2xl border border-amber-500/30">
                 <span className="text-slate-400 block font-bold mb-0.5">Thu Phí Gian Hàng Dịch Vụ:</span>
-                <span className="text-xl font-black text-amber-400">24.800.000đ</span>
+                <span className="text-sm font-black text-slate-400">Chưa theo dõi</span>
               </div>
               <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-500/30">
                 <span className="text-slate-400 block font-bold mb-0.5">Hoa Hồng Đã Trả Cư Dân:</span>
-                <span className="text-xl font-black text-emerald-400">3.250.000đ</span>
+                <span className="text-xl font-black text-emerald-400">{affiliateStats ? `${affiliateStats.totalPaid.toLocaleString('vi-VN')}đ` : '...'}</span>
               </div>
               <div className="bg-slate-900/80 p-3 rounded-2xl border border-blue-500/30">
                 <span className="text-slate-400 block font-bold mb-0.5">Số Cư Dân Có Mã Ref:</span>
-                <span className="text-xl font-black text-blue-400">128 Cư Dân</span>
+                <span className="text-xl font-black text-blue-400">{affiliateStats ? `${affiliateStats.refUserCount} Cư Dân` : '...'}</span>
               </div>
               <div className="bg-slate-900/80 p-3 rounded-2xl border border-purple-500/30">
                 <span className="text-slate-400 block font-bold mb-0.5">Yêu Cầu Rút Chờ Duyệt:</span>
@@ -6946,7 +7066,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 font-bold text-[10px] uppercase tracking-wider bg-slate-50 dark:bg-slate-900/60">
                     <th className="p-3">Mã Lệnh</th>
-                    <th className="p-3">Họ Tên & SĐT Cư Dân</th>
+                    <th className="p-3">User ID Cư Dân</th>
                     <th className="p-3">Số Tiền Rút</th>
                     <th className="p-3">Ngân Hàng & Số TK Thụ Hưởng</th>
                     <th className="p-3">Thời Gian</th>
@@ -6955,25 +7075,35 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                  {payoutRequestsLoading && (
+                    <tr><td colSpan={7} className="p-6 text-center text-slate-400 font-bold">Đang tải danh sách...</td></tr>
+                  )}
+                  {!payoutRequestsLoading && payoutRequests.length === 0 && (
+                    <tr><td colSpan={7} className="p-6 text-center text-slate-400 font-bold">Chưa có yêu cầu rút tiền nào.</td></tr>
+                  )}
                   {payoutRequests.map((po) => (
                     <tr key={po.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition">
-                      <td className="p-3 font-mono font-bold text-slate-500">{po.id}</td>
+                      <td className="p-3 font-mono font-bold text-slate-500">{po.referenceCode || po.id}</td>
                       <td className="p-3 font-extrabold text-slate-900 dark:text-white">
-                        {po.userName}
-                        <span className="block text-[11px] font-normal text-slate-500">{po.userPhone}</span>
+                        {po.userId}
                       </td>
                       <td className="p-3 font-black text-amber-600 dark:text-amber-400 text-sm">
-                        {po.amount.toLocaleString('vi-VN')} VNĐ
+                        {Number(po.amount || 0).toLocaleString('vi-VN')} VNĐ
                       </td>
                       <td className="p-3 font-medium">
-                        <span className="font-bold text-slate-900 dark:text-white">{po.bank}</span>
-                        <span className="block font-mono text-emerald-600 font-bold">{po.bankAccount}</span>
+                        <span className="font-bold text-slate-900 dark:text-white">{po.bankDetails?.bankName}</span>
+                        <span className="block font-mono text-emerald-600 font-bold">{po.bankDetails?.accountNumber}</span>
+                        <span className="block text-[10px] text-slate-400">{po.bankDetails?.accountHolder}</span>
                       </td>
-                      <td className="p-3 text-slate-500 text-[11px]">{po.requestedAt}</td>
+                      <td className="p-3 text-slate-500 text-[11px]">{po.requestedAtDisplay}</td>
                       <td className="p-3 text-center">
                         {po.status === 'approved' ? (
                           <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black rounded-full text-[10px]">
                             ✓ Đã Chuyển Khoản
+                          </span>
+                        ) : po.status === 'rejected' ? (
+                          <span className="px-2.5 py-1 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-black rounded-full text-[10px]">
+                            ✕ Đã Từ Chối
                           </span>
                         ) : (
                           <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black rounded-full text-[10px] animate-pulse">
@@ -6985,25 +7115,24 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         {po.status === 'pending' ? (
                           <div className="flex items-center justify-center gap-1.5">
                             <button
-                              onClick={() => {
-                                setPayoutRequests(prev => prev.map(p => p.id === po.id ? { ...p, status: 'approved' } : p));
-                                alert(`🎉 Đã duyệt lệnh chuyển khoản ${po.amount.toLocaleString('vi-VN')}đ cho ${po.userName}!`);
-                              }}
-                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-lg text-[11px] transition shadow-xs"
+                              disabled={payoutActionId === po.id}
+                              onClick={() => handleApprovePayout(po.id)}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold rounded-lg text-[11px] transition shadow-xs"
                             >
-                              ✓ Duyệt Chuyển
+                              {payoutActionId === po.id ? '...' : '✓ Duyệt Chuyển'}
                             </button>
                             <button
-                              onClick={() => {
-                                setPayoutRequests(prev => prev.filter(p => p.id !== po.id));
-                              }}
-                              className="px-2.5 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold rounded-lg text-[11px] transition"
+                              disabled={payoutActionId === po.id}
+                              onClick={() => handleRejectPayout(po.id)}
+                              className="px-2.5 py-1.5 bg-rose-100 hover:bg-rose-200 disabled:opacity-50 text-rose-700 font-bold rounded-lg text-[11px] transition"
                             >
-                              ✕ Hủy
+                              ✕ Từ Chối
                             </button>
                           </div>
                         ) : (
-                          <span className="text-[11px] text-slate-400 font-bold">Đã hoàn tất</span>
+                          <span className="text-[11px] text-slate-400 font-bold">
+                            {po.status === 'rejected' ? 'Đã hoàn tiền vào ví' : 'Đã hoàn tất'}
+                          </span>
                         )}
                       </td>
                     </tr>
