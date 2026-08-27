@@ -13,6 +13,7 @@ import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
 import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile, RECRUITMENT_PACKAGES, INITIAL_EMPLOYER_REGISTRATIONS, INITIAL_TASK_DELEGATIONS } from "./src/data/recruitmentData.ts";
 import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation, DepositIntent, AppNotification } from "./src/types.ts";
+import { isPostgresConfigured } from "./src/db/index.ts";
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
@@ -866,7 +867,137 @@ let taxLedgerStore: any[] = [
 const DATA_STORE_PATH = path.join(process.cwd(), "app_data_store.json");
 const DATA_STORE_BACKUP_PATH = path.join(process.cwd(), "app_data_store.backup.json");
 
-function loadDataStore() {
+// Apply a full data-store payload into the in-memory stores
+function applyDataToStores(data: any) {
+  // 1. Properties
+  if (Array.isArray(data.properties) && data.properties.length > 0) {
+    const savedMap = new Map(data.properties.map((p: any) => [p.id, p]));
+    INITIAL_PROPERTIES.forEach(ip => {
+      if (!savedMap.has(ip.id)) savedMap.set(ip.id, ip);
+    });
+    propertiesStore = Array.from(savedMap.values()) as Property[];
+  } else {
+    propertiesStore = [...INITIAL_PROPERTIES];
+  }
+
+  // 2. Projects
+  if (Array.isArray(data.projects) && data.projects.length > 0) {
+    const projMap = new Map(data.projects.map((p: any) => [p.id, p]));
+    INITIAL_PROJECTS.forEach(ip => {
+      if (!projMap.has(ip.id)) projMap.set(ip.id, ip);
+    });
+    projectsStore = Array.from(projMap.values()) as Project[];
+  }
+
+  // 3. News
+  if (Array.isArray(data.news) && data.news.length > 0) {
+    const newsMap = new Map(data.news.map((n: any) => [n.id, n]));
+    INITIAL_NEWS.forEach(inews => {
+      if (!newsMap.has(inews.id)) newsMap.set(inews.id, inews);
+    });
+    newsStore = Array.from(newsMap.values()) as NewsArticle[];
+  }
+
+  // 4. Resident Services
+  if (Array.isArray(data.residentServices) && data.residentServices.length > 0) {
+    const servMap = new Map(data.residentServices.map((s: any) => [s.id, s]));
+    INITIAL_RESIDENT_SERVICES.forEach(iserv => {
+      if (!servMap.has(iserv.id)) servMap.set(iserv.id, iserv);
+    });
+    residentServicesStore = Array.from(servMap.values()) as any;
+  }
+
+  // 5. Stores
+  if (Array.isArray(data.stores) && data.stores.length > 0) {
+    const storeMap = new Map(data.stores.map((st: any) => [st.id, st]));
+    INITIAL_USER_STOREFRONTS.forEach(istore => {
+      if (!storeMap.has(istore.id)) storeMap.set(istore.id, istore);
+    });
+    storesStore = Array.from(storeMap.values()) as any;
+  }
+
+  // 6. Ads / Banners
+  if (Array.isArray(data.ads) && data.ads.length > 0) {
+    const adsMap = new Map(data.ads.map((a: any) => [a.id, a]));
+    INITIAL_ADS.forEach(iad => {
+      if (!adsMap.has(iad.id)) adsMap.set(iad.id, iad);
+    });
+    adsStore = Array.from(adsMap.values()) as any;
+  }
+
+  // 7. Users
+  if (Array.isArray(data.users) && data.users.length > 0) {
+    const userMap = new Map(data.users.map((u: any) => [u.id, u]));
+    usersStore.forEach(u => {
+      if (!userMap.has(u.id)) userMap.set(u.id, u);
+    });
+    usersStore = Array.from(userMap.values()) as StoredUser[];
+  }
+
+  if (Array.isArray(data.contacts) && data.contacts.length > 0) contactsStore = data.contacts;
+  if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
+  if (Array.isArray(data.storeOrders) && data.storeOrders.length > 0) storeOrdersStore = data.storeOrders;
+  if (Array.isArray(data.reputationPosts) && data.reputationPosts.length > 0) reputationPostsStore = data.reputationPosts;
+  if (Array.isArray(data.storePackages) && data.storePackages.length > 0) storePackagesStore = data.storePackages;
+  if (Array.isArray(data.packageOrders) && data.packageOrders.length > 0) packageOrdersStore = data.packageOrders;
+  if (Array.isArray(data.techOrders) && data.techOrders.length > 0) techOrdersStore = data.techOrders;
+  if (Array.isArray(data.walletTransactions) && data.walletTransactions.length > 0) walletTransactionsStore = data.walletTransactions;
+  if (Array.isArray(data.depositIntents)) depositIntentsStore = data.depositIntents;
+  if (Array.isArray(data.notifications) && data.notifications.length > 0) notificationsStore = data.notifications;
+  if (data.taxConfig) taxConfigStore = data.taxConfig;
+  if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
+
+  // 8. Recruitment Jobs
+  if (Array.isArray(data.recruitmentJobs) && data.recruitmentJobs.length > 0) {
+    const jobMap = new Map(data.recruitmentJobs.map((j: any) => [j.id, j]));
+    INITIAL_RECRUITMENT_JOBS.forEach(ijob => {
+      if (!jobMap.has(ijob.id)) jobMap.set(ijob.id, ijob);
+    });
+    recruitmentJobsStore = Array.from(jobMap.values()) as RecruitmentJob[];
+  }
+
+  // 9. Candidate Profiles
+  if (Array.isArray(data.candidateProfiles) && data.candidateProfiles.length > 0) {
+    const candMap = new Map(data.candidateProfiles.map((c: any) => [c.id, c]));
+    INITIAL_CANDIDATE_PROFILES.forEach(icand => {
+      if (!candMap.has(icand.id)) candMap.set(icand.id, icand);
+        });
+    candidateProfilesStore = Array.from(candMap.values()) as CandidateProfile[];
+  }
+
+  // 10. Employers
+  if (Array.isArray(data.employers) && data.employers.length > 0) {
+    const empMap = new Map(data.employers.map((e: any) => [e.id, e]));
+    INITIAL_EMPLOYERS.forEach(iemp => {
+      if (!empMap.has(iemp.id)) empMap.set(iemp.id, iemp);
+    });
+    employersStore = Array.from(empMap.values()) as EmployerProfile[];
+  }
+
+  if (Array.isArray(data.jobApplications) && data.jobApplications.length > 0) jobApplicationsStore = data.jobApplications;
+  if (Array.isArray(data.cvUnlocks) && data.cvUnlocks.length > 0) cvUnlocksStore = data.cvUnlocks;
+
+  console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${residentServicesStore.length} services, ${recruitmentJobsStore.length} jobs, ${candidateProfilesStore.length} candidates, ${storesStore.length} stores.`);
+}
+
+async function loadDataStore() {
+  // DURABILITY: If Postgres/Supabase is configured, prefer loading from there
+  // (survives Render redeploys). Fall back to the local JSON file otherwise.
+  if (isPostgresConfigured()) {
+    try {
+      const { loadAppStateFromSql } = await import("./src/db/sync");
+      const sqlData = await loadAppStateFromSql();
+      if (sqlData && sqlData.users) {
+        applyDataToStores(sqlData);
+        console.log(`[DataStore] Loaded from Supabase/Postgres (${sqlData.users?.length || 0} users).`);
+        return;
+      }
+      console.log("[DataStore] Postgres configured but empty — falling back to JSON file.");
+    } catch (err) {
+      console.warn("[DataStore] Postgres load failed, falling back to JSON file:", err);
+    }
+  }
+
   try {
     let targetPath = DATA_STORE_PATH;
     if (!fs.existsSync(DATA_STORE_PATH) && fs.existsSync(DATA_STORE_BACKUP_PATH)) {
@@ -876,116 +1007,7 @@ function loadDataStore() {
     if (fs.existsSync(targetPath)) {
       const raw = fs.readFileSync(targetPath, "utf-8");
       const data = JSON.parse(raw);
-      
-      // 1. Properties
-      if (Array.isArray(data.properties) && data.properties.length > 0) {
-        const savedMap = new Map(data.properties.map((p: any) => [p.id, p]));
-        INITIAL_PROPERTIES.forEach(ip => {
-          if (!savedMap.has(ip.id)) savedMap.set(ip.id, ip);
-        });
-        propertiesStore = Array.from(savedMap.values()) as Property[];
-      } else {
-        propertiesStore = [...INITIAL_PROPERTIES];
-      }
-
-      // 2. Projects
-      if (Array.isArray(data.projects) && data.projects.length > 0) {
-        const projMap = new Map(data.projects.map((p: any) => [p.id, p]));
-        INITIAL_PROJECTS.forEach(ip => {
-          if (!projMap.has(ip.id)) projMap.set(ip.id, ip);
-        });
-        projectsStore = Array.from(projMap.values()) as Project[];
-      }
-
-      // 3. News
-      if (Array.isArray(data.news) && data.news.length > 0) {
-        const newsMap = new Map(data.news.map((n: any) => [n.id, n]));
-        INITIAL_NEWS.forEach(inews => {
-          if (!newsMap.has(inews.id)) newsMap.set(inews.id, inews);
-        });
-        newsStore = Array.from(newsMap.values()) as NewsArticle[];
-      }
-
-      // 4. Resident Services
-      if (Array.isArray(data.residentServices) && data.residentServices.length > 0) {
-        const servMap = new Map(data.residentServices.map((s: any) => [s.id, s]));
-        INITIAL_RESIDENT_SERVICES.forEach(iserv => {
-          if (!servMap.has(iserv.id)) servMap.set(iserv.id, iserv);
-        });
-        residentServicesStore = Array.from(servMap.values()) as any;
-      }
-
-      // 5. Stores
-      if (Array.isArray(data.stores) && data.stores.length > 0) {
-        const storeMap = new Map(data.stores.map((st: any) => [st.id, st]));
-        INITIAL_USER_STOREFRONTS.forEach(istore => {
-          if (!storeMap.has(istore.id)) storeMap.set(istore.id, istore);
-        });
-        storesStore = Array.from(storeMap.values()) as any;
-      }
-
-      // 6. Ads / Banners
-      if (Array.isArray(data.ads) && data.ads.length > 0) {
-        const adsMap = new Map(data.ads.map((a: any) => [a.id, a]));
-        INITIAL_ADS.forEach(iad => {
-          if (!adsMap.has(iad.id)) adsMap.set(iad.id, iad);
-        });
-        adsStore = Array.from(adsMap.values()) as any;
-      }
-
-      // 7. Users
-      if (Array.isArray(data.users) && data.users.length > 0) {
-        const userMap = new Map(data.users.map((u: any) => [u.id, u]));
-        usersStore.forEach(u => {
-          if (!userMap.has(u.id)) userMap.set(u.id, u);
-        });
-        usersStore = Array.from(userMap.values()) as StoredUser[];
-      }
-
-      if (Array.isArray(data.contacts) && data.contacts.length > 0) contactsStore = data.contacts;
-      if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
-      if (Array.isArray(data.storeOrders) && data.storeOrders.length > 0) storeOrdersStore = data.storeOrders;
-      if (Array.isArray(data.reputationPosts) && data.reputationPosts.length > 0) reputationPostsStore = data.reputationPosts;
-      if (Array.isArray(data.storePackages) && data.storePackages.length > 0) storePackagesStore = data.storePackages;
-      if (Array.isArray(data.packageOrders) && data.packageOrders.length > 0) packageOrdersStore = data.packageOrders;
-      if (Array.isArray(data.techOrders) && data.techOrders.length > 0) techOrdersStore = data.techOrders;
-      if (Array.isArray(data.walletTransactions) && data.walletTransactions.length > 0) walletTransactionsStore = data.walletTransactions;
-      if (Array.isArray(data.depositIntents)) depositIntentsStore = data.depositIntents;
-      if (Array.isArray(data.notifications) && data.notifications.length > 0) notificationsStore = data.notifications;
-      if (data.taxConfig) taxConfigStore = data.taxConfig;
-      if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
-
-      // 8. Recruitment Jobs
-      if (Array.isArray(data.recruitmentJobs) && data.recruitmentJobs.length > 0) {
-        const jobMap = new Map(data.recruitmentJobs.map((j: any) => [j.id, j]));
-        INITIAL_RECRUITMENT_JOBS.forEach(ijob => {
-          if (!jobMap.has(ijob.id)) jobMap.set(ijob.id, ijob);
-        });
-        recruitmentJobsStore = Array.from(jobMap.values()) as RecruitmentJob[];
-      }
-
-      // 9. Candidate Profiles
-      if (Array.isArray(data.candidateProfiles) && data.candidateProfiles.length > 0) {
-        const candMap = new Map(data.candidateProfiles.map((c: any) => [c.id, c]));
-        INITIAL_CANDIDATE_PROFILES.forEach(icand => {
-          if (!candMap.has(icand.id)) candMap.set(icand.id, icand);
-        });
-        candidateProfilesStore = Array.from(candMap.values()) as CandidateProfile[];
-      }
-
-      // 10. Employers
-      if (Array.isArray(data.employers) && data.employers.length > 0) {
-        const empMap = new Map(data.employers.map((e: any) => [e.id, e]));
-        INITIAL_EMPLOYERS.forEach(iemp => {
-          if (!empMap.has(iemp.id)) empMap.set(iemp.id, iemp);
-        });
-        employersStore = Array.from(empMap.values()) as EmployerProfile[];
-      }
-
-      if (Array.isArray(data.jobApplications) && data.jobApplications.length > 0) jobApplicationsStore = data.jobApplications;
-      if (Array.isArray(data.cvUnlocks) && data.cvUnlocks.length > 0) cvUnlocksStore = data.cvUnlocks;
-
-      console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${residentServicesStore.length} services, ${recruitmentJobsStore.length} jobs, ${candidateProfilesStore.length} candidates, ${storesStore.length} stores.`);
+      applyDataToStores(data);
     } else {
       saveDataStore();
       console.log(`[DataStore] Initialized app_data_store.json file.`);
@@ -1048,13 +1070,27 @@ function saveDataStore() {
     fs.writeFileSync(DATA_STORE_PATH, jsonStr, "utf-8");
     // Also update backup file synchronously
     fs.writeFileSync(DATA_STORE_BACKUP_PATH, jsonStr, "utf-8");
+
+    // SECURITY/DURABILITY: Mirror the full state to Supabase/Postgres so data
+    // survives Render redeploys. Fire-and-forget — never blocks or crashes.
+    if (isPostgresConfigured()) {
+      import("./src/db/sync").then(({ saveAppStateToSql }) => {
+        saveAppStateToSql(payload);
+      }).catch((err) => {
+        console.warn("[CloudSQL Save Mirror Error]", err?.message || err);
+      });
+    }
   } catch (err) {
     console.warn("Could not write app_data_store.json", err);
   }
 }
 
-// Initial load on server start
-loadDataStore();
+// Initial load on server start (async — prefers Supabase/Postgres when configured).
+// Deferred via setTimeout so ALL store declarations (some appear later in the file)
+// are initialized first — otherwise `let` stores hit the temporal dead zone.
+setTimeout(() => {
+  loadDataStore().catch(err => console.warn("[DataStore] Initial load error:", err));
+}, 0);
 
 // Interval auto-save every 30 seconds as bulletproof background backup
 setInterval(() => {

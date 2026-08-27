@@ -104,3 +104,12 @@ export const newsArticles = pgTable('news_articles', {
   views: integer('views').default(0),
   createdAt: timestamp('created_at').defaultNow(),
 });
+
+// Whole-store snapshot table: keeps the FULL app state (all stores) as JSONB.
+// This is the safety net that survives Render redeploys — the server writes
+// its entire state here on every save, and loads from here on startup.
+export const appState = pgTable('app_state', {
+  id: text('id').primaryKey(),
+  data: jsonb('data').notNull(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});

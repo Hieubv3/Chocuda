@@ -55,7 +55,7 @@ export function createVnpayPaymentUrl(params: VnpayCreateParams): string {
     vnp_TxnRef: params.orderId,
     vnp_OrderInfo: params.orderInfo,
     vnp_OrderType: 'other',
-    vnp_Amount: params.amount * 100, // VNPay uses amount * 100
+    vnp_Amount: String(params.amount * 100), // VNPay uses amount * 100
     vnp_ReturnUrl: config.vnpay.returnUrl,
     vnp_IpAddr: params.ipAddress,
     vnp_CreateDate: createDate,

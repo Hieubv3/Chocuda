@@ -171,6 +171,7 @@ export interface NewsArticle {
   views: number;
   source: 'n8n' | 'manual' | 'ai';
   status: 'published' | 'draft';
+  authorId?: string;
 }
 
 export interface LeadCareLog {

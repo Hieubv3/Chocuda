@@ -1,5 +1,5 @@
 import { db } from './index';
-import { properties, residentServices, stores, adBanners, newsArticles, users } from './schema';
+import { properties, residentServices, stores, adBanners, newsArticles, users, appState } from './schema';
 import { eq } from 'drizzle-orm';
 
 export async function syncPropertyToSql(prop: any) {
@@ -155,5 +155,45 @@ export async function syncAdBannerToSql(ad: any) {
     });
   } catch (err) {
     console.error(`[CloudSQL Sync Ad Error ${ad.id}]`, err);
+  }
+}
+
+// ==========================================
+// WHOLE-STORE SNAPSHOT (app_state table)
+// The server writes its ENTIRE state here on every save, and loads from
+// here on startup. This is what survives Render redeploys.
+// ==========================================
+
+const APP_STATE_ID = 'main';
+
+export async function saveAppStateToSql(payload: any) {
+  try {
+    await db.insert(appState).values({
+      id: APP_STATE_ID,
+      data: payload,
+      updatedAt: new Date(),
+    }).onConflictDoUpdate({
+      target: appState.id,
+      set: {
+        data: payload,
+        updatedAt: new Date(),
+      },
+    });
+  } catch (err: any) {
+    // Never crash the server because of a DB hiccup — log and continue
+    console.warn('[CloudSQL Save AppState Error]', err?.message || err);
+  }
+}
+
+export async function loadAppStateFromSql(): Promise<any | null> {
+  try {
+    const rows = await db.select().from(appState).where(eq(appState.id, APP_STATE_ID)).limit(1);
+    if (rows && rows.length > 0 && rows[0].data) {
+      return rows[0].data;
+    }
+    return null;
+  } catch (err: any) {
+    console.warn('[CloudSQL Load AppState Error]', err?.message || err);
+    return null;
   }
 }
