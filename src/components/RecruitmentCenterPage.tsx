@@ -394,11 +394,14 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
 
     setIsUnlocking(true);
     try {
+      const authToken = localStorage.getItem('auth_token');
       const res = await fetch(`/api/recruitment/candidates/${candidateToUnlock.id}/unlock`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+        },
         body: JSON.stringify({
-          recruiterUserId: currentUser.id,
           recruiterName: currentUser.displayName || currentUser.name || 'Nhà Tuyển Dụng',
           recruiterPhone: currentUser.phone || '',
           paymentMethod: unlockPaymentMethod,

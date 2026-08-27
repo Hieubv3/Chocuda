@@ -5941,12 +5941,16 @@ app.post("/api/recruitment/candidates", (req, res) => {
 });
 
 // 9. POST Unlock Candidate CV Contact Details (Nhà tuyển dụng trả phí mở khóa CV)
-app.post("/api/recruitment/candidates/:id/unlock", (req, res) => {
+app.post("/api/recruitment/candidates/:id/unlock", authenticateToken, (req, res) => {
   const { id } = req.params;
-  const { recruiterUserId, recruiterName, recruiterPhone, paymentMethod, amountVnd } = req.body;
+  const jwtUser = (req as any).user;
+  const { recruiterName, recruiterPhone, paymentMethod, amountVnd } = req.body;
+
+  // SECURITY: Use JWT userId, ignore client-provided recruiterUserId
+  const recruiterUserId = jwtUser.userId;
 
   if (!recruiterUserId) {
-    return res.status(400).json({ error: "Vui lòng đăng nhập tài khoản Nhà Tuyển Dụng để mở khóa CV!" });
+    return res.status(401).json({ error: "Vui lòng đăng nhập tài khoản Nhà Tuyển Dụng để mở khóa CV!" });
   }
 
   const candidate = candidateProfilesStore.find(c => c.id === id);
@@ -5958,9 +5962,10 @@ app.post("/api/recruitment/candidates/:id/unlock", (req, res) => {
     candidate.unlockedByUserIds = [];
   }
 
-  const unlockAmount = amountVnd || candidate.unlockPriceVnd || 50000;
+  // SECURITY: Server-side price validation - use candidate's price, ignore client amount
+  const unlockAmount = candidate.unlockPriceVnd || 50000;
   const user = usersStore.find(u => u.id === recruiterUserId);
-  const isAdmin = recruiterUserId === 'user-admin' || user?.role === 'admin';
+  const isAdmin = user?.role === 'admin';
 
   // If already unlocked, simply return candidate
   if (candidate.unlockedByUserIds.includes(recruiterUserId)) {
