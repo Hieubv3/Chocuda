@@ -1435,7 +1435,7 @@ app.post("/api/auth/change-password", authenticateToken, async (req, res) => {
 // Real Google OAuth / Google Account Authentication API (with JWT)
 // SECURITY: Verify Google ID token server-side before creating/authenticating user
 app.post("/api/auth/google", async (req, res) => {
-  const { email, name, avatar, googleId, idToken } = req.body;
+  const { email, name, avatar, googleId, idToken, accessToken } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: "Xác thực Google không hợp lệ, không tìm thấy Email!" });
@@ -1443,7 +1443,7 @@ app.post("/api/auth/google", async (req, res) => {
 
   const normalizedEmail = String(email).trim().toLowerCase();
 
-  // SECURITY: Verify Google ID token with Google's tokeninfo endpoint
+  // SECURITY: Verify Google token with Google's endpoints
   // This prevents attackers from forging arbitrary Google logins
   if (idToken) {
     try {
@@ -1465,12 +1465,30 @@ app.post("/api/auth/google", async (req, res) => {
       console.error("[SECURITY] Google token verification failed:", e.message);
       return res.status(401).json({ error: "Xác thực Google thất bại. Vui lòng thử lại!" });
     }
+  } else if (accessToken) {
+    // OAuth2 implicit flow: verify access token via Google userinfo endpoint
+    try {
+      const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      if (!userInfoRes.ok) {
+        return res.status(401).json({ error: "Xác thực Google thất bại: Access token không hợp lệ!" });
+      }
+      const userInfo = await userInfoRes.json();
+      if (!userInfo.email || userInfo.email.toLowerCase() !== normalizedEmail) {
+        return res.status(401).json({ error: "Xác thực Google không hợp lệ: Email không khớp với token!" });
+      }
+      console.log(`[SECURITY] Google access token verified for ${normalizedEmail}`);
+    } catch (e) {
+      console.error("[SECURITY] Google access token verification failed:", e.message);
+      return res.status(401).json({ error: "Xác thực Google thất bại. Vui lòng thử lại!" });
+    }
   } else {
-    // No idToken provided - in production this should be rejected
+    // No token provided - in production this should be rejected
     if (process.env.NODE_ENV === 'production') {
       return res.status(401).json({ error: "Thiếu token xác thực Google!" });
     }
-    console.warn("[SECURITY] WARNING: Google login without idToken verification (dev mode only)");
+    console.warn("[SECURITY] WARNING: Google login without token verification (dev mode only)");
   }
 
   let user = usersStore.find(u => u.email.toLowerCase() === normalizedEmail);

@@ -52,6 +52,7 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
         let name = '';
         let avatar = '';
         let googleId = '';
+        let isFacebook = false;
 
         if (idToken) {
           const payload = parseJwt(idToken);
@@ -91,6 +92,7 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
               name = fbData.name;
               avatar = fbData.picture?.data?.url;
               googleId = fbData.id;
+              isFacebook = true;
             }
           } catch (e) {
             console.warn('Facebook graph lookup failed:', e);
@@ -109,14 +111,18 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
         }
 
         // Send to backend API to create or fetch user session
-        const res = await fetch('/api/auth/google', {
+        const authEndpoint = isFacebook ? '/api/auth/facebook' : '/api/auth/google';
+        const res = await fetch(authEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             email,
             name: name || email.split('@')[0],
             avatar,
-            googleId
+            googleId,
+            idToken,
+            accessToken,
+            facebookId: isFacebook ? googleId : undefined
           })
         });
 

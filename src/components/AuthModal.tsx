@@ -82,7 +82,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           email: payload.email,
           name: payload.name || payload.given_name || payload.email.split('@')[0],
           avatar: payload.picture,
-          googleId: payload.sub
+          googleId: payload.sub,
+          idToken: response.credential
         })
       });
 
@@ -177,7 +178,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                   email: userInfo.email,
                   name: userInfo.name || userInfo.given_name || userInfo.email.split('@')[0],
                   avatar: userInfo.picture,
-                  googleId: userInfo.sub
+                  googleId: userInfo.sub,
+                  accessToken: tokenResponse.access_token
                 })
               });
 
