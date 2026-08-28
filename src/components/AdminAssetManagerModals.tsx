@@ -3,6 +3,7 @@ import { Property, Project, NewsArticle, ProjectCategory } from '../types';
 import { X, Save, Image as ImageIcon, Trash2, Plus, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield } from 'lucide-react';
 import { SoDoCensorEditor } from './SoDoCensorEditor';
 import { compressImageFile } from '../lib/imageUtils';
+import { uploadBase64DataUrl, isBase64DataUrl } from '../lib/uploadService';
 
 // ==========================================
 // 1. EDIT PROPERTY MODAL (WITH FULL IMAGE MANAGER)
@@ -24,7 +25,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
   const [censorTargetIndex, setCensorTargetIndex] = useState<number | null>(null);
   const [showSoDoCensorAdmin, setShowSoDoCensorAdmin] = useState(false);
 
-  // Handle image upload from computer (convert & compress to Web Data URL)
+  // Handle image upload from computer (compress -> upload server -> URL public)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -35,10 +36,16 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
       try {
         const compressedDataUrl = await compressImageFile(file, 1200, 900, 0.82);
         if (compressedDataUrl) {
-          setFormData(prev => ({
-            ...prev,
-            images: [compressedDataUrl, ...prev.images]
-          }));
+          // Upload lên server -> URL public (thay vì lưu base64)
+          const url = isBase64DataUrl(compressedDataUrl)
+            ? await uploadBase64DataUrl(compressedDataUrl, 'properties')
+            : compressedDataUrl;
+          if (url) {
+            setFormData(prev => ({
+              ...prev,
+              images: [url, ...prev.images]
+            }));
+          }
         }
       } catch (err) {
         console.error('Error compressing image file:', err);
@@ -508,7 +515,11 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
       try {
         const compressed = await compressImageFile(file, 1400, 1000, 0.82);
         if (compressed) {
-          setFormData(prev => ({ ...prev, image: compressed }));
+          // Upload lên server -> URL public
+          const url = isBase64DataUrl(compressed)
+            ? await uploadBase64DataUrl(compressed, 'projects')
+            : compressed;
+          if (url) setFormData(prev => ({ ...prev, image: url }));
         }
       } catch (err) {
         console.error('Error compressing banner image:', err);
@@ -526,7 +537,11 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
       try {
         const compressed = await compressImageFile(file, 1600, 1200, 0.82);
         if (compressed) {
-          setFormData(prev => ({ ...prev, masterplanUrl: compressed }));
+          // Upload lên server -> URL public
+          const url = isBase64DataUrl(compressed)
+            ? await uploadBase64DataUrl(compressed, 'projects')
+            : compressed;
+          if (url) setFormData(prev => ({ ...prev, masterplanUrl: url }));
         }
       } catch (err) {
         console.error('Error compressing masterplan image:', err);
@@ -743,7 +758,11 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
       try {
         const compressed = await compressImageFile(file, 1200, 900, 0.82);
         if (compressed) {
-          setFormData(prev => ({ ...prev, image: compressed }));
+          // Upload lên server -> URL public
+          const url = isBase64DataUrl(compressed)
+            ? await uploadBase64DataUrl(compressed, 'news')
+            : compressed;
+          if (url) setFormData(prev => ({ ...prev, image: url }));
         }
       } catch (err) {
         console.error('Error compressing news image:', err);

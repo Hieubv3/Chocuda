@@ -9,6 +9,7 @@ import { UserStorefront, StoreProduct, StoreOrder, User } from '../types';
 import { UserStorefrontModal } from './UserStorefrontModal';
 import { AiMenuScannerModal, AiMenuScanResult, ScannedMenuItem } from './AiMenuScannerModal';
 import { addWatermarkToImage, validateImageSize, createInstantPreview } from '../lib/watermark';
+import { uploadBase64DataUrl } from '../lib/uploadService';
 
 interface UserStorefrontManagerProps {
   user: User;
@@ -670,7 +671,13 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                           setLogoUrl(createInstantPreview(file));
                           try {
                             const watermarked = await addWatermarkToImage(file);
-                            if (watermarked) setLogoUrl(watermarked);
+                            if (watermarked) {
+                              // Upload lên server -> URL public
+                              const url = watermarked.startsWith('data:image/')
+                                ? await uploadBase64DataUrl(watermarked, 'store-logos')
+                                : watermarked;
+                              if (url) setLogoUrl(url);
+                            }
                           } catch (err) {
                             console.error('Lỗi tải logo:', err);
                           } finally {
@@ -712,7 +719,13 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                           setBannerUrl(createInstantPreview(file));
                           try {
                             const watermarked = await addWatermarkToImage(file);
-                            if (watermarked) setBannerUrl(watermarked);
+                            if (watermarked) {
+                              // Upload lên server -> URL public
+                              const url = watermarked.startsWith('data:image/')
+                                ? await uploadBase64DataUrl(watermarked, 'store-banners')
+                                : watermarked;
+                              if (url) setBannerUrl(url);
+                            }
                           } catch (err) {
                             console.error('Lỗi tải banner:', err);
                           } finally {
@@ -1311,7 +1324,13 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                           setNewProdImage(createInstantPreview(file));
                           try {
                             const watermarked = await addWatermarkToImage(file);
-                            if (watermarked) setNewProdImage(watermarked);
+                            if (watermarked) {
+                              // Upload lên server -> URL public
+                              const url = watermarked.startsWith('data:image/')
+                                ? await uploadBase64DataUrl(watermarked, 'store-products')
+                                : watermarked;
+                              if (url) setNewProdImage(url);
+                            }
                           } catch (err) {
                             console.error('Lỗi tải ảnh sản phẩm:', err);
                           } finally {
@@ -1430,7 +1449,13 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                         setPhotoMenuUrl(createInstantPreview(file));
                         try {
                           const watermarked = await addWatermarkToImage(file);
-                          if (watermarked) setPhotoMenuUrl(watermarked);
+                          if (watermarked) {
+                            // Upload lên server -> URL public
+                            const url = watermarked.startsWith('data:image/')
+                              ? await uploadBase64DataUrl(watermarked, 'store-menus')
+                              : watermarked;
+                            if (url) setPhotoMenuUrl(url);
+                          }
                         } catch (err) {
                           console.error('Lỗi tải ảnh menu:', err);
                         } finally {

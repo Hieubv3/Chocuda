@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { Property, PropertyType, ProjectCategory, PropertyCategory } from '../types';
 import { createInstantPreview, validateImageSize } from '../lib/watermark';
+import { uploadFiles } from '../lib/uploadService';
 
 interface UserPropertyEditModalProps {
   property: Property | null;
@@ -71,6 +72,11 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
       try {
         const preview = await createInstantPreview(file);
         setImages(prev => [...prev, preview]);
+        // Upload file lên server -> URL public (thay vì base64)
+        const urls = await uploadFiles([file]);
+        if (urls[0]) {
+          setImages(prev => prev.map(img => img === preview ? urls[0] : img));
+        }
       } catch (err) {
         console.error('Image preview error:', err);
       }

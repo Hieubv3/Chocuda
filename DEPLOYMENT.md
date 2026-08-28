@@ -4,6 +4,16 @@ Dự án **Chợ Cư Dân 24H** đã được chuẩn bị đầy đủ file c�
 
 ---
 
+## 0. Lưu ý quan trọng về ảnh upload (server-side)
+
+- Ảnh người dùng tải lên được lưu **file vật lý** trong thư mục `uploads/` trên server (không còn lưu base64 trong localStorage).
+- Thư mục `uploads/` đã được thêm vào `.gitignore` — **không commit ảnh lên GitHub**.
+- Trên **Render**: vào Web Service -> **Disks** -> **Add Disk**, mount vào đường dẫn `/app/uploads` (dung lượng tối thiểu 1GB). Nếu không mount disk, ảnh sẽ bị mất mỗi khi Render deploy lại.
+- Trên **Docker**: mount volume vào `/app/uploads` (ví dụ `docker run -v chocudan24h_uploads:/app/uploads ...`).
+- Các API liên quan: `POST /api/upload` (multipart), `POST /api/upload/base64`, `DELETE /api/upload`; ảnh được phục vụ tĩnh tại `/uploads/...`.
+
+---
+
 ## 1. Môi trường & Tên miền (Domains)
 
 - **Tên miền chính (Production):** `https://chocudan24h.com` (hoặc `https://www.chocudan24h.com`)

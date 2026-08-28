@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User } from '../types';
 import { ShieldCheck, Upload, CheckCircle2, AlertTriangle, Sparkles, X, FileText, UserCheck, Lock } from 'lucide-react';
 import { addWatermarkToImage, validateImageSize, createInstantPreview } from '../lib/watermark';
+import { uploadBase64DataUrl } from '../lib/uploadService';
 
 interface KycVerificationModalProps {
   user: User;
@@ -176,7 +177,13 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                       setIdCardFrontUrl(createInstantPreview(file));
                       try {
                         const watermarked = await addWatermarkToImage(file);
-                        if (watermarked) setIdCardFrontUrl(watermarked);
+                        if (watermarked) {
+                          // Upload lên server -> URL public
+                          const url = watermarked.startsWith('data:image/')
+                            ? await uploadBase64DataUrl(watermarked, 'kyc')
+                            : watermarked;
+                          if (url) setIdCardFrontUrl(url);
+                        }
                       } catch (err) {
                         console.error('Lỗi tải CCCD trước:', err);
                       } finally {
@@ -212,7 +219,13 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                       setIdCardBackUrl(createInstantPreview(file));
                       try {
                         const watermarked = await addWatermarkToImage(file);
-                        if (watermarked) setIdCardBackUrl(watermarked);
+                        if (watermarked) {
+                          // Upload lên server -> URL public
+                          const url = watermarked.startsWith('data:image/')
+                            ? await uploadBase64DataUrl(watermarked, 'kyc')
+                            : watermarked;
+                          if (url) setIdCardBackUrl(url);
+                        }
                       } catch (err) {
                         console.error('Lỗi tải CCCD sau:', err);
                       } finally {
@@ -255,7 +268,13 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                         setBrokerLicenseUrl(createInstantPreview(file));
                         try {
                           const watermarked = await addWatermarkToImage(file);
-                          if (watermarked) setBrokerLicenseUrl(watermarked);
+                          if (watermarked) {
+                            // Upload lên server -> URL public
+                            const url = watermarked.startsWith('data:image/')
+                              ? await uploadBase64DataUrl(watermarked, 'kyc')
+                              : watermarked;
+                            if (url) setBrokerLicenseUrl(url);
+                          }
                         } catch (err) {
                           console.error('Lỗi tải chứng chỉ:', err);
                         } finally {

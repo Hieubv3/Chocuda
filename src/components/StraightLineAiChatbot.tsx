@@ -379,7 +379,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 left-6 z-40 flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-4 py-2.5 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 border border-white/30 group cursor-pointer"
+          className="fixed bottom-24 md:bottom-6 left-6 z-40 flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-4 py-2.5 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 border border-white/30 group cursor-pointer"
           title="Trợ lý AI BĐS & Đặt Dịch Vụ Cư Dân 24/7"
         >
           <div className="relative flex items-center justify-center">

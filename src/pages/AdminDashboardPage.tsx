@@ -22,6 +22,7 @@ interface ReputationPost {
 }
 import { AiUrlTrackerModal } from '../components/AiUrlTrackerModal';
 import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
+import { uploadBase64DataUrl, isBase64DataUrl, uploadFiles } from '../lib/uploadService';
 import { EditPropertyModal, EditProjectModal, EditNewsModal } from '../components/AdminAssetManagerModals';
 import { AdminMarketingCenter } from '../components/AdminMarketingCenter';
 import { AdminSeoCenter } from '../components/AdminSeoCenter';
@@ -1044,31 +1045,47 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewAdBadgeText('QC CẠNH PHẢI');
   };
 
-  const handleAdFileUpload = (e: React.ChangeEvent<HTMLInputElement>, targetAdId?: string) => {
+  const handleAdFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, targetAdId?: string) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 8 * 1024 * 1024) {
         alert('Dung lượng ảnh vượt quá 8MB, vui lòng chọn file nhẹ hơn.');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
+      // Upload ảnh lên server -> nhận URL public (thay vì lưu base64)
+      try {
+        const url = await uploadBase64DataUrl(await fileToDataUrl(file), 'ads');
+        if (!url) {
+          alert('Upload ảnh banner thất bại. Vui lòng thử lại!');
+          return;
+        }
         if (targetAdId) {
           // Change image directly on table row
-          const updated = adsList.map(a => a.id === targetAdId ? { ...a, imageUrl: base64 } : a);
+          const updated = adsList.map(a => a.id === targetAdId ? { ...a, imageUrl: url } : a);
           setAdsList(updated);
           if (editingAd && editingAd.id === targetAdId) {
-            setEditingAd({ ...editingAd, imageUrl: base64 });
-            setNewAdImage(base64);
+            setEditingAd({ ...editingAd, imageUrl: url });
+            setNewAdImage(url);
           }
           alert('Cập nhật ảnh Banner trực tiếp thành công!');
         } else {
-          setNewAdImage(base64);
+          setNewAdImage(url);
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Lỗi upload ảnh banner:', err);
+        alert('Lỗi khi upload ảnh banner. Vui lòng thử lại!');
+      }
     }
+  };
+
+  // Helper: đọc File -> base64 data URL (dùng cho upload banner)
+  const fileToDataUrl = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleSaveFormAd = (e: React.FormEvent) => {
@@ -7837,6 +7854,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           try {
                             const preview = await createInstantPreview(file);
                             setNewSrvImage(preview);
+                            // Upload lên server -> URL public
+                            const urls = await uploadFiles([file]);
+                            if (urls[0]) setNewSrvImage(urls[0]);
                           } catch (err) {
                             console.error(err);
                           }
@@ -8602,9 +8622,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           const previewUrl = createInstantPreview(file);
                           setStoreProductForm(p => ({ ...p, images: [previewUrl] }));
 
-                          addWatermarkToImage(file).then(compressed => {
+                          addWatermarkToImage(file).then(async compressed => {
                             if (compressed) {
-                              setStoreProductForm(p => ({ ...p, images: [compressed] }));
+                              // Upload lên server -> URL public
+                              const url = isBase64DataUrl(compressed)
+                                ? await uploadBase64DataUrl(compressed, 'store-products')
+                                : compressed;
+                              if (url) setStoreProductForm(p => ({ ...p, images: [url] }));
                             }
                           }).catch(console.error);
                         }
@@ -8815,9 +8839,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           const previewUrl = createInstantPreview(file);
                           setStoreFormData(p => ({ ...p, logoUrl: previewUrl }));
 
-                          addWatermarkToImage(file, { skipWatermark: true, maxDim: 600 }).then(compressed => {
+                          addWatermarkToImage(file, { skipWatermark: true, maxDim: 600 }).then(async compressed => {
                             if (compressed) {
-                              setStoreFormData(p => ({ ...p, logoUrl: compressed }));
+                              // Upload lên server -> URL public
+                              const url = isBase64DataUrl(compressed)
+                                ? await uploadBase64DataUrl(compressed, 'store-logos')
+                                : compressed;
+                              if (url) setStoreFormData(p => ({ ...p, logoUrl: url }));
                             }
                           }).catch(console.error);
                         }

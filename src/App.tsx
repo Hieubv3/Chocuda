@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon } from 'lucide-react';
 import { Header } from './components/Header';
 import { RealTimeMarketTicker } from './components/RealTimeMarketTicker';
-import { StraightLineAiChatbot } from './components/StraightLineAiChatbot';
 import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -151,6 +150,30 @@ export const App: React.FC = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  // Giữ menu dưới luôn bám đáy vùng nhìn thực tế trên mobile.
+  // Trình duyệt mobile (Safari/Chrome) ẩn/hiện thanh URL khi cuộn làm
+  // `position: fixed; bottom: 0` bị đẩy ra khỏi màn hình -> menu "mất" tùy lúc.
+  // Theo dõi window.visualViewport để bù offset khi URL bar / bàn phím đổi kích thước.
+  const bottomNavRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const nav = bottomNavRef.current;
+    if (!vv || !nav) return;
+    const update = () => {
+      const offset = Math.max(0, window.innerHeight - vv.height);
+      nav.style.bottom = `${offset}px`;
+    };
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    window.addEventListener('orientationchange', update);
+    update();
+    return () => {
+      vv.removeEventListener('resize', update);
+      vv.removeEventListener('scroll', update);
+      window.removeEventListener('orientationchange', update);
+    };
+  }, []);
 
   // Fetch initial data from server APIs & update localStorage with double-safety merge
   const refreshServerData = () => {
@@ -722,7 +745,7 @@ export const App: React.FC = () => {
 
   // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300 pb-16 md:pb-0">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
       <ScrollToTop />
 
       {/* Top Banner (If active) */}
@@ -1679,15 +1702,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* AI Straight Line Sales Chatbot */}
-      <StraightLineAiChatbot
-        properties={properties}
-        projects={projects}
-        news={news}
-        onOpenConsultation={() => setAuthModalOpen(true)}
-        onOpenUpTin={() => navigate('/tai-khoan')}
-      />
-
       {/* Gemini AI Writer Studio Modal */}
       {aiWriterModalOpen && (
         <AiWriterModal
@@ -1710,7 +1724,10 @@ export const App: React.FC = () => {
       />
 
       {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-1 flex items-center justify-around shadow-2xl">
+      <nav
+        ref={bottomNavRef}
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-1 flex items-center justify-around shadow-2xl pb-[max(0.25rem,env(safe-area-inset-bottom))]"
+      >
         {/* 1. Trang Chủ */}
         <button
           onClick={() => navigate('/')}

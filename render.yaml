@@ -5,6 +5,10 @@ services:
     plan: free
     buildCommand: npm install && npm run build
     startCommand: npm run start
+    disk:
+      name: uploads
+      mountPath: /app/uploads
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production

@@ -4,17 +4,20 @@
  * while silently converting heavy files (up to 10MB) into ultra-light web assets (~120KB-200KB) to save memory & prevent lag.
  */
 
-const MAX_IMAGE_FILE_SIZE = 10 * 1024 * 1024; // 10MB limit
+const MAX_IMAGE_FILE_SIZE = 10 * 1024 * 1024; // 10MB — ảnh lớn hơn sẽ được tự động nén
+const HARD_LIMIT = 50 * 1024 * 1024; // 50MB — giới hạn cứng, trên mức này mới từ chối
 
 /**
- * Validates if file is within 10MB limit
+ * Kiểm tra kích thước ảnh.
+ * Ảnh 10-50MB vẫn HỢP LỆ (valid: true) — hệ thống sẽ tự động nén xuống dưới 10MB.
+ * Chỉ từ chối ảnh > 50MB (quá lớn để nén an toàn trên trình duyệt).
  */
 export function validateImageSize(file: File): { valid: boolean; message?: string } {
-  if (file.size > MAX_IMAGE_FILE_SIZE) {
+  if (file.size > HARD_LIMIT) {
     const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
     return {
       valid: false,
-      message: `Ảnh "${file.name}" (${sizeMb}MB) vượt quá giới hạn 10MB. Hệ thống chỉ nhận ảnh dưới 10MB.`
+      message: `Ảnh "${file.name}" (${sizeMb}MB) quá lớn. Hệ thống chỉ nhận ảnh dưới 50MB.`
     };
   }
   return { valid: true };

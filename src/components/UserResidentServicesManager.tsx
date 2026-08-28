@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { ResidentServiceItem, RESIDENT_SERVICE_CATEGORIES, VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
 import { User, ProjectCategory } from '../types';
 import { createInstantPreview, validateImageSize, addWatermarkToImage } from '../lib/watermark';
+import { uploadBase64DataUrl } from '../lib/uploadService';
 import { getServiceDetailUrl } from '../lib/slugs';
 
 interface UserResidentServicesManagerProps {
@@ -206,10 +207,16 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
         const instantPreview = createInstantPreview(file);
         setImages(prev => [...prev, instantPreview]);
 
-        // Compress and watermark
-        addWatermarkToImage(file).then(watermarked => {
+        // Compress and watermark -> upload server
+        addWatermarkToImage(file).then(async watermarked => {
           if (watermarked) {
-            setImages(prev => prev.map(img => img === instantPreview ? watermarked : img));
+            // Upload lên server -> URL public (thay vì base64)
+            const url = watermarked.startsWith('data:image/')
+              ? await uploadBase64DataUrl(watermarked, 'services')
+              : watermarked;
+            if (url) {
+              setImages(prev => prev.map(img => img === instantPreview ? url : img));
+            }
           }
         }).catch(err => console.warn('Watermark err:', err));
       }

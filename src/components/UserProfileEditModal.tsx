@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { User as UserType } from '../types';
 import { createInstantPreview, validateImageSize } from '../lib/watermark';
+import { uploadFiles } from '../lib/uploadService';
 
 interface UserProfileEditModalProps {
   user: UserType;
@@ -75,6 +76,9 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
     try {
       const preview = await createInstantPreview(file);
       setAvatar(preview);
+      // Upload file lên server -> URL public (thay vì base64)
+      const urls = await uploadFiles([file]);
+      if (urls[0]) setAvatar(urls[0]);
     } catch (err) {
       console.error('Avatar preview error:', err);
     }
@@ -444,6 +448,9 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                         if (file) {
                           const preview = await createInstantPreview(file);
                           setBusinessLicenseUrl(preview);
+                          // Upload lên server -> URL public
+                          const urls = await uploadFiles([file]);
+                          if (urls[0]) setBusinessLicenseUrl(urls[0]);
                         }
                       }}
                       className="hidden"
@@ -483,6 +490,9 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                         if (file) {
                           const preview = await createInstantPreview(file);
                           setBrokerLicenseUrl(preview);
+                          // Upload lên server -> URL public
+                          const urls = await uploadFiles([file]);
+                          if (urls[0]) setBrokerLicenseUrl(urls[0]);
                         }
                       }}
                       className="hidden"
@@ -539,6 +549,9 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                         if (file) {
                           const preview = await createInstantPreview(file);
                           setNewCertImage(preview);
+                          // Upload lên server -> URL public
+                          const urls = await uploadFiles([file]);
+                          if (urls[0]) setNewCertImage(urls[0]);
                         }
                       }}
                       className="hidden"

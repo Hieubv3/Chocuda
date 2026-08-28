@@ -75,7 +75,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     <div className="space-y-16 pb-16">
       
       {/* 1. Hero Banner Section */}
-      <section className="relative bg-slate-950 text-white pt-12 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden rounded-b-[2.5rem] shadow-2xl">
+      <section className="relative bg-slate-950 text-white pt-12 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden rounded-b-[2.5rem] shadow-2xl">
         <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]" />
         
         {/* Background Image Overlay */}
@@ -480,43 +480,39 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* 2. Key Values Bar */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 p-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl">
-          <div className="text-center sm:text-left space-y-1">
-            <div className="flex items-center justify-center sm:justify-start space-x-1.5 text-amber-500">
-              <CheckCircle2 className="w-5 h-5 shrink-0" />
-              <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">Minh Bạch</span>
+      {/* 2. Key Values Bar - compact */}
+      <section className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 p-2.5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-md">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <CheckCircle2 className="w-4 h-4 text-amber-500 shrink-0" />
+            <div className="min-w-0 leading-tight">
+              <p className="text-[11px] font-black text-slate-900 dark:text-white truncate">Minh Bạch</p>
+              <p className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 truncate">{t.stats.deals}</p>
             </div>
-            <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{t.stats.deals}</p>
-            <p className="text-[11px] text-slate-400">Chuyển nhượng & Cho thuê chính chủ</p>
           </div>
 
-          <div className="text-center sm:text-left space-y-1 border-l sm:border-l-0 lg:border-l border-slate-200 dark:border-slate-700 pl-4 sm:pl-0 lg:pl-4">
-            <div className="flex items-center justify-center sm:justify-start space-x-1.5 text-amber-500">
-              <Star className="w-5 h-5 shrink-0 fill-amber-500" />
-              <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">Uy Tín</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Star className="w-4 h-4 text-amber-500 shrink-0 fill-amber-500" />
+            <div className="min-w-0 leading-tight">
+              <p className="text-[11px] font-black text-slate-900 dark:text-white truncate">Uy Tín</p>
+              <p className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 truncate">{t.stats.satisfaction}</p>
             </div>
-            <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{t.stats.satisfaction}</p>
-            <p className="text-[11px] text-slate-400">Đánh giá tốt từ cư dân & khách hàng</p>
           </div>
 
-          <div className="text-center sm:text-left space-y-1">
-            <div className="flex items-center justify-center sm:justify-start space-x-1.5 text-amber-500">
-              <ShieldCheck className="w-5 h-5 shrink-0" />
-              <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">Chuyên Nghiệp</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0" />
+            <div className="min-w-0 leading-tight">
+              <p className="text-[11px] font-black text-slate-900 dark:text-white truncate">Chuyên Nghiệp</p>
+              <p className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 truncate">{t.stats.experience}</p>
             </div>
-            <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{t.stats.experience}</p>
-            <p className="text-[11px] text-slate-400">Am hiểu chuyên sâu thị trường BĐS</p>
           </div>
 
-          <div className="text-center sm:text-left space-y-1 border-l sm:border-l-0 lg:border-l border-slate-200 dark:border-slate-700 pl-4 sm:pl-0 lg:pl-4">
-            <div className="flex items-center justify-center sm:justify-start space-x-1.5 text-amber-500">
-              <Clock className="w-5 h-5 shrink-0" />
-              <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">Tận Tâm</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+            <div className="min-w-0 leading-tight">
+              <p className="text-[11px] font-black text-slate-900 dark:text-white truncate">Tận Tâm</p>
+              <p className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 truncate">{t.stats.support}</p>
             </div>
-            <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{t.stats.support}</p>
-            <p className="text-[11px] text-slate-400">Tư vấn trực tiếp, nhận báo giá Zalo</p>
           </div>
         </div>
       </section>

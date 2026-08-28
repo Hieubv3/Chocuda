@@ -26,6 +26,7 @@ import { TechnicalServiceEscrowModal } from './TechnicalServiceEscrowModal';
 import { AiMenuScannerModal, AiMenuScanResult, ScannedMenuItem } from './AiMenuScannerModal';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
 import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
+import { uploadBase64DataUrl } from '../lib/uploadService';
 import { getServiceDetailUrl, getServiceCategoryUrl, getStoreDetailUrl } from '../lib/slugs';
 
 interface ResidentServicesPageProps {
@@ -586,126 +587,84 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
           </div>
 
           {/* Row 2: Direct Connect & Legal Notice Banner (Full Width Block) */}
-          <div className="w-full bg-emerald-950/70 border border-emerald-500/40 rounded-xl p-2.5 text-xs text-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-inner">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="bg-emerald-500/20 text-emerald-300 font-black px-2 py-0.5 rounded text-[10px] border border-emerald-500/30 uppercase shrink-0">
-                ⚡ PHÍ SÀN 0% - KẾT NỐI TRỰC TIẾP
+          <div className="w-full bg-emerald-950/70 border border-emerald-500/40 rounded-lg px-2.5 py-1.5 text-[11px] text-emerald-200 flex items-center justify-between gap-2 shadow-inner">
+            <span className="flex items-center gap-1.5 min-w-0">
+              <span className="bg-emerald-500/20 text-emerald-300 font-black px-1.5 py-0.5 rounded text-[9px] border border-emerald-500/30 uppercase shrink-0">
+                ⚡ PHÍ SÀN 0%
               </span>
-              <span className="text-[11px] font-medium text-emerald-100">
+              <span className="truncate">
                 Khách hàng &amp; Thợ/Nhà cung cấp liên hệ, thanh toán trực tiếp. Đơn hàng dùng để <strong>Lưu Nhật Ký Lịch Sử</strong>.
               </span>
-            </div>
+            </span>
             <button 
               onClick={() => setShowLegalDisclaimer(true)}
-              className="text-[10px] text-amber-300 underline hover:text-amber-200 font-bold shrink-0 flex items-center gap-1"
+              className="text-[9px] text-amber-300 underline hover:text-amber-200 font-bold shrink-0 flex items-center gap-0.5 cursor-pointer"
             >
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-              <span>Quy định Pháp lý &amp; Trách nhiệm</span>
+              <AlertTriangle className="w-3 h-3 text-amber-400" />
+              <span>Quy định Pháp lý</span>
             </button>
           </div>
 
-          {/* Row 3: Action Buttons Bar - Tinh gọn dạng lưới biểu tượng & text ngăn nắp cho cả PC và Mobile */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-2 pt-1">
+          {/* Row 3: Action Buttons Bar - compact single-line chips */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 pt-1">
             {/* Button 1: AI Quét Menu */}
             <button
               onClick={() => setIsAiMenuScannerOpen(true)}
-              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-amber-500/50 hover:border-amber-400 text-amber-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-amber-500/50 hover:border-amber-400 text-amber-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
               title="AI Quét Menu & Báo Giá (1-Click Đăng Bài)"
             >
-              <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <Sparkles className="w-4 h-4 fill-amber-400" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[11px] font-black text-white block truncate group-hover:text-amber-300">
-                  AI Quét Menu
-                </span>
-                <span className="text-[9px] text-amber-400/90 block truncate">1-Click Đăng Bài</span>
-              </div>
+              <Sparkles className="w-3.5 h-3.5 shrink-0 fill-amber-400" />
+              <span className="text-[10px] font-black text-white truncate group-hover:text-amber-300">AI Quét Menu</span>
             </button>
 
             {/* Button 2: Bảng Giá Quảng Bá */}
             <button
               onClick={() => setIsPricingModalOpen(true)}
-              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
               title="Bảng Giá Dịch Vụ & Quảng Bá Truyền Thông"
             >
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <ShoppingBag className="w-4 h-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[11px] font-black text-white block truncate group-hover:text-emerald-300">
-                  Bảng Giá PR
-                </span>
-                <span className="text-[9px] text-emerald-400/90 block truncate">Quảng bá cư dân</span>
-              </div>
+              <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+              <span className="text-[10px] font-black text-white truncate group-hover:text-emerald-300">Bảng Giá PR</span>
             </button>
 
             {/* Button 3: Đặt Xe Vận Tải */}
             <button
               onClick={() => setIsTransportModalOpen(true)}
-              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-amber-500/40 hover:border-amber-400 text-amber-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-amber-500/40 hover:border-amber-400 text-amber-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
               title="Đặt Xe Vận Tải Nội & Ngoại Khu 24/7"
             >
-              <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <Car className="w-4 h-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[11px] font-black text-white block truncate group-hover:text-amber-300">
-                  Xe Cư Dân 24/7
-                </span>
-                <span className="text-[9px] text-slate-300 block truncate">Nội &amp; Ngoại khu</span>
-              </div>
+              <Car className="w-3.5 h-3.5 shrink-0" />
+              <span className="text-[10px] font-black text-white truncate group-hover:text-amber-300">Xe Cư Dân 24/7</span>
             </button>
 
             {/* Button 4: Xây Lắp & Thang Máy */}
             <button
               onClick={() => setIsConstructionModalOpen(true)}
-              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-blue-500/40 hover:border-blue-400 text-blue-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-blue-500/40 hover:border-blue-400 text-blue-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
               title="Báo Giá Xây Lắp, Nội Thất & Thang Máy"
             >
-              <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <Hammer className="w-4 h-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[11px] font-black text-white block truncate group-hover:text-blue-300">
-                  Xây Lắp & Thang Máy
-                </span>
-                <span className="text-[9px] text-slate-300 block truncate">Khảo sát báo giá</span>
-              </div>
+              <Hammer className="w-3.5 h-3.5 shrink-0" />
+              <span className="text-[10px] font-black text-white truncate group-hover:text-blue-300">Xây Lắp &amp; Thang Máy</span>
             </button>
 
             {/* Button 5: Thỏa Thuận 3 Bên */}
             <button
               onClick={() => setIsTripartiteModalOpen(true)}
-              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-purple-500/40 hover:border-purple-400 text-purple-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-purple-500/40 hover:border-purple-400 text-purple-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
               title="Thỏa Thuận 3 Bên Bảo Vệ Khách & Thợ"
             >
-              <div className="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <FileText className="w-4 h-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[11px] font-black text-white block truncate group-hover:text-purple-300">
-                  Thỏa Thuận 3 Bên
-                </span>
-                <span className="text-[9px] text-slate-300 block truncate">Hợp đồng bảo vệ</span>
-              </div>
+              <FileText className="w-3.5 h-3.5 shrink-0" />
+              <span className="text-[10px] font-black text-white truncate group-hover:text-purple-300">Thỏa Thuận 3 Bên</span>
             </button>
 
             {/* Button 6: Bản Đồ Định Vị */}
             <button
               onClick={() => setIsMapModalOpen(true)}
-              className="p-2 sm:p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-200 shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-2 group text-left"
+              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-200 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
               title="Bản Đồ Định Vị Gian Hàng & Dịch Vụ Cư Dân"
             >
-              <div className="w-8 h-8 rounded-lg bg-slate-700 text-amber-300 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <Compass className="w-4 h-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[11px] font-black text-white block truncate group-hover:text-amber-300">
-                  Bản Đồ Định Vị
-                </span>
-                <span className="text-[9px] text-slate-300 block truncate">Vị trí gian hàng</span>
-              </div>
+              <Compass className="w-3.5 h-3.5 shrink-0" />
+              <span className="text-[10px] font-black text-white truncate group-hover:text-amber-300">Bản Đồ Định Vị</span>
             </button>
 
             {/* Optional Button 7: Ví & Escrow cho tài khoản thợ/kinh doanh */}
@@ -719,19 +678,14 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             ) && (
               <button
                 onClick={() => setIsEscrowModalOpen(true)}
-                className="col-span-2 sm:col-span-3 lg:col-span-6 p-2 rounded-xl bg-gradient-to-r from-emerald-950/80 to-slate-900 border border-emerald-500/50 hover:border-emerald-400 text-emerald-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-between gap-2 text-left"
+                className="col-span-2 sm:col-span-3 lg:col-span-6 px-2 py-1.5 rounded-lg bg-gradient-to-r from-emerald-950/80 to-slate-900 border border-emerald-500/50 hover:border-emerald-400 text-emerald-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-between gap-2"
                 title="Ví Tự Động & Escrow Thợ Kĩ Thuật"
               >
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0">
-                    <Wallet className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-black text-white">Ví Tự Động &amp; Ký Quỹ Escrow Kỹ Thuật</span>
-                    <span className="text-[10px] text-emerald-400 ml-2 font-medium">Bảo vệ dòng tiền đơn hàng &amp; tạm giữ tiền an toàn</span>
-                  </div>
-                </div>
-                <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30 shrink-0">
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <Wallet className="w-3.5 h-3.5 shrink-0" />
+                  <span className="text-[10px] font-black text-white truncate">Ví Tự Động &amp; Ký Quỹ Escrow Kỹ Thuật</span>
+                </span>
+                <span className="text-[9px] font-bold bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded-md border border-emerald-500/30 shrink-0">
                   Mở ví →
                 </span>
               </button>
@@ -1072,61 +1026,53 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-xl space-y-4">
             
             {/* Consolidated Title & Header Action Controls */}
-            <div className="space-y-3 border-b border-slate-100 dark:border-slate-800 pb-3.5">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                <div className="space-y-1 min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="px-2.5 py-0.5 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-black text-[10px] rounded-full border border-purple-500/20 uppercase tracking-wider inline-flex items-center gap-1 shrink-0">
-                      <Sparkles className="w-3 h-3 text-amber-500" /> CHỢ CƯ DÂN VINHOMES 24H
-                    </span>
-                    <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-full border border-emerald-500/20 shrink-0">
-                      GIAN HÀNG & THỢ DỊCH VỤ CƯ DÂN
-                    </span>
-                  </div>
-                  <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white mt-1 tracking-tight leading-snug">
-                    🏪 Gian Hàng Cư Dân & Đối Tác Dịch Vụ
+            <div className="space-y-2.5 border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-sm sm:text-lg font-black text-slate-900 dark:text-white tracking-tight leading-snug">
+                    🏪 Gian Hàng Cư Dân &amp; Đối Tác Dịch Vụ
                   </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-2xl">
-                    Bảng tổng hợp tất cả gian hàng chính chủ cư dân, quán ăn, thực phẩm, sửa chữa, nội thất... được phân loại theo ngành nghề trên hệ thống.
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                    Gian hàng chính chủ cư dân, quán ăn, thực phẩm, sửa chữa, nội thất... phân loại theo ngành nghề.
                   </p>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsAllStoresDirectoryOpen(true)}
-                  className="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-2xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 self-start md:self-center"
+                  className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] rounded-xl shadow-xs transition flex items-center justify-center gap-1 cursor-pointer shrink-0"
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                  <span>Xem Toàn Bộ Gian Hàng ({stores.length})</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>Xem Toàn Bộ ({stores.length})</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               {/* THE 2 VERIFICATION TABS BAR */}
-              <div className="flex items-center justify-start gap-2 pt-1">
-                <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700/80 max-w-full overflow-x-auto scrollbar-none">
+              <div className="flex items-center justify-start gap-2">
+                <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700/80 max-w-full overflow-x-auto scrollbar-none">
                   <button
                     onClick={() => setStoreVerificationTab('verified')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                    className={`px-3 py-1 rounded-lg text-[11px] font-black transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                       storeVerificationTab === 'verified'
                         ? 'bg-emerald-600 text-white shadow-md'
                         : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    <ShieldCheck className="w-4 h-4 text-emerald-200 shrink-0" />
-                    <span>🛡️ Cửa Hàng Đã Định Danh ({totalVerified})</span>
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
+                    <span>🛡️ Đã Định Danh ({totalVerified})</span>
                   </button>
 
                   <button
                     onClick={() => setStoreVerificationTab('pending')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                    className={`px-3 py-1 rounded-lg text-[11px] font-black transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                       storeVerificationTab === 'pending'
                         ? 'bg-amber-500 text-slate-950 shadow-md'
                         : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    <Clock className="w-4 h-4 text-slate-950 shrink-0" />
-                    <span>⏳ Chờ Được Định Danh ({totalPending})</span>
+                    <Clock className="w-3.5 h-3.5 text-slate-950 shrink-0" />
+                    <span>⏳ Chờ Định Danh ({totalPending})</span>
                   </button>
                 </div>
               </div>
@@ -1148,35 +1094,35 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             </div>
 
             {/* Helper Alert Banner */}
-            <div className={`p-3 rounded-2xl border text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+            <div className={`p-2 rounded-xl border text-[11px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 ${
               storeVerificationTab === 'verified'
                 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-800 dark:text-emerald-300'
                 : 'bg-amber-500/10 border-amber-500/20 text-amber-900 dark:text-amber-300'
             }`}>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 min-w-0">
                 {storeVerificationTab === 'verified' ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                 ) : (
-                  <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                 )}
-                <span className="font-bold">
+                <span className="font-bold leading-snug">
                   {storeVerificationTab === 'verified'
-                    ? 'Danh sách gian hàng & thợ dịch vụ đã hoàn tất xác minh căn cước & giấy phép chính chủ.'
-                    : 'Danh sách gian hàng & dịch vụ đang gửi hồ sơ KYC. Khi bấm kích hoạt định danh, cửa hàng sẽ tự động chuyển sang tab Đã Định Danh.'}
+                    ? 'Gian hàng & thợ dịch vụ đã xác minh căn cước & giấy phép chính chủ.'
+                    : 'Gian hàng đang gửi hồ sơ KYC. Kích hoạt định danh sẽ tự chuyển sang tab Đã Định Danh.'}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+              <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
                 <button
                   onClick={() => setIsPricingModalOpen(true)}
-                  className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[11px] rounded-lg shrink-0 cursor-pointer shadow-xs"
+                  className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[10px] rounded-md shrink-0 cursor-pointer shadow-xs"
                 >
                   + Mở Gian Hàng Mới
                 </button>
                 {storeVerificationTab === 'pending' && (
                   <button
                     onClick={() => setIsPostingModalOpen(true)}
-                    className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] rounded-lg shrink-0 cursor-pointer shadow-xs"
+                    className="px-2 py-0.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[10px] rounded-md shrink-0 cursor-pointer shadow-xs"
                   >
                     + Đăng Bài Dịch Vụ
                   </button>
@@ -1185,40 +1131,40 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             </div>
 
             {/* View Mode & Count Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
-              <span className="text-xs font-extrabold text-slate-500 dark:text-slate-400">
-                Hiển thị trong tab này: {displayStoresByTab.length} gian hàng, {displayServicesByTab.length} thợ & dịch vụ
+            <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+              <span className="text-[11px] font-extrabold text-slate-500 dark:text-slate-400">
+                {displayStoresByTab.length} gian hàng · {displayServicesByTab.length} thợ &amp; dịch vụ
               </span>
 
               {/* View Mode Buttons */}
-              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs">
+              <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-xs">
                 <button
                   onClick={() => { setViewMode('grid-2col'); localStorage.setItem('hb_resident_services_view_mode', 'grid-2col'); }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'grid-2col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'grid-2col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
                 >
-                  <Grid2x2 className="w-3.5 h-3.5" />
-                  <span>2 Cột (Mobi)</span>
+                  <Grid2x2 className="w-3 h-3" />
+                  <span>2 Cột</span>
                 </button>
                 <button
                   onClick={() => { setViewMode('card-1col'); localStorage.setItem('hb_resident_services_view_mode', 'card-1col'); }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'card-1col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'card-1col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
                 >
-                  <LayoutGrid className="w-3.5 h-3.5" />
-                  <span>1 Cột Lớn</span>
+                  <LayoutGrid className="w-3 h-3" />
+                  <span>1 Cột</span>
                 </button>
                 <button
                   onClick={() => { setViewMode('list-row'); localStorage.setItem('hb_resident_services_view_mode', 'list-row'); }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'list-row' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'list-row' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
                 >
-                  <List className="w-3.5 h-3.5" />
-                  <span>Hàng Ngang</span>
+                  <List className="w-3 h-3" />
+                  <span>Ngang</span>
                 </button>
                 <button
                   onClick={() => { setViewMode('grid-3col'); localStorage.setItem('hb_resident_services_view_mode', 'grid-3col'); }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'grid-3col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'grid-3col' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
                 >
-                  <Grid3x3 className="w-3.5 h-3.5" />
-                  <span>3 Cột Nhỏ</span>
+                  <Grid3x3 className="w-3 h-3" />
+                  <span>3 Cột</span>
                 </button>
               </div>
             </div>
@@ -2356,13 +2302,19 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                             imagesText: prev.imagesText ? `${prev.imagesText}\n${previewUrl}` : previewUrl
                           }));
 
-                          // Asynchronous background compression & watermarking
-                          addWatermarkToImage(file).then(compressedUrl => {
+                          // Asynchronous background compression & watermarking -> upload server
+                          addWatermarkToImage(file).then(async compressedUrl => {
                             if (compressedUrl) {
-                              setPostForm(prev => ({
-                                ...prev,
-                                imagesText: prev.imagesText.replace(previewUrl, compressedUrl)
-                              }));
+                              // Upload lên server -> URL public (thay vì base64)
+                              const url = compressedUrl.startsWith('data:image/')
+                                ? await uploadBase64DataUrl(compressedUrl, 'services')
+                                : compressedUrl;
+                              if (url) {
+                                setPostForm(prev => ({
+                                  ...prev,
+                                  imagesText: prev.imagesText.replace(previewUrl, url)
+                                }));
+                              }
                             }
                           }).catch(err => console.error('Error background compressing image:', err));
                         }
@@ -2685,7 +2637,13 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                           setNewPRForm(prev => ({ ...prev, imageUrl: previewUrl }));
                           try {
                             const compressed = await addWatermarkToImage(file);
-                            if (compressed) setNewPRForm(prev => ({ ...prev, imageUrl: compressed }));
+                            if (compressed) {
+                              // Upload lên server -> URL public
+                              const url = compressed.startsWith('data:image/')
+                                ? await uploadBase64DataUrl(compressed, 'services')
+                                : compressed;
+                              if (url) setNewPRForm(prev => ({ ...prev, imageUrl: url }));
+                            }
                           } catch (err) {
                             console.error('Error compressing PR image:', err);
                           } finally {
@@ -3077,8 +3035,14 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                             }
                             const preview = createInstantPreview(file);
                             setTransportImages(prev => [...prev, preview]);
-                            addWatermarkToImage(file).then(comp => {
-                              if (comp) setTransportImages(prev => prev.map(p => p === preview ? comp : p));
+                            addWatermarkToImage(file).then(async comp => {
+                              if (comp) {
+                                // Upload lên server -> URL public
+                                const url = comp.startsWith('data:image/')
+                                  ? await uploadBase64DataUrl(comp, 'services')
+                                  : comp;
+                                if (url) setTransportImages(prev => prev.map(p => p === preview ? url : p));
+                              }
                             }).catch(() => {});
                           }
                           e.target.value = '';
@@ -3325,8 +3289,14 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                             }
                             const preview = createInstantPreview(file);
                             setConstructionImages(prev => [...prev, preview]);
-                            addWatermarkToImage(file).then(comp => {
-                              if (comp) setConstructionImages(prev => prev.map(p => p === preview ? comp : p));
+                            addWatermarkToImage(file).then(async comp => {
+                              if (comp) {
+                                // Upload lên server -> URL public
+                                const url = comp.startsWith('data:image/')
+                                  ? await uploadBase64DataUrl(comp, 'services')
+                                  : comp;
+                                if (url) setConstructionImages(prev => prev.map(p => p === preview ? url : p));
+                              }
                             }).catch(() => {});
                           }
                           e.target.value = '';

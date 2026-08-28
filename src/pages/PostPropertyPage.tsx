@@ -14,6 +14,7 @@ import {
 } from '../types';
 import { SoDoCensorEditor } from '../components/SoDoCensorEditor';
 import { addWatermarkToImage, compressAndWatermarkImagesParallel, validateImageSize, createInstantPreview } from '../lib/watermark';
+import { uploadBase64DataUrl, isBase64DataUrl } from '../lib/uploadService';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
 
 interface PostPropertyPageProps {
@@ -177,13 +178,26 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         (completed, total) => setUploadProgress({ completed, total })
       );
 
-      // Silently replace temporary previews with final lightweight compressed base64 images
+      // 4. Upload ảnh đã nén lên server -> nhận URL public (/uploads/xxx.jpg)
+      //    Thay vì lưu base64 vào localStorage (gây đầy bộ nhớ, mất ảnh)
+      const uploadedUrls: string[] = [];
+      for (const compressed of compressedList) {
+        if (!compressed) continue;
+        if (isBase64DataUrl(compressed)) {
+          const url = await uploadBase64DataUrl(compressed, 'properties');
+          if (url) uploadedUrls.push(url);
+        } else {
+          uploadedUrls.push(compressed);
+        }
+      }
+
+      // Silently replace temporary previews with final server URLs
       setImagesList(prev => {
         const nextList = [...prev];
         let compIdx = 0;
         for (let i = 0; i < nextList.length; i++) {
-          if (instantPreviews.includes(nextList[i]) && compressedList[compIdx]) {
-            nextList[i] = compressedList[compIdx];
+          if (instantPreviews.includes(nextList[i]) && uploadedUrls[compIdx]) {
+            nextList[i] = uploadedUrls[compIdx];
             compIdx++;
           }
         }
@@ -278,7 +292,13 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const handleAddImage = async () => {
     if (!newImgInput) return;
     const watermarked = await addWatermarkToImage(newImgInput);
-    setImagesList(prev => [...prev, watermarked]);
+    if (watermarked) {
+      // Upload lên server -> URL public
+      const url = isBase64DataUrl(watermarked)
+        ? await uploadBase64DataUrl(watermarked, 'properties')
+        : watermarked;
+      if (url) setImagesList(prev => [...prev, url]);
+    }
     setNewImgInput('');
   };
 
@@ -311,62 +331,93 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
     setLoading(true);
 
+    // Chuẩn hóa ảnh: upload mọi base64 còn sót lên server trước khi lưu tin
     const priceNum = parseFloat(price) || 0;
     const areaNum = parseFloat(area) || 0;
+    let payload: any;
+    try {
+      const finalImages: string[] = [];
+      for (const img of imagesList) {
+        if (isBase64DataUrl(img)) {
+          const url = await uploadBase64DataUrl(img, 'properties');
+          if (url) finalImages.push(url);
+        } else {
+          finalImages.push(img);
+        }
+      }
+      let finalSoDo = soDoImage;
+      if (isBase64DataUrl(finalSoDo)) {
+        finalSoDo = (await uploadBase64DataUrl(finalSoDo, 'sodo')) || finalSoDo;
+      }
+      let finalSoDoRedacted = soDoRedactedImage;
+      if (isBase64DataUrl(finalSoDoRedacted)) {
+        finalSoDoRedacted = (await uploadBase64DataUrl(finalSoDoRedacted, 'sodo')) || finalSoDoRedacted;
+      }
+      let finalBrokerCert = brokerCertImage;
+      if (isBase64DataUrl(finalBrokerCert)) {
+        finalBrokerCert = (await uploadBase64DataUrl(finalBrokerCert, 'certificates')) || finalBrokerCert;
+      }
 
-    // Check for Duplicate Listings
-    const isDuplicateImage = existingProperties.some(p => p.images && imagesList.some(img => p.images.includes(img)));
-    const isDuplicateSpecs = existingProperties.some(p => 
-      p.project === project && 
-      p.subdivision?.toLowerCase() === subdivision.toLowerCase() && 
-      Math.abs(p.area - areaNum) < 0.5 && 
-      Math.abs(p.price - priceNum) < 0.1
-    );
-
-    if (isDuplicateImage || isDuplicateSpecs) {
-      setLoading(false);
-      setDuplicateWarning(
-        `CẢNH BÁO TRÙNG TIN: ${
-          isDuplicateImage 
-            ? 'Hình ảnh bất động sản này đã tồn tại trong hệ thống!' 
-            : `Thông số căn (Dự án: ${project.toUpperCase()}, Phân khu: ${subdivision}, Diện tích: ${areaNum}m², Giá: ${priceNum}) đã có người đăng!`
-        } Vui lòng kiểm tra lại thông tin để đảm bảo tính minh bạch.`
+      // Check for Duplicate Listings
+      const isDuplicateImage = existingProperties.some(p => p.images && finalImages.some(img => p.images.includes(img)));
+      const isDuplicateSpecs = existingProperties.some(p => 
+        p.project === project && 
+        p.subdivision?.toLowerCase() === subdivision.toLowerCase() && 
+        Math.abs(p.area - areaNum) < 0.5 && 
+        Math.abs(p.price - priceNum) < 0.1
       );
+
+      if (isDuplicateImage || isDuplicateSpecs) {
+        setLoading(false);
+        setDuplicateWarning(
+          `CẢNH BÁO TRÙNG TIN: ${
+            isDuplicateImage 
+              ? 'Hình ảnh bất động sản này đã tồn tại trong hệ thống!' 
+              : `Thông số căn (Dự án: ${project.toUpperCase()}, Phân khu: ${subdivision}, Diện tích: ${areaNum}m², Giá: ${priceNum}) đã có người đăng!`
+          } Vui lòng kiểm tra lại thông tin để đảm bảo tính minh bạch.`
+        );
+        return;
+      }
+
+      payload = {
+        userId: user?.id || `usr-${Date.now()}`,
+        userPhone: user?.phone || sellerPhone,
+        userEmail: user?.email,
+        title,
+        type,
+        project,
+        category,
+        subdivision,
+        price: priceNum,
+        priceDisplay: type === 'sale' ? `${priceNum} Tỷ` : `${priceNum} Tr/tháng`,
+        area: areaNum,
+        bedrooms: parseInt(bedrooms) || 1,
+        bathrooms: parseInt(bathrooms) || 1,
+        direction,
+        furniture,
+        completionStatus,
+        completionDetail,
+        furnitureDetail,
+        legal,
+        address,
+        description: description || `Bất động sản vị trí đẹp tại ${project.toUpperCase()}, phù hợp để ở hoặc đầu tư kinh doanh.`,
+        images: finalImages.length > 0 ? finalImages : ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'],
+        sellerName: sellerName || user?.name || 'Chủ nhà chính chủ',
+        sellerPhone: sellerPhone.trim() || user?.phone || '',
+        sellerRole,
+        soDoImage: sellerRole === 'owner' ? finalSoDo : undefined,
+        soDoRedactedImage: sellerRole === 'owner' ? (finalSoDoRedacted || finalSoDo) : undefined,
+        approved: true, // Display live immediately on website
+        status: 'approved',
+        approvalStatus: 'approved'
+      };
+
+    } catch (uploadErr: any) {
+      console.error('Lỗi upload ảnh khi đăng tin:', uploadErr);
+      alert('Lỗi khi xử lý ảnh: ' + (uploadErr?.message || 'Không thể upload ảnh lên máy chủ. Vui lòng thử lại!'));
+      setLoading(false);
       return;
     }
-
-    const payload = {
-      userId: user?.id || `usr-${Date.now()}`,
-      userPhone: user?.phone || sellerPhone,
-      userEmail: user?.email,
-      title,
-      type,
-      project,
-      category,
-      subdivision,
-      price: priceNum,
-      priceDisplay: type === 'sale' ? `${priceNum} Tỷ` : `${priceNum} Tr/tháng`,
-      area: areaNum,
-      bedrooms: parseInt(bedrooms) || 1,
-      bathrooms: parseInt(bathrooms) || 1,
-      direction,
-      furniture,
-      completionStatus,
-      completionDetail,
-      furnitureDetail,
-      legal,
-      address,
-      description: description || `Bất động sản vị trí đẹp tại ${project.toUpperCase()}, phù hợp để ở hoặc đầu tư kinh doanh.`,
-      images: imagesList.length > 0 ? imagesList : ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'],
-      sellerName: sellerName || user?.name || 'Chủ nhà chính chủ',
-      sellerPhone: sellerPhone.trim() || user?.phone || '',
-      sellerRole,
-      soDoImage: sellerRole === 'owner' ? soDoImage : undefined,
-      soDoRedactedImage: sellerRole === 'owner' ? (soDoRedactedImage || soDoImage) : undefined,
-      approved: true, // Display live immediately on website
-      status: 'approved',
-      approvalStatus: 'approved'
-    };
 
     if (!payload.sellerPhone) {
       alert('Vui lòng nhập số điện thoại liên hệ của bạn để khách mua/thuê có thể liên hệ trực tiếp!');
@@ -883,7 +934,13 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         setServiceImg(createInstantPreview(file));
                         try {
                           const watermarked = await addWatermarkToImage(file);
-                          if (watermarked) setServiceImg(watermarked);
+                          if (watermarked) {
+                            // Upload lên server để lưu URL thay vì base64
+                            const url = isBase64DataUrl(watermarked)
+                              ? await uploadBase64DataUrl(watermarked, 'services')
+                              : watermarked;
+                            if (url) setServiceImg(url);
+                          }
                         } catch (err) {
                           console.error('Lỗi khi tải ảnh dịch vụ:', err);
                         } finally {

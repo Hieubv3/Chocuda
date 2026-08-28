@@ -614,19 +614,19 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Mobile Drawer Navigation */}
+      {/* Mobile Drawer Navigation - compact horizontal grid */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-6 space-y-2 shadow-lg">
+        <div className="lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 pt-2 pb-3 shadow-lg">
           
-          {/* Mobile Login / User Profile CTA */}
+          {/* Mobile Login / User Profile CTA - compact */}
           {currentUser ? (
-            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/80 rounded-2xl border border-emerald-200 dark:border-emerald-800 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">
+            <div className="mb-1.5 p-2 bg-emerald-50 dark:bg-emerald-950/80 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center justify-between">
+              <div className="flex items-center space-x-2 min-w-0">
+                <div className="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-[11px] shrink-0">
                   {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : currentUser?.email ? currentUser.email.charAt(0).toUpperCase() : 'U'}
                 </div>
-                <div>
-                  <p className="text-xs font-extrabold text-slate-900 dark:text-white">{currentUser?.name || currentUser?.email || 'Cư Dân'}</p>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-extrabold text-slate-900 dark:text-white truncate">{currentUser?.name || currentUser?.email || 'Cư Dân'}</p>
                   <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
                     {currentUser?.role === 'admin' ? '👑 Admin' : currentUser?.role === 'sale' ? '💼 Môi Giới' : '🏠 Chủ Nhà'}
                   </p>
@@ -637,7 +637,7 @@ export const Header: React.FC<HeaderProps> = ({
                   setCurrentTab(currentUser?.role === 'admin' ? 'admin' : 'user_dashboard');
                   setMobileMenuOpen(false);
                 }}
-                className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-bold"
+                className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-[11px] font-bold shrink-0"
               >
                 Quản Lý
               </button>
@@ -648,53 +648,56 @@ export const Header: React.FC<HeaderProps> = ({
                 setMobileMenuOpen(false);
                 onOpenAuth();
               }}
-              className="w-full p-3 bg-amber-500 text-slate-950 font-black text-xs rounded-2xl flex items-center justify-center gap-2 shadow-md uppercase tracking-wider"
+              className="w-full mb-1.5 p-2 bg-amber-500 text-slate-950 font-black text-[11px] rounded-xl flex items-center justify-center gap-1.5 shadow-md uppercase tracking-wider"
             >
-              <User className="w-4 h-4" />
-              <span>ĐĂNG NHẬP / ĐĂNG KÝ TÀI KHOẢN</span>
+              <User className="w-3.5 h-3.5" />
+              <span>ĐĂNG NHẬP / ĐĂNG KÝ</span>
             </button>
           )}
 
-          {navItems.map((item) => (
+          {/* Nav items - horizontal grid, compact */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setCurrentTab(item.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`px-1.5 py-2 rounded-lg text-xs font-bold text-center transition ${
+                  currentTab === item.id
+                    ? 'bg-emerald-600 text-white font-extrabold'
+                    : 'bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+            {currentUser && (
+              <button
+                onClick={() => {
+                  setCurrentTab('user_dashboard');
+                  setMobileMenuOpen(false);
+                }}
+                className="px-1.5 py-2 rounded-lg text-xs font-bold text-center bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center gap-1"
+              >
+                <Zap className="w-3.5 h-3.5 shrink-0" /> Quản Lý
+              </button>
+            )}
             <button
-              key={item.id}
               onClick={() => {
-                setCurrentTab(item.id);
+                if (!currentUser) {
+                  onOpenAuth();
+                }
+                setCurrentTab('post');
                 setMobileMenuOpen(false);
               }}
-              className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold ${
-                currentTab === item.id
-                  ? 'bg-emerald-600 text-white font-extrabold'
-                  : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
+              className="px-1.5 py-2 rounded-lg text-xs font-bold text-center bg-emerald-600 text-white flex items-center justify-center gap-1"
             >
-              {item.label}
+              <PlusCircle className="w-3.5 h-3.5 shrink-0" />
+              {t.nav.postProperty}
             </button>
-          ))}
-          {currentUser && (
-            <button
-              onClick={() => {
-                setCurrentTab('user_dashboard');
-                setMobileMenuOpen(false);
-              }}
-              className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center"
-            >
-              <Zap className="w-4 h-4 mr-2" /> Quản Lý & Đẩy Tin Đăng
-            </button>
-          )}
-          <button
-            onClick={() => {
-              if (!currentUser) {
-                onOpenAuth();
-              }
-              setCurrentTab('post');
-              setMobileMenuOpen(false);
-            }}
-            className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold bg-emerald-600 text-white flex items-center"
-          >
-            <PlusCircle className="w-4 h-4 mr-2" />
-            {t.nav.postProperty}
-          </button>
+          </div>
         </div>
       )}
     </header>

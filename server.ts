@@ -1,6 +1,8 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import multer from "multer";
+import crypto from "crypto";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import nodemailer from "nodemailer";
@@ -15,6 +17,110 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
+
+// ==========================================
+// IMAGE UPLOAD SYSTEM (Chuẩn hóa lưu trữ ảnh)
+// Ảnh được lưu thành file vật lý trong /uploads,
+// trả về URL public thay vì base64 trong localStorage.
+// ==========================================
+const UPLOADS_DIR = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
+// Serve uploaded files as static assets
+app.use("/uploads", express.static(UPLOADS_DIR, {
+  maxAge: "30d",
+  immutable: true
+}));
+
+const ALLOWED_MIME = new Set([
+  "image/jpeg", "image/png", "image/webp", "image/gif",
+  "image/bmp", "image/avif", "image/svg+xml"
+]);
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, "") || ".jpg";
+      const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".avif", ".svg"].includes(ext) ? ext : ".jpg";
+      const name = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}${safeExt}`;
+      cb(null, name);
+    }
+  }),
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max — client tự nén ảnh > 10MB xuống ≤ 10MB trước khi gửi
+  fileFilter: (_req, file, cb) => {
+    if (ALLOWED_MIME.has(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Chỉ chấp nhận file ảnh (JPG, PNG, WEBP, GIF, BMP, AVIF, SVG)!") as any);
+    }
+  }
+});
+
+// POST /api/upload - Upload 1 hoặc nhiều ảnh, trả về mảng URL
+app.post("/api/upload", upload.array("images", 20), (req, res) => {
+  const files = (req.files as Express.Multer.File[]) || [];
+  if (files.length === 0) {
+    return res.status(400).json({ success: false, error: "Không có file ảnh nào được gửi lên!" });
+  }
+  const urls = files.map(f => `/uploads/${f.filename}`);
+  res.json({ success: true, urls, message: `Đã upload thành công ${urls.length} ảnh.` });
+});
+
+// POST /api/upload/base64 - Nhận base64 data URL, lưu thành file, trả URL
+app.post("/api/upload/base64", (req, res) => {
+  const { dataUrl, folder } = req.body || {};
+  if (!dataUrl || typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/")) {
+    return res.status(400).json({ success: false, error: "Dữ liệu ảnh base64 không hợp lệ!" });
+  }
+  try {
+    const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+    if (!match) {
+      return res.status(400).json({ success: false, error: "Không thể phân tích dữ liệu ảnh!" });
+    }
+    const mime = match[1];
+    const base64Data = match[2];
+    const extMap: Record<string, string> = {
+      "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp",
+      "image/gif": ".gif", "image/bmp": ".bmp", "image/avif": ".avif", "image/svg+xml": ".svg"
+    };
+    const ext = extMap[mime] || ".jpg";
+    const subDir = folder && /^[a-z0-9-_]+$/i.test(String(folder)) ? String(folder) : "general";
+    const dir = path.join(UPLOADS_DIR, subDir);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const filename = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}${ext}`;
+    const filePath = path.join(dir, filename);
+    fs.writeFileSync(filePath, Buffer.from(base64Data, "base64"));
+    res.json({ success: true, url: `/uploads/${subDir}/${filename}` });
+  } catch (err: any) {
+    console.error("[Upload base64] Error:", err);
+    res.status(500).json({ success: false, error: "Lỗi lưu ảnh trên máy chủ: " + (err.message || "") });
+  }
+});
+
+// DELETE /api/upload - Xóa file ảnh đã upload (dọn dẹp khi xóa tin)
+app.delete("/api/upload", (req, res) => {
+  const { url } = req.body || {};
+  if (!url || typeof url !== "string" || !url.startsWith("/uploads/")) {
+    return res.status(400).json({ success: false, error: "URL ảnh không hợp lệ!" });
+  }
+  try {
+    const relPath = url.replace(/^\/uploads\//, "");
+    const safePath = path.normalize(relPath);
+    if (safePath.includes("..")) {
+      return res.status(400).json({ success: false, error: "Đường dẫn không hợp lệ!" });
+    }
+    const fullPath = path.join(UPLOADS_DIR, safePath);
+    if (fs.existsSync(fullPath)) {
+      fs.unlinkSync(fullPath);
+    }
+    res.json({ success: true, message: "Đã xóa ảnh." });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: "Lỗi xóa ảnh: " + (err.message || "") });
+  }
+});
 
 // Express JSON Body Parser & Payload Error Middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
