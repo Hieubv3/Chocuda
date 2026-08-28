@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { User, Language } from '../types';
 import { ShieldCheck, Lock, User as UserIcon, KeyRound, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
-import logoImg from '../assets/images/chocudan24h_custom_logo_1785384117746.jpg';
 
 interface AdminLoginPageProps {
   language: Language;
@@ -20,28 +19,35 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAdminSubmit = (e: React.FormEvent) => {
+  const handleAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (password.length < 4) {
-        setError('Mật khẩu không đúng. Vui lòng thử lại.');
-        setIsLoading(false);
-        return;
+    try {
+      // SECURITY: Xác thực qua server thay vì tự tạo admin session phía client.
+      // Endpoint /api/auth/login kiểm tra email + password thật (bcrypt) và trả về JWT token.
+      const loginEmail = username.trim().toLowerCase() === 'admin'
+        ? 'admin@chocudan24h.com'
+        : username.trim().toLowerCase();
+
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, password })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản và mật khẩu!');
       }
 
-      const loggedInAdmin: User = {
-        id: `user-admin-${Date.now()}`,
-        name: role === 'admin' ? 'Chợ Cư Dân 24h (Admin Tổng)' : 'Quản Lý Cấp Cao',
-        email: 'hotro.chocudan24h@gmail.com',
-        phone: '0868.499.929',
-        role: role,
-        avatar: logoImg,
-        provider: 'local',
-        balance: 10000000
-      };
+      const loggedInAdmin: User = data.user;
+
+      // Lưu JWT token để gửi kèm các request admin cần xác thực
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token);
+      }
 
       try {
         localStorage.setItem('hb_user', JSON.stringify(loggedInAdmin));
@@ -52,7 +58,10 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
 
       setIsLoading(false);
       onLoginSuccess(loggedInAdmin);
-    }, 400);
+    } catch (err: any) {
+      setIsLoading(false);
+      setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+    }
   };
 
   return (

@@ -79,7 +79,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Background Image Overlay — giảm opacity */}
         <div className="absolute inset-0 opacity-20">
           <img
-            src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1800&q=80"
+            src="/images/hero-placeholder.svg"
             alt="Vinhomes"
             className="w-full h-full object-cover"
           />
@@ -119,7 +119,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative h-16 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
-                    src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
+                    src="/images/hero-placeholder.svg"
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -144,7 +144,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative h-16 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
-                    src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
+                    src="/images/hero-placeholder.svg"
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -162,7 +162,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative h-16 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
-                    src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"
+                    src="/images/hero-placeholder.svg"
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -180,7 +180,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative h-16 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
-                    src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80"
+                    src="/images/hero-placeholder.svg"
                     alt="Tuyển Dụng Việc Làm"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -208,7 +208,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img
-                    src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=300&q=80"
+                    src="/images/hero-placeholder.svg"
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
@@ -236,7 +236,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img
-                    src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=300&q=80"
+                    src="/images/hero-placeholder.svg"
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
@@ -257,7 +257,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img
-                    src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=80"
+                    src="/images/hero-placeholder.svg"
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
@@ -278,7 +278,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img
-                    src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=300&q=80"
+                    src="/images/hero-placeholder.svg"
                     alt="Việc Làm"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"

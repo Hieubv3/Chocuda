@@ -17,9 +17,9 @@
       "address": "Phân khu Chà Là, Vinhomes Ocean Park 2, Hưng Yên",
       "description": "Căn Shophouse Chà Là vị trí cực kỳ đắc địa, ngay gần cổng vào dự án và cụm trường học Vinschool. Mặt tiền 5m, xây dựng 4.5 tầng, diện tích sàn 285m2. Rất thích hợp vừa ở vừa kinh doanh nhà thuốc, cà phê, spa hoặc văn phòng đại diện.",
       "images": [
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80"
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg"
       ],
       "featured": true,
       "status": "approved",
@@ -48,9 +48,9 @@
       "address": "Phân khu San Hô, Vinhomes Ocean Park 2",
       "description": "Siêu phẩm Biệt thự Song Lập San Hô hoàn thiện nội thất siêu cao cấp xa xỉ. Đường trước nhà 13m thoáng mát, cách biển hồ Wave Park chỉ 80m. Chủ nhà chuyển công tác nước ngoài cần nhượng lại giá tốt cho người thiện chí.",
       "images": [
-        "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1000&q=80"
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg"
       ],
       "featured": true,
       "status": "approved",
@@ -78,8 +78,8 @@
       "address": "Tòa Masteri / Căn hộ OCP2, Hưng Yên",
       "description": "Căn hộ 2 phòng ngủ thiết kế hiện đại, đầy đủ thiết bị điện tử, sofa, giường tủ, điều hòa âm trần. Chỉ việc xách vali vào ở. Ban công view trực diện công viên nội khu rợp bóng cây xanh.",
       "images": [
-        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80"
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg"
       ],
       "featured": true,
       "status": "approved",
@@ -106,8 +106,8 @@
       "address": "Phân khu Phố Biển, Vinhomes Ocean Park 3",
       "description": "Căn liền kề Phố Biển OCP3 thiết kế 5 tầng tinh tế, mặt tiền 5m. Đi bộ 3 phút ra Vịnh biển Paradise Bay 12ha. Giá cắt lỗ cực hời so với hợp đồng chủ đầu tư.",
       "images": [
-        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1000&q=80"
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg"
       ],
       "featured": true,
       "status": "approved",
@@ -135,8 +135,8 @@
       "address": "Tòa Căn hộ Thời Đại, Vinhomes Ocean Park 3",
       "description": "Căn hộ Studio cực kỳ xinh xắn thích hợp người đi làm hoặc vợ chồng trẻ. Nội thất đồng bộ phong cách Scandinavian ấm cúng. Giá thuê đã bao gồm phí quản lý 1 năm.",
       "images": [
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1000&q=80"
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg"
       ],
       "featured": false,
       "status": "approved",
@@ -163,8 +163,8 @@
       "address": "Phân khu Đảo Sinh Thái, Siêu dự án Vinhomes Hạ Long Xanh",
       "description": "Suất biệt thự đơn lập VIP bậc nhất dự án Hạ Long Xanh. Sở hữu 3 mặt giáp biển & bến du thuyền riêng. Tiềm năng tăng giá X2, X3 trong 3 năm tới khi hạ tầng hoàn thiện.",
       "images": [
-        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1000&q=80"
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg"
       ],
       "featured": true,
       "status": "approved",
@@ -192,8 +192,8 @@
       "address": "Phân khu Chà Là, Vinhomes Ocean Park 2",
       "description": "Mặt bằng kinh doanh tầng 1 shophouse thông sàn 80m2, lối đi riêng độc lập. Vị trí góc 2 mặt tiền sầm uất, đỗ xe ô tô thoải mái. Rất thích hợp mở siêu thị mini, tiệm bánh, phòng khám, văn phòng chuyển phát.",
       "images": [
-        "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80"
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg"
       ],
       "featured": true,
       "status": "approved",
@@ -221,8 +221,8 @@
       "address": "Tòa S2.18, Vinhomes Ocean Park 1 (Gia Lâm)",
       "description": "Căn hộ 1 phòng ngủ cộng 1 thiết kế đa năng, full đồ xịn sò chỉ việc vào ở. Tòa ngay cạnh biển hồ nước ngọt 24.5ha, miễn phí bể bơi nội khu.",
       "images": [
-        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80"
+        "/images/news-placeholder.svg",
+        "/images/news-placeholder.svg"
       ],
       "featured": false,
       "status": "approved",
@@ -243,8 +243,8 @@
       "priceRange": "3.5 tỷ - 45 tỷ VNĐ",
       "status": "Đã hoàn thiện & Bàn giao nhận nhà ngay",
       "description": "Tên thương mại: Vinhomes Ocean Park 2 - The Empire (Tên thường gọi: Vin Ocean Park 2, Ocean City Hưng Yên). Siêu quần thể đô thị biển hàng đầu miền Bắc sở hữu Tổ hợp công viên sóng nhân tạo Royal Wave Park 18 ha & Mega Grand World Hà Nội.",
-      "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
-      "masterplanUrl": "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80",
+      "image": "/images/news-placeholder.svg",
+      "masterplanUrl": "/images/news-placeholder.svg",
       "subdivisions": [
         "Chà Là",
         "Cọ Xanh",
@@ -272,8 +272,8 @@
       "priceRange": "4.2 tỷ - 38 tỷ VNĐ",
       "status": "Đang bàn giao & Hoàn thiện nội thất",
       "description": "Tên thương mại: Vinhomes Ocean Park 3 - Grand Park (Tên thường gọi: Vin Ocean Park 3, Vịnh biển thiên đường Hưng Yên). Mảnh ghép hoàn hảo của Siêu quần thể 1.200ha với Vịnh biển Paradise Bay 12 ha và công viên nước Aqua Bay độc đáo.",
-      "image": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
-      "masterplanUrl": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+      "image": "/images/news-placeholder.svg",
+      "masterplanUrl": "/images/news-placeholder.svg",
       "subdivisions": [
         "Phố Biển",
         "Vịnh Thiên Đường",
@@ -299,8 +299,8 @@
       "priceRange": "1.2 tỷ - 32 tỷ VNĐ",
       "status": "Đã hoàn thiện & Cư dân về ở 95%",
       "description": "Tên thương mại: Vinhomes Ocean Park 1 (Tên thường gọi: Vin Ocean Park 1, Thành phố Biển hồ Singapore). Biển hồ nước mặn Crystal Lagoon 6.1ha & Hồ Ngọc Trai 24.5ha trải cát trắng mịn tạo không gian nghỉ dưỡng ngay trong lòng Thủ đô.",
-      "image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
-      "masterplanUrl": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      "image": "/images/news-placeholder.svg",
+      "masterplanUrl": "/images/news-placeholder.svg",
       "subdivisions": [
         "Sapphire 1 & 2",
         "Zen Park",
@@ -327,8 +327,8 @@
       "priceRange": "Đang cập nhật đợt 1",
       "status": "Đang triển khai hạ tầng & quy hoạch tổng thể 10 tỷ USD",
       "description": "Tên thương mại chính thức: Vinhomes Hạ Long Xanh (Khu đô thị phức hợp Hạ Long Xanh) - Tên thường gọi: Vin Hạ Long Xanh, Siêu đô thị Hạ Long Xanh. Dự án đại đô thị sinh thái ven biển lớn nhất Quảng Ninh với bến du thuyền 5 sao & sân Golf 36 hố.",
-      "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "image": "/images/news-placeholder.svg",
+      "masterplanUrl": "/images/news-placeholder.svg",
       "subdivisions": [
         "Phân khu Hoàng Tân",
         "Phân khu Hà An",
@@ -353,8 +353,8 @@
       "priceRange": "Dự kiến công bố đợt 1",
       "status": "Đang san lấp & hoàn thiện hạ tầng kỹ thuật",
       "description": "Tên thương mại chính thức: Vinhomes Green Paradise Cần Giờ (Vinhomes Long Beach Cần Giờ) - Tên thường gọi: Vin Cần Giờ, Đô thị lấn biển Cần Giờ. Siêu đô thị lấn biển duy nhất tại TP.HCM với tổng vốn hơn 10 tỷ USD sở hữu Biển hồ nhân tạo Lagoon 400ha.",
-      "image": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
-      "masterplanUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "image": "/images/news-placeholder.svg",
+      "masterplanUrl": "/images/news-placeholder.svg",
       "subdivisions": [
         "Phân khu A (Sinh thái nghỉ dưỡng)",
         "Phân khu B (Thương mại & VinWonders)",
@@ -380,8 +380,8 @@
       "priceRange": "Dự kiến 3.8 tỷ - 18 tỷ VNĐ",
       "status": "Đang giải phóng mặt bằng & thi công hạ tầng",
       "description": "Tên thương mại chính thức: Vinhomes Tân Mỹ - Hậu Nghĩa (Vinhomes Hậu Nghĩa Đức Hòa) - Tên thường gọi: Vin Hậu Nghĩa, Vin Đức Hòa, Vinhomes Long An. Dự án đô thị kiểu mẫu cửa ngõ Tây Bắc TP.HCM kết nối trực tiếp Vành Đai 3, Vành Đai 4.",
-      "image": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80",
-      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "image": "/images/news-placeholder.svg",
+      "masterplanUrl": "/images/news-placeholder.svg",
       "subdivisions": [
         "Phân khu Biệt thự Sinh thái",
         "Phân khu Nhà phố thương mại Shophouse",
@@ -405,8 +405,8 @@
       "priceRange": "Đang cập nhật quy hoạch",
       "status": "Đang triển khai quy hoạch phân khu 1/500",
       "description": "Tên thương mại chính thức: Vinhomes Green City Hóc Môn (Khu đô thị Đại học Quốc tế Hóc Môn do Vingroup đầu tư) - Tên thường gọi: Vin Hóc Môn, Đô thị sinh thái Hóc Môn. Siêu dự án phía Tây Bắc TP.HCM sở hữu Làng Đại học VinUni cơ sở 2.",
-      "image": "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=1200&q=80",
-      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "image": "/images/news-placeholder.svg",
+      "masterplanUrl": "/images/news-placeholder.svg",
       "subdivisions": [
         "Phân khu Đô thị Sinh thái",
         "Phân khu Làng Đại học Quốc tế",
@@ -430,8 +430,8 @@
       "priceRange": "Dự kiến công bố đợt 1",
       "status": "Đang thi công hạ tầng giao thông & bến du thuyền",
       "description": "Tên thương mại chính thức: Vinhomes Làng Vân Đà Nẵng (Khu du lịch sinh thái nghỉ dưỡng Làng Vân) - Tên thường gọi: Vin Làng Vân, Siêu nghỉ dưỡng Làng Vân Đà Nẵng. Kỳ quan nghỉ dưỡng tọa sơn hướng thủy lớn nhất miền Trung gần Cảng nước sâu Liên Chiểu.",
-      "image": "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80",
-      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "image": "/images/news-placeholder.svg",
+      "masterplanUrl": "/images/news-placeholder.svg",
       "subdivisions": [
         "Phân khu Biệt thự biển Đồi Hải Vân",
         "Phân khu Căn hộ Condotel cao cấp",
@@ -456,8 +456,8 @@
       "priceRange": "1.5 tỷ - 25 tỷ VNĐ",
       "status": "Đã hoàn thiện & Cư dân đông đúc",
       "description": "Thành phố thông minh quốc tế tích hợp hệ sinh thái AI - IoT vận hành hiện đại hàng đầu Thủ đô, liền kề Đại lộ Thăng Long và tuyến Metro số 5, 6, 7.",
-      "image": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80",
-      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "image": "/images/news-placeholder.svg",
+      "masterplanUrl": "/images/news-placeholder.svg",
       "subdivisions": [
         "Sapphire Parkville",
         "Tonkin",
@@ -761,8 +761,8 @@
       "amount": 6000000,
       "paymentCode": "UPTIN-101-999",
       "status": "approved",
-      "createdAt": "2026-08-27T09:42:28.126Z",
-      "approvedAt": "2026-08-27T10:42:28.126Z",
+      "createdAt": "2026-08-27T14:41:04.633Z",
+      "approvedAt": "2026-08-27T15:41:04.633Z",
       "approvedBy": "vietqr_gateway_webhook"
     }
   ],
@@ -1184,8 +1184,8 @@
       "ownerZalo": "0988123456",
       "storeName": "Nông Sản Sạch & Trái Cây Nhập Khẩu Mai Farm - San Hô 2",
       "slug": "mai-farm-san-ho-2",
-      "logoUrl": "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80",
-      "bannerUrl": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80",
+      "logoUrl": "/images/news-placeholder.svg",
+      "bannerUrl": "/images/news-placeholder.svg",
       "category": "Thực Phẩm & Nông Sản Sạch",
       "project": "ocean-park-2",
       "subdivision": "San Hô 2",
@@ -1223,7 +1223,7 @@
           "unit": "hộp 1kg",
           "stockQuantity": 45,
           "images": [
-            "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80"
+            "/images/news-placeholder.svg"
           ],
           "description": "Táo Envy nhập khẩu trực tiếp từ Mỹ, giòn ngọt đậm đà, đóng hộp sang trọng phục vụ cư dân.",
           "isAvailable": true,
@@ -1241,7 +1241,7 @@
           "unit": "chùm",
           "stockQuantity": 18,
           "images": [
-            "https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=600&q=80"
+            "/images/news-placeholder.svg"
           ],
           "description": "Nho Mẫu Đơn giòn ngọt ngào thơm mùi sữa, trái to tròn mọng nước, giao tận giường cư dân.",
           "isAvailable": true,
@@ -1258,7 +1258,7 @@
           "unit": "túi 3kg",
           "stockQuantity": 30,
           "images": [
-            "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80"
+            "/images/news-placeholder.svg"
           ],
           "description": "Bao gồm Cải kale, Cà chua cherry, Dưa leo baby, Ớt chuông đà lạt trồng chuẩn VietGAP.",
           "isAvailable": true,
@@ -1274,8 +1274,8 @@
       "ownerZalo": "0868499929",
       "storeName": "Nội Thất & Thiết Bị Điện Thông Minh Bùi Gia - Chà Là 1",
       "slug": "bui-gia-noi-that-smart-home",
-      "logoUrl": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80",
-      "bannerUrl": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
+      "logoUrl": "/images/news-placeholder.svg",
+      "bannerUrl": "/images/news-placeholder.svg",
       "category": "Nội Thất & Thi Công",
       "project": "ocean-park-2",
       "subdivision": "Chà Là 1",
@@ -1313,7 +1313,7 @@
           "unit": "bộ",
           "stockQuantity": 12,
           "images": [
-            "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&q=80"
+            "/images/news-placeholder.svg"
           ],
           "description": "Mở cửa bằng Nhận diện khuôn mặt 3D, Vân tay FPO, Thẻ từ & App thoại. Hỗ trợ miến phí công lắp đặt tại Vinhomes.",
           "isAvailable": true,
@@ -1331,7 +1331,7 @@
           "unit": "gói trọn gói",
           "stockQuantity": 5,
           "images": [
-            "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80"
+            "/images/news-placeholder.svg"
           ],
           "description": "Trọn gói vật tư & thi công hệ thống đèn ray nam châm đổi màu 3 chế độ theo tâm trạng cho căn hộ Vinhomes.",
           "isAvailable": true,
@@ -1347,8 +1347,8 @@
       "ownerZalo": "0977112233",
       "storeName": "Tiệm Giặt Sấy Lấy Ngay Phương Clean - S1.05",
       "slug": "tiem-giat-say-phuong-clean",
-      "logoUrl": "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=400&q=80",
-      "bannerUrl": "https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=1200&q=80",
+      "logoUrl": "/images/news-placeholder.svg",
+      "bannerUrl": "/images/news-placeholder.svg",
       "category": "Giặt Là & Chăm Sóc Nhà",
       "project": "ocean-park-1",
       "subdivision": "S1.05",
@@ -2571,5 +2571,5 @@
       "read": false
     }
   ],
-  "savedAt": "2026-08-28T12:58:59.178Z"
+  "savedAt": "2026-08-28T16:02:34.724Z"
 }

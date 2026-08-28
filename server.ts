@@ -1,6 +1,8 @@
+import 'dotenv/config';
 import express from "express";
 import path from "path";
 import fs from "fs";
+import crypto from "crypto";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import nodemailer from "nodemailer";
@@ -19,7 +21,12 @@ const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 // Security Configuration
-const JWT_SECRET = process.env.JWT_SECRET || 'chocudan24h-jwt-secret-2026-change-in-production';
+// SECURITY: JWT_SECRET phải được cấu hình qua biến môi trường.
+// - Production: bắt buộc phải có, không được dùng fallback công khai.
+// - Dev: fallback ngẫu nhiên mỗi lần khởi động (không phải giá trị hard-code công khai).
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production'
+  ? (() => { throw new Error('JWT_SECRET phải được cấu hình trong biến môi trường khi chạy production!'); })()
+  : crypto.randomBytes(48).toString('hex'));
 const JWT_EXPIRES_IN = '7d';
 const BCRYPT_SALT_ROUNDS = 10;
 
@@ -83,8 +90,11 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use(express.json({ limit: "100mb" }));
-app.use(express.urlencoded({ limit: "100mb", extended: true }));
+// SECURITY: Gắn rate limiter toàn cục cho toàn bộ API để chống spam/tấn công tải
+app.use('/api', apiLimiter);
+
+app.use(express.json({ limit: "15mb" }));
+app.use(express.urlencoded({ limit: "15mb", extended: true }));
 
 // Express JSON Body Parser & Payload Error Middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -1609,55 +1619,27 @@ app.post("/api/auth/facebook", async (req, res) => {
 
 // Zalo Account Authentication API (with JWT)
 app.post("/api/auth/zalo", async (req, res) => {
-  const { phone, name, avatar, zaloId } = req.body;
-
-  const userPhone = phone ? String(phone).trim() : '0868499929';
-  const userEmail = `zalo_${userPhone.replace(/\D/g, '')}@chocudan24h.com`;
-
-  let user = usersStore.find(u => u.phone === userPhone || u.email === userEmail);
-
-  if (!user) {
-    user = {
-      id: zaloId ? `user-zalo-${zaloId}` : `user-zalo-${Date.now()}`,
-      name: name || 'Cư dân Zalo',
-      email: userEmail,
-      phone: userPhone,
-      avatar: avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name || 'Zalo User')}`,
-      role: 'visitor',
-      provider: 'zalo',
-      upTinCredits: 20,
-      tier: 'thuong',
-      balance: 0,
-      registeredAt: new Date().toISOString()
-    };
-    usersStore.push(user);
-  } else {
-    if (name) user.name = String(name);
-    if (avatar) user.avatar = String(avatar);
-    user.provider = 'zalo';
-  }
-
-  saveDataStore();
-
-  // Generate JWT token
-  const token = generateToken(user);
-
-  const { password: _, ...userWithoutPassword } = user;
-  return res.json({
-    message: "Đăng nhập bằng Zalo thành công!",
-    user: userWithoutPassword,
-    token
+  // SECURITY: Đăng nhập Zalo hiện đang bị TẠM KHÓA.
+  // Lý do: endpoint cũ nhận số điện thoại/name từ client mà không xác thực token Zalo
+  // server-side, cho phép kẻ tấn công giả mạo tài khoản bằng số điện thoại bất kỳ.
+  // Để bật lại, cần tích hợp Zalo Login API và xác thực access_token server-side
+  // (gọi https://graph.zalo.me/v2.0/me với access_token) trước khi tạo/đăng nhập user.
+  return res.status(503).json({
+    success: false,
+    error: 'Đăng nhập Zalo đang tạm khóa để bảo trì bảo mật. Vui lòng dùng Email/Mật khẩu hoặc Google để đăng nhập.'
   });
 });
 
 // All Users Endpoint
-app.get("/api/auth/users", (req, res) => {
+// SECURITY: Chỉ Admin mới được xem danh sách toàn bộ người dùng
+app.get("/api/auth/users", authenticateToken, requireAdmin, (req, res) => {
   const safeUsers = usersStore.map(({ password, ...u }) => u);
   res.json(safeUsers);
 });
 
 // Admin Create User Endpoint
-app.post("/api/auth/users", (req, res) => {
+// SECURITY: Chỉ Admin mới được tạo tài khoản
+app.post("/api/auth/users", authenticateToken, requireAdmin, (req, res) => {
   const { name, email, phone, role, upTinCredits, balance, password } = req.body;
   if (!name || !email) {
     return res.status(400).json({ error: "Họ tên và email là bắt buộc!" });
@@ -1866,7 +1848,8 @@ app.all(["/api/auth/users/:id", "/api/users/:id"], (req, res, next) => {
 });
 
 // Delete User Endpoint
-app.delete("/api/auth/users/:id", (req, res) => {
+// SECURITY: Chỉ Admin mới được xóa tài khoản
+app.delete("/api/auth/users/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const initialLen = usersStore.length;
   usersStore = usersStore.filter(u => u.id !== id);
@@ -1925,13 +1908,15 @@ app.get("/api/admin/pricing", (req, res) => {
   res.json(pricingConfigStore);
 });
 
-app.post("/api/admin/pricing", (req, res) => {
+// SECURITY: Chỉ Admin mới được thay đổi cấu hình giá
+app.post("/api/admin/pricing", authenticateToken, requireAdmin, (req, res) => {
   pricingConfigStore = { ...pricingConfigStore, ...req.body };
   res.json({ success: true, pricing: pricingConfigStore });
 });
 
 // Seed 1,000 listings endpoint for testing ("tets 1000 chạy")
-app.post("/api/seed-1000", (req, res) => {
+// SECURITY: Chỉ Admin mới được chạy seed dữ liệu
+app.post("/api/seed-1000", authenticateToken, requireAdmin, (req, res) => {
   const seedList: Property[] = Array.from({ length: 1000 }, (_, i) => {
     const idNum = i + 1;
     const projectTypes = ['ocean-park-2', 'ocean-park-3', 'ha-long-xanh'] as const;

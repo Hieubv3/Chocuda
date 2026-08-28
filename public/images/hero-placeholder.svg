@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="800" viewBox="0 0 1800 800">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1800" height="800" fill="url(#bg)"/>
+  <text x="900" y="400" font-family="Arial, sans-serif" font-size="48" fill="#94a3bc" text-anchor="middle" font-weight="bold">
+    Chợ Cư Dân 24h
+  </text>
+  <text x="900" y="460" font-family="Arial, sans-serif" font-size="24" fill="#64748b" text-anchor="middle">
+    Vinhomes Community Platform
+  </text>
+</svg>

@@ -7,6 +7,17 @@ import { INITIAL_ADS } from '../data/initialData';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { calculateExpiryInfo } from '../lib/expiration';
 
+// SECURITY: Helper lấy JWT token từ localStorage và trả về Authorization header
+// để gửi kèm các request cần xác thực (admin/user endpoints).
+function getAuthHeaders(extra?: Record<string, string>): Record<string, string> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  const headers: Record<string, string> = { ...(extra || {}) };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 interface ReputationPost {
   id: string;
   partnerName: string;
@@ -710,7 +721,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // Fetch users list from backend API
   const fetchUsers = async () => {
     try {
-      const res = await fetch('/api/auth/users');
+      const res = await fetch('/api/auth/users', { headers: getAuthHeaders() });
       if (res.ok) {
         const data = await res.json();
         setRegisteredUsers(data);
@@ -744,7 +755,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       setRegisteredUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole as any } : u));
       await fetch(`/api/auth/users/${userId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ role: newRole })
       });
       fetchUsers();
@@ -766,7 +777,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       setRegisteredUsers(prev => prev.map(u => u.id === userId ? { ...u, upTinCredits: newAmount } : u));
       await fetch(`/api/auth/users/${userId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ upTinCredits: newAmount })
       });
       alert(`Đã cấp ${newAmount} lượt Up Tin thành công!`);
@@ -784,7 +795,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       setRegisteredUsers(prev => prev.map(u => u.id === userId ? { ...u, isBlocked: !currentBlocked } : u));
       await fetch(`/api/auth/users/${userId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ isBlocked: !currentBlocked })
       });
       fetchUsers();
@@ -798,7 +809,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
     try {
       setRegisteredUsers(prev => prev.filter(u => u.id !== userId));
-      await fetch(`/api/auth/users/${userId}`, { method: 'DELETE' });
+      await fetch(`/api/auth/users/${userId}`, { method: 'DELETE', headers: getAuthHeaders() });
       alert('Đã xóa tài khoản thành công!');
       fetchUsers();
     } catch (e) {
@@ -851,7 +862,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     try {
       const res = await fetch('/api/auth/users', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(userFormData)
       });
       const data = await res.json();
@@ -871,7 +882,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     try {
       const res = await fetch(`/api/auth/users/${editingUser.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           name: editingUser.name,
           email: editingUser.email,
