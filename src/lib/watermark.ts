@@ -1,20 +1,20 @@
 /**
  * Utility to apply ultra-fast automatic watermark, background compression, and copyright stamp (Chợ Cư Dân 24h) to uploaded images.
  * Uses hardware-accelerated background decoding (createImageBitmap) and async Canvas to instantly display images (0ms)
- * while silently converting heavy files (up to 10MB) into ultra-light web assets (~120KB-200KB) to save memory & prevent lag.
+ * while silently converting heavy files (up to 15MB) into ultra-light web assets (~120KB-200KB) to save memory & prevent lag.
  */
 
-const MAX_IMAGE_FILE_SIZE = 10 * 1024 * 1024; // 10MB limit
+const MAX_IMAGE_FILE_SIZE = 10 * 1024 * 1024; // 15MB limit
 
 /**
- * Validates if file is within 10MB limit
+ * Validates if file is within 15MB limit
  */
 export function validateImageSize(file: File): { valid: boolean; message?: string } {
   if (file.size > MAX_IMAGE_FILE_SIZE) {
     const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
     return {
       valid: false,
-      message: `Ảnh "${file.name}" (${sizeMb}MB) vượt quá giới hạn 10MB. Hệ thống chỉ nhận ảnh dưới 10MB.`
+      message: `Ảnh "${file.name}" (${sizeMb}MB) vượt quá giới hạn 15MB. Hệ thống chỉ nhận ảnh dưới 15MB.`
     };
   }
   return { valid: true };
@@ -34,7 +34,7 @@ export function createInstantPreview(source: File | string): string {
 
 /**
  * Non-blocking asynchronous background compression & watermarking engine.
- * Converts heavy images (up to 10MB) to lightweight web JPEG (~120KB-220KB) in background thread.
+ * Converts heavy images (up to 15MB) to lightweight web JPEG (~120KB-220KB) in background thread.
  */
 export async function addWatermarkToImage(
   source: File | string,
@@ -256,7 +256,7 @@ export async function compressAndWatermarkImagesParallel(
   for (const file of files) {
     const check = validateImageSize(file);
     if (!check.valid) {
-      errors.push(check.message || 'Ảnh quá 10MB');
+      errors.push(check.message || 'Ảnh quá 15MB');
     } else {
       validFiles.push(file);
     }
