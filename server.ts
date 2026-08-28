@@ -16,6 +16,7 @@ import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/resid
 import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile, RECRUITMENT_PACKAGES, INITIAL_EMPLOYER_REGISTRATIONS, INITIAL_TASK_DELEGATIONS } from "./src/data/recruitmentData.ts";
 import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation, DepositIntent, AppNotification } from "./src/types.ts";
 import { isPostgresConfigured } from "./src/db/index.ts";
+import { generateTotpSecret, verifyTotpToken, buildOtpAuthUri, generateBackupCodes, hashBackupCode } from "./src/lib/totp.ts";
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
@@ -322,7 +323,16 @@ async function sendEmailOtp(toEmail: string, otpCode: string): Promise<{ sent: b
 
 interface StoredUser extends User {
   password?: string;
+  // SECURITY: Xác thực 2 lớp (TOTP - Google Authenticator/Authy/Microsoft Authenticator)
+  totpSecret?: string; // base32 secret, chỉ tồn tại khi đang setup hoặc đã bật 2FA
+  totpEnabled?: boolean;
+  totpBackupCodeHashes?: string[]; // SHA-256 hash của các mã dự phòng dùng 1 lần chưa dùng
 }
+
+// SECURITY: Lưu tạm "pending TOTP token" khi user vừa nhập đúng mật khẩu nhưng chưa nhập mã 2FA.
+// Tránh phải gửi lại email/password ở bước xác thực mã, đồng thời không phát hành JWT thật cho tới khi qua 2FA.
+const pendingTotpLogins = new Map<string, { userId: string; expiresAt: number }>();
+const PENDING_TOTP_TTL = 5 * 60 * 1000; // 5 phút
 
 // User accounts store (seeded with admin & default accounts)
 let usersStore: StoredUser[] = [
@@ -1316,7 +1326,27 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
 
 // Account Login API (with bcrypt + JWT)
 app.post("/api/auth/login", authLimiter, async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  const { pendingToken } = req.body;
+
+  // SECURITY: Cho phép bước 2 của luồng 2FA gửi lại pendingToken thay vì email+password
+  // (tránh phải nhập lại mật khẩu khi chỉ còn thiếu mã TOTP).
+  if (pendingToken && !password) {
+    const pending = pendingTotpLogins.get(String(pendingToken));
+    if (!pending || pending.expiresAt < Date.now()) {
+      pendingTotpLogins.delete(String(pendingToken));
+      return res.status(400).json({ error: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại từ đầu!" });
+    }
+    const pendingUser = usersStore.find(u => u.id === pending.userId);
+    if (!pendingUser) {
+      pendingTotpLogins.delete(String(pendingToken));
+      return res.status(400).json({ error: "Không tìm thấy tài khoản. Vui lòng đăng nhập lại từ đầu!" });
+    }
+    email = pendingUser.email;
+    password = '__pending_totp_bypass__'; // đã xác thực password ở lần gọi trước, chỉ cần qua kiểm tra TOTP bên dưới
+    pendingTotpLogins.delete(String(pendingToken));
+    (req as any)._skipPasswordCheck = true;
+  }
 
   if (!email || !password) {
     return res.status(400).json({ error: "Vui lòng nhập Email và Mật khẩu!" });
@@ -1346,7 +1376,7 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
   }
 
   // Check if password is bcrypt hashed (starts with $2a$ or $2b$)
-  if (user.password) {
+  if (user.password && !(req as any)._skipPasswordCheck) {
     const isBcryptHash = user.password.startsWith('$2a$') || user.password.startsWith('$2b$');
     
     if (isBcryptHash) {
@@ -1373,13 +1403,53 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
     }
   }
   
+  // SECURITY: Nếu tài khoản đã bật xác thực 2 lớp (TOTP), yêu cầu thêm bước nhập mã 6 số
+  if (user.totpEnabled && user.totpSecret) {
+    const { totpCode, backupCode } = req.body;
+
+    if (!totpCode && !backupCode) {
+      // Chưa nhập mã 2FA -> KHÔNG cấp token, KHÔNG tính là đăng nhập thất bại (mật khẩu đã đúng).
+      // Trả về pendingToken tạm để bước xác thực mã kế tiếp không cần gửi lại password.
+      const pendingToken = crypto.randomBytes(24).toString('hex');
+      pendingTotpLogins.set(pendingToken, { userId: user.id, expiresAt: Date.now() + PENDING_TOTP_TTL });
+      return res.json({
+        success: false,
+        requireTotp: true,
+        pendingToken,
+        message: "Vui lòng nhập mã xác thực 2 lớp (TOTP) từ ứng dụng Authenticator."
+      });
+    }
+
+    let totpValid = false;
+    if (totpCode) {
+      totpValid = verifyTotpToken(user.totpSecret, String(totpCode));
+    } else if (backupCode && user.totpBackupCodeHashes?.length) {
+      const hashed = hashBackupCode(String(backupCode));
+      const idx = user.totpBackupCodeHashes.indexOf(hashed);
+      if (idx !== -1) {
+        totpValid = true;
+        // Mã dự phòng chỉ dùng được 1 lần
+        user.totpBackupCodeHashes.splice(idx, 1);
+        saveDataStore();
+      }
+    }
+
+    if (!totpValid) {
+      recordFailedLogin(normalizedEmail);
+      return res.status(400).json({
+        success: false,
+        error: "Mã xác thực 2 lớp không đúng hoặc đã hết hạn!"
+      });
+    }
+  }
+
   // SECURITY: Reset login attempts on successful login
   resetLoginAttempts(normalizedEmail);
 
   // Generate JWT token
   const token = generateToken(user);
 
-  const { password: _, ...userWithoutPassword } = user;
+  const { password: _, totpSecret: __, totpBackupCodeHashes: ___, ...userWithoutPassword } = user;
   return res.json({
     message: "Đăng nhập thành công!",
     user: userWithoutPassword,
@@ -1440,6 +1510,102 @@ app.post("/api/auth/change-password", authenticateToken, async (req, res) => {
   console.log(`[SECURITY] Password changed for user: ${user.email}`);
   
   res.json({ success: true, message: "Đổi mật khẩu thành công! Vui lòng đăng nhập lại." });
+});
+
+// ============================================
+// 2FA / TOTP (Google Authenticator, Authy, Microsoft Authenticator...)
+// ============================================
+
+// SECURITY: Bước 1 - Tạo secret mới + trả về otpauth URI (frontend tự render QR từ URI này,
+// ví dụ dùng thư viện "qrcode.react" hoặc gọi API tạo QR ảnh riêng).
+// Secret CHƯA được coi là "đã bật" cho tới khi xác nhận đúng mã ở bước /2fa/verify-setup.
+app.post("/api/auth/2fa/setup", authenticateToken, requireAdmin, async (req, res) => {
+  const jwtUser = (req as any).user;
+  const user = usersStore.find(u => u.id === jwtUser.userId);
+  if (!user) {
+    return res.status(404).json({ success: false, error: "Không tìm thấy người dùng!" });
+  }
+
+  if (user.totpEnabled) {
+    return res.status(400).json({ success: false, error: "Tài khoản đã bật xác thực 2 lớp. Vui lòng tắt trước khi cài lại." });
+  }
+
+  const secret = generateTotpSecret();
+  user.totpSecret = secret; // lưu tạm, chưa bật (totpEnabled vẫn false) cho tới khi verify-setup
+  saveDataStore();
+
+  const otpauthUri = buildOtpAuthUri({
+    secret,
+    accountName: user.email,
+    issuer: "ChoCuDan24h"
+  });
+
+  res.json({
+    success: true,
+    secret, // hiển thị dạng text để nhập tay nếu không quét được QR
+    otpauthUri, // dùng để render mã QR ở frontend
+    message: "Quét mã QR bằng app Authenticator, sau đó nhập mã 6 số để xác nhận."
+  });
+});
+
+// SECURITY: Bước 2 - Xác nhận mã 6 số đầu tiên đúng thì mới chính thức bật 2FA.
+// Đồng thời sinh backup codes 1 lần duy nhất (chỉ hiển thị lúc này, server chỉ lưu bản hash).
+app.post("/api/auth/2fa/verify-setup", authenticateToken, requireAdmin, async (req, res) => {
+  const jwtUser = (req as any).user;
+  const { totpCode } = req.body;
+  const user = usersStore.find(u => u.id === jwtUser.userId);
+
+  if (!user) {
+    return res.status(404).json({ success: false, error: "Không tìm thấy người dùng!" });
+  }
+  if (!user.totpSecret) {
+    return res.status(400).json({ success: false, error: "Chưa khởi tạo 2FA. Vui lòng gọi /2fa/setup trước!" });
+  }
+  if (!totpCode || !verifyTotpToken(user.totpSecret, String(totpCode))) {
+    return res.status(400).json({ success: false, error: "Mã xác thực không đúng. Vui lòng thử lại!" });
+  }
+
+  const backupCodes = generateBackupCodes(8);
+  user.totpEnabled = true;
+  user.totpBackupCodeHashes = backupCodes.map(hashBackupCode);
+  saveDataStore();
+
+  console.log(`[SECURITY] 2FA (TOTP) enabled for admin: ${user.email}`);
+
+  res.json({
+    success: true,
+    message: "Đã bật xác thực 2 lớp thành công!",
+    // CHỈ hiển thị 1 lần duy nhất - nhắc người dùng lưu lại nơi an toàn (server không lưu bản rõ).
+    backupCodes
+  });
+});
+
+// SECURITY: Tắt 2FA - yêu cầu xác nhận lại mật khẩu để tránh kẻ chiếm phiên đăng nhập tắt 2FA tùy ý.
+app.post("/api/auth/2fa/disable", authenticateToken, requireAdmin, async (req, res) => {
+  const jwtUser = (req as any).user;
+  const { password } = req.body;
+  const user = usersStore.find(u => u.id === jwtUser.userId);
+
+  if (!user) {
+    return res.status(404).json({ success: false, error: "Không tìm thấy người dùng!" });
+  }
+  if (!password) {
+    return res.status(400).json({ success: false, error: "Vui lòng nhập mật khẩu để xác nhận tắt 2FA!" });
+  }
+
+  const isBcrypt = user.password && (user.password.startsWith('$2a$') || user.password.startsWith('$2b$'));
+  const passwordValid = isBcrypt ? await comparePassword(password, user.password!) : user.password === String(password);
+  if (!passwordValid) {
+    return res.status(400).json({ success: false, error: "Mật khẩu không chính xác!" });
+  }
+
+  user.totpEnabled = false;
+  user.totpSecret = undefined;
+  user.totpBackupCodeHashes = undefined;
+  saveDataStore();
+
+  console.log(`[SECURITY] 2FA (TOTP) disabled for admin: ${user.email}`);
+  res.json({ success: true, message: "Đã tắt xác thực 2 lớp." });
 });
 
 // Real Google OAuth / Google Account Authentication API (with JWT)
