@@ -35,6 +35,14 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'select' | 'qr' | 'success'>('select');
 
+  // SePay order state (created server-side, polled until approved)
+  const [order, setOrder] = useState<any>(null);
+  const [qrUrl, setQrUrl] = useState<string>('');
+  const [paymentCode, setPaymentCode] = useState<string>('');
+  const [isPolling, setIsPolling] = useState(false);
+  const [pollError, setPollError] = useState<string>('');
+  const [pollTimer, setPollTimer] = useState<any>(null);
+
   // Direct Free Push in Donate Mode
   const handleFreeDonatePush = async () => {
     setIsSubmitting(true);
@@ -141,8 +149,9 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
     }, 1500);
   };
 
-  // Payment Memo unique code
-  const paymentCode = `UPTIN-${property.id.replace('prop-', '')}-${Math.floor(100 + Math.random() * 900)}`;
+  // Payment code + QR are now created server-side via POST /api/up-tin/orders
+  // (see handleCreateOrder). The local paymentCode/qrUrl state holds the
+  // server-generated values once the order is created.
 
   // Calculate amount based on selection
   const getPackageInfo = () => {
@@ -192,11 +201,8 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
 
   const packageInfo = getPackageInfo();
 
-  // VietQR Auto URL
-  const bankAccountClean = pricingConfig.accountNumber.replace(/[^0-9]/g, '');
-  const bankCodeRaw = pricingConfig.bankName.toUpperCase();
-  const bankCode = bankCodeRaw.includes('MSB') ? 'MSB' : bankCodeRaw.includes('MB') ? 'MB' : 'MSB';
-  const vietQrUrl = `https://img.vietqr.io/image/${bankCode}-${bankAccountClean}-compact2.png?amount=${packageInfo.price}&addInfo=${paymentCode}&accountName=${encodeURIComponent(pricingConfig.accountHolder)}`;
+  // VietQR URL + payment code are generated server-side when the order is
+  // created (POST /api/up-tin/orders). They live in state: qrUrl, paymentCode.
 
   const handleCopy = (text: string, type: 'account' | 'code') => {
     navigator.clipboard.writeText(text);
@@ -209,59 +215,123 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
     }
   };
 
-  const handleConfirmPayment = async () => {
+  // Create a pending payment order on the server. The property is NOT pushed
+  // until SePay confirms the transfer via webhook.
+  const handleCreateOrder = async () => {
     setIsSubmitting(true);
-
-    const newTx: UpTinTransaction = {
-      id: `tx-${Date.now()}`,
-      propertyId: property.id,
-      propertyTitle: property.title,
-      userId: user?.id || 'guest-user',
-      userName: user?.name || property.sellerName,
-      userPhone: user?.phone || property.sellerPhone,
-      packageType: selectedType,
-      packageName: packageInfo.name,
-      amount: packageInfo.price,
-      paymentCode: paymentCode,
-      status: 'approved', // Auto-approve in preview/test mode
-      createdAt: new Date().toISOString()
-    };
-
-    // Calculate updated property
-    const nowIso = new Date().toISOString();
-    let updatedVipLevel = property.vipLevel || 'normal';
-    if (selectedType === 'vip_silver') updatedVipLevel = 'silver';
-    if (selectedType === 'vip_gold') updatedVipLevel = 'gold';
-    if (selectedType === 'vip_diamond') updatedVipLevel = 'diamond';
-
-    const updatedProperty: Property = {
-      ...property,
-      pushedAt: nowIso,
-      pushedCount: (property.pushedCount || 0) + 1,
-      vipLevel: updatedVipLevel,
-      featured: selectedType === 'vip_gold' || selectedType === 'vip_diamond' ? true : property.featured
-    };
-
+    setPollError('');
     try {
-      // Send to server API
-      await fetch(`/api/properties/${property.id}/push`, {
+      const res = await fetch('/api/up-tin/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          transaction: newTx,
-          updatedProperty
+          propertyId: property.id,
+          propertyTitle: property.title,
+          userId: user?.id || 'guest-user',
+          userName: user?.name || property.sellerName,
+          userPhone: user?.phone || property.sellerPhone,
+          packageType: selectedType,
+          days
         })
       });
+      const data = await res.json();
+      if (!res.ok) {
+        setPollError(data.error || 'Không thể tạo đơn thanh toán.');
+        setIsSubmitting(false);
+        return;
+      }
+      setOrder(data.order);
+      setQrUrl(data.qrUrl);
+      setPaymentCode(data.order.paymentCode);
+      setPaymentStep('qr');
+    } catch (err) {
+      console.error('Error creating up-tin order:', err);
+      setPollError('Không thể kết nối đến máy chủ để tạo đơn thanh toán.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Poll the order status until SePay confirms the payment (status approved).
+  const startPolling = () => {
+    if (!order) return;
+    setIsPolling(true);
+    setPollError('');
+
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/up-tin/orders/${order.id}`);
+        const data = await res.json();
+        if (res.ok && data.order) {
+          if (data.order.status === 'approved') {
+            // Payment confirmed — push the property and show success
+            if (pollTimer) clearInterval(pollTimer);
+            setIsPolling(false);
+            await finalizePush(data.order);
+            return;
+          }
+          if (data.order.status === 'rejected') {
+            if (pollTimer) clearInterval(pollTimer);
+            setIsPolling(false);
+            setPollError('Đơn thanh toán đã bị từ chối. Vui lòng liên hệ hỗ trợ.');
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Poll error (will retry):', err);
+      }
+    };
+
+    poll();
+    const timer = setInterval(poll, 4000);
+    setPollTimer(timer);
+  };
+
+  // Called once the order is approved: push the property via the server.
+  const finalizePush = async (approvedOrder: any) => {
+    const newTx: UpTinTransaction = {
+      id: approvedOrder.id,
+      propertyId: property.id,
+      propertyTitle: property.title,
+      userId: approvedOrder.userId || user?.id || 'guest-user',
+      userName: approvedOrder.userName || property.sellerName,
+      userPhone: approvedOrder.userPhone || property.sellerPhone,
+      packageType: approvedOrder.packageType,
+      packageName: approvedOrder.packageName,
+      amount: approvedOrder.amount,
+      paymentCode: approvedOrder.paymentCode,
+      status: 'approved',
+      createdAt: approvedOrder.createdAt,
+      approvedAt: approvedOrder.approvedAt
+    };
+
+    let updatedProperty: Property = { ...property };
+    try {
+      const res = await fetch(`/api/properties/${property.id}/push`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: approvedOrder.id })
+      });
+      const data = await res.json();
+      if (res.ok && data.property) {
+        updatedProperty = data.property;
+      }
     } catch (err) {
       console.warn('Push API call completed or fallback active:', err);
     }
 
-    setIsSubmitting(false);
     setPaymentStep('success');
     setTimeout(() => {
       onSuccessPush(updatedProperty, newTx);
     }, 1500);
   };
+
+  // Clean up polling timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (pollTimer) clearInterval(pollTimer);
+    };
+  }, [pollTimer]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-3 sm:p-4 overflow-y-auto">
@@ -724,11 +794,12 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                 </div>
                 <button
                   type="button"
-                  onClick={() => setPaymentStep('qr')}
-                  className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition transform active:scale-95"
+                  disabled={isSubmitting}
+                  onClick={handleCreateOrder}
+                  className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition transform active:scale-95 disabled:opacity-50"
                 >
                   <QrCode className="w-5 h-5" />
-                  Tiếp Tục Quét Mã VietQR
+                  {isSubmitting ? 'Đang tạo mã QR...' : 'Tiếp Tục Quét Mã VietQR'}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -750,7 +821,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                 {/* VietQR Image Container */}
                 <div className="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
                   <img loading="lazy"
-                    src={vietQrUrl}
+                    src={qrUrl}
                     alt="VietQR Transfer"
                     className="w-56 h-auto rounded-xl shadow-md border border-white bg-white p-2"
                     onError={(e) => {
@@ -825,21 +896,32 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
 
                   {/* Actions */}
                   <div className="pt-2 flex flex-col gap-2">
-                    <button
-                      type="button"
-                      disabled={isSubmitting}
-                      onClick={handleConfirmPayment}
-                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition disabled:opacity-50"
-                    >
-                      {isSubmitting ? (
-                        <span>Đang xử lý hệ thống...</span>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="w-5 h-5 text-emerald-200" />
-                          Xác Nhận Đã Chuyển Khoản & Up Tin
-                        </>
-                      )}
-                    </button>
+                    {isPolling ? (
+                      <div className="w-full py-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold text-sm rounded-xl flex items-center justify-center gap-2">
+                        <span className="inline-block w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                        Đang chờ hệ thống xác nhận thanh toán...
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={isSubmitting}
+                        onClick={startPolling}
+                        className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition disabled:opacity-50"
+                      >
+                        <CheckCircle2 className="w-5 h-5 text-emerald-200" />
+                        Tôi Đã Chuyển Khoản — Chờ Xác Nhận Tự Động
+                      </button>
+                    )}
+
+                    {pollError && (
+                      <p className="text-[11px] text-rose-600 dark:text-rose-400 font-semibold text-center">
+                        {pollError}
+                      </p>
+                    )}
+
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-relaxed">
+                      Sau khi bạn chuyển khoản, hệ thống <strong>tự động xác nhận</strong> qua SePay trong vòng 15-30 giây và đẩy tin lên TOP 1. Vui lòng giữ nguyên nội dung chuyển khoản <span className="font-mono font-bold text-emerald-600">{paymentCode}</span>.
+                    </p>
 
                     <button
                       type="button"

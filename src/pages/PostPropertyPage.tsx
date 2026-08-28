@@ -406,10 +406,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         sellerPhone: sellerPhone.trim() || user?.phone || '',
         sellerRole,
         soDoImage: sellerRole === 'owner' ? finalSoDo : undefined,
-        soDoRedactedImage: sellerRole === 'owner' ? (finalSoDoRedacted || finalSoDo) : undefined,
-        approved: true, // Display live immediately on website
-        status: 'approved',
-        approvalStatus: 'approved'
+        soDoRedactedImage: sellerRole === 'owner' ? (finalSoDoRedacted || finalSoDo) : undefined
+        // Tin mới đăng ở trạng thái pending; admin sẽ duyệt qua trang quản trị.
       };
 
     } catch (uploadErr: any) {
@@ -525,8 +523,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       contactName: serviceContactName || user.name || 'Cư dân Vinhomes',
       contactPhone: servicePhoneInput.trim() || user.phone || '',
       userId: user.id || `usr-${Date.now()}`,
-      status: user.role === 'admin' ? 'approved' : 'pending',
-      approved: user.role === 'admin',
+      // Dịch vụ mới đăng ở trạng thái pending; admin duyệt qua trang quản trị.
       verified: true,
       rating: 5.0,
       reviewCount: 1,

@@ -521,9 +521,10 @@ let pricingConfigStore = {
   vipSilverPriceDay: 50000,
   vipGoldPriceDay: 100000,
   vipDiamondPriceDay: 200000,
-  bankName: 'MSB (Ngân hàng Hàng Hải Việt Nam)',
-  accountNumber: '3028031988',
-  accountHolder: 'BUI VAN HIEU'
+  bankName: 'ACB (Ngân Hàng Á Châu)',
+  accountNumber: '26098167',
+  accountHolder: 'BUI VAN HIEU',
+  qrNotePrefix: 'CC24H'
 };
 
 let affiliateConfigStore = {
@@ -533,6 +534,16 @@ let affiliateConfigStore = {
   servicePackageMonthPrice: 199000,
   servicePackage3MonthPrice: 499000
 };
+
+// Up-Tin Payment Orders (SePay auto-verification)
+// Each order is created as 'pending' when the user selects a package.
+// SePay webhook matches the paymentCode + amount and flips it to 'approved',
+// which then pushes the property to the top.
+let upTinOrdersStore: any[] = [];
+
+// SePay webhook authentication token (from .env). When set, the webhook
+// endpoint requires the "Authorization: Apikey <token>" header that SePay sends.
+const SEPAY_API_TOKEN = process.env.SEPAY_API_TOKEN || '';
 
 // Technical Orders & Escrow Store
 let techOrdersStore: any[] = [
@@ -808,6 +819,7 @@ function loadDataStore() {
       if (Array.isArray(data.techOrders) && data.techOrders.length > 0) techOrdersStore = data.techOrders;
       if (Array.isArray(data.walletTransactions) && data.walletTransactions.length > 0) walletTransactionsStore = data.walletTransactions;
       if (Array.isArray(data.withdrawalRequests)) withdrawalRequestsStore = data.withdrawalRequests;
+      if (Array.isArray(data.upTinOrders) && data.upTinOrders.length > 0) upTinOrdersStore = data.upTinOrders;
       if (data.taxConfig) taxConfigStore = data.taxConfig;
       if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
 
@@ -890,6 +902,7 @@ function saveDataStore() {
       techOrders: techOrdersStore,
       walletTransactions: walletTransactionsStore,
       withdrawalRequests: withdrawalRequestsStore,
+      upTinOrders: upTinOrdersStore,
       taxConfig: taxConfigStore,
       taxLedger: taxLedgerStore,
       recruitmentJobs: recruitmentJobsStore,
@@ -1015,7 +1028,9 @@ app.post("/api/auth/send-otp", async (req, res) => {
   return res.json({
     success: true,
     email: normalizedEmail,
-    code: otpCode, // Provided for instant visual feedback in UI / testing
+    // Chỉ trả OTP về client trong chế độ demo (khi chưa cấu hình Gmail SMTP thật).
+    // Khi có GMAIL_APP_PASS, OTP chỉ được gửi qua email và KHÔNG trả về client.
+    ...(emailRes.sent ? {} : { code: otpCode }),
     sentLive: emailRes.sent,
     message: emailRes.sent 
       ? `Mã OTP đã được gửi trực tiếp tới email ${normalizedEmail}. Vui lòng kiểm tra hộp thư đến!` 
@@ -1553,54 +1568,209 @@ app.post("/api/admin/affiliate-config", (req, res) => {
   res.json({ success: true, config: affiliateConfigStore });
 });
 
-// Seed 1,000 listings endpoint for testing ("tets 1000 chạy")
-app.post("/api/seed-1000", (req, res) => {
-  const seedList: Property[] = Array.from({ length: 1000 }, (_, i) => {
-    const idNum = i + 1;
-    const projectTypes = ['ocean-park-2', 'ocean-park-3', 'ha-long-xanh'] as const;
-    const pType = projectTypes[i % 3];
-    const isRent = i % 2 === 0;
-    const price = isRent ? Math.floor(Math.random() * 25) + 8 : (Math.floor(Math.random() * 200) + 30) / 10;
-    const priceDisplay = isRent ? `${price} Triệu/tháng` : `${price.toFixed(1)} Tỷ`;
+// ==========================================
+// UP-TIN PAYMENT ORDERS + SEPAY AUTO-VERIFICATION
+// ==========================================
 
-    return {
-      id: `seed-1000-${idNum}`,
-      title: `${isRent ? 'Cho Thuê' : 'Bán'} Căn Căn Hộ/Biệt Thự Shophouse Vị Trí VIP #${idNum}`,
-      type: isRent ? 'rent' : 'sale',
-      project: pType,
-      category: i % 4 === 0 ? 'biet-thu-don-lap' : i % 3 === 0 ? 'shophouse' : '2pn',
-      price: price * (isRent ? 1000000 : 1000000000),
-      priceDisplay: priceDisplay,
-      area: Math.floor(Math.random() * 180) + 45,
-      bedrooms: (i % 3) + 1,
-      bathrooms: (i % 2) + 1,
-      direction: 'Đông Nam',
-      furniture: 'full',
-      legal: 'so-do',
-      address: `Phân khu Chà Là / San Hô #${idNum}, Vinhomes`,
-      description: `Bất động sản vị trí đắc địa tại ${pType.toUpperCase()}, phân khu VIP.`,
-      images: [
-        `https://images.unsplash.com/photo-${1545324418 + (i % 10)}?auto=format&fit=crop&w=800&q=80`
-      ],
-      sellerName: `Chủ Nhà/Sale #${(i % 50) + 1}`,
-      sellerPhone: `0868.499.${100 + (i % 800)}`,
-      sellerRole: i % 2 === 0 ? 'owner' : 'sale',
-      status: 'approved',
-      approved: true,
-      vipLevel: i < 20 ? 'diamond' : i < 60 ? 'gold' : 'normal',
-      pushedAt: new Date().toISOString(),
-      createdAt: 'Hôm nay'
-    };
-  });
+// Helper: generate a unique payment code that SePay can recognize in the
+// transfer content. Format: <prefix>-<random alphanumeric>
+function generatePaymentCode() {
+  const prefix = (pricingConfigStore.qrNotePrefix || 'CC24H').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const rand = crypto.randomBytes(4).toString('hex').toUpperCase();
+  return `${prefix}-${rand}`;
+}
 
-  propertiesStore = [...seedList, ...INITIAL_PROPERTIES];
-  res.json({
+// Helper: compute the package price for a given package type + days
+function computeUpTinPrice(packageType: string, days: number): number {
+  switch (packageType) {
+    case 'single_push': return pricingConfigStore.singlePushPrice;
+    case 'auto_push_5': return pricingConfigStore.autoPush5Price;
+    case 'vip_silver': return pricingConfigStore.vipSilverPriceDay * days;
+    case 'vip_gold': return pricingConfigStore.vipGoldPriceDay * days;
+    case 'vip_diamond': return pricingConfigStore.vipDiamondPriceDay * days;
+    default: return pricingConfigStore.singlePushPrice;
+  }
+}
+
+// Helper: apply the paid package effects to a property (push to top + VIP level)
+function applyUpTinPackageToProperty(prop: any, packageType: string, days: number) {
+  const nowIso = new Date().toISOString();
+  prop.pushedAt = nowIso;
+  prop.pushedCount = (prop.pushedCount || 0) + 1;
+  if (packageType === 'vip_silver') prop.vipLevel = 'silver';
+  if (packageType === 'vip_gold') prop.vipLevel = 'gold';
+  if (packageType === 'vip_diamond') prop.vipLevel = 'diamond';
+  if (packageType === 'vip_gold' || packageType === 'vip_diamond') prop.featured = true;
+  if (['vip_silver', 'vip_gold', 'vip_diamond'].includes(packageType)) {
+    const vipDays = Number(days) || 3;
+    prop.vipExpiresAt = new Date(Date.now() + vipDays * 24 * 60 * 60 * 1000).toISOString();
+  }
+  return prop;
+}
+
+// POST /api/up-tin/orders — create a pending payment order for a package.
+// Returns the order (with paymentCode) + VietQR URL. The property is NOT
+// pushed until SePay confirms the payment via webhook.
+app.post("/api/up-tin/orders", (req, res) => {
+  const {
+    propertyId, propertyTitle, userId, userName, userPhone,
+    packageType = 'single_push', days = 3
+  } = req.body || {};
+
+  const prop = propertiesStore.find(p => p.id === propertyId);
+  if (!prop) {
+    return res.status(404).json({ error: "Không tìm thấy bất động sản." });
+  }
+
+  const validTypes = ['single_push', 'auto_push_5', 'vip_silver', 'vip_gold', 'vip_diamond'];
+  const type = validTypes.includes(packageType) ? packageType : 'single_push';
+  const amount = computeUpTinPrice(type, Number(days) || 3);
+
+  const paymentCode = generatePaymentCode();
+  const order = {
+    id: `upord-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    propertyId: prop.id,
+    propertyTitle: prop.title,
+    userId: userId || 'guest-user',
+    userName: userName || prop.sellerName,
+    userPhone: userPhone || prop.sellerPhone,
+    packageType: type,
+    packageName: type === 'single_push' ? '1 Lượt Up Tin Lên Đầu Ngay'
+      : type === 'auto_push_5' ? 'Gói Auto-Push 5 Lượt/Ngày'
+      : type === 'vip_silver' ? `VIP Bạc (${days} Ngày Nổi Bật)`
+      : type === 'vip_gold' ? `VIP Vàng (${days} Ngày Nổi Bật)`
+      : `VIP Kim Cương (${days} Ngày Đỉnh Cao)`,
+    days: Number(days) || 3,
+    amount,
+    paymentCode,
+    status: 'pending', // pending -> approved (via SePay webhook) -> rejected
+    createdAt: new Date().toISOString(),
+    approvedAt: null,
+    sepayTransactionId: null
+  };
+
+  upTinOrdersStore.unshift(order);
+  saveDataStore();
+
+  // Build VietQR URL with the payment code + amount
+  const bankAccountClean = String(pricingConfigStore.accountNumber).replace(/[^0-9]/g, '');
+  const bankNameRaw = String(pricingConfigStore.bankName).toUpperCase();
+  const bankCode = bankNameRaw.includes('ACB') ? 'ACB'
+    : bankNameRaw.includes('VCB') || bankNameRaw.includes('VIETCOMBANK') ? 'VCB'
+    : bankNameRaw.includes('MB') ? 'MB'
+    : bankNameRaw.includes('MSB') ? 'MSB'
+    : 'ACB';
+  const qrUrl = `https://img.vietqr.io/image/${bankCode}-${bankAccountClean}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(paymentCode)}&accountName=${encodeURIComponent(pricingConfigStore.accountHolder)}`;
+
+  res.status(201).json({
     success: true,
-    message: "Đã tạo thành công 1,000 bài tin test running mượt mà!",
-    totalProperties: propertiesStore.length,
-    properties: propertiesStore
+    order,
+    qrUrl,
+    bank: {
+      bankName: pricingConfigStore.bankName,
+      accountNumber: pricingConfigStore.accountNumber,
+      accountHolder: pricingConfigStore.accountHolder
+    }
   });
 });
+
+// GET /api/up-tin/orders/:id — poll the status of a payment order
+app.get("/api/up-tin/orders/:id", (req, res) => {
+  const order = upTinOrdersStore.find(o => o.id === req.params.id);
+  if (!order) {
+    return res.status(404).json({ error: "Không tìm thấy đơn hàng thanh toán." });
+  }
+  res.json({ success: true, order });
+});
+
+// POST /api/webhooks/sepay — SePay sends a POST here when money arrives.
+// We verify the transfer is money-in, matches a pending order's paymentCode
+// and amount, then mark it approved and push the property.
+app.post("/api/webhooks/sepay", (req, res) => {
+  // Optional auth: if SEPAY_API_TOKEN is configured, require the Apikey header.
+  if (SEPAY_API_TOKEN) {
+    const authHeader = req.headers.authorization || '';
+    const expected = `Apikey ${SEPAY_API_TOKEN}`;
+    if (authHeader !== expected) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+  }
+
+  const payload = req.body || {};
+  // SePay payload fields: id, gateway, transactionDate, accountNumber, code,
+  // content, transferType ('in'|'out'), transferAmount, accumulated, subAccount,
+  // referenceCode, description
+  const transferType = payload.transferType;
+  const transferAmount = Number(payload.transferAmount);
+  const code = payload.code || '';
+  const content = String(payload.content || '');
+
+  // Only handle money-in transactions
+  if (transferType !== 'in') {
+    return res.json({ success: true, message: 'Ignored non-inbound transaction' });
+  }
+
+  // Find a pending order whose paymentCode appears in the code field OR content
+  const order = upTinOrdersStore.find(o =>
+    o.status === 'pending' &&
+    (code === o.paymentCode || content.includes(o.paymentCode))
+  );
+
+  if (!order) {
+    // No matching pending order — acknowledge to stop SePay retries
+    return res.json({ success: true, message: 'No matching pending order' });
+  }
+
+  // Verify the amount matches (allow small tolerance for bank fees)
+  if (Math.abs(transferAmount - order.amount) > 1000) {
+    return res.json({ success: true, message: 'Amount mismatch, order stays pending' });
+  }
+
+  // Mark order approved
+  order.status = 'approved';
+  order.approvedAt = new Date().toISOString();
+  order.sepayTransactionId = payload.id || null;
+
+  // Push the property to the top + apply VIP effects
+  const prop = propertiesStore.find(p => p.id === order.propertyId);
+  if (prop) {
+    applyUpTinPackageToProperty(prop, order.packageType, order.days);
+  }
+
+  saveDataStore();
+  res.json({ success: true, message: 'Payment confirmed, property pushed' });
+});
+
+// POST /api/properties/:id/push — apply a confirmed up-tin push to a property.
+// Used by the frontend after a payment order is confirmed (status approved).
+app.post("/api/properties/:id/push", (req, res) => {
+  const { id } = req.params;
+  const { orderId } = req.body || {};
+  const prop = propertiesStore.find(p => p.id === id);
+  if (!prop) {
+    return res.status(404).json({ error: "Không tìm thấy bất động sản." });
+  }
+
+  // If an orderId is supplied, only allow push if that order is approved.
+  if (orderId) {
+    const order = upTinOrdersStore.find(o => o.id === orderId);
+    if (!order) {
+      return res.status(404).json({ error: "Không tìm thấy đơn hàng thanh toán." });
+    }
+    if (order.status !== 'approved') {
+      return res.status(402).json({ error: "Thanh toán chưa được xác nhận. Vui lòng chờ hệ thống xác nhận." });
+    }
+    applyUpTinPackageToProperty(prop, order.packageType, order.days);
+  } else {
+    // No orderId: generic push (used by legacy/free flows). Still requires an
+    // approved order reference to prevent free pushes — reject if none.
+    return res.status(400).json({ error: "Thiếu mã đơn hàng thanh toán (orderId)." });
+  }
+
+  saveDataStore();
+  res.json({ success: true, message: "Đã đẩy tin lên TOP 1 thành công!", property: prop });
+});
+
 // ------------------- API ROUTES -------------------
 
 // Healthcheck
@@ -1611,23 +1781,6 @@ app.get("/api/health", (req, res) => {
     domain: "chocudan24h.com",
     timestamp: new Date().toISOString()
   });
-});
-
-// Android APK Download Route
-app.get(["/api/download/apk", "/downloads/ChoCuDan24h_v2.8.apk"], (req, res) => {
-  // Generate a valid APK binary header or package file
-  const fileName = "ChoCuDan24h_v2.8_Pro.apk";
-  res.setHeader("Content-Type", "application/vnd.android.package-archive");
-  res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
-  
-  // Return APK package content payload
-  const apkHeader = Buffer.from([
-    0x50, 0x4b, 0x03, 0x04, 0x14, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x43, 0x68, 0x6f, 0x43, 0x75, 0x44, 0x61, 0x6e, 0x32, 0x34, 0x68, 0x20, 0x41, 0x6e,
-    0x64, 0x72, 0x6f, 0x69, 0x64, 0x20, 0x41, 0x50, 0x4b, 0x20, 0x50, 0x61, 0x63, 0x6b,
-    0x61, 0x67, 0x65, 0x20, 0x76, 0x32, 0x2e, 0x38, 0x2e, 0x34, 0x20, 0x50, 0x72, 0x6f
-  ]);
-  res.send(apkHeader);
 });
 
 // Server-side expiration checker (Default 30 days auto-hide for public visibility)
@@ -4095,36 +4248,6 @@ app.delete("/api/stores/:storeId/products/:productId", (req, res) => {
   storesStore[storeIdx].products = filteredProds;
   saveDataStore();
   res.json({ success: true, message: "Đã xóa sản phẩm khỏi gian hàng!" });
-});
-
-// Endpoint serving APK file download with valid Android package headers
-app.get("/api/download/apk", (req, res) => {
-  const filename = "ChoCuDan24h_v2.8_Pro.apk";
-  res.setHeader("Content-Type", "application/vnd.android.package-archive");
-  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
-
-  // PK Zip header minimal binary payload for APK archive format
-  const zipHeader = Buffer.from([
-    0x50, 0x4b, 0x03, 0x04, 0x14, 0x00, 0x08, 0x00,
-    0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x12, 0x00, 0x00, 0x00, 0x41, 0x6e,
-    0x64, 0x72, 0x6f, 0x69, 0x64, 0x4d, 0x61, 0x6e,
-    0x69, 0x66, 0x65, 0x73, 0x74, 0x2e, 0x78, 0x6d,
-    0x6c, 0x50, 0x4b, 0x01, 0x02, 0x14, 0x00, 0x14,
-    0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x41, 0x6e, 0x64,
-    0x72, 0x6f, 0x69, 0x64, 0x4d, 0x61, 0x6e, 0x69,
-    0x66, 0x65, 0x73, 0x74, 0x2e, 0x78, 0x6d, 0x6c,
-    0x50, 0x4b, 0x05, 0x06, 0x00, 0x00, 0x00, 0x00,
-    0x01, 0x00, 0x01, 0x00, 0x40, 0x00, 0x00, 0x00,
-    0x40, 0x00, 0x00, 0x00, 0x00, 0x00
-  ]);
-  
-  res.send(zipHeader);
 });
 
 // Explicit Privacy Policy HTML Route for Facebook App Review / Meta Developer Crawlers

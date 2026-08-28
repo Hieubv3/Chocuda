@@ -7,3 +7,7 @@ uploads/
 *.log
 .env*
 !.env.example
+
+# Runtime data store (contains user data / demo passwords — never commit)
+app_data_store.json
+app_data_store.backup.json

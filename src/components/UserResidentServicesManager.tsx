@@ -106,44 +106,8 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
       if (userList.length > 0) {
         setServices(userList);
       } else {
-        // Sample starter service
-        const sampleService: ResidentServiceItem = {
-          id: `srv-${user.id || 'sample'}-1`,
-          userId: user.id,
-          title: `Dịch Vụ Đặt Xe Điện Buggy, Taxi Cư Dân & Vận Chuyển 24/7 - ${user.name || 'Vinhomes'}`,
-          categoryId: 'van-tai-xe-dien',
-          subCategory: 'Xe Taxi & Chở đồ nội khu 24/7',
-          project: 'ocean-park-2',
-          subdivision: 'Toàn đại đô thị Ocean Park 1, 2, 3',
-          providerName: user.name || 'Tài Xế / Đội Xe Cư Dân',
-          providerPhone: user.phone || '0868499929',
-          providerZalo: user.phone || '0868499929',
-          address: user.apartmentAddress || 'Vinhomes Ocean Park 2',
-          priceDisplay: 'Từ 20.000đ / chuyến (Nội khu) - Trọn gói sân bay 250k',
-          rating: 5.0,
-          reviewCount: 36,
-          images: [
-            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80'
-          ],
-          description: 'Nhận đón trả cư dân đi học, đi làm, đi siêu thị Vincom, đi sân bay Nội Bài 24/7. Xe đời mới sạch sẽ, không mùi, đúng giờ, chu đáo và phục vụ tận tâm.',
-          verified: true,
-          legalCommitmentAccepted: true,
-          status: 'approved',
-          approved: true,
-          kycStatus: 'verified',
-          createdAt: new Date().toISOString()
-        };
-        setServices([sampleService]);
-        
-        // Sync sample
-        try {
-          fetch('/api/resident-services', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(sampleService)
-          }).catch(() => {});
-        } catch (e) {}
+        // Không tự tạo dịch vụ mẫu giả; user tự đăng dịch vụ thật của mình.
+        setServices([]);
       }
     } catch (e) {
       console.error('Error loading resident services:', e);
@@ -336,8 +300,9 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
           description: description.trim(),
           verified: true,
           legalCommitmentAccepted: true,
-          status: 'approved',
-          approved: true,
+          // Dịch vụ mới đăng ở trạng thái pending; admin duyệt qua trang quản trị.
+          status: 'pending',
+          approved: false,
           kycStatus: 'verified',
           createdAt: new Date().toISOString()
         };
@@ -356,7 +321,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
       setIsEditingModalOpen(false);
       if (onRefresh) onRefresh();
-      alert('🎉 Đã lưu & xuất bản bài đăng Dịch Vụ Cư Dân thành công! Bài viết đã hiển thị ngay trên Chợ Cư Dân.');
+      alert('🎉 Đã gửi bài đăng Dịch Vụ Cư Dân thành công! Bài viết đang chờ quản trị viên duyệt.');
     } catch (e) {
       console.error('Error saving resident service:', e);
       alert('Có lỗi xảy ra khi lưu bài dịch vụ.');
