@@ -83,8 +83,8 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use(express.json({ limit: "100mb" }));
-app.use(express.urlencoded({ limit: "100mb", extended: true }));
+app.use(express.json({ limit: "15mb" }));
+app.use(express.urlencoded({ limit: "15mb", extended: true }));
 
 // Express JSON Body Parser & Payload Error Middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
