@@ -16,8 +16,12 @@ import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/resid
 import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile, RECRUITMENT_PACKAGES, INITIAL_EMPLOYER_REGISTRATIONS, INITIAL_TASK_DELEGATIONS } from "./src/data/recruitmentData.ts";
 import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation, DepositIntent, AppNotification } from "./src/types.ts";
 import { isPostgresConfigured } from "./src/db/index.ts";
+import { generateTotpSecret, verifyTotpToken, buildOtpAuthUri, generateBackupCodes, hashBackupCode } from "./src/lib/totp.ts";
 
 const app = express();
+// SECURITY: App chạy sau reverse proxy của Render — nếu không set, express-rate-limit
+// sẽ coi IP của proxy là IP duy nhất cho mọi request (toàn bộ user chia nhau 1 hạn mức).
+app.set('trust proxy', 1);
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 // Security Configuration
@@ -137,10 +141,21 @@ function generateToken(user: { id: string; email: string; role: string }): strin
 const tokenBlacklist = new Set<string>();
 const BLACKLIST_CLEANUP_INTERVAL = 60 * 60 * 1000; // 1 hour
 
-// Periodically clean up expired tokens from blacklist
+// Periodically clean up ONLY expired tokens from blacklist (not the whole set —
+// a token logged out 5 minutes ago is still valid for up to 7 days via its JWT exp).
 setInterval(() => {
-  tokenBlacklist.clear();
-  console.log('[SECURITY] Token blacklist cleaned');
+  const now = Math.floor(Date.now() / 1000);
+  for (const token of tokenBlacklist) {
+    try {
+      const decoded: any = jwt.decode(token);
+      if (!decoded?.exp || decoded.exp < now) {
+        tokenBlacklist.delete(token);
+      }
+    } catch {
+      tokenBlacklist.delete(token);
+    }
+  }
+  console.log('[SECURITY] Token blacklist cleaned (expired entries only)');
 }, BLACKLIST_CLEANUP_INTERVAL);
 
 // Verify JWT Token Middleware
@@ -322,7 +337,16 @@ async function sendEmailOtp(toEmail: string, otpCode: string): Promise<{ sent: b
 
 interface StoredUser extends User {
   password?: string;
+  // SECURITY: Xác thực 2 lớp (TOTP - Google Authenticator/Authy/Microsoft Authenticator)
+  totpSecret?: string; // base32 secret, chỉ tồn tại khi đang setup hoặc đã bật 2FA
+  totpEnabled?: boolean;
+  totpBackupCodeHashes?: string[]; // SHA-256 hash của các mã dự phòng dùng 1 lần chưa dùng
 }
+
+// SECURITY: Lưu tạm "pending TOTP token" khi user vừa nhập đúng mật khẩu nhưng chưa nhập mã 2FA.
+// Tránh phải gửi lại email/password ở bước xác thực mã, đồng thời không phát hành JWT thật cho tới khi qua 2FA.
+const pendingTotpLogins = new Map<string, { userId: string; expiresAt: number }>();
+const PENDING_TOTP_TTL = 5 * 60 * 1000; // 5 phút
 
 // User accounts store (seeded with admin & default accounts)
 let usersStore: StoredUser[] = [
@@ -1222,7 +1246,9 @@ app.post("/api/auth/send-otp", authLimiter, async (req, res) => {
 });
 
 // Verify OTP API
-app.post("/api/auth/verify-otp", (req, res) => {
+// SECURITY: authLimiter chống brute-force theo IP; đếm attempts trong otpStore chống
+// brute-force theo email cụ thể (OTP 6 số chỉ có 1 triệu khả năng, cần khóa sau vài lần sai).
+app.post("/api/auth/verify-otp", authLimiter, (req, res) => {
   const { email, otpCode } = req.body;
   if (!email || !otpCode) {
     return res.status(400).json({ error: "Thiếu Email hoặc mã OTP xác nhận." });
@@ -1241,9 +1267,16 @@ app.post("/api/auth/verify-otp", (req, res) => {
   }
 
   if (record.code !== String(otpCode).trim()) {
+    (record as any).attempts = ((record as any).attempts || 0) + 1;
+    if ((record as any).attempts >= 5) {
+      otpStore.delete(normalizedEmail);
+      return res.status(429).json({ error: "Sai mã OTP quá 5 lần. Vui lòng bấm 'Gửi lại mã OTP Email' để lấy mã mới!" });
+    }
     return res.status(400).json({ error: "Mã OTP không chính xác. Vui lòng kiểm tra lại 6 chữ số trong Email!" });
   }
 
+  // Lưu ý: KHÔNG xóa record ở đây — /api/auth/register verify lại OTP này lần nữa
+  // trước khi tạo tài khoản, nên record cần tồn tại tới khi hết hạn hoặc dùng ở register.
   return res.json({ success: true, message: "Xác thực mã OTP Email thành công!" });
 });
 
@@ -1316,7 +1349,27 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
 
 // Account Login API (with bcrypt + JWT)
 app.post("/api/auth/login", authLimiter, async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  const { pendingToken } = req.body;
+
+  // SECURITY: Cho phép bước 2 của luồng 2FA gửi lại pendingToken thay vì email+password
+  // (tránh phải nhập lại mật khẩu khi chỉ còn thiếu mã TOTP).
+  if (pendingToken && !password) {
+    const pending = pendingTotpLogins.get(String(pendingToken));
+    if (!pending || pending.expiresAt < Date.now()) {
+      pendingTotpLogins.delete(String(pendingToken));
+      return res.status(400).json({ error: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại từ đầu!" });
+    }
+    const pendingUser = usersStore.find(u => u.id === pending.userId);
+    if (!pendingUser) {
+      pendingTotpLogins.delete(String(pendingToken));
+      return res.status(400).json({ error: "Không tìm thấy tài khoản. Vui lòng đăng nhập lại từ đầu!" });
+    }
+    email = pendingUser.email;
+    password = '__pending_totp_bypass__'; // đã xác thực password ở lần gọi trước, chỉ cần qua kiểm tra TOTP bên dưới
+    pendingTotpLogins.delete(String(pendingToken));
+    (req as any)._skipPasswordCheck = true;
+  }
 
   if (!email || !password) {
     return res.status(400).json({ error: "Vui lòng nhập Email và Mật khẩu!" });
@@ -1346,7 +1399,7 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
   }
 
   // Check if password is bcrypt hashed (starts with $2a$ or $2b$)
-  if (user.password) {
+  if (user.password && !(req as any)._skipPasswordCheck) {
     const isBcryptHash = user.password.startsWith('$2a$') || user.password.startsWith('$2b$');
     
     if (isBcryptHash) {
@@ -1373,13 +1426,53 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
     }
   }
   
+  // SECURITY: Nếu tài khoản đã bật xác thực 2 lớp (TOTP), yêu cầu thêm bước nhập mã 6 số
+  if (user.totpEnabled && user.totpSecret) {
+    const { totpCode, backupCode } = req.body;
+
+    if (!totpCode && !backupCode) {
+      // Chưa nhập mã 2FA -> KHÔNG cấp token, KHÔNG tính là đăng nhập thất bại (mật khẩu đã đúng).
+      // Trả về pendingToken tạm để bước xác thực mã kế tiếp không cần gửi lại password.
+      const pendingToken = crypto.randomBytes(24).toString('hex');
+      pendingTotpLogins.set(pendingToken, { userId: user.id, expiresAt: Date.now() + PENDING_TOTP_TTL });
+      return res.json({
+        success: false,
+        requireTotp: true,
+        pendingToken,
+        message: "Vui lòng nhập mã xác thực 2 lớp (TOTP) từ ứng dụng Authenticator."
+      });
+    }
+
+    let totpValid = false;
+    if (totpCode) {
+      totpValid = verifyTotpToken(user.totpSecret, String(totpCode));
+    } else if (backupCode && user.totpBackupCodeHashes?.length) {
+      const hashed = hashBackupCode(String(backupCode));
+      const idx = user.totpBackupCodeHashes.indexOf(hashed);
+      if (idx !== -1) {
+        totpValid = true;
+        // Mã dự phòng chỉ dùng được 1 lần
+        user.totpBackupCodeHashes.splice(idx, 1);
+        saveDataStore();
+      }
+    }
+
+    if (!totpValid) {
+      recordFailedLogin(normalizedEmail);
+      return res.status(400).json({
+        success: false,
+        error: "Mã xác thực 2 lớp không đúng hoặc đã hết hạn!"
+      });
+    }
+  }
+
   // SECURITY: Reset login attempts on successful login
   resetLoginAttempts(normalizedEmail);
 
   // Generate JWT token
   const token = generateToken(user);
 
-  const { password: _, ...userWithoutPassword } = user;
+  const { password: _, totpSecret: __, totpBackupCodeHashes: ___, ...userWithoutPassword } = user;
   return res.json({
     message: "Đăng nhập thành công!",
     user: userWithoutPassword,
@@ -1440,6 +1533,102 @@ app.post("/api/auth/change-password", authenticateToken, async (req, res) => {
   console.log(`[SECURITY] Password changed for user: ${user.email}`);
   
   res.json({ success: true, message: "Đổi mật khẩu thành công! Vui lòng đăng nhập lại." });
+});
+
+// ============================================
+// 2FA / TOTP (Google Authenticator, Authy, Microsoft Authenticator...)
+// ============================================
+
+// SECURITY: Bước 1 - Tạo secret mới + trả về otpauth URI (frontend tự render QR từ URI này,
+// ví dụ dùng thư viện "qrcode.react" hoặc gọi API tạo QR ảnh riêng).
+// Secret CHƯA được coi là "đã bật" cho tới khi xác nhận đúng mã ở bước /2fa/verify-setup.
+app.post("/api/auth/2fa/setup", authenticateToken, requireAdmin, async (req, res) => {
+  const jwtUser = (req as any).user;
+  const user = usersStore.find(u => u.id === jwtUser.userId);
+  if (!user) {
+    return res.status(404).json({ success: false, error: "Không tìm thấy người dùng!" });
+  }
+
+  if (user.totpEnabled) {
+    return res.status(400).json({ success: false, error: "Tài khoản đã bật xác thực 2 lớp. Vui lòng tắt trước khi cài lại." });
+  }
+
+  const secret = generateTotpSecret();
+  user.totpSecret = secret; // lưu tạm, chưa bật (totpEnabled vẫn false) cho tới khi verify-setup
+  saveDataStore();
+
+  const otpauthUri = buildOtpAuthUri({
+    secret,
+    accountName: user.email,
+    issuer: "ChoCuDan24h"
+  });
+
+  res.json({
+    success: true,
+    secret, // hiển thị dạng text để nhập tay nếu không quét được QR
+    otpauthUri, // dùng để render mã QR ở frontend
+    message: "Quét mã QR bằng app Authenticator, sau đó nhập mã 6 số để xác nhận."
+  });
+});
+
+// SECURITY: Bước 2 - Xác nhận mã 6 số đầu tiên đúng thì mới chính thức bật 2FA.
+// Đồng thời sinh backup codes 1 lần duy nhất (chỉ hiển thị lúc này, server chỉ lưu bản hash).
+app.post("/api/auth/2fa/verify-setup", authenticateToken, requireAdmin, async (req, res) => {
+  const jwtUser = (req as any).user;
+  const { totpCode } = req.body;
+  const user = usersStore.find(u => u.id === jwtUser.userId);
+
+  if (!user) {
+    return res.status(404).json({ success: false, error: "Không tìm thấy người dùng!" });
+  }
+  if (!user.totpSecret) {
+    return res.status(400).json({ success: false, error: "Chưa khởi tạo 2FA. Vui lòng gọi /2fa/setup trước!" });
+  }
+  if (!totpCode || !verifyTotpToken(user.totpSecret, String(totpCode))) {
+    return res.status(400).json({ success: false, error: "Mã xác thực không đúng. Vui lòng thử lại!" });
+  }
+
+  const backupCodes = generateBackupCodes(8);
+  user.totpEnabled = true;
+  user.totpBackupCodeHashes = backupCodes.map(hashBackupCode);
+  saveDataStore();
+
+  console.log(`[SECURITY] 2FA (TOTP) enabled for admin: ${user.email}`);
+
+  res.json({
+    success: true,
+    message: "Đã bật xác thực 2 lớp thành công!",
+    // CHỈ hiển thị 1 lần duy nhất - nhắc người dùng lưu lại nơi an toàn (server không lưu bản rõ).
+    backupCodes
+  });
+});
+
+// SECURITY: Tắt 2FA - yêu cầu xác nhận lại mật khẩu để tránh kẻ chiếm phiên đăng nhập tắt 2FA tùy ý.
+app.post("/api/auth/2fa/disable", authenticateToken, requireAdmin, async (req, res) => {
+  const jwtUser = (req as any).user;
+  const { password } = req.body;
+  const user = usersStore.find(u => u.id === jwtUser.userId);
+
+  if (!user) {
+    return res.status(404).json({ success: false, error: "Không tìm thấy người dùng!" });
+  }
+  if (!password) {
+    return res.status(400).json({ success: false, error: "Vui lòng nhập mật khẩu để xác nhận tắt 2FA!" });
+  }
+
+  const isBcrypt = user.password && (user.password.startsWith('$2a$') || user.password.startsWith('$2b$'));
+  const passwordValid = isBcrypt ? await comparePassword(password, user.password!) : user.password === String(password);
+  if (!passwordValid) {
+    return res.status(400).json({ success: false, error: "Mật khẩu không chính xác!" });
+  }
+
+  user.totpEnabled = false;
+  user.totpSecret = undefined;
+  user.totpBackupCodeHashes = undefined;
+  saveDataStore();
+
+  console.log(`[SECURITY] 2FA (TOTP) disabled for admin: ${user.email}`);
+  res.json({ success: true, message: "Đã tắt xác thực 2 lớp." });
 });
 
 // Real Google OAuth / Google Account Authentication API (with JWT)
@@ -5384,17 +5573,17 @@ app.post("/api/wallets/:userId/withdraw", authenticateToken, (req, res) => {
 });
 
 // 8. Tax Withholding & E-Commerce Tax Declaration Endpoints (Nghị định 91/2022/NĐ-CP & Thông tư 40/2021/TT-BTC)
-app.get("/api/admin/tax-config", (req, res) => {
+app.get("/api/admin/tax-config", authenticateToken, requireAdmin, (req, res) => {
   res.json(taxConfigStore);
 });
 
-app.post("/api/admin/tax-config", (req, res) => {
+app.post("/api/admin/tax-config", authenticateToken, requireAdmin, (req, res) => {
   taxConfigStore = { ...taxConfigStore, ...req.body };
   saveDataStore();
   res.json({ success: true, message: "Cập nhật cấu hình thuế TMĐT thành công!", config: taxConfigStore });
 });
 
-app.get("/api/admin/tax-ledger", (req, res) => {
+app.get("/api/admin/tax-ledger", authenticateToken, requireAdmin, (req, res) => {
   const totalTaxCollected = taxLedgerStore.reduce((acc, cur) => acc + (cur.totalTaxWithheld || 0), 0);
   const totalRevenueManaged = taxLedgerStore.reduce((acc, cur) => acc + (cur.grossRevenue || 0), 0);
   res.json({
@@ -5405,7 +5594,7 @@ app.get("/api/admin/tax-ledger", (req, res) => {
   });
 });
 
-app.post("/api/admin/tax-declare-gdt", (req, res) => {
+app.post("/api/admin/tax-declare-gdt", authenticateToken, requireAdmin, (req, res) => {
   const { period } = req.body;
   taxLedgerStore.forEach(r => {
     if (r.status === 'withheld_in_vault') {
@@ -6615,7 +6804,7 @@ app.post("/api/recruitment/employer-registrations/:id/reject", (req, res) => {
 });
 
 // 26. GET Admin Task Delegations (Phân công giao việc quản trị các mảng)
-app.get("/api/admin/tasks", (req, res) => {
+app.get("/api/admin/tasks", authenticateToken, requireAdmin, (req, res) => {
   const { category, status, assignedToAdminId, targetProject } = req.query;
   let list = [...adminTaskDelegationsStore];
 
@@ -6636,7 +6825,7 @@ app.get("/api/admin/tasks", (req, res) => {
 });
 
 // 27. POST Create Admin Task Delegation
-app.post("/api/admin/tasks", (req, res) => {
+app.post("/api/admin/tasks", authenticateToken, requireAdmin, (req, res) => {
   const data = req.body;
   if (!data.title || !data.assignedToAdminName || !data.category) {
     return res.status(400).json({ error: "Vui lòng nhập đầy đủ Tiêu đề nhiệm vụ, Mảng công việc và Người được phân công!" });
@@ -6672,7 +6861,7 @@ app.post("/api/admin/tasks", (req, res) => {
 });
 
 // 28. PUT Update Admin Task Delegation
-app.put("/api/admin/tasks/:id", (req, res) => {
+app.put("/api/admin/tasks/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const index = adminTaskDelegationsStore.findIndex(t => t.id === id);
   if (index === -1) {
@@ -6696,7 +6885,7 @@ app.put("/api/admin/tasks/:id", (req, res) => {
 });
 
 // 29. DELETE Admin Task Delegation
-app.delete("/api/admin/tasks/:id", (req, res) => {
+app.delete("/api/admin/tasks/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const index = adminTaskDelegationsStore.findIndex(t => t.id === id);
   if (index === -1) {
@@ -7618,7 +7807,7 @@ app.post("/api/admin/users/:userId/adjust-balance", authenticateToken, requireAd
 });
 
 // Admin Finance Summary & Withdrawals
-app.get("/api/admin/finance/summary", (req, res) => {
+app.get("/api/admin/finance/summary", authenticateToken, requireAdmin, (req, res) => {
   const totalDeposit = walletTransactionsStore
     .filter(t => t.type === 'deposit_vietqr' && t.status === 'success')
     .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
