@@ -74,101 +74,59 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="space-y-16 pb-16">
       
-      {/* 1. Hero Banner Section */}
-      <section className="relative bg-slate-950 text-white pt-12 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden rounded-b-[2.5rem] shadow-2xl">
-        <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]" />
-        
-        {/* Background Image Overlay */}
-        <div className="absolute inset-0 opacity-30">
+      {/* 1. Hero Banner Section — TỐI GIẢN */}
+      <section className="relative bg-slate-950 text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden rounded-b-[2rem] shadow-xl">
+        {/* Background Image Overlay — giảm opacity */}
+        <div className="absolute inset-0 opacity-20">
           <img
             src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1800&q=80"
-            alt="Vinhomes Ocean Park"
+            alt="Vinhomes"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/30" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto space-y-4 sm:space-y-8 text-center sm:text-left">
+        <div className="relative max-w-7xl mx-auto space-y-3 sm:space-y-4 text-center sm:text-left">
           
-          {/* Top Badge */}
-          <div className="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-extrabold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>CHỢ CƯ DÂN 24H — CHOCUDAN24H.COM</span>
-          </div>
-
-          {/* Hero Titles */}
-          <div className="space-y-2 sm:space-y-3 max-w-4xl">
+          {/* Hero Titles — rút gọn */}
+          <div className="space-y-1 sm:space-y-2 max-w-3xl">
             <h1 className="tracking-tight text-white leading-tight">
-              <span className="block text-slate-200 font-bold text-[11px] sm:text-sm md:text-base tracking-wide uppercase mb-0.5 opacity-90">
-                NỀN TẢNG TRAO ĐỔI THÔNG TIN CHUYỂN NHƯỢNG, CHO THUÊ & DỊCH VỤ NỘI KHU
-              </span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 font-black text-lg sm:text-2xl md:text-3xl lg:text-4xl tracking-tight drop-shadow-md">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500 font-black text-lg sm:text-xl md:text-2xl lg:text-3xl tracking-tight drop-shadow-md">
                 KẾT NỐI CƯ DÂN VINHOMES
               </span>
             </h1>
-            <div className="bg-slate-900/80 backdrop-blur-md border border-amber-500/30 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl max-w-3xl space-y-1 text-left">
-              <p className="text-[11px] sm:text-sm text-slate-200 font-medium leading-snug sm:leading-relaxed">
-                Nền tảng trực tiếp dành cho cư dân Vinhomes trao đổi thông tin mua bán, cho thuê BĐS và đăng tin dịch vụ tiện ích nội khu — Tối ưu kết nối minh bạch, hỗ trợ cư dân 24/7.
-              </p>
-              <p className="text-[10px] sm:text-[11px] text-amber-300 font-semibold flex items-center gap-1.5 pt-0.5">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                <span>Hotline/Zalo 0868.499.929: Chuyên trách hỗ trợ cư dân đăng tin & hỗ trợ vận hành.</span>
-              </p>
-            </div>
+            <p className="text-xs sm:text-sm text-slate-300 font-medium leading-snug max-w-2xl">
+              Nền tảng trao đổi mua bán, cho thuê BĐS & dịch vụ nội khu — hỗ trợ cư dân 24/7.
+            </p>
           </div>
 
-          {/* Search Box Widget */}
-          <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-3 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white max-w-4xl">
+          {/* Search Box Widget — giảm padding */}
+          <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white max-w-3xl">
             
-            {/* Desktop 4 Services Cards (Horizontal Grid) */}
-            <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-3 border-b border-slate-200 dark:border-slate-800 pb-5 mb-5">
+            {/* Desktop 4 Services Cards (Horizontal Grid) — TỐI GIẢN */}
+            <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 mb-3">
               {/* Card 1: Mua Bán BĐS */}
               <button
                 onClick={() => {
                   setSearchType('sale');
                   setCurrentTab('sale');
                 }}
-                className={`group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between cursor-pointer ${
+                className={`group text-left rounded-xl border transition overflow-hidden flex flex-col cursor-pointer ${
                   searchType === 'sale'
-                    ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500 shadow-md ring-2 ring-amber-500/50'
-                    : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-amber-400 hover:shadow-md'
+                    ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500 ring-1 ring-amber-500/50'
+                    : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-amber-400'
                 }`}
               >
-                {/* Image Simulation Preview */}
-                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-16 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
-                  
-                  {/* Badge & Icon on Image */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1">
-                    <div className="p-1 bg-amber-500 text-slate-950 rounded-md shadow-xs">
-                      <Building2 className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="px-1.5 py-0.2 bg-amber-500/90 text-slate-950 text-[9px] font-black rounded uppercase tracking-wider">
-                      Chính Chủ
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-1.5 left-2 right-2">
-                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
-                      1. Mua Bán BĐS
-                    </span>
-                  </div>
                 </div>
-
-                {/* Brief Info */}
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Căn hộ, Shophouse & Biệt thự Vinhomes bán chính chủ.
-                  </p>
-                  <div className="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 font-bold pt-0.5">
-                    <span>Xem bảng giá →</span>
-                  </div>
+                <div className="p-2">
+                  <span className="text-xs font-black text-slate-900 dark:text-white block truncate">Mua Bán BĐS</span>
                 </div>
               </button>
 
@@ -178,138 +136,63 @@ export const HomePage: React.FC<HomePageProps> = ({
                   setSearchType('rent');
                   setCurrentTab('rent');
                 }}
-                className={`group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between cursor-pointer ${
+                className={`group text-left rounded-xl border transition overflow-hidden flex flex-col cursor-pointer ${
                   searchType === 'rent'
-                    ? 'bg-sky-500/10 dark:bg-sky-500/20 border-sky-500 shadow-md ring-2 ring-sky-500/50'
-                    : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-sky-400 hover:shadow-md'
+                    ? 'bg-sky-500/10 dark:bg-sky-500/20 border-sky-500 ring-1 ring-sky-500/50'
+                    : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-sky-400'
                 }`}
               >
-                {/* Image Simulation Preview */}
-                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-16 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
-                  
-                  {/* Badge & Icon on Image */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1">
-                    <div className="p-1 bg-sky-500 text-white rounded-md shadow-xs">
-                      <KeyRound className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="px-1.5 py-0.2 bg-sky-500/90 text-white text-[9px] font-black rounded uppercase tracking-wider">
-                      Ở Ngay
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-1.5 left-2 right-2">
-                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
-                      2. Cho Thuê BĐS
-                    </span>
-                  </div>
                 </div>
-
-                {/* Brief Info */}
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Căn hộ full đồ, Thuê theo tầng, VP & Mặt bằng KD.
-                  </p>
-                  <div className="flex items-center gap-1 text-[10px] text-sky-600 dark:text-sky-400 font-bold pt-0.5">
-                    <span>Xem danh sách →</span>
-                  </div>
+                <div className="p-2">
+                  <span className="text-xs font-black text-slate-900 dark:text-white block truncate">Cho Thuê BĐS</span>
                 </div>
               </button>
 
               {/* Card 3: Dịch Vụ Cư Dân */}
               <button
                 onClick={() => setCurrentTab('services')}
-                className="group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-emerald-400 hover:shadow-md cursor-pointer"
+                className="group text-left rounded-xl border transition overflow-hidden flex flex-col bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-emerald-400 cursor-pointer"
               >
-                {/* Image Simulation Preview */}
-                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-16 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
-                  
-                  {/* Badge & Icon on Image */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1">
-                    <div className="p-1 bg-emerald-600 text-white rounded-md shadow-xs">
-                      <Wrench className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="px-1.5 py-0.2 bg-emerald-600/90 text-white text-[9px] font-black rounded uppercase tracking-wider">
-                      Tiện Ích
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-1.5 left-2 right-2">
-                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
-                      3. Dịch Vụ Cư Dân
-                    </span>
-                  </div>
                 </div>
-
-                {/* Brief Info */}
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Sửa chữa, Giặt là, Taxi, Spa, Đặt cơm & Gian hàng.
-                  </p>
-                  <div className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-bold pt-0.5">
-                    <span>Khám phá chợ →</span>
-                  </div>
+                <div className="p-2">
+                  <span className="text-xs font-black text-slate-900 dark:text-white block truncate">Dịch Vụ Cư Dân</span>
                 </div>
               </button>
 
               {/* Card 4: Việc Làm & Tuyển Dụng */}
               <button
                 onClick={() => setCurrentTab('recruitment')}
-                className="group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-teal-400 hover:shadow-md cursor-pointer"
+                className="group text-left rounded-xl border transition overflow-hidden flex flex-col bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-teal-400 cursor-pointer"
               >
-                {/* Image Simulation Preview */}
-                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-16 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img
                     src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80"
                     alt="Tuyển Dụng Việc Làm"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
-                  
-                  {/* Badge & Icon on Image */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1">
-                    <div className="p-1 bg-teal-600 text-white rounded-md shadow-xs">
-                      <Briefcase className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="px-1.5 py-0.2 bg-teal-600/90 text-white text-[9px] font-black rounded uppercase tracking-wider">
-                      Việc Làm
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-1.5 left-2 right-2">
-                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
-                      4. Việc Làm & Tuyển Dụng
-                    </span>
-                  </div>
                 </div>
-
-                {/* Brief Info */}
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Tìm việc làm nội khu, ứng tuyển thợ, nhân sự DN.
-                  </p>
-                  <div className="flex items-center gap-1 text-[10px] text-teal-600 dark:text-teal-400 font-bold pt-0.5">
-                    <span>Tìm việc ngay →</span>
-                  </div>
+                <div className="p-2">
+                  <span className="text-xs font-black text-slate-900 dark:text-white block truncate">Tuyển Dụng</span>
                 </div>
               </button>
             </div>
 
-            {/* Mobile Compact 2x2 Clean Services Grid (Ultra Neat Chợ Tốt Style) */}
+            {/* Mobile Compact 2x2 Clean Services Grid */}
             <div className="grid sm:hidden grid-cols-2 gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 mb-3">
               {/* Mobile Card 1: Mua Bán */}
               <button
@@ -626,8 +509,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* Middle Banner Ad */}
-      <AdBannerWidget ads={liveAds} position="home_middle" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" />
+      {/* Middle Banner Ad — TẮT QUẢNG CÁO theo yêu cầu 27/08/2026 (thiết kế xấu) */}
+      {/* <AdBannerWidget ads={liveAds} position="home_middle" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" /> */}
 
       {/* 5. Hiếu Bùi Profile Bio Highlight Card */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -758,11 +641,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     n8n Sync
                   </span>
                 )}
-                {item.source === 'ai' && (
-                  <span className="absolute top-3 left-3 bg-purple-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow">
-                    Gemini AI
-                  </span>
-                )}
+                {/* Badge "Gemini AI" đã xóa — không hiển thị trên trang công khai */}
               </div>
 
               <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">

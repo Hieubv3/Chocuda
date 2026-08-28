@@ -20,9 +20,12 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
   const [selectedCat, setSelectedCat] = useState<string>('all');
   const [showShareModalFor, setShowShareModalFor] = useState<NewsArticle | null>(null);
 
+  // Chỉ hiển thị bài đã xuất bản trên trang công khai (bài draft chờ admin duyệt)
+  const publishedNews = news.filter(n => n.status !== 'draft');
+
   const filteredNews = selectedCat === 'all'
-    ? news
-    : news.filter(n => n.category === selectedCat);
+    ? publishedNews
+    : publishedNews.filter(n => n.category === selectedCat);
 
   const handleCardClick = (article: NewsArticle) => {
     if (onSelectArticle) {
@@ -45,12 +48,9 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
           <span className="text-xs font-black uppercase text-amber-500 tracking-wider">
             TIN TỨC BĐS & PHÂN TÍCH THỊ TRƯỜNG
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">
+           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">
             BẢN TIN THỊ TRƯỜNG VINHOMES 24/7
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Đồng bộ bài viết tự động từ webhook n8n & Phân tích chuyên sâu từ Gemini AI
-          </p>
         </div>
 
         {/* Category Filter Pills */}
@@ -133,9 +133,9 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
                     n8n Sync
                   </span>
                 )}
-                {article.source === 'ai' && (
+                {article.source === 'ai' && currentUser?.role === 'admin' && (
                   <span className="bg-purple-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow">
-                    Gemini AI
+                    AI
                   </span>
                 )}
                 <span className="bg-slate-950/80 text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-lg backdrop-blur">

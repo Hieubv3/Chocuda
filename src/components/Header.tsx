@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Building2, Phone, Heart, Scale, User, ShieldCheck, Globe, Menu, X, PlusCircle, Sparkles, Sun, Moon, Zap, KeyRound, Share2, ChevronDown, Home, Store, Wrench, Smartphone, Download, Briefcase } from 'lucide-react';
 import { Language, User as UserType, HeightCategory, PropertyCategory } from '../types';
 import { getTranslation } from '../lib/i18n';
@@ -47,6 +47,42 @@ export const Header: React.FC<HeaderProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [saleHover, setSaleHover] = useState(false);
   const [rentHover, setRentHover] = useState(false);
+
+  // Swipe gesture: vuốt phải từ mép trái → mở menu mobile; vuốt trái → đóng menu
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  useEffect(() => {
+    const isMobile = () => window.innerWidth < 1024; // lg breakpoint (khớp lg:hidden)
+    const onTouchStart = (e: TouchEvent) => {
+      if (!isMobile()) return;
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!isMobile() || touchStartX.current === null || touchStartY.current === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      const dy = e.changedTouches[0].clientY - touchStartY.current;
+      const startX = touchStartX.current;
+      touchStartX.current = null;
+      touchStartY.current = null;
+      // Chỉ nhận cử chỉ ngang (dx > dy) để không xung đột cuộn dọc
+      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      if (dx > 0 && startX < 40) {
+        // Vuốt phải từ mép trái màn hình → mở menu
+        setMobileMenuOpen(true);
+      } else if (dx < 0 && mobileMenuOpen) {
+        // Vuốt trái → đóng menu
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [mobileMenuOpen]);
 
   const t = getTranslation(language);
   const { views, onlineCount } = useVisitorStats();

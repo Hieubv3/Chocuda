@@ -396,8 +396,8 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
 
   return (
     <>
-      {/* Floating Launcher Button */}
-      {!isOpen && (
+      {/* Floating Launcher Button — TẮT theo yêu cầu 27/08/2026 (dàn trải chiếm màn hình mobile) */}
+      {/* {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 left-6 z-40 flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-4 py-2.5 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 border border-white/30 group cursor-pointer"
@@ -415,7 +415,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
             </span>
           )}
         </button>
-      )}
+      )} */}
 
       {/* Chatbot Window Modal */}
       {isOpen && (

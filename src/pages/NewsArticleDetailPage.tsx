@@ -9,6 +9,47 @@ import { SEOHead } from '../components/SEOHead';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { slugify } from '../lib/slugs';
 
+// Simple markdown renderer for article content (no external deps)
+function renderMarkdown(content: string): string {
+  if (!content) return '';
+  let html = content;
+  // Escape HTML first (XSS safety)
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Restore code blocks temporarily
+  const codeBlocks: string[] = [];
+  html = html.replace(/```[\s\S]*?```/g, (m) => {
+    codeBlocks.push(m);
+    return `\x00CODEBLOCK${codeBlocks.length - 1}\x00`;
+  });
+  // Headings
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  // Bold / italic
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // List items
+  html = html.replace(/^\- (.+)$/gm, '<li>$1</li>');
+  // Wrap consecutive <li> in <ul>
+  html = html.replace(/(<li>.*?<\/li>)(\s*<li>.*?<\/li>)+/gs, (m) => `<ul>${m}</ul>`);
+  html = html.replace(/^<li>/gm, '<ul><li>').replace(/<\/li>$/gm, '</li></ul>');
+  // Paragraphs (double newline)
+  html = html.replace(/\n\n/g, '</p><p>');
+  // Single newlines to <br>
+  html = html.replace(/\n/g, '<br>');
+  // Restore code blocks
+  codeBlocks.forEach((block, i) => {
+    html = html.replace(`\x00CODEBLOCK${i}\x00`, `<pre><code>${block.replace(/```/g, '')}</code></pre>`);
+  });
+  // Wrap in paragraph if not already wrapped
+  if (!html.startsWith('<h') && !html.startsWith('<p>') && !html.startsWith('<ul>') && !html.startsWith('<pre>')) {
+    html = `<p>${html}</p>`;
+  }
+  return html;
+}
+
 interface NewsArticleDetailPageProps {
   news: NewsArticle[];
   language: Language;
@@ -19,11 +60,14 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
   const [showShareModal, setShowShareModal] = useState(false);
 
   // Match article by id or slugified title or url param
+  // Chỉ hiển thị bài đã xuất bản (bài draft chờ admin duyệt sẽ ẩn khỏi trang công khai)
   const article = news.find(n => 
-    n.id === postSlug || 
-    n.id === decodeURIComponent(postSlug || '') ||
-    slugify(n.title) === postSlug ||
-    n.id === categorySlug
+    n.status !== 'draft' && (
+      n.id === postSlug || 
+      n.id === decodeURIComponent(postSlug || '') ||
+      slugify(n.title) === postSlug ||
+      n.id === categorySlug
+    )
   );
 
   if (!article) {
@@ -97,12 +141,6 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
             <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 text-xs font-black rounded-full uppercase tracking-wider">
               {categoryName}
             </span>
-            {article.source === 'ai' && (
-              <span className="px-2.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-[11px] font-bold rounded-full flex items-center gap-1">
-                <Sparkles className="w-3 h-3" />
-                <span>AI Tổng Hợp</span>
-              </span>
-            )}
           </div>
 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white leading-tight">
@@ -157,9 +195,7 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
         )}
 
         {/* Article Body Content */}
-        <div className="prose prose-slate dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 text-sm sm:text-base leading-relaxed space-y-4 whitespace-pre-line">
-          {article.content}
-        </div>
+        <div className="prose prose-slate dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 text-sm sm:text-base leading-relaxed space-y-4" dangerouslySetInnerHTML={{ __html: renderMarkdown(article.content) }} />
 
         {/* Share & Source Banner */}
         <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">

@@ -670,9 +670,13 @@ export const App: React.FC = () => {
       return updated;
     });
     try {
+      const token = localStorage.getItem('auth_token');
       await fetch(`/api/news/${updatedNews.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify(updatedNews)
       });
     } catch (e) {
@@ -688,9 +692,13 @@ export const App: React.FC = () => {
       return updated;
     });
     try {
+      const token = localStorage.getItem('auth_token');
       await fetch('/api/news', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify(newArticle)
       });
     } catch (e) {
@@ -707,7 +715,11 @@ export const App: React.FC = () => {
       return updated;
     });
     try {
-      await fetch(`/api/news/${id}`, { method: 'DELETE' });
+      const token = localStorage.getItem('auth_token');
+      await fetch(`/api/news/${id}`, {
+        method: 'DELETE',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
     } catch (e) {
       console.warn('Deleted news article locally:', id);
     }
@@ -807,8 +819,8 @@ export const App: React.FC = () => {
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300 pb-16 md:pb-0">
       <ScrollToTop />
 
-      {/* Top Banner (If active) */}
-      <AdBannerWidget ads={ads} position="header_top" />
+      {/* Top Banner (If active) — TẮT QUẢNG CÁO theo yêu cầu 27/08/2026 (thiết kế xấu) */}
+      {/* <AdBannerWidget ads={ads} position="header_top" /> */}
 
       {/* Navigation Header */}
       <Header
@@ -1843,35 +1855,35 @@ export const App: React.FC = () => {
         onClose={() => setAndroidModalOpen(false)}
       />
 
-      {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-1 flex items-center justify-around shadow-2xl">
+      {/* Mobile Bottom Navigation Bar - Compact Size */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-0.5 flex items-center justify-around shadow-lg">
         {/* 1. Trang Chủ */}
         <button
           onClick={() => navigate('/')}
-          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
+          className={`flex-1 flex flex-col items-center justify-center py-0.5 rounded-lg transition-all duration-150 ${
             location.pathname === '/'
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Home className="w-5 h-5 transition-transform" />
-          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Trang Chủ</span>
+          <Home className="w-4 h-4 transition-transform" />
+          <span className="text-[8px] mt-0.5 font-medium whitespace-nowrap">Trang Chủ</span>
         </button>
 
         {/* 2. Bất Động Sản */}
         <button
           onClick={() => navigate('/bat-dong-san')}
-          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
+          className={`flex-1 flex flex-col items-center justify-center py-0.5 rounded-lg transition-all duration-150 ${
             location.pathname.startsWith('/bat-dong-san') || location.pathname.startsWith('/mua-ban') || location.pathname.startsWith('/cho-thue')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Building2 className="w-5 h-5 transition-transform" />
-          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Bất Động Sản</span>
+          <Building2 className="w-4 h-4 transition-transform" />
+          <span className="text-[8px] mt-0.5 font-medium whitespace-nowrap">BĐS</span>
         </button>
 
-        {/* 3. Đăng Tin (Gọn gàng, bằng kích thước hàng menu, có hiệu ứng zoom khi chạm) */}
+        {/* 3. Đăng Tin (Gọn gàng, bằng kích thước hàng menu) */}
         <button
           onClick={() => {
             if (!user) {
@@ -1880,25 +1892,25 @@ export const App: React.FC = () => {
               navigate('/dang-tin');
             }
           }}
-          className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer text-emerald-600 dark:text-emerald-400 font-black group"
+          className="flex-1 flex flex-col items-center justify-center py-0.5 rounded-lg transition-all duration-150 text-emerald-600 dark:text-emerald-400 font-black group"
         >
-          <div className="w-6 h-6 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <PlusCircle className="w-5 h-5" />
+          <div className="w-5 h-5 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <PlusCircle className="w-4 h-4" />
           </div>
-          <span className="text-[10px] mt-0.5 font-black whitespace-nowrap">Đăng Tin</span>
+          <span className="text-[8px] mt-0.5 font-black whitespace-nowrap">Đăng Tin</span>
         </button>
 
         {/* 4. Chợ Cư Dân */}
         <button
           onClick={() => navigate('/dich-vu-cu-dan')}
-          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
+          className={`flex-1 flex flex-col items-center justify-center py-0.5 rounded-lg transition-all duration-150 ${
             location.pathname.startsWith('/dich-vu-cu-dan')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <ShoppingBag className="w-5 h-5 transition-transform" />
-          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Chợ Cư Dân</span>
+          <ShoppingBag className="w-4 h-4 transition-transform" />
+          <span className="text-[8px] mt-0.5 font-medium whitespace-nowrap">Chợ Cư Dân</span>
         </button>
 
         {/* 5. Cá Nhân */}
@@ -1910,29 +1922,29 @@ export const App: React.FC = () => {
               navigate('/tai-khoan');
             }
           }}
-          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer relative group ${
+          className={`flex-1 flex flex-col items-center justify-center py-0.5 rounded-lg transition-all duration-150 relative group ${
             location.pathname.startsWith('/tai-khoan')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
               : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <div className="relative">
-            <UserIcon className="w-5 h-5 transition-transform" />
+            <UserIcon className="w-4 h-4 transition-transform" />
             {/* Live Chat / Notification ping badge */}
-            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+            <span className="absolute -top-1 -right-1 flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-white dark:border-slate-900"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 border border-white dark:border-slate-900"></span>
             </span>
           </div>
-          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Cá Nhân</span>
+          <span className="text-[8px] mt-0.5 font-medium whitespace-nowrap">Cá Nhân</span>
         </button>
       </nav>
 
-      {/* Global Modals & Popup */}
-      <AdBannerWidget ads={ads} position="popup_modal" />
+      {/* Global Modals & Popup — TẮT QUẢNG CÁO theo yêu cầu 27/08/2026 (thiết kế xấu) */}
+      {/* <AdBannerWidget ads={ads} position="popup_modal" /> */}
 
-      {/* Floating Draggable Sidebar Ads on Right Edge */}
-      <DraggableSidebarAds ads={ads} />
+      {/* Floating Draggable Sidebar Ads on Right Edge — TẮT QUẢNG CÁO theo yêu cầu 27/08/2026 (thiết kế xấu) */}
+      {/* <DraggableSidebarAds ads={ads} /> */}
 
       {/* Global Hashtag Explore Modal */}
       <HashtagExploreModal

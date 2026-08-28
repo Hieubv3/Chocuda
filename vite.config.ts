@@ -15,11 +15,21 @@ export default defineConfig(() => {
       },
     },
     server: {
+      // Proxy API requests to the Express backend during local dev
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+        },
+      },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      // Ignore backend data-store files so Vite does not reload the page when the server writes them.
+      watch: process.env.DISABLE_HMR === 'true' ? null : {
+        ignored: ['**/app_data_store*.json'],
+      },
     },
   };
 });

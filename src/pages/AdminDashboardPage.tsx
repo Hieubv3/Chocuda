@@ -37,6 +37,7 @@ import { AdminFinanceHub } from '../components/AdminFinanceHub';
 import { NotificationBellDropdown } from '../components/NotificationBellDropdown';
 import { GoogleWorkspaceCenter } from '../components/GoogleWorkspaceCenter';
 import { AdminLeadsSupervisionCRM } from '../components/AdminLeadsSupervisionCRM';
+import { NewsReviewCenter } from '../components/NewsReviewCenter';
 import { getProjectSlug } from '../lib/slugs';
 
 interface AdminDashboardPageProps {
@@ -3553,6 +3554,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </button>
               </div>
             </div>
+
+            {/* 📋 CHƯƠNG TRÌNH DUYỆT BÀI VIẾT — kiểm duyệt trước khi xuất bản public */}
+            <NewsReviewCenter
+              news={news}
+              onUpdateNews={onUpdateNews}
+              onDeleteNews={onDeleteNews}
+            />
 
             {/* n8n Webhook Automation Guide for Admin */}
             <div className="p-3.5 bg-blue-950/40 border border-blue-500/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-300">

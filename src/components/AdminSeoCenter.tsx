@@ -414,7 +414,7 @@ ${INITIAL_CANDIDATE_PROFILES.map(cand => `  <url>
   </url>`).join('\n')}
 
   <!-- 9. Tin Tức & Cẩm Nang Thị Trường -->
-${news.map(n => `  <url>
+${news.filter(n => n.status !== 'draft').map(n => `  <url>
     <loc>https://chocudan24h.com${getNewsDetailUrl(n)}</loc>
     <lastmod>${n.publishedAt ? n.publishedAt.split('T')[0] : today}</lastmod>
     <changefreq>weekly</changefreq>

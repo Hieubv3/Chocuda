@@ -1,0 +1,2575 @@
+{
+  "properties": [
+    {
+      "id": "prop-101",
+      "title": "Bán gấp Shophouse Chà Là Vinhomes Ocean Park 2 - Mặt tiền kinh doanh sầm uất",
+      "type": "sale",
+      "project": "ocean-park-2",
+      "category": "shophouse",
+      "price": 7.8,
+      "priceDisplay": "7.8 Tỷ",
+      "area": 70,
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "direction": "Đông Nam",
+      "furniture": "raw",
+      "legal": "so-do",
+      "address": "Phân khu Chà Là, Vinhomes Ocean Park 2, Hưng Yên",
+      "description": "Căn Shophouse Chà Là vị trí cực kỳ đắc địa, ngay gần cổng vào dự án và cụm trường học Vinschool. Mặt tiền 5m, xây dựng 4.5 tầng, diện tích sàn 285m2. Rất thích hợp vừa ở vừa kinh doanh nhà thuốc, cà phê, spa hoặc văn phòng đại diện.",
+      "images": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "featured": true,
+      "status": "approved",
+      "createdAt": "2026-07-20",
+      "sellerName": "Nhà đẹp Vinhomes",
+      "sellerPhone": "0868.499.929",
+      "sellerRole": "admin",
+      "subdivision": "Chà Là",
+      "pushedAt": "2026-08-27T14:32:07.992Z",
+      "pushedCount": 2
+    },
+    {
+      "id": "prop-102",
+      "title": "Biệt thự Song Lập San Hô Ocean Park 2 - View sát Biển hồ nhân tạo Royal Wave Park",
+      "type": "sale",
+      "project": "ocean-park-2",
+      "category": "biet-thu-song-lap",
+      "price": 18.5,
+      "priceDisplay": "18.5 Tỷ",
+      "area": 136,
+      "bedrooms": 5,
+      "bathrooms": 5,
+      "direction": "Nam",
+      "furniture": "full",
+      "legal": "so-do",
+      "address": "Phân khu San Hô, Vinhomes Ocean Park 2",
+      "description": "Siêu phẩm Biệt thự Song Lập San Hô hoàn thiện nội thất siêu cao cấp xa xỉ. Đường trước nhà 13m thoáng mát, cách biển hồ Wave Park chỉ 80m. Chủ nhà chuyển công tác nước ngoài cần nhượng lại giá tốt cho người thiện chí.",
+      "images": [
+        "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "featured": true,
+      "status": "approved",
+      "createdAt": "2026-07-22",
+      "sellerName": "Nhà đẹp Vinhomes",
+      "sellerPhone": "0868.499.929",
+      "sellerRole": "admin",
+      "subdivision": "San Hô"
+    },
+    {
+      "id": "prop-103",
+      "title": "Cho thuê Căn hộ 2PN2WC Vinhomes Ocean Park 2 - Đầy đủ nội thất cao cấp",
+      "type": "rent",
+      "project": "ocean-park-2",
+      "category": "2pn",
+      "price": 9.5,
+      "priceDisplay": "9.5 Tr/tháng",
+      "area": 68,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "direction": "Đông Bắc",
+      "floor": "Tầng 12",
+      "furniture": "full",
+      "legal": "hop-dong-mua-ban",
+      "address": "Tòa Masteri / Căn hộ OCP2, Hưng Yên",
+      "description": "Căn hộ 2 phòng ngủ thiết kế hiện đại, đầy đủ thiết bị điện tử, sofa, giường tủ, điều hòa âm trần. Chỉ việc xách vali vào ở. Ban công view trực diện công viên nội khu rợp bóng cây xanh.",
+      "images": [
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "featured": true,
+      "status": "approved",
+      "createdAt": "2026-07-24",
+      "sellerName": "Sale Nguyễn Văn A",
+      "sellerPhone": "0912.345.678",
+      "sellerRole": "sale",
+      "subdivision": "Phân khu Cao Tầng"
+    },
+    {
+      "id": "prop-104",
+      "title": "Bán Nhà Liền Kề Phố Biển Vinhomes Ocean Park 3 - Nhận nhà ở ngay",
+      "type": "sale",
+      "project": "ocean-park-3",
+      "category": "lien-ke",
+      "price": 8.2,
+      "priceDisplay": "8.2 Tỷ",
+      "area": 80,
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "direction": "Tây Nam",
+      "furniture": "basic",
+      "legal": "so-do",
+      "address": "Phân khu Phố Biển, Vinhomes Ocean Park 3",
+      "description": "Căn liền kề Phố Biển OCP3 thiết kế 5 tầng tinh tế, mặt tiền 5m. Đi bộ 3 phút ra Vịnh biển Paradise Bay 12ha. Giá cắt lỗ cực hời so với hợp đồng chủ đầu tư.",
+      "images": [
+        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "featured": true,
+      "status": "approved",
+      "createdAt": "2026-07-23",
+      "sellerName": "Nhà đẹp Vinhomes",
+      "sellerPhone": "0868.499.929",
+      "sellerRole": "admin",
+      "subdivision": "Phố Biển"
+    },
+    {
+      "id": "prop-105",
+      "title": "Cho thuê Căn Studio Vinhomes Ocean Park 3 - Nội thất mới 100%, vào ở ngay",
+      "type": "rent",
+      "project": "ocean-park-3",
+      "category": "studio",
+      "price": 5.5,
+      "priceDisplay": "5.5 Tr/tháng",
+      "area": 32,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "direction": "Đông",
+      "floor": "Tầng 8",
+      "furniture": "full",
+      "legal": "hop-dong-mua-ban",
+      "address": "Tòa Căn hộ Thời Đại, Vinhomes Ocean Park 3",
+      "description": "Căn hộ Studio cực kỳ xinh xắn thích hợp người đi làm hoặc vợ chồng trẻ. Nội thất đồng bộ phong cách Scandinavian ấm cúng. Giá thuê đã bao gồm phí quản lý 1 năm.",
+      "images": [
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "featured": false,
+      "status": "approved",
+      "createdAt": "2026-07-25",
+      "sellerName": "Chủ nhà Trần Thị B",
+      "sellerPhone": "0977.123.456",
+      "sellerRole": "owner",
+      "subdivision": "Thời Đại"
+    },
+    {
+      "id": "prop-106",
+      "title": "Suất Ngoại Giao Biệt Thự Đảo Đơn Lập Hạ Long Xanh - View Vịnh Biển Tuyệt Đẹp",
+      "type": "sale",
+      "project": "ha-long-xanh",
+      "category": "biet-thu-don-lap",
+      "price": 32,
+      "priceDisplay": "32 Tỷ",
+      "area": 350,
+      "bedrooms": 5,
+      "bathrooms": 6,
+      "direction": "Đông Nam",
+      "furniture": "raw",
+      "legal": "dang-cho-so",
+      "address": "Phân khu Đảo Sinh Thái, Siêu dự án Vinhomes Hạ Long Xanh",
+      "description": "Suất biệt thự đơn lập VIP bậc nhất dự án Hạ Long Xanh. Sở hữu 3 mặt giáp biển & bến du thuyền riêng. Tiềm năng tăng giá X2, X3 trong 3 năm tới khi hạ tầng hoàn thiện.",
+      "images": [
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "featured": true,
+      "status": "approved",
+      "createdAt": "2026-07-25",
+      "sellerName": "Nhà đẹp Vinhomes",
+      "sellerPhone": "0868.499.929",
+      "sellerRole": "admin",
+      "subdivision": "Đảo Sinh Thái"
+    },
+    {
+      "id": "prop-107",
+      "title": "Cho thuê Thuê Tầng 1 Shophouse Chà Là Ocean Park 2 - Mặt bằng kinh doanh 80m2",
+      "type": "rent",
+      "project": "ocean-park-2",
+      "category": "thue-tang",
+      "price": 15,
+      "priceDisplay": "15 Tr/tháng",
+      "area": 80,
+      "bedrooms": 1,
+      "bathrooms": 2,
+      "direction": "Đông Nam",
+      "floor": "Tầng 1 + Lửng",
+      "furniture": "basic",
+      "legal": "so-do",
+      "address": "Phân khu Chà Là, Vinhomes Ocean Park 2",
+      "description": "Mặt bằng kinh doanh tầng 1 shophouse thông sàn 80m2, lối đi riêng độc lập. Vị trí góc 2 mặt tiền sầm uất, đỗ xe ô tô thoải mái. Rất thích hợp mở siêu thị mini, tiệm bánh, phòng khám, văn phòng chuyển phát.",
+      "images": [
+        "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "featured": true,
+      "status": "approved",
+      "createdAt": "2026-07-26",
+      "sellerName": "Chợ Cư Dân 24h",
+      "sellerPhone": "0868.499.929",
+      "sellerRole": "admin",
+      "subdivision": "Chà Là"
+    },
+    {
+      "id": "prop-108",
+      "title": "Cho thuê Căn Hộ 1PN+1 Vinhomes Ocean Park 1 - Full đồ decor cực đẹp",
+      "type": "rent",
+      "project": "ocean-park-1",
+      "category": "1pn",
+      "price": 7,
+      "priceDisplay": "7 Tr/tháng",
+      "area": 48,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "direction": "Tây Nam",
+      "floor": "Tầng 15",
+      "furniture": "full",
+      "legal": "hop-dong-mua-ban",
+      "address": "Tòa S2.18, Vinhomes Ocean Park 1 (Gia Lâm)",
+      "description": "Căn hộ 1 phòng ngủ cộng 1 thiết kế đa năng, full đồ xịn sò chỉ việc vào ở. Tòa ngay cạnh biển hồ nước ngọt 24.5ha, miễn phí bể bơi nội khu.",
+      "images": [
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "featured": false,
+      "status": "approved",
+      "createdAt": "2026-07-27",
+      "sellerName": "Chủ nhà Lê Minh C",
+      "sellerPhone": "0988.777.666",
+      "sellerRole": "owner",
+      "subdivision": "Sapphire 2"
+    }
+  ],
+  "projects": [
+    {
+      "id": "ocean-park-2",
+      "name": "Vinhomes Ocean Park 2 - The Empire",
+      "location": "Huyện Văn Giang, Tỉnh Hưng Yên (Nút giao Cổ Linh & Vành đai 3.5)",
+      "areaSize": "458 ha",
+      "totalUnits": "12.841 căn thấp tầng & 24 tòa căn hộ cao tầng",
+      "priceRange": "3.5 tỷ - 45 tỷ VNĐ",
+      "status": "Đã hoàn thiện & Bàn giao nhận nhà ngay",
+      "description": "Tên thương mại: Vinhomes Ocean Park 2 - The Empire (Tên thường gọi: Vin Ocean Park 2, Ocean City Hưng Yên). Siêu quần thể đô thị biển hàng đầu miền Bắc sở hữu Tổ hợp công viên sóng nhân tạo Royal Wave Park 18 ha & Mega Grand World Hà Nội.",
+      "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      "masterplanUrl": "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80",
+      "subdivisions": [
+        "Chà Là",
+        "Cọ Xanh",
+        "San Hô",
+        "Hải Tăng",
+        "Sao Biển",
+        "Đảo Ngọc",
+        "Chợ Đêm Grand World"
+      ],
+      "amenities": [
+        "Công viên sóng Royal Wave Park 18ha",
+        "Quảng trường Kinh đô Ánh sáng",
+        "Bệnh viện Vinmec Health Resort 5 sao",
+        "Trung tâm thương mại Vincom Mega Mall",
+        "Hệ thống liên cấp Vinschool",
+        "Xe buýt VinBus nội khu 24/7"
+      ]
+    },
+    {
+      "id": "ocean-park-3",
+      "name": "Vinhomes Ocean Park 3 - Grand Park",
+      "location": "Huyện Văn Giang & Văn Lâm, Tỉnh Hưng Yên",
+      "areaSize": "294 ha",
+      "totalUnits": "8.458 căn thấp tầng & các phân khu cao tầng",
+      "priceRange": "4.2 tỷ - 38 tỷ VNĐ",
+      "status": "Đang bàn giao & Hoàn thiện nội thất",
+      "description": "Tên thương mại: Vinhomes Ocean Park 3 - Grand Park (Tên thường gọi: Vin Ocean Park 3, Vịnh biển thiên đường Hưng Yên). Mảnh ghép hoàn hảo của Siêu quần thể 1.200ha với Vịnh biển Paradise Bay 12 ha và công viên nước Aqua Bay độc đáo.",
+      "image": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+      "masterplanUrl": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+      "subdivisions": [
+        "Phố Biển",
+        "Vịnh Thiên Đường",
+        "Ánh Dương",
+        "Thời Đại",
+        "Vịnh Tây",
+        "Vịnh Hải Tăng"
+      ],
+      "amenities": [
+        "Vịnh biển Paradise Bay 12ha",
+        "Hồ bơi bốn mùa Tropical Surf",
+        "Công viên Aqua Bay với cầu trượt cảm giác mạnh",
+        "Khu phố thương mại sầm uất Grand World",
+        "Sân thể thao đa năng & Gym outdoor"
+      ]
+    },
+    {
+      "id": "ocean-park-1",
+      "name": "Vinhomes Ocean Park 1 - Gia Lâm",
+      "location": "Huyện Gia Lâm, Thủ đô Hà Nội",
+      "areaSize": "420 ha",
+      "totalUnits": "66 tòa chung cư cao tầng & 2.300 căn thấp tầng",
+      "priceRange": "1.2 tỷ - 32 tỷ VNĐ",
+      "status": "Đã hoàn thiện & Cư dân về ở 95%",
+      "description": "Tên thương mại: Vinhomes Ocean Park 1 (Tên thường gọi: Vin Ocean Park 1, Thành phố Biển hồ Singapore). Biển hồ nước mặn Crystal Lagoon 6.1ha & Hồ Ngọc Trai 24.5ha trải cát trắng mịn tạo không gian nghỉ dưỡng ngay trong lòng Thủ đô.",
+      "image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+      "masterplanUrl": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      "subdivisions": [
+        "Sapphire 1 & 2",
+        "Zen Park",
+        "Masteri Waterfront",
+        "Ngọc Trai",
+        "San Hô",
+        "Hải Tăng",
+        "Sao Biển"
+      ],
+      "amenities": [
+        "Biển hồ nước mặn Crystal Lagoon 6.1ha",
+        "Hồ nước ngọt Ngọc Trai 24.5ha",
+        "Trường Đại học VinUni",
+        "Vincom Mega Mall Gia Lâm",
+        "Tuyến xe điện VinBus kết nối Hà Nội"
+      ]
+    },
+    {
+      "id": "ha-long-xanh",
+      "name": "Vinhomes Hạ Long Xanh (Quảng Ninh)",
+      "location": "Thị xã Quảng Yên & TP. Hạ Long, Tỉnh Quảng Ninh (Nối cao tốc Hà Nội - Hải Phòng - Hạ Long)",
+      "areaSize": "4.110 ha",
+      "totalUnits": "Khu phức hợp Đô thị, Biệt thự biển, Shophouse & Căn hộ cao cấp",
+      "priceRange": "Đang cập nhật đợt 1",
+      "status": "Đang triển khai hạ tầng & quy hoạch tổng thể 10 tỷ USD",
+      "description": "Tên thương mại chính thức: Vinhomes Hạ Long Xanh (Khu đô thị phức hợp Hạ Long Xanh) - Tên thường gọi: Vin Hạ Long Xanh, Siêu đô thị Hạ Long Xanh. Dự án đại đô thị sinh thái ven biển lớn nhất Quảng Ninh với bến du thuyền 5 sao & sân Golf 36 hố.",
+      "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "subdivisions": [
+        "Phân khu Hoàng Tân",
+        "Phân khu Hà An",
+        "Phân khu Bến du thuyền Đảo",
+        "Phân khu Sân Golf 36 hố PGA",
+        "Phân khu Căn hộ sinh thái cao tầng"
+      ],
+      "amenities": [
+        "Sân Golf 36 hố tiêu chuẩn PGA",
+        "Bến du thuyền quốc tế 5 sao",
+        "Công viên giải trí VinWonders Hạ Long Xanh",
+        "Trung tâm tài chính - thương mại quốc tế Vincom",
+        "Bệnh viện Vinmec Medical Resort"
+      ]
+    },
+    {
+      "id": "green-paradise-can-gio",
+      "name": "Vinhomes Green Paradise Cần Giờ",
+      "location": "Xã Long Hòa & TT. Cần Thạnh, Huyện Cần Giờ, TP. Hồ Chí Minh",
+      "areaSize": "2.870 ha",
+      "totalUnits": "Khu lấn biển sinh thái, Biệt thự biển, Shophouse & Tháp tài chính 108 tầng",
+      "priceRange": "Dự kiến công bố đợt 1",
+      "status": "Đang san lấp & hoàn thiện hạ tầng kỹ thuật",
+      "description": "Tên thương mại chính thức: Vinhomes Green Paradise Cần Giờ (Vinhomes Long Beach Cần Giờ) - Tên thường gọi: Vin Cần Giờ, Đô thị lấn biển Cần Giờ. Siêu đô thị lấn biển duy nhất tại TP.HCM với tổng vốn hơn 10 tỷ USD sở hữu Biển hồ nhân tạo Lagoon 400ha.",
+      "image": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
+      "masterplanUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "subdivisions": [
+        "Phân khu A (Sinh thái nghỉ dưỡng)",
+        "Phân khu B (Thương mại & VinWonders)",
+        "Phân khu C (Trung tâm Tài chính 108 tầng & Bến du thuyền)",
+        "Phân khu D (Khu du lịch cao cấp)",
+        "Phân khu E (Đô thị Biển thông minh)"
+      ],
+      "amenities": [
+        "Biển hồ lấn biển Lagoon 400ha",
+        "Tháp tài chính biểu tượng 108 tầng",
+        "Bến du thuyền siêu sang 6 sao",
+        "Sân Golf 36 hố tiêu chuẩn quốc tế",
+        "Công viên Safari Cần Giờ",
+        "TTTM Vincom Mega Mall Cần Giờ"
+      ]
+    },
+    {
+      "id": "tan-my-hau-nghia",
+      "name": "Vinhomes Tân Mỹ - Hậu Nghĩa (Long An)",
+      "location": "Thị trấn Hậu Nghĩa, Xã Tân Mỹ & Đức Lập Cầu, Huyện Đức Hòa, Tỉnh Long An",
+      "areaSize": "197.2 ha",
+      "totalUnits": "4.500 căn biệt thự, nhà phố shophouse & 5 tòa căn hộ cao tầng",
+      "priceRange": "Dự kiến 3.8 tỷ - 18 tỷ VNĐ",
+      "status": "Đang giải phóng mặt bằng & thi công hạ tầng",
+      "description": "Tên thương mại chính thức: Vinhomes Tân Mỹ - Hậu Nghĩa (Vinhomes Hậu Nghĩa Đức Hòa) - Tên thường gọi: Vin Hậu Nghĩa, Vin Đức Hòa, Vinhomes Long An. Dự án đô thị kiểu mẫu cửa ngõ Tây Bắc TP.HCM kết nối trực tiếp Vành Đai 3, Vành Đai 4.",
+      "image": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80",
+      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "subdivisions": [
+        "Phân khu Biệt thự Sinh thái",
+        "Phân khu Nhà phố thương mại Shophouse",
+        "Phân khu Căn hộ cao tầng Hậu Nghĩa",
+        "Phân khu Công viên trung tâm"
+      ],
+      "amenities": [
+        "Công viên hồ điều hòa trung tâm 15ha",
+        "Trung tâm thương mại Vincom Plaza Hậu Nghĩa",
+        "Trường học liên cấp Vinschool",
+        "Bệnh viện đa khoa Vinmec Hậu Nghĩa",
+        "Khu thể thao phức hợp & Hồ bơi Olympic"
+      ]
+    },
+    {
+      "id": "green-city-hoc-mon",
+      "name": "Vinhomes Green City Hóc Môn",
+      "location": "Xã Tân Thới Nhì, Huyện Hóc Môn, TP. Hồ Chí Minh (Mặt tiền Quốc Lộ 22 & Vành Đai 3)",
+      "areaSize": "924 ha",
+      "totalUnits": "Biệt thự, Shophouse, Nhà phố & Khu Làng Đại học Quốc tế",
+      "priceRange": "Đang cập nhật quy hoạch",
+      "status": "Đang triển khai quy hoạch phân khu 1/500",
+      "description": "Tên thương mại chính thức: Vinhomes Green City Hóc Môn (Khu đô thị Đại học Quốc tế Hóc Môn do Vingroup đầu tư) - Tên thường gọi: Vin Hóc Môn, Đô thị sinh thái Hóc Môn. Siêu dự án phía Tây Bắc TP.HCM sở hữu Làng Đại học VinUni cơ sở 2.",
+      "image": "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=1200&q=80",
+      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "subdivisions": [
+        "Phân khu Đô thị Sinh thái",
+        "Phân khu Làng Đại học Quốc tế",
+        "Phân khu Trung tâm Tài chính & Công nghệ cao",
+        "Phân khu Biệt thự & Nhà phố"
+      ],
+      "amenities": [
+        "Công viên trung tâm Hóc Môn 50ha",
+        "Trường Đại học Quốc tế VinUni cơ sở 2",
+        "Bệnh viện quốc tế Vinmec Hóc Môn",
+        "TTTM Vincom Mega Mall",
+        "Hồ sinh thái cảnh quan & Khu công nghệ cao"
+      ]
+    },
+    {
+      "id": "lang-van-da-nang",
+      "name": "Vinhomes Làng Vân Đà Nẵng",
+      "location": "Phường Hòa Hiệp Bắc, Quận Liên Chiểu, TP. Đà Nẵng (Chân đèo Hải Vân)",
+      "areaSize": "1.000 ha",
+      "totalUnits": "Biệt thự biển đồi, Condotel cao cấp & Resort 6 sao Vinpearl",
+      "priceRange": "Dự kiến công bố đợt 1",
+      "status": "Đang thi công hạ tầng giao thông & bến du thuyền",
+      "description": "Tên thương mại chính thức: Vinhomes Làng Vân Đà Nẵng (Khu du lịch sinh thái nghỉ dưỡng Làng Vân) - Tên thường gọi: Vin Làng Vân, Siêu nghỉ dưỡng Làng Vân Đà Nẵng. Kỳ quan nghỉ dưỡng tọa sơn hướng thủy lớn nhất miền Trung gần Cảng nước sâu Liên Chiểu.",
+      "image": "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80",
+      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "subdivisions": [
+        "Phân khu Biệt thự biển Đồi Hải Vân",
+        "Phân khu Căn hộ Condotel cao cấp",
+        "Phân khu Resort 6 sao Vinpearl Làng Vân",
+        "Phân khu Tổ hợp Giải trí & Casino"
+      ],
+      "amenities": [
+        "Tổ hợp Khách sạn & Resort 6 sao Vinpearl",
+        "Bến du thuyền quốc tế Liên Chiểu",
+        "Sân Golf 18 hố ven biển",
+        "Tuyến Cáp treo Làng Vân",
+        "Công viên giải trí VinWonders Làng Vân",
+        "Casino & Trung tâm hội nghị quốc tế"
+      ]
+    },
+    {
+      "id": "smart-city",
+      "name": "Vinhomes Smart City - Tây Mỗ",
+      "location": "Phường Tây Mỗ & Đại Mỗ, Q. Nam Từ Liêm, Hà Nội",
+      "areaSize": "280 ha",
+      "totalUnits": "58 tòa chung cư cao tầng & biệt thự thương mại",
+      "priceRange": "1.5 tỷ - 25 tỷ VNĐ",
+      "status": "Đã hoàn thiện & Cư dân đông đúc",
+      "description": "Thành phố thông minh quốc tế tích hợp hệ sinh thái AI - IoT vận hành hiện đại hàng đầu Thủ đô, liền kề Đại lộ Thăng Long và tuyến Metro số 5, 6, 7.",
+      "image": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80",
+      "masterplanUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80",
+      "subdivisions": [
+        "Sapphire Parkville",
+        "Tonkin",
+        "Masteri West Heights",
+        "Imperia Smart City",
+        "The Canopy"
+      ],
+      "amenities": [
+        "Bộ 3 công viên liên hoàn 16.3ha",
+        "Vườn Nhật Zen Park lớn nhất Việt Nam",
+        "TTTM Vincom Mega Mall Smart City",
+        "Bệnh viện Vinmec"
+      ]
+    }
+  ],
+  "news": [
+    {
+      "id": "news-quy-hoach-2026-01",
+      "title": "Nh� ? x� h?i tang t?c: H� N?i, B?c Ninh, C?n Tho d?ng lo?t m? b�n cu?i 2026",
+      "summary": "Nhà ở xã hội tăng tốc: Hà Nội, Bắc Ninh, Cần Thơ đồng loạt mở bán cuối 2026",
+      "content": "# Nh� ? x� h?i tang t?c: H� N?i, B?c Ninh, C?n Tho d?ng lo?t m? b�n cu?i 2026\n\n**Th? tru?ng nh� ? x� h?i (NOXH) dang bu?c v�o giai do?n tang t?c chua t?ng th?y. Ch? trong v�i th�ng cu?i nam 2026, h�ng lo?t d? �n NOXH t?i H� N?i, B?c Ninh v� C?n Tho d?ng lo?t c�ng b? m? b�n v?i m?c gi� t? 15 d?n 24 tri?u d?ng/m� - m? ra co h?i an cu th?c s? cho ngu?i thu nh?p trung b�nh.**\n\n## H� N?i: Hon 700 can s?p m? b�n t?i M� Linh\n\nT?i H� N?i, d? �n m? r?ng khu nh� ? Minh Giang - D?m V� (x� M� Linh) d? ki?n m? b�n hon 700 can nh� ? x� h?i trong qu� I/2027 v?i m?c gi� kho?ng 24 tri?u d?ng/m�. D�y l� m?t trong nh?ng d? �n NOXH quy m� l?n du?c k? v?ng gi�p gi?m �p l?c gi� nh� t?i khu v?c ph�a B?c Th? d�.\n\nDi?m d�ng ch� �:\n\n- **Gi� h?p l� so v?i m?t b?ng chung**: Trong khi can h? thuong m?i t?i H� N?i d� vu?t xa m?c n�y, NOXH 24 tri?u/m� l� l?a ch?n kh? thi cho ngu?i tr? v� gia d�nh thu nh?p trung b�nh.\n- **V? tr� g?n c�c khu c�ng nghi?p**: M� Linh n?m g?n c�c khu c�ng nghi?p l?n, ph� h?p v?i nhu c?u ? c?a ngu?i lao d?ng.\n\n## B?c Ninh: 985 can NOXH t? 15 tri?u/m�\n\nB?c Ninh cung ghi nh?n l�n s�ng NOXH m?i v?i 985 can du?c m? b�n, cho thu� v� thu� mua v?i gi� kh?i di?m t? 15 tri?u d?ng/m�. M?c gi� n�y du?c d�nh gi� l� r?t c?nh tranh, ph� h?p v?i thu nh?p c?a ph?n l?n c�ng nh�n t?i c�c khu c�ng nghi?p t?nh n�y.\n\n## C?n Tho: Tang t?c ph�t tri?n NOXH\n\nT?i mi?n T�y, TP C?n Tho dang d?y m?nh ph�t tri?n nh� ? x� h?i nhu m?t nhi?m v? tr?ng t�m nh?ng th�ng cu?i nam. Ch�nh quy?n th�nh ph? l�m vi?c tr?c ti?p v?i S? X�y d?ng d? th�o g? vu?ng m?c, d?y nhanh ti?n d? c�c d? �n NOXH v� d?ng th?i x? l� c�c d? �n giao th�ng dang ch?m ti?n d?.\n\n## V� sao NOXH \"l�n ng�i\" nam 2026?\n\n1. **Ch�nh s�ch th�c d?y m?nh m?**: C�c d?a phuong du?c giao ch? ti�u ph�t tri?n NOXH c? th?, k�m co ch? uu d�i v? d?t dai, v?n vay.\n2. **Nhu c?u th?c r?t l?n**: Ngu?i lao d?ng, c�ng nh�n khu c�ng nghi?p, ngu?i tr? t?i d� th? dang r?t c?n nh� ? gi� h?p l�.\n3. **Th? tru?ng thuong m?i vu?t t?m v?i**: Gi� can h? thuong m?i tang cao khi?n NOXH tr? th�nh l?a ch?n th?c t? duy nh?t cho nhi?u gia d�nh.\n\n## Luu � khi mua nh� ? x� h?i\n\n- **Di?u ki?n dang k�**: C?n d�p ?ng c�c di?u ki?n v? thu nh?p, nh� ? theo quy d?nh - h�y ki?m tra k? tru?c khi n?p h? so.\n- **H?n ch? chuy?n nhu?ng**: NOXH c� th?i h?n h?n ch? chuy?n nhu?ng theo quy d?nh - ph� h?p v?i ngu?i mua d? ?, kh�ng ph� h?p d?u co.\n- **Theo d�i th�ng tin ch�nh th?c**: Ch? dang k� qua c�c k�nh ch�nh th?c c?a ch? d?u tu v� co quan qu?n l� d? tr�nh b? l?a d?o \"mua su?t ngo?i giao\".\n\n## K?t lu?n\n\nL�n s�ng nh� ? x� h?i cu?i nam 2026 l� t�n hi?u t�ch c?c cho th? tru?ng b?t d?ng s?n Vi?t Nam: ngu?n cung gi� r? dang du?c bom v�o d? c�n b?ng th? tru?ng v?n nghi�ng v? ph�n kh�c cao c?p. V?i ngu?i thu nh?p trung b�nh, d�y ch�nh l� th?i di?m v�ng d? hi?n th?c h�a gi?c mo an cu.\n\n?? **Dang t�m nh� ? gi� h?p l� t?i khu d� th?? Theo d�i tin dang mua b�n, cho thu� c?p nh?t li�n t?c tr�n Ch? Cu D�n 24h - noi k?t n?i tr?c ti?p ngu?i mua v� ch? nh�!**\n\n---",
+      "category": "Quy Ho?ch",
+      "author": "Ban Qu?n Tr? Ch? Cu D�n 24H",
+      "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-09-08",
+      "views": 0,
+      "source": "ai",
+      "status": "published",
+      "authorId": "user-admin"
+    },
+    {
+      "id": "news-thi-truong-2026-03",
+      "title": "T?n kho BDS dang n?m ? ph�n kh�c n�o? B?c tranh cu?i nam 2026",
+      "summary": "Tồn kho bất động sản đang nằm ở phân khúc nào? Bức tranh cuối năm 2026",
+      "content": "# T?n kho b?t d?ng s?n dang n?m ? ph�n kh�c n�o? B?c tranh cu?i nam 2026\n\n**C�u chuy?n \"t?n kho\" lu�n l� ch? b�o quan tr?ng nh?t d? d?c v? th? tru?ng b?t d?ng s?n. Cu?i nam 2026, b?c tranh t?n kho dang c� s? ph�n h�a r?t r�: kh�ng ph?i ph�n kh�c n�o cung ? d?ng, v� ch�nh s? m?t c�n d?i n�y l?i m? ra co h?i cho nh?ng ngu?i mua bi?t ch?n th?i di?m.**\n\n## T?n kho t?p trung ? d�u?\n\nTheo c�c b�o c�o th? tru?ng, t?n kho b?t d?ng s?n hi?n kh�ng ph�n b? d?u m� t?p trung ch? y?u ? m?t s? nh�m s?n ph?m:\n\n- **B?t d?ng s?n ngh? du?ng**: Thanh kho?n v?n ? m?c th?p k�o d�i, nhi?u d? �n ven bi?n ch?m b�n do nhu c?u du l?ch chua ph?c h?i ho�n to�n v� t�m l� th?n tr?ng c?a nh� d?u tu.\n- **S?n ph?m d?nh gi� cao so v?i gi� tr? s? d?ng**: Nh?ng d? �n c� m?c gi� vu?t xa gi� tr? th?c t?, kh� khai th�c cho thu�, dang g?p kh� trong vi?c t�m ngu?i mua.\n- **D?t n?n v�ng xa, thi?u h? t?ng**: C�c khu v?c chua c� quy ho?ch k?t n?i r� r�ng, d�n cu thua th?t.\n\n## Ph�n kh�c n�o h?p th? t?t?\n\nNgu?c l?i, m?t s? ph�n kh�c ghi nh?n s?c h?p th? t�ch c?c:\n\n| Ph�n kh�c | T�nh h�nh | L� do |\n|-----------|-----------|-------|\n| Can h? t?m trung, d� b�n giao | ? H?p th? t?t | Nhu c?u ? th?c l?n, gi� h?p l� |\n| Nh� ? x� h?i | ? S�i d?ng | Gi� ph� h?p, ch�nh s�ch h? tr? |\n| Shophouse khu d� th? d�ng d�n | ? Quan t�m tang | Khai th�c thuong m?i du?c |\n| BDS ngh? du?ng | ?? Ch?m | Nhu c?u chua ph?c h?i |\n\n## T�n hi?u t? c�c khu d?t l?n\n\nM?t di?m nh?n d�ng ch� � c?a th? tru?ng cu?i nam l� s? s�i d?ng tr? l?i c?a c�c giao d?ch d?t l?n t?i nh?ng v? tr� d?c d?a. T?i khu v?c Th? Thi�m (TP.HCM), hai khu d?t g?n v?i c�c thuong v? t�i ch�nh h�ng ch?c ngh�n t? d?ng dang c� di?n bi?n tr�i chi?u: m?t b�n ghi nh?n d�ng thu? kh?ng l? t? ho?t d?ng kinh doanh, m?t b�n ch?ng ki?n thuong v? chuy?n nhu?ng v?n l?n. Di?u n�y cho th?y d�ng ti?n l?n v?n dang t�m d?n nh?ng v? tr� c� gi� tr? chi?n lu?c.\n\nB�n c?nh d�, TP.HCM d? ki?n t? ch?c d?u gi� 24 khu d?t v?i t?ng di?n t�ch g?n 105 ha trong nh?ng th�ng cu?i nam - ph?n l?n l� qu? d?t ? d� th? v?a v� nh?. D�y l� t�n hi?u t�ch c?c cho ngu?n cung tuong lai v� l� co h?i cho c�c nh� d?u tu c� nang l?c.\n\n## Co h?i cho ngu?i mua cu?i nam\n\n1. **D�m ph�n gi� t?t hon ? ph�n kh�c t?n kho**: BDS ngh? du?ng, d?t n?n xa trung t�m - ngu?i mua c� th? thuong lu?ng gi?m gi� d�ng k?.\n2. **Ch?n can h? d� b�n giao**: Tr�nh r?i ro ti?n d?, ki?m tra du?c ch?t lu?ng th?c t?.\n3. **Theo d�i d?u gi� d?t**: C�c phi�n d?u gi� c�ng khai l� k�nh minh b?ch d? ti?p c?n qu? d?t s?ch.\n\n## K?t lu?n\n\nT?n kho kh�ng ph?i l�c n�o cung l� tin x?u. V?i ngu?i mua c� chi?n lu?c, t?n kho ? m?t s? ph�n kh�c ch�nh l� co h?i d? s? h?u s?n ph?m v?i gi� h?p l�. Di?u quan tr?ng l� ph�n bi?t du?c d�u l� t?n kho do th? tru?ng di?u ch?nh, d�u l� s?n ph?m k�m ch?t lu?ng kh�ng n�n ch?m t?i.\n\n?? **Dang t�m nh� t?i khu d� th? v?i gi� h?p l�? L?c h�ng tram tin dang mua b�n, cho thu� d� ki?m duy?t tr�n Ch? Cu D�n 24h - k?t n?i tr?c ti?p ch? nh�, kh�ng qua trung gian!**\n\n---",
+      "category": "Th? Tru?ng",
+      "author": "Ban Qu?n Tr? Ch? Cu D�n 24H",
+      "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-09-05",
+      "views": 0,
+      "source": "ai",
+      "status": "published",
+      "authorId": "user-admin"
+    },
+    {
+      "id": "news-thi-truong-2026-02",
+      "title": "D�ng ti?n BDS 2026: Ph�n h�a r� n�t, v?n t? ch?c quay l?i",
+      "summary": "Dòng tiền bất động sản 2026: Phân hóa rõ nét, vốn tổ chức quay trở lại",
+      "content": "# D�ng ti?n b?t d?ng s?n 2026: Ph�n h�a r� n�t, v?n t? ch?c quay tr? l?i\n\n**Nam 2026 d�nh d?u s? ph�n h�a r� r?t c?a d�ng ti?n tr�n th? tru?ng b?t d?ng s?n Vi?t Nam. Kh�ng c�n c?nh \"s�ng n�o cung l�n\", d�ng v?n gi? d�y c� ch?n l?c: ch?y m?nh v�o s?n ph?m ph�p l� chu?n, d�p ?ng nhu c?u th?c, v� th?n tr?ng v?i nh?ng d? �n d?nh gi� cao so v?i gi� tr? s? d?ng.**\n\n## B?c tranh ph�n h�a d�ng ti?n\n\nTheo nh?n d?nh c?a c�c chuy�n gia kinh t? v� l�nh d?o c�c s�n giao d?ch l?n, d�ng ti?n v�o b?t d?ng s?n nam 2026 c� ba d?c di?m n?i b?t:\n\n| Nh�m s?n ph?m | Di?n bi?n d�ng ti?n | Nguy�n nh�n |\n|---------------|---------------------|-------------|\n| D? �n ph�p l� d?y d?, dang ho�n thi?n | ?? H�t v?n m?nh | An to�n, d�p ?ng nhu c?u ? th?c |\n| S?n ph?m d?nh gi� cao so v?i gi� tr? | ?? Thanh kho?n ch?m | Ngu?i mua th?n tr?ng, so s�nh k? |\n| D?t n?n v�ng quy ho?ch h? t?ng m?i | ?? Quan t�m tang | K? v?ng h? t?ng k?t n?i |\n\n## V� sao v?n t? ch?c quay tr? l?i?\n\nM?t di?m d�ng ch� � c?a th? tru?ng 2026 l� s? xu?t hi?n tr? l?i c?a d�ng v?n t? ch?c - c�c qu? d?u tu, doanh nghi?p v� nh� d?u tu d�i h?n. Kh�c v?i nh� d?u tu c� nh�n, nh�m n�y ti?p c?n th? tru?ng m?t c�ch b�i b?n:\n\n- **Th?m d?nh k? lu?ng**: D�nh nhi?u th�ng nghi�n c?u ph�p l�, quy ho?ch, nang l?c ch? d?u tu tru?c khi xu?ng ti?n.\n- **Uu ti�n d�ng ti?n ?n d?nh**: Ch?n s?n ph?m c� kh? nang khai th�c cho thu�, v?n h�nh thuong m?i.\n- **T?m nh�n d�i h?n**: Ch?p nh?n bi�n l?i nhu?n th?p hon d? d?i l?y s? an to�n v� b?n v?ng.\n\n## Khu v?c n�o du?c d�nh gi� an to�n?\n\nC�c chuy�n gia ch? ra nh?ng khu v?c c� l?i th? h? t?ng dang du?c nh� d?u tu san d�n:\n\n1. **Khu v?c g?n h? t?ng giao th�ng l?n**: S�n bay, cao t?c, metro - noi c� quy ho?ch k?t n?i r� r�ng.\n2. **Khu d� th? d� h�nh th�nh c?ng d?ng cu d�n**: Noi c� d�n cu d�ng, ti?n �ch v?n h�nh th?c t?.\n3. **V�ng ven c�c th�nh ph? l?n sau s�p nh?p**: Gi� c�n th?p, du d?a tang tru?ng theo h? t?ng.\n\n## B�i h?c cho nh� d?u tu c� nh�n\n\n- **D?ng ch?y theo s?t d?t**: Nh?ng con s?t ng?n h?n thu?ng di k�m r?i ro thanh kho?n khi h? nhi?t.\n- **Uu ti�n s?n ph?m c� th? khai th�c du?c**: Nh� cho thu�, shophouse, can h? c� nhu c?u thu� th?c - an to�n hon d?t tr?ng ch? tang gi�.\n- **Ki?m tra d�ng ti?n c?a ch�nh m�nh**: D?ng vay qu� s?c; chi ph� v?n cao s? an m�n l?i nhu?n n?u th? tru?ng di ngang.\n\n## K?t lu?n\n\nTh? tru?ng b?t d?ng s?n 2026 dang v?n h�nh theo logic m?i: d�ng ti?n t�m v? gi� tr? th?c, v?n t? ch?c d?n d?t, v� s? ph�n h�a gi?a c�c ph�n kh�c ng�y c�ng s�u. V?i nh� d?u tu c� nh�n, chi?n lu?c an to�n nh?t l� ch?n s?n ph?m ph�p l� chu?n, c� kh? nang khai th�c v� g?n v?i h? t?ng th?c t?.\n\n?? **Dang t�m co h?i d?u tu ho?c noi an cu t?i khu d� th?? Kh�m ph� h�ng tram tin dang mua b�n, cho thu� d� du?c ki?m duy?t tr�n Ch? Cu D�n 24h ngay h�m nay!**\n\n---",
+      "category": "Th? Tru?ng",
+      "author": "Ban Qu?n Tr? Ch? Cu D�n 24H",
+      "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-09-03",
+      "views": 0,
+      "source": "ai",
+      "status": "published",
+      "authorId": "user-admin"
+    },
+    {
+      "id": "news-thi-truong-2026-01",
+      "title": "Ngu?i mua nh� 2026 d� kh�c: Gi� tr? th?c l�n ng�i",
+      "summary": "Người mua nhà 2026 đã khác: Giá trị thực lên ngôi, kỳ vọng tăng giá không còn là ưu tiên",
+      "content": "# Ngu?i mua nh� 2026 d� kh�c: Gi� tr? th?c l�n ng�i, k? v?ng tang gi� kh�ng c�n l� uu ti�n\n\n**Bu?c sang nam 2026, h�nh vi c?a ngu?i mua nh� t?i Vi?t Nam d� c� s? thay d?i mang t�nh bu?c ngo?t. Thay v� h?i \"khu v?c n�o dang s?t gi�\", c�u h?i ph? bi?n nh?t hi?n nay l� \"d? �n n�y ph�p l� c� chu?n, ti?n d? c� d�ng cam k?t kh�ng?\".**\n\n## S? thay d?i trong t�m l� ngu?i mua\n\nTheo c�c kh?o s�t th? tru?ng du?c c�ng b? trong n?a d?u nam 2026, ngu?i mua nh� dang chuy?n t? k? v?ng tang gi� sang uu ti�n gi� tr? th?c. Di?u n�y th? hi?n qua ba di?m ch�nh:\n\n- **Ph�p l� l� ti�u ch� s? m?t**: Ngu?i mua s?n s�ng tr? gi� cao hon cho d? �n c� s? d?, quy ho?ch r� r�ng, thay v� ch?p nh?n r?i ro ph�p l� d? d?i l?y gi� r?.\n- **Ti?n d? v� h? t?ng du?c soi k?**: C�c d? �n dang ho�n thi?n, b�n giao d�ng h?n, c� h? t?ng d?ng b? ghi nh?n s?c h?p th? t?t hon h?n.\n- **Nang l?c ch? d?u tu l�n b�n c�n**: L?ch s? tri?n khai, uy t�n v� nang l?c t�i ch�nh c?a ch? d?u tu tr? th�nh y?u t? quy?t d?nh.\n\n## V� sao gi� tr? th?c l�n ng�i?\n\nC� ba nguy�n nh�n ch�nh d?n d?n s? d?ch chuy?n n�y:\n\n1. **B�i h?c t? giai do?n di?u ch?nh**: Nh?ng nam tru?c, kh�ng �t nh� d?u tu ch?u thi?t h?i v� mua theo tin d?n s?t d?t, d? �n ma ho?c ph�p l� chua ho�n thi?n. Kinh nghi?m n�y khi?n ngu?i mua th?n tr?ng hon.\n2. **M?t b?ng l�i su?t v� d�ng ti?n**: Chi ph� v?n cao hon bu?c ngu?i mua ph?i t�nh to�n k? hi?u qu? s? d?ng v?n, thay v� �m d?t ch? tang gi�.\n3. **Ngu?n cung ch?t lu?ng tang**: C�c d? �n m?i ra m?t ng�y c�ng ch� tr?ng ph�p l� v� ti?n �ch, t?o ra chu?n so s�nh m?i cho ngu?i mua.\n\n## Di?u n�y c� � nghia g� v?i cu d�n khu d� th??\n\nV?i c?ng d?ng cu d�n t?i c�c khu d� th? l?n, xu hu?ng n�y mang l?i nh?ng t�n hi?u t�ch c?c:\n\n- **Th? tru?ng minh b?ch hon**: Tin dang c� th�ng tin ph�p l� r� r�ng du?c quan t�m hon, gi�p ngu?i mua d? d�ng so s�nh v� l?a ch?n.\n- **Gi� c? ph?n �nh gi� tr? th?c**: M?t b?ng gi� d?n ti?m c?n gi� tr? s? d?ng th?c t?, gi?m t�nh tr?ng th?i gi�.\n- **Co h?i cho ngu?i mua ? th?c**: Nh?ng ngu?i mua d? ?, mua l�u d�i du?c hu?ng l?i khi th? tru?ng �t bi?n d?ng d?u co.\n\n## L?i khuy�n cho ngu?i mua nh� 2026\n\n1. **Ki?m tra ph�p l� tru?c khi d?t c?c**: Y�u c?u xem s? d?, gi?y ph�p x�y d?ng, quy ho?ch chi ti?t.\n2. **So s�nh �t nh?t 5-10 tin dang c�ng ph�n kh�c** tru?c khi quy?t d?nh - d?ng v?i tin v�o m?t ngu?n duy nh?t.\n3. **Uu ti�n d? �n dang ho�n thi?n** ho?c d� b�n giao n?u b?n mua d? ?.\n4. **Tham kh?o � ki?n ngu?i dang s?ng t?i khu v?c d�** - tr?i nghi?m th?c t? c?a cu d�n l� k�nh th�ng tin d�ng tin c?y nh?t.\n\n## K?t lu?n\n\nTh? tru?ng b?t d?ng s?n 2026 kh�ng c�n l� s�n choi c?a nh?ng con s?t ng?n h?n. Ngu?i mua th�ng th�i hon, y�u c?u cao hon v� uu ti�n gi� tr? b?n v?ng. V?i nh?ng ai dang t�m ki?m noi an cu ho?c d?u tu d�i h?n t?i c�c khu d� th?, d�y ch�nh l� th?i di?m th�ch h?p d? l?a ch?n nh?ng s?n ph?m c� gi� tr? th?c, ph�p l� chu?n ch?nh.\n\n?? **B?n dang t�m mua ho?c cho thu� nh� t?i khu d� th?? Dang tin mi?n ph� ngay tr�n Ch? Cu D�n 24h d? k?t n?i tr?c ti?p v?i ch? nh� - kh�ng qua trung gian!**\n\n---",
+      "category": "Th? Tru?ng",
+      "author": "Ban Qu?n Tr? Ch? Cu D�n 24H",
+      "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-09-01",
+      "views": 0,
+      "source": "ai",
+      "status": "published",
+      "authorId": "user-admin"
+    },
+    {
+      "id": "news-ha-long-xanh",
+      "title": "Tổng Quan Vinhomes Hạ Long Xanh Quảng Ninh: Tên Thương Mại, Quy Mô 4.110ha & Tiện Ích Đỉnh Cao",
+      "summary": "Bài viết chuẩn SEO giới thiệu chi tiết siêu dự án Vinhomes Hạ Long Xanh tại Quảng Yên & Hạ Long. Phân tích các phân khu, diện tích, bến du thuyền 5 sao và cơ hội đầu tư dòng tiền.",
+      "content": "\n      ## 1. Tên Thương Mại & Tên Thường Gọi\n      - **Tên thương mại chính thức:** Vinhomes Hạ Long Xanh (Khu đô thị phức hợp Hạ Long Xanh)\n      - **Tên thường gọi:** Vin Hạ Long Xanh, Vinhomes Quảng Ninh, Siêu dự án Hạ Long Xanh.\n      - **Chủ đầu tư:** Tập đoàn Vingroup & Công ty Vinhomes.\n      - **Vị trí địa lý:** Nằm tại Thị xã Quảng Yên và TP. Hạ Long, Tỉnh Quảng Ninh (ngay nút giao cao tốc Hà Nội - Hải Phòng - Hạ Long).\n\n      ## 2. Quy Mô & Các Phân Khu Chi Tiết\n      Siêu dự án sở hữu tổng diện tích quy hoạch lên tới **4.110 ha** với vốn đầu tư ước tính hơn 10 tỷ USD:\n      - **Phân khu Hoàng Tân:** Đô thị sinh thái biển nghỉ dưỡng cao cấp kết hợp biệt thự ven biển.\n      - **Phân khu Hà An:** Trung tâm tài chính, thương mại dịch vụ sầm uất và khu công nghệ cao.\n      - **Phân khu Bến Du Thuyền Đảo:** Biệt thự đảo VIP sở hữu bến đậu du thuyền riêng.\n      - **Phân khu Sân Golf 36 hố:** Sân Golf tiêu chuẩn quốc tế PGA hàng đầu miền Bắc.\n      - **Phân khu Căn hộ cao tầng:** Tòa tháp chung cư sinh thái view ôm trọn Vịnh Hạ Long.\n\n      ## 3. Hệ Thống Tiện Ích Nội Khu Đẳng Cấp\n      - **Sân Golf 36 hố PGA** thu hút các golfer quốc tế.\n      - **Bến du thuyền 5 sao** dành riêng cho giới thượng lưu.\n      - **Công viên giải trí VinWonders Hạ Long Xanh** quy mô hàng chục hecta.\n      - **Trung tâm thương mại Vincom Mega Mall**, Bệnh viện **Vinmec Medical Resort** và Trường học liên cấp **Vinschool**.\n\n      ## 4. Lợi Ích & Tiềm Năng Đầu Tư BĐS\n      Vinhomes Hạ Long Xanh nằm tại tam giác kinh tế bứt phá Hà Nội - Hải Phòng - Quảng Ninh. Khi đi vào vận hành, đây sẽ là tâm điểm du lịch sinh thái nghỉ dưỡng quốc tế, mang lại giá trị gia tăng bất động sản đột phá X2, X3 cho nhà đầu tư tiên phong.\n    ",
+      "category": "vinhomes",
+      "author": "Nhà đẹp Vinhomes - 0868.499.929",
+      "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-07-26",
+      "views": 3240,
+      "source": "manual",
+      "status": "published"
+    },
+    {
+      "id": "news-ocean-park",
+      "title": "Phân Biệt Rõ Ràng Siêu Quần Thể Ocean City: Vinhomes Ocean Park 1, 2 và 3",
+      "summary": "Phân tích chi tiết quy mô, vị trí, tiện ích điểm nhấn và quy hoạch các phân khu tại Vinhomes Ocean Park 1 (Gia Lâm), Ocean Park 2 (Văn Giang) và Ocean Park 3 (Hưng Yên).",
+      "content": "\n      ## 1. Vinhomes Ocean Park 1 - Gia Lâm (Hà Nội)\n      - **Tên thương mại:** Vinhomes Ocean Park 1 (Tên gọi: Vin Ocean Park 1, Thành phố Biển hồ).\n      - **Quy mô:** 420 ha.\n      - **Phân khu:** Sapphire, Zen Park, Masteri Waterfront, Ngọc Trai, San Hô, Sao Biển, Hải Tăng.\n      - **Tiện ích nổi bật:** Biển hồ nước mặn Crystal Lagoon 6.1ha, Hồ Ngọc Trai 24.5ha, Đại học VinUni, Vincom Mega Mall Gia Lâm.\n\n      ## 2. Vinhomes Ocean Park 2 - The Empire (Hưng Yên)\n      - **Tên thương mại:** Vinhomes Ocean Park 2 - The Empire (Tên gọi: Vin Ocean Park 2, The Empire).\n      - **Quy mô:** 458 ha.\n      - **Phân khu:** Chà Là, Cọ Xanh, San Hô, Hải Tăng, Sao Biển, Đảo Ngọc, Chợ Đêm Grand World.\n      - **Tiện ích nổi bật:** Tổ hợp công viên sóng Royal Wave Park 18ha lớn nhất thế giới, Kinh đô Ánh sáng, Bệnh viện Vinmec Health Resort 5 sao.\n\n      ## 3. Vinhomes Ocean Park 3 - Grand Park (Hưng Yên)\n      - **Tên thương mại:** Vinhomes Ocean Park 3 - Grand Park (Tên gọi: Vin Ocean Park 3).\n      - **Quy mô:** 294 ha.\n      - **Phân khu:** Phố Biển, Vịnh Thiên Đường, Ánh Dương, Thời Đại, Vịnh Tây, Vịnh Hải Tăng.\n      - **Tiện ích nổi bật:** Vịnh biển thiên đường Paradise Bay 12ha, công viên nước Aqua Bay, hồ bơi bốn mùa Tropical Surf.\n    ",
+      "category": "vinhomes",
+      "author": "Nhà đẹp Vinhomes - 0868.499.929",
+      "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-07-26",
+      "views": 2890,
+      "source": "manual",
+      "status": "published"
+    },
+    {
+      "id": "news-green-paradise-can-gio",
+      "title": "Si�u D? �n L?n Bi?n Vinhomes Green Paradise C?n Gi?: Bi?u Tu?ng M?i C?a TP.HCM",
+      "summary": null,
+      "content": "\n      ## 1. T�n Thuong M?i & V? Tr� L?n Bi?n\n      - **T�n thuong m?i ch�nh th?c:** Vinhomes Green Paradise C?n Gi? (Vinhomes Long Beach C?n Gi?)\n      - **T�n thu?ng g?i:** Vin C?n Gi?, Vinhomes C?n Gi?, D� th? l?n bi?n C?n Gi?.\n      - **V? tr�:** X� Long H�a & Th? tr?n C?n Th?nh, Huy?n C?n Gi?, TP. H? Ch� Minh.\n\n      ## 2. Quy M� & C�c Ph�n Khu M? B�n\n      T?ng di?n t�ch **2.870 ha** chia l�m 5 ph�n khu ch?c nang:\n      - **Ph�n khu A:** Khu du l?ch ngh? du?ng sinh th�i cao c?p.\n      - **Ph�n khu B:** Khu thuong m?i d?ch v?, c�ng vi�n ch? d? VinWonders & Safari C?n Gi?.\n      - **Ph�n khu C:** Trung t�m T�i ch�nh thuong m?i qu?c t? v?i di?m nh?n **Th�p 108 t?ng** & B?n du thuy?n 6 sao.\n      - **Ph�n khu D:** Khu ngh? du?ng sinh th�i bi?t th? bi?n xa x?.\n      - **Ph�n khu E:** Khu bi?n h? v� d� th? th�ng minh hi?n d?i.\n\n      ## 3. Ti?n �ch D?c B?n & Ti?m Nang Tang Gi�\n      S? h?u Bi?n h? l?n bi?n Lagoon r?ng d?n 400 ha, S�n Golf 36 h?, c?u C?n Gi? n?i Nh� B�. D? �n hu?ng l?i t?i da khi C?n Gi? ch�nh th?c n�ng c?p th�nh ph? sinh th�i tr?c thu?c TP.HCM.\n    ",
+      "category": "thi-truong",
+      "author": "Nh� d?p Vinhomes AI Assistant",
+      "image": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-07-26",
+      "views": 2150,
+      "source": "ai",
+      "status": "published"
+    },
+    {
+      "id": "news-tan-my-hau-nghia",
+      "title": "Vinhomes Tân Mỹ - Hậu Nghĩa Long An: Tâm Điểm Đô Thị Mới Cửa Ngõ Tây Bắc TP.HCM",
+      "summary": "Bài viết chuẩn SEO giới thiệu dự án Vinhomes Hậu Nghĩa Đức Hòa Long An quy mô 197.2ha, công viên hồ 15ha và kết nối Vành Đai 3, Vành Đai 4.",
+      "content": "\n      ## 1. Tên Thương Mại & Tên Thường Gọi\n      - **Tên thương mại chính thức:** Vinhomes Tân Mỹ - Hậu Nghĩa (Vinhomes Hậu Nghĩa Đức Hòa)\n      - **Tên thường gọi:** Vin Hậu Nghĩa, Vin Đức Hòa, Vinhomes Long An.\n      - **Vị trí:** Thị trấn Hậu Nghĩa, Xã Tân Mỹ & Đức Lập Cầu, Huyện Đức Hòa, Tỉnh Long An.\n\n      ## 2. Quy Mô & Các Phân Khu Sản Phẩm\n      Dự án có diện tích **197,2 ha** với hơn 4.500 căn biệt thự sinh thái, nhà phố shophouse và 5 tòa căn hộ cao tầng:\n      - **Phân khu Biệt thự Sinh thái:** Không gian sống yên bình bên dòng kênh cảnh quan.\n      - **Phân khu Shophouse Thương mại:** Mặt tiền các trục đường lớn sầm uất kinh doanh.\n      - **Phân khu Căn hộ cao tầng:** Chung cư hiện đại đầy đủ tiện ích.\n\n      ## 3. Tiện Ích & Hạ Tầng Kết Nối\n      Công viên hồ điều hòa trung tâm 15ha, TTTM Vincom Plaza, Trường Vinschool, Bệnh viện Vinmec. Nằm kề bên Vành Đai 3, Vành Đai 4 và Cao tốc TP.HCM - Mộc Bài giúp di chuyển về Quận 1 chỉ 35 phút.\n    ",
+      "category": "thi-truong",
+      "author": "Nhà đẹp Vinhomes - 0868.499.929",
+      "image": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-07-26",
+      "views": 1870,
+      "source": "manual",
+      "status": "published"
+    },
+    {
+      "id": "news-green-city-hoc-mon",
+      "title": "Vinhomes Green City H�c M�n: D� Th? Sinh Th�i & L�ng D?i H?c Qu?c T? 924ha",
+      "summary": null,
+      "content": "\n      ## 1. T�n Thuong M?i & V? Tr�\n      - **T�n thuong m?i ch�nh th?c:** Vinhomes Green City H�c M�n (Khu d� th? D?i h?c Qu?c t? H�c M�n)\n      - **T�n thu?ng g?i:** Vin H�c M�n, Vinhomes H�c M�n, D� th? sinh th�i H�c M�n.\n      - **V? tr�:** X� T�n Th?i Nh�, Huy?n H�c M�n, TP.HCM (M?t ti?n QL22 & V�nh Dai 3).\n\n      ## 2. Quy M� 924ha & Ph�n Khu Ch?c Nang\n      - **Ph�n khu D� th? Sinh th�i:** Bi?t th?, nh� ph? ven s�ng m�t m?.\n      - **Ph�n khu L�ng D?i h?c Qu?c t?:** Co s? 2 D?i h?c VinUni & t? h?p nghi�n c?u gi�o d?c.\n      - **Ph�n khu Trung t�m T�i ch�nh & C�ng ngh?:** T�a van ph�ng, trung t�m s�ng t?o start-up.\n\n      ## 3. L?i �ch & H? T?ng Tuong Lai\n      K?t n?i tr?c ti?p V�nh Dai 3, Tuy?n Metro s? 2 k�o d�i. D�ng vai tr� l� d� th? v? tinh hi?n d?i h�ng d?u ph�a T�y B?c TP.HCM.\n    ",
+      "category": "thi-truong",
+      "author": "Nh� d?p Vinhomes AI Assistant",
+      "image": "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-07-26",
+      "views": 1650,
+      "source": "ai",
+      "status": "published"
+    },
+    {
+      "id": "news-lang-van-da-nang",
+      "title": "Vinhomes Làng Vân Đà Nẵng: Kỳ Quan Nghỉ Dưỡng 1.000ha Dưới Chân Đèo Hải Vân",
+      "summary": "Giới thiệu dự án siêu sang Vinhomes Làng Vân Đà Nẵng với bến du thuyền 6 sao Liên Chiểu, Sân Golf 18 hố, Cáp treo Làng Vân và Resort Vinpearl.",
+      "content": "\n      ## 1. Tên Thương Mại & Tọa Độ Độc Bản\n      - **Tên thương mại chính thức:** Vinhomes Làng Vân Đà Nẵng (Khu du lịch sinh thái nghỉ dưỡng Làng Vân)\n      - **Tên thường gọi:** Vin Làng Vân, Siêu nghỉ dưỡng Làng Vân Đà Nẵng.\n      - **Vị trí:** Phường Hòa Hiệp Bắc, Quận Liên Chiểu, TP. Đà Nẵng (dưới chân đèo Hải Vân, hướng vịnh Nam Ô).\n\n      ## 2. Quy Mô 1.000ha & Phân Khu Đột Phá\n      - **Phân khu Biệt thự biển Đồi Hải Vân:** Biệt thự sườn đồi view biển panoramic 360 độ.\n      - **Phân khu Căn hộ Condotel cao cấp:** Căn hộ khách sạn quản lý theo tiêu chuẩn 5 sao.\n      - **Phân khu Resort 6 sao Vinpearl Làng Vân:** Khu nghỉ dưỡng khép kín đẳng cấp quốc tế.\n      - **Phân khu Tổ hợp Casino & Giải trí:** Casino, trung tâm hội nghị quốc tế.\n\n      ## 3. Tiện Ích Đỉnh Cao & Liên Kết Cảng Liên Chiểu\n      Bến du thuyền quốc tế, Sân Golf 18 hố, Cáp treo Làng Vân, Công viên VinWonders. Liền kề Siêu cảng nước sâu Liên Chiểu giúp BĐS Làng Vân trở thành hàng hiếm thu hút dòng vốn toàn cầu.\n    ",
+      "category": "vinhomes",
+      "author": "Nhà đẹp Vinhomes - 0868.499.929",
+      "image": "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80",
+      "publishedAt": "2026-07-26",
+      "views": 2410,
+      "source": "manual",
+      "status": "published"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-admin",
+      "name": "Nhà đẹp Vinhomes (Admin)",
+      "email": "admin@chocudan24h.com",
+      "phone": "0868.499.929",
+      "role": "admin",
+      "password": "$2b$10$Kl0ms4yO.f0kReSTIk7iguy8dZnSbdwMTr6L9hbJDh3jrtAPbB2L.",
+      "provider": "local",
+      "upTinCredits": 100,
+      "tier": "kim-cuong",
+      "registeredAt": "2026-07-21T03:59:29.256Z"
+    },
+    {
+      "id": "user-hieubui",
+      "name": "Bùi Văn Hiếu (Vinhomes 24h)",
+      "email": "kinhdoanh1.fpt@gmail.com",
+      "phone": "0868.499.929",
+      "role": "owner",
+      "password": "$2b$10$pQ//vCfvo6krrJJxyGK/KO06CkT2SK1BW7jPJWxiVdePTrvybg78C",
+      "provider": "google",
+      "upTinCredits": 50,
+      "tier": "vang",
+      "registeredAt": "2026-07-26T03:59:29.256Z",
+      "balance": 500000,
+      "tokenBalance": 500000,
+      "totalTokensPumped": 500000,
+      "affiliatePoints": 150000,
+      "totalAffiliateEarned": 150000
+    },
+    {
+      "id": "user-trangnguyen",
+      "name": "Nguyễn Thu Trang (Chủ Căn San Hô OCP2)",
+      "email": "trang.nguyen@vinhomesresidence.vn",
+      "phone": "0988.123.456",
+      "role": "owner",
+      "password": "$2b$10$LKv3v5Vc16Tdsl8n2R.DLON1lEhrQYLdCjZec5ShEDvS/JrjvZ1QC",
+      "provider": "google",
+      "upTinCredits": 20,
+      "tier": "vang",
+      "registeredAt": "2026-08-05T03:59:29.256Z"
+    },
+    {
+      "id": "user-quanghuy",
+      "name": "Trần Quang Huy (Môi Giới Săn Căn OCP3)",
+      "email": "huy.bds.vinhomes@gmail.com",
+      "phone": "0912.888.999",
+      "role": "sale",
+      "password": "$2b$10$lnaixKAW8wrXKwkEzY/xReebTHH.UpnMu8PkCB3CiR5Xwcoma9Bem",
+      "provider": "local",
+      "upTinCredits": 35,
+      "tier": "bac",
+      "registeredAt": "2026-08-10T03:59:29.256Z"
+    },
+    {
+      "id": "user-hoangnam",
+      "name": "Lê Hoàng Nam (Chủ Căn Shophouse OCP2)",
+      "email": "nam.le.invest@gmail.com",
+      "phone": "0903.456.789",
+      "role": "owner",
+      "password": "$2b$10$UzmbznOi3KVzskEN.mj.G.9CM5gk2G6rjq7QgZ4kdmqX91ctSFkH.",
+      "provider": "google",
+      "upTinCredits": 15,
+      "tier": "thuong",
+      "registeredAt": "2026-08-15T03:59:29.256Z"
+    },
+    {
+      "id": "user-minhpham",
+      "name": "Phạm Thị Minh (Cư Dân Cổ Loa Global Gate)",
+      "email": "minh.pham.coloa@gmail.com",
+      "phone": "0977.654.321",
+      "role": "owner",
+      "password": "$2b$10$xIJvyHteGjv2jczGj.8mlusGY8qCYFV0xubijzPGUGx7ZWMytP2ju",
+      "provider": "google",
+      "upTinCredits": 10,
+      "tier": "thuong",
+      "registeredAt": "2026-08-18T03:59:29.256Z"
+    },
+    {
+      "id": "user-1787812592659",
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": "0868.499.929",
+      "role": "owner",
+      "password": "$2b$10$VQrXOM2oDeXGQnNE8VozSeFetBbXbWNs6AVg1OSaAC.ZafQzWMxO.",
+      "provider": "local",
+      "upTinCredits": 10,
+      "tier": "thuong",
+      "balance": 0,
+      "emailVerified": true,
+      "phoneVerified": true,
+      "businessCategories": [],
+      "registeredAt": "2026-08-27T06:36:32.659Z"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "lead-101",
+      "fullName": "Trần Hoàng Việt",
+      "phone": "0912.345.678",
+      "email": "viet.tran@gmail.com",
+      "projectInterest": "Vinhomes Ocean Park 2",
+      "propertyId": "prop-1",
+      "propertyTitle": "Shophouse Chà Là CL-08 Phố Đi Bộ Sầm Uất",
+      "sellerName": "Nhà đẹp Vinhomes",
+      "sellerPhone": "0868.499.929",
+      "preferredTime": "Cuối tuần này",
+      "note": "Cần gặp trực tiếp xem sổ đỏ chính chủ và thương lượng giá",
+      "type": "viewing",
+      "status": "new",
+      "createdAt": "2026-08-20T03:59:29.256Z"
+    },
+    {
+      "id": "lead-102",
+      "fullName": "Nguyễn Thị Thu Hà",
+      "phone": "0988.765.432",
+      "email": "thu.ha.vinhomes@gmail.com",
+      "projectInterest": "Vinhomes Smart City",
+      "propertyId": "prop-2",
+      "propertyTitle": "Căn Hộ 2PN+1 Sapphire 2 View Công Viên Trung Tâm",
+      "sellerName": "Cư dân Đỗ Minh Hoàng (Chủ nhà)",
+      "sellerPhone": "0915.223.344",
+      "preferredTime": "Hôm nay",
+      "note": "Đặt lịch xem nhà trực tiếp lúc 17h30 chiều nay sau giờ làm",
+      "type": "viewing",
+      "status": "contacted",
+      "createdAt": "2026-08-19T22:59:29.256Z"
+    }
+  ],
+  "pricingConfig": {
+    "singlePushPrice": 20000,
+    "autoPush5Price": 90000,
+    "vipSilverPriceDay": 50000,
+    "vipGoldPriceDay": 100000,
+    "vipDiamondPriceDay": 200000,
+    "bankName": "MSB (Ngân hàng Hàng Hải Việt Nam)",
+    "accountNumber": "3028031988",
+    "accountHolder": "BUI VAN HIEU"
+  },
+  "upTinTransactions": [
+    {
+      "id": "tx-init-101",
+      "propertyId": "prop-101",
+      "propertyTitle": "Bán Biệt Thự Đơn Lập San Hô 06 - View Hồ Ngọc Trai Vinhomes Ocean Park 2",
+      "userId": "user-hieubui",
+      "userName": "Bùi Văn Hiếu (Chính Chủ)",
+      "userPhone": "0988.123.456",
+      "packageType": "vip_diamond",
+      "packageName": "VIP Kim Cương (30 Ngày Đỉnh Cao)",
+      "amount": 6000000,
+      "paymentCode": "UPTIN-101-999",
+      "status": "approved",
+      "createdAt": "2026-08-27T09:42:28.126Z",
+      "approvedAt": "2026-08-27T10:42:28.126Z",
+      "approvedBy": "vietqr_gateway_webhook"
+    }
+  ],
+  "residentServices": [
+    {
+      "id": "srv-thang-may-01",
+      "title": "Thang Máy Gia Đình Vinhomes - Thi Công & Bảo Trì Kính Homelift",
+      "categoryId": "thang-may-sua-nha",
+      "subCategory": "🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình & Homelift Kính",
+      "project": "ocean-park-2",
+      "subdivision": "Phân khu Chà Là & San Hô",
+      "providerName": "Kỹ sư Nguyễn Văn Đức (Cư dân Chà Là 6)",
+      "providerPhone": "0988.345.890",
+      "providerZalo": "https://zalo.me/0988345890",
+      "address": "Chà Là 6-12, Vinhomes Ocean Park 2",
+      "priceDisplay": "Báo giá trực tiếp theo công trình (Khảo sát Miễn Phí)",
+      "rating": 5,
+      "reviewCount": 42,
+      "images": [
+        "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Chuyên tư vấn, thiết kế và thi công lắp đặt thang máy gia đình Kính Homelift, thang máy tải khách cho Shophouse và Biệt thự tại Ocean Park 1, 2, 3 và Smart City. Đội ngũ kỹ sư Cư dân bảo trì 24/7 trong 15 phút!",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-07-15",
+      "kycStatus": "verified",
+      "kycBadgeType": "blue_verified",
+      "businessLicenseNo": "0108928372-VIN",
+      "taxCode": "0108928372",
+      "kycApprovedAt": "2026-07-16",
+      "kycApprovedBy": "Ban Quản Trị Hệ Thống chocudan24h.com",
+      "submittedDocs": [
+        {
+          "id": "doc-101",
+          "docType": "Chứng chỉ Kiểm định Thử tải Thang máy Gia đình",
+          "docName": "KiemDinhThangMay_GlassLift2026.pdf",
+          "fileUrl": "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80",
+          "status": "approved",
+          "uploadedAt": "2026-07-15",
+          "note": "Đã kiểm tra tem kiểm định an toàn đợt 1/2026 còn hiệu lực."
+        },
+        {
+          "id": "doc-102",
+          "docType": "Giấy phép ĐKKD Công ty Thang máy Thăng Long",
+          "docName": "DKKD_ThangMayThangLong.png",
+          "fileUrl": "https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=800&q=80",
+          "status": "approved",
+          "uploadedAt": "2026-07-15"
+        }
+      ]
+    },
+    {
+      "id": "srv-dien-nuoc-laptop-02",
+      "title": "Sửa Điện Nước, Máy Tính, Laptop & Wi-Fi Mesh 24/7 Bách Khoa",
+      "categoryId": "dien-may-tinh-cong-nghe",
+      "subCategory": "Sửa Máy tính, Laptop & Wi-Fi",
+      "project": "ocean-park-1",
+      "subdivision": "Căn hộ S2.12 & Toàn Quận 1",
+      "providerName": "Thợ Cư Dân Lê Anh Tuấn (Kỹ sư Bách Khoa)",
+      "providerPhone": "0972.112.334",
+      "providerZalo": "https://zalo.me/0972112334",
+      "address": "Tòa S2.12, Vinhomes Ocean Park 1",
+      "priceDisplay": "Khảo sát tận nhà từ 50.000đ",
+      "rating": 4.9,
+      "reviewCount": 118,
+      "images": [
+        "https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Xử lý nhanh sự cố chập điện, rò rỉ nước, sửa máy tính, laptop không lên nguồn, cài Win, thi công Wi-Fi Mesh sóng khỏe toàn biệt thự/căn hộ. Có mặt sau 10 phút gọi.",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-07-20",
+      "kycStatus": "verified",
+      "kycBadgeType": "blue_verified",
+      "submittedDocs": [
+        {
+          "id": "doc-201",
+          "docType": "Bằng Tốt Nghiệp Kỹ Sư Điện - CNTT ĐH Bách Khoa Hà Nội",
+          "docName": "BangDaiHoc_BachKhoa_LeAnhTuan.jpg",
+          "fileUrl": "https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=800&q=80",
+          "status": "approved",
+          "uploadedAt": "2026-07-20"
+        }
+      ]
+    },
+    {
+      "id": "srv-com-cu-dan-05",
+      "title": "Bếp Cư Dân - Cơm Cửa Hàng & Đồ Ăn Sạch Hữu Cơ Tận Nhà",
+      "categoryId": "am-thuc-com-cu-dan",
+      "subCategory": "Cơm gia đình & Đồ ăn cư dân nấu",
+      "project": "grand-park",
+      "subdivision": "Phân khu Origami & Rainbow",
+      "providerName": "Chị Mai Cư Dân Origami (Bếp Mẹ Làm)",
+      "providerPhone": "0903.666.123",
+      "providerZalo": "https://zalo.me/0903666123",
+      "address": "S7.02 Vinhomes Grand Park, TP. Thủ Đức",
+      "priceDisplay": "Suất cơm từ 45.000đ",
+      "rating": 4.9,
+      "reviewCount": 210,
+      "images": [
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Bếp ăn cư dân chuẩn vị cơm nhà nấu, thực phẩm tươi sạch mua trong ngày, không mì chính. Đặt cơm trưa công văn, cơm tối gia đình ship tận cửa phòng!",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-07-25",
+      "kycStatus": "verified",
+      "kycBadgeType": "gold_certified",
+      "businessLicenseNo": "79A8392112",
+      "submittedDocs": [
+        {
+          "id": "doc-501",
+          "docType": "Giấy Chứng Nhận Cơ Sở Đủ Điều Kiện An Toàn Vệ Sinh Thực Phẩm",
+          "docName": "Giay_ATVSTP_BepChimai.jpg",
+          "fileUrl": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+          "status": "approved",
+          "uploadedAt": "2026-07-25",
+          "note": "Cấp bởi Chi cục An toàn Vệ sinh Thực phẩm TP.HCM."
+        }
+      ]
+    },
+    {
+      "id": "srv-pending-medical-09",
+      "title": "Phòng Khám Y Tế Gia Đình & Bác Sĩ Cư Dân Khám Tại Nhà 24/7",
+      "categoryId": "spa-lam-dep-suc-khoe",
+      "subCategory": "Bác sĩ gia đình & Y tế tại nhà 24/7",
+      "project": "ocean-park-1",
+      "subdivision": "Tòa S1.08 Vinhomes Ocean Park 1",
+      "providerName": "Thạc sĩ Bác sĩ Nguyễn Hoàng Lâm (Bệnh viện Vinmec)",
+      "providerPhone": "0915.223.445",
+      "providerZalo": "https://zalo.me/0915223445",
+      "address": "P1208, Tòa S1.08 Ocean Park 1",
+      "priceDisplay": "Khám tại nhà từ 300.000đ",
+      "rating": 5,
+      "reviewCount": 19,
+      "images": [
+        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Dịch vụ bác sĩ gia đình khám sức khỏe tận nơi, xét nghiệm máu tại nhà, truyền dịch y tế theo chỉ định bác sĩ, chăm sóc vết thương sau phẫu thuật.",
+      "verified": false,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-08-01",
+      "kycStatus": "pending",
+      "kycBadgeType": "none",
+      "kycAppliedAt": "2026-08-01",
+      "submittedDocs": [
+        {
+          "id": "doc-901",
+          "docType": "Chứng chỉ Hành nghề Khám Bệnh, Chữa Bệnh Y Tế do Bộ Y Tế Cấp",
+          "docName": "ChungChiHanhNghe_BS_NguyenHoangLam.pdf",
+          "fileUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+          "status": "pending",
+          "uploadedAt": "2026-08-01",
+          "note": "Đang chờ Ban Quản Trị đối soát thông tin trên Cổng Thông tin Bộ Y Tế."
+        },
+        {
+          "id": "doc-902",
+          "docType": "CCCD Bác Sĩ Cư Dân Chính Chủ",
+          "docName": "CCCD_NguyenHoangLam.png",
+          "fileUrl": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80",
+          "status": "pending",
+          "uploadedAt": "2026-08-01"
+        }
+      ]
+    },
+    {
+      "id": "srv-transport-noi-khu-01",
+      "title": "Xe Điện Buggy & Taxi Điện Nội Khu Đưa Đón Trẻ Em & Cư Dân 24/7",
+      "categoryId": "van-chuyen-taxi",
+      "subCategory": "⚡ Vận Tải Nội Khu (Xe điện Buggy, Taxi điện, Chuyển đồ)",
+      "project": "ocean-park-1",
+      "subdivision": "Phân khu Ngọc Trai & San Hô",
+      "providerName": "Đội Xe Điện Cư Dân Nội Khu Vinhomes",
+      "providerPhone": "0868.499.929",
+      "providerZalo": "https://zalo.me/0868499929",
+      "address": "Sảnh S2.01 Vinhomes Ocean Park 1",
+      "priceDisplay": "Từ 20.000đ/lượt nội khu",
+      "rating": 5,
+      "reviewCount": 112,
+      "images": [
+        "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Dịch vụ VẬN TẢI NỘI KHU chuyên nghiệp: Đưa đón con trẻ đi học Vinschool, đưa đón ông bà đi dạo/bể bơi/Vincom, di chuyển giữa các phân khu Ocean Park 1, 2, 3 & Smart City. Xe điện êm ái, an toàn 100%.",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-08-01",
+      "kycStatus": "verified",
+      "kycBadgeType": "blue_verified"
+    },
+    {
+      "id": "srv-transport-noi-khu-02",
+      "title": "Xe Điện Ba Bánh & Tải Nhỏ Chuyển Đồ, Vận Chuyển Nội Thất Nội Khu",
+      "categoryId": "van-chuyen-taxi",
+      "subCategory": "⚡ Vận Tải Nội Khu (Xe điện Buggy, Taxi điện, Chuyển đồ)",
+      "project": "smart-city",
+      "subdivision": "Sảnh Sapphire & Imperia",
+      "providerName": "Đội Vận Chuyển Chợ Cư Dân Smart City",
+      "providerPhone": "0988.345.890",
+      "providerZalo": "https://zalo.me/0988345890",
+      "address": "S2.05 Vinhomes Smart City",
+      "priceDisplay": "Từ 100.000đ/chuyến chuyển đồ",
+      "rating": 4.9,
+      "reviewCount": 78,
+      "images": [
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Chuyên chở đồ đạc cồng kềnh, chuyển đồ chuyển nhà giữa các tòa nhà nội khu Vinhomes. Hỗ trợ bốc xếp tận phòng, cẩn thận, không trầy xước thang máy.",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-08-02",
+      "kycStatus": "verified",
+      "kycBadgeType": "blue_verified"
+    },
+    {
+      "id": "srv-pending-taxi-10",
+      "title": "Đội Xe Điện VinFast VF9 Đưa Đón Vip Cư Dân Sân Bay Nội Bài (Vận Tải Ngoại Khu)",
+      "categoryId": "van-chuyen-taxi",
+      "subCategory": "✈️ Vận Tải Ngoại Khu (Taxi Sân Bay Nội Bài, Xe đi tỉnh)",
+      "project": "smart-city",
+      "subdivision": "Tonkin 1, Vinhomes Smart City",
+      "providerName": "Tài xế Đỗ Quốc Khánh (Cư dân Tonkin)",
+      "providerPhone": "0966.888.999",
+      "providerZalo": "https://zalo.me/0966888999",
+      "address": "Sảnh Tonkin 1, Vinhomes Smart City",
+      "priceDisplay": "Trọn gói Sân bay 350.000đ",
+      "rating": 4.9,
+      "reviewCount": 32,
+      "images": [
+        "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "VẬN TẢI NGOẠI KHU: Chuyên phục vụ các chuyến đưa đón VIP bằng xe điện 7 chỗ VF9 rộng rãi sang trọng đi Sân bay Nội Bài, đi tỉnh, sân golf. Đặt lịch trước có ngay xe.",
+      "verified": false,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-08-01",
+      "kycStatus": "pending",
+      "kycBadgeType": "none",
+      "kycAppliedAt": "2026-08-01",
+      "submittedDocs": [
+        {
+          "id": "doc-1001",
+          "docType": "Giấy Phép Lái Xe Hạng B2 Chính Chủ",
+          "docName": "GPLX_B2_DoQuocKhanh.jpg",
+          "fileUrl": "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80",
+          "status": "pending",
+          "uploadedAt": "2026-08-01"
+        },
+        {
+          "id": "doc-1002",
+          "docType": "Giấy Đăng Ký Xe &Tem Đăng Kiểm Xe VF9",
+          "docName": "Cavet_DangKiem_VF9.jpg",
+          "fileUrl": "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80",
+          "status": "pending",
+          "uploadedAt": "2026-08-01"
+        }
+      ]
+    },
+    {
+      "id": "srv-taxi-03",
+      "title": "Taxi Cư Dân Vin 7 Chỗ Tiện Chuyến Hà Nội - Sân Bay Nội Bài & Đi Tỉnh",
+      "categoryId": "van-chuyen-taxi",
+      "subCategory": "✈️ Vận Tải Ngoại Khu (Taxi Sân Bay Nội Bài, Xe đi tỉnh)",
+      "project": "smart-city",
+      "subdivision": "Phân khu Sapphire & Tonkin",
+      "providerName": "Tài xế Cư Dân Trần Minh Quân (Xe VF8 Sang Trọng)",
+      "providerPhone": "0868.999.234",
+      "providerZalo": "https://zalo.me/0868999234",
+      "address": "S3.03 Vinhomes Smart City",
+      "priceDisplay": "Nội Bài giá trọn gói 250.000đ",
+      "rating": 5,
+      "reviewCount": 95,
+      "images": [
+        "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "VẬN TẢI NGOẠI KHU 24/7: Phục vụ cư dân đưa đón Sân bay Nội Bài, tiện chuyến đi tỉnh Quảng Ninh, Hải Phòng, Nam Định, Ninh Bình, Thanh Hóa. Xe điện VF8 êm ái, lịch sự, đúng giờ.",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-07-18",
+      "kycStatus": "verified",
+      "kycBadgeType": "blue_verified"
+    },
+    {
+      "id": "srv-giat-la-04",
+      "title": "Tiệm Giặt Sấy Công Nghiệp & Giặt Rèm / Sofa Cao Cấp Ocean Park 3",
+      "categoryId": "dich-vu-gia-dinh-giat-la",
+      "subCategory": "Giặt sấy công nghiệp & Giặt rèm",
+      "project": "ocean-park-3",
+      "subdivision": "Phân khu Thời Đại 3",
+      "providerName": "Cửa Hàng Giặt Sấy Chợ Cư Dân 24/7",
+      "providerPhone": "0912.888.777",
+      "providerZalo": "https://zalo.me/0912888777",
+      "address": "Thời Đại 3-45, Vinhomes Ocean Park 3",
+      "priceDisplay": "Từ 15.000đ/kg (Giao nhận tận cửa)",
+      "rating": 4.8,
+      "reviewCount": 64,
+      "images": [
+        "https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Giặt sấy quần áo lấy ngay trong 2 giờ, giặt rèm cửa, đệm cao su, sofa tại nhà. Sử dụng nước giặt hữu cơ lưu hương nhập khẩu, không hư hại vải.",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-07-22",
+      "kycStatus": "verified",
+      "kycBadgeType": "blue_verified"
+    },
+    {
+      "id": "srv-spa-06",
+      "title": "Mamaterra Spa & Gội Đầu Dưỡng Sinh Đông Y Thảo Dược",
+      "categoryId": "spa-lam-dep-suc-khoe",
+      "subCategory": "Spa Dưỡng sinh & Gội đầu thảo dược",
+      "project": "ocean-park-2",
+      "subdivision": "Cọ Xanh 12",
+      "providerName": "Chủ Spa: Nguyễn Thu Hà (Cư dân Cọ Xanh)",
+      "providerPhone": "0989.445.667",
+      "providerZalo": "https://zalo.me/0989445667",
+      "address": "Cọ Xanh 12-88, Vinhomes Ocean Park 2",
+      "priceDisplay": "Combo gội dưỡng sinh từ 99.000đ",
+      "rating": 5,
+      "reviewCount": 88,
+      "images": [
+        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Dịch vụ gội đầu dưỡng sinh canh thuốc Bắc, massage cổ vai gáy giảm căng thẳng, chăm sóc da mặt chuyên sâu. Giảm 20% cho cư dân đăng ký trước!",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-07-28",
+      "kycStatus": "verified",
+      "kycBadgeType": "gold_certified"
+    },
+    {
+      "id": "srv-homestay-07",
+      "title": "Ocean Luxury Homestay 2PN View Biển Hồ Bốn Mùa Chợ Cư Dân",
+      "categoryId": "homestay-luu-tru",
+      "subCategory": "Homestay theo giờ / Theo ngày",
+      "project": "ocean-park-3",
+      "subdivision": "Vịnh Thiên Đường",
+      "providerName": "Chủ Căn Hộ: Vũ Hoàng Nam",
+      "providerPhone": "0868.499.929",
+      "providerZalo": "https://zalo.me/0868499929",
+      "address": "Phân khu Vịnh Thiên Đường, Vinhomes Ocean Park 3",
+      "priceDisplay": "Thuê theo giờ 200k/2h - Theo ngày 650k/đêm",
+      "rating": 4.9,
+      "reviewCount": 150,
+      "images": [
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Homestay thiết kế phong cách Santorini hiện đại, đầy đủ bếp nấu, chiếu phim Netflix 4K, view công viên nước và biển hồ bơi 4 mùa. Tự do check-in 24/7.",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-07-29",
+      "kycStatus": "verified",
+      "kycBadgeType": "blue_verified"
+    },
+    {
+      "id": "srv-noi-that-08",
+      "title": "Thi Công Nội Thất Gỗ An Cường Trọn Gói - Cải Tạo Shophouse & Biệt Thự Vin",
+      "categoryId": "thang-may-sua-nha",
+      "subCategory": "🛋️ Thiết Kế & Thi Công Nội Thất Trọn Gói (Gỗ An Cường)",
+      "project": "ha-long-xanh",
+      "subdivision": "Toàn dự án Hạ Long Xanh & Quảng Ninh",
+      "providerName": "Xưởng Nội Thất Cư Dân Kiến Trúc Việt",
+      "providerPhone": "0977.555.888",
+      "providerZalo": "https://zalo.me/0977555888",
+      "address": "Khu Đô Thị Hạ Long Xanh, Quảng Ninh",
+      "priceDisplay": "Miễn phí 100% bản vẽ thiết kế 3D",
+      "rating": 5,
+      "reviewCount": 35,
+      "images": [
+        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Xưởng sản xuất trực tiếp nội thất gỗ An Cường, cải tạo biệt thự, shophouse thương mại, vách thạch cao, sơn bả trọn gói bảo hành 5 năm.",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-07-30",
+      "kycStatus": "verified",
+      "kycBadgeType": "blue_verified"
+    },
+    {
+      "id": "srv-xay-lap-09",
+      "title": "Thi Công Xây Lắp & Cải Tạo Xây Dựng Biệt Thự / Shophouse Vinhomes",
+      "categoryId": "thang-may-sua-nha",
+      "subCategory": "🏗️ Thi Công Xây Lắp, Cải Tạo Biệt Thự & Shophouse",
+      "project": "ocean-park-2",
+      "subdivision": "Phân khu Sao Biển & San Hô",
+      "providerName": "Công Ty CP Xây Dựng & Tổng Thầu VinCons",
+      "providerPhone": "0868.499.929",
+      "providerZalo": "https://zalo.me/0868499929",
+      "address": "Sao Biển 1-89, Vinhomes Ocean Park 2",
+      "priceDisplay": "Khảo sát & Lập dự toán miễn phí tận nơi",
+      "rating": 5,
+      "reviewCount": 68,
+      "images": [
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Tổng thầu thi công xây lắp trọn gói: Đập phá mở rộng không gian, đổ sàn bê tông, xây tường, trát sơn, thi công chống thấm hố thang máy, hoàn thiện kiến trúc & kết cấu biệt thự, shophouse cam kết bảo hành kết cấu 10 năm.",
+      "verified": true,
+      "legalCommitmentAccepted": true,
+      "createdAt": "2026-08-01",
+      "kycStatus": "verified",
+      "kycBadgeType": "blue_verified"
+    }
+  ],
+  "stores": [
+    {
+      "id": "store-1",
+      "userId": "user-mai-1",
+      "ownerName": "Trần Thị Mai",
+      "ownerPhone": "0988123456",
+      "ownerZalo": "0988123456",
+      "storeName": "Nông Sản Sạch & Trái Cây Nhập Khẩu Mai Farm - San Hô 2",
+      "slug": "mai-farm-san-ho-2",
+      "logoUrl": "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80",
+      "bannerUrl": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80",
+      "category": "Thực Phẩm & Nông Sản Sạch",
+      "project": "ocean-park-2",
+      "subdivision": "San Hô 2",
+      "address": "Shophouse SH2-18, Phân khu San Hô, Vinhomes Ocean Park 2",
+      "description": "Chuyên cung cấp trái cây tươi nhập khẩu (Sầu riêng Musang King, Táo Envy, Nho mẫu đơn), rau củ hữu cơ giao nhanh 15 phút tận cửa căn hộ cư dân.",
+      "operatingHours": "07:00 - 21:30 hàng ngày",
+      "verified": true,
+      "rating": 4.9,
+      "reviewCount": 38,
+      "createdAt": "2026-01-15",
+      "lat": 20.9592,
+      "lng": 105.9765,
+      "kiotVietConfig": {
+        "enabled": true,
+        "storeDomain": "maifarmvinhomes.kiotviet.vn",
+        "clientId": "kv-client-8839210",
+        "clientSecret": "••••••••••••••••",
+        "retailerName": "Mai Farm Vinhomes",
+        "branchId": "Chi nhánh Ocean Park 2 (ID: 10928)",
+        "autoSync": true,
+        "lastSyncedAt": "2026-08-02 09:20",
+        "syncStatus": "connected",
+        "syncedProductsCount": 12
+      },
+      "products": [
+        {
+          "id": "p-101",
+          "storeId": "store-1",
+          "kiotVietId": "KV-9901",
+          "code": "TC-ENVY-1KG",
+          "name": "Táo Envy Mỹ Size Lớn (Hộp 1kg)",
+          "category": "Trái Cây Nhập Khẩu",
+          "price": 220000,
+          "originalPrice": 250000,
+          "unit": "hộp 1kg",
+          "stockQuantity": 45,
+          "images": [
+            "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80"
+          ],
+          "description": "Táo Envy nhập khẩu trực tiếp từ Mỹ, giòn ngọt đậm đà, đóng hộp sang trọng phục vụ cư dân.",
+          "isAvailable": true,
+          "soldCount": 142
+        },
+        {
+          "id": "p-102",
+          "storeId": "store-1",
+          "kiotVietId": "KV-9902",
+          "code": "TC-NHO-MD",
+          "name": "Nho Mẫu Đơn Shine Muscat Hàn Quốc (Chùm 700g)",
+          "category": "Trái Cây Nhập Khẩu",
+          "price": 390000,
+          "originalPrice": 450000,
+          "unit": "chùm",
+          "stockQuantity": 18,
+          "images": [
+            "https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=600&q=80"
+          ],
+          "description": "Nho Mẫu Đơn giòn ngọt ngào thơm mùi sữa, trái to tròn mọng nước, giao tận giường cư dân.",
+          "isAvailable": true,
+          "soldCount": 89
+        },
+        {
+          "id": "p-103",
+          "storeId": "store-1",
+          "kiotVietId": "KV-9903",
+          "code": "RC-HUUC-COMBO",
+          "name": "Combo Rau Củ Hữu Cơ Đà Lạt (Túi 3kg)",
+          "category": "Rau Củ Tươi Sạch",
+          "price": 125000,
+          "unit": "túi 3kg",
+          "stockQuantity": 30,
+          "images": [
+            "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80"
+          ],
+          "description": "Bao gồm Cải kale, Cà chua cherry, Dưa leo baby, Ớt chuông đà lạt trồng chuẩn VietGAP.",
+          "isAvailable": true,
+          "soldCount": 210
+        }
+      ]
+    },
+    {
+      "id": "store-2",
+      "userId": "user-hieu-bui",
+      "ownerName": "Bùi Trung Hiếu",
+      "ownerPhone": "0868499929",
+      "ownerZalo": "0868499929",
+      "storeName": "Nội Thất & Thiết Bị Điện Thông Minh Bùi Gia - Chà Là 1",
+      "slug": "bui-gia-noi-that-smart-home",
+      "logoUrl": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80",
+      "bannerUrl": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
+      "category": "Nội Thất & Thi Công",
+      "project": "ocean-park-2",
+      "subdivision": "Chà Là 1",
+      "address": "Shophouse CL1-28, Vinhomes Ocean Park 2",
+      "description": "Tư vấn, thiết kế, thi công nội thất trọn gói biệt thự, shophouse và căn hộ Vinhomes. Phân phối khóa cửa vân tay, đèn LED cảm ứng Smart Home kết nối ứng dụng.",
+      "operatingHours": "08:00 - 19:00",
+      "verified": true,
+      "rating": 5,
+      "reviewCount": 52,
+      "createdAt": "2026-02-10",
+      "lat": 20.9568,
+      "lng": 105.9721,
+      "kiotVietConfig": {
+        "enabled": true,
+        "storeDomain": "buigianoithat.kiotviet.vn",
+        "clientId": "kv-client-992104",
+        "clientSecret": "••••••••••••••••",
+        "retailerName": "Bùi Gia Smart Home",
+        "branchId": "Trụ sở Vinhomes Ocean Park (ID: 8812)",
+        "autoSync": true,
+        "lastSyncedAt": "2026-08-02 08:45",
+        "syncStatus": "connected",
+        "syncedProductsCount": 8
+      },
+      "products": [
+        {
+          "id": "p-201",
+          "storeId": "store-2",
+          "kiotVietId": "KV-8801",
+          "code": "KHOA-VT-VINH3",
+          "name": "Khóa Cửa Vân Tay Thông Minh Xiaomi Face ID 3D",
+          "category": "Thiết Bị Smart Home",
+          "price": 4850000,
+          "originalPrice": 5500000,
+          "unit": "bộ",
+          "stockQuantity": 12,
+          "images": [
+            "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&q=80"
+          ],
+          "description": "Mở cửa bằng Nhận diện khuôn mặt 3D, Vân tay FPO, Thẻ từ & App thoại. Hỗ trợ miến phí công lắp đặt tại Vinhomes.",
+          "isAvailable": true,
+          "soldCount": 45
+        },
+        {
+          "id": "p-202",
+          "storeId": "store-2",
+          "kiotVietId": "KV-8802",
+          "code": "DEN-LED-RAY-AM",
+          "name": "Gói Đèn LED Ray Nam Châm Thông Minh Căn Hộ 2PN (Trọn gói)",
+          "category": "Hệ Thống Chiếu Sáng",
+          "price": 12500000,
+          "originalPrice": 15000000,
+          "unit": "gói trọn gói",
+          "stockQuantity": 5,
+          "images": [
+            "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80"
+          ],
+          "description": "Trọn gói vật tư & thi công hệ thống đèn ray nam châm đổi màu 3 chế độ theo tâm trạng cho căn hộ Vinhomes.",
+          "isAvailable": true,
+          "soldCount": 19
+        }
+      ]
+    },
+    {
+      "id": "store-3",
+      "userId": "user-phuong-3",
+      "ownerName": "Lê Thanh Phương",
+      "ownerPhone": "0977112233",
+      "ownerZalo": "0977112233",
+      "storeName": "Tiệm Giặt Sấy Lấy Ngay Phương Clean - S1.05",
+      "slug": "tiem-giat-say-phuong-clean",
+      "logoUrl": "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=400&q=80",
+      "bannerUrl": "https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=1200&q=80",
+      "category": "Giặt Là & Chăm Sóc Nhà",
+      "project": "ocean-park-1",
+      "subdivision": "S1.05",
+      "address": "S1.05, Vinhomes Ocean Park 1",
+      "description": "Giặt hấp cao cấp, giặt sấy diệt khuẩn thơm tho, giặt rèm thảm tận nhà. Đang gửi hồ sơ đăng ký định danh KYC.",
+      "operatingHours": "07:30 - 21:00",
+      "verified": false,
+      "rating": 4.8,
+      "reviewCount": 12,
+      "createdAt": "2026-08-01",
+      "products": []
+    }
+  ],
+  "storeOrders": [
+    {
+      "id": "ord-1001",
+      "orderCode": "DH-KV-8821",
+      "storeId": "store-1",
+      "storeName": "Nông Sản Sạch & Trái Cây Nhập Khẩu Mai Farm - San Hô 2",
+      "customerId": "cust-1",
+      "customerName": "Nguyễn Hoàng Nam",
+      "customerPhone": "0912345678",
+      "customerAddress": "Căn 12.08 Tòa S2.01 Ocean Park 1",
+      "note": "Giao gấp trước 11h trưa giúp mình nhé!",
+      "items": [
+        {
+          "productId": "p-101",
+          "productName": "Táo Envy Mỹ Size Lớn (Hộp 1kg)",
+          "price": 220000,
+          "quantity": 2,
+          "unit": "hộp 1kg"
+        }
+      ],
+      "totalAmount": 440000,
+      "paymentMethod": "vietqr",
+      "paymentStatus": "paid",
+      "orderStatus": "delivering",
+      "createdAt": "2026-08-02 08:30",
+      "kiotVietSyncStatus": "synced"
+    }
+  ],
+  "reputationPosts": [
+    {
+      "id": "rep-1",
+      "partnerName": "Bún Chả Hà Nội Cụ Bà S2.12",
+      "partnerCategory": "Quán Ăn & Nhà Hàng",
+      "project": "ocean-park-1",
+      "authorName": "Nguyễn Thị Minh Anh",
+      "authorRoom": "S2.12 - Căn 1806",
+      "title": "Review chân thực: Bún chả ngon đúng vị phố cổ, giao siêu nhanh 10 phút!",
+      "content": "Nhà mình ăn bún chả ở đây từ ngày mới về S2.12. Thịt nướng than hoa thơm lừng, nước chấm ấm nóng vừa miệng. Đặc biệt chị chủ nhà cư dân siêu dễ thương, ship tận cửa không tính phí. Mọi người nên thử nem hải sản ở đây!",
+      "rating": 5,
+      "images": [
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80"
+      ],
+      "youtubeUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "createdAt": "10 phút trước",
+      "likesCount": 42,
+      "trustBadge": "top_rated",
+      "zaloContact": "https://zalo.me/0988123456",
+      "phoneContact": "0988.123.456",
+      "status": "approved"
+    },
+    {
+      "id": "rep-2",
+      "partnerName": "Sửa Chữa Điện Nước Anh Đức Cư Dân",
+      "partnerCategory": "Sửa Chữa Gia Đình",
+      "project": "ocean-park-2",
+      "authorName": "Trần Quốc Tuấn",
+      "authorRoom": "Chà Là 6 - Căn 22",
+      "title": "Cảm ơn anh Đức đã cứu nguy sự cố chập điện lúc 11h đêm!",
+      "content": "Hôm qua nhà mình bị nhảy aptomat lúc đêm muộn. Gọi anh Đức 5 phút sau anh qua ngay, mang đầy đủ thiết bị đo đạc báo giá minh bạch chỉ 150k. Đúng chất cư dân giúp đỡ nhau, làm việc có tâm!",
+      "rating": 5,
+      "images": [
+        "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80"
+      ],
+      "youtubeUrl": "https://www.youtube.com/watch?v=5qap5aO4i9A",
+      "createdAt": "2 giờ trước",
+      "likesCount": 89,
+      "trustBadge": "gold_partner",
+      "zaloContact": "https://zalo.me/0977888999",
+      "phoneContact": "0977.888.999",
+      "status": "approved"
+    }
+  ],
+  "storePackages": [
+    {
+      "id": "basic-cu-dan",
+      "name": "GÓI CƯ DÂN KHỞI TẠO",
+      "priceDisplay": "0đ",
+      "priceValue": 0,
+      "unit": "/ vĩnh viễn",
+      "color": "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900",
+      "description": "Gian hàng tiêu chuẩn cho cư dân nội khu khởi tạo kinh doanh",
+      "categoryGroup": "identity",
+      "badge": "CƯ DÂN NỘI KHU",
+      "priorityOrder": 1,
+      "active": true,
+      "features": [
+        "Khởi tạo Hồ sơ Gian hàng / Dịch vụ miễn phí",
+        "Cập nhật Hotline, Zalo & Địa chỉ căn hộ",
+        "Đăng tối đa 10 sản phẩm/món ăn cơ bản",
+        "Xuất hiện trên công cụ Tìm Kiếm Cư Dân 24h",
+        "Nhận phản hồi & Đánh giá sao từ xóm giềng"
+      ],
+      "buttonText": "Đăng Ký Miễn Phí",
+      "buttonVariant": "outline"
+    },
+    {
+      "id": "shop-xac-thuc-24h",
+      "name": "GÓI CHỦ SHOP XÁC THỰC 24H",
+      "priceDisplay": "680.000đ",
+      "priceValue": 680000,
+      "unit": "/ năm",
+      "badge": "XÁC THỰC UY TÍN 24H",
+      "badgeColor": "bg-emerald-600 text-white",
+      "color": "border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20",
+      "description": "Xác minh KYC chính chủ, tạo dựng niềm tin tuyệt đối với cư dân",
+      "categoryGroup": "identity",
+      "priorityOrder": 2,
+      "active": true,
+      "features": [
+        "Bao gồm toàn bộ quyền lợi Gói Khởi Tạo",
+        "Cấp Huy hiệu KHIÊN XANH XÁC THỰC (KYC CCCD + SĐT)",
+        "Hỗ trợ đăng không giới hạn Sản phẩm & Menu dịch vụ",
+        "Ưu tiên xếp hạng cao trong tìm kiếm danh mục",
+        "Tặng 20 lượt Up-Tin tự động mỗi tháng",
+        "Hỗ trợ cập nhật thông tin gian hàng 24/7"
+      ],
+      "buttonText": "Kích Hoạt Ngay",
+      "buttonVariant": "success"
+    },
+    {
+      "id": "doi-tac-kim-cuong-24h",
+      "name": "GÓI ĐỐI TÁC KIM CƯƠNG VIP",
+      "priceDisplay": "1.880.000đ",
+      "priceValue": 1880000,
+      "unit": "/ năm",
+      "popular": true,
+      "badge": "ĐỐI TÁC VIP KIM CƯƠNG",
+      "badgeColor": "bg-amber-500 text-slate-950",
+      "color": "border-amber-500 bg-amber-50/40 dark:bg-amber-950/20 ring-2 ring-amber-500",
+      "description": "Giải pháp thương hiệu toàn diện cho Gian Hàng & Doanh Nghiệp uy tín",
+      "categoryGroup": "identity",
+      "priorityOrder": 3,
+      "active": true,
+      "features": [
+        "Tích hợp toàn bộ đặc quyền Gói Xác Thực 24h",
+        "Huy hiệu VƯƠNG MIỆN VÀNG KIM CƯƠNG nổi bật nhất",
+        "Ghim Top 1 ưu tiên trong danh mục ngành hàng",
+        "Hỗ trợ chụp ảnh & biên tập giao diện chuẩn thương hiệu",
+        "Tặng 12 Bài Viết Truyền Thông PR Doanh Nghiệp / năm",
+        "Báo cáo thống kê lượt xem & tương tác khách hàng theo tuần",
+        "Đội ngũ Admin hỗ trợ riêng 1-on-1 qua Zalo"
+      ],
+      "buttonText": "Đăng Ký Gói VIP",
+      "buttonVariant": "warning"
+    },
+    {
+      "id": "top-banner-danh-muc",
+      "name": "QUẢNG CÁO TOP BANNER DANH MỤC",
+      "priceDisplay": "890.000đ",
+      "priceValue": 890000,
+      "unit": "/ tháng",
+      "badge": "VỊ TRÍ VÀNG NGÀNH HÀNG",
+      "badgeColor": "bg-purple-600 text-white",
+      "color": "border-purple-500 bg-purple-50/40 dark:bg-purple-950/20",
+      "description": "Sở hữu Banner vị trí độc tôn ngay đầu trang danh mục ngành hàng",
+      "categoryGroup": "advertising",
+      "priorityOrder": 4,
+      "active": true,
+      "features": [
+        "Hiển thị Banner kích thước lớn ngay đầu Danh mục",
+        "Hỗ trợ thiết kế Banner tĩnh & động miễn phí",
+        "Tích hợp nút Gọi Điện & Chat Zalo trực tiếp 1-Touch",
+        "Tiếp cận 100% cư dân truy cập vào nhóm ngành liên quan",
+        "Báo cáo số lượt hiển thị (Impressions) & Lượt Click hàng tuần"
+      ],
+      "buttonText": "Đặt Banner Ngay",
+      "buttonVariant": "purple"
+    },
+    {
+      "id": "sponsor-home-slider",
+      "name": "QUẢNG CÁO SLIDER VIP TRANG CHỦ",
+      "priceDisplay": "2.680.000đ",
+      "priceValue": 2680000,
+      "unit": "/ tháng",
+      "badge": "VỊ TRÍ ĐỘC TÔN TRANG CHỦ",
+      "badgeColor": "bg-rose-600 text-white",
+      "color": "border-rose-500 bg-rose-50/40 dark:bg-rose-950/20",
+      "description": "Tiếp cận toàn bộ hàng vạn cư dân ngay khi mở app & truy cập trang chủ",
+      "categoryGroup": "advertising",
+      "priorityOrder": 5,
+      "active": true,
+      "features": [
+        "Banner Hero lớn ở vị trí đầu tiên Slider Trang Chủ",
+        "Hiển thị Popup chào mừng cư dân mới đăng nhập",
+        "Tối ưu hiển thị đa nền tảng (Web PC, Mobile App, Tablet)",
+        "Hỗ trợ quay chụp & sản xuất Banner truyền thông cao cấp",
+        "Ưu tiên giới thiệu trong các bản tin cư dân tuần"
+      ],
+      "buttonText": "Liên Hệ Đặt Vị Trí",
+      "buttonVariant": "primary"
+    },
+    {
+      "id": "article-pr-review",
+      "name": "BÀI REVIEW PR THƯƠNG HIỆU CƯ DÂN",
+      "priceDisplay": "1.280.000đ",
+      "priceValue": 1280000,
+      "unit": "/ bài",
+      "badge": "PR THƯƠNG HIỆU & SEO TOP",
+      "badgeColor": "bg-blue-600 text-white",
+      "color": "border-blue-500 bg-blue-50/40 dark:bg-blue-950/20",
+      "description": "Bài viết trải nghiệm chân thực góc nhìn cư dân, phủ Top Google SEO",
+      "categoryGroup": "pr",
+      "priorityOrder": 6,
+      "active": true,
+      "features": [
+        "Biên tập bài viết chuyên sâu & chụp ảnh thực tế tận nơi",
+        "Đăng tải trên Chuyên Mục Doanh Nghiệp Cư Dân 24h",
+        "Đẩy SEO Google từ khóa thương hiệu & dịch vụ nội khu",
+        "Lan tỏa bài viết đến hệ sinh thái Group Zalo & Fanpage Cư Dân",
+        "Lưu trữ bài viết vĩnh viễn trên hệ thống"
+      ],
+      "buttonText": "Đăng Bài Review",
+      "buttonVariant": "primary"
+    }
+  ],
+  "packageOrders": [],
+  "ads": [
+    {
+      "id": "ad-01",
+      "title": "Đăng Bán & Cho Thuê BĐS Vinhomes Ocean Park 2,3 Miễn Phí Trên Nhà đẹp Vinhomes",
+      "imageUrl": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80",
+      "linkUrl": "https://zalo.me/0868499929",
+      "position": "header_top",
+      "active": true,
+      "clickCount": 1420,
+      "createdAt": "2026-07-20"
+    },
+    {
+      "id": "ad-02",
+      "title": "Gói Vay Vốn Ngân Hàng Ưu Đãi Lãi Suất 0% Trong 24 Tháng Tại Vinhomes",
+      "imageUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
+      "linkUrl": "tel:0868499929",
+      "position": "home_sidebar",
+      "active": true,
+      "clickCount": 890,
+      "createdAt": "2026-07-22"
+    },
+    {
+      "id": "ad-03",
+      "title": "Quỹ Căn Cắt Lỗ Sâu Shophouse Chà Là & San Hô - Hotline Nhà đẹp Vinhomes: 0868.499.929",
+      "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "linkUrl": "https://zalo.me/0868499929",
+      "position": "home_middle",
+      "active": true,
+      "clickCount": 2310,
+      "createdAt": "2026-07-24"
+    },
+    {
+      "id": "ad-04",
+      "title": "⚡ BẤM XEM NGAY: Quỹ Căn Biệt Thự - Shophouse Đã Có Sổ Đỏ Lâu Dài",
+      "imageUrl": "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=600&q=80",
+      "linkUrl": "https://zalo.me/0868499929",
+      "position": "float_right_pc",
+      "widthSize": "medium",
+      "displayStyle": "glowing_border",
+      "badgeText": "HOT BÁM ĐUỔI",
+      "active": false,
+      "clickCount": 520,
+      "createdAt": "2026-07-25"
+    },
+    {
+      "id": "ad-05",
+      "title": "🚕 Dịch Vụ Taxi & Chuyển Nhà Cư Dân Vinhomes 24/7 - Hotline: 0868.499.929",
+      "imageUrl": "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80",
+      "linkUrl": "tel:0868499929",
+      "position": "float_left_pc",
+      "active": false,
+      "clickCount": 380,
+      "createdAt": "2026-07-26"
+    }
+  ],
+  "techOrders": [
+    {
+      "id": "tech-ord-101",
+      "orderCode": "TECH-ESCROW-9801",
+      "serviceId": "srv-thang-may-01",
+      "serviceTitle": "Lắp Đặt & Bảo Trì Thang Máy Gia Đình Kính Homelift 24/7",
+      "categoryId": "thang-may-sua-nha",
+      "subCategory": "🛗 Lắp Đặt & Bảo Trì Thang Máy Gia Đình & Homelift Kính",
+      "customerUserId": "user-trangnguyen",
+      "customerName": "Nguyễn Thu Trang (Cư dân San Hô OCP2)",
+      "customerPhone": "0988.123.456",
+      "customerAddress": "San Hô 12 - Căn 08, Vinhomes Ocean Park 2",
+      "project": "ocean-park-2",
+      "subdivision": "Phân khu San Hô",
+      "techUserId": "user-hieubui",
+      "techName": "Kỹ Sư Nguyễn Văn Đức (Đội Thợ Thang Máy VinCons)",
+      "techPhone": "0868.499.929",
+      "agreedPrice": 3500000,
+      "escrowAmount": 3500000,
+      "platformFee": 175000,
+      "payoutAmount": 3325000,
+      "status": "inspection_submitted",
+      "warrantyDays": 30,
+      "warrantyExpiresAt": "2026-09-19",
+      "note": "Thang máy kính Homelift kẹt nút tầng 3. Đã thay cảm biến an toàn và tra dầu xích tải.",
+      "imagesBefore": [
+        "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80"
+      ],
+      "imagesAfter": [
+        "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80"
+      ],
+      "createdAt": "2026-08-19T22:59:29.256Z",
+      "updatedAt": "2026-08-20T03:59:29.256Z",
+      "autoReleaseAt": "2026-08-20T22:59:29.256Z",
+      "bankInfoForPayout": {
+        "bankName": "MBBank (Ngân Hàng Quân Đội)",
+        "accountNumber": "3028031988",
+        "accountHolder": "BUI VAN HIEU"
+      }
+    },
+    {
+      "id": "tech-ord-102",
+      "orderCode": "TECH-ESCROW-9802",
+      "serviceId": "srv-dien-nuoc-laptop-02",
+      "serviceTitle": "Sửa Điện Nước & Wi-Fi Mesh Khẩn Cấp 24/7",
+      "categoryId": "dien-may-tinh-cong-nghe",
+      "subCategory": "Sửa Máy tính, Laptop & Wi-Fi",
+      "customerUserId": "user-quanghuy",
+      "customerName": "Trần Quang Huy (Cư dân OCP1)",
+      "customerPhone": "0912.888.999",
+      "customerAddress": "Tòa S2.12 - Căn 1806, Vinhomes Ocean Park 1",
+      "project": "ocean-park-1",
+      "subdivision": "S2.12",
+      "techUserId": "user-trangnguyen",
+      "techName": "Thợ Cư Dân Lê Anh Tuấn (Bách Khoa)",
+      "techPhone": "0972.112.334",
+      "agreedPrice": 450000,
+      "escrowAmount": 450000,
+      "platformFee": 22500,
+      "payoutAmount": 427500,
+      "status": "completed_released",
+      "warrantyDays": 14,
+      "warrantyExpiresAt": "2026-09-03",
+      "note": "Xử lý chập Aptomat tầng 2 và kích sóng Wi-Fi Mesh phòng ngủ.",
+      "createdAt": "2026-08-18T03:59:29.256Z",
+      "updatedAt": "2026-08-19T03:59:29.256Z"
+    }
+  ],
+  "walletTransactions": [
+    {
+      "id": "wtx-1787841929308",
+      "userId": "user-admin",
+      "type": "deposit_vietqr",
+      "amount": 50000,
+      "description": "[NẠP TỰ ĐỘNG VIETQR] Nạp 50.000đ vào Ví Cư Dân",
+      "status": "success",
+      "createdAt": "21:45:29 27/8/2026",
+      "referenceCode": "NAP-VQR-5561"
+    },
+    {
+      "id": "wtx-1787841929089",
+      "userId": "user-other",
+      "type": "deposit_vietqr",
+      "amount": 50000,
+      "description": "[NẠP TỰ ĐỘNG VIETQR] Nạp 50.000đ vào Ví Cư Dân",
+      "status": "success",
+      "createdAt": "21:45:29 27/8/2026",
+      "referenceCode": "NAP-VQR-6877"
+    },
+    {
+      "id": "wtx-aff-1787198600564-300",
+      "userId": "user-hieubui",
+      "type": "affiliate_commission",
+      "amount": 150000,
+      "description": "[CỘNG ĐIỂM HOA HỒNG] Thưởng +150.000 Điểm Affiliate (ĐƯỢC RÚT VỀ NGÂN HÀNG) - Lý do: Thưởng kích hoạt tài khoản cư dân Vinhomes",
+      "status": "success",
+      "createdAt": "04:03:20 20/8/2026",
+      "referenceCode": "AFF-POINTS-user-hieubui"
+    },
+    {
+      "id": "wtx-pump-1787198600559-64",
+      "userId": "user-hieubui",
+      "type": "admin_pump_tokens",
+      "amount": 500000,
+      "description": "[BƠM TOKEN ADMIN] Tặng +500.000 Token Cư Dân (Xu Tiêu Dùng - Không Thể Rút) - Lý do: Thưởng kích hoạt tài khoản cư dân Vinhomes",
+      "status": "success",
+      "createdAt": "04:03:20 20/8/2026",
+      "referenceCode": "PUMP-TOKEN-user-hieubui"
+    },
+    {
+      "id": "wtx-101",
+      "userId": "user-trangnguyen",
+      "type": "escrow_hold",
+      "amount": 3500000,
+      "orderId": "tech-ord-101",
+      "orderCode": "TECH-ESCROW-9801",
+      "description": "Tạm giữ tiền dịch vụ Thang máy Homelift Kính OCP2 (Trạng thái Escrow Hold)",
+      "status": "success",
+      "createdAt": "22:59:29 19/8/2026",
+      "referenceCode": "ESCROW-9801-HOLD"
+    },
+    {
+      "id": "wtx-102",
+      "userId": "user-trangnguyen",
+      "type": "deposit_vietqr",
+      "amount": 10000000,
+      "description": "Nạp tiền tự động qua VietQR MBBank 3028031988",
+      "status": "success",
+      "createdAt": "03:59:29 17/8/2026",
+      "referenceCode": "NAP-VQR-10000"
+    }
+  ],
+  "taxConfig": {
+    "autoWithholdEnabled": true,
+    "pitRateServices": 1.5,
+    "vatRateServices": 3.5,
+    "pitRateGoods": 0.5,
+    "vatRateGoods": 1,
+    "minAnnualRevenueThreshold": 100000000,
+    "taxAuthorityUnit": "Chi Cục Thuế Huyện Văn Giang - Tỉnh Hưng Yên",
+    "taxCodePlatform": "0109888999-001"
+  },
+  "taxLedger": [
+    {
+      "id": "tax-rec-101",
+      "taxpayerName": "Bùi Văn Hiếu",
+      "taxpayerPhone": "0868.499.929",
+      "taxCodeCCCD": "001088019988",
+      "userRole": "Kỹ Sư / Thợ Thang Máy",
+      "project": "ocean-park-2",
+      "grossRevenue": 3500000,
+      "pitWithheld": 52500,
+      "vatWithheld": 122500,
+      "totalTaxWithheld": 175000,
+      "netPayout": 3150000,
+      "orderCode": "TECH-ESCROW-9801",
+      "status": "withheld_in_vault",
+      "quarterPeriod": "Q3/2026",
+      "createdAt": "16:19:54 27/8/2026"
+    },
+    {
+      "id": "tax-rec-102",
+      "taxpayerName": "Lê Anh Tuấn",
+      "taxpayerPhone": "0972.112.334",
+      "taxCodeCCCD": "001095012345",
+      "userRole": "Thợ Điện Nước & Wi-Fi",
+      "project": "ocean-park-1",
+      "grossRevenue": 450000,
+      "pitWithheld": 6750,
+      "vatWithheld": 15750,
+      "totalTaxWithheld": 22500,
+      "netPayout": 405000,
+      "orderCode": "TECH-ESCROW-9802",
+      "status": "declared_gdt",
+      "quarterPeriod": "Q3/2026",
+      "createdAt": "16:19:54 26/8/2026"
+    }
+  ],
+  "recruitmentJobs": [
+    {
+      "id": "job-1",
+      "title": "Tuyển 5 Chuyên Viên Môi Giới BĐS Vinhomes Ocean Park 1, 2, 3 (Hoa Hồng Tới 70% + Lương Cứng)",
+      "companyName": "Công Ty BĐS Nhà Đẹp Vinhomes",
+      "industry": "bat-dong-san",
+      "project": "ocean-park-2",
+      "projectName": "Vinhomes Ocean Park 2",
+      "location": "Shophouse Chà Là 15-08, Vinhomes Ocean Park 2, Hưng Yên",
+      "jobType": "full-time",
+      "salaryType": "range",
+      "salaryDisplay": "15 - 50 Triệu / tháng (Lương cứng + Thưởng hoa hồng nóng)",
+      "minSalary": 15000000,
+      "maxSalary": 50000000,
+      "experience": "under-1y",
+      "experienceDisplay": "Chấp nhận chưa có kinh nghiệm, được đào tạo 1:1",
+      "description": "Do nhu cầu mở rộng quy mô kinh doanh tại phân khu Ocean Park 2 & 3, công ty cần tuyển dụng 5 bạn Chuyên viên tư vấn Bất động sản nhiệt huyết, đam mê kiếm tiền.",
+      "requirements": [
+        "Có laptop cá nhân, phương tiện đi lại",
+        "Nhanh nhẹn, trung thực, giao tiếp tốt, đam mê bất động sản",
+        "Cư dân sinh sống tại Vinhomes Ocean Park 1, 2, 3 hoặc khu vực Gia Lâm, Văn Giang là lợi thế lớn",
+        "Có tinh thần học hỏi, cầu tiến và chịu được áp lực doanh số"
+      ],
+      "benefits": [
+        "Lương cứng 6.000.000đ - 10.000.000đ/tháng + Hoa hồng 60% - 70% doanh thu môi giới",
+        "Được cấp nguồn Data khách nét cư dân có sẵn của công ty",
+        "Hỗ trợ 100% ngân sách chạy Marketing, đăng tin VIP và làm video TikTok/Reels",
+        "Môi trường làm việc trẻ trung, năng động tại Shophouse VIP mặt đường lớn",
+        "Du lịch định kỳ 2 lần/năm, thưởng quý và thưởng Tết vượt KPI"
+      ],
+      "contactName": "Mr. Bùi Hiếu (Giám Đốc Kinh Doanh)",
+      "contactPhone": "0988112233",
+      "contactZalo": "0988112233",
+      "contactEmail": "tuyendung@chocudan24h.com",
+      "status": "active",
+      "isVip": true,
+      "isUrgent": true,
+      "viewsCount": 642,
+      "applicationsCount": 14,
+      "deadline": "2026-09-30",
+      "createdAt": "2026-08-10T08:00:00.000Z"
+    },
+    {
+      "id": "job-2",
+      "title": "Tuyển 2 Nhân Viên Pha Chế (Barista) & 3 Phục Vụ Quán Cafe Cư Dân S2.05",
+      "companyName": "Tiệm Trà & Cafe Gió Biển S2.05",
+      "industry": "fb-am-thuc",
+      "project": "ocean-park-1",
+      "projectName": "Vinhomes Ocean Park 1",
+      "location": "Shophouse Khối Đế Tòa S2.05, Vinhomes Ocean Park 1, Gia Lâm, Hà Nội",
+      "jobType": "shift",
+      "salaryType": "hourly",
+      "salaryDisplay": "28.000đ - 35.000đ / giờ + Thưởng doanh thu ca",
+      "minSalary": 28000,
+      "maxSalary": 35000,
+      "experience": "none",
+      "experienceDisplay": "Không yêu cầu kinh nghiệm, được training pha chế",
+      "description": "Quán Cafe cư dân thân thiện cần tuyển đồng đội Barista và Phục vụ ca sáng (06:30 - 12:30), ca chiều (12:30 - 18:30) hoặc ca tối (18:30 - 23:00).",
+      "requirements": [
+        "Ưu tiên bạn sinh viên hoặc cư dân sống tại các tòa S1, S2 Ocean Park 1",
+        "Chăm chỉ, nhanh nhẹn, vui vẻ, có trách nhiệm với ca làm",
+        "Có khả năng xoay ca linh hoạt theo lịch học"
+      ],
+      "benefits": [
+        "Lương tính theo giờ + Phụ cấp ăn ca 30k/ca + Thưởng doanh thu",
+        "Uống nước miễn phí tại quán trong giờ làm",
+        "Được đào tạo tay nghề pha chế máy Espresso, trà sữa, sinh tố chuẩn bài"
+      ],
+      "contactName": "Chị Mai Lan",
+      "contactPhone": "0912345678",
+      "contactZalo": "0912345678",
+      "contactEmail": "tiemtralangio@gmail.com",
+      "status": "active",
+      "isVip": false,
+      "isUrgent": true,
+      "viewsCount": 420,
+      "applicationsCount": 9,
+      "deadline": "2026-09-15",
+      "createdAt": "2026-08-12T09:30:00.000Z"
+    },
+    {
+      "id": "job-3",
+      "title": "Cần Tìm Cô Giúp Việc Theo Giờ / Nấu Cơm Gia Đình Căn Hộ 3PN Tòa Tonkin 1",
+      "companyName": "Gia Đình Chị Hằng (Cư Dân Tonkin 1)",
+      "industry": "giup-viec-gia-dinh",
+      "project": "smart-city",
+      "projectName": "Vinhomes Smart City",
+      "location": "Căn hộ TK1-1808, Phân khu The Tonkin, Vinhomes Smart City, Nam Từ Liêm, Hà Nội",
+      "jobType": "part-time",
+      "salaryType": "hourly",
+      "salaryDisplay": "70.000đ - 90.000đ / giờ (Làm 3-4 tiếng/ngày, nghỉ Chủ Nhật)",
+      "minSalary": 70000,
+      "maxSalary": 90000,
+      "experience": "1-3y",
+      "experienceDisplay": "Cần có kinh nghiệm dọn dẹp chung cư cao cấp và nấu ăn ngon",
+      "description": "Gia đình gồm 2 vợ chồng và 1 bé 6 tuổi cần cô giúp việc dọn dẹp nhà cửa, giặt ủi đồ và nấu bữa tối từ 16h30 đến 19h30 các ngày thứ 2 đến thứ 7.",
+      "requirements": [
+        "Thật thà, sạch sẽ, ngăn nắp, có CCCD rõ ràng và giấy tờ tùy thân hợp lệ",
+        "Nấu ăn ngon khẩu vị miền Bắc, biết bảo quản đồ gia dụng hiện đại (máy rửa bát, bếp từ, robot hút bụi)",
+        "Ưu tiên cô bác đang sống gần khu vực Smart City hoặc Tây Mỗ"
+      ],
+      "benefits": [
+        "Mức lương trả đúng hạn theo tuần hoặc theo tháng (từ 5 - 7 triệu/tháng)",
+        "Gia đình văn minh, tôn trọng người làm, thưởng lễ tết chu đáo",
+        "Có ăn tối cùng gia đình nếu cô có nhu cầu"
+      ],
+      "contactName": "Chị Thu Hằng",
+      "contactPhone": "0978665544",
+      "contactZalo": "0978665544",
+      "status": "active",
+      "isVip": false,
+      "isUrgent": false,
+      "viewsCount": 310,
+      "applicationsCount": 5,
+      "deadline": "2026-09-20",
+      "createdAt": "2026-08-14T10:15:00.000Z"
+    },
+    {
+      "id": "job-4",
+      "title": "Tuyển 2 Thợ Kỹ Thuật Điện Nước & Bảo Dưỡng Điều Hòa Nội Khu Lương 12-18 Triệu",
+      "companyName": "Trung Tâm Cơ Điện & Kỹ Thuật Cư Dân 24H",
+      "industry": "ky-thuat-xay-dung",
+      "project": "ocean-park-2",
+      "projectName": "Vinhomes Ocean Park 2",
+      "location": "Văn phòng Kỹ Thuật San Hô 12, Vinhomes Ocean Park 2",
+      "jobType": "full-time",
+      "salaryType": "range",
+      "salaryDisplay": "12 - 18 Triệu / tháng + Phụ cấp xăng xe & đơn hàng",
+      "minSalary": 12000000,
+      "maxSalary": 18000000,
+      "experience": "1-3y",
+      "experienceDisplay": "Kinh nghiệm từ 1 năm trong nghề điện nước dân dụng",
+      "description": "Chuyên bảo trì, xử lý sự cố điện chập, rò rỉ nước, vệ sinh nạp gas điều hòa cho cư dân các biệt thự và chung cư trong đại đô thị.",
+      "requirements": [
+        "Biết đọc sơ đồ điện nước cơ bản, có đồ nghề chuyên dụng cơ bản",
+        "Trung thực, có mặt nhanh chóng khi có lệnh điều phối sự cố",
+        "Có thái độ nhã nhặn, lịch sự khi vào nhà cư dân làm việc"
+      ],
+      "benefits": [
+        "Lương cứng 10.000.000đ + % hoa hồng trực tiếp trên từng đơn hàng hoàn thành",
+        "Cấp đồng phục, bảo hộ lao động và đóng bảo hiểm đầy đủ sau thử việc",
+        "Môi trường làm việc ổn định, lượng khách hàng cư dân dồi dào quanh năm"
+      ],
+      "contactName": "Anh Tuấn Kỹ Thuật",
+      "contactPhone": "0968112233",
+      "contactZalo": "0968112233",
+      "status": "active",
+      "isVip": true,
+      "isUrgent": true,
+      "viewsCount": 512,
+      "applicationsCount": 7,
+      "deadline": "2026-10-05",
+      "createdAt": "2026-08-11T14:20:00.000Z"
+    },
+    {
+      "id": "job-5",
+      "title": "Tuyển Nhân Viên Bán Hàng & Thu Ngân Siêu Thị Mini VinMart+ S1.02",
+      "companyName": "Siêu Thị Thực Phẩm Sạch & Tiện Lợi Cư Dân",
+      "industry": "ban-hang-cskh",
+      "project": "ocean-park-1",
+      "projectName": "Vinhomes Ocean Park 1",
+      "location": "Tầng 1 S1.02 Vinhomes Ocean Park 1, Gia Lâm",
+      "jobType": "full-time",
+      "salaryType": "range",
+      "salaryDisplay": "7.5 - 9.5 Triệu / tháng",
+      "minSalary": 7500000,
+      "maxSalary": 9500000,
+      "experience": "none",
+      "experienceDisplay": "Không yêu cầu kinh nghiệm, hướng dẫn dùng máy POS",
+      "description": "Kiểm kê hàng hóa, trưng bày quầy kệ gọn gàng, thanh toán tiền cho khách hàng cư dân qua máy POS và quét mã VietQR.",
+      "requirements": [
+        "Độ tuổi 18 - 35, tính cách cẩn thận, trung thực, hòa nhã",
+        "Có thể làm theo ca 8 tiếng (Ca sáng: 6h-14h, Ca chiều: 14h-22h)"
+      ],
+      "benefits": [
+        "Lương cứng + Thưởng doanh số siêu thị hàng tháng",
+        "Môi trường làm việc mát mẻ, điều hòa 24/7",
+        "Ưu tiên giảm giá khi mua hàng thực phẩm tại cửa hàng"
+      ],
+      "contactName": "Quản lý Thu Trang",
+      "contactPhone": "0945998877",
+      "contactZalo": "0945998877",
+      "status": "active",
+      "isVip": false,
+      "isUrgent": false,
+      "viewsCount": 290,
+      "applicationsCount": 11,
+      "deadline": "2026-09-25",
+      "createdAt": "2026-08-13T11:00:00.000Z"
+    },
+    {
+      "id": "job-6",
+      "title": "Tuyển Gia Sư Tiếng Anh Dạy Kèm 2 Bé Lớp 3 & Lớp 5 Khu Biệt Thự Ngọc Trai",
+      "companyName": "Gia Đình Anh Long (Khu Ngọc Trai)",
+      "industry": "gia-su-giao-duc",
+      "project": "ocean-park-1",
+      "projectName": "Vinhomes Ocean Park 1",
+      "location": "Biệt thự NT-06, Khu Ngọc Trai, Vinhomes Ocean Park 1",
+      "jobType": "part-time",
+      "salaryType": "hourly",
+      "salaryDisplay": "250.000đ - 350.000đ / buổi (90 phút)",
+      "minSalary": 250000,
+      "maxSalary": 350000,
+      "experience": "1-3y",
+      "experienceDisplay": "Yêu cầu phát âm chuẩn, có chứng chỉ IELTS ≥ 7.0 hoặc tốt nghiệp ĐH Ngoại Ngữ",
+      "description": "Dạy giao tiếp, ngữ pháp và hỗ trợ các bé làm bài tập trường Vinschool. Mỗi tuần 3 buổi vào các tối thứ 2, 4, 6.",
+      "requirements": [
+        "Sinh viên năm cuối hoặc giáo viên có kinh nghiệm dạy học sinh tiểu học Vinschool",
+        "Phương pháp dạy vui tươi, kiên nhẫn, truyền cảm hứng học tập"
+      ],
+      "benefits": [
+        "Thu nhập ổn định 3 - 4.5 triệu/tháng chỉ với 3 buổi/tuần",
+        "Thưởng thêm nếu các bé đạt điểm thi cao trên lớp"
+      ],
+      "contactName": "Anh Hoàng Long",
+      "contactPhone": "0933221100",
+      "contactZalo": "0933221100",
+      "status": "active",
+      "isVip": false,
+      "isUrgent": true,
+      "viewsCount": 380,
+      "applicationsCount": 8,
+      "deadline": "2026-09-18",
+      "createdAt": "2026-08-14T15:40:00.000Z"
+    }
+  ],
+  "candidateProfiles": [
+    {
+      "id": "bui-van-hieu",
+      "userId": "u-cand-bui-van-hieu",
+      "fullName": "Bùi Văn Hiếu",
+      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+      "birthYear": 1998,
+      "gender": "nam",
+      "phone": "0868.499.929",
+      "email": "kinhdoanh1.fpt@gmail.com",
+      "zalo": "0868.499.929",
+      "currentProject": "ocean-park-2",
+      "projectName": "Vinhomes Ocean Park 2",
+      "currentAddress": "Phân khu San Hô, Vinhomes Ocean Park 2",
+      "targetJobTitle": "Nhân viên kinh doanh BĐS / Quản lý cửa hàng",
+      "primaryIndustry": "bat-dong-san",
+      "subIndustries": [
+        "fb-am-thuc",
+        "dich-vu-cu-dan"
+      ],
+      "workTypePreference": [
+        "full-time",
+        "part-time"
+      ],
+      "expectedSalary": "12 - 18 Triệu/tháng",
+      "experienceLevel": "1-3y",
+      "yearsOfExp": 2,
+      "introduction": "Cư dân sinh sống tại nội khu đô thị, năng động, nhiệt tình, có kinh nghiệm giao tiếp và phục vụ khách hàng chu đáo.",
+      "skills": [
+        "Giao tiếp đàm phán",
+        "Hiểu rõ nội khu Vinhomes",
+        "Tin học văn phòng",
+        "Chăm sóc khách hàng"
+      ],
+      "workExperience": [
+        {
+          "company": "Đại lý BĐS Đất Vàng Vinhomes",
+          "role": "Chuyên viên tư vấn căn hộ",
+          "period": "01/2023 - Hiện tại",
+          "description": "Tư vấn mua bán, chuyển nhượng và cho thuê căn hộ, shophouse Ocean Park 1, 2, 3."
+        }
+      ],
+      "education": [
+        {
+          "school": "Đại học Kinh Tế Quốc Dân",
+          "major": "Quản trị kinh doanh",
+          "period": "2016 - 2020",
+          "degree": "Cử nhân"
+        }
+      ],
+      "certificates": [
+        "Chứng chỉ Môi giới BĐS",
+        "Chứng chỉ Tin học MOS"
+      ],
+      "isLookingForJob": true,
+      "isImmediate": true,
+      "unlockPriceVnd": 20000,
+      "unlockedByUserIds": [
+        "admin",
+        "u-cand-bui-van-hieu",
+        "user-admin"
+      ],
+      "viewsCount": 350,
+      "createdAt": "2026-08-01T08:00:00.000Z",
+      "updatedAt": "2026-08-20T10:00:00.000Z"
+    },
+    {
+      "id": "cand-1",
+      "userId": "u-cand-101",
+      "fullName": "Nguyễn Văn Minh",
+      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+      "birthYear": 1996,
+      "gender": "nam",
+      "phone": "0987654321",
+      "email": "minh.nguyen96@gmail.com",
+      "zalo": "0987654321",
+      "currentProject": "ocean-park-2",
+      "projectName": "Vinhomes Ocean Park 2",
+      "currentAddress": "Căn C15-12, Phân Khu Chà Là, Vinhomes Ocean Park 2",
+      "targetJobTitle": "Trưởng Nhóm / Chuyên Viên Cao Cấp BĐS Vinhomes",
+      "primaryIndustry": "bat-dong-san",
+      "subIndustries": [
+        "ban-hang-cskh",
+        "marketing-it-design"
+      ],
+      "workTypePreference": [
+        "full-time",
+        "freelance"
+      ],
+      "expectedSalary": "20 - 35 Triệu / tháng",
+      "experienceLevel": "3-5y",
+      "yearsOfExp": 4,
+      "introduction": "Tôi có hơn 4 năm kinh nghiệm làm môi giới BĐS thực chiến tại khu vực phía Đông Hà Nội, am hiểu sâu sắc quy hoạch và mặt bằng Ocean Park 1, 2, 3. Đã từng dẫn dắt nhóm kinh doanh đạt doanh số 150 tỷ giao dịch năm 2025.",
+      "skills": [
+        "Tư vấn & Chốt deal BĐS triệu USD",
+        "Đàm phán chuyển nhượng & Hợp đồng mua bán",
+        "Chạy quảng cáo Facebook Ads / Google Ads",
+        "Sáng tạo Video Review nhà thực tế TikTok/Youtube",
+        "Quản lý đội ngũ telesale & chăm sóc khách hàng VIP"
+      ],
+      "workExperience": [
+        {
+          "company": "Sàn Bất Động Sản CenLand Chi Nhánh Đông Hà Nội",
+          "role": "Trưởng Nhóm Kinh Doanh",
+          "period": "2023 - 2025",
+          "description": "Quản lý team 8 nhân viên, trực tiếp phân phối quỹ căn chuyển nhượng thấp tầng Ocean Park 2 và chung cư Masteri Waterfront."
+        },
+        {
+          "company": "Công ty Cổ phần Địa Ốc Đất Xanh Miền Bắc",
+          "role": "Chuyên Viên Tư Vấn BĐS",
+          "period": "2021 - 2023",
+          "description": "Tư vấn bán hàng các dự án căn hộ cao cấp Vinhomes Smart City và Grand Park."
+        }
+      ],
+      "education": [
+        {
+          "school": "Đại Học Kinh Tế Quốc Dân (NEU)",
+          "major": "Bất Động Sản & Kinh Tế Tài Nguyên",
+          "period": "2014 - 2018",
+          "degree": "Cử nhân loại Giỏi"
+        }
+      ],
+      "certificates": [
+        "Chứng chỉ hành nghề Môi giới Bất động sản do Sở Xây Dựng cấp",
+        "Chứng chỉ Digital Marketing Google & Meta Certified"
+      ],
+      "isLookingForJob": true,
+      "isImmediate": true,
+      "unlockPriceVnd": 50000,
+      "unlockedByUserIds": [
+        "admin",
+        "u-employer-1"
+      ],
+      "viewsCount": 185,
+      "createdAt": "2026-08-05T10:00:00.000Z",
+      "updatedAt": "2026-08-15T09:00:00.000Z"
+    },
+    {
+      "id": "cand-2",
+      "userId": "u-cand-102",
+      "fullName": "Trần Thị Thu Hà",
+      "avatarUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80",
+      "birthYear": 1999,
+      "gender": "nu",
+      "phone": "0912888999",
+      "email": "thuha.tran99@gmail.com",
+      "zalo": "0912888999",
+      "currentProject": "ocean-park-1",
+      "projectName": "Vinhomes Ocean Park 1",
+      "currentAddress": "Tòa S2.16 - Căn hộ 2210, Vinhomes Ocean Park 1",
+      "targetJobTitle": "Quản Lý Cửa Hàng / Trưởng Ca F&B / Barista Chuyên Nghiệp",
+      "primaryIndustry": "fb-am-thuc",
+      "subIndustries": [
+        "ban-hang-cskh"
+      ],
+      "workTypePreference": [
+        "full-time",
+        "shift"
+      ],
+      "expectedSalary": "10 - 15 Triệu / tháng",
+      "experienceLevel": "1-3y",
+      "yearsOfExp": 3,
+      "introduction": "Có 3 năm kinh nghiệm làm Trưởng ca tại chuỗi Highlands Coffee và Phúc Long. Có tay nghề pha chế máy Espresso, Latte Art, kiểm soát nguyên vật liệu và quản lý nhân sự ca làm việc.",
+      "skills": [
+        "Pha chế Barista & Latte Art chuyên sâu",
+        "Quản lý quầy bar, kiểm kê cost nguyên vật liệu",
+        "Sử dụng thành thạo phần mềm CukCuk, iPOS, KiotViet",
+        "Kỹ năng giải quyết khiếu nại khách hàng khéo léo",
+        "Tiếng Anh giao tiếp tốt (IELTS 6.5)"
+      ],
+      "workExperience": [
+        {
+          "company": "Highlands Coffee Ocean Park 1",
+          "role": "Trưởng Ca Vận Hành (Shift Leader)",
+          "period": "2023 - 2025",
+          "description": "Điều phối ca 6 nhân viên, đảm bảo tiêu chuẩn an toàn vệ sinh thực phẩm và nâng cao trải nghiệm khách hàng."
+        }
+      ],
+      "education": [
+        {
+          "school": "Cao Đẳng Du Lịch Hà Nội",
+          "major": "Quản Trị Nhà Hàng & Dịch Vụ Ăn Uống",
+          "period": "2017 - 2020",
+          "degree": "Bằng Khá"
+        }
+      ],
+      "certificates": [
+        "SCA Specialty Coffee Barista Skills Intermediate"
+      ],
+      "isLookingForJob": true,
+      "isImmediate": true,
+      "unlockPriceVnd": 50000,
+      "unlockedByUserIds": [],
+      "viewsCount": 142,
+      "createdAt": "2026-08-08T14:30:00.000Z",
+      "updatedAt": "2026-08-14T11:20:00.000Z"
+    },
+    {
+      "id": "cand-3",
+      "userId": "u-cand-103",
+      "fullName": "Lê Văn Hùng",
+      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
+      "birthYear": 1990,
+      "gender": "nam",
+      "phone": "0977334455",
+      "email": "kythuat.hungvan@gmail.com",
+      "zalo": "0977334455",
+      "currentProject": "ocean-park-2",
+      "projectName": "Vinhomes Ocean Park 2",
+      "currentAddress": "Khu San Hô 15, Ocean Park 2",
+      "targetJobTitle": "Thợ Kỹ Thuật Trưởng / Giám Sát Cơ Điện Lạnh & Thang Máy",
+      "primaryIndustry": "ky-thuat-xay-dung",
+      "subIndustries": [
+        "ky-thuat-xay-dung"
+      ],
+      "workTypePreference": [
+        "full-time",
+        "freelance"
+      ],
+      "expectedSalary": "15 - 22 Triệu / tháng",
+      "experienceLevel": "above-5y",
+      "yearsOfExp": 8,
+      "introduction": "Thợ điện nước lành nghề với 8 năm kinh nghiệm chuyên thi công, sửa chữa hệ thống điện 3 pha, điều hòa âm trần VRV/Multi, máy bơm nước tăng áp và thang máy gia đình biệt thự.",
+      "skills": [
+        "Sửa chữa điện chập, cân tải tủ điện 3 pha",
+        "Lắp đặt & Bảo dưỡng điều hòa Multi, VRV Daikin/Panasonic",
+        "Hệ thống cấp thoát nước, máy lọc nước trung tâm",
+        "Đọc bản vẽ kỹ thuật CAD và thi công hoàn thiện thấp tầng",
+        "Có đầy đủ máy đo điện, máy hàn nhiệt, máy hút chân không chuyên nghiệp"
+      ],
+      "workExperience": [
+        {
+          "company": "Công ty Cơ Điện Vinhomes Services",
+          "role": "Kỹ Sư Vận Hành Tòa Nhà",
+          "period": "2019 - 2024",
+          "description": "Bảo trì hệ thống cơ điện M&E phân khu căn hộ cao tầng và shophouse dịch vụ."
+        }
+      ],
+      "education": [
+        {
+          "school": "Đại Học Công Nghiệp Hà Nội",
+          "major": "Kỹ Thuật Điện - Điện Tử Dân Dụng",
+          "period": "2008 - 2012",
+          "degree": "Kỹ Sư"
+        }
+      ],
+      "certificates": [
+        "Chứng chỉ An toàn điện bậc 4/5",
+        "Chứng chỉ thợ hàn áp lực"
+      ],
+      "isLookingForJob": true,
+      "isImmediate": true,
+      "unlockPriceVnd": 50000,
+      "unlockedByUserIds": [],
+      "viewsCount": 220,
+      "createdAt": "2026-08-09T08:00:00.000Z",
+      "updatedAt": "2026-08-15T16:00:00.000Z"
+    },
+    {
+      "id": "cand-4",
+      "userId": "u-cand-104",
+      "fullName": "Bác Nguyễn Thị Lành",
+      "avatarUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80",
+      "birthYear": 1974,
+      "gender": "nu",
+      "phone": "0965112244",
+      "email": "baclanh.giupviec@gmail.com",
+      "zalo": "0965112244",
+      "currentProject": "smart-city",
+      "projectName": "Vinhomes Smart City",
+      "currentAddress": "Tòa S4.01, Vinhomes Smart City, Tây Mỗ",
+      "targetJobTitle": "Giúp Việc Gia Đình Theo Giờ / Chăm Bé / Nấu Cơm Cư Dân",
+      "primaryIndustry": "giup-viec-gia-dinh",
+      "subIndustries": [
+        "giup-viec-gia-dinh"
+      ],
+      "workTypePreference": [
+        "part-time",
+        "shift"
+      ],
+      "expectedSalary": "80.000đ - 100.000đ / giờ (Hoặc 6 - 8 Triệu/tháng)",
+      "experienceLevel": "above-5y",
+      "yearsOfExp": 7,
+      "introduction": "Bác Lành 52 tuổi, tính tình hiền lành, sạch sẽ, thật thà và có trách nhiệm cao. Đã có 7 năm kinh nghiệm giúp việc gia đình, chăm sóc em bé từ 6 tháng tuổi và nấu các món ăn gia đình ngon miệng, hợp vệ sinh.",
+      "skills": [
+        "Dọn dẹp nhà cửa ngăn nắp, biết ủi quần áo sơ mi thẳng thớm",
+        "Nấu ăn chuẩn vị Bắc, biết nấu cháo dinh dưỡng cho trẻ nhỏ",
+        "Chăm sóc trẻ em chu đáo, kiên nhẫn bón ăn và chơi cùng bé",
+        "Biết sử dụng máy giặt sấy, robot hút bụi, máy rửa chén",
+        "Có giấy tờ tùy thân CCCD gắn chip gốc, lý lịch trong sạch"
+      ],
+      "workExperience": [
+        {
+          "company": "Giúp việc gia đình cư dân tòa S1.03 Smart City",
+          "role": "Giúp Việc Theo Giờ & Đón Bé Đi Học Về",
+          "period": "2022 - 2025",
+          "description": "Dọn dẹp căn hộ 2PN+, nấu bữa tối và đón bé học trường Vinschool về tắm rửa cho bé."
+        }
+      ],
+      "education": [
+        {
+          "school": "Phổ Thông Trung Học Nam Định",
+          "major": "Tốt nghiệp THPT",
+          "period": "1989 - 1992"
+        }
+      ],
+      "isLookingForJob": true,
+      "isImmediate": true,
+      "unlockPriceVnd": 50000,
+      "unlockedByUserIds": [],
+      "viewsCount": 310,
+      "createdAt": "2026-08-11T13:00:00.000Z",
+      "updatedAt": "2026-08-16T08:00:00.000Z"
+    },
+    {
+      "id": "cand-5",
+      "userId": "u-cand-105",
+      "fullName": "Hoàng Minh Châu",
+      "avatarUrl": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop&q=80",
+      "birthYear": 2002,
+      "gender": "nu",
+      "phone": "0934567123",
+      "email": "chau.hoangielts@gmail.com",
+      "zalo": "0934567123",
+      "currentProject": "ocean-park-1",
+      "projectName": "Vinhomes Ocean Park 1",
+      "currentAddress": "Tòa Masteri Waterfront M2, Ocean Park 1",
+      "targetJobTitle": "Gia Sư Tiếng Anh / Giáo Viên Dạy Kèm Tiểu Học & THCS",
+      "primaryIndustry": "gia-su-giao-duc",
+      "subIndustries": [
+        "marketing-it-design"
+      ],
+      "workTypePreference": [
+        "part-time",
+        "freelance"
+      ],
+      "expectedSalary": "250.000đ - 400.000đ / buổi",
+      "experienceLevel": "1-3y",
+      "yearsOfExp": 2,
+      "introduction": "Sinh viên năm cuối ĐH Hà Nội (HANU), đạt IELTS 8.0 overall (Speaking 8.5, Listening 8.5). Có 2 năm kinh nghiệm dạy kèm tiếng Anh giao tiếp và luyện thi chứng chỉ Cambridge Flyers/KET/PET cho các bạn nhỏ cư dân.",
+      "skills": [
+        "IELTS 8.0 (Chứng chỉ còn hạn đến 2027)",
+        "Phát âm chuẩn Anh - Mỹ, phương pháp giảng dạy TPR sinh động",
+        "Kiên nhẫn, gần gũi và tạo động lực học tập cho trẻ",
+        "Hỗ trợ giáo trình Vinschool, Cambridge Primary Global English"
+      ],
+      "workExperience": [
+        {
+          "company": "Trung Tâm Anh Ngữ Vinschool Satellite",
+          "role": "Trợ Giảng & Gia Sư Riêng Cư Dân",
+          "period": "2023 - Nay",
+          "description": "Dạy kèm cho hơn 15 học sinh cư dân Ocean Park 1 đạt kết quả thi học kỳ điểm 9-10."
+        }
+      ],
+      "education": [
+        {
+          "school": "Trường Đại Học Hà Nội (HANU)",
+          "major": "Ngôn Ngữ Anh - Chuyên ngành Sư Phạm",
+          "period": "2021 - 2025",
+          "degree": "Sinh viên Giỏi"
+        }
+      ],
+      "certificates": [
+        "IELTS 8.0 Academic Certificate",
+        "TESOL Teaching Certificate 120 Hours"
+      ],
+      "isLookingForJob": true,
+      "isImmediate": true,
+      "unlockPriceVnd": 50000,
+      "unlockedByUserIds": [],
+      "viewsCount": 168,
+      "createdAt": "2026-08-12T10:00:00.000Z",
+      "updatedAt": "2026-08-15T18:00:00.000Z"
+    },
+    {
+      "id": "cand-6",
+      "userId": "u-cand-106",
+      "fullName": "Đỗ Văn Thành",
+      "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80",
+      "birthYear": 1994,
+      "gender": "nam",
+      "phone": "0904556677",
+      "email": "thanhdo.driver@gmail.com",
+      "zalo": "0904556677",
+      "currentProject": "ocean-park-2",
+      "projectName": "Vinhomes Ocean Park 2",
+      "currentAddress": "Phân Khu Đảo Dừa 08, Ocean Park 2",
+      "targetJobTitle": "Tài Xế Riêng Cho Sếp / Lái Xe Buggy & Đưa Đón Học Sinh Vinschool",
+      "primaryIndustry": "tai-xe-giao-hang",
+      "subIndustries": [
+        "bao-ve-an-ninh"
+      ],
+      "workTypePreference": [
+        "full-time",
+        "shift"
+      ],
+      "expectedSalary": "12 - 16 Triệu / tháng",
+      "experienceLevel": "3-5y",
+      "yearsOfExp": 6,
+      "introduction": "Có bằng lái xe hạng D, kinh nghiệm 6 năm lái xe cho lãnh đạo tập đoàn và đưa đón học sinh. Lái xe điềm đạm, giữ xe sạch sẽ, tuyệt đối không uống rượu bia trong giờ làm.",
+      "skills": [
+        "Bằng lái xe B2, C, D còn hạn dài",
+        "Thông thạo mọi cung đường Hà Nội - Hải Phòng - Hưng Yên - Quảng Ninh",
+        "Biết kiểm tra bảo dưỡng dầu máy, lốp, phanh xe định kỳ",
+        "Đúng giờ, giữ kín thông tin cá nhân của gia chủ"
+      ],
+      "workExperience": [
+        {
+          "company": "Công ty Cổ phần Vận Tải Cư Dân Xanh",
+          "role": "Tài Xế Xe Đưa Đón Học Sinh Vinschool OCP1 & OCP2",
+          "period": "2022 - 2025",
+          "description": "Đảm bảo an toàn 100% trên mọi chuyến đi cho các em học sinh cư dân."
+        }
+      ],
+      "education": [
+        {
+          "school": "Trường Trung Cấp Nghề Giao Thông Vận Tải",
+          "major": "Lái Xe Ô Tô Chuyên Nghiệp Hạng D",
+          "period": "2016 - 2017"
+        }
+      ],
+      "certificates": [
+        "Bằng Lái Hạng D",
+        "Giấy khám sức khỏe lái xe định kỳ loại 1"
+      ],
+      "isLookingForJob": true,
+      "isImmediate": true,
+      "unlockPriceVnd": 50000,
+      "unlockedByUserIds": [],
+      "viewsCount": 195,
+      "createdAt": "2026-08-13T09:00:00.000Z",
+      "updatedAt": "2026-08-16T07:30:00.000Z"
+    }
+  ],
+  "employers": [
+    {
+      "id": "emp-01",
+      "userId": "u-emp-01",
+      "companyName": "Công Ty BĐS Nhà Đẹp Vinhomes",
+      "brandName": "Nhà Đẹp Vinhomes Real Estate",
+      "logoUrl": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80",
+      "bannerUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80",
+      "tagline": "Đơn Vị Phân Phối & Cho Thuê BĐS Thấp Tầng Hàng Đầu Tại Ocean Park 1, 2, 3",
+      "industry": "Bất Động Sản & Môi Giới",
+      "project": "ocean-park-2",
+      "projectName": "Vinhomes Ocean Park 2",
+      "address": "Shophouse Chà Là 15-08 & San Hô 06-12, Vinhomes Ocean Park 2, Hưng Yên",
+      "contactName": "Mr. Hiếu Bùi - Giám Đốc Kinh Doanh",
+      "contactPhone": "0988112233",
+      "contactZalo": "0988112233",
+      "contactEmail": "tuyendung.nhadepvinhomes@gmail.com",
+      "website": "https://chocudan24h.com",
+      "facebookUrl": "https://facebook.com/nhadepvinhomes",
+      "introduction": "Công ty BĐS Nhà Đẹp Vinhomes với hơn 5 năm kinh nghiệm chuyên sâu tại các đại đô thị Vinhomes Ocean Park 1, 2, 3 và Vinhomes Smart City. Chúng tôi quản lý giỏ hàng hơn 1.000 căn biệt thự, liền kề, shophouse và quỹ căn chuyển nhượng độc quyền. Môi trường làm việc năng động, đào tạo 1:1, hoa hồng hấp dẫn chi trả ngay trong tuần.",
+      "scaleSize": "20 - 50 nhân sự",
+      "verified": true,
+      "activeJobsCount": 2,
+      "totalViews": 3450,
+      "createdAt": "2026-06-01"
+    },
+    {
+      "id": "emp-02",
+      "userId": "u-emp-02",
+      "companyName": "Hệ Thống Trà Sữa & Quán Cà Phê The Ocean Chill Cafe",
+      "brandName": "The Ocean Chill Cafe & Bakery",
+      "logoUrl": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=200&auto=format&fit=crop&q=80",
+      "bannerUrl": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200&auto=format&fit=crop&q=80",
+      "tagline": "Không Gian Cà Phê View Biển Tạo Sóng Đẹp Nhất Ocean Park 2",
+      "industry": "F&B - Nhà Hàng & Cafe",
+      "project": "ocean-park-2",
+      "projectName": "Vinhomes Ocean Park 2",
+      "address": "Căn Cọ Xanh 04-26 (Đối diện Công viên Sóng Wave Park), Ocean Park 2",
+      "contactName": "Chị Lan Quản Lý",
+      "contactPhone": "0988665544",
+      "contactZalo": "0988665544",
+      "contactEmail": "theoceanchill@gmail.com",
+      "introduction": "The Ocean Chill là chuỗi quán cafe kết hợp bánh ngọt phong cách Địa Trung Hải, phục vụ cư dân và du khách tại Ocean City. Chúng tôi cam kết môi trường làm việc trẻ trung, linh hoạt thời gian theo ca cho học sinh sinh viên cư dân.",
+      "scaleSize": "10 - 20 nhân sự",
+      "verified": true,
+      "activeJobsCount": 2,
+      "totalViews": 1890,
+      "createdAt": "2026-06-15"
+    },
+    {
+      "id": "emp-03",
+      "userId": "u-emp-03",
+      "companyName": "Trung Tâm Dịch Vụ Kỹ Thuật Điện Nước Vinhomes FixPro",
+      "brandName": "FixPro Resident Services",
+      "logoUrl": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=200&auto=format&fit=crop&q=80",
+      "bannerUrl": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=1200&auto=format&fit=crop&q=80",
+      "tagline": "Dịch Vụ Kỹ Thuật, Điện Lạnh & Bảo Dưỡng Nội Thất 24/7 Cho Cư Dân",
+      "industry": "Kỹ Thuật & Xây Dựng",
+      "project": "ocean-park-3",
+      "projectName": "Vinhomes Ocean Park 3",
+      "address": "Phân khu Phố Biển 08-15, Ocean Park 3",
+      "contactName": "Kỹ sư Tuấn",
+      "contactPhone": "0912334455",
+      "contactZalo": "0912334455",
+      "contactEmail": "hotro.fixpro@gmail.com",
+      "introduction": "Đội ngũ kỹ thuật lành nghề chuyên sửa chữa điều hòa, điện nước, thông tắc và bảo dưỡng nhà thông minh cho hơn 3.000 căn hộ tại Ocean Park 1, 2, 3.",
+      "scaleSize": "15 - 30 nhân sự",
+      "verified": true,
+      "activeJobsCount": 1,
+      "totalViews": 1220,
+      "createdAt": "2026-07-01"
+    }
+  ],
+  "jobApplications": [],
+  "cvUnlocks": [
+    {
+      "id": "unlock-1787841599861-414",
+      "recruiterUserId": "user-admin",
+      "recruiterName": "Nhà đẹp Vinhomes (Admin)",
+      "recruiterPhone": "0868.499.929",
+      "candidateId": "bui-van-hieu",
+      "candidateName": "Bùi Văn Hiếu",
+      "amountVnd": 20000,
+      "paymentMethod": "token_balance",
+      "status": "completed",
+      "createdAt": "21:39:59 27/8/2026"
+    }
+  ],
+  "depositIntents": [],
+  "notifications": [
+    {
+      "id": "notif-1",
+      "targetUserId": "ALL",
+      "title": "📢 CHÀO MỪNG TÍNH NĂNG GIAN HÀNG CƯ DÂN & AI SEO 2026",
+      "body": "Cư dân Vinhomes nay đã có thể tự mở gian hàng, kết nối máy POS KiotViet và viết bài sản phẩm SEO tự động bằng Gemini AI!",
+      "type": "system",
+      "createdAt": "16:19:54 26/8/2026",
+      "read": false
+    }
+  ],
+  "savedAt": "2026-08-28T12:58:59.178Z"
+}
