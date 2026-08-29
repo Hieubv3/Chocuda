@@ -230,15 +230,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     ownerName: '',
     ownerPhone: '',
     ownerZalo: '',
-    category: 'Thực Phẩm & Ăn Uống',
-    project: 'ocean-park-2' as any,
-    subdivision: 'Phân Khu Kinh Đô Ánh Sáng',
-    address: 'Vinhomes Ocean Park 2, Hưng Yên',
+    category: '',
+    project: '' as any,
+    subdivision: '',
+    address: '',
     description: '',
-    logoUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80',
-    bannerUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80',
-    status: 'approved' as 'approved' | 'pending' | 'rejected',
-    verified: true
+    logoUrl: '',
+    bannerUrl: '',
+    status: 'pending' as 'approved' | 'pending' | 'rejected',
+    verified: false
   });
 
   // Store Product Add / Edit Modal
@@ -248,14 +248,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     id: '',
     name: '',
     code: '',
-    category: 'Món Ăn & Đồ Uống',
-    price: 50000,
-    unit: 'suất',
-    stockQuantity: 50,
-    images: ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
+    category: '',
+    price: 0,
+    unit: '',
+    stockQuantity: 0,
+    images: [],
     description: '',
-    status: 'approved' as 'approved' | 'pending' | 'rejected',
-    isAvailable: true
+    status: 'pending' as 'approved' | 'pending' | 'rejected',
+    isAvailable: false
   });
 
   // Package Management State
@@ -265,12 +265,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     name: '',
     priceDisplay: '',
     priceValue: 0,
-    unit: '/ năm',
+    unit: '',
     badge: '',
     description: '',
     featuresStr: '',
-    buttonText: 'Đăng Ký Ngay',
-    buttonVariant: 'success' as 'primary' | 'success' | 'warning' | 'purple' | 'outline',
+    buttonText: '',
+    buttonVariant: 'primary' as 'primary' | 'success' | 'warning' | 'purple' | 'outline',
     popular: false
   });
 
@@ -280,12 +280,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       name: '',
       priceDisplay: '',
       priceValue: 0,
-      unit: '/ năm',
+      unit: '',
       badge: '',
       description: '',
       featuresStr: '',
-      buttonText: 'Đăng Ký Ngay',
-      buttonVariant: 'success',
+      buttonText: '',
+      buttonVariant: 'primary',
       popular: false
     });
     setShowAddPkgModal(true);
@@ -297,13 +297,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       name: pkg.name || '',
       priceDisplay: pkg.priceDisplay || '',
       priceValue: pkg.priceValue || 0,
-      unit: pkg.unit || '/ năm',
-      badge: pkg.badge || '',
-      description: pkg.description || '',
-      featuresStr: Array.isArray(pkg.features) ? pkg.features.join('\n') : '',
-      buttonText: pkg.buttonText || 'Đăng Ký Ngay',
-      buttonVariant: (pkg.buttonVariant as any) || 'success',
-      popular: Boolean(pkg.popular)
+       unit: pkg.unit || '',
+       badge: pkg.badge || '',
+       description: pkg.description || '',
+       featuresStr: Array.isArray(pkg.features) ? pkg.features.join('\n') : '',
+       buttonText: pkg.buttonText || '',
+       buttonVariant: (pkg.buttonVariant as any) || 'primary',
+       popular: Boolean(pkg.popular)
     });
     setShowAddPkgModal(true);
   };
@@ -386,26 +386,26 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newSrvTitle, setNewSrvTitle] = useState('');
   const [newSrvCategory, setNewSrvCategory] = useState(BUSINESS_CATEGORIES[0].id);
   const [newSrvSubCat, setNewSrvSubCat] = useState('');
-  const [newSrvProject, setNewSrvProject] = useState('Vinhomes Ocean Park 1');
+  const [newSrvProject, setNewSrvProject] = useState('');
   const [newSrvProviderName, setNewSrvProviderName] = useState('');
   const [newSrvProviderPhone, setNewSrvProviderPhone] = useState('');
   const [newSrvProviderZalo, setNewSrvProviderZalo] = useState('');
   const [newSrvAddress, setNewSrvAddress] = useState('');
-  const [newSrvPrice, setNewSrvPrice] = useState('Liên hệ báo giá');
-  const [newSrvImage, setNewSrvImage] = useState('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');
+  const [newSrvPrice, setNewSrvPrice] = useState('');
+  const [newSrvImage, setNewSrvImage] = useState('');
   const [newSrvDesc, setNewSrvDesc] = useState('');
 
   const resetNewSrvForm = () => {
     setNewSrvTitle('');
-    setNewSrvCategory(BUSINESS_CATEGORIES[0].id);
+    setNewSrvCategory('');
     setNewSrvSubCat('');
-    setNewSrvProject('Vinhomes Ocean Park 1');
+    setNewSrvProject('');
     setNewSrvProviderName('');
     setNewSrvProviderPhone('');
     setNewSrvProviderZalo('');
     setNewSrvAddress('');
-    setNewSrvPrice('Liên hệ báo giá');
-    setNewSrvImage('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');
+    setNewSrvPrice('');
+    setNewSrvImage('');
     setNewSrvDesc('');
   };
 
@@ -515,11 +515,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [userForCreditInjector, setUserForCreditInjector] = useState<User | null>(null);
 
   // Admin Affiliate & Platform Fee Config State
-  const [affiliateF1Rate, setAffiliateF1Rate] = useState<number>(15); // 15%
-  const [affiliateF2Rate, setAffiliateF2Rate] = useState<number>(5); // 5%
-  const [refBonusUpTin, setRefBonusUpTin] = useState<number>(5); // +5 Up-Tin per referral
-  const [servicePackageMonthPrice, setServicePackageMonthPrice] = useState<number>(199000); // 199k VNĐ/tháng
-  const [servicePackage3MonthPrice, setServicePackage3MonthPrice] = useState<number>(499000); // 499k VNĐ/3 tháng
+  const [affiliateF1Rate, setAffiliateF1Rate] = useState<number>(0);
+  const [affiliateF2Rate, setAffiliateF2Rate] = useState<number>(0);
+  const [refBonusUpTin, setRefBonusUpTin] = useState<number>(0);
+  const [servicePackageMonthPrice, setServicePackageMonthPrice] = useState<number>(0);
+  const [servicePackage3MonthPrice, setServicePackage3MonthPrice] = useState<number>(0);
   const [isSavingAffiliateConfig, setIsSavingAffiliateConfig] = useState(false);
 
   const fetchAffiliateConfig = async () => {
@@ -909,8 +909,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     name: '',
     email: '',
     phone: '',
-    role: 'owner',
-    upTinCredits: 10,
+    role: '',
+    upTinCredits: 0,
     balance: 0,
     password: ''
   });
@@ -927,7 +927,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       if (!res.ok) throw new Error(data.error || 'Lỗi khi tạo tài khoản');
       alert(data.message || 'Thêm thành viên mới thành công!');
       setIsAddingUser(false);
-      setUserFormData({ name: '', email: '', phone: '', role: 'owner', upTinCredits: 10, balance: 0, password: '' });
+      setUserFormData({ name: '', email: '', phone: '', role: '', upTinCredits: 0, balance: 0, password: '' });
       fetchUsers();
     } catch (err: any) {
       alert(err.message || 'Lỗi hệ thống');
@@ -971,34 +971,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     } catch (e) {
       console.warn('Failed to parse ads from localStorage:', e);
     }
-    return [
-      {
-        id: 'ad-1',
-        title: 'Mở Bán Quỹ Căn Độc Quyền Ocean Park 2 - Chiết Khấu 15%',
-        imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
-        linkUrl: '/project/ocean-park-2',
-        targetUrl: '/project/ocean-park-2',
-        position: 'home_top',
-        active: true,
-        isActive: true,
-        clickCount: 1420,
-        clicks: 1420,
-        createdAt: '2026-07-28'
-      },
-      {
-        id: 'ad-2',
-        title: 'Vinhomes Hạ Long Xanh - Cơ Hội Đầu Tư X2 Tài Sản',
-        imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
-        linkUrl: '/news/news-ha-long-xanh',
-        targetUrl: '/news/news-ha-long-xanh',
-        position: 'sidebar',
-        active: true,
-        isActive: true,
-        clickCount: 890,
-        clicks: 890,
-        createdAt: '2026-07-28'
-      }
-    ];
+    return [];
   });
 
   const [newAdTitle, setNewAdTitle] = useState('');
@@ -1159,14 +1132,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   
   // Sales team & Broker count
   const salesTeamList = registeredUsers.filter(u => u.role === 'sale' || u.role === 'manager' || u.role === 'broker' || u.role === 'admin');
-  const totalSalesCount = salesTeamList.length > 0 ? salesTeamList.length : Math.max(12, registeredUsers.length);
+  const totalSalesCount = salesTeamList.length;
 
   // Expiration Rules: 15-25 days live display (default 20 days), 1 month (30 days) seller/property data preservation
   const EXPIRY_DAYS = 20; 
   const ARCHIVE_PRESERVE_DAYS = 30;
 
   const getPropertyExpiryInfo = (p: Property) => {
-    const baseDateStr = p.pushedAt || p.createdAt || '2026-07-01';
+    const baseDateStr = p.pushedAt || p.createdAt || '';
     const baseDate = new Date(baseDateStr);
     const now = new Date();
     const daysPassed = Math.floor((now.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -1177,7 +1150,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     // Format post date (DD/MM/YYYY)
     const postDateFormatted = !isNaN(baseDate.getTime()) 
       ? `${String(baseDate.getDate()).padStart(2, '0')}/${String(baseDate.getMonth() + 1).padStart(2, '0')}/${baseDate.getFullYear()}`
-      : '15/07/2026';
+      : '—';
 
     // Calculate exact expiration date
     const expiryDateObj = new Date(baseDate.getTime() + EXPIRY_DAYS * 24 * 60 * 60 * 1000);
@@ -1311,13 +1284,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewSrvTitle(srv.title);
     setNewSrvCategory(srv.categoryId);
     setNewSrvSubCat(srv.subCategory || '');
-    setNewSrvProject(srv.project || 'Vinhomes Ocean Park 1');
+    setNewSrvProject(srv.project || '');
     setNewSrvProviderName(srv.providerName || '');
     setNewSrvProviderPhone(srv.providerPhone || '');
     setNewSrvProviderZalo(srv.providerZalo || '');
     setNewSrvAddress(srv.address || '');
-    setNewSrvPrice(srv.priceDisplay || 'Liên hệ báo giá');
-    setNewSrvImage(srv.images && srv.images.length > 0 ? srv.images[0] : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80');
+    setNewSrvPrice(srv.priceDisplay || '');
+    setNewSrvImage(srv.images && srv.images.length > 0 ? srv.images[0] : '');
     setNewSrvDesc(srv.description || '');
     setShowAddServiceModal(true);
   };
@@ -1333,21 +1306,21 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       id: editingService ? editingService.id : `srv-${Date.now()}`,
       title: newSrvTitle,
       categoryId: newSrvCategory,
-      subCategory: newSrvSubCat || 'Dịch vụ chính',
+      subCategory: newSrvSubCat || '',
       project: newSrvProject as any,
-      providerName: newSrvProviderName || 'Cư Dân Vinhomes',
+      providerName: newSrvProviderName || '',
       providerPhone: newSrvProviderPhone,
       providerZalo: newSrvProviderZalo || newSrvProviderPhone,
-      address: newSrvAddress || 'KĐT Vinhomes',
+      address: newSrvAddress || '',
       priceDisplay: newSrvPrice,
-      rating: editingService ? editingService.rating : 5.0,
-      reviewCount: editingService ? editingService.reviewCount : 1,
+      rating: editingService ? editingService.rating : 0,
+      reviewCount: editingService ? editingService.reviewCount : 0,
       images: [newSrvImage],
       description: newSrvDesc,
-      verified: true,
-      kycStatus: 'verified',
-      kycBadgeType: 'blue_verified',
-      legalCommitmentAccepted: true,
+      verified: false,
+      kycStatus: 'pending',
+      kycBadgeType: '',
+      legalCommitmentAccepted: false,
       createdAt: editingService ? editingService.createdAt : new Date().toISOString().split('T')[0]
     };
 
@@ -1389,15 +1362,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       ownerName: '',
       ownerPhone: '',
       ownerZalo: '',
-      category: 'Thực Phẩm & Ăn Uống',
-      project: 'ocean-park-2',
-      subdivision: 'Phân Khu Kinh Đô Ánh Sáng',
-      address: 'Vinhomes Ocean Park 2, Hưng Yên',
+      category: '',
+      project: '',
+      subdivision: '',
+      address: '',
       description: '',
-      logoUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80',
-      bannerUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80',
-      status: 'approved',
-      verified: true
+      logoUrl: '',
+      bannerUrl: '',
+      status: 'pending',
+      verified: false
     });
     setShowStoreFormModal(true);
   };
@@ -1409,15 +1382,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       ownerName: store.ownerName || '',
       ownerPhone: store.ownerPhone || '',
       ownerZalo: store.ownerZalo || '',
-      category: store.category || 'Thực Phẩm & Ăn Uống',
-      project: (store.project as any) || 'ocean-park-2',
-      subdivision: store.subdivision || 'Nội khu',
-      address: store.address || '',
-      description: store.description || '',
-      logoUrl: store.logoUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80',
-      bannerUrl: store.bannerUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80',
-      status: store.status || 'approved',
-      verified: Boolean(store.verified)
+       category: store.category || '',
+       project: (store.project as any) || '',
+       subdivision: store.subdivision || '',
+       address: store.address || '',
+       description: store.description || '',
+       logoUrl: store.logoUrl || '',
+       bannerUrl: store.bannerUrl || '',
+       status: store.status || 'pending',
+       verified: Boolean(store.verified)
     });
     setShowStoreFormModal(true);
   };
@@ -1446,8 +1419,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       description: storeFormData.description || 'Gian hàng cư dân phục vụ nội khu chuẩn chất lượng.',
       verified: storeFormData.verified,
       status: storeFormData.status,
-      rating: editingStoreItem?.rating || 5.0,
-      reviewCount: editingStoreItem?.reviewCount || 1,
+      rating: editingStoreItem?.rating || 0,
+      reviewCount: editingStoreItem?.reviewCount || 0,
       products: editingStoreItem?.products || [],
       createdAt: editingStoreItem?.createdAt || new Date().toISOString().split('T')[0]
     };
@@ -1520,14 +1493,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       id: prod.id,
       name: prod.name,
       code: prod.code || '',
-      category: prod.category || 'Món Ăn & Đồ Uống',
+      category: prod.category || '',
       price: prod.price || 0,
-      unit: prod.unit || 'suất',
+      unit: prod.unit || '',
       stockQuantity: prod.stockQuantity || 0,
-      images: prod.images && prod.images.length > 0 ? prod.images : ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
+      images: prod.images && prod.images.length > 0 ? prod.images : [],
       description: prod.description || '',
-      status: prod.status || 'approved',
-      isAvailable: prod.isAvailable ?? true
+      status: prod.status || 'pending',
+      isAvailable: prod.isAvailable ?? false
     });
     setShowStoreProductModal(true);
   };
@@ -2790,11 +2763,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <div className="space-y-3">
                       {/* Image & Badges */}
                       <div className="relative h-44 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
-                        <img loading="lazy"
-                          src={srv.images && srv.images.length > 0 ? srv.images[0] : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80'}
+                        {srv.images && srv.images.length > 0 ? (
+                          <img loading="lazy"
+                          src={srv.images[0]}
                           alt={srv.title}
                           className="w-full h-full object-cover"
                         />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs font-bold">Chưa có ảnh</div>
+                        )}
                         <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
                           <span className="px-2.5 py-1 bg-slate-950/80 backdrop-blur-md text-amber-400 font-extrabold text-[10px] rounded-lg border border-amber-500/30">
                             {categoryObj ? `${categoryObj.icon} ${categoryObj.name}` : srv.categoryId}
@@ -2842,11 +2819,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         </h3>
                         <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
                           <span className="font-black text-amber-600 dark:text-amber-400 text-sm">
-                            {srv.priceDisplay || 'Liên hệ báo giá'}
+                            {srv.priceDisplay || '—'}
                           </span>
                           <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
                             <Star className="w-3.5 h-3.5 fill-amber-400" />
-                            <span>{srv.rating || 5.0} ({srv.reviewCount || 1})</span>
+                            <span>{srv.rating || 0} ({srv.reviewCount || 0})</span>
                           </div>
                         </div>
                       </div>
@@ -3200,7 +3177,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-center gap-3">
                             <img loading="lazy"
-                              src={st.logoUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80'}
+                              src={st.logoUrl || ''}
                               alt={st.storeName}
                               className="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shadow-sm shrink-0"
                             />
@@ -3281,7 +3258,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           </div>
                           <div>
                             <span className="text-slate-400 text-[10px] block font-bold">Đánh giá</span>
-                            <span className="font-black text-amber-500 text-sm">⭐ {st.rating || 5.0}</span>
+                            <span className="font-black text-amber-500 text-sm">⭐ {st.rating || 0}</span>
                           </div>
                         </div>
                       </div>
@@ -3567,7 +3544,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <span className="px-2.5 py-0.5 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-extrabold text-[10px] rounded-full">
                       {post.category || 'Review Dịch Vụ'}
                     </span>
-                    <span className="text-amber-500 font-black text-xs">⭐ {post.rating || 5.0} / 5</span>
+                    <span className="text-amber-500 font-black text-xs">⭐ {post.rating || 0} / 5</span>
                   </div>
 
                   <h3 className="font-black text-base text-slate-900 dark:text-white">{post.title}</h3>
@@ -4497,7 +4474,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     >
                       <div className="relative shrink-0">
                         <img loading="lazy"
-                          src={p.images[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
+                          src={p.images[0] || ''}
                           alt={p.title}
                           className="w-14 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700"
                         />
@@ -4702,7 +4679,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               title="Bấm để xem album ảnh"
                             >
                               <img loading="lazy"
-                                src={p.images[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
+                                src={p.images[0] || ''}
                                 alt={p.title}
                                 className="w-12 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:opacity-85 transition"
                               />
@@ -6405,14 +6382,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </div>
               <span className="text-2xl font-black text-slate-900 dark:text-white block">
                 {(
-                  analyticsTimeFrame === 'today' ? (analyticsData?.todayVisits || 1420) :
-                  analyticsTimeFrame === '7d' ? 8950 :
-                  analyticsTimeFrame === '30d' ? (analyticsData?.totalVisits || 28450) :
-                  45800
+                  analyticsTimeFrame === 'today' ? (analyticsData?.todayVisits || 0) :
+                  analyticsTimeFrame === '7d' ? (analyticsData?.visits7d || 0) :
+                  analyticsTimeFrame === '30d' ? (analyticsData?.totalVisits || 0) :
+                  (analyticsData?.totalVisits || 0)
                 ).toLocaleString('vi-VN')}
               </span>
               <span className="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-                <TrendingUp className="w-3.5 h-3.5" /> +22.4% tăng trưởng
+                <TrendingUp className="w-3.5 h-3.5" /> {analyticsData?.growthPercent ? `${analyticsData.growthPercent}% tăng trưởng` : '—'}
               </span>
             </div>
 
@@ -6422,7 +6399,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <Activity className="w-5 h-5" />
               </div>
               <span className="text-2xl font-black text-slate-900 dark:text-white block">
-                {contacts.length > 0 ? `${((contacts.length / (analyticsData?.todayVisits || 1420)) * 100).toFixed(1)}%` : '3.8%'}
+                {contacts.length > 0 && analyticsData?.todayVisits ? `${((contacts.length / analyticsData.todayVisits) * 100).toFixed(1)}%` : '—'}
               </span>
               <span className="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" /> {contacts.length} Khách gửi lịch hẹn
@@ -6435,7 +6412,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <Zap className="w-5 h-5 text-amber-500 animate-pulse" />
               </div>
               <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block flex items-center gap-2">
-                {analyticsData?.activeOnline || 48}
+                {analyticsData?.activeOnline || 0}
                 <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
               </span>
               <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
@@ -6449,7 +6426,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <Award className="w-5 h-5" />
               </div>
               <span className="text-2xl font-black text-purple-600 dark:text-purple-300 block">
-                {(8450000).toLocaleString('vi-VN')} VNĐ
+                {(analyticsData?.revenue || 0).toLocaleString('vi-VN')} VNĐ
               </span>
               <span className="text-[11px] text-purple-600 font-bold">
                 ✓ Phí Up-tin MSB & Gói thành viên
@@ -6464,34 +6441,34 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <TrendingUp className="w-4 h-4 text-emerald-500" />
                 PHỄU CHUYỂN ĐỔI KHÁCH HÀNG CRM (CONVERSION FUNNEL)
               </span>
-              <span className="text-xs text-amber-500 font-bold">Tỉ lệ chốt cuộc hẹn: 24.5%</span>
+              <span className="text-xs text-amber-500 font-bold">Tỉ lệ chốt cuộc hẹn: {analyticsData?.appointmentRate ? `${analyticsData.appointmentRate}%` : '—'}</span>
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
               <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 relative overflow-hidden">
                 <div className="text-[10px] text-slate-400 font-bold uppercase">Bước 1: Lượt Xem Web</div>
-                <div className="text-lg font-black text-slate-900 dark:text-white mt-1">28.450</div>
+                <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{analyticsData?.funnelStep1 || 0}</div>
                 <div className="text-[10px] text-emerald-600 font-bold">100% Traffic</div>
                 <div className="w-full h-1 bg-blue-500 rounded-full mt-2"></div>
               </div>
 
               <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 relative overflow-hidden">
                 <div className="text-[10px] text-slate-400 font-bold uppercase">Bước 2: Tìm Kiếm / Lọc Căn</div>
-                <div className="text-lg font-black text-slate-900 dark:text-white mt-1">18.200</div>
-                <div className="text-[10px] text-blue-600 font-bold">64% Chuyển đổi</div>
+                <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{analyticsData?.funnelStep2 || 0}</div>
+                <div className="text-[10px] text-blue-600 font-bold">{analyticsData?.funnelStep2Rate ? `${analyticsData.funnelStep2Rate}% Chuyển đổi` : '—'}</div>
                 <div className="w-full h-1 bg-teal-500 rounded-full mt-2"></div>
               </div>
 
               <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 relative overflow-hidden">
                 <div className="text-[10px] text-slate-400 font-bold uppercase">Bước 3: Bấm Xem Chi Tiết Căn</div>
-                <div className="text-lg font-black text-slate-900 dark:text-white mt-1">9.840</div>
-                <div className="text-[10px] text-purple-600 font-bold">34.5% Chuyển đổi</div>
+                <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{analyticsData?.funnelStep3 || 0}</div>
+                <div className="text-[10px] text-purple-600 font-bold">{analyticsData?.funnelStep3Rate ? `${analyticsData.funnelStep3Rate}% Chuyển đổi` : '—'}</div>
                 <div className="w-full h-1 bg-purple-500 rounded-full mt-2"></div>
               </div>
 
               <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-amber-500/40 bg-amber-500/5 relative overflow-hidden">
                 <div className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase">Bước 4: Đặt Lịch Xem / Gọi Điện</div>
-                <div className="text-lg font-black text-amber-600 dark:text-amber-400 mt-1">{contacts.length || 18} Khách CRM</div>
+                <div className="text-lg font-black text-amber-600 dark:text-amber-400 mt-1">{contacts.length || 0} Khách CRM</div>
                 <div className="text-[10px] text-amber-600 font-bold">Hot Leads</div>
                 <div className="w-full h-1 bg-amber-500 rounded-full mt-2"></div>
               </div>
@@ -6513,10 +6490,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                       <Smartphone className="w-3.5 h-3.5 text-emerald-500" /> Điện Thoại Di Động (iOS & Android)
                     </span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-black">68%</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-black">{analyticsData?.deviceBreakdown?.mobile || 0}%</span>
                   </div>
                   <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-500 rounded-full w-[68%]"></div>
+                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${analyticsData?.deviceBreakdown?.mobile || 0}%` }}></div>
                   </div>
                 </div>
 
@@ -6525,10 +6502,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                       <Monitor className="w-3.5 h-3.5 text-blue-500" /> Máy Tính Laptop / PC
                     </span>
-                    <span className="text-blue-600 dark:text-blue-400 font-black">27%</span>
+                    <span className="text-blue-600 dark:text-blue-400 font-black">{analyticsData?.deviceBreakdown?.desktop || 0}%</span>
                   </div>
                   <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 rounded-full w-[27%]"></div>
+                    <div className="h-full bg-blue-500 rounded-full" style={{ width: `${analyticsData?.deviceBreakdown?.desktop || 0}%` }}></div>
                   </div>
                 </div>
 
@@ -6537,10 +6514,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                       <Tablet className="w-3.5 h-3.5 text-purple-500" /> Máy Tính Bảng (Tablet/iPad)
                     </span>
-                    <span className="text-purple-600 dark:text-purple-400 font-black">5%</span>
+                    <span className="text-purple-600 dark:text-purple-400 font-black">{analyticsData?.deviceBreakdown?.tablet || 0}%</span>
                   </div>
                   <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-purple-500 rounded-full w-[5%]"></div>
+                    <div className="h-full bg-purple-500 rounded-full" style={{ width: `${analyticsData?.deviceBreakdown?.tablet || 0}%` }}></div>
                   </div>
                 </div>
               </div>
@@ -6559,9 +6536,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <MessageSquare className="w-4 h-4 text-blue-500" />
                     <span>Nhóm Zalo Cư Dân Vinhomes</span>
                   </div>
-                  <span className="px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black rounded-lg text-xs">
-                    42% (11.950 lượt)
-                  </span>
+                   <span className="px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black rounded-lg text-xs">
+                     {analyticsData?.trafficSources?.zalo ? `${analyticsData.trafficSources.zalo.percent}% (${analyticsData.trafficSources.zalo.visits.toLocaleString('vi-VN')} lượt)` : '—'}
+                   </span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
@@ -6569,9 +6546,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <Globe className="w-4 h-4 text-amber-500" />
                     <span>Google Tìm Kiếm (SEO Web)</span>
                   </div>
-                  <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black rounded-lg text-xs">
-                    34% (9.670 lượt)
-                  </span>
+                   <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black rounded-lg text-xs">
+                     {analyticsData?.trafficSources?.google ? `${analyticsData.trafficSources.google.percent}% (${analyticsData.trafficSources.google.visits.toLocaleString('vi-VN')} lượt)` : '—'}
+                   </span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
@@ -6579,9 +6556,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <ArrowUpRight className="w-4 h-4 text-emerald-500" />
                     <span>Truy Cập Trực Tiếp (Bookmark/Gõ URL)</span>
                   </div>
-                  <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black rounded-lg text-xs">
-                    16% (4.550 lượt)
-                  </span>
+                   <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black rounded-lg text-xs">
+                     {analyticsData?.trafficSources?.direct ? `${analyticsData.trafficSources.direct.percent}% (${analyticsData.trafficSources.direct.visits.toLocaleString('vi-VN')} lượt)` : '—'}
+                   </span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
@@ -6589,9 +6566,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <Share2 className="w-4 h-4 text-purple-500" />
                     <span>Facebook & Mạng Xã Hội Chia Sẻ</span>
                   </div>
-                  <span className="px-2.5 py-1 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-black rounded-lg text-xs">
-                    8% (2.280 lượt)
-                  </span>
+                   <span className="px-2.5 py-1 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-black rounded-lg text-xs">
+                     {analyticsData?.trafficSources?.social ? `${analyticsData.trafficSources.social.percent}% (${analyticsData.trafficSources.social.visits.toLocaleString('vi-VN')} lượt)` : '—'}
+                   </span>
                 </div>
               </div>
             </div>
@@ -6605,41 +6582,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
-                <span className="text-[10px] text-slate-400 font-bold uppercase">Xếp hạng #1</span>
-                <p className="font-extrabold text-slate-900 dark:text-white text-xs">Vinhomes Ocean Park 2</p>
-                <div className="flex justify-between items-center text-xs pt-1">
-                  <span className="font-black text-amber-500">12.450 lượt xem</span>
-                  <span className="px-2 py-0.5 bg-amber-500/10 text-amber-600 font-bold rounded text-[10px]">43%</span>
-                </div>
-              </div>
-
-              <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
-                <span className="text-[10px] text-slate-400 font-bold uppercase">Xếp hạng #2</span>
-                <p className="font-extrabold text-slate-900 dark:text-white text-xs">Vinhomes Ocean Park 3</p>
-                <div className="flex justify-between items-center text-xs pt-1">
-                  <span className="font-black text-emerald-500">8.920 lượt xem</span>
-                  <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 font-bold rounded text-[10px]">31%</span>
-                </div>
-              </div>
-
-              <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
-                <span className="text-[10px] text-slate-400 font-bold uppercase">Xếp hạng #3</span>
-                <p className="font-extrabold text-slate-900 dark:text-white text-xs">Cổ Loa Global Gate</p>
-                <div className="flex justify-between items-center text-xs pt-1">
-                  <span className="font-black text-blue-500">4.120 lượt xem</span>
-                  <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 font-bold rounded text-[10px]">14%</span>
-                </div>
-              </div>
-
-              <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
-                <span className="text-[10px] text-slate-400 font-bold uppercase">Xếp hạng #4</span>
-                <p className="font-extrabold text-slate-900 dark:text-white text-xs">Vinhomes Hạ Long Xanh</p>
-                <div className="flex justify-between items-center text-xs pt-1">
-                  <span className="font-black text-purple-500">2.960 lượt xem</span>
-                  <span className="px-2 py-0.5 bg-purple-500/10 text-purple-600 font-bold rounded text-[10px]">12%</span>
-                </div>
-              </div>
+              {analyticsData?.topProjects && analyticsData.topProjects.length > 0 ? (
+                analyticsData.topProjects.map((proj, idx) => (
+                  <div key={proj.id || idx} className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase">Xếp hạng #{idx + 1}</span>
+                    <p className="font-extrabold text-slate-900 dark:text-white text-xs">{proj.name}</p>
+                    <div className="flex justify-between items-center text-xs pt-1">
+                      <span className={`font-black ${['text-amber-500', 'text-emerald-500', 'text-blue-500', 'text-purple-500'][idx % 4]}`}>{proj.views.toLocaleString('vi-VN')} lượt xem</span>
+                      <span className={`px-2 py-0.5 bg-${['amber', 'emerald', 'blue', 'purple'][idx % 4]}-500/10 text-${['amber', 'emerald', 'blue', 'purple'][idx % 4]}-600 font-bold rounded text-[10px]`}>{proj.percent}%</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-4 text-center py-4 text-slate-500 dark:text-slate-400">Chưa có dữ liệu dự án</div>
+              )}
             </div>
           </div>
 
@@ -6654,29 +6610,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </h4>
 
             <div className="space-y-2 text-xs font-mono">
-              <div className="p-2 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-emerald-400">[Vừa xong]</span>
-                  <span className="text-slate-300">Khách <b>0988***123</b> vừa gửi lịch hẹn xem căn Biệt thự San Hổ tại OCP2</span>
-                </div>
-                <span className="text-[10px] text-slate-500">10 giây trước</span>
-              </div>
-
-              <div className="p-2 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-blue-400">[Vừa xong]</span>
-                  <span className="text-slate-300">Sale <b>Bùi Trung Hiếu</b> vừa thực hiện Up-tin cho căn Shophouse Cổ Loa</span>
-                </div>
-                <span className="text-[10px] text-slate-500">2 phút trước</span>
-              </div>
-
-              <div className="p-2 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-amber-400">[Vừa xong]</span>
-                  <span className="text-slate-300">Cư dân vừa quét mã VietQR nạp +20 lượt Up-tin tự động qua MSB</span>
-                </div>
-                <span className="text-[10px] text-slate-500">5 phút trước</span>
-              </div>
+              {analyticsData?.liveEvents && analyticsData.liveEvents.length > 0 ? (
+                analyticsData.liveEvents.map((event, idx) => (
+                  <div key={idx} className="p-2 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className={event.type === 'appointment' ? 'text-emerald-400' : event.type === 'upTin' ? 'text-blue-400' : 'text-amber-400'}>[Vừa xong]</span>
+                      <span className="text-slate-300">{event.message}</span>
+                    </div>
+                    <span className="text-[10px] text-slate-500">{event.timeAgo}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4 text-slate-500 dark:text-slate-400">Chưa có hoạt động nào</div>
+              )}
             </div>
           </div>
         </div>
@@ -8057,7 +8003,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white p-5 sm:p-6 flex items-start justify-between gap-4 border-b border-emerald-500/30">
                 <div className="flex items-center gap-4">
                   <img loading="lazy"
-                    src={selectedAdminStore.logoUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80'}
+                    src={selectedAdminStore.logoUrl || ''}
                     alt={selectedAdminStore.storeName}
                     className="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-400 shadow-md shrink-0"
                   />
@@ -8212,7 +8158,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             >
                               <div className="flex items-start gap-3">
                                 <img loading="lazy"
-                                  src={prod.images?.[0] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'}
+                                  src={prod.images?.[0] || ''}
                                   alt={prod.name}
                                   className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                                 />
@@ -8342,7 +8288,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             >
                               <div className="flex items-start gap-3">
                                 <img loading="lazy"
-                                  src={srv.images?.[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
+                                  src={srv.images?.[0] || ''}
                                   alt={srv.title}
                                   className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                                 />
