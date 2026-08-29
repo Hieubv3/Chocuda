@@ -171,6 +171,50 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
   const [unlockPaymentMethod, setUnlockPaymentMethod] = useState<'vietqr' | 'wallet_balance'>('vietqr');
   const [isUnlocking, setIsUnlocking] = useState<boolean>(false);
 
+  // Pricing Config (quản trị được trong Admin) - fetch từ server
+  const [pricingConfig, setPricingConfig] = useState<any>({
+    cvUnlockPrice1: 50000,
+    cvUnlockPrice2: 90000,
+    cvUnlockPrice3: 120000,
+    bankName: 'MSB (Ngân hàng Hàng Hải Việt Nam)',
+    accountNumber: '3028031988',
+    accountHolder: 'BUI VAN HIEU'
+  });
+
+  // Unlock flow: bước chọn gói (1/2/3 CV) → bước QR thanh toán
+  const [unlockStep, setUnlockStep] = useState<'select' | 'qr'>('select');
+  const [selectedCvCount, setSelectedCvCount] = useState<1 | 2 | 3>(1);
+  const [unlockAmount, setUnlockAmount] = useState<number>(50000);
+  const [unlockPaymentCode, setUnlockPaymentCode] = useState<string>('');
+
+  // Fetch pricing config từ server (giá do Admin cấu hình)
+  useEffect(() => {
+    const loadPricing = async () => {
+      try {
+        const res = await fetch('/api/admin/pricing');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            setPricingConfig((prev: any) => ({ ...prev, ...data }));
+          }
+        }
+      } catch (err) {
+        console.warn('Không tải được cấu hình giá, dùng mặc định:', err);
+      }
+    };
+    loadPricing();
+  }, []);
+
+  // Khi mở modal unlock → reset về bước chọn gói
+  useEffect(() => {
+    if (isUnlockModalOpen) {
+      setUnlockStep('select');
+      setSelectedCvCount(1);
+      setUnlockAmount(Number(pricingConfig.cvUnlockPrice1) || 50000);
+      setUnlockPaymentCode('');
+    }
+  }, [isUnlockModalOpen]);
+
   // Fetch Jobs & Candidates from Server API
   const fetchData = async () => {
     setIsLoading(true);
@@ -405,7 +449,9 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
           recruiterName: currentUser.displayName || currentUser.name || 'Nhà Tuyển Dụng',
           recruiterPhone: currentUser.phone || '',
           paymentMethod: unlockPaymentMethod,
-          amountVnd: candidateToUnlock.unlockPriceVnd || 50000
+          amountVnd: unlockAmount || candidateToUnlock.unlockPriceVnd || 50000,
+          cvCount: selectedCvCount,
+          paymentCode: unlockPaymentCode
         })
       });
 
@@ -426,6 +472,21 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
     } finally {
       setIsUnlocking(false);
     }
+  };
+
+  // Chọn gói mở khóa CV → chuyển sang bước QR thanh toán
+  const handleSelectCvPackage = (count: 1 | 2 | 3) => {
+    setSelectedCvCount(count);
+    const priceMap: Record<1 | 2 | 3, number> = {
+      1: Number(pricingConfig.cvUnlockPrice1) || 50000,
+      2: Number(pricingConfig.cvUnlockPrice2) || 90000,
+      3: Number(pricingConfig.cvUnlockPrice3) || 120000
+    };
+    setUnlockAmount(priceMap[count]);
+    // Tạo mã thanh toán duy nhất
+    const code = `MOKHOA${count}CV-${candidateToUnlock?.id?.slice(0, 6) || 'XXXX'}-${Date.now().toString().slice(-6)}`;
+    setUnlockPaymentCode(code);
+    setUnlockStep('qr');
   };
 
   // Add work experience item to CV
@@ -1950,75 +2011,126 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
               </div>
             </div>
 
-            {/* Fee & VietQR */}
-            <div className="bg-amber-50 dark:bg-amber-950/40 p-4 rounded-2xl border border-amber-200 dark:border-amber-800 text-center space-y-2">
-              <div className="text-xs text-amber-900 dark:text-amber-300 font-medium">Phí mở khóa xem trọn vẹn CV:</div>
-              <div className="text-2xl font-black text-amber-600 dark:text-amber-400">
-                {(candidateToUnlock.unlockPriceVnd || 50000).toLocaleString('vi-VN')} đ
-              </div>
-              <div className="text-[11px] text-slate-500">Mở khóa 1 lần xem vĩnh viễn trong danh sách của bạn</div>
-            </div>
-
-            {/* QR Scan Code Preview */}
-            <div className="text-center space-y-3">
-              <div className="inline-block p-2 bg-white rounded-2xl border border-slate-200 shadow-md">
-                <img
-                  src={`https://img.vietqr.io/image/MSB-3028031988-compact2.png?amount=${candidateToUnlock.unlockPriceVnd || 50000}&addInfo=${encodeURIComponent(`MOKHOA CV ${candidateToUnlock.id}`)}&accountName=BUI%20VAN%20HIEU`}
-                  alt="VietQR Mở Khóa CV"
-                  className="w-44 h-44 mx-auto object-contain"
-                />
-              </div>
-              
-              {/* Direct Open Banking App Link */}
-              <a
-                href={`https://dl.vietqr.io/pay?bank=MSB&account=3028031988&amount=${candidateToUnlock.unlockPriceVnd || 50000}&memo=${encodeURIComponent(`MOKHOA CV ${candidateToUnlock.id}`)}`}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md flex items-center justify-center gap-1.5 transition"
-              >
-                <Smartphone className="w-4 h-4" />
-                <span>Mở App Ngân Hàng Chuyển Khoản</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-
-              {/* Automated Real-time Detection Status */}
-              <div className="p-3 bg-emerald-950/10 dark:bg-emerald-950/30 rounded-xl border border-dashed border-emerald-500/50 text-left space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                  </span>
-                  <span className="text-[11px] font-black text-emerald-700 dark:text-emerald-300">
-                    Đang chờ Webhook trung gian xác nhận tự động...
-                  </span>
+            {/* BƯỚC 1: CHỌN GÓI MỞ KHÓA CV (chỉ hiện giá khi mở modal) */}
+            {unlockStep === 'select' && (
+              <>
+                <div className="bg-amber-50 dark:bg-amber-950/40 p-4 rounded-2xl border border-amber-200 dark:border-amber-800 text-center space-y-1">
+                  <div className="text-xs text-amber-900 dark:text-amber-300 font-medium">Chọn gói mở khóa hồ sơ ứng viên:</div>
+                  <div className="text-[11px] text-slate-500">Mở khóa 1 lần xem vĩnh viễn trong danh sách của bạn</div>
                 </div>
-                <p className="text-[10px] text-slate-500">
-                  Hồ sơ sẽ tự động mở khóa ngay sau khi tiền vào tài khoản (Không cần bấm nút).
+
+                {/* Bảng chọn gói 1/2/3 CV */}
+                <div className="grid grid-cols-3 gap-2">
+                  {([1, 2, 3] as const).map((count) => {
+                    const price = count === 1
+                      ? (Number(pricingConfig.cvUnlockPrice1) || 50000)
+                      : count === 2
+                      ? (Number(pricingConfig.cvUnlockPrice2) || 90000)
+                      : (Number(pricingConfig.cvUnlockPrice3) || 120000);
+                    return (
+                      <button
+                        key={count}
+                        type="button"
+                        onClick={() => handleSelectCvPackage(count)}
+                        className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer text-center ${
+                          selectedCvCount === count
+                            ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/40 ring-2 ring-amber-500/20'
+                            : 'border-slate-200 dark:border-slate-700 hover:border-amber-400 bg-white dark:bg-slate-800'
+                        }`}
+                      >
+                        <div className="text-2xl font-black text-slate-900 dark:text-white">{count}</div>
+                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">CV</div>
+                        <div className="mt-1.5 text-sm font-black text-amber-600 dark:text-amber-400">
+                          {price.toLocaleString('vi-VN')}đ
+                        </div>
+                        <div className="text-[9px] text-slate-400 mt-0.5">Mở khóa {count} hồ sơ</div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <p className="text-[10px] text-slate-400 text-center">
+                  💡 Giá do Admin cấu hình. Chọn gói để tiếp tục thanh toán qua VietQR.
                 </p>
-              </div>
-            </div>
+              </>
+            )}
+
+            {/* BƯỚC 2: QR THANH TOÁN + CHỜ WEBHOOK */}
+            {unlockStep === 'qr' && (
+              <>
+                {/* Fee & VietQR */}
+                <div className="bg-amber-50 dark:bg-amber-950/40 p-4 rounded-2xl border border-amber-200 dark:border-amber-800 text-center space-y-2">
+                  <div className="text-xs text-amber-900 dark:text-amber-300 font-medium">Phí mở khóa {selectedCvCount} CV:</div>
+                  <div className="text-2xl font-black text-amber-600 dark:text-amber-400">
+                    {unlockAmount.toLocaleString('vi-VN')} đ
+                  </div>
+                  <div className="text-[11px] text-slate-500">Mở khóa {selectedCvCount} lần xem vĩnh viễn trong danh sách của bạn</div>
+                </div>
+
+                {/* QR Scan Code Preview */}
+                <div className="text-center space-y-3">
+                  <div className="inline-block p-2 bg-white rounded-2xl border border-slate-200 shadow-md">
+                    <img
+                      src={`https://img.vietqr.io/image/MSB-3028031988-compact2.png?amount=${unlockAmount}&addInfo=${encodeURIComponent(unlockPaymentCode || `MOKHOA CV ${candidateToUnlock.id}`)}&accountName=BUI%20VAN%20HIEU`}
+                      alt="VietQR Mở Khóa CV"
+                      className="w-44 h-44 mx-auto object-contain"
+                    />
+                  </div>
+                  
+                  {/* Direct Open Banking App Link */}
+                  <a
+                    href={`https://dl.vietqr.io/pay?bank=MSB&account=3028031988&amount=${unlockAmount}&memo=${encodeURIComponent(unlockPaymentCode || `MOKHOA CV ${candidateToUnlock.id}`)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md flex items-center justify-center gap-1.5 transition"
+                  >
+                    <Smartphone className="w-4 h-4" />
+                    <span>Mở App Ngân Hàng Chuyển Khoản</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+
+                  {/* Automated Real-time Detection Status */}
+                  <div className="p-3 bg-emerald-950/10 dark:bg-emerald-950/30 rounded-xl border border-dashed border-emerald-500/50 text-left space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                      </span>
+                      <span className="text-[11px] font-black text-emerald-700 dark:text-emerald-300">
+                        Đang chờ Webhook trung gian xác nhận tự động...
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500">
+                      Hồ sơ sẽ tự động mở khóa ngay sau khi tiền vào tài khoản (Không cần bấm nút).
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Action Bar */}
             <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
-                onClick={() => setIsUnlockModalOpen(false)}
+                onClick={() => unlockStep === 'qr' ? setUnlockStep('select') : setIsUnlockModalOpen(false)}
                 className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold"
               >
-                Đóng
+                {unlockStep === 'qr' ? '← Chọn lại gói' : 'Đóng'}
               </button>
               
-              {/* Simulation Test Button */}
-              <button
-                type="button"
-                onClick={handleUnlockCandidate}
-                disabled={isUnlocking}
-                className="px-3 py-1.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded-xl text-[11px] font-bold border border-emerald-300 dark:border-emerald-700 flex items-center gap-1"
-                title="Mô phỏng Webhook trung gian gửi thông báo thành công"
-              >
-                <RefreshCw className="w-3 h-3 animate-spin" />
-                <span>Mô Phỏng Webhook Khớp Lệnh</span>
-              </button>
+              {/* Simulation Test Button (chỉ ở bước QR) */}
+              {unlockStep === 'qr' && (
+                <button
+                  type="button"
+                  onClick={handleUnlockCandidate}
+                  disabled={isUnlocking}
+                  className="px-3 py-1.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded-xl text-[11px] font-bold border border-emerald-300 dark:border-emerald-700 flex items-center gap-1"
+                  title="Mô phỏng Webhook trung gian gửi thông báo thành công"
+                >
+                  <RefreshCw className="w-3 h-3 animate-spin" />
+                  <span>Mô Phỏng Webhook Khớp Lệnh</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

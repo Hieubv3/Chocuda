@@ -692,6 +692,12 @@ let pricingConfigStore: any = {
   vipSilverPriceDay: 50000,
   vipGoldPriceDay: 100000,
   vipDiamondPriceDay: 200000,
+  // Giá mở khóa CV ứng viên (quản trị được trong Admin)
+  cvUnlockPrice1: 50000,   // Mở khóa 1 CV
+  cvUnlockPrice2: 90000,   // Mở khóa 2 CV
+  cvUnlockPrice3: 120000,  // Mở khóa 3 CV
+  // Giá gói tuyển dụng (quản trị được trong Admin)
+  recruitmentPackagePrice: 199000, // Gói đăng tin tuyển dụng
   bankName: 'MSB (Ngân hàng Hàng Hải Việt Nam)',
   accountNumber: '3028031988',
   accountHolder: 'BUI VAN HIEU',

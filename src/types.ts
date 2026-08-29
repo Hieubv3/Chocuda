@@ -396,6 +396,13 @@ export interface UpTinPricingConfig {
   vipSilverPriceDay: number; // VNĐ / day (e.g. 50,000)
   vipGoldPriceDay: number; // VNĐ / day (e.g. 100,000)
   vipDiamondPriceDay: number; // VNĐ / day (e.g. 200,000)
+
+  // Giá mở khóa CV ứng viên (quản trị được trong Admin)
+  cvUnlockPrice1?: number; // Mở khóa 1 CV
+  cvUnlockPrice2?: number; // Mở khóa 2 CV
+  cvUnlockPrice3?: number; // Mở khóa 3 CV
+  // Giá gói tuyển dụng (quản trị được trong Admin)
+  recruitmentPackagePrice?: number; // Gói đăng tin tuyển dụng
   
   // Admin Toggle for Payment vs Donate Mode
   paymentEnabled?: boolean; // Toggle ON/OFF required payments
