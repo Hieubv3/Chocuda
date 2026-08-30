@@ -47,7 +47,7 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         originalPrice: 250000,
         unit: 'hộp 1kg',
         stockQuantity: 0,
-        images: [],
+        images: ['/images/demo/ad-food.jpg'],
         description: 'Táo Envy nhập khẩu trực tiếp từ Mỹ, giòn ngọt đậm đà, đóng hộp sang trọng phục vụ cư dân.',
         isAvailable: true,
         soldCount: 0
@@ -63,7 +63,7 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         originalPrice: 450000,
         unit: 'chùm',
         stockQuantity: 0,
-        images: [],
+        images: ['/images/demo/ad-food.jpg'],
         description: 'Nho Mẫu Đơn giòn ngọt ngào thơm mùi sữa, trái to tròn mọng nước, giao tận giường cư dân.',
         isAvailable: true,
         soldCount: 0
@@ -78,7 +78,7 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         price: 125000,
         unit: 'túi 3kg',
         stockQuantity: 0,
-        images: [],
+        images: ['/images/demo/ad-food.jpg'],
         description: 'Bao gồm Cải kale, Cà chua cherry, Dưa leo baby, Ớt chuông đà lạt trồng chuẩn VietGAP.',
         isAvailable: true,
         soldCount: 0
@@ -131,7 +131,7 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         originalPrice: 5500000,
         unit: 'bộ',
         stockQuantity: 0,
-        images: [],
+        images: ['/images/demo/ad-food.jpg'],
         description: 'Mở cửa bằng Nhận diện khuôn mặt 3D, Vân tay FPO, Thẻ từ & App thoại. Hỗ trợ miến phí công lắp đặt tại Vinhomes.',
         isAvailable: true,
         soldCount: 0
@@ -147,7 +147,7 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         originalPrice: 15000000,
         unit: 'gói trọn gói',
         stockQuantity: 0,
-        images: [],
+        images: ['/images/demo/ad-food.jpg'],
         description: 'Trọn gói vật tư & thi công hệ thống đèn ray nam châm đổi màu 3 chế độ theo tâm trạng cho căn hộ Vinhomes.',
         isAvailable: true,
         soldCount: 0

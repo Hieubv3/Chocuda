@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Search, ChevronRight, ChevronDown, Sparkles, Building2, ShieldCheck, MapPin, Phone, ArrowRight, CheckCircle2, UserCheck, Star, Clock, KeyRound, Wrench, Briefcase } from 'lucide-react';
 import logoImg from '../assets/images/chocudan24h_custom_logo_1785384117746.jpg';
 import { Property, Project, NewsArticle, Language, PropertyType, ProjectCategory } from '../types';
@@ -81,7 +81,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Background Image Overlay */}
         <div className="absolute inset-0 opacity-30">
           <img loading="lazy"
-            src=""
+            src="/images/demo/hero-city-1.jpg"
             alt="Vinhomes Ocean Park"
             className="w-full h-full object-cover"
           />
@@ -137,7 +137,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-                    src=""
+            src="/images/demo/project-tower.jpg"
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -187,7 +187,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-                    src=""
+            src="/images/demo/project-apartment.jpg"
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -230,7 +230,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-                    src=""
+            src="/images/demo/ad-service.jpg"
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -273,7 +273,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-                    src=""
+            src="/images/demo/hero-city-2.jpg"
                     alt="Tuyển Dụng Việc Làm"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -325,7 +325,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-                    src=""
+            src="/images/demo/property-house.jpg"
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
@@ -353,7 +353,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-                    src=""
+            src="/images/demo/property-interior-2.jpg"
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
@@ -374,7 +374,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-                    src=""
+            src="/images/demo/amenity-pool.jpg"
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
@@ -395,7 +395,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-                    src=""
+            src="/images/demo/hero-skyline.jpg"
                     alt="Việc Làm"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"

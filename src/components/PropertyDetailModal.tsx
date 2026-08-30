@@ -236,7 +236,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             </h3>
             <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-48 bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-center p-4">
               <img loading="lazy"
-                src=""
+                src="/images/demo/hero-city-2.jpg"
                 alt="Bản đồ vị trí"
                 className="absolute inset-0 w-full h-full object-cover opacity-40"
               />
