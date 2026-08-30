@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon } from 'lucide-react';
 import { Header } from './components/Header';
-import { RealTimeMarketTicker } from './components/RealTimeMarketTicker';
 import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -1802,11 +1801,7 @@ export const App: React.FC = () => {
         >
           <div className="relative">
             <UserIcon className="w-5 h-5 transition-transform" />
-            {/* Live Chat / Notification ping badge */}
-            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-white dark:border-slate-900"></span>
-            </span>
+            
           </div>
           <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Cá Nhân</span>
         </button>

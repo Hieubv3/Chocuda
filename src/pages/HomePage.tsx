@@ -111,7 +111,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 Nền tảng trực tiếp dành cho cư dân Vinhomes trao đổi thông tin mua bán, cho thuê BĐS và đăng tin dịch vụ tiện ích nội khu — Tối ưu kết nối minh bạch, hỗ trợ cư dân 24/7.
               </p>
               <p className="text-[10px] sm:text-[11px] text-amber-300 font-semibold flex items-center gap-1.5 pt-0.5">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
                 <span>Hotline/Zalo 0868.499.929: Chuyên trách hỗ trợ cư dân đăng tin & hỗ trợ vận hành.</span>
               </p>
             </div>

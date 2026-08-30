@@ -257,7 +257,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
             {/* Pending Approval Badge */}
             {(property.approvalStatus === 'pending' || (property.status === 'pending' && !property.approved)) && (
-              <span className="text-[8px] font-black bg-amber-500/90 text-slate-950 px-1 py-0.2 rounded shadow-xs flex items-center gap-0.5 animate-pulse">
+              <span className="text-[8px] font-black bg-amber-500/90 text-slate-950 px-1 py-0.2 rounded shadow-xs flex items-center gap-0.5">
                 ⏳ CHỜ
               </span>
             )}

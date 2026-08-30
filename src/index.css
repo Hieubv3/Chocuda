@@ -21,10 +21,11 @@ body {
   * {
     scroll-behavior: smooth;
   }
-  
-  img {
-    content-visibility: auto;
-  }
+}
+
+/* Hide empty/broken images (no fake placeholder images) */
+img[src=""], img:not([src]) {
+  display: none;
 }
 
 @layer base {

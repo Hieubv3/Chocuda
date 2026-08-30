@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 
 const VIEWS_STORAGE_KEY = 'chocudan24h_total_views';
 const ZALO_STORAGE_KEY = 'chocudan24h_zalo_interactions';
-const INITIAL_VIEWS = 152840;
-const INITIAL_ZALO = 1480;
+const INITIAL_VIEWS = 0;
+const INITIAL_ZALO = 0;
 
 // Read initial from localStorage or default
 export function getStoredViews(): number {
@@ -62,7 +62,7 @@ export function recordZaloInteraction(): number {
 export function useVisitorStats() {
   const [views, setViews] = useState<number>(getStoredViews);
   const [zaloInteractions, setZaloInteractions] = useState<number>(getStoredZaloInteractions);
-  const [onlineCount, setOnlineCount] = useState<number>(48);
+  const [onlineCount, setOnlineCount] = useState<number>(0);
 
   useEffect(() => {
     // Record +1 page view when hook initializes in app runtime once per session
@@ -81,22 +81,9 @@ export function useVisitorStats() {
     window.addEventListener('chocudan24h_stats_updated', handleStatsChange);
     window.addEventListener('storage', handleStatsChange);
 
-    // Dynamic fluctuating Online User counter (between 45 and 53)
-    const onlineInterval = setInterval(() => {
-      // Small random fluctuation around 48 (+- 4)
-      const delta = Math.floor(Math.random() * 7) - 3; // -3 to +3
-      setOnlineCount(prev => {
-        let next = prev + delta;
-        if (next < 45) next = 46;
-        if (next > 54) next = 52;
-        return next;
-      });
-    }, 4000);
-
     return () => {
       window.removeEventListener('chocudan24h_stats_updated', handleStatsChange);
       window.removeEventListener('storage', handleStatsChange);
-      clearInterval(onlineInterval);
     };
   }, []);
 

@@ -266,7 +266,6 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
           <div className={`flex flex-col sm:flex-row items-center justify-between gap-3.5 text-xs ${!isBannerDismissed ? 'pt-3.5' : ''}`}>
             <div className="flex items-center space-x-3 w-full sm:w-auto">
               <span className="relative flex h-3 w-3 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
               </span>
               <div>
@@ -275,6 +274,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
               </div>
             </div>
 
+            {(onlineCount > 0 || views > 0 || zaloInteractions > 0) && (
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto justify-start sm:justify-end shrink-0">
               <div className="px-3 py-1.5 bg-slate-800/90 rounded-xl border border-slate-700/80 flex items-center gap-2 shadow-xs">
                 <span className="text-emerald-400 font-extrabold text-xs sm:text-sm">🟢 {onlineCount}</span>
@@ -291,6 +291,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
                 <span className="text-slate-300 text-[11px] font-semibold">Tương tác Zalo</span>
               </div>
             </div>
+            )}
           </div>
 
         </div>

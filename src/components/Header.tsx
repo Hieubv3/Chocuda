@@ -83,20 +83,21 @@ export const Header: React.FC<HeaderProps> = ({
               chocudan24h.com
             </span>
             <span className="text-slate-700">|</span>
-            <div className="flex items-center space-x-2 bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-700 text-[10px]">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span className="text-emerald-400 font-bold">{onlineCount} đang Online</span>
-              <span className="text-slate-600">|</span>
-              <span className="text-slate-300 font-medium">{views.toLocaleString('vi-VN')} lượt xem</span>
-            </div>
+            {(onlineCount > 0 || views > 0) && (
+              <div className="flex items-center space-x-2 bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-700 text-[10px]">
+                <span className="relative flex h-2 w-2">
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span className="text-emerald-400 font-bold">{onlineCount} đang Online</span>
+                <span className="text-slate-600">|</span>
+                <span className="text-slate-300 font-medium">{views.toLocaleString('vi-VN')} lượt xem</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center space-x-3">
             <button
               onClick={onOpenAndroidModal}
-              className="flex items-center text-[10px] bg-emerald-950/90 hover:bg-emerald-900 border border-emerald-500/60 text-emerald-300 font-black px-2.5 py-0.5 rounded-full transition shadow-xs animate-pulse hover:animate-none gap-1"
+              className="flex items-center text-[10px] bg-emerald-950/90 hover:bg-emerald-900 border border-emerald-500/60 text-emerald-300 font-black px-2.5 py-0.5 rounded-full transition shadow-xs gap-1"
               title="Tải ứng dụng Android APK chính thức"
             >
               <Smartphone className="w-3 h-3 text-emerald-400" />

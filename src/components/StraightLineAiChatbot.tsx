@@ -362,7 +362,6 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
         >
           <div className="relative flex items-center justify-center">
             <Bot className="w-4 h-4 text-emerald-100 group-hover:rotate-12 transition-transform" />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-ping" />
             <span className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full" />
           </div>
           <span className="font-extrabold text-xs tracking-tight">Tư Vấn &amp; Đặt Hàng AI</span>
