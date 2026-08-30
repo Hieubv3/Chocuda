@@ -1382,6 +1382,7 @@ app.post("/api/auth/login", async (req, res) => {
   // Ho tro du lieu cu: neu password con plaintext (vd tu app_data_store.json), hash ngay truoc khi so sanh
   if (user.password && !user.password.startsWith('$2')) {
     user.password = bcrypt.hashSync(user.password, BCRYPT_SALT_ROUNDS);
+    saveDataStore();
   }
   if (user.password && !(await comparePassword(String(password), user.password))) {
     return res.status(400).json({
@@ -1426,6 +1427,7 @@ app.post("/api/auth/totp/setup", authenticateToken, (req, res) => {
   const otpauthUri = buildOtpAuthUri({ secret, accountName: user.email, issuer: "ChoCuDan24h" });
   const backupCodes = generateBackupCodes(8);
   user.totpBackupCodeHashes = backupCodes.map(hashBackupCode);
+  saveDataStore();
   return res.json({ secret, otpauthUri, backupCodes });
 });
 
@@ -1438,6 +1440,7 @@ app.post("/api/auth/totp/verify", authenticateToken, (req, res) => {
     return res.status(400).json({ error: "Ma xac thuc khong chinh xac!" });
   }
   user.totpEnabled = true;
+  saveDataStore();
   return res.json({ success: true, message: "Da bat xac thuc 2 lop (TOTP)!" });
 });
 
@@ -1454,6 +1457,7 @@ app.post("/api/auth/totp/disable", authenticateToken, (req, res) => {
   user.totpEnabled = false;
   user.totpSecret = undefined;
   user.totpBackupCodeHashes = undefined;
+  saveDataStore();
   return res.json({ success: true, message: "Da tat xac thuc 2 lop!" });
 });
 // Real Google OAuth / Google Account Authentication API
