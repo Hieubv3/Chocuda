@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { X, Sparkles, Send, Copy, Check, FileText, Globe } from 'lucide-react';
 import { Language, NewsArticle } from '../types';
 
@@ -66,7 +66,7 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
       category: category,
       author: 'Gemini AI Assistant',
       source: 'ai',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'
+      image: ''
     });
     setPublished(true);
   };

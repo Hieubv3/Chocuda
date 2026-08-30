@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Property, User, Language, UpTinPricingConfig, UpTinTransaction } from '../types';
 import {
@@ -411,7 +411,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
           <div className="flex items-center gap-3">
             <img loading="lazy"
-              src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}
+              src={user.avatar || ''}
               alt={user.name}
               className="w-12 h-12 rounded-xl border border-emerald-400/60 shadow-xs object-cover shrink-0"
             />
@@ -993,7 +993,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                           className="relative shrink-0 cursor-pointer group"
                         >
                           <img loading="lazy"
-                            src={prop.images?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80'}
+                            src={prop.images?.[0] || ''}
                             alt={prop.title}
                             className="w-14 h-12 sm:w-16 sm:h-14 rounded-xl object-cover border border-slate-200 dark:border-slate-800 group-hover:opacity-90 transition"
                           />
@@ -1543,7 +1543,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3">
               <img loading="lazy"
-                src={userState.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}
+                src={userState.avatar || ''}
                 alt={userState.name}
                 className="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-500/50 shadow-md"
               />

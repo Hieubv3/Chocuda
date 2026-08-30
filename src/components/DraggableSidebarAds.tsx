@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   X, Move, Sparkles, ExternalLink, ChevronRight, ChevronLeft, 
@@ -203,7 +203,7 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
           >
             <div className="relative aspect-16/10 rounded-xl overflow-hidden bg-slate-800 border border-slate-700/80">
               <img loading="lazy"
-                src={currentAd.imageUrl || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80'}
+                src={currentAd.imageUrl || ''}
                 alt={currentAd.title}
                 className="w-full h-full object-cover group-hover/ad:scale-105 transition-transform duration-300"
               />

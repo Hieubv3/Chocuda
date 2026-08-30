@@ -51,48 +51,48 @@ const SAMPLE_TEMPLATES = [
   {
     name: '🍵 Menu Trà Sữa & Đồ Ăn Vặt',
     category: 'am-thuc-com-cu-dan',
-    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+    image: '',
     text: `MENU TIỆM TRÀ CHỢ CƯ DÂN S2.05 VINHOMES:
-1. Trà sữa trân châu đường đen - 35.000đ (cốc)
-2. Trà xoài macchiato phô mai - 40.000đ (cốc)
-3. Trà chanh giã tay Tây Bắc - 25.000đ (cốc)
-4. Nem chua rán giòn Phố Cổ - 35.000đ (đĩa 10 cái)
-5. Khoai tây lắc phô mai - 30.000đ (hộp)
+1. Trà sữa trân châu đường đen - [giá] (cốc)
+2. Trà xoài macchiato phô mai - [giá] (cốc)
+3. Trà chanh giã tay Tây Bắc - [giá] (cốc)
+4. Nem chua rán giòn Phố Cổ - [giá] (đĩa 10 cái)
+5. Khoai tây lắc phô mai - [giá] (hộp)
 Hotline Zalo: 0868.499.929. Ship tận phòng Ocean Park 1, 2, 3 trong 15p!`
   },
   {
     name: '⚡ Báo Giá Sửa Điện Nước & Thang Máy',
     category: 'thang-may-sua-nha',
-    image: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80',
+    image: '',
     text: `BẢNG BÁO GIÁ DỊCH VỤ KỸ THUẬT CƯ DÂN CHÀ LÀ 6:
-- Khảo sát & sửa rò rỉ đường nước ngầm: 150.000đ/lần
-- Thay vòi sen, lavabo, bồn cầu cao cấp: 120.000đ/vị trí
-- Lắp đặt khóa cửa thông minh vân tay: 250.000đ/bộ
-- Bảo trì & kiểm định thang máy gia đình: 350.000đ/lần
-- Lắp giàn phơi thông minh, lưới an toàn: 650.000đ/bộ
+- Khảo sát & sửa rò rỉ đường nước ngầm: [giá]/lần
+- Thay vòi sen, lavabo, bồn cầu cao cấp: [giá]/vị trí
+- Lắp đặt khóa cửa thông minh vân tay: [giá]/bộ
+- Bảo trì & kiểm định thang máy gia đình: [giá]/lần
+- Lắp giàn phơi thông minh, lưới an toàn: [giá]/bộ
 Thợ cư dân Chà Là 6 - Có mặt 15 phút, bảo hành 12 tháng.`
   },
   {
     name: '✨ Báo Giá Giặt Là & Dọn Dẹp Nhà',
     category: 'dich-vu-gia-dinh-giat-la',
-    image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80',
+    image: '',
     text: `BẢNG GIÁ TIỆM GIẶT SẤY & DỌN NHÀ ECO VINHOMES:
-- Dọn dẹp nhà theo giờ: 70.000đ/giờ (tối thiểu 2 giờ)
-- Tổng vệ sinh căn hộ sau xây dựng: 15.000đ/m2
-- Giặt rèm cửa khử khuẩn UV: 45.000đ/kg
-- Giặt sấy quần áo lấy ngay: 20.000đ/kg
-- Vệ sinh sofa da/nỉ tại nhà: 250.000đ/bộ
+- Dọn dẹp nhà theo giờ: [giá]/giờ (tối thiểu 2 giờ)
+- Tổng vệ sinh căn hộ sau xây dựng: [giá]/m2
+- Giặt rèm cửa khử khuẩn UV: [giá]/kg
+- Giặt sấy quần áo lấy ngay: [giá]/kg
+- Vệ sinh sofa da/nỉ tại nhà: [giá]/bộ
 Giao nhận tận sảnh căn hộ miễn phí. Zalo: 0868.499.929`
   },
   {
     name: '✈️ Báo Giá Taxi Tiện Chuyến & Sân Bay',
     category: 'van-chuyen-taxi',
-    image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=800&q=80',
+    image: '',
     text: `BẢNG GIÁ XE TIỆN CHUYẾN CƯ DÂN VINHOMES 24/7:
-- Ocean Park đi Sân Bay Nội Bài: 280.000đ (Xe 5 chỗ sạch sẽ)
-- Ocean Park đi Sân Bay Nội Bài: 380.000đ (Xe 7 chỗ Xpander)
-- Xe tiện chuyến Ocean Park - Hải Phòng / Hạ Long: 450.000đ/ghế
-- Chở hàng chuyển đồ xe bán tải nội khu: 150.000đ/chuyến
+- Ocean Park đi Sân Bay Nội Bài: [giá] (Xe 5 chỗ sạch sẽ)
+- Ocean Park đi Sân Bay Nội Bài: [giá] (Xe 7 chỗ Xpander)
+- Xe tiện chuyến Ocean Park - Hải Phòng / Hạ Long: [giá]/ghế
+- Chở hàng chuyển đồ xe bán tải nội khu: [giá]/chuyến
 Tài xế cư dân lịch sự, không hút thuốc, nhận đưa đón học sinh.`
   }
 ];

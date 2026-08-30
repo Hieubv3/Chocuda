@@ -458,7 +458,7 @@ export const RealestateVideoChannelSection: React.FC<RealestateVideoChannelSecti
             >
               <div className="aspect-[9/14] bg-slate-950 rounded-xl overflow-hidden relative border border-slate-700 flex items-center justify-center">
                 <img loading="lazy"
-                  src={`https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=400&q=80`}
+                  src={''}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />

@@ -84,8 +84,8 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
         userId: matchedJob.employerUserId,
         companyName: matchedJob.companyName,
         brandName: matchedJob.companyName,
-        logoUrl: matchedJob.companyLogo || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
-        bannerUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
+        logoUrl: matchedJob.companyLogo || '',
+        bannerUrl: '',
         tagline: `Nhà tuyển dụng uy tín tại ${matchedJob.projectName || 'Vinhomes'}`,
         industry: matchedJob.industry,
         project: matchedJob.project,
@@ -99,7 +99,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
         scaleSize: '10 - 50 nhân sự',
         verified: true,
         activeJobsCount: 1,
-        totalViews: 850
+        totalViews: 0
       };
     }
   }
@@ -230,7 +230,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
           {/* Banner cover */}
           <div className="relative h-48 sm:h-64 bg-slate-950 overflow-hidden">
             <img loading="lazy"
-              src={employer.bannerUrl || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80'}
+              src={employer.bannerUrl || ''}
               alt={employer.companyName}
               className="w-full h-full object-cover opacity-60"
             />
@@ -249,7 +249,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
               
               <div className="flex items-start gap-4 sm:gap-6">
                 <img loading="lazy"
-                  src={employer.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80'}
+                  src={employer.logoUrl || ''}
                   alt={employer.companyName}
                   className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-2xl bg-white shrink-0"
                 />

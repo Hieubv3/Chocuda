@@ -101,7 +101,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
           recruiterUserId: currentUser.id,
           recruiterName: currentUser.name || currentUser.email,
           recruiterPhone: currentUser.phone || '',
-          amountVnd: 20000,
+          amountVnd: candidate.unlockPriceVnd || 50000,
           paymentMethod: 'token_balance'
         })
       });
@@ -189,7 +189,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
       <SEOHead
         title={`CV: ${candidate.fullName} - ${candidate.desiredPosition} | Ứng Viên Vinhomes`}
         description={`Hồ sơ ứng viên ${candidate.fullName}. Vị trí mong muốn: ${candidate.desiredPosition}. Kinh nghiệm: ${candidate.experienceDisplay}. Khu vực: ${project?.name || candidate.desiredProject}. Mức lương: ${candidate.expectedSalaryDisplay}.`}
-        image={candidate.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80'}
+        image={candidate.avatar || ''}
         url={shareUrl}
         keywords={`${candidate.fullName}, CV ${candidate.desiredPosition}, ứng viên vinhomes, tìm việc làm ocean park`}
       />
@@ -225,7 +225,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
             <div className="flex items-start gap-4">
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-3xl overflow-hidden border-2 border-emerald-500 shadow-md shrink-0 bg-slate-100 dark:bg-slate-800">
                 <img loading="lazy"
-                  src={candidate.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
+                  src={candidate.avatar || ''}
                   alt={candidate.fullName}
                   className="w-full h-full object-cover"
                 />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   Briefcase, Building2, MapPin, DollarSign, Clock, Users, 
@@ -136,7 +136,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
       <SEOHead
         title={`${job.title} - ${job.companyName} | Tuyển Dụng Vinhomes`}
         description={`${job.title} tại ${job.companyName}. Mức lương: ${job.salaryDisplay}. Địa điểm: ${job.location}. Hotline: ${job.contactPhone}. Hạn nộp: ${job.deadline}.`}
-        image="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=80"
+        image=""
         url={shareUrl}
         keywords={`${job.title}, tuyển dụng vinhomes, việc làm ocean park, ${industry?.name || 'việc làm cư dân'}`}
       />

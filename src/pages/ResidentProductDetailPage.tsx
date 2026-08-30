@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   ShoppingBag, Store, MapPin, Phone, MessageCircle, Star, ShieldCheck, 
@@ -86,16 +86,16 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
     category: store.category,
     price: 150000,
     unit: 'phần',
-    stockQuantity: 10,
-    images: [store.logoUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80'],
+    stockQuantity: 0,
+    images: [store.logoUrl || ''],
     description: 'Sản phẩm & hàng hóa chất lượng cao từ cư dân Vinhomes.',
     isAvailable: true,
-    soldCount: 20
+    soldCount: 0
   };
 
   const images = product.images && product.images.length > 0 
     ? product.images 
-    : [store.logoUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80'];
+    : [store.logoUrl || ''];
 
   const currentImageUrl = images[activeImageIndex] || images[0];
   const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://chocudan24h.com/san-pham/${product.id}`;
@@ -429,7 +429,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
               <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
                   <img loading="lazy"
-                    src={store.logoUrl || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80'}
+                    src={store.logoUrl || ''}
                     alt={store.storeName}
                     className="w-12 h-12 rounded-xl object-cover border border-amber-500 shadow-sm shrink-0"
                   />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   Briefcase, Search, Filter, MapPin, DollarSign, Clock, Users, Building2, 
@@ -117,7 +117,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
     id: `cv-${currentUser?.id || 'guest'}`,
     userId: currentUser?.id,
     fullName: currentUser?.displayName || currentUser?.name || '',
-    avatarUrl: currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    avatarUrl: currentUser?.avatar || '',
     birthYear: 1998,
     gender: 'nam',
     phone: currentUser?.phone || '',
@@ -872,7 +872,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
                         {/* Top Candidate Avatar & Status */}
                         <div className="flex items-start gap-3">
                           <img loading="lazy"
-                            src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
+                            src={cand.avatarUrl || ''}
                             alt={cand.fullName}
                             className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                           />
@@ -1936,7 +1936,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
             {/* Candidate Summary */}
             <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl">
               <img loading="lazy"
-                src={candidateToUnlock.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
+                src={candidateToUnlock.avatarUrl || ''}
                 alt={candidateToUnlock.fullName}
                 className="w-12 h-12 rounded-xl object-cover"
               />
@@ -1998,7 +1998,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
             <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
               <div className="flex items-center gap-3">
                 <img loading="lazy"
-                  src={selectedCandidateModal.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
+                  src={selectedCandidateModal.avatarUrl || ''}
                   alt={selectedCandidateModal.fullName}
                   className="w-14 h-14 rounded-2xl object-cover border"
                 />

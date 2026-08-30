@@ -9,8 +9,8 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
     ownerZalo: '0988123456',
     storeName: 'Nông Sản Sạch & Trái Cây Nhập Khẩu Mai Farm - San Hô 2',
     slug: 'mai-farm-san-ho-2',
-    logoUrl: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80',
-    bannerUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80',
+    logoUrl: '',
+    bannerUrl: '',
     category: 'Thực Phẩm & Nông Sản Sạch',
     project: 'ocean-park-2',
     subdivision: 'San Hô 2',
@@ -18,8 +18,8 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
     description: 'Chuyên cung cấp trái cây tươi nhập khẩu (Sầu riêng Musang King, Táo Envy, Nho mẫu đơn), rau củ hữu cơ giao nhanh 15 phút tận cửa căn hộ cư dân.',
     operatingHours: '07:00 - 21:30 hàng ngày',
     verified: true,
-    rating: 4.9,
-    reviewCount: 38,
+    rating: 0,
+    reviewCount: 0,
     createdAt: '2026-01-15',
     lat: 20.9592,
     lng: 105.9765,
@@ -46,11 +46,11 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         price: 220000,
         originalPrice: 250000,
         unit: 'hộp 1kg',
-        stockQuantity: 45,
-        images: ['https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80'],
+        stockQuantity: 0,
+        images: [],
         description: 'Táo Envy nhập khẩu trực tiếp từ Mỹ, giòn ngọt đậm đà, đóng hộp sang trọng phục vụ cư dân.',
         isAvailable: true,
-        soldCount: 142
+        soldCount: 0
       },
       {
         id: 'p-102',
@@ -62,11 +62,11 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         price: 390000,
         originalPrice: 450000,
         unit: 'chùm',
-        stockQuantity: 18,
-        images: ['https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=600&q=80'],
+        stockQuantity: 0,
+        images: [],
         description: 'Nho Mẫu Đơn giòn ngọt ngào thơm mùi sữa, trái to tròn mọng nước, giao tận giường cư dân.',
         isAvailable: true,
-        soldCount: 89
+        soldCount: 0
       },
       {
         id: 'p-103',
@@ -77,11 +77,11 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         category: 'Rau Củ Tươi Sạch',
         price: 125000,
         unit: 'túi 3kg',
-        stockQuantity: 30,
-        images: ['https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80'],
+        stockQuantity: 0,
+        images: [],
         description: 'Bao gồm Cải kale, Cà chua cherry, Dưa leo baby, Ớt chuông đà lạt trồng chuẩn VietGAP.',
         isAvailable: true,
-        soldCount: 210
+        soldCount: 0
       }
     ]
   },
@@ -93,8 +93,8 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
     ownerZalo: '0988112233',
     storeName: 'Nội Thất & Thiết Bị Điện Thông Minh Bùi Gia - Chà Là 1',
     slug: 'bui-gia-noi-that-smart-home',
-    logoUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80',
-    bannerUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
+    logoUrl: '',
+    bannerUrl: '',
     category: 'Nội Thất & Thi Công',
     project: 'ocean-park-2',
     subdivision: 'Chà Là 1',
@@ -102,8 +102,8 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
     description: 'Tư vấn, thiết kế, thi công nội thất trọn gói biệt thự, shophouse và căn hộ Vinhomes. Phân phối khóa cửa vân tay, đèn LED cảm ứng Smart Home kết nối ứng dụng.',
     operatingHours: '08:00 - 19:00',
     verified: true,
-    rating: 5.0,
-    reviewCount: 52,
+    rating: 0,
+    reviewCount: 0,
     createdAt: '2026-02-10',
     lat: 20.9568,
     lng: 105.9721,
@@ -130,11 +130,11 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         price: 4850000,
         originalPrice: 5500000,
         unit: 'bộ',
-        stockQuantity: 12,
-        images: ['https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&q=80'],
+        stockQuantity: 0,
+        images: [],
         description: 'Mở cửa bằng Nhận diện khuôn mặt 3D, Vân tay FPO, Thẻ từ & App thoại. Hỗ trợ miến phí công lắp đặt tại Vinhomes.',
         isAvailable: true,
-        soldCount: 45
+        soldCount: 0
       },
       {
         id: 'p-202',
@@ -146,11 +146,11 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
         price: 12500000,
         originalPrice: 15000000,
         unit: 'gói trọn gói',
-        stockQuantity: 5,
-        images: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80'],
+        stockQuantity: 0,
+        images: [],
         description: 'Trọn gói vật tư & thi công hệ thống đèn ray nam châm đổi màu 3 chế độ theo tâm trạng cho căn hộ Vinhomes.',
         isAvailable: true,
-        soldCount: 19
+        soldCount: 0
       }
     ]
   },
@@ -162,8 +162,8 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
     ownerZalo: '0977112233',
     storeName: 'Tiệm Giặt Sấy Lấy Ngay Phương Clean - S1.05',
     slug: 'tiem-giat-say-phuong-clean',
-    logoUrl: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=400&q=80',
-    bannerUrl: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=1200&q=80',
+    logoUrl: '',
+    bannerUrl: '',
     category: 'Giặt Là & Chăm Sóc Nhà',
     project: 'ocean-park-1',
     subdivision: 'S1.05',
@@ -171,8 +171,8 @@ export const INITIAL_USER_STOREFRONTS: UserStorefront[] = [
     description: 'Giặt hấp cao cấp, giặt sấy diệt khuẩn thơm tho, giặt rèm thảm tận nhà. Đang gửi hồ sơ đăng ký định danh KYC.',
     operatingHours: '07:30 - 21:00',
     verified: false,
-    rating: 4.8,
-    reviewCount: 12,
+    rating: 0,
+    reviewCount: 0,
     createdAt: '2026-08-01',
     products: []
   }

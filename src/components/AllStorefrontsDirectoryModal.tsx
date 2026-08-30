@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   X, Store, Search, Filter, Star, Phone, MessageSquare, MapPin, 
@@ -146,7 +146,7 @@ export const AllStorefrontsDirectoryModal: React.FC<AllStorefrontsDirectoryModal
                   {/* Banner / Header image */}
                   <div className="h-28 rounded-2xl overflow-hidden relative mb-3 bg-slate-100 dark:bg-slate-900">
                     <img loading="lazy"
-                      src={st.bannerUrl || st.logoUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80'}
+                      src={st.bannerUrl || st.logoUrl || ''}
                       alt={st.storeName}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />

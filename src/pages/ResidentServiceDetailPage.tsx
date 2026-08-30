@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   Wrench, Phone, MessageCircle, Star, BadgeCheck, ShieldCheck, 
@@ -90,7 +90,7 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
       <SEOHead
         title={`${service.title} - Dịch Vụ Cư Dân Vinhomes`}
         description={`${service.title}. Đơn vị: ${service.providerName}. Báo giá: ${service.priceDisplay}. Hotline: ${service.providerPhone}. ${service.description?.substring(0, 120)}`}
-        image={service.images && service.images[0] ? service.images[0] : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80'}
+        image={service.images && service.images[0] ? service.images[0] : ''}
         url={shareUrl}
         keywords={`${service.title}, dịch vụ vinhomes, thợ sửa chữa, ${service.categoryId}`}
       />
@@ -127,7 +127,7 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
               
               <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-950 relative">
                 <img loading="lazy"
-                  src={service.images && service.images[0] ? service.images[0] : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80'}
+                  src={service.images && service.images[0] ? service.images[0] : ''}
                   alt={service.title}
                   className="w-full h-full object-cover"
                 />

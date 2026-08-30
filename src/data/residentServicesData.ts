@@ -355,12 +355,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0988345890',
     address: 'Chà Là 6-12, Vinhomes Ocean Park 2',
     priceDisplay: 'Báo giá trực tiếp theo công trình (Khảo sát Miễn Phí)',
-    rating: 5.0,
-    reviewCount: 42,
-    images: [
-      'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Chuyên tư vấn, thiết kế và thi công lắp đặt thang máy gia đình Kính Homelift, thang máy tải khách cho Shophouse và Biệt thự tại Ocean Park 1, 2, 3 và Smart City. Đội ngũ kỹ sư Cư dân bảo trì 24/7 trong 15 phút!',
     verified: true,
     legalCommitmentAccepted: true,
@@ -376,7 +373,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
         id: 'doc-101',
         docType: 'Chứng chỉ Kiểm định Thử tải Thang máy Gia đình',
         docName: 'KiemDinhThangMay_GlassLift2026.pdf',
-        fileUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80',
+        fileUrl: '',
         status: 'approved',
         uploadedAt: '2026-07-15',
         note: 'Đã kiểm tra tem kiểm định an toàn đợt 1/2026 còn hiệu lực.'
@@ -385,7 +382,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
         id: 'doc-102',
         docType: 'Giấy phép ĐKKD Công ty Thang máy Thăng Long',
         docName: 'DKKD_ThangMayThangLong.png',
-        fileUrl: 'https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=800&q=80',
+        fileUrl: '',
         status: 'approved',
         uploadedAt: '2026-07-15'
       }
@@ -403,12 +400,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0972112334',
     address: 'Tòa S2.12, Vinhomes Ocean Park 1',
     priceDisplay: 'Khảo sát tận nhà từ 50.000đ',
-    rating: 4.9,
-    reviewCount: 118,
-    images: [
-      'https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Xử lý nhanh sự cố chập điện, rò rỉ nước, sửa máy tính, laptop không lên nguồn, cài Win, thi công Wi-Fi Mesh sóng khỏe toàn biệt thự/căn hộ. Có mặt sau 10 phút gọi.',
     verified: true,
     legalCommitmentAccepted: true,
@@ -420,7 +414,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
         id: 'doc-201',
         docType: 'Bằng Tốt Nghiệp Kỹ Sư Điện - CNTT ĐH Bách Khoa Hà Nội',
         docName: 'BangDaiHoc_BachKhoa_LeAnhTuan.jpg',
-        fileUrl: 'https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=800&q=80',
+        fileUrl: '',
         status: 'approved',
         uploadedAt: '2026-07-20'
       }
@@ -438,12 +432,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0903666123',
     address: 'S7.02 Vinhomes Grand Park, TP. Thủ Đức',
     priceDisplay: 'Suất cơm từ 45.000đ',
-    rating: 4.9,
-    reviewCount: 210,
-    images: [
-      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Bếp ăn cư dân chuẩn vị cơm nhà nấu, thực phẩm tươi sạch mua trong ngày, không mì chính. Đặt cơm trưa công văn, cơm tối gia đình ship tận cửa phòng!',
     verified: true,
     legalCommitmentAccepted: true,
@@ -456,7 +447,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
         id: 'doc-501',
         docType: 'Giấy Chứng Nhận Cơ Sở Đủ Điều Kiện An Toàn Vệ Sinh Thực Phẩm',
         docName: 'Giay_ATVSTP_BepChimai.jpg',
-        fileUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+        fileUrl: '',
         status: 'approved',
         uploadedAt: '2026-07-25',
         note: 'Cấp bởi Chi cục An toàn Vệ sinh Thực phẩm TP.HCM.'
@@ -475,12 +466,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0915223445',
     address: 'P1208, Tòa S1.08 Ocean Park 1',
     priceDisplay: 'Khám tại nhà từ 300.000đ',
-    rating: 5.0,
-    reviewCount: 19,
-    images: [
-      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Dịch vụ bác sĩ gia đình khám sức khỏe tận nơi, xét nghiệm máu tại nhà, truyền dịch y tế theo chỉ định bác sĩ, chăm sóc vết thương sau phẫu thuật.',
     verified: false,
     legalCommitmentAccepted: true,
@@ -493,7 +481,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
         id: 'doc-901',
         docType: 'Chứng chỉ Hành nghề Khám Bệnh, Chữa Bệnh Y Tế do Bộ Y Tế Cấp',
         docName: 'ChungChiHanhNghe_BS_NguyenHoangLam.pdf',
-        fileUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
+        fileUrl: '',
         status: 'pending',
         uploadedAt: '2026-08-01',
         note: 'Đang chờ Ban Quản Trị đối soát thông tin trên Cổng Thông tin Bộ Y Tế.'
@@ -502,7 +490,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
         id: 'doc-902',
         docType: 'CCCD Bác Sĩ Cư Dân Chính Chủ',
         docName: 'CCCD_NguyenHoangLam.png',
-        fileUrl: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80',
+        fileUrl: '',
         status: 'pending',
         uploadedAt: '2026-08-01'
       }
@@ -520,12 +508,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0912668999',
     address: 'Sảnh S2.01 Vinhomes Ocean Park 1',
     priceDisplay: 'Từ 20.000đ/lượt nội khu',
-    rating: 5.0,
-    reviewCount: 112,
-    images: [
-      'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Dịch vụ VẬN TẢI NỘI KHU chuyên nghiệp: Đưa đón con trẻ đi học Vinschool, đưa đón ông bà đi dạo/bể bơi/Vincom, di chuyển giữa các phân khu Ocean Park 1, 2, 3 & Smart City. Xe điện êm ái, an toàn 100%.',
     verified: true,
     legalCommitmentAccepted: true,
@@ -545,11 +530,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0988345890',
     address: 'S2.05 Vinhomes Smart City',
     priceDisplay: 'Từ 100.000đ/chuyến chuyển đồ',
-    rating: 4.9,
-    reviewCount: 78,
-    images: [
-      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Chuyên chở đồ đạc cồng kềnh, chuyển đồ chuyển nhà giữa các tòa nhà nội khu Vinhomes. Hỗ trợ bốc xếp tận phòng, cẩn thận, không trầy xước thang máy.',
     verified: true,
     legalCommitmentAccepted: true,
@@ -569,11 +552,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0966888999',
     address: 'Sảnh Tonkin 1, Vinhomes Smart City',
     priceDisplay: 'Trọn gói Sân bay 350.000đ',
-    rating: 4.9,
-    reviewCount: 32,
-    images: [
-      'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'VẬN TẢI NGOẠI KHU: Chuyên phục vụ các chuyến đưa đón VIP bằng xe điện 7 chỗ VF9 rộng rãi sang trọng đi Sân bay Nội Bài, đi tỉnh, sân golf. Đặt lịch trước có ngay xe.',
     verified: false,
     legalCommitmentAccepted: true,
@@ -586,7 +567,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
         id: 'doc-1001',
         docType: 'Giấy Phép Lái Xe Hạng B2 Chính Chủ',
         docName: 'GPLX_B2_DoQuocKhanh.jpg',
-        fileUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
+        fileUrl: '',
         status: 'pending',
         uploadedAt: '2026-08-01'
       },
@@ -594,7 +575,7 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
         id: 'doc-1002',
         docType: 'Giấy Đăng Ký Xe &Tem Đăng Kiểm Xe VF9',
         docName: 'Cavet_DangKiem_VF9.jpg',
-        fileUrl: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80',
+        fileUrl: '',
         status: 'pending',
         uploadedAt: '2026-08-01'
       }
@@ -612,12 +593,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0868999234',
     address: 'S3.03 Vinhomes Smart City',
     priceDisplay: 'Nội Bài giá trọn gói 250.000đ',
-    rating: 5.0,
-    reviewCount: 95,
-    images: [
-      'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'VẬN TẢI NGOẠI KHU 24/7: Phục vụ cư dân đưa đón Sân bay Nội Bài, tiện chuyến đi tỉnh Quảng Ninh, Hải Phòng, Nam Định, Ninh Bình, Thanh Hóa. Xe điện VF8 êm ái, lịch sự, đúng giờ.',
     verified: true,
     legalCommitmentAccepted: true,
@@ -637,12 +615,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0912888777',
     address: 'Thời Đại 3-45, Vinhomes Ocean Park 3',
     priceDisplay: 'Từ 15.000đ/kg (Giao nhận tận cửa)',
-    rating: 4.8,
-    reviewCount: 64,
-    images: [
-      'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Giặt sấy quần áo lấy ngay trong 2 giờ, giặt rèm cửa, đệm cao su, sofa tại nhà. Sử dụng nước giặt hữu cơ lưu hương nhập khẩu, không hư hại vải.',
     verified: true,
     legalCommitmentAccepted: true,
@@ -662,12 +637,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0989445667',
     address: 'Cọ Xanh 12-88, Vinhomes Ocean Park 2',
     priceDisplay: 'Combo gội dưỡng sinh từ 99.000đ',
-    rating: 5.0,
-    reviewCount: 88,
-    images: [
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Dịch vụ gội đầu dưỡng sinh canh thuốc Bắc, massage cổ vai gáy giảm căng thẳng, chăm sóc da mặt chuyên sâu. Giảm 20% cho cư dân đăng ký trước!',
     verified: true,
     legalCommitmentAccepted: true,
@@ -687,12 +659,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0987555222',
     address: 'Phân khu Vịnh Thiên Đường, Vinhomes Ocean Park 3',
     priceDisplay: 'Thuê theo giờ 200k/2h - Theo ngày 650k/đêm',
-    rating: 4.9,
-    reviewCount: 150,
-    images: [
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Homestay thiết kế phong cách Santorini hiện đại, đầy đủ bếp nấu, chiếu phim Netflix 4K, view công viên nước và biển hồ bơi 4 mùa. Tự do check-in 24/7.',
     verified: true,
     legalCommitmentAccepted: true,
@@ -712,12 +681,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0977555888',
     address: 'Khu Đô Thị Hạ Long Xanh, Quảng Ninh',
     priceDisplay: 'Miễn phí 100% bản vẽ thiết kế 3D',
-    rating: 5.0,
-    reviewCount: 35,
-    images: [
-      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Xưởng sản xuất trực tiếp nội thất gỗ An Cường, cải tạo biệt thự, shophouse thương mại, vách thạch cao, sơn bả trọn gói bảo hành 5 năm.',
     verified: true,
     legalCommitmentAccepted: true,
@@ -737,12 +703,9 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
     providerZalo: 'https://zalo.me/0938222333',
     address: 'Sao Biển 1-89, Vinhomes Ocean Park 2',
     priceDisplay: 'Khảo sát & Lập dự toán miễn phí tận nơi',
-    rating: 5.0,
-    reviewCount: 68,
-    images: [
-      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80'
-    ],
+    rating: 0,
+    reviewCount: 0,
+    images: [],
     description: 'Tổng thầu thi công xây lắp trọn gói: Đập phá mở rộng không gian, đổ sàn bê tông, xây tường, trát sơn, thi công chống thấm hố thang máy, hoàn thiện kiến trúc & kết cấu biệt thự, shophouse cam kết bảo hành kết cấu 10 năm.',
     verified: true,
     legalCommitmentAccepted: true,

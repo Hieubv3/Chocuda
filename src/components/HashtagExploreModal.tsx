@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   X, Hash, Search, Building2, Wrench, Briefcase, FileText, 
@@ -253,7 +253,7 @@ export const HashtagExploreModal: React.FC<HashtagExploreModalProps> = ({
                         className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 transition cursor-pointer flex gap-3 group"
                       >
                         <img loading="lazy"
-                          src={p.images[0] || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80'}
+                          src={p.images[0] || ''}
                           alt={p.title}
                           className="w-20 h-20 rounded-xl object-cover shrink-0"
                         />
@@ -291,7 +291,7 @@ export const HashtagExploreModal: React.FC<HashtagExploreModalProps> = ({
                         className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-amber-50 dark:hover:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 transition cursor-pointer flex gap-3 group"
                       >
                         <img loading="lazy"
-                          src={s.images?.[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=600&q=80'}
+                          src={s.images?.[0] || ''}
                           alt={s.title}
                           className="w-20 h-20 rounded-xl object-cover shrink-0"
                         />
@@ -364,7 +364,7 @@ export const HashtagExploreModal: React.FC<HashtagExploreModalProps> = ({
                         className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-purple-50 dark:hover:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 transition cursor-pointer flex gap-3 group"
                       >
                         <img loading="lazy"
-                          src={n.imageUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80'}
+                          src={n.imageUrl || ''}
                           alt={n.title}
                           className="w-20 h-20 rounded-xl object-cover shrink-0"
                         />

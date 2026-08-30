@@ -33,7 +33,7 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
 }) => {
   const [balance, setBalance] = useState<number>(user.balance || 0);
   const [affiliatePoints, setAffiliatePoints] = useState<number>(user.affiliatePoints || 0);
-  const [upTinCredits, setUpTinCredits] = useState<number>(user.upTinCredits || 10);
+  const [upTinCredits, setUpTinCredits] = useState<number>(user.upTinCredits || 0);
   const [socialPoints, setSocialPoints] = useState<number>(user.socialPoints || 0);
   const [tier, setTier] = useState<UserTier>(user.tier || 'thuong');
   const [reason, setReason] = useState<string>('Trợ giá đăng tin tuyển dụng & Gian hàng Cư Dân');
@@ -346,7 +346,7 @@ export const AdminCreditInjectorModal: React.FC<AdminCreditInjectorModalProps> =
                 3. LƯỢT UP TIN ĐẨY TOP KHẢ DỤNG
               </label>
               <span className="text-[11px] text-amber-700 dark:text-amber-400 font-bold">
-                Hiện tại: {user.upTinCredits || 10} lượt
+                Hiện tại: {user.upTinCredits || 0} lượt
               </span>
             </div>
 

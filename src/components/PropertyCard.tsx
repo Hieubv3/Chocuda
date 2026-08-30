@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Heart, Scale, MapPin, Bed, Bath, Compass, ShieldCheck, Phone, MessageCircle, Zap, Crown, Sparkles, Share2 } from 'lucide-react';
 import { Property, Language } from '../types';
 import { getTranslation } from '../lib/i18n';
@@ -73,7 +73,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           onClick={() => onSelect(property)}
         >
           <img
-            src={property.images[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'}
+            src={property.images[0] || ''}
             alt={property.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
@@ -236,7 +236,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       {/* Image Thumbnail & Badges */}
       <div className="relative aspect-[16/10] overflow-hidden bg-slate-100 dark:bg-slate-900 cursor-pointer" onClick={() => onSelect(property)}>
         <img
-          src={property.images[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'}
+          src={property.images[0] || ''}
           alt={property.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"

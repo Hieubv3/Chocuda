@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, Send, Bell, BellOff, Volume2, VolumeX, MessageSquare, Phone, 
   Store, ShoppingBag, CheckCheck, Sparkles, Image as ImageIcon, ShieldCheck, MapPin
@@ -166,7 +166,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
           <div className="flex items-center gap-3 min-w-0">
             <div className="relative shrink-0">
               <img loading="lazy" 
-                src={store.logoUrl || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=150&q=80'} 
+                src={store.logoUrl || ''} 
                 alt={store.storeName}
                 className="w-11 h-11 rounded-2xl border border-amber-400 object-cover shadow-md"
               />
@@ -242,7 +242,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
           <div className="bg-amber-500/10 dark:bg-amber-500/15 border-b border-amber-500/30 p-2.5 px-4 flex items-center justify-between gap-3 text-xs shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
               <img loading="lazy" 
-                src={selectedProduct.images[0] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=150&q=80'} 
+                src={selectedProduct.images[0] || ''} 
                 alt={selectedProduct.name}
                 className="w-10 h-10 rounded-lg object-cover shrink-0 border border-amber-500/40"
               />

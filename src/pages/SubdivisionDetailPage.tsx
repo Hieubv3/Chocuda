@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Building2, MapPin, CheckCircle2, ChevronRight, Home, 
@@ -12,7 +12,7 @@ import { PropertyCard } from '../components/PropertyCard';
 import { ProjectFaqHub } from '../components/ProjectFaqHub';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { SUBDIVISION_SEO_DATA, SubdivisionSEOInfo } from '../data/subdivisionData';
-import { getProjectIdFromSlug, getProjectSlug } from '../lib/slugs';
+import { getProjectIdFromSlug, getProjectSlug, getPropertyDetailUrl } from '../lib/slugs';
 
 interface SubdivisionDetailPageProps {
   projects: Project[];
@@ -94,8 +94,7 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
         'Tiềm năng gia tăng giá trị bền vững và thanh khoản chuyển nhượng cao'
       ],
       images: [
-        project?.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'
+        project?.image || ''
       ]
     };
   }, [subdivisionSlug, project]);
@@ -135,7 +134,7 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
       <SEOHead
         title={`${subdivision.name} - ${subdivision.projectName} | Sơ Đồ & Quỹ Căn Giá Gốc`}
         description={`${subdivision.name} thuộc ${subdivision.projectName}. Quy mô: ${subdivision.scaleArea}. Số lượng: ${subdivision.totalUnits}. ${subdivision.description.substring(0, 160)}`}
-        image={subdivision.images[0] || project?.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80'}
+        image={subdivision.images[0] || project?.image || ''}
         url={shareUrl}
         keywords={`${subdivision.name}, ${subdivision.projectName}, bán căn hộ ${subdivision.name}, liền kề ${subdivision.name}, shophouse ${subdivision.name}`}
       />
@@ -458,7 +457,7 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
                   key={p.id}
                   property={p}
                   language={language}
-                  onSelect={(selected) => navigate(`/${getProjectSlug(selected.project)}/${selected.id}`)}
+                  onSelect={(selected) => navigate(getPropertyDetailUrl(selected))}
                   isSaved={savedIds.includes(p.id)}
                   onToggleSave={onToggleSave}
                   isCompared={compareIds.includes(p.id)}

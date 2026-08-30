@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   X, ShoppingBag, Search, CheckCircle2, Phone, MessageSquare, MapPin, 
   Sparkles, Star, Plus, Minus, Trash2, ArrowRight, ShieldCheck, Clock,
@@ -51,7 +51,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
   const [prodPrice, setProdPrice] = useState<number>(50000);
   const [prodUnit, setProdUnit] = useState<string>('suất');
   const [prodStock, setProdStock] = useState<number>(20);
-  const [prodImage, setProdImage] = useState<string>('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80');
+  const [prodImage, setProdImage] = useState<string>('');
   const [prodDesc, setProdDesc] = useState<string>('');
   const [isSavingProduct, setIsSavingProduct] = useState<boolean>(false);
   
@@ -114,7 +114,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
     setProdPrice(45000);
     setProdUnit('suất');
     setProdStock(25);
-    setProdImage('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80');
+    setProdImage('');
     setProdDesc('');
     setShowProductModal(true);
   };
@@ -126,7 +126,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
     setProdPrice(p.price);
     setProdUnit(p.unit || 'suất');
     setProdStock(p.stockQuantity);
-    setProdImage(p.images[0] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80');
+    setProdImage(p.images[0] || '');
     setProdDesc(p.description || '');
     setShowProductModal(true);
   };
@@ -324,7 +324,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
         {/* Store Banner & Header */}
         <div className="relative h-44 sm:h-56 bg-slate-800 shrink-0 overflow-hidden">
           <img loading="lazy" 
-            src={storeState.bannerUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80'} 
+            src={storeState.bannerUrl || ''} 
             alt={storeState.storeName}
             className="w-full h-full object-cover opacity-85"
           />
@@ -333,7 +333,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
           <div className="absolute bottom-4 left-4 right-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
             <div className="flex items-center gap-3.5">
               <img loading="lazy" 
-                src={storeState.logoUrl || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=200&q=80'} 
+                src={storeState.logoUrl || ''} 
                 alt={storeState.storeName}
                 className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-2 border-amber-400 shadow-xl object-cover shrink-0"
               />
@@ -513,7 +513,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
                 <div className="flex gap-3">
                   <img loading="lazy" 
-                    src={product.images[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80'} 
+                    src={product.images[0] || ''} 
                     alt={product.name}
                     className="w-24 h-24 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700"
                   />

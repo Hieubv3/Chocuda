@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Building2, MapPin, CheckCircle2, ChevronRight, Home, 
@@ -85,7 +85,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
           'Sân thể thao đa năng, công viên trẻ em & khu nướng BBQ',
           'Kết nối giao thông trục chính nội khu siêu tốc'
         ],
-        images: [project.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80']
+        images: [project.image || '']
       };
     } else {
       const subObj = subItem as any;
@@ -123,7 +123,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       <SEOHead
         title={`${projectName} - Sơ Đồ Quy Hoạch & Quỹ Căn Giá Gốc`}
         description={`${projectName}. Vị trí: ${project.location}. Quy mô: ${project.areaSize || 'Quy mô lớn'}. Khám phá sơ đồ phân khu, quỹ căn biệt thự shophouse, giá bán chuyển nhượng tốt nhất.`}
-        image={project.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'}
+        image={project.image || ''}
         url={shareUrl}
         keywords={`dự án ${projectName}, sơ đồ ${projectName}, quỹ căn ${project.id}, shophouse vinhomes`}
       />
@@ -364,7 +364,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
                 key={p.id}
                 property={p}
                 language={language}
-                onSelect={(selected) => navigate(`/${getProjectSlug(selected.project)}/${selected.id}`)}
+                onSelect={(selected) => navigate(getPropertyDetailUrl(selected))}
                 isSaved={savedIds.includes(p.id)}
                 onToggleSave={onToggleSave}
                 isCompared={compareIds.includes(p.id)}

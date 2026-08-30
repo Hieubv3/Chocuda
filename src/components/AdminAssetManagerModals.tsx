@@ -488,20 +488,16 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
       id: `du-an-${Date.now()}` as any,
       title: '',
       name: '',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
-      masterplanUrl: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
-      location: 'Hà Nội / TP.HCM / Quảng Ninh',
-      areaSize: '450 ha',
-      totalUnits: '12,000 căn',
-      priceRange: '3.5 tỷ - 28 tỷ',
+      image: '',
+      masterplanUrl: '',
+      location: '',
+      areaSize: '',
+      totalUnits: '',
+      priceRange: '',
       status: 'Đang Mở Bán & Bàn Giao',
-      description: 'Dự án đại đô thị với hạ tầng hiện đại, hệ thống tiện ích đẳng cấp và tiềm năng tăng giá bền vững.',
-      subdivisions: [
-        { name: 'Phân Khu Trung Tâm', totalUnits: '2,500 căn', highlights: 'Vị trí đắc địa kề công viên', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80' }
-      ],
-      amenities: [
-        { title: 'Công Viên Trung Tâm', image: 'https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=800&q=80' }
-      ]
+      description: '',
+      subdivisions: [],
+      amenities: []
     }
   );
 
@@ -740,9 +736,9 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
       content: '',
       category: 'vinhomes',
       author: 'Nhà đẹp Vinhomes - 0868.499.929',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
+      image: '',
       publishedAt: new Date().toISOString().split('T')[0],
-      views: 120,
+      views: 0,
       source: 'manual',
       status: 'published'
     }

@@ -28,6 +28,7 @@ import { ResidentStoreDetailPage } from './pages/ResidentStoreDetailPage';
 import { ResidentProductDetailPage } from './pages/ResidentProductDetailPage';
 import { SitemapDirectoryPage } from './pages/SitemapDirectoryPage';
 import { AuthCallbackPage } from './pages/AuthCallbackPage';
+import { getNewsDetailUrl, getPropertyDetailUrl } from './lib/slugs';
 import { CommunityGroupsPage } from './pages/CommunityGroupsPage';
 import { MortgageCalculatorPage } from './pages/MortgageCalculatorPage';
 import { RecruitmentCenterPage } from './components/RecruitmentCenterPage';
@@ -85,7 +86,7 @@ export const App: React.FC = () => {
       name: raw.name || (raw.email ? raw.email.split('@')[0] : 'Cư Dân Vinhomes'),
       email: raw.email || 'cudan@chocudan24h.com',
       role: raw.role || 'visitor',
-      upTinCredits: typeof raw.upTinCredits === 'number' ? raw.upTinCredits : 20,
+      upTinCredits: typeof raw.upTinCredits === 'number' ? raw.upTinCredits : 0,
       tier: raw.tier || 'thuong',
       balance: raw.balance || 0
     };
@@ -803,7 +804,7 @@ export const App: React.FC = () => {
                 properties={properties.filter(p => p.approved || p.status === 'approved')}
                 news={news}
                 setCurrentTab={handleTabSwitch}
-                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                onSelectProperty={(prop) => navigate(getPropertyDetailUrl(prop))}
                 savedIds={savedIds}
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
@@ -824,7 +825,7 @@ export const App: React.FC = () => {
                 projects={projects}
                 properties={properties}
                 language={language}
-                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                onSelectProperty={(prop) => navigate(getPropertyDetailUrl(prop))}
                 savedIds={savedIds}
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
@@ -915,7 +916,7 @@ export const App: React.FC = () => {
                 properties={properties}
                 projects={projects}
                 language={language}
-                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                onSelectProperty={(prop) => navigate(getPropertyDetailUrl(prop))}
                 savedIds={savedIds}
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
@@ -933,7 +934,7 @@ export const App: React.FC = () => {
                 properties={properties}
                 projects={projects}
                 language={language}
-                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                onSelectProperty={(prop) => navigate(getPropertyDetailUrl(prop))}
                 savedIds={savedIds}
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
@@ -951,7 +952,7 @@ export const App: React.FC = () => {
                 properties={properties}
                 projects={projects}
                 language={language}
-                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                onSelectProperty={(prop) => navigate(getPropertyDetailUrl(prop))}
                 savedIds={savedIds}
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
@@ -969,7 +970,7 @@ export const App: React.FC = () => {
                 properties={properties}
                 projects={projects}
                 language={language}
-                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                onSelectProperty={(prop) => navigate(getPropertyDetailUrl(prop))}
                 savedIds={savedIds}
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
@@ -987,7 +988,7 @@ export const App: React.FC = () => {
                 properties={properties}
                 projects={projects}
                 language={language}
-                onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                onSelectProperty={(prop) => navigate(getPropertyDetailUrl(prop))}
                 savedIds={savedIds}
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
@@ -1072,7 +1073,7 @@ export const App: React.FC = () => {
               <NewsPage
                 news={news}
                 language={language}
-                onSelectArticle={(art) => navigate(`/tin-tuc/${art.category || 'chung'}/${art.id}`)}
+                onSelectArticle={(art) => navigate(getNewsDetailUrl(art))}
               />
             }
           />
@@ -1082,7 +1083,7 @@ export const App: React.FC = () => {
               <NewsPage
                 news={news}
                 language={language}
-                onSelectArticle={(art) => navigate(`/tin-tuc/${art.category || 'chung'}/${art.id}`)}
+                onSelectArticle={(art) => navigate(getNewsDetailUrl(art))}
               />
             }
           />
@@ -1539,7 +1540,7 @@ export const App: React.FC = () => {
                   onDeleteProperty={handleDeleteProperty}
                   onOpenPostProperty={() => navigate('/dang-tin')}
                   onPostNewProperty={() => navigate('/dang-tin')}
-                  onSelectProperty={(prop) => navigate(`/${getProjectSlug(prop.project)}/${prop.id}`)}
+                  onSelectProperty={(prop) => navigate(getPropertyDetailUrl(prop))}
                   onOpenAiWriter={() => setAiWriterModalOpen(true)}
                   onRefreshData={refreshServerData}
                   onLogout={() => {
@@ -1678,7 +1679,7 @@ export const App: React.FC = () => {
           onRemove={(id) => setCompareIds(prev => prev.filter(i => i !== id))}
           onSelectProperty={(p) => {
             setCompareModalOpen(false);
-            navigate(`/${getProjectSlug(p.project)}/${p.id}`);
+            navigate(getPropertyDetailUrl(p));
           }}
         />
       )}

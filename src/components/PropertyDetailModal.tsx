@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { X, MapPin, Bed, Bath, Compass, ShieldCheck, Phone, MessageCircle, Calendar, Share2, Calculator, CheckCircle2 } from 'lucide-react';
 import { Property, Language } from '../types';
 import { getTranslation } from '../lib/i18n';
@@ -236,7 +236,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             </h3>
             <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-48 bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-center p-4">
               <img loading="lazy"
-                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80"
+                src=""
                 alt="Bản đồ vị trí"
                 className="absolute inset-0 w-full h-full object-cover opacity-40"
               />

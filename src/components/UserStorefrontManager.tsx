@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   Store, RefreshCw, CheckCircle2, AlertCircle, Plus, Edit2, Trash2, 
   ExternalLink, ShoppingBag, Eye, Phone, MessageSquare, MapPin, Sparkles, 
@@ -32,8 +32,8 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
   const [ownerZalo, setOwnerZalo] = useState<string>(user.phone || '');
   const [description, setDescription] = useState<string>('');
   const [operatingHours, setOperatingHours] = useState<string>('08:00 - 21:00 hàng ngày');
-  const [logoUrl, setLogoUrl] = useState<string>('https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80');
-  const [bannerUrl, setBannerUrl] = useState<string>('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80');
+  const [logoUrl, setLogoUrl] = useState<string>('');
+  const [bannerUrl, setBannerUrl] = useState<string>('');
 
   // KiotViet config state
   const [kvStoreDomain, setKvStoreDomain] = useState<string>('cuahangvinhomes.kiotviet.vn');
@@ -52,13 +52,13 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
   const [newProdUnit, setNewProdUnit] = useState<string>('suất');
   const [newProdStock, setNewProdStock] = useState<number>(20);
   const [newProdCode, setNewProdCode] = useState<string>('');
-  const [newProdImage, setNewProdImage] = useState<string>('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80');
+  const [newProdImage, setNewProdImage] = useState<string>('');
   const [newProdDesc, setNewProdDesc] = useState<string>('');
 
   // Physical Photo Menu Digitizer & Admin Approval state
   const [showPhotoMenuModal, setShowPhotoMenuModal] = useState<boolean>(false);
   const [showAiScannerModal, setShowAiScannerModal] = useState<boolean>(false);
-  const [photoMenuUrl, setPhotoMenuUrl] = useState<string>('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80');
+  const [photoMenuUrl, setPhotoMenuUrl] = useState<string>('');
   const [isAnalyzingPhoto, setIsAnalyzingPhoto] = useState<boolean>(false);
   const [extractedDishes, setExtractedDishes] = useState<{ id: string; name: string; price: number; unit: string; category: string; status: 'pending' | 'approved' }[]>([
     { id: 'ocr-1', name: 'Cơm Sườn Nướng Mật Ong', price: 45000, unit: 'suất', category: 'Cơm Cư Dân', status: 'pending' },
@@ -93,9 +93,9 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
       category: item.category || category || 'Món Ăn & Đồ Uống',
       price: Number(item.price) || 50000,
       unit: item.unit || 'suất',
-      stockQuantity: 50,
+      stockQuantity: 0,
       images: [
-        item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'
+        item.image || ''
       ],
       description: item.description || `Món ngon niêm yết chính xác từ Menu: ${item.name} (${item.unit || 'suất'})`,
       isAvailable: true,
@@ -123,8 +123,8 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
       ownerPhone: ownerPhone || user.phone || '0868.499.929',
       ownerZalo: ownerZalo || user.phone || '0868.499.929',
       description: description || 'Gian hàng cư dân chất lượng cao, phục vụ nhanh chóng.',
-      rating: 5.0,
-      reviewCount: 1,
+      rating: 0,
+      reviewCount: 0,
       verified: isUserAdmin,
       products: updatedProducts,
       status: 'active',
@@ -364,7 +364,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
     setNewProdUnit('suất');
     setNewProdStock(20);
     setNewProdCode('');
-    setNewProdImage('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80');
+    setNewProdImage('');
     setNewProdDesc('');
     setShowAddProductModal(true);
   };
@@ -377,7 +377,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
     setNewProdUnit(prod.unit || 'suất');
     setNewProdStock(prod.stockQuantity);
     setNewProdCode(prod.code || '');
-    setNewProdImage(prod.images[0] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80');
+    setNewProdImage(prod.images[0] || '');
     setNewProdDesc(prod.description || '');
     setShowAddProductModal(true);
   };
@@ -903,7 +903,7 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
             >
               <div className="flex gap-3 items-center">
                 <img loading="lazy" 
-                  src={prod.images[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80'} 
+                  src={prod.images[0] || ''} 
                   alt={prod.name}
                   className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700"
                 />

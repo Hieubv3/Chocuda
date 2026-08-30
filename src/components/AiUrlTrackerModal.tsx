@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Globe, Sparkles, ShieldCheck, CheckCircle2, FileText, Send, AlertCircle, RefreshCw, Copy, ExternalLink, X, BookOpen, Layers } from 'lucide-react';
 import { NewsArticle } from '../types';
 
@@ -70,7 +70,7 @@ export const AiUrlTrackerModal: React.FC<AiUrlTrackerModalProps> = ({
       content: generatedArticle.content,
       category,
       author: 'AI Studio Engine (No-Copyright SEO)',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80',
+      image: '',
       publishedAt: new Date().toISOString().split('T')[0],
       source: 'ai_crawled',
       status: 'published'

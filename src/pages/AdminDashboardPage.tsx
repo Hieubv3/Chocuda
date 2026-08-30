@@ -1319,7 +1319,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       description: newSrvDesc,
       verified: false,
       kycStatus: 'pending',
-      kycBadgeType: '',
+      kycBadgeType: 'none',
       legalCommitmentAccepted: false,
       createdAt: editingService ? editingService.createdAt : new Date().toISOString().split('T')[0]
     };
@@ -1474,15 +1474,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setStoreProductForm({
       id: '',
       name: '',
-      code: `SKU-${Math.floor(Math.random() * 800) + 100}`,
-      category: 'Món Ăn & Đồ Uống',
-      price: 45000,
-      unit: 'suất',
-      stockQuantity: 50,
-      images: ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
-      description: 'Sản phẩm tươi ngon, chuẩn vị, phục vụ tận căn hộ cho cư dân.',
-      status: 'approved',
-      isAvailable: true
+      code: '',
+      category: '',
+      price: 0,
+      unit: '',
+      stockQuantity: 0,
+      images: [],
+      description: '',
+      status: 'pending',
+      isAvailable: false
     });
     setShowStoreProductModal(true);
   };
@@ -5996,7 +5996,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                         {/* Brief summary row */}
                         <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
-                          <span>📦 <b>{userPropertiesList.length}</b> BĐS • ⚡ <b>{u.upTinCredits || 10}</b> Lượt Up</span>
+                          <span>📦 <b>{userPropertiesList.length}</b> BĐS • ⚡ <b>{u.upTinCredits || 0}</b> Lượt Up</span>
                           <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
                             {(u.balance || 0).toLocaleString('vi-VN')} đ
                           </span>
@@ -6198,7 +6198,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             {/* UpTin Credits */}
                             <td className="py-3 px-3 text-center">
                               <div className="inline-flex items-center gap-1.5">
-                                <span className="font-black text-amber-500 text-xs">{u.upTinCredits || 10} lượt</span>
+                                <span className="font-black text-amber-500 text-xs">{u.upTinCredits || 0} lượt</span>
                                 <button
                                   onClick={() => setUserForCreditInjector(u)}
                                   className="p-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-lg transition text-[10px] shadow-xs"
@@ -7146,7 +7146,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     partnerName,
                     partnerCategory,
                     content,
-                    rating: 5,
+                    rating: 0,
                     authorName,
                     authorRoom,
                     youtubeUrl,

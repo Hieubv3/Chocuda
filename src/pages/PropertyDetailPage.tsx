@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   MapPin, Bed, Bath, Compass, ShieldCheck, Phone, MessageCircle, 
@@ -12,7 +12,7 @@ import { SocialShareModal } from '../components/SocialShareModal';
 import { MortgageCalculator } from '../components/MortgageCalculator';
 import { recordZaloInteraction } from '../lib/visitorStats';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
-import { getProjectSlug } from '../lib/slugs';
+import { getProjectSlug, extractIdFromSlug, getPropertyDetailUrl } from '../lib/slugs';
 import { PropertyCard } from '../components/PropertyCard';
 
 interface PropertyDetailPageProps {
@@ -36,7 +36,8 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
   const navigate = useNavigate();
   const t = getTranslation(language);
 
-  const cleanParamId = id ? decodeURIComponent(id).trim() : '';
+  // Hỗ trợ cả URL cũ (chỉ id) và URL mới ({titleSlug}-{id})
+  const cleanParamId = id ? extractIdFromSlug(id) : '';
 
   // Local state for fetched property if not present in initial array
   const [fetchedProperty, setFetchedProperty] = useState<Property | null>(null);
@@ -190,7 +191,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
       <SEOHead
         title={`${property.title} - ${property.priceDisplay}`}
         description={`${property.title}. Giá: ${property.priceDisplay}, Diện tích: ${property.area}m2, Vị trí: ${property.address}. Liên hệ chính chủ/môi giới: ${property.sellerPhone}`}
-        image={property.images[0] || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'}
+        image={property.images[0] || ''}
         url={shareUrl}
         keywords={`${property.title}, mua bán ${projectTitle}, bđs ${property.project}, biệt thự shophouse vinhomes`}
       />
@@ -583,7 +584,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                   key={p.id}
                   property={p}
                   language={language}
-                  onSelect={(selected) => navigate(getProjectSlug(selected.project) ? `/${getProjectSlug(selected.project)}/${selected.id}` : `/bat-dong-san/${selected.id}`)}
+                  onSelect={(selected) => navigate(getPropertyDetailUrl(selected))}
                   isSaved={savedIds.includes(p.id)}
                   onToggleSave={onToggleSave}
                   isCompared={compareIds.includes(p.id)}

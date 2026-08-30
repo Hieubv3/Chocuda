@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   Briefcase, Users, FileText, CheckCircle2, Clock, XCircle, 
   Trash2, Edit3, Plus, Search, Filter, Eye, Phone, Mail, 
@@ -57,16 +57,16 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
   const [jobFormData, setJobFormData] = useState({
     title: '',
     companyName: '',
-    companyLogo: 'https://images.unsplash.com/photo-1572021335469-31706a17aaef?w=200&auto=format&fit=crop&q=80',
-    industry: 'F&B - Nhà Hàng & Cafe',
+    companyLogo: '',
+    industry: '',
     project: 'ocean-park-2' as ProjectCategory,
     projectName: 'Vinhomes Ocean Park 2',
-    location: 'Phân khu Sao Biển, Vinhomes Ocean Park 2',
+    location: '',
     jobType: 'full-time' as any,
     salaryType: 'range' as any,
-    salaryDisplay: '10 - 15 Triệu/tháng',
-    minSalary: 10000000,
-    maxSalary: 15000000,
+    salaryDisplay: '',
+    minSalary: 0,
+    maxSalary: 0,
     experience: '1-3y' as any,
     experienceDisplay: '1 - 3 năm kinh nghiệm',
     description: '',
@@ -88,22 +88,22 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
   const [employerFormData, setEmployerFormData] = useState({
     companyName: '',
     brandName: '',
-    logoUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
-    bannerUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
-    tagline: 'Nhà tuyển dụng uy tín tại Vinhomes',
-    industry: 'Bất Động Sản & Môi Giới',
+    logoUrl: '',
+    bannerUrl: '',
+    tagline: '',
+    industry: '',
     project: 'ocean-park-2' as ProjectCategory,
     projectName: 'Vinhomes Ocean Park 2',
-    address: 'Shophouse San Hô, Vinhomes Ocean Park 2',
-    contactName: 'Ban Nhân Sự',
-    contactPhone: '0868499929',
-    contactZalo: '0868499929',
-    contactEmail: 'tuyendung@chocudan24h.com',
+    address: '',
+    contactName: '',
+    contactPhone: '',
+    contactZalo: '',
+    contactEmail: '',
     website: '',
     facebookUrl: '',
-    introduction: 'Doanh nghiệp uy tín hoạt động lâu năm tại các đại đô thị Vinhomes.',
-    scaleSize: '20 - 50 nhân sự',
-    verified: true
+    introduction: '',
+    scaleSize: '',
+    verified: false
   });
 
   // Candidate View / Edit Modal
@@ -113,18 +113,18 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
   const [candidateFormData, setCandidateFormData] = useState({
     fullName: '',
     targetJobTitle: '',
-    primaryIndustry: 'Bất Động Sản & Môi Giới',
-    birthYear: 1995,
+    primaryIndustry: '',
+    birthYear: 0,
     gender: 'male' as 'male' | 'female' | 'other',
     currentProject: 'ocean-park-2' as ProjectCategory,
     projectName: 'Vinhomes Ocean Park 2',
-    currentAddress: 'Phân khu Cọ Xanh, Vinhomes Ocean Park 2',
+    currentAddress: '',
     phone: '',
     zalo: '',
     email: '',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
-    expectedSalary: '15 - 25 Triệu/tháng',
-    yearsOfExp: 2,
+    avatarUrl: '',
+    expectedSalary: '',
+    yearsOfExp: 0,
     experienceLevel: 'experienced' as any,
     introduction: '',
     skillsText: 'Kỹ năng bán hàng, Tư vấn khách hàng, Giao tiếp tốt',
@@ -321,27 +321,27 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
     setJobFormData({
       title: '',
       companyName: '',
-      companyLogo: 'https://images.unsplash.com/photo-1572021335469-31706a17aaef?w=200&auto=format&fit=crop&q=80',
-      industry: 'F&B - Nhà Hàng & Cafe',
+      companyLogo: '',
+      industry: '',
       project: 'ocean-park-2',
       projectName: 'Vinhomes Ocean Park 2',
-      location: 'Vinhomes Ocean Park 2, Văn Giang, Hưng Yên',
+      location: '',
       jobType: 'full-time',
       salaryType: 'range',
-      salaryDisplay: '10 - 15 Triệu/tháng',
-      minSalary: 10000000,
-      maxSalary: 15000000,
+      salaryDisplay: '',
+      minSalary: 0,
+      maxSalary: 0,
       experience: '1-3y',
-      experienceDisplay: '1 - 3 năm kinh nghiệm',
-      description: 'Tuyển dụng nhân sự phục vụ chuỗi dịch vụ cư dân nội khu đô thị.',
-      requirements: ['Chăm chỉ, nhanh nhẹn, có trách nhiệm trong công việc', 'Ưu tiên cư dân sinh sống tại khu đô thị'],
-      benefits: ['Thu nhập cạnh tranh + Thưởng chuyên cần', 'Được đào tạo bài bản, môi trường thân thiện'],
-      contactName: 'Ban Quản Lý Tuyển Dụng',
-      contactPhone: '0868499929',
-      contactZalo: '0868499929',
-      contactEmail: 'tuyendung@chocudan24h.com',
-      status: 'active',
-      isVip: true,
+      experienceDisplay: '',
+      description: '',
+      requirements: [],
+      benefits: [],
+      contactName: '',
+      contactPhone: '',
+      contactZalo: '',
+      contactEmail: '',
+      status: 'pending',
+      isVip: false,
       isUrgent: false,
       deadline: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
     });
@@ -353,7 +353,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
     setJobFormData({
       title: job.title,
       companyName: job.companyName,
-      companyLogo: job.companyLogo || 'https://images.unsplash.com/photo-1572021335469-31706a17aaef?w=200&auto=format&fit=crop&q=80',
+      companyLogo: job.companyLogo || '',
       industry: job.industry,
       project: job.project as any,
       projectName: job.projectName || 'Vinhomes Ocean Park',
@@ -386,22 +386,22 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
     setEmployerFormData({
       companyName: '',
       brandName: '',
-      logoUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
-      bannerUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
-      tagline: 'Nhà tuyển dụng uy tín tại Vinhomes',
-      industry: 'Bất Động Sản & Môi Giới',
+      logoUrl: '',
+      bannerUrl: '',
+      tagline: '',
+      industry: '',
       project: 'ocean-park-2' as ProjectCategory,
       projectName: 'Vinhomes Ocean Park 2',
-      address: 'Shophouse San Hô, Vinhomes Ocean Park 2',
-      contactName: 'Ban Nhân Sự',
-      contactPhone: '0868499929',
-      contactZalo: '0868499929',
-      contactEmail: 'tuyendung@chocudan24h.com',
+      address: '',
+      contactName: '',
+      contactPhone: '',
+      contactZalo: '',
+      contactEmail: '',
       website: '',
       facebookUrl: '',
-      introduction: 'Doanh nghiệp uy tín hoạt động lâu năm tại các đại đô thị Vinhomes.',
-      scaleSize: '20 - 50 nhân sự',
-      verified: true
+      introduction: '',
+      scaleSize: '',
+      verified: false
     });
     setShowEmployerModal(true);
   };
@@ -594,21 +594,21 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
     setCandidateFormData({
       fullName: '',
       targetJobTitle: '',
-      primaryIndustry: 'Bất Động Sản & Môi Giới',
-      birthYear: 1995,
+      primaryIndustry: '',
+      birthYear: 0,
       gender: 'male',
       currentProject: 'ocean-park-2',
       projectName: 'Vinhomes Ocean Park 2',
-      currentAddress: 'Phân khu Cọ Xanh, Vinhomes Ocean Park 2',
+      currentAddress: '',
       phone: '',
       zalo: '',
       email: '',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
-      expectedSalary: '15 - 25 Triệu/tháng',
-      yearsOfExp: 2,
+      avatarUrl: '',
+      expectedSalary: '',
+      yearsOfExp: 0,
       experienceLevel: 'experienced',
-      introduction: 'Ứng viên năng động, nhiệt tình, có trách nhiệm cao trong công việc.',
-      skillsText: 'Kỹ năng bán hàng, Tư vấn khách hàng, Giao tiếp tốt',
+      introduction: '',
+      skillsText: '',
       isLookingForJob: true
     });
     setShowCandidateModal(true);
@@ -619,8 +619,8 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
     setCandidateFormData({
       fullName: cand.fullName || '',
       targetJobTitle: cand.targetJobTitle || '',
-      primaryIndustry: cand.primaryIndustry || 'Bất Động Sản & Môi Giới',
-      birthYear: cand.birthYear || 1995,
+      primaryIndustry: cand.primaryIndustry || '',
+      birthYear: cand.birthYear || 0,
       gender: cand.gender || 'male',
       currentProject: cand.currentProject || 'ocean-park-2',
       projectName: cand.projectName || 'Vinhomes Ocean Park 2',
@@ -628,9 +628,9 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
       phone: cand.phone || '',
       zalo: cand.zalo || cand.phone || '',
       email: cand.email || '',
-      avatarUrl: cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
-      expectedSalary: cand.expectedSalary || 'Thỏa thuận',
-      yearsOfExp: cand.yearsOfExp || 1,
+      avatarUrl: cand.avatarUrl || '',
+      expectedSalary: cand.expectedSalary || '',
+      yearsOfExp: cand.yearsOfExp || 0,
       experienceLevel: (cand.experienceLevel as any) || 'experienced',
       introduction: cand.introduction || '',
       skillsText: Array.isArray(cand.skills) ? cand.skills.join(', ') : '',
@@ -1461,7 +1461,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2.5 min-w-0 flex-1">
                         <img loading="lazy"
-                          src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
+                          src={cand.avatarUrl || ''}
                           alt={cand.fullName}
                           className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                         />
@@ -1646,7 +1646,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                           <td className="p-3.5">
                             <div className="flex items-center gap-3">
                               <img loading="lazy"
-                                src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
+                                src={cand.avatarUrl || ''}
                                 alt={cand.fullName}
                                 className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                               />
@@ -1882,7 +1882,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <img loading="lazy"
-                          src={emp.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&auto=format&fit=crop&q=80'}
+                          src={emp.logoUrl || ''}
                           alt={emp.companyName}
                           className="w-8 h-8 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white shrink-0"
                         />
@@ -2036,7 +2036,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                           <td className="p-3.5">
                             <div className="flex items-center gap-3">
                               <img loading="lazy"
-                                src={emp.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&auto=format&fit=crop&q=80'}
+                                src={emp.logoUrl || ''}
                                 alt={emp.companyName}
                                 className="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-white shrink-0"
                               />
@@ -4047,7 +4047,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
                 <img loading="lazy"
-                  src={selectedCandidate.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
+                  src={selectedCandidate.avatarUrl || ''}
                   alt={selectedCandidate.fullName}
                   className="w-12 h-12 rounded-full object-cover border-2 border-teal-500"
                 />

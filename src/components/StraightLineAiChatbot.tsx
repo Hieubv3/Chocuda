@@ -60,35 +60,13 @@ interface StraightLineAiChatbotProps {
   currentUser?: any;
 }
 
-const DEFAULT_FOOD_CATALOG: ChatOrderItem[] = [
-  { id: 'f-1', name: 'Cơm Sườn Nướng Mật Ong S2.12', price: 45000, priceDisplay: '45.000đ', unit: 'suất', category: 'Cơm & Món Chính', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=200&q=80' },
-  { id: 'f-2', name: 'Bún Bò Huế Chả Cua Cư Dân OCP2', price: 50000, priceDisplay: '50.000đ', unit: 'bát', category: 'Bún & Phở', image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=200&q=80' },
-  { id: 'f-3', name: 'Trà Sữa Trân Châu Đường Đen', price: 35000, priceDisplay: '35.000đ', unit: 'cốc', category: 'Cafe & Trà Sữa', image: 'https://images.unsplash.com/photo-1558857563-b371033873b8?auto=format&fit=crop&w=200&q=80' },
-  { id: 'f-4', name: 'Trà Đào Cam Sả Tươi Tự Nấu', price: 30000, priceDisplay: '30.000đ', unit: 'cốc', category: 'Cafe & Trà Sữa', image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=200&q=80' },
-  { id: 'f-5', name: 'Cà Phê Muối / Bạc Xỉu Kem Béo', price: 28000, priceDisplay: '28.000đ', unit: 'cốc', category: 'Cafe & Trà Sữa', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=200&q=80' },
-  { id: 'f-6', name: 'Pizza Hải Sản Phô Mai Tươi', price: 120000, priceDisplay: '120.000đ', unit: 'chiếc', category: 'Ăn Vặt & Pizza', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=200&q=80' }
-];
+const DEFAULT_FOOD_CATALOG: ChatOrderItem[] = [];
 
-const DEFAULT_GOODS_CATALOG: ChatOrderItem[] = [
-  { id: 'g-1', name: 'Gạo ST25 Sóc Trăng Thượng Hạng (Túi 5kg)', price: 185000, priceDisplay: '185.000đ', unit: 'bao 5kg', category: 'Thực Phẩm & Bách Hóa', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=200&q=80' },
-  { id: 'g-2', name: 'Trứng Gà Ta Thả Vườn Cư Dân (Vỉ 10 quả)', price: 45000, priceDisplay: '45.000đ', unit: 'vỉ', category: 'Thực Phẩm & Bách Hóa', image: 'https://images.unsplash.com/photo-1516448620398-c5f44bf9f441?auto=format&fit=crop&w=200&q=80' },
-  { id: 'g-3', name: 'Thùng Nước Khoáng Lavie 24 chai x 500ml', price: 95000, priceDisplay: '95.000đ', unit: 'thùng', category: 'Bách Hóa & Đồ Uống', image: 'https://images.unsplash.com/photo-1559839914-ba2c58908866?auto=format&fit=crop&w=200&q=80' },
-  { id: 'g-4', name: 'Khăn Giấy Ướt Cao Cấp Cho Bé (Gói 100 tờ)', price: 25000, priceDisplay: '25.000đ', unit: 'gói', category: 'Gia Dụng & Mẹ Bé', image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=200&q=80' }
-];
+const DEFAULT_GOODS_CATALOG: ChatOrderItem[] = [];
 
-const DEFAULT_TRANSPORT_CATALOG: ChatOrderItem[] = [
-  { id: 't-1', name: '⚡ Xe Điện Buggy Nội Khu (Đưa đón sảnh/Vincom)', price: 20000, priceDisplay: '20.000đ', unit: 'lượt', category: 'Vận Tải Nội Khu' },
-  { id: 't-2', name: '✈️ Taxi Sân Bay Nội Bài (Trọn gói 1 chiều)', price: 280000, priceDisplay: '280.000đ', unit: 'chuyến', category: 'Vận Tải Ngoại Khu' },
-  { id: 't-3', name: '🚗 Taxi Điện VF8 Đi Tỉnh / Khứ Hồi', price: 450000, priceDisplay: '450.000đ', unit: 'chuyến', category: 'Vận Tải Ngoại Khu' },
-  { id: 't-4', name: '📦 Xe Ba Bánh Chuyển Đồ Cồng Kềnh Nội Khu', price: 100000, priceDisplay: '100.000đ', unit: 'chuyến', category: 'Vận Tải Nội Khu' }
-];
+const DEFAULT_TRANSPORT_CATALOG: ChatOrderItem[] = [];
 
-const DEFAULT_REPAIR_CATALOG: ChatOrderItem[] = [
-  { id: 'r-1', name: '⚡ Sửa Chữa Điện Nước & Aptomat Khẩn Cấp 24/7', price: 150000, priceDisplay: '150.000đ', unit: 'lần', category: 'Điện Nước' },
-  { id: 'r-2', name: '🛗 Kiểm Tra & Bảo Trì Thang Máy Gia Đình Homelift', price: 350000, priceDisplay: '350.000đ', unit: 'lần', category: 'Thang Máy' },
-  { id: 'r-3', name: '💻 Cài Đặt Win / Sửa Máy Tính & Wi-Fi Mesh Tận Nhà', price: 150000, priceDisplay: '150.000đ', unit: 'máy', category: 'Máy Tính & Mạng' },
-  { id: 'r-4', name: '🔐 Lắp Đặt & Mở Khóa Cửa Vân Tay Thông Minh', price: 200000, priceDisplay: '200.000đ', unit: 'bộ', category: 'Khóa Cửa' }
-];
+const DEFAULT_REPAIR_CATALOG: ChatOrderItem[] = [];
 
 export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
   properties,
@@ -627,6 +605,15 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                     activeTab === 'order_goods' ? DEFAULT_GOODS_CATALOG :
                     activeTab === 'order_transport' ? DEFAULT_TRANSPORT_CATALOG :
                     DEFAULT_REPAIR_CATALOG
+                  ).length === 0 ? (
+                    <div className="p-4 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 text-center text-[11px] text-slate-400 font-bold">
+                      Chưa có sản phẩm/dịch vụ nào được đăng ký. Vui lòng quay lại sau.
+                    </div>
+                  ) : (
+                  (activeTab === 'order_food' ? DEFAULT_FOOD_CATALOG :
+                    activeTab === 'order_goods' ? DEFAULT_GOODS_CATALOG :
+                    activeTab === 'order_transport' ? DEFAULT_TRANSPORT_CATALOG :
+                    DEFAULT_REPAIR_CATALOG
                   ).map((item) => {
                     const inCart = selectedItems[item.id];
                     const qty = inCart?.quantity || 0;
@@ -682,7 +669,8 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                         </div>
                       </div>
                     );
-                  })}
+                  })
+                  )}
                 </div>
               </div>
 

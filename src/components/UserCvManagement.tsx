@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { User, CandidateProfile, JobApplication } from '../types';
 import { RECRUITMENT_INDUSTRIES } from '../data/recruitmentData';
 import { 
@@ -37,7 +37,7 @@ export const UserCvManagement: React.FC<UserCvManagementProps> = ({
     phone: currentUser.phone || '',
     email: currentUser.email || '',
     zalo: currentUser.phone || '',
-    avatarUrl: currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    avatarUrl: currentUser.avatar || '',
     birthYear: 1998,
     gender: 'nam',
     currentProject: 'ocean-park-2',
@@ -272,7 +272,7 @@ export const UserCvManagement: React.FC<UserCvManagementProps> = ({
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-4">
               <img loading="lazy"
-                src={cvProfile.avatarUrl || currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
+                src={cvProfile.avatarUrl || currentUser.avatar || ''}
                 alt={cvProfile.fullName}
                 className="w-16 h-16 rounded-2xl object-cover border-2 border-teal-500/40 shadow-sm"
               />

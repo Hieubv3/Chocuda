@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   Home, ChevronRight, Calendar, User, Eye, Share2, 
@@ -7,7 +7,7 @@ import {
 import { NewsArticle, Language } from '../types';
 import { SEOHead } from '../components/SEOHead';
 import { SocialShareModal } from '../components/SocialShareModal';
-import { slugify } from '../lib/slugs';
+import { slugify, extractIdFromSlug, getNewsDetailUrl } from '../lib/slugs';
 
 interface NewsArticleDetailPageProps {
   news: NewsArticle[];
@@ -19,9 +19,12 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
   const [showShareModal, setShowShareModal] = useState(false);
 
   // Match article by id or slugified title or url param
+  // Hỗ trợ cả URL cũ (chỉ id) và URL mới ({titleSlug}-{id})
+  const extractedId = postSlug ? extractIdFromSlug(postSlug) : '';
   const article = news.find(n => 
     n.id === postSlug || 
     n.id === decodeURIComponent(postSlug || '') ||
+    n.id === extractedId ||
     slugify(n.title) === postSlug ||
     n.id === categorySlug
   );
@@ -62,7 +65,7 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
       <SEOHead
         title={article.title}
         description={article.summary || article.content.substring(0, 160)}
-        image={article.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'}
+        image={article.image || ''}
         url={shareUrl}
         type="article"
         keywords={`${article.title}, tin tức vinhomes, ${categoryName}`}
@@ -194,7 +197,7 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
               {relatedArticles.map(rel => (
                 <Link
                   key={rel.id}
-                  to={`/tin-tuc/${rel.category || 'chung'}/${rel.id}`}
+                  to={getNewsDetailUrl(rel)}
                   className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 shadow-sm hover:shadow-lg transition space-y-2 p-3"
                 >
                   <div className="aspect-[16/10] rounded-xl overflow-hidden bg-slate-950">

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+﻿import React, { useRef, useState, useEffect } from 'react';
 import { Eye, EyeOff, RotateCcw, Check, Sparkles, Image as ImageIcon, Droplets, Sliders, Shield } from 'lucide-react';
 
 interface SoDoCensorEditorProps {
@@ -23,7 +23,7 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
   const [previewMode, setPreviewMode] = useState(false);
 
   // Default sample Sổ Đỏ if none uploaded
-  const defaultSoDoSample = 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1000&q=80';
+  const defaultSoDoSample = '';
 
   useEffect(() => {
     const srcToUse = imageSrc || defaultSoDoSample;

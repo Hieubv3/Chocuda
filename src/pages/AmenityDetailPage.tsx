@@ -11,7 +11,7 @@ import { PropertyCard } from '../components/PropertyCard';
 import { ProjectFaqHub } from '../components/ProjectFaqHub';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { AMENITY_SEO_DATA, AmenitySEOInfo } from '../data/subdivisionData';
-import { getProjectIdFromSlug, getProjectSlug, slugify } from '../lib/slugs';
+import { getProjectIdFromSlug, getProjectSlug, slugify, getPropertyDetailUrl } from '../lib/slugs';
 
 interface AmenityDetailPageProps {
   projects: Project[];
@@ -86,7 +86,7 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
         'Cảnh quan check-in sinh thái xanh mát rợp bóng cây',
         'Hạ tầng an ninh bảo vệ an toàn 24/7'
       ],
-      image: project?.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'
+      image: project?.image || ''
     };
   }, [amenitySlug, project]);
 
@@ -345,7 +345,7 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
                   key={p.id}
                   property={p}
                   language={language}
-                  onSelect={(selected) => navigate(`/${getProjectSlug(selected.project)}/${selected.id}`)}
+                  onSelect={(selected) => navigate(getPropertyDetailUrl(selected))}
                   isSaved={savedIds.includes(p.id)}
                   onToggleSave={onToggleSave}
                   isCompared={compareIds.includes(p.id)}

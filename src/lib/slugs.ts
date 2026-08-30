@@ -52,13 +52,66 @@ export function getProjectIdFromSlug(slug: string): string {
 export function getPropertyDetailUrl(property: { id: string; project?: string; title?: string }): string {
   const projSlug = property.project ? getProjectSlug(property.project) : 'bat-dong-san';
   const cleanId = encodeURIComponent(property.id);
+  // URL chứa title slug + id để SEO đánh giá cao
+  const titleSlug = property.title ? slugify(property.title) : '';
+  if (titleSlug) {
+    return `/${projSlug}/${encodeURIComponent(titleSlug)}-${cleanId}`;
+  }
   return `/${projSlug}/${cleanId}`;
+}
+
+/**
+ * Tách id thật từ slug dạng "{titleSlug}-{id}".
+ * Nếu slug không chứa id (chỉ là id thuần), trả về nguyên slug.
+ * Hỗ trợ các dạng id:
+ *  - Có prefix + số: prop-101, job-1, cand-2, news-101
+ *  - Có prefix + chữ (news): news-ha-long-xanh
+ *  - Số thuần: 101
+ */
+const ID_PREFIXES = ['news', 'prop', 'job', 'cand', 'cv', 'store', 'prod', 'svc', 'emp', 'group'];
+
+export function extractIdFromSlug(slug: string): string {
+  if (!slug) return '';
+  const decoded = decodeURIComponent(slug).trim();
+  if (!decoded) return '';
+
+  // 1. Nếu slug là id thuần (không có title slug), trả về nguyên
+  //    (id thuần thường bắt đầu bằng prefix đã biết hoặc là số)
+  if (ID_PREFIXES.some(p => decoded === p || decoded.startsWith(`${p}-`)) && !decoded.includes('--')) {
+    // Kiểm tra: nếu toàn bộ slug là một id hợp lệ (prefix + phần còn lại không có dấu gạch thừa)
+    const prefix = ID_PREFIXES.find(p => decoded.startsWith(`${p}-`));
+    if (prefix) {
+      const rest = decoded.slice(prefix.length + 1);
+      // Nếu phần còn lại không chứa dấu gạch, đây là id thuần
+      if (!rest.includes('-')) {
+        return decoded;
+      }
+    }
+  }
+
+  // 2. Tìm id ở cuối slug dạng "{titleSlug}-{id}"
+  //    Ưu tiên tìm id có prefix đã biết (news-, prop-, job-, cand-...)
+  const parts = decoded.split('-');
+  // 2a. Duyệt từ cuối, tìm candidate bắt đầu bằng prefix id đã biết
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const candidate = parts.slice(i).join('-');
+    if (ID_PREFIXES.some(p => candidate.startsWith(`${p}-`))) {
+      return candidate;
+    }
+  }
+  // 2b. Không tìm thấy prefix — xét id dạng số thuần ở cuối
+  const lastPart = parts[parts.length - 1];
+  if (/^\d+$/.test(lastPart)) {
+    return lastPart;
+  }
+  return decoded;
 }
 
 export function getNewsDetailUrl(article: { id: string; category?: string; title?: string }): string {
   const catSlug = article.category ? slugify(article.category) : 'tin-tuc-chung';
   const titleSlug = article.title ? slugify(article.title) : article.id;
-  return `/tin-tuc/${catSlug}/${encodeURIComponent(article.id)}`;
+  // URL chứa title slug + id để SEO đánh giá cao (từ khóa trong URL, vẫn duy nhất nhờ id)
+  return `/tin-tuc/${catSlug}/${encodeURIComponent(titleSlug)}-${encodeURIComponent(article.id)}`;
 }
 
 export function getSubdivisionUrl(projectId: string, subdivisionNameOrId: string): string {
@@ -103,12 +156,22 @@ export function getProductDetailUrl(
 export function getJobDetailUrl(job?: { id?: string; title?: string } | string | null): string {
   if (!job) return '/tuyen-dung';
   const jId = typeof job === 'string' ? job : (job.id || 'job-detail');
+  const jTitle = typeof job === 'object' && job.title ? slugify(job.title) : '';
+  // URL chứa title slug để SEO đánh giá cao
+  if (jTitle) {
+    return `/tuyen-dung/viec-lam/${encodeURIComponent(jId)}/${encodeURIComponent(jTitle)}`;
+  }
   return `/tuyen-dung/viec-lam/${encodeURIComponent(jId)}`;
 }
 
 export function getCandidateCvUrl(candidate?: { id?: string; fullName?: string } | string | null): string {
   if (!candidate) return '/tuyen-dung';
   const cId = typeof candidate === 'string' ? candidate : (candidate.id || 'ung-vien');
+  const cName = typeof candidate === 'object' && candidate.fullName ? slugify(candidate.fullName) : '';
+  // URL chứa tên slug để SEO đánh giá cao
+  if (cName) {
+    return `/tuyen-dung/ung-vien/${encodeURIComponent(cId)}/${encodeURIComponent(cName)}`;
+  }
   return `/tuyen-dung/ung-vien/${encodeURIComponent(cId)}`;
 }
 

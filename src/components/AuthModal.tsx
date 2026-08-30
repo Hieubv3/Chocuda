@@ -321,7 +321,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
         body: JSON.stringify({
           phone: defaultPhone,
           name: defaultName,
-          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80'
+          avatar: ''
         })
       });
 

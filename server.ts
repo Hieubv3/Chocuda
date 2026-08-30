@@ -292,11 +292,11 @@ let reputationPostsStore: any[] = [
     authorRoom: 'S2.12 - Căn 1806',
     title: 'Review chân thực: Bún chả ngon đúng vị phố cổ, giao siêu nhanh 10 phút!',
     content: 'Nhà mình ăn bún chả ở đây từ ngày mới về S2.12. Thịt nướng than hoa thơm lừng, nước chấm ấm nóng vừa miệng. Đặc biệt chị chủ nhà cư dân siêu dễ thương, ship tận cửa không tính phí. Mọi người nên thử nem hải sản ở đây!',
-    rating: 5,
-    images: ['https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80'],
+    rating: 0,
+    images: [],
     youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     createdAt: '10 phút trước',
-    likesCount: 42,
+    likesCount: 0,
     trustBadge: 'top_rated',
     zaloContact: 'https://zalo.me/0988123456',
     phoneContact: '0988.123.456',
@@ -311,11 +311,11 @@ let reputationPostsStore: any[] = [
     authorRoom: 'Chà Là 6 - Căn 22',
     title: 'Cảm ơn anh Đức đã cứu nguy sự cố chập điện lúc 11h đêm!',
     content: 'Hôm qua nhà mình bị nhảy aptomat lúc đêm muộn. Gọi anh Đức 5 phút sau anh qua ngay, mang đầy đủ thiết bị đo đạc báo giá minh bạch chỉ 150k. Đúng chất cư dân giúp đỡ nhau, làm việc có tâm!',
-    rating: 5,
-    images: ['https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80'],
+    rating: 0,
+    images: [],
     youtubeUrl: 'https://www.youtube.com/watch?v=5qap5aO4i9A',
     createdAt: '2 giờ trước',
-    likesCount: 89,
+    likesCount: 0,
     trustBadge: 'gold_partner',
     zaloContact: 'https://zalo.me/0977888999',
     phoneContact: '0977.888.999',
@@ -571,8 +571,8 @@ let techOrdersStore: any[] = [
     warrantyDays: 30,
     warrantyExpiresAt: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
     note: 'Thang máy kính Homelift kẹt nút tầng 3. Đã thay cảm biến an toàn và tra dầu xích tải.',
-    imagesBefore: ['https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80'],
-    imagesAfter: ['https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80'],
+    imagesBefore: [],
+    imagesAfter: [],
     createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
     updatedAt: new Date().toISOString(),
     autoReleaseAt: new Date(Date.now() + 3600000 * 19).toISOString(),
@@ -614,10 +614,10 @@ let techOrdersStore: any[] = [
 let walletsStore: Map<string, any> = new Map([
   ['user-trangnguyen', {
     userId: 'user-trangnguyen',
-    availableBalance: 5200000,
-    escrowLockedBalance: 3500000,
-    securityDeposit: 2000000,
-    totalEarned: 12500000,
+    availableBalance: 0,
+    escrowLockedBalance: 0,
+    securityDeposit: 0,
+    totalEarned: 0,
     bankDetails: {
       bankName: 'MBBank (Ngân Hàng Quân Đội)',
       accountNumber: '3028031988',
@@ -627,10 +627,10 @@ let walletsStore: Map<string, any> = new Map([
   }],
   ['user-hieubui', {
     userId: 'user-hieubui',
-    availableBalance: 18450000,
+    availableBalance: 0,
     escrowLockedBalance: 0,
-    securityDeposit: 5000000,
-    totalEarned: 48200000,
+    securityDeposit: 0,
+    totalEarned: 0,
     bankDetails: {
       bankName: 'MSB (Ngân hàng Hàng Hải)',
       accountNumber: '3028031988',
@@ -640,10 +640,10 @@ let walletsStore: Map<string, any> = new Map([
   }],
   ['user-admin', {
     userId: 'user-admin',
-    availableBalance: 85200000,
-    escrowLockedBalance: 3500000,
-    securityDeposit: 10000000,
-    totalEarned: 125000000,
+    availableBalance: 0,
+    escrowLockedBalance: 0,
+    securityDeposit: 0,
+    totalEarned: 0,
     bankDetails: {
       bankName: 'Vietcombank',
       accountNumber: '0868499929',
@@ -1941,9 +1941,7 @@ app.post("/api/properties", (req, res) => {
     legal: data.legal || "so-do",
     address: data.address || "Vinhomes Ocean Park 2, Hưng Yên",
     description: data.description || "Thông tin bất động sản chính chủ.",
-    images: data.images && data.images.length > 0 ? data.images : [
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80"
-    ],
+    images: data.images && data.images.length > 0 ? data.images : [],
     featured: Boolean(data.featured),
     createdAt: data.createdAt || new Date().toISOString().split('T')[0],
     sellerName: data.sellerName || "Khách đăng tin",
@@ -2020,7 +2018,7 @@ app.post("/api/projects", (req, res) => {
     title: data.title || data.name || "Dự án mới",
     location: data.location || "Vinhomes",
     description: data.description || "",
-    image: data.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+    image: data.image || "",
     masterplanUrl: data.masterplanUrl || "",
     areaSize: data.areaSize || "Đang cập nhật",
     totalUnits: data.totalUnits || "Đang cập nhật",
@@ -2050,7 +2048,7 @@ app.put("/api/projects/:id", (req, res) => {
       title: req.body.title || req.body.name || "Dự án mới",
       location: req.body.location || "Vinhomes",
       description: req.body.description || "",
-      image: req.body.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+      image: req.body.image || "",
       masterplanUrl: req.body.masterplanUrl || "",
       areaSize: req.body.areaSize || "Đang cập nhật",
       totalUnits: req.body.totalUnits || "Đang cập nhật",
@@ -2091,7 +2089,7 @@ app.post("/api/news", (req, res) => {
     content: data.content || "Nội dung chi tiết bài viết...",
     category: data.category || "vinhomes",
     author: data.author || "Nhà đẹp Vinhomes",
-    image: data.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+    image: data.image || "",
     publishedAt: data.publishedAt || new Date().toISOString().split('T')[0],
     views: data.views || 1,
     source: data.source || "manual",
@@ -2251,7 +2249,7 @@ app.post("/api/ads", (req, res) => {
   const newAd: AdBanner = {
     id: adData.id || `ad-${Date.now()}`,
     title: adData.title,
-    imageUrl: adData.imageUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: adData.imageUrl || '',
     linkUrl: adData.linkUrl || 'https://zalo.me/0868499929',
     position: adData.position || 'home_middle',
     widthSize: adData.widthSize || 'medium',
@@ -2484,8 +2482,8 @@ app.post("/api/stores", (req, res) => {
       ...storeData,
       id: storeData.id || `store-${Date.now()}`,
       slug: storeData.slug || storeData.storeName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      rating: 5.0,
-      reviewCount: 1,
+      rating: 0,
+      reviewCount: 0,
       createdAt: new Date().toISOString().split('T')[0],
       products: storeData.products || []
     };
@@ -2519,7 +2517,7 @@ app.post("/api/stores/:id/sync-kiotviet", (req, res) => {
       price: Math.floor(Math.random() * 300 + 50) * 1000,
       unit: 'hộp',
       stockQuantity: Math.floor(Math.random() * 50) + 10,
-      images: ['https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'],
+      images: [],
       description: 'Đồng bộ trực tiếp từ kho KiotViet POS của chủ cửa hàng.',
       isAvailable: true,
       soldCount: Math.floor(Math.random() * 100) + 5
@@ -2533,8 +2531,8 @@ app.post("/api/stores/:id/sync-kiotviet", (req, res) => {
       category: 'Dịch Vụ Cư Dân',
       price: Math.floor(Math.random() * 500 + 100) * 1000,
       unit: 'lượt',
-      stockQuantity: 99,
-      images: ['https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80'],
+      stockQuantity: 0,
+      images: [],
       description: 'Lịch dịch vụ gia đình cập nhật tồn kho từ hệ thống KiotViet.',
       isAvailable: true,
       soldCount: Math.floor(Math.random() * 50) + 2
@@ -2766,7 +2764,7 @@ app.post("/api/webhooks/n8n-news", (req, res) => {
     content: payload.content || payload.summary || "Nội dung được đồng bộ tự động từ n8n Webhook.",
     category: payload.category || "thi-truong",
     author: payload.author || "n8n Automation Engine",
-    image: payload.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+    image: payload.image || "",
     publishedAt: new Date().toISOString().split('T')[0],
     views: Math.floor(Math.random() * 100) + 10,
     source: "n8n",
@@ -3428,10 +3426,24 @@ function serverSlugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+// Map project id -> project slug (khớp với client src/lib/slugs.ts)
+const SERVER_PROJECT_SLUG_MAP: Record<string, string> = {
+  'ocean-park-2': 'vinhomes-ocean-park-2',
+  'ocean-park-3': 'vinhomes-ocean-park-3',
+  'ocean-park-1': 'vinhomes-ocean-park-1',
+  'ha-long-xanh': 'vinhomes-ha-long-xanh',
+  'smart-city': 'vinhomes-smart-city',
+  'grand-park': 'vinhomes-grand-park',
+  'golden-crown': 'golden-crown-hai-phong',
+  'royal-island': 'vinhomes-royal-island'
+};
+function serverGetProjectSlug(projectId: string): string {
+  return SERVER_PROJECT_SLUG_MAP[projectId] || serverSlugify(projectId) || 'vinhomes-ocean-park-2';
+}
+
 app.get("/sitemap.xml", (req, res) => {
-  const host = req.get('host') || 'chocudan24h.com';
-  const protocol = req.protocol || 'https';
-  const baseUrl = `${protocol}://${host}`;
+  // Luôn dùng HTTPS để tránh lỗi protocol khi đi qua Cloudflare/proxy
+  const baseUrl = 'https://chocudan24h.com';
   const today = new Date().toISOString().split('T')[0];
 
   const staticUrls = [
@@ -3461,12 +3473,15 @@ app.get("/sitemap.xml", (req, res) => {
     priority: '0.9'
   }));
 
-  // 2. Real Estate Properties
-  const propertyUrls = propertiesStore.map(p => ({
-    url: `${baseUrl}/${serverSlugify(p.project)}/${p.id}`,
-    changefreq: 'weekly',
-    priority: '0.8'
-  }));
+  // 2. Real Estate Properties (URL chứa title slug + id, khớp với client)
+  const propertyUrls = propertiesStore.map(p => {
+    const projSlug = serverGetProjectSlug(p.project);
+    const titleSlug = p.title ? serverSlugify(p.title) : '';
+    const url = titleSlug
+      ? `${baseUrl}/${projSlug}/${titleSlug}-${p.id}`
+      : `${baseUrl}/${projSlug}/${p.id}`;
+    return { url, changefreq: 'weekly', priority: '0.8' };
+  });
 
   // 3. Resident Stores (Gian Hàng)
   const storeUrls = storesStore.map(st => ({
@@ -3523,11 +3538,15 @@ app.get("/sitemap.xml", (req, res) => {
   }));
 
   // 9. News Articles (Tin Tức Thị Trường)
-  const newsUrls = newsStore.map(n => ({
-    url: `${baseUrl}/tin-tuc/${serverSlugify(n.category || 'chung')}/${n.id}`,
-    changefreq: 'weekly',
-    priority: '0.75'
-  }));
+  const newsUrls = newsStore.map(n => {
+    const catSlug = serverSlugify(n.category || 'chung');
+    const titleSlug = n.title ? serverSlugify(n.title) : n.id;
+    return {
+      url: `${baseUrl}/tin-tuc/${catSlug}/${titleSlug}-${n.id}`,
+      changefreq: 'weekly',
+      priority: '0.75'
+    };
+  });
 
   const allUrls = [
     ...staticUrls,
@@ -3563,9 +3582,8 @@ ${uniqueUrls.map(item => `  <url>
 });
 
 app.get("/robots.txt", (req, res) => {
-  const host = req.get('host') || 'chocudan24h.com';
-  const protocol = req.protocol || 'https';
-  const baseUrl = `${protocol}://${host}`;
+  // Luôn dùng HTTPS để tránh lỗi protocol khi đi qua Cloudflare/proxy
+  const baseUrl = 'https://chocudan24h.com';
 
   const robotsTxt = `User-agent: *
 Allow: /
@@ -4197,7 +4215,7 @@ app.post("/api/stores/:storeId/products", (req, res) => {
     price: Number(productData.price) || 50000,
     unit: productData.unit || 'suất',
     stockQuantity: Number(productData.stockQuantity) || 50,
-    images: productData.images && productData.images.length > 0 ? productData.images : ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'],
+    images: productData.images && productData.images.length > 0 ? productData.images : [],
     description: productData.description || 'Mô tả sản phẩm chuẩn SEO AI',
     isAvailable: productData.isAvailable ?? true,
     status: productData.status || 'approved',
@@ -4341,7 +4359,7 @@ function getUserWallet(userId: string) {
   if (!walletsStore.has(userId)) {
     walletsStore.set(userId, {
       userId,
-      availableBalance: 2000000, // Cấp thử nghiệm 2tr cho user mới
+      availableBalance: 0,
       escrowLockedBalance: 0,
       securityDeposit: 0,
       totalEarned: 0,
@@ -5329,7 +5347,7 @@ app.post("/api/recruitment/candidates", (req, res) => {
     id: `cand-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     userId: data.userId || `u-guest-${Date.now()}`,
     fullName: data.fullName.trim(),
-    avatarUrl: data.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    avatarUrl: data.avatarUrl || '',
     birthYear: data.birthYear || 2000,
     gender: data.gender || 'khac',
     phone: data.phone.trim(),
@@ -5787,8 +5805,8 @@ app.post("/api/recruitment/employers", (req, res) => {
     userId: data.userId || `u-emp-${Date.now()}`,
     companyName: data.companyName.trim(),
     brandName: data.brandName || data.companyName.trim(),
-    logoUrl: data.logoUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
-    bannerUrl: data.bannerUrl || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
+    logoUrl: data.logoUrl || '',
+    bannerUrl: data.bannerUrl || '',
     tagline: data.tagline || 'Nhà tuyển dụng uy tín tại Vinhomes',
     industry: data.industry || 'Bất Động Sản & Môi Giới',
     project: data.project || 'ocean-park-2',
@@ -5804,7 +5822,7 @@ app.post("/api/recruitment/employers", (req, res) => {
     scaleSize: data.scaleSize || '10 - 50 nhân sự',
     verified: Boolean(data.verified),
     activeJobsCount: 0,
-    totalViews: 1,
+    totalViews: 0,
     createdAt: nowIso
   };
 
@@ -5921,8 +5939,8 @@ app.post("/api/recruitment/employer-registrations/:id/approve", (req, res) => {
       userId: reg.userId || `u-emp-${Date.now()}`,
       companyName: reg.companyName,
       brandName: reg.brandName || reg.companyName,
-      logoUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&auto=format&fit=crop&q=80',
-      bannerUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
+      logoUrl: '',
+      bannerUrl: '',
       tagline: `Nhà tuyển dụng uy tín tại ${reg.project}`,
       industry: reg.industry,
       project: reg.project,
@@ -5936,7 +5954,7 @@ app.post("/api/recruitment/employer-registrations/:id/approve", (req, res) => {
       scaleSize: '10 - 50 nhân sự',
       verified: true,
       activeJobsCount: 0,
-      totalViews: 1,
+      totalViews: 0,
       createdAt: new Date().toISOString()
     });
   }

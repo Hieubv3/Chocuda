@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield, ShoppingBag, Store, Zap, Loader2 } from 'lucide-react';
 import { 
   PropertyType, 
@@ -98,7 +98,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const [serviceDesc, setServiceDesc] = useState('');
   const [serviceContactName, setServiceContactName] = useState(() => effectiveUser?.name || '');
   const [servicePhoneInput, setServicePhoneInput] = useState(() => effectiveUser?.phone || '');
-  const [serviceImg, setServiceImg] = useState('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80');
+  const [serviceImg, setServiceImg] = useState('');
   const [serviceLoading, setServiceLoading] = useState(false);
   const [serviceSubmitted, setServiceSubmitted] = useState(false);
 
@@ -120,15 +120,11 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   }, [effectiveUser, autoUseProfileInfo]);
 
   // Images state
-  const [imagesList, setImagesList] = useState<string[]>([
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80'
-  ]);
+  const [imagesList, setImagesList] = useState<string[]>([]);
   const [newImgInput, setNewImgInput] = useState('');
 
   // Legal Docs State
-  const [soDoImage, setSoDoImage] = useState<string>('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1000&q=80');
+  const [soDoImage, setSoDoImage] = useState<string>('');
   const [soDoRedactedImage, setSoDoRedactedImage] = useState<string>('');
   const [brokerCertImage, setBrokerCertImage] = useState<string>('');
   const [showSoDoEditor, setShowSoDoEditor] = useState(false);
@@ -401,7 +397,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         legal,
         address,
         description: description || `Bất động sản vị trí đẹp tại ${project.toUpperCase()}, phù hợp để ở hoặc đầu tư kinh doanh.`,
-        images: finalImages.length > 0 ? finalImages : ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'],
+        images: finalImages,
         sellerName: sellerName || user?.name || 'Chủ nhà chính chủ',
         sellerPhone: sellerPhone.trim() || user?.phone || '',
         sellerRole,
@@ -514,8 +510,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       project: serviceProject,
       price: servicePrice || 'Liên hệ',
       priceDisplay: servicePrice || 'Liên hệ báo giá',
-      image: serviceImg || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
-      images: [serviceImg || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80'],
+      image: serviceImg || '',
+      images: [serviceImg || ''],
       description: serviceDesc || 'Dịch vụ cư dân chất lượng cao.',
       providerName: serviceContactName || user.name || 'Cư dân Vinhomes',
       providerPhone: servicePhoneInput.trim() || user.phone || '',
@@ -525,8 +521,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       userId: user.id || `usr-${Date.now()}`,
       // Dịch vụ mới đăng ở trạng thái pending; admin duyệt qua trang quản trị.
       verified: true,
-      rating: 5.0,
-      reviewCount: 1,
+      rating: 0,
+      reviewCount: 0,
       createdAt: new Date().toISOString().split('T')[0]
     };
 

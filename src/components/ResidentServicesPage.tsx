@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   Wrench, ShieldCheck, Phone, MessageSquare, MapPin, Search, PlusCircle, 
@@ -122,10 +122,10 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       authorRoom: 'S2.12 - Căn 1806',
       title: 'Review chân thực: Bún chả ngon đúng vị phố cổ, giao siêu nhanh 10 phút!',
       content: 'Nhà mình ăn bún chả ở đây từ ngày mới về S2.12. Thịt nướng than hoa thơm lừng, nước chấm ấm nóng vừa miệng. Đặc biệt chị chủ nhà cư dân siêu dễ thương, ship tận cửa không tính phí. Mọi người nên thử nem hải sản ở đây!',
-      rating: 5,
-      images: ['https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80'],
+      rating: 0,
+      images: [],
       createdAt: '10 phút trước',
-      likesCount: 42,
+      likesCount: 0,
       trustBadge: 'top_rated',
       zaloContact: 'https://zalo.me/0988123456',
       phoneContact: '0988.123.456'
@@ -139,10 +139,10 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       authorRoom: 'Chà Là 6 - Căn 22',
       title: 'Cảm ơn anh Đức đã cứu nguy sự cố chập điện lúc 11h đêm!',
       content: 'Hôm qua nhà mình bị nhảy aptomat lúc đêm muộn. Gọi anh Đức 5 phút sau anh qua ngay, mang đầy đủ thiết bị đo đạc báo giá minh bạch chỉ 150k. Đúng chất cư dân giúp đỡ nhau, làm việc có tâm!',
-      rating: 5,
-      images: ['https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80'],
+      rating: 0,
+      images: [],
       createdAt: '2 giờ trước',
-      likesCount: 89,
+      likesCount: 0,
       trustBadge: 'gold_partner',
       zaloContact: 'https://zalo.me/0977888999',
       phoneContact: '0977.888.999'
@@ -158,7 +158,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     authorRoom: '',
     title: '',
     content: '',
-    rating: 5,
+    rating: 0,
     imageUrl: '',
     youtubeUrl: '',
     phoneContact: '',
@@ -229,7 +229,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     providerZalo: '',
     address: '',
     priceDisplay: 'Khảo sát báo giá trực tiếp',
-    imagesText: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b2?auto=format&fit=crop&w=800&q=80',
+    imagesText: '',
     description: '',
     legalCommitmentAccepted: false,
     // KYC Additions
@@ -390,7 +390,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       .filter(s => s.startsWith('http') || s.startsWith('data:image') || s.startsWith('blob:'));
 
     if (images.length === 0) {
-      images.push('https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80');
+      images.push('');
     }
 
     // Build submitted docs if provided
@@ -419,8 +419,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       providerZalo: postForm.providerZalo || `https://zalo.me/${postForm.providerPhone.replace(/\D/g, '')}`,
       address: postForm.address,
       priceDisplay: postForm.priceDisplay || 'Thỏa thuận',
-      rating: 5.0,
-      reviewCount: 1,
+      rating: 0,
+      reviewCount: 0,
       images,
       description: postForm.description || 'Dịch vụ cư dân uy tín, cam kết chất lượng chuẩn phong cách Vinhomes.',
       verified: false,
@@ -1272,7 +1272,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       >
                         <div className="relative w-full sm:w-48 md:w-56 h-36 sm:h-auto bg-slate-100 dark:bg-slate-800 shrink-0 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
                           <img loading="lazy"
-                            src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
+                            src={service.images[0] || ''}
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
@@ -1375,7 +1375,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       >
                         <div className="relative h-28 sm:h-36 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
                           <img loading="lazy"
-                            src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
+                            src={service.images[0] || ''}
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
@@ -1482,7 +1482,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                         {/* Thumbnail Header */}
                         <div className="relative h-48 bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
                           <img loading="lazy"
-                            src={service.images[0] || 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=80'}
+                            src={service.images[0] || ''}
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
@@ -2431,10 +2431,10 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   title: newPRForm.title,
                   content: newPRForm.content,
                   rating: Number(newPRForm.rating),
-                  images: [newPRForm.imageUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80'],
+                  images: [newPRForm.imageUrl || ''],
                   youtubeUrl: newPRForm.youtubeUrl,
                   createdAt: 'Vừa xong',
-                  likesCount: 1,
+                  likesCount: 0,
                   trustBadge: 'verified_resident',
                   phoneContact: newPRForm.phoneContact,
                   zaloContact: newPRForm.zaloContact

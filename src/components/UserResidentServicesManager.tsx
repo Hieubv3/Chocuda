@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   Wrench, Plus, Edit2, Trash2, CheckCircle2, AlertCircle, Phone, 
   MapPin, Image as ImageIcon, ExternalLink, Sparkles, X, Check, Eye, Clock, ShieldCheck,
@@ -57,9 +57,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
   const [address, setAddress] = useState(user.apartmentAddress || 'Vinhomes Ocean Park 2');
   const [priceDisplay, setPriceDisplay] = useState('Từ 50.000đ - 150.000đ');
   const [description, setDescription] = useState('');
-  const [images, setImages] = useState<string[]>([
-    'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80'
-  ]);
+  const [images, setImages] = useState<string[]>([]);
   const [newImageUrl, setNewImageUrl] = useState('');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
@@ -133,7 +131,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
     setAddress(user.apartmentAddress || 'Vinhomes Ocean Park 2');
     setPriceDisplay('Từ 50.000đ / lần');
     setDescription('');
-    setImages(['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80']);
+    setImages(['']);
     setIsEditingModalOpen(true);
   };
 
@@ -150,7 +148,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
     setAddress(svc.address || 'Vinhomes Ocean Park 2');
     setPriceDisplay(svc.priceDisplay || 'Từ 50.000đ');
     setDescription(svc.description || '');
-    setImages(svc.images && svc.images.length > 0 ? [...svc.images] : ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80']);
+    setImages(svc.images && svc.images.length > 0 ? [...svc.images] : []);
     setIsEditingModalOpen(true);
   };
 
@@ -246,7 +244,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
     setIsSaving(true);
     try {
-      const finalImages = images.length > 0 ? images : ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80'];
+      const finalImages = images;
 
       if (editingService) {
         // Update existing service
@@ -294,8 +292,8 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
           providerZalo: providerZalo.trim() || providerPhone.trim(),
           address: address.trim(),
           priceDisplay: priceDisplay.trim(),
-          rating: 5.0,
-          reviewCount: 1,
+          rating: 0,
+          reviewCount: 0,
           images: finalImages,
           description: description.trim(),
           verified: true,
@@ -470,7 +468,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                       className="relative shrink-0 cursor-pointer group"
                     >
                       <img loading="lazy"
-                        src={svc.images?.[0] || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=200&q=80'}
+                        src={svc.images?.[0] || ''}
                         alt={svc.title}
                         className="w-14 h-12 sm:w-16 sm:h-14 rounded-xl object-cover border border-slate-200 dark:border-slate-800 group-hover:opacity-90 transition"
                       />

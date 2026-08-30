@@ -59,10 +59,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Mật độ cư dân về ở đông đúc nhất, tỷ lệ lấp đầy kinh doanh shophouse lên đến 80%.',
       'Đường nội khu rộng từ 13m đến 20m, giao thông ô tô dừng đỗ thuận tiện.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'San Hô': {
@@ -89,10 +86,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Hệ thống trường học Vinschool liên cấp nằm ngay trong lòng phân khu.',
       'Kế sát trục giao thông chính Đại lộ Đại Dương 43m kết nối thẳng cao tốc Hà Nội - Hải Phòng.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Cọ Xanh': {
@@ -118,9 +112,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Sân thể thao đa năng, hồ bơi Resort, công viên BBQ ngoài trời.',
       'Mức giá cạnh tranh bậc nhất toàn đại đô thị Ocean Park 2.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Sao Biển': {
@@ -146,9 +138,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Sát cạnh Trung tâm thương mại Vincom Mega Mall và Quảng trường Kinh đô Ánh sáng.',
       'Sở hữu 2 công viên chủ đề Empress Park & Khu phố ẩm thực đêm.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Đảo Ngọc': {
@@ -172,9 +162,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       '100% biệt thự ven sông mặt nước riêng, chốt an ninh bảo vệ 4 lớp.',
       'Cộng đồng cư dân tinh hoa là các tập đoàn chủ doanh nghiệp & tỷ phú.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Phố Biển': {
@@ -199,9 +187,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Sát cạnh khu VinWonders Hà Nội Wave Park & Water Park.',
       'Tiếp giáp đường trục chính 30m thông thẳng ra cao tốc Hà Nội - Hải Phòng.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Vịnh Thiên Đường': {
@@ -227,9 +213,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Sở hữu Hồ bơi bốn mùa trong nhà kính khổng lồ Tropical Surf.',
       'Công viên nước Aqua Bay với các đường trượt cảm giác mạnh VinWonders.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Ánh Dương': {
@@ -254,9 +238,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Tuyến phố đi bộ mua sắm ẩm thực nhộn nhịp.',
       'Mặt tiền đại lộ Ánh Dương 30m rộng rãi kết nối 2 đô thị OCP2 & OCP3.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Thời Đại': {
@@ -281,9 +263,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       '10 tòa tháp chung cư cao tầng mang lại lượng khách hàng tiêu dùng cực lớn.',
       '3 công viên nội khu: Công viên Bãi Biển, Công viên Nhiệt Đới và Công viên Thần Thoại.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Phân khu Hoàng Tân': {
@@ -309,9 +289,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Bến du thuyền quốc tế 5 sao kết nối Vịnh Hạ Long & Vịnh Bái Tử Long.',
       'Hệ thống công viên giải trí VinWonders Hạ Long Xanh.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Phân khu Hà An': {
@@ -337,9 +315,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Bệnh viện Vinmec Medical Resort & Hệ thống trường học Vinschool.',
       'Kết nối giao thông siêu tốc tới Hải Phòng (15 phút) và Hà Nội (60 phút).'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Sapphire Parkville': {
@@ -365,9 +341,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Sở hữu bể bơi ngoài trời phong cách Resort rộng 1.000m².',
       'Hệ thống an ninh AI nhận diện khuôn mặt FaceID 24/7.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   },
 
   'Tonkin': {
@@ -393,9 +367,7 @@ export const SUBDIVISION_SEO_DATA: Record<string, SubdivisionSEOInfo> = {
       'Bể bơi Phoenix Pool thiết kế hình giọt nước phong cách Indochine.',
       'Cạnh nhà đỗ xe thông minh 10 tầng và trường học Vinschool.'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80'
-    ]
+    images: [],
   }
 };
 
@@ -424,7 +396,7 @@ Tổ hợp Công viên biển tạo sóng nhân tạo Royal Wave Park quy mô 18
       'Cát trắng mịn nhập trực tiếp từ Vịnh Nha Trang',
       'Miễn phí vé vào cửa cho cư dân Vinhomes Ocean Park 2'
     ],
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'paradise-bay': {
@@ -449,7 +421,7 @@ Vịnh biển thiên đường Paradise Bay quy mô 12 ha tại Vinhomes Ocean P
       'Công viên nước VinWonders Aqua Bay cảm giác mạnh',
       'Hồ bơi tiêu chuẩn Olympic 10 làn bơi'
     ],
-    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'mega-grand-world': {
@@ -473,7 +445,7 @@ Mega Grand World Hà Nội là điểm đến du lịch giải trí quy mô qu�
       'Đi thuyền Gondola Venice Ý lãng mạn',
       'Tuyến xe VinBus chạy thẳng từ trung tâm Hà Nội miễn phí'
     ],
-    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'san-golf-36-ho': {
@@ -497,7 +469,7 @@ Sân Golf 36 hố PGA tại Siêu đại đô thị Vinhomes Hạ Long Xanh là 
       'View Vịnh Hạ Long & Vịnh Bái Tử Long 360 độ',
       'Nhà câu lạc bộ Clubhouse 6 sao xa xỉ'
     ],
-    image: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'thap-108-tang': {
@@ -522,7 +494,7 @@ Tháp 108 tầng Vinhomes Green Paradise Cần Giờ là tòa nhà biểu tượ
       'Trục tài chính kết nối dòng vốn đầu tư quốc tế',
       'Bể bơi vô cực & Đài quan sát kính trên không'
     ],
-    image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'zen-park-smart-city': {
@@ -547,7 +519,7 @@ Vườn Nhật Zen Park tại Vinhomes Smart City Tây Mỗ mang đến không g
       '130 cây Tùng La Hán quý hiếm & Hồ cá Koi',
       'Miễn phí vé tham quan cho toàn bộ cư dân Smart City'
     ],
-    image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'kinh-do-anh-sang': {
@@ -571,7 +543,7 @@ Quảng trường Kinh đô Ánh sáng Kingdom of Avenue rộng 3.2 ha tái hi�
       'Tuyến phố đi bộ phong cách Paris dài hơn 1km',
       'Trục căn Shophouse giá trị kinh doanh thương mại đỉnh cao'
     ],
-    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'vinmec-health-resort': {
@@ -595,7 +567,7 @@ Bệnh viện Đa khoa Quốc tế Vinmec Health Resort tại Vinhomes Ocean Par
       'Đội ngũ Y bác sĩ chuyên gia đầu ngành trong & ngoài nước',
       'Dịch vụ Y tế tại nhà 24/7 cho cư dân đại đô thị'
     ],
-    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'vincom-mega-mall': {
@@ -620,7 +592,7 @@ Vincom Mega Mall Ocean Park là đại siêu thị - trung tâm thương mại n
       'Đại siêu thị WinMart & Rạp chiếu phim CGV IMAX',
       'Bãi đỗ xe thông minh công suất 3.000 xe ô tô'
     ],
-    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'vinschool-system': {
@@ -644,7 +616,7 @@ Trường Liên cấp Vinschool tại các đại đô thị Vinhomes được x
       'Chương trình học Cambridge song ngữ chất lượng cao',
       'Hệ thống đưa đón học sinh VinBus an toàn tuyệt đối'
     ],
-    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'vinbus-system': {
@@ -668,7 +640,7 @@ VinBus là phương tiện giao thông xanh tiên phong tại Việt Nam, mang l
       'Chạy liên tục 24/7 kết nối miễn phí tất cả phân khu',
       'Tra cứu lộ trình thời gian thực qua App VinBus'
     ],
-    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'vinuni': {
@@ -694,7 +666,7 @@ Trường Đại học VinUni (VinUniversity) tọa lạc tại cửa ngõ đạ
       'Học bổng tài năng lên tới 100% học phí và sinh hoạt phí',
       'Đội ngũ giáo sư, tiến sĩ danh tiếng hàng đầu thế giới trực tiếp giảng dạy'
     ],
-    image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'crystal-lagoon': {
@@ -718,7 +690,7 @@ Biển hồ nước mặn Crystal Lagoon 6.1 ha tại Vinhomes Ocean Park 1 do c
       'Bờ cát trắng tự nhiên Nha Trang rộng 35m rợp bóng dừa',
       'Đặc quyền tắm biển & chèo thuyền Kayak cho cư dân'
     ],
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   },
 
   'ho-ngoc-trai': {
@@ -742,6 +714,6 @@ Hồ nước ngọt trung tâm Ngọc Trai quy mô 24.5 ha tại Vinhomes Ocean 
       'Đường chạy bộ ven hồ 8.5km ngắm hoàng hôn tuyệt đẹp',
       'Hơn 50 điểm nướng BBQ ngoài trời ven hồ cát trắng'
     ],
-    image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80'
+    image: ''
   }
 };

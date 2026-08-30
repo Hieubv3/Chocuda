@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   X, User, Phone, Mail, MapPin, Building2, CreditCard, 
   Check, ShieldCheck, Sparkles, Image as ImageIcon, Camera, Upload
@@ -26,7 +26,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
   const [phone, setPhone] = useState(user.phone || '');
   const [email, setEmail] = useState(user.email || '');
   const [zalo, setZalo] = useState(user.zalo || user.phone || '');
-  const [avatar, setAvatar] = useState(user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80');
+  const [avatar, setAvatar] = useState(user.avatar || '');
   const [apartmentAddress, setApartmentAddress] = useState(user.apartmentAddress || (user as any).apartment || '');
   const [projectArea, setProjectArea] = useState((user as any).projectArea || 'Vinhomes Ocean Park 2');
   const [bio, setBio] = useState(user.bio || (user as any).introduction || '');
@@ -56,14 +56,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const PRESET_AVATARS = [
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
-    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80',
-    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80'
-  ];
+  const PRESET_AVATARS: string[] = [];
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

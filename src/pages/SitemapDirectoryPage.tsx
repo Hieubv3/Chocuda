@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Globe, Search, FileCode, Layers, Store, ShoppingBag, Wrench, 
@@ -299,7 +299,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                   className="p-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-teal-500/10 dark:hover:bg-teal-500/10 border border-slate-200 dark:border-slate-700/80 rounded-2xl flex items-center gap-3 group transition"
                 >
                   <img loading="lazy" 
-                    src={cand.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'} 
+                    src={cand.avatarUrl || ''} 
                     alt={cand.fullName} 
                     className="w-10 h-10 rounded-full object-cover shrink-0" 
                   />

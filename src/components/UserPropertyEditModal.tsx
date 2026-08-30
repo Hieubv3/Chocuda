@@ -42,7 +42,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
   const [description, setDescription] = useState(property.description || '');
   const [sellerName, setSellerName] = useState(property.sellerName || '');
   const [sellerPhone, setSellerPhone] = useState(property.sellerPhone || '');
-  const [images, setImages] = useState<string[]>(property.images && property.images.length > 0 ? [...property.images] : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80']);
+  const [images, setImages] = useState<string[]>(property.images && property.images.length > 0 ? [...property.images] : []);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handlePriceChange = (val: string) => {
@@ -126,7 +126,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
       description: description.trim(),
       sellerName: sellerName.trim(),
       sellerPhone: sellerPhone.trim(),
-      images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80'],
+      images: images,
       updatedAt: new Date().toISOString()
     };
 

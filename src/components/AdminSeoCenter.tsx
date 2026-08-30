@@ -34,7 +34,7 @@ export const AdminSeoCenter: React.FC<AdminSeoCenterProps> = ({
   const [metaTitle, setMetaTitle] = useState('Chợ Cư Dân 24h — Nền Tảng Trao Đổi Thông Tin Chuyển Nhượng, Cho Thuê & Kết Nối Cư Dân Vinhomes');
   const [metaDescription, setMetaDescription] = useState('Nền tảng trao đổi thông tin chuyển nhượng, cho thuê và kết nối sản phẩm BĐS của cư dân Vinhomes để bỏ qua rào cản bảo mật với sale. Tất cả hotline 0868.499.929 hỗ trợ đăng tin & vận hành hệ thống.');
   const [metaKeywords, setMetaKeywords] = useState('chocudan24h, chợ cư dân 24h, bất động sản vinhomes, mua bán vinhomes, cho thuê vinhomes, chuyển nhượng vinhomes, bán mới vinhomes, pháp lý vinhomes, sổ đỏ chính chủ, bảng giá vinhomes 2026, biệt thự vinhomes, shophouse vinhomes, liền kề vinhomes, chung cư vinhomes, studio vinhomes, vinhomes ocean park 1 2 3, ocean city, vinhomes hạ long xanh, vinhomes smart city, vinhomes grand park, vinhomes cổ loa, vinhomes vũ yên royal island');
-  const [ogImage, setOgImage] = useState('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80');
+  const [ogImage, setOgImage] = useState('');
   const [canonicalUrl, setCanonicalUrl] = useState('https://chocudan24h.com');
 
   // 2. Google Analytics & Verification Tags
@@ -75,27 +75,23 @@ export const AdminSeoCenter: React.FC<AdminSeoCenterProps> = ({
     aiOptimizedTitle?: string;
     aiOptimizedDesc?: string;
   }>({
-    score: 92,
-    gradeBadge: '🟢 Xuất Sắc — Đạt Top 1 Google',
-    gradeColor: 'emerald',
+    score: 0,
+    gradeBadge: '⏳ Chưa phân tích',
+    gradeColor: 'slate',
     breakdown: {
-      title: { score: 15, max: 15, pass: true, note: 'Tiêu đề có độ dài lý tưởng (58 ký tự) chứa từ khóa chính.' },
-      metaDesc: { score: 14, max: 15, pass: true, note: 'Mô tả meta chứa từ khóa & kêu gọi hành động (152 ký tự).' },
-      keywordDensity: { score: 18, max: 20, pass: true, density: '2.4%', note: 'Mật độ từ khóa đạt 2.4% (ngưỡng tối ưu 1.5 - 3.0%).' },
-      headings: { score: 15, max: 15, pass: true, note: 'Đã có thẻ H1 duy nhất và các thẻ H2 bổ trợ.' },
-      imageAlt: { score: 12, max: 15, pass: false, totalImages: 24, missingAlt: 2, note: 'Còn 2 ảnh sản phẩm chưa gắn thẻ Alt từ khóa.' },
-      schemaAndLinks: { score: 18, max: 20, pass: true, note: 'Đã sẵn sàng Schema RealEstateAgent & 3 liên kết nội bộ.' }
+      title: { score: 0, max: 15, pass: false, note: 'Chưa phân tích.' },
+      metaDesc: { score: 0, max: 15, pass: false, note: 'Chưa phân tích.' },
+      keywordDensity: { score: 0, max: 20, pass: false, density: '—', note: 'Chưa phân tích.' },
+      headings: { score: 0, max: 15, pass: false, note: 'Chưa phân tích.' },
+      imageAlt: { score: 0, max: 15, pass: false, totalImages: 0, missingAlt: 0, note: 'Chưa phân tích.' },
+      schemaAndLinks: { score: 0, max: 20, pass: false, note: 'Chưa phân tích.' }
     },
-    titleCheck: { pass: true, message: 'Độ dài tiêu đề hoàn hảo (58/60 ký tự).' },
-    descCheck: { pass: true, message: 'Thẻ Description chứa từ khóa chính và nằm trong ngưỡng 150-160 ký tự.' },
-    headingsCheck: { pass: true, message: 'Có 1 thẻ H1 duy nhất và cấu trúc H2, H3 mạch lạc.' },
-    imageAltCheck: { pass: true, totalImages: 24, missingAlt: 2 },
-    keywordDensity: { keyword: 'vinhomes ocean park 2', density: '2.4%', status: 'Good' },
-    recommendations: [
-      'Bổ sung thẻ alt cho 2 hình ảnh còn thiếu tại danh sách BĐS.',
-      'Tăng số lượng liên kết nội bộ (Internal Links) từ bài viết tin tức sang chi tiết sản phẩm.',
-      'Đã cấu hình tự động tạo Schema.org (RealEstateAgent & FAQPage).'
-    ]
+    titleCheck: { pass: false, message: 'Chưa phân tích.' },
+    descCheck: { pass: false, message: 'Chưa phân tích.' },
+    headingsCheck: { pass: false, message: 'Chưa phân tích.' },
+    imageAltCheck: { pass: false, totalImages: 0, missingAlt: 0 },
+    keywordDensity: { keyword: '', density: '—', status: 'Low' },
+    recommendations: []
   });
 
   // 4. Slugs & Redirects State
@@ -174,29 +170,29 @@ export const AdminSeoCenter: React.FC<AdminSeoCenterProps> = ({
       setIsAuditing(false);
 
       if (data.success && data.result) {
+        const realScore = typeof data.result.score === 'number' ? data.result.score : 0;
         setAuditResult({
-          score: data.result.score || 94,
-          gradeBadge: data.result.score >= 90 ? '🟢 Xuất Sắc — Đạt Top 1 Google' : data.result.score >= 75 ? '🟡 Khá — Đạt Chuẩn Trang 1' : '🔴 Cần Tối Ưu Lại',
-          gradeColor: data.result.score >= 90 ? 'emerald' : data.result.score >= 75 ? 'amber' : 'rose',
+          score: realScore,
+          gradeBadge: realScore >= 90 ? '🟢 Xuất Sắc — Đạt Top 1 Google' : realScore >= 75 ? '🟡 Khá — Đạt Chuẩn Trang 1' : realScore > 0 ? '🔴 Cần Tối Ưu Lại' : '⏳ Chưa phân tích',
+          gradeColor: realScore >= 90 ? 'emerald' : realScore >= 75 ? 'amber' : 'rose',
           breakdown: {
             title: { score: titleLength >= 45 && titleLength <= 65 ? 15 : 10, max: 15, pass: titleLength >= 40, note: `Độ dài tiêu đề: ${titleLength} ký tự ${kwInTitle ? '(chứa từ khóa)' : '(chưa tối ưu từ khóa)'}` },
             metaDesc: { score: descLength >= 120 && descLength <= 165 ? 15 : 11, max: 15, pass: descLength >= 100, note: `Độ dài mô tả: ${descLength} ký tự ${kwInDesc ? '(chứa từ khóa)' : ''}` },
-            keywordDensity: { score: 18, max: 20, pass: true, density: '2.4%', note: 'Mật độ từ khóa đạt 2.4% (mức lý tưởng cho Google)' },
-            headings: { score: 15, max: 15, pass: true, note: 'Có 1 thẻ H1 duy nhất và phân bổ thẻ H2, H3 tự động' },
-            imageAlt: { score: 13, max: 15, pass: true, totalImages: 12, missingAlt: 1, note: 'Đã bổ sung thẻ alt cho 11/12 hình ảnh sản phẩm' },
-            schemaAndLinks: { score: 18, max: 20, pass: true, note: 'Tích hợp sẵn Schema JSON-LD RealEstateAgent & FAQPage' }
+            keywordDensity: data.result.breakdown?.keywordDensity || { score: 0, max: 20, pass: false, density: '—', note: 'Chưa phân tích.' },
+            headings: data.result.breakdown?.headings || { score: 0, max: 15, pass: false, note: 'Chưa phân tích.' },
+            imageAlt: data.result.breakdown?.imageAlt || { score: 0, max: 15, pass: false, totalImages: 0, missingAlt: 0, note: 'Chưa phân tích.' },
+            schemaAndLinks: data.result.breakdown?.schemaAndLinks || { score: 0, max: 20, pass: false, note: 'Chưa phân tích.' }
           },
-          titleCheck: data.result.titleCheck || { pass: true, message: `Tiêu đề (${titleLength} ký tự) hiển thị đầy đủ trên kết quả Google.` },
-          descCheck: data.result.descCheck || { pass: true, message: `Thẻ mô tả (${descLength} ký tự) đạt tiêu chuẩn hiển thị 2 dòng.` },
-          headingsCheck: data.result.headingsCheck || { pass: true, message: 'Cấu trúc tiêu đề mạch lạc H1 -> H2.' },
-          imageAltCheck: data.result.imageAltCheck || { pass: true, totalImages: 12, missingAlt: 1 },
-          keywordDensity: data.result.keywordDensity || { keyword: targetKeyword, density: '2.4%', status: 'Good' },
+          titleCheck: data.result.titleCheck || { pass: false, message: `Tiêu đề (${titleLength} ký tự) — chưa có dữ liệu phân tích.` },
+          descCheck: data.result.descCheck || { pass: false, message: `Thẻ mô tả (${descLength} ký tự) — chưa có dữ liệu phân tích.` },
+          headingsCheck: data.result.headingsCheck || { pass: false, message: 'Chưa phân tích cấu trúc tiêu đề.' },
+          imageAltCheck: data.result.imageAltCheck || { pass: false, totalImages: 0, missingAlt: 0 },
+          keywordDensity: data.result.keywordDensity || { keyword: targetKeyword, density: '—', status: 'Low' },
           recommendations: data.result.recommendations || [
-            'Thêm 1-2 từ khóa phụ liên quan tới dự án Vinhomes Ocean Park 2.',
-            'Tự động áp dụng nút AI Auto-Fix bên dưới để đạt điểm tuyệt đối 100/100.'
+            'Chưa có dữ liệu phân tích từ máy chủ. Vui lòng thử lại sau.'
           ],
-          aiOptimizedTitle: `[Hot Chốt Nhanh] ${testContentTitle} — Bảng Giá Niêm Yết`,
-          aiOptimizedDesc: `${testContentDesc} Cập nhật ngay quỹ căn độc quyền giá cắt lỗ sâu, liên hệ hotline chuyên viên 0868.499.929!`
+          aiOptimizedTitle: data.result.aiOptimizedTitle || '',
+          aiOptimizedDesc: data.result.aiOptimizedDesc || ''
         });
       } else {
         throw new Error('Fallback audit');
@@ -204,28 +200,27 @@ export const AdminSeoCenter: React.FC<AdminSeoCenterProps> = ({
     } catch (err) {
       setIsAuditing(false);
       setAuditResult({
-        score: Math.min(98, (titleLength >= 45 && titleLength <= 65 ? 15 : 10) + (descLength >= 120 ? 15 : 10) + 60),
-        gradeBadge: '🟢 Xuất Sắc — Đạt Top 1 Google',
-        gradeColor: 'emerald',
+        score: 0,
+        gradeBadge: '⚠️ Không lấy được kết quả phân tích',
+        gradeColor: 'rose',
         breakdown: {
-          title: { score: 15, max: 15, pass: true, note: `Tiêu đề (${titleLength} ký tự) tối ưu chuẩn SEO` },
-          metaDesc: { score: 14, max: 15, pass: true, note: `Thẻ mô tả (${descLength} ký tự) cuốn hút khách mua` },
-          keywordDensity: { score: 19, max: 20, pass: true, density: '2.2%', note: 'Mật độ từ khóa hoàn hảo 2.2%' },
-          headings: { score: 15, max: 15, pass: true, note: 'Phân bổ thẻ H1, H2 hợp lý' },
-          imageAlt: { score: 14, max: 15, pass: true, totalImages: 10, missingAlt: 0, note: '100% hình ảnh có thẻ ALT từ khóa' },
-          schemaAndLinks: { score: 18, max: 20, pass: true, note: 'Đã sẵn sàng Schema Json-LD' }
+          title: { score: 0, max: 15, pass: false, note: 'Không lấy được dữ liệu phân tích.' },
+          metaDesc: { score: 0, max: 15, pass: false, note: 'Không lấy được dữ liệu phân tích.' },
+          keywordDensity: { score: 0, max: 20, pass: false, density: '—', note: 'Không lấy được dữ liệu phân tích.' },
+          headings: { score: 0, max: 15, pass: false, note: 'Không lấy được dữ liệu phân tích.' },
+          imageAlt: { score: 0, max: 15, pass: false, totalImages: 0, missingAlt: 0, note: 'Không lấy được dữ liệu phân tích.' },
+          schemaAndLinks: { score: 0, max: 20, pass: false, note: 'Không lấy được dữ liệu phân tích.' }
         },
-        titleCheck: { pass: true, message: `Tiêu đề (${titleLength} ký tự) chuẩn SEO Google` },
-        descCheck: { pass: true, message: `Mô tả (${descLength} ký tự) đạt điểm cao` },
-        headingsCheck: { pass: true, message: 'Thẻ tiêu đề chuẩn' },
-        imageAltCheck: { pass: true, totalImages: 10, missingAlt: 0 },
-        keywordDensity: { keyword: targetKeyword, density: '2.2%', status: 'Good' },
+        titleCheck: { pass: false, message: 'Không lấy được dữ liệu phân tích.' },
+        descCheck: { pass: false, message: 'Không lấy được dữ liệu phân tích.' },
+        headingsCheck: { pass: false, message: 'Không lấy được dữ liệu phân tích.' },
+        imageAltCheck: { pass: false, totalImages: 0, missingAlt: 0 },
+        keywordDensity: { keyword: targetKeyword, density: '—', status: 'Low' },
         recommendations: [
-          'Chất lượng nội dung và thẻ meta đã cực kỳ tối ưu.',
-          'Khuyến nghị bấm "AI Auto-Fix Đạt 100/100 Điểm" để bổ sung CTA giục khách liên hệ Zalo.'
+          'Không kết nối được máy chủ phân tích SEO. Vui lòng kiểm tra kết nối và thử lại.'
         ],
-        aiOptimizedTitle: `[Chính Chủ Bán] ${testContentTitle} — Hotline 0868.499.929`,
-        aiOptimizedDesc: `${testContentDesc} Nhận bảng giá chi tiết & xem nhà trực tiếp 24/7.`
+        aiOptimizedTitle: '',
+        aiOptimizedDesc: ''
       });
     }
   };
@@ -240,25 +235,7 @@ export const AdminSeoCenter: React.FC<AdminSeoCenterProps> = ({
       if (auditResult?.aiOptimizedDesc) {
         setTestContentDesc(auditResult.aiOptimizedDesc);
       }
-      setAuditResult(prev => prev ? {
-        ...prev,
-        score: 100,
-        gradeBadge: '🏆 ĐẠT ĐIỂM TUYỆT ĐỐI 100/100 — TOP 1 GOOGLE GUARANTEED',
-        gradeColor: 'emerald',
-        breakdown: {
-          title: { score: 15, max: 15, pass: true, note: 'Tiêu đề đã được AI tối ưu tuyệt đối 100%' },
-          metaDesc: { score: 15, max: 15, pass: true, note: 'Mô tả meta đã chèn đủ từ khóa & nút CTA liên hệ hotline' },
-          keywordDensity: { score: 20, max: 20, pass: true, density: '2.5%', note: 'Mật độ từ khóa chuẩn xác 2.5%' },
-          headings: { score: 15, max: 15, pass: true, note: 'Đầy đủ thẻ H1, H2, H3 theo tiêu chuẩn Google' },
-          imageAlt: { score: 15, max: 15, pass: true, totalImages: 12, missingAlt: 0, note: '100% Ảnh đã có Alt chuẩn SEO' },
-          schemaAndLinks: { score: 20, max: 20, pass: true, note: 'Gắn liên kết nội bộ & Schema.org hoàn chỉnh' }
-        },
-        recommendations: [
-          '🎉 Nội dung đã đạt điểm tối đa 100/100 SEO!',
-          'Bạn có thể xuất bản bài viết hoặc tin đăng ngay lập tức để leo top 1 Google.'
-        ]
-      } : prev);
-      alert('⚡ AI đã tự động tối ưu Tiêu Đề & Mô Tả Meta! Điểm SEO đã nâng lên 100/100.');
+      alert('⚡ Đã áp dụng Tiêu Đề & Mô Tả Meta tối ưu. Chạy lại phân tích để cập nhật điểm SEO.');
     }, 800);
   };
 

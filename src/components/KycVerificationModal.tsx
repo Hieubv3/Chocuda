@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { User } from '../types';
 import { ShieldCheck, Upload, CheckCircle2, AlertTriangle, Sparkles, X, FileText, UserCheck, Lock } from 'lucide-react';
 import { addWatermarkToImage, validateImageSize, createInstantPreview } from '../lib/watermark';
@@ -18,9 +18,9 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
   const [fullName, setFullName] = useState(user.name || '');
   const [dob, setDob] = useState(user.dob || '1992-08-15');
   const [idCardNumber, setIdCardNumber] = useState(user.idCardNumber || '');
-  const [idCardFrontUrl, setIdCardFrontUrl] = useState(user.idCardFrontUrl || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80');
-  const [idCardBackUrl, setIdCardBackUrl] = useState(user.idCardBackUrl || 'https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&w=600&q=80');
-  const [brokerLicenseUrl, setBrokerLicenseUrl] = useState(user.brokerLicenseUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80');
+  const [idCardFrontUrl, setIdCardFrontUrl] = useState(user.idCardFrontUrl || '');
+  const [idCardBackUrl, setIdCardBackUrl] = useState(user.idCardBackUrl || '');
+  const [brokerLicenseUrl, setBrokerLicenseUrl] = useState(user.brokerLicenseUrl || '');
   
   const [isAiScanning, setIsAiScanning] = useState(false);
   const [aiScanResult, setAiScanResult] = useState<{

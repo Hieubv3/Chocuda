@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   Store, MapPin, Phone, MessageCircle, Star, ShieldCheck, 
@@ -110,7 +110,7 @@ export const ResidentStoreDetailPage: React.FC<ResidentStoreDetailPageProps> = (
         }
         image={selectedProduct && selectedProduct.images && selectedProduct.images[0] 
           ? selectedProduct.images[0] 
-          : (store.bannerUrl || store.logoUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80')
+          : (store.bannerUrl || store.logoUrl || '')
         }
         url={shareUrl}
         keywords={`${store.storeName}, chợ cư dân vinhomes, mua sắm ${store.project}, nông sản thực phẩm`}
@@ -154,7 +154,7 @@ export const ResidentStoreDetailPage: React.FC<ResidentStoreDetailPageProps> = (
         <div className="relative rounded-3xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl">
           <div className="h-44 sm:h-60 w-full overflow-hidden relative">
             <img loading="lazy"
-              src={store.bannerUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80'}
+              src={store.bannerUrl || ''}
               alt={store.storeName}
               className="w-full h-full object-cover opacity-75"
             />
@@ -164,7 +164,7 @@ export const ResidentStoreDetailPage: React.FC<ResidentStoreDetailPageProps> = (
           <div className="p-6 sm:p-8 relative -mt-16 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 bg-slate-900/90 backdrop-blur-md">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
               <img loading="lazy"
-                src={store.logoUrl || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80'}
+                src={store.logoUrl || ''}
                 alt={store.storeName}
                 className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-4 border-amber-500 shadow-2xl bg-white shrink-0"
               />

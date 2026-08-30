@@ -40,7 +40,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
         role: role,
         avatar: logoImg,
         provider: 'local',
-        balance: 10000000
+        balance: 0
       };
 
       setIsLoading(false);

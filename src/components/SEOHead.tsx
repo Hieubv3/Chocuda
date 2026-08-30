@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 
 interface SEOHeadProps {
   title?: string;
@@ -12,7 +12,7 @@ interface SEOHeadProps {
 export const SEOHead: React.FC<SEOHeadProps> = ({
   title = 'Chợ Cư Dân 24h - Nền Tảng BĐS & Dịch Vụ Cư Dân Vinhomes',
   description = 'Kênh thông tin bất động sản, chuyển nhượng, cho thuê căn hộ, shophouse và dịch vụ cư dân Vinhomes Ocean Park 1, 2, 3, Hạ Long Xanh, Smart City.',
-  image = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
+  image = '',
   url,
   type = 'website',
   keywords = 'bất động sản vinhomes, chợ cư dân, mua bán ocean park 2, shophouse chà là, việc làm cư dân, dịch vụ nội khu'
