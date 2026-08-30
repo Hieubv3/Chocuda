@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Lock, Mail, User as UserIcon, Phone, ShieldCheck, AlertCircle, CheckCircle2, Building2, Briefcase, Check } from 'lucide-react';
 import { User as UserType, BUSINESS_CATEGORIES } from '../types';
+import { setToken } from '../lib/api';
 import { Logo } from './Logo';
 import { TripartiteAgreementModal } from './TripartiteAgreementModal';
 
@@ -23,6 +24,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [showTripartiteModal, setShowTripartiteModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+const [totpPending, setTotpPending] = useState<{ pendingToken: string; email: string; password: string } | null>(null);
+const [totpCode, setTotpCode] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -92,7 +95,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
       } else {
         setSuccessMsg('Đăng nhập Google thành công!');
         setTimeout(() => {
-          onLoginSuccess(data.user);
+          setToken(data.token); onLoginSuccess(data.user);
         }, 400);
       }
     } catch (err) {
@@ -124,7 +127,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
       if (event.data && event.data.type === 'GOOGLE_OAUTH_SUCCESS' && event.data.user) {
         setSuccessMsg('Đăng nhập Google thành công!');
         setTimeout(() => {
-          onLoginSuccess(event.data.user);
+          setToken(event.data.token); onLoginSuccess(event.data.user);
         }, 300);
       } else if (event.data && event.data.type === 'GOOGLE_OAUTH_ERROR') {
         setErrorMsg(event.data.error || 'Đăng nhập Google không thành công.');
@@ -187,7 +190,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
               } else {
                 setSuccessMsg('Đăng nhập bằng tài khoản Google thành công!');
                 setTimeout(() => {
-                  onLoginSuccess(data.user);
+                  setToken(data.token); onLoginSuccess(data.user);
                 }, 400);
               }
             } catch (err: any) {
@@ -295,7 +298,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
       } else {
         setSuccessMsg('Đăng nhập bằng Facebook thành công!');
         setTimeout(() => {
-          onLoginSuccess(data.user);
+          setToken(data.token); onLoginSuccess(data.user);
         }, 400);
       }
     } catch (err) {
@@ -331,7 +334,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
       } else {
         setSuccessMsg('Đăng nhập bằng Zalo thành công!');
         setTimeout(() => {
-          onLoginSuccess(data.user);
+          setToken(data.token); onLoginSuccess(data.user);
         }, 400);
       }
     } catch (err) {
@@ -478,11 +481,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
 
         const data = await res.json();
         if (!res.ok) {
-          setErrorMsg(data.error || 'Đăng nhập không thành công.');
+          setErrorMsg(data.error || 'Dang nhap khong thanh cong.');
+        } else if (data.requireTotp && data.pendingToken) {
+          // SECURITY: Tai khoan da bat xac thuc 2 lop (TOTP) - yeu cau nhap ma
+          setTotpPending({ pendingToken: data.pendingToken, email: email.trim(), password });
+          setTotpCode('');
+          setErrorMsg('');
         } else {
-          setSuccessMsg('Đăng nhập thành công! Đang chuyển hướng...');
+          setSuccessMsg('Dang nhap thanh cong! Dang chuyen huong...');
           setTimeout(() => {
-            onLoginSuccess(data.user);
+            setToken(data.token); onLoginSuccess(data.user);
           }, 500);
         }
       } catch (err) {
@@ -490,6 +498,42 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
       } finally {
         setIsLoading(false);
       }
+    }
+  };
+
+  const handleTotpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!totpPending) return;
+    if (!totpCode.trim()) {
+      setErrorMsg('Vui long nhap ma xac thuc 2 lop.');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: totpPending.email,
+          password: totpPending.password,
+          pendingToken: totpPending.pendingToken,
+          totpCode: totpCode.trim()
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErrorMsg(data.error || 'Ma xac thuc khong chinh xac.');
+      } else {
+        setTotpPending(null);
+        setSuccessMsg('Dang nhap thanh cong! Dang chuyen huong...');
+        setTimeout(() => {
+          setToken(data.token); onLoginSuccess(data.user);
+        }, 500);
+      }
+    } catch (err) {
+      setErrorMsg('Loi ket noi may chu. Vui long thu lai!');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -712,6 +756,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                 <span className="inline-block animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
               ) : (
                 '✓ XÁC NHẬN & HOÀN TẤT ĐĂNG KÝ'
+              )}
+            </button>
+          </form>
+        ) : totpPending ? (
+          <form onSubmit={handleTotpSubmit} className="space-y-3 text-xs">
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Ma xac thuc 2 lop (TOTP)
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                value={totpCode}
+                onChange={(e) => setTotpCode(e.target.value)}
+                placeholder="Nhap 6 chu so tu ung dung Authenticator"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition cursor-pointer disabled:opacity-60"
+            >
+              {isLoading ? (
+                <span className="inline-block animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
+              ) : (
+                'XAC NHAN MA TOTP'
               )}
             </button>
           </form>

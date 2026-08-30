@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Language } from '../types';
 import { ShieldCheck, Lock, User as UserIcon, KeyRound, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
-import logoImg from '../assets/images/chocudan24h_custom_logo_1785384117746.jpg';
+import { setToken } from '../lib/api';
 
 interface AdminLoginPageProps {
   language: Language;
@@ -16,36 +16,75 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
 }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'admin' | 'manager'>('admin');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [totpPending, setTotpPending] = useState<{ pendingToken: string; email: string; password: string } | null>(null);
+  const [totpCode, setTotpCode] = useState('');
 
-  const handleAdminSubmit = (e: React.FormEvent) => {
+  const handleAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!username.trim() || !password) {
+      setError('Vui lòng nhập đầy đủ tài khoản và mật khẩu.');
+      return;
+    }
     setIsLoading(true);
-
-    setTimeout(() => {
-      if (password.length < 4) {
-        setError('Mật khẩu không đúng. Vui lòng thử lại.');
-        setIsLoading(false);
-        return;
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: username.trim(), password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Đăng nhập không thành công.');
+      } else if (data.requireTotp && data.pendingToken) {
+        // SECURITY: Tai khoan da bat xac thuc 2 lop (TOTP) - yeu cau nhap ma
+        setTotpPending({ pendingToken: data.pendingToken, email: username.trim(), password });
+        setTotpCode('');
+      } else {
+        setToken(data.token);
+        onLoginSuccess(data.user);
       }
-
-      const loggedInAdmin: User = {
-        id: `user-admin-${Date.now()}`,
-        name: role === 'admin' ? 'Chợ Cư Dân 24h (Admin Tổng)' : 'Quản Lý Cấp Cao',
-        email: 'hotro.chocudan24h@gmail.com',
-        phone: '0868.499.929',
-        role: role,
-        avatar: logoImg,
-        provider: 'local',
-        balance: 0
-      };
-
+    } catch (err) {
+      setError('Lỗi kết nối máy chủ. Vui lòng kiểm tra lại đường truyền!');
+    } finally {
       setIsLoading(false);
-      onLoginSuccess(loggedInAdmin);
-    }, 600);
+    }
+  };
+
+  const handleTotpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!totpPending) return;
+    if (!totpCode.trim()) {
+      setError('Vui lòng nhập mã xác thực 2 lớp (TOTP).');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: totpPending.email,
+          password: totpPending.password,
+          pendingToken: totpPending.pendingToken,
+          totpCode: totpCode.trim()
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Mã xác thực không chính xác.');
+      } else {
+        setToken(data.token);
+        onLoginSuccess(data.user);
+      }
+    } catch (err) {
+      setError('Lỗi kết nối máy chủ. Vui lòng thử lại!');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -89,79 +128,96 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
           </div>
         )}
 
-        <form onSubmit={handleAdminSubmit} className="space-y-4">
-          
-          {/* Role selector */}
-          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-800/80 rounded-xl border border-slate-700">
+        {totpPending ? (
+          <form onSubmit={handleTotpSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs font-bold text-slate-400 block mb-1.5">Mã xác thực 2 lớp (TOTP)</label>
+              <div className="relative">
+                <KeyRound className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  required
+                  value={totpCode}
+                  onChange={(e) => setTotpCode(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
+                  placeholder="Nhập 6 chữ số từ ứng dụng Authenticator"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition active:scale-98 disabled:opacity-50"
+            >
+              {isLoading ? (
+                <span>Đang xác thực...</span>
+              ) : (
+                <>
+                  Xác Nhận Mã TOTP
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+
             <button
               type="button"
-              onClick={() => setRole('admin')}
-              className={`py-2 text-xs font-bold rounded-lg transition ${
-                role === 'admin'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              onClick={() => setTotpPending(null)}
+              className="w-full text-xs text-slate-400 hover:text-white transition cursor-pointer"
             >
-              👑 Admin Tổng
+              ← Quay lại đăng nhập
             </button>
+          </form>
+        ) : (
+          <form onSubmit={handleAdminSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs font-bold text-slate-400 block mb-1.5">Tên đăng nhập / Email Admin</label>
+              <div className="relative">
+                <UserIcon className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
+                  placeholder="Nhập tài khoản quản trị..."
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-400 block mb-1.5">Mật khẩu bảo mật</label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
             <button
-              type="button"
-              onClick={() => setRole('manager')}
-              className={`py-2 text-xs font-bold rounded-lg transition ${
-                role === 'manager'
-                  ? 'bg-teal-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition active:scale-98 disabled:opacity-50"
             >
-              💼 Admin Cấp Quản Lý
+              {isLoading ? (
+                <span>Đang xác thực hệ thống...</span>
+              ) : (
+                <>
+                  Đăng Nhập Quản Trị Hệ Thống
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
-          </div>
-
-          <div>
-            <label className="text-xs font-bold text-slate-400 block mb-1.5">Tên đăng nhập / Email Admin</label>
-            <div className="relative">
-              <UserIcon className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
-                placeholder="Nhập tài khoản quản trị..."
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="text-xs font-bold text-slate-400 block mb-1.5">Mật khẩu bảo mật</label>
-            <div className="relative">
-              <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-3 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition active:scale-98 disabled:opacity-50"
-          >
-            {isLoading ? (
-              <span>Đang xác thực hệ thống...</span>
-            ) : (
-              <>
-                Đăng Nhập Quản Trị Hệ Thống
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
-          </button>
-        </form>
+          </form>
+        )}
 
         <div className="mt-6 pt-4 border-t border-slate-800/80 text-center">
           <p className="text-[11px] text-slate-500">
