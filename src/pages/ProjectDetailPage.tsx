@@ -268,6 +268,19 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
                   <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
                     {sub.description}
                   </p>
+                  {/* Mục con của phân khu (tầng/block/lô/giai đoạn) */}
+                  {sub.subItems && sub.subItems.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {sub.subItems.map((item, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-[10px] rounded-full border border-emerald-200 dark:border-emerald-800"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <div className="pt-2 flex items-center justify-between text-[11px] font-bold text-emerald-600 dark:text-emerald-400 border-t border-slate-100 dark:border-slate-800">
                     <span>Xem sơ đồ & thông số</span>
                     <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />

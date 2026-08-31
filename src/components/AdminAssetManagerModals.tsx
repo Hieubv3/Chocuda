@@ -690,6 +690,42 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
               />
             </div>
+
+            {/* Phân Khu (Subdivisions) — mỗi dòng 1 phân khu */}
+            <div className="md:col-span-2">
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                Danh Sách Phân Khu (Subdivisions) — mỗi dòng 1 phân khu:
+              </label>
+              <textarea
+                rows={3}
+                value={(formData.subdivisions || []).join('\n')}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  subdivisions: e.target.value.split('\n').map(s => s.trim()).filter(Boolean)
+                })}
+                placeholder={'VD:\nChà Là\nSan Hô\nHải Tăng\nCổ Loa'}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              />
+              <p className="text-[10px] text-slate-400 mt-1">Mỗi dòng là một phân khu. Các phân khu này sẽ hiển thị trong trang chi tiết dự án.</p>
+            </div>
+
+            {/* Tiện Ích (Amenities) — mỗi dòng 1 tiện ích */}
+            <div className="md:col-span-2">
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                Danh Sách Tiện Ích (Amenities) — mỗi dòng 1 tiện ích:
+              </label>
+              <textarea
+                rows={3}
+                value={(formData.amenities || []).join('\n')}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  amenities: e.target.value.split('\n').map(s => s.trim()).filter(Boolean)
+                })}
+                placeholder={'VD:\nHồ bơi\nPhòng gym\nCông viên\nTrường học'}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              />
+              <p className="text-[10px] text-slate-400 mt-1">Mỗi dòng là một tiện ích. Các tiện ích này sẽ hiển thị trong trang chi tiết dự án.</p>
+            </div>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200 dark:border-slate-800">

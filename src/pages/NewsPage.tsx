@@ -87,6 +87,14 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
           >
             Quy Hoạch
           </button>
+          <button
+            onClick={() => setSelectedCat('kinh-nghiem')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+              selectedCat === 'kinh-nghiem' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-600 dark:text-slate-300'
+            }`}
+          >
+            Chia Sẻ Kinh Nghiệm
+          </button>
         </div>
       </div>
 

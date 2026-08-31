@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { User, UpTinPricingConfig } from '../types';
 import { 
   Zap, Crown, Wallet, ArrowUpRight, Copy, Check, Clock, RefreshCw, 
-  Sparkles, CheckCircle2, ShieldCheck, DollarSign
+  Sparkles, CheckCircle2, ShieldCheck, DollarSign, QrCode
 } from 'lucide-react';
+import { PaymentQRModal } from './PaymentQRModal';
 
 interface UserWalletSectionProps {
   userState: User;
@@ -32,6 +33,8 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
   const [copiedAccount, setCopiedAccount] = useState(false);
   const [copiedMemo, setCopiedMemo] = useState(false);
   const [customAmount, setCustomAmount] = useState(100000);
+  // Auto VietQR deposit modal (SePay auto-verification)
+  const [showAutoDeposit, setShowAutoDeposit] = useState(false);
 
   // Check if user is authorized for business / technician services
   const isBusinessOrTechnician = Boolean(
@@ -215,6 +218,12 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
                 {(amt / 1000).toLocaleString('vi-VN')}k
               </button>
             ))}
+            <button
+              onClick={() => setShowAutoDeposit(true)}
+              className="px-2.5 py-1 text-xs font-bold rounded-lg border transition bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
+            >
+              <QrCode className="w-3 h-3" /> Nạp Tự Động
+            </button>
           </div>
         </div>
 
@@ -326,6 +335,23 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
           </div>
         )}
       </div>
+
+      {/* Auto VietQR Deposit Modal (SePay auto-verification) */}
+      <PaymentQRModal
+        open={showAutoDeposit}
+        onClose={() => setShowAutoDeposit(false)}
+        title="Nạp Ví Chợ Cư Dân 24h"
+        description={`Nạp ${customAmount.toLocaleString('vi-VN')} VNĐ vào ví — tự động cộng sau khi chuyển khoản`}
+        amount={customAmount}
+        type="wallet_deposit"
+        userId={userState.id}
+        userName={userState.name}
+        userPhone={userState.phone}
+        onSuccess={() => {
+          // Refresh the wallet balance after a successful deposit
+          setTimeout(() => onRefreshBalance(true), 1500);
+        }}
+      />
     </div>
   );
 };

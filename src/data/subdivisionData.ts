@@ -18,6 +18,8 @@ export interface SubdivisionSEOInfo {
   description: string;
   highlights: string[];
   images: string[];
+  // Mục con của phân khu (tầng, block, lô, giai đoạn...) — hiển thị trong trang chi tiết dự án
+  subItems?: string[];
 }
 
 export interface AmenitySEOInfo {

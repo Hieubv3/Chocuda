@@ -775,6 +775,12 @@ let affiliateConfigStore = {
 // which then pushes the property to the top.
 let upTinOrdersStore: any[] = [];
 
+// Generic Payment Orders (SePay auto-verification) — covers ALL payment types:
+// wallet_deposit (nạp ví), package (mua gói gian hàng), up_tin (đẩy tin), etc.
+// Each order is 'pending' until the SePay webhook matches its paymentCode + amount,
+// then it flips to 'approved' and the corresponding business action is applied.
+let paymentOrdersStore: any[] = [];
+
 // SePay webhook authentication token (from .env). When set, the webhook
 // endpoint requires the "Authorization: Apikey <token>" header that SePay sends.
 const SEPAY_API_TOKEN = process.env.SEPAY_API_TOKEN || '';
@@ -1063,6 +1069,7 @@ function loadDataStore() {
       if (Array.isArray(data.walletTransactions) && data.walletTransactions.length > 0) walletTransactionsStore = data.walletTransactions;
       if (Array.isArray(data.withdrawalRequests)) withdrawalRequestsStore = data.withdrawalRequests;
       if (Array.isArray(data.upTinOrders) && data.upTinOrders.length > 0) upTinOrdersStore = data.upTinOrders;
+      if (Array.isArray(data.paymentOrders) && data.paymentOrders.length > 0) paymentOrdersStore = data.paymentOrders;
       if (data.taxConfig) taxConfigStore = data.taxConfig;
       if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
 
@@ -1148,6 +1155,7 @@ ads: adsStore,
       walletTransactions: walletTransactionsStore,
       withdrawalRequests: withdrawalRequestsStore,
       upTinOrders: upTinOrdersStore,
+      paymentOrders: paymentOrdersStore,
       taxConfig: taxConfigStore,
       taxLedger: taxLedgerStore,
       recruitmentJobs: recruitmentJobsStore,
@@ -2103,11 +2111,19 @@ app.post("/api/webhooks/sepay", (req, res) => {
     return res.json({ success: true, message: 'Ignored non-inbound transaction' });
   }
 
-  // Find a pending order whose paymentCode appears in the code field OR content
-  const order = upTinOrdersStore.find(o =>
+  // Find a pending order whose paymentCode appears in the code field OR content.
+  // Search BOTH the up-tin orders store AND the generic payment orders store.
+  const upTinOrder = upTinOrdersStore.find(o =>
     o.status === 'pending' &&
     (code === o.paymentCode || content.includes(o.paymentCode))
   );
+  const paymentOrder = paymentOrdersStore.find(o =>
+    o.status === 'pending' &&
+    (code === o.paymentCode || content.includes(o.paymentCode))
+  );
+
+  // Prefer the up-tin order if both match (legacy flow), else the generic order.
+  const order = upTinOrder || paymentOrder;
 
   if (!order) {
     // No matching pending order — acknowledge to stop SePay retries
@@ -2124,14 +2140,53 @@ app.post("/api/webhooks/sepay", (req, res) => {
   order.approvedAt = new Date().toISOString();
   order.sepayTransactionId = payload.id || null;
 
-  // Push the property to the top + apply VIP effects
-  const prop = propertiesStore.find(p => p.id === order.propertyId);
-  if (prop) {
-    applyUpTinPackageToProperty(prop, order.packageType, order.days);
+  // Apply the business action based on which store the order belongs to.
+  if (upTinOrder) {
+    // Up-tin: push the property to the top + apply VIP effects
+    const prop = propertiesStore.find(p => p.id === order.propertyId);
+    if (prop) {
+      applyUpTinPackageToProperty(prop, order.packageType, order.days);
+    }
+  } else if (paymentOrder) {
+    // Generic payment order — apply action based on order.type
+    const meta = order.metadata || {};
+    if (order.type === 'wallet_deposit') {
+      // Credit the user's wallet balance
+      const user = usersStore.find((u: any) => u.id === order.userId);
+      if (user) {
+        user.balance = (Number(user.balance) || 0) + Number(order.amount);
+        (user as any).tokenBalance = user.balance;
+        walletTransactionsStore.unshift({
+          id: `wtx-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          userId: order.userId,
+          type: 'deposit',
+          amount: Number(order.amount),
+          method: 'vietqr',
+          status: 'completed',
+          description: `Nạp ví qua QR (${order.paymentCode})`,
+          createdAt: new Date().toISOString()
+        });
+      }
+    } else if (order.type === 'package') {
+      // Activate a store package for the user
+      const user = usersStore.find((u: any) => u.id === order.userId);
+      if (user && meta.packageId) {
+        const pkg = storePackagesStore.find((p: any) => p.id === meta.packageId);
+        if (pkg) {
+          const days = Number(meta.days) || 30;
+          (user as any).storePackage = {
+            packageId: pkg.id,
+            packageName: pkg.name,
+            expiresAt: new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
+          };
+        }
+      }
+    }
+    // up_tin / service / other: handled by the frontend polling the order status
   }
 
   saveDataStore();
-  res.json({ success: true, message: 'Payment confirmed, property pushed' });
+  res.json({ success: true, message: 'Payment confirmed' });
 });
 
 // POST /api/properties/:id/push — apply a confirmed up-tin push to a property.
@@ -2162,6 +2217,85 @@ app.post("/api/properties/:id/push", authenticateToken, (req, res) => {
 
   saveDataStore();
   res.json({ success: true, message: "Đã đẩy tin lên TOP 1 thành công!", property: prop });
+});
+
+// ==========================================
+// GENERIC PAYMENT ORDERS + SEPAY AUTO-VERIFICATION
+// Covers ALL payment types: wallet_deposit, package, up_tin, service, etc.
+// ==========================================
+
+// Helper: build a VietQR URL from the configured bank + amount + payment code
+function buildVietQrUrl(amount: number, paymentCode: string) {
+  const bankAccountClean = String(pricingConfigStore.accountNumber).replace(/[^0-9]/g, '');
+  const bankNameRaw = String(pricingConfigStore.bankName).toUpperCase();
+  const bankCode = bankNameRaw.includes('ACB') ? 'ACB'
+    : bankNameRaw.includes('VCB') || bankNameRaw.includes('VIETCOMBANK') ? 'VCB'
+    : bankNameRaw.includes('MB') ? 'MB'
+    : bankNameRaw.includes('MSB') ? 'MSB'
+    : 'ACB';
+  return `https://img.vietqr.io/image/${bankCode}-${bankAccountClean}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(paymentCode)}&accountName=${encodeURIComponent(pricingConfigStore.accountHolder)}`;
+}
+
+// POST /api/payment/orders — create a generic pending payment order + VietQR URL.
+// Body: { type, amount, userId, userName, userPhone, metadata }
+//   type: 'wallet_deposit' | 'package' | 'up_tin' | 'service' | 'other'
+//   metadata: arbitrary object describing what the payment is for
+app.post("/api/payment/orders", (req, res) => {
+  const {
+    type = 'other',
+    amount,
+    userId = 'guest-user',
+    userName = '',
+    userPhone = '',
+    metadata = {}
+  } = req.body || {};
+
+  const numericAmount = Number(amount);
+  if (!numericAmount || numericAmount <= 0) {
+    return res.status(400).json({ error: "Số tiền thanh toán không hợp lệ." });
+  }
+
+  const validTypes = ['wallet_deposit', 'package', 'up_tin', 'service', 'other'];
+  const orderType = validTypes.includes(type) ? type : 'other';
+
+  const paymentCode = generatePaymentCode();
+  const order = {
+    id: `pay-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    type: orderType,
+    userId,
+    userName,
+    userPhone,
+    amount: numericAmount,
+    paymentCode,
+    status: 'pending', // pending -> approved (via SePay webhook) -> rejected
+    metadata: metadata || {},
+    createdAt: new Date().toISOString(),
+    approvedAt: null,
+    sepayTransactionId: null
+  };
+
+  paymentOrdersStore.unshift(order);
+  saveDataStore();
+
+  res.status(201).json({
+    success: true,
+    order,
+    qrUrl: buildVietQrUrl(numericAmount, paymentCode),
+    bank: {
+      bankName: pricingConfigStore.bankName,
+      accountNumber: pricingConfigStore.accountNumber,
+      accountHolder: pricingConfigStore.accountHolder
+    }
+  });
+});
+
+// GET /api/payment/orders/:id — poll the status of a generic payment order
+app.get("/api/payment/orders/:id", (req, res) => {
+  const order = paymentOrdersStore.find(o => o.id === req.params.id);
+  if (!order) {
+    return res.status(404).json({ error: "Không tìm thấy đơn hàng thanh toán." });
+  }
+  res.json({ success: true, order });
 });
 
 // ------------------- API ROUTES -------------------
