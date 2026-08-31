@@ -5230,90 +5230,84 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse">
-              <thead className="bg-slate-100 dark:bg-slate-900">
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  <th className="p-3 font-bold text-slate-500">Ảnh bìa</th>
-                  <th className="p-3 font-bold text-slate-500">Tiêu đề bài viết</th>
-                  <th className="p-3 font-bold text-slate-500">Chuyên mục</th>
-                  <th className="p-3 font-bold text-slate-500">Trạng Thái Duyệt</th>
-                  <th className="p-3 font-bold text-slate-500">Tác giả & Ngày đăng</th>
-                  <th className="p-3 font-bold text-slate-500">Thao tác Phê Duyệt</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {news.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
-                    <td className="p-3">
-                      <img loading="lazy" src={item.image} alt={item.title} className="w-16 h-12 object-cover rounded-lg border shadow-sm" />
-                    </td>
-                    <td className="p-3 max-w-sm">
-                      <span className="font-bold text-slate-900 dark:text-white line-clamp-1">{item.title}</span>
-                      <span className="text-[10px] text-slate-500 line-clamp-1 block">{item.summary}</span>
-                    </td>
-                    <td className="p-3">
-                      <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-md text-[10px]">
-                        {item.category.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="p-3">
-                      {item.status === 'published' ? (
-                        <span className="px-2 py-1 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-lg text-[10px] inline-flex items-center gap-1">
-                          🟢 Đã Đồng Bộ Public
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-extrabold rounded-lg text-[10px] inline-flex items-center gap-1">
-                          🟡 Chờ Duyệt (Nháp)
-                        </span>
-                      )}
-                    </td>
-                    <td className="p-3 text-[11px] text-slate-500">
-                      <div>{item.author}</div>
-                      <div className="text-[10px] text-slate-400">{item.publishedAt}</div>
-                    </td>
-                    <td className="p-3">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        {item.status === 'published' ? (
-                          <button
-                            onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'draft' })}
-                            className="px-2 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg transition text-[10px]"
-                            title="Chuyển bài này về trạng thái Chờ Duyệt (Sub-admin kiểm duyệt lại)"
-                          >
-                            🟡 Trả Chờ Duyệt
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'published' })}
-                            className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg transition shadow text-[10px]"
-                            title="Phê duyệt bài viết và xuất bản lên Web Public"
-                          >
-                            🟢 Duyệt & Đăng Public
-                          </button>
-                        )}
+          {/* Responsive card grid — gọn gàng trên di động */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {news.map((item) => (
+              <div
+                key={item.id}
+                className="bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col"
+              >
+                {/* Ảnh bìa */}
+                <div className="relative h-32 bg-slate-950">
+                  <img loading="lazy" src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                  <span className="absolute top-2 left-2 px-2 py-0.5 bg-slate-950/80 text-emerald-400 font-black text-[10px] rounded-full backdrop-blur-sm uppercase">
+                    {item.category}
+                  </span>
+                  {item.status === 'published' ? (
+                    <span className="absolute top-2 right-2 px-2 py-0.5 bg-emerald-600/90 text-white font-black text-[10px] rounded-full">
+                      🟢 Đã Đồng Bộ
+                    </span>
+                  ) : (
+                    <span className="absolute top-2 right-2 px-2 py-0.5 bg-amber-500/90 text-slate-950 font-black text-[10px] rounded-full">
+                      🟡 Chờ Duyệt
+                    </span>
+                  )}
+                </div>
 
-                        <button
-                          onClick={() => setEditingNews(item)}
-                          className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[10px]"
-                          title="Sửa bài & Thay ảnh"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" /> Sửa
-                        </button>
-                        {onDeleteNews && (
-                          <button
-                            onClick={() => onDeleteNews(item.id)}
-                            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition"
-                            title="Xóa bài viết"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                {/* Nội dung bài viết */}
+                <div className="p-4 space-y-2.5 flex flex-col flex-1">
+                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white leading-snug line-clamp-2">
+                    {item.title}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">
+                    {item.summary}
+                  </p>
+
+                  <div className="pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400">
+                    <div className="font-bold text-slate-700 dark:text-slate-200 truncate">{item.author}</div>
+                    <div className="text-[10px] text-slate-400">{item.publishedAt}</div>
+                  </div>
+
+                  {/* Thao tác */}
+                  <div className="flex items-center gap-2 pt-1 mt-auto">
+                    {item.status === 'published' ? (
+                      <button
+                        onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'draft' })}
+                        className="flex-1 px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg transition text-[11px]"
+                        title="Chuyển bài này về trạng thái Chờ Duyệt"
+                      >
+                        🟡 Trả Chờ Duyệt
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'published' })}
+                        className="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg transition shadow text-[11px]"
+                        title="Phê duyệt bài viết và xuất bản lên Web Public"
+                      >
+                        🟢 Duyệt & Đăng Public
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => setEditingNews(item)}
+                      className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[11px]"
+                      title="Sửa bài & Thay ảnh"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" /> Sửa
+                    </button>
+                    {onDeleteNews && (
+                      <button
+                        onClick={() => onDeleteNews(item.id)}
+                        className="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition"
+                        title="Xóa bài viết"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
