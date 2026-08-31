@@ -329,7 +329,8 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // In-Memory OTP Store
-const otpStore = new Map<string, { code: string; expiresAt: number }>();
+const otpStore = new Map<string, { code: string; expiresAt: number; attempts?: number }>();
+const MAX_OTP_ATTEMPTS = 5;
 
 async function sendEmailOtp(toEmail: string, otpCode: string): Promise<{ sent: boolean; message?: string }> {
   const gmailUser = process.env.GMAIL_USER || 'chocudan24h@gmail.com';
@@ -392,81 +393,59 @@ interface StoredUser extends User {
 const pendingTotpLogins = new Map<string, { userId: string; expiresAt: number }>();
 const PENDING_TOTP_TTL = 5 * 60 * 1000; // 5 phút
 
-// User accounts store (seeded with admin & default accounts)
-let usersStore: StoredUser[] = [
-  {
-    id: 'user-admin',
-    name: 'Nhà đẹp Vinhomes (Admin)',
-    email: 'admin@chocudan24h.com',
-    phone: '0868.499.929',
-    role: 'admin',
-    password: 'admin',
-    provider: 'local',
-    upTinCredits: 100,
-    tier: 'kim-cuong',
-    registeredAt: new Date(Date.now() - 30 * 86400000).toISOString()
-  },
-  {
-    id: 'user-hieubui',
-    name: 'Bùi Văn Hiếu (Vinhomes 24h)',
-    email: 'kinhdoanh1.fpt@gmail.com',
-    phone: '0868.499.929',
-    role: 'owner',
-    password: '123456',
-    provider: 'google',
-    upTinCredits: 50,
-    tier: 'vang',
-    registeredAt: new Date(Date.now() - 25 * 86400000).toISOString()
-  },
-  {
-    id: 'user-trangnguyen',
-    name: 'Nguyễn Thu Trang (Chủ Căn San Hô OCP2)',
-    email: 'trang.nguyen@vinhomesresidence.vn',
-    phone: '0988.123.456',
-    role: 'owner',
-    password: '123',
-    provider: 'google',
-    upTinCredits: 20,
-    tier: 'vang',
-    registeredAt: new Date(Date.now() - 15 * 86400000).toISOString()
-  },
-  {
-    id: 'user-quanghuy',
-    name: 'Trần Quang Huy (Môi Giới Săn Căn OCP3)',
-    email: 'huy.bds.vinhomes@gmail.com',
-    phone: '0912.888.999',
-    role: 'sale',
-    password: '123',
-    provider: 'local',
-    upTinCredits: 35,
-    tier: 'bac',
-    registeredAt: new Date(Date.now() - 10 * 86400000).toISOString()
-  },
-  {
-    id: 'user-hoangnam',
-    name: 'Lê Hoàng Nam (Chủ Căn Shophouse OCP2)',
-    email: 'nam.le.invest@gmail.com',
-    phone: '0903.456.789',
-    role: 'owner',
-    password: '123',
-    provider: 'google',
-    upTinCredits: 15,
-    tier: 'thuong',
-    registeredAt: new Date(Date.now() - 5 * 86400000).toISOString()
-  },
-  {
-    id: 'user-minhpham',
-    name: 'Phạm Thị Minh (Cư Dân Cổ Loa Global Gate)',
-    email: 'minh.pham.coloa@gmail.com',
-    phone: '0977.654.321',
-    role: 'owner',
-    password: '123',
-    provider: 'google',
-    upTinCredits: 10,
-    tier: 'thuong',
-    registeredAt: new Date(Date.now() - 2 * 86400000).toISOString()
+// User accounts store.
+// SECURITY: KHÔNG hardcode tài khoản/mật khẩu thật ở đây — trước đây file này
+// từng chứa email + mật khẩu PLAINTEXT của admin và nhiều user thật, bị lộ công khai
+// trên GitHub. Danh sách user thật phải nằm ở DB (Postgres) hoặc app_data_store.json
+// (không commit dữ liệu thật), KHÔNG BAO GIỜ ở trong source code.
+let usersStore: StoredUser[] = [];
+
+// SECURITY: Bootstrap tài khoản admin đầu tiên từ biến môi trường.
+// - Nếu chưa có user admin nào (lần chạy đầu / mới xóa data), tự tạo 1 admin.
+// - Ưu tiên ADMIN_EMAIL/ADMIN_PASSWORD từ .env. Nếu không set ADMIN_PASSWORD,
+//   tự sinh mật khẩu ngẫu nhiên mạnh và chỉ in ra console MỘT LẦN DUY NHẤT lúc
+//   khởi động — không bao giờ ghi xuống file bị commit.
+async function ensureDefaultAdmin() {
+  const hasAdmin = usersStore.some(u => u.role === 'admin');
+  if (hasAdmin) return;
+
+  const email = (process.env.ADMIN_EMAIL || 'admin@chocudan24h.com').trim().toLowerCase();
+  let plainPassword = process.env.ADMIN_PASSWORD;
+  let generated = false;
+
+  if (!plainPassword || plainPassword.length < 8) {
+    plainPassword = crypto.randomBytes(12).toString('base64url'); // mật khẩu ngẫu nhiên mạnh
+    generated = true;
   }
-];
+
+  const hashed = await hashPassword(plainPassword);
+
+  usersStore.push({
+    id: 'user-admin',
+    name: 'Quản trị viên',
+    email,
+    phone: '',
+    role: 'admin',
+    password: hashed,
+    provider: 'local',
+    upTinCredits: 0,
+    tier: 'kim-cuong',
+    registeredAt: new Date().toISOString()
+  } as StoredUser);
+
+  saveDataStore();
+
+  console.warn('==========================================');
+  console.warn('[SECURITY] Đã tự tạo tài khoản admin đầu tiên:');
+  console.warn(`[SECURITY]   Email: ${email}`);
+  if (generated) {
+    console.warn(`[SECURITY]   Mật khẩu (CHỈ HIỂN THỊ 1 LẦN, hãy lưu lại ngay): ${plainPassword}`);
+    console.warn('[SECURITY]   Khuyến nghị: đặt ADMIN_PASSWORD trong .env để cố định mật khẩu admin.');
+  } else {
+    console.warn('[SECURITY]   Mật khẩu: lấy từ biến môi trường ADMIN_PASSWORD.');
+  }
+  console.warn('==========================================');
+}
 
 // SECURITY: Hash mật khẩu seed ngay khi khởi động (bcrypt) — không lưu plaintext
 for (const u of usersStore) {
@@ -1125,6 +1104,7 @@ function saveDataStore() {
 
 // Initial load on server start
 loadDataStore();
+ensureDefaultAdmin().catch(err => console.error("[SECURITY] Không thể tạo admin mặc định:", err));
 
 // Interval auto-save every 30 seconds as bulletproof background backup
 setInterval(() => {
@@ -1202,7 +1182,7 @@ function checkUserUniqueness(email?: string, phone?: string, name?: string): { i
 // ------------------- AUTH API ROUTES -------------------
 
 // Send Email OTP API
-app.post("/api/auth/send-otp", async (req, res) => {
+app.post("/api/auth/send-otp", authLimiter, async (req, res) => {
   const { email, phone, name } = req.body;
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: "Địa chỉ Email không hợp lệ." });
@@ -1241,7 +1221,7 @@ app.post("/api/auth/send-otp", async (req, res) => {
 });
 
 // Verify OTP API
-app.post("/api/auth/verify-otp", (req, res) => {
+app.post("/api/auth/verify-otp", authLimiter, (req, res) => {
   const { email, otpCode } = req.body;
   if (!email || !otpCode) {
     return res.status(400).json({ error: "Thiếu Email hoặc mã OTP xác nhận." });
@@ -1259,7 +1239,13 @@ app.post("/api/auth/verify-otp", (req, res) => {
     return res.status(400).json({ error: "Mã OTP đã hết hạn sau 5 phút. Vui lòng bấm 'Gửi lại mã OTP'!" });
   }
 
+  if ((record.attempts || 0) >= MAX_OTP_ATTEMPTS) {
+    otpStore.delete(normalizedEmail);
+    return res.status(429).json({ error: "Bạn đã nhập sai mã OTP quá nhiều lần. Vui lòng bấm 'Gửi lại mã OTP' để lấy mã mới!" });
+  }
+
   if (record.code !== String(otpCode).trim()) {
+    record.attempts = (record.attempts || 0) + 1;
     return res.status(400).json({ error: "Mã OTP không chính xác. Vui lòng kiểm tra lại 6 chữ số trong Email!" });
   }
 
@@ -1267,7 +1253,7 @@ app.post("/api/auth/verify-otp", (req, res) => {
 });
 
 // Account Registration API
-app.post("/api/auth/register", (req, res) => {
+app.post("/api/auth/register", authLimiter, (req, res) => {
   const { name, email, phone, password, role, businessCategories, otpCode } = req.body;
 
   if (!email || !password || !name) {
@@ -1320,7 +1306,7 @@ app.post("/api/auth/register", (req, res) => {
 });
 
 // Account Login API
-app.post("/api/auth/login", async (req, res) => {
+app.post("/api/auth/login", authLimiter, async (req, res) => {
   const { email, password, totpCode, backupCode, pendingToken } = req.body;
 
   if (!email || !password) {
@@ -1338,7 +1324,7 @@ app.post("/api/auth/login", async (req, res) => {
   const user = usersStore.find(u => u.email.toLowerCase() === targetEmail);
   if (!user) {
     return res.status(400).json({
-      error: "Tai khoan khong ton tai tren he thong. Vui long kiem tra lai Email hoac bam 'Dang ky tai khoan moi' ben duoi!"
+      error: "Email hoac mat khau khong chinh xac. Vui long kiem tra lai!"
     });
   }
 
@@ -1386,7 +1372,7 @@ app.post("/api/auth/login", async (req, res) => {
   }
   if (user.password && !(await comparePassword(String(password), user.password))) {
     return res.status(400).json({
-      error: "Mat khau khong chinh xac. Vui long kiem tra lai mat khau!"
+      error: "Email hoac mat khau khong chinh xac. Vui long kiem tra lai!"
     });
   }
 
