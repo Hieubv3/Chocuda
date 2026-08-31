@@ -80,13 +80,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // 7 Mảng Quản Trị Chuyên Biệt Tách Rời (1. BĐS, 2. Thợ Dịch Vụ, 3. Tuyển Dụng, 4. Dịch Vụ Cư Dân, 5. Người Dùng, 6. Quảng Cáo, 7. Công Cụ)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
-    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync'
+    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync' | 'faq'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
   >('properties');
 
   // Compute active main category (Phân rõ các tab riêng biệt không bị gộp chung)
   const effectiveMainTab: 'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' = (() => {
-    if (['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt'].includes(activeTab)) return 'bds';
+    if (['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt', 'faq'].includes(activeTab)) return 'bds';
     if (activeTab === 'resident_services_mgmt') return 'technicians';
     if (activeTab === 'recruitment_mgmt') return 'recruitment';
     if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
@@ -98,7 +98,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const handleSelectMainTab = (tab: 'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools') => {
     if (tab === 'bds') {
       setAdminSector('bds');
-      if (!['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt'].includes(activeTab)) {
+      if (!['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt', 'faq'].includes(activeTab)) {
         setActiveTab('properties');
       }
     } else if (tab === 'technicians') {
