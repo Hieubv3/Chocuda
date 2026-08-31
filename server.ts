@@ -14,7 +14,7 @@ import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS, INITIAL_ADS } from 
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
 import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile, RECRUITMENT_PACKAGES, INITIAL_EMPLOYER_REGISTRATIONS, INITIAL_TASK_DELEGATIONS } from "./src/data/recruitmentData.ts";
-import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation, DepositIntent, AppNotification } from "./src/types.ts";
+import { Property, NewsArticle, LeadContact, Project, User, UserRole, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation, DepositIntent, AppNotification } from "./src/types.ts";
 import { isPostgresConfigured } from "./src/db/index.ts";
 import { generateTotpSecret, verifyTotpToken, buildOtpAuthUri, generateBackupCodes, hashBackupCode } from "./src/lib/totp.ts";
 
@@ -1293,12 +1293,24 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
   // Hash password with bcrypt
   const hashedPassword = await hashPassword(password);
 
+  // SECURITY: NEVER trust `role` from client input for self-registration.
+  // Only the non-privileged roles the public sign-up form actually offers ('owner',
+  // 'sale', 'visitor') may be chosen here. Everything else — 'admin', 'manager*',
+  // 'partner', or any unrecognized value — is always forced down to 'owner'.
+  // Promoting someone to admin/manager must go through a separate authenticated
+  // admin-only action (PATCH /api/auth/users/:id), never through self-registration.
+  const SELF_REGISTER_ALLOWED_ROLES: ReadonlySet<UserRole> = new Set<UserRole>(['owner', 'sale', 'visitor']);
+  const requestedRole = typeof role === 'string' ? role.trim().toLowerCase() : '';
+  const safeRole: UserRole = SELF_REGISTER_ALLOWED_ROLES.has(requestedRole as UserRole)
+    ? (requestedRole as UserRole)
+    : 'owner';
+
   const newUser: StoredUser = {
     id: `user-${Date.now()}`,
     name: String(name).trim(),
     email: normalizedEmail,
     phone: phone ? String(phone).trim() : '0868.499.929',
-    role: role || 'owner',
+    role: safeRole,
     password: hashedPassword,
     provider: 'local',
     upTinCredits: 10,
