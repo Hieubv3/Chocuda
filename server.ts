@@ -431,7 +431,9 @@ async function isWeakAdminPassword(stored: string): Promise<boolean> {
 
 async function ensureDefaultAdmin() {
   const email = (process.env.ADMIN_EMAIL || 'admin@chocudan24h.com').trim().toLowerCase();
-  let plainPassword = process.env.ADMIN_PASSWORD;
+  // ADMIN_SEED_PASSWORD (nếu có) là nguồn mật khẩu ưu tiên — dùng nó thay vì random/reset
+  const seedOverride = process.env.ADMIN_SEED_PASSWORD;
+  let plainPassword = seedOverride || process.env.ADMIN_PASSWORD;
   let generated = false;
   if (!plainPassword || plainPassword.length < 8) {
     plainPassword = crypto.randomBytes(12).toString('base64url');
@@ -470,19 +472,22 @@ async function ensureDefaultAdmin() {
   }
 
   // Đã có admin — quét xem có ai đang dùng mật khẩu yếu/plaintext không, ép reset ngay
-  for (const admin of admins) {
-    if (await isWeakAdminPassword(admin.password || '')) {
-      admin.password = await hashPassword(plainPassword);
-      saveDataStore();
-      console.warn('==========================================');
-      console.warn('[SECURITY] ⚠️  PHÁT HIỆN admin dùng mật khẩu yếu/plaintext — đã RESET tự động:');
-      console.warn(`[SECURITY]   Email: ${admin.email}`);
-      if (generated) {
-        console.warn(`[SECURITY]   Mật khẩu mới (CHỈ HIỂN THỊ 1 LẦN, hãy lưu lại ngay): ${plainPassword}`);
-      } else {
-        console.warn('[SECURITY]   Mật khẩu mới: lấy từ biến môi trường ADMIN_PASSWORD.');
+  // (BỎ QUA nếu ADMIN_SEED_PASSWORD được set — block override phía dưới sẽ ghi đè password admin)
+  if (!seedOverride) {
+    for (const admin of admins) {
+      if (await isWeakAdminPassword(admin.password || '')) {
+        admin.password = await hashPassword(plainPassword);
+        saveDataStore();
+        console.warn('==========================================');
+        console.warn('[SECURITY] ⚠️  PHÁT HIỆN admin dùng mật khẩu yếu/plaintext — đã RESET tự động:');
+        console.warn(`[SECURITY]   Email: ${admin.email}`);
+        if (generated) {
+          console.warn(`[SECURITY]   Mật khẩu mới (CHỈ HIỂN THỊ 1 LẦN, hãy lưu lại ngay): ${plainPassword}`);
+        } else {
+          console.warn('[SECURITY]   Mật khẩu mới: lấy từ biến môi trường ADMIN_PASSWORD.');
+        }
+        console.warn('==========================================');
       }
-      console.warn('==========================================');
     }
   }
 }
@@ -1163,13 +1168,14 @@ ads: adsStore,
 
 // Initial load on server start
 loadDataStore();
-ensureDefaultAdmin().catch(err => console.error("[SECURITY] Không thể tạo admin mặc định:", err));
 
-// SECURITY: ADMIN_SEED_PASSWORD env luôn ghi đè mật khẩu admin sau khi load data store.
+// SECURITY: ADMIN_SEED_PASSWORD env luôn ghi đè mật khẩu admin.
+// Chạy SAU ensureDefaultAdmin() (async) để tránh bị reset ngược lại.
 // Lý do: app_data_store.json (được commit trong repo) có thể chứa hash bcrypt cũ/không khớp
 // với mật khẩu mong muốn — nếu không override, admin sẽ không đăng nhập được sau khi redeploy.
 // Cách dùng: set env ADMIN_SEED_PASSWORD=admin (hoặc mật khẩu tùy ý) trên Render.
-if (process.env.ADMIN_SEED_PASSWORD) {
+function applyAdminSeedPassword() {
+  if (!process.env.ADMIN_SEED_PASSWORD) return;
   const seedPw = String(process.env.ADMIN_SEED_PASSWORD);
   const adminUser = usersStore.find(u => u.role === 'admin' && u.email === 'admin@chocudan24h.com');
   if (adminUser) {
@@ -1191,6 +1197,10 @@ if (process.env.ADMIN_SEED_PASSWORD) {
     console.log('[Security] ADMIN_SEED_PASSWORD created admin@chocudan24h.com');
   }
 }
+
+ensureDefaultAdmin()
+  .then(() => applyAdminSeedPassword())
+  .catch(err => console.error("[SECURITY] Không thể tạo admin mặc định:", err));
 
 // Interval auto-save every 30 seconds as bulletproof background backup
 setInterval(() => {
