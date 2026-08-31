@@ -8,6 +8,48 @@ const MAX_IMAGE_FILE_SIZE = 10 * 1024 * 1024; // 10MB — ảnh lớn hơn sẽ 
 const HARD_LIMIT = 50 * 1024 * 1024; // 50MB — giới hạn cứng, trên mức này mới từ chối
 
 /**
+ * BUG FIX: một số ảnh (JPEG hệ màu CMYK từ máy ảnh/Photoshop, hoặc file HEIC iPhone chưa convert
+ * đúng) khi vẽ vào <canvas> của trình duyệt sẽ RA MÀU ĐEN HOÀN TOÀN thay vì báo lỗi — vì canvas
+ * không decode đúng các định dạng này. Ảnh hỏng ngay lúc nén ở đây, không phải lỗi hiển thị.
+ * Hàm này lấy mẫu vài chục điểm ảnh sau khi drawImage để phát hiện canvas bị đen toàn bộ, để
+ * kịp fallback dùng ảnh gốc thay vì lưu ảnh đen vào hệ thống.
+ */
+function isCanvasMostlyBlack(ctx: CanvasRenderingContext2D, width: number, height: number): boolean {
+  try {
+    const grid = 10;
+    let total = 0;
+    let samples = 0;
+    for (let i = 1; i < grid; i++) {
+      for (let j = 1; j < grid; j++) {
+        const x = Math.min(width - 1, Math.floor((width * i) / grid));
+        const y = Math.min(height - 1, Math.floor((height * j) / grid));
+        const pixel = ctx.getImageData(x, y, 1, 1).data;
+        total += pixel[0] + pixel[1] + pixel[2];
+        samples++;
+      }
+    }
+    const avgBrightness = total / (samples * 3);
+    return avgBrightness < 5; // near-pure-black across the whole sampled grid
+  } catch {
+    // getImageData có thể throw nếu canvas bị "tainted" (ảnh CORS) — không đủ căn cứ để coi là lỗi
+    return false;
+  }
+}
+
+/**
+ * Đọc file gốc thành base64 KHÔNG qua canvas — dùng làm phương án dự phòng khi phát hiện
+ * canvas render ra ảnh đen, để không làm mất ảnh của người dùng.
+ */
+function readFileAsRawDataUrl(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => resolve((e.target?.result as string) || '');
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
  * Kiểm tra kích thước ảnh.
  * Ảnh 10-50MB vẫn HỢP LỆ (valid: true) — hệ thống sẽ tự động nén xuống dưới 10MB.
  * Chỉ từ chối ảnh > 50MB (quá lớn để nén an toàn trên trình duyệt).
@@ -76,13 +118,24 @@ export async function addWatermarkToImage(
           ctx.drawImage(bitmap, 0, 0, width, height);
           bitmap.close();
 
-          if (!skipWatermark) {
-            applyWatermarkLayers(ctx, width, height);
-          }
+          // BUG FIX: phát hiện ảnh bị render đen (CMYK JPEG / HEIC lỗi decode) trước khi đóng watermark lên
+          if (isCanvasMostlyBlack(ctx, width, height)) {
+            console.warn('[watermark] Phát hiện canvas bị đen (có thể ảnh CMYK/HEIC), dùng ảnh gốc thay thế.');
+            const raw = await readFileAsRawDataUrl(source);
+            if (raw) {
+              resolve(raw);
+              return;
+            }
+            // Nếu đọc file gốc cũng thất bại thì vẫn tiếp tục dùng canvas (còn hơn không có ảnh)
+          } else {
+            if (!skipWatermark) {
+              applyWatermarkLayers(ctx, width, height);
+            }
 
-          const dataUrl = canvas.toDataURL('image/jpeg', QUALITY);
-          resolve(dataUrl);
-          return;
+            const dataUrl = canvas.toDataURL('image/jpeg', QUALITY);
+            resolve(dataUrl);
+            return;
+          }
         }
       } catch (err) {
         console.warn('createImageBitmap fallback to HTMLImageElement:', err);
@@ -102,7 +155,7 @@ export async function addWatermarkToImage(
         }
       };
 
-      img.onload = () => {
+      img.onload = async () => {
         try {
           const canvas = document.createElement('canvas');
           let width = img.naturalWidth || img.width || 1200;
@@ -131,6 +184,19 @@ export async function addWatermarkToImage(
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'medium';
           ctx.drawImage(img, 0, 0, width, height);
+
+          // BUG FIX: phát hiện ảnh bị render đen (CMYK JPEG / HEIC lỗi decode)
+          if (isCanvasMostlyBlack(ctx, width, height)) {
+            console.warn('[watermark] Phát hiện canvas bị đen (có thể ảnh CMYK/HEIC), dùng ảnh gốc thay thế.');
+            cleanup();
+            if (typeof source === 'string') {
+              resolve(source);
+            } else {
+              const raw = await readFileAsRawDataUrl(source);
+              resolve(raw || '');
+            }
+            return;
+          }
 
           if (!skipWatermark) {
             applyWatermarkLayers(ctx, width, height);
@@ -289,5 +355,8 @@ export async function compressAndWatermarkImagesParallel(
   });
 
   const results = await Promise.all(tasks);
-  return results.filter(r => Boolean(r));
+  // BUG FIX: KHÔNG filter() bỏ kết quả rỗng ở đây nữa — làm vậy sẽ làm lệch vị trí tương ứng
+  // giữa ảnh gốc và ảnh đã nén, khiến ảnh của các file phía sau bị gán nhầm cho nhau.
+  // Giữ nguyên 1-1 theo thứ tự, để caller tự xử lý phần tử rỗng theo đúng vị trí của nó.
+  return results;
 }

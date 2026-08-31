@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
-import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut } from 'lucide-react';
+import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2 } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { calculateExpiryInfo } from '../lib/expiration';
 
@@ -991,6 +991,45 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       console.warn('Failed to save ads to localStorage:', e);
     }
   }, [adsList]);
+
+  // ===== Ảnh 4 nhóm ngành trên trang chủ (Homepage Category Images) =====
+  const [categoryImages, setCategoryImages] = useState<{ key: string; label: string; image: string; link: string }[]>([]);
+  const [categoryImageBusy, setCategoryImageBusy] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    fetch('/api/homepage-category-images')
+      .then(r => r.ok ? r.json() : [])
+      .then((data: any[]) => {
+        if (Array.isArray(data) && data.length > 0) setCategoryImages(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleCategoryImageUpload = async (key: string, file: File) => {
+    if (!file) return;
+    setCategoryImageBusy(key);
+    try {
+      // Nén nhẹ ảnh trước khi upload (giữ dung lượng nhỏ)
+      const compressed = await addWatermarkToImage(file, { skipWatermark: true, maxDim: 800 });
+      const res = await fetch(`/api/homepage-category-images/${key}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: compressed })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.categories)) setCategoryImages(data.categories);
+        alert('✅ Đã cập nhật ảnh nhóm ngành!');
+      } else {
+        alert('❌ Lỗi khi lưu ảnh. Vui lòng thử lại.');
+      }
+    } catch (e) {
+      console.error('Upload category image failed:', e);
+      alert('❌ Lỗi khi upload ảnh.');
+    } finally {
+      setCategoryImageBusy(null);
+    }
+  };
 
   // Start editing banner: pre-fill top form directly
   const handleStartEditAd = (ad: AdBanner) => {
@@ -3857,6 +3896,50 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* Tab: Quảng Cáo Management */}
       {activeTab === 'ads' && (
         <div className="space-y-6">
+          {/* ===== ẢNH 4 NHÓM NGÀNH TRANG CHỦ ===== */}
+          {categoryImages.length > 0 && (
+            <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-black text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-amber-500" />
+                  <span>ẢNH 4 NHÓM NGÀNH TRANG CHỦ</span>
+                </h3>
+                <span className="text-[10px] text-slate-400 font-bold">Hiển thị trên trang chủ</span>
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {categoryImages.map(cat => (
+                  <div key={cat.key} className="space-y-2">
+                    <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 aspect-[4/3]">
+                      <img src={cat.image} alt={cat.label} className="w-full h-full object-cover" />
+                      <span className="absolute top-2 left-2 bg-slate-950/80 text-white text-[10px] font-black px-2 py-1 rounded-lg">
+                        {cat.label}
+                      </span>
+                    </div>
+                    <label className="flex items-center justify-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-[11px] cursor-pointer transition">
+                      {categoryImageBusy === cat.key ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Upload className="w-3.5 h-3.5" />
+                      )}
+                      <span>{categoryImageBusy === cat.key ? 'ĐANG LƯU...' : 'ĐỔI ẢNH'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={categoryImageBusy === cat.key}
+                        onChange={e => {
+                          const f = e.target.files?.[0];
+                          if (f) handleCategoryImageUpload(cat.key, f);
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className={`bg-white dark:bg-slate-800 rounded-3xl p-6 border transition-all shadow-xl space-y-4 ${
             editingAd 
               ? 'border-2 border-amber-500 ring-4 ring-amber-500/20' 

@@ -62,6 +62,19 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [searchCategory, setSearchCategory] = React.useState<string>('all');
   const [isProjectModalOpen, setIsProjectModalOpen] = React.useState<boolean>(false);
 
+  // Ảnh 4 nhóm ngành (admin quản lý trong Admin Dashboard)
+  const [categoryImages, setCategoryImages] = React.useState<{ key: string; label: string; image: string; link: string }[]>([]);
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch('/api/homepage-category-images')
+      .then(r => r.ok ? r.json() : [])
+      .then((data: any[]) => {
+        if (!cancelled && Array.isArray(data) && data.length > 0) setCategoryImages(data);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
   const handleHeroSearch = () => {
     if (searchProject !== 'all') {
       onSelectProject(searchProject as ProjectCategory);
@@ -786,6 +799,49 @@ export const HomePage: React.FC<HomePageProps> = ({
           ))}
         </div>
       </section>
+
+      {/* 4 Nhóm Ngành Chính — Ảnh đại diện (admin quản lý) */}
+      {categoryImages.length > 0 && (
+        <section className="px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-amber-500" />
+                <span>4 NHÓM NGÀNH CHÍNH</span>
+              </h2>
+              <span className="text-[11px] font-bold text-slate-400">Chợ Cư Dân 24H</span>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              {categoryImages.map(cat => (
+                <a
+                  key={cat.key}
+                  href={cat.link}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentTab(cat.key === 'mua-ban' ? 'sale' : cat.key === 'cho-thue' ? 'rent' : 'services');
+                  }}
+                  className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 block"
+                >
+                  <img
+                    loading="lazy"
+                    src={cat.image}
+                    alt={cat.label}
+                    className="w-full h-32 sm:h-44 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-md">{cat.label}</span>
+                    <div className="flex items-center text-amber-400 text-[10px] sm:text-[11px] font-bold mt-1">
+                      <span>Khám phá ngay</span>
+                      <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* SEO Popular Links Section at Bottom of HomePage */}
       <PopularVinhomesLinksSection

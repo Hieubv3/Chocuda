@@ -306,6 +306,12 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
     e.preventDefault();
     setDuplicateWarning(null);
 
+    // BUG FIX: chặn submit khi ảnh đang được nén/đóng dấu — tránh lưu blob: URL tạm thời vào tin
+    if (isUploadingImages) {
+      alert('⏳ Ảnh đang được nén nhẹ & đóng dấu bản quyền... Vui lòng chờ vài giây rồi bấm Đăng bài lại!');
+      return;
+    }
+
     // Rule Check 0: Must be logged in to post listing
     if (!effectiveUser) {
       alert('🔒 QUY ĐỊNH HỆ THỐNG: Quý khách không được phép đăng tin khi chưa đăng nhập. Vui lòng đăng nhập hoặc đăng ký tài khoản mới!');
@@ -334,6 +340,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
     try {
       const finalImages: string[] = [];
       for (const img of imagesList) {
+        // BUG FIX: loại bỏ mọi blob: URL còn sót (ảnh chưa nén xong / nén thất bại) — blob: chỉ tồn tại
+        // trong tab hiện tại, lưu vào DB sẽ thành ảnh đen/hỏng vĩnh viễn
+        if (img.startsWith('blob:')) continue;
         if (isBase64DataUrl(img)) {
           const url = await uploadBase64DataUrl(img, 'properties');
           if (url) finalImages.push(url);
@@ -1993,10 +2002,10 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || isUploadingImages}
             className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-400 text-slate-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer"
           >
-            {loading ? 'Đang gửi...' : 'Đăng bài'}
+            {isUploadingImages ? '⏳ Đang nén ảnh...' : loading ? 'Đang gửi...' : 'Đăng bài'}
           </button>
 
         </form>

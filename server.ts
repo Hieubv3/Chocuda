@@ -463,6 +463,14 @@ let storesStore: UserStorefront[] = [...INITIAL_USER_STOREFRONTS];
 let storeOrdersStore: StoreOrder[] = [...INITIAL_STORE_ORDERS];
 let adsStore: AdBanner[] = [...INITIAL_ADS];
 
+// Ảnh đại diện 4 nhóm ngành trên trang chủ (admin có thể đổi trong Admin Dashboard)
+let homepageCategoryImagesStore: { key: string; label: string; image: string; link: string }[] = [
+  { key: 'mua-ban', label: 'Mua Bán BĐS', image: '/images/demo/property-house.jpg', link: '/mua-ban' },
+  { key: 'cho-thue', label: 'Cho Thuê BĐS', image: '/images/demo/property-interior-1.jpg', link: '/cho-thue' },
+  { key: 'dich-vu', label: 'Dịch Vụ Nội Khu', image: '/images/demo/ad-service.jpg', link: '/dich-vu-cu-dan' },
+  { key: 'hang-hoa', label: 'Hàng Hóa & Chợ', image: '/images/demo/ad-food.jpg', link: '/hang-hoa' }
+];
+
 let reputationPostsStore: any[] = [
   {
     id: 'rep-1',
@@ -981,6 +989,15 @@ function loadDataStore() {
         adsStore = Array.from(adsMap.values()) as any;
       }
 
+      // 6b. Homepage Category Images (ảnh 4 nhóm ngành)
+      if (Array.isArray(data.homepageCategoryImages) && data.homepageCategoryImages.length > 0) {
+        const catMap = new Map(data.homepageCategoryImages.map((c: any) => [c.key, c]));
+        homepageCategoryImagesStore.forEach(def => {
+          if (!catMap.has(def.key)) catMap.set(def.key, def);
+        });
+        homepageCategoryImagesStore = Array.from(catMap.values()) as any;
+      }
+
       // 7. Users
       if (Array.isArray(data.users) && data.users.length > 0) {
         const userMap = new Map(data.users.map((u: any) => [u.id, u]));
@@ -1052,6 +1069,7 @@ function loadDataStore() {
         if (Array.isArray(data.residentServices)) residentServicesStore = data.residentServices;
         if (Array.isArray(data.stores)) storesStore = data.stores;
         if (Array.isArray(data.ads)) adsStore = data.ads;
+        if (Array.isArray(data.homepageCategoryImages) && data.homepageCategoryImages.length > 0) homepageCategoryImagesStore = data.homepageCategoryImages;
         if (Array.isArray(data.storeOrders)) storeOrdersStore = data.storeOrders;
         if (Array.isArray(data.storePackages)) storePackagesStore = data.storePackages;
         if (Array.isArray(data.packageOrders)) packageOrdersStore = data.packageOrders;
@@ -1079,7 +1097,8 @@ function saveDataStore() {
       reputationPosts: reputationPostsStore,
       storePackages: storePackagesStore,
       packageOrders: packageOrdersStore,
-      ads: adsStore,
+ads: adsStore,
+      homepageCategoryImages: homepageCategoryImagesStore,
       techOrders: techOrdersStore,
       walletTransactions: walletTransactionsStore,
       withdrawalRequests: withdrawalRequestsStore,
@@ -1105,6 +1124,33 @@ function saveDataStore() {
 // Initial load on server start
 loadDataStore();
 ensureDefaultAdmin().catch(err => console.error("[SECURITY] Không thể tạo admin mặc định:", err));
+
+// SECURITY: ADMIN_SEED_PASSWORD env luôn ghi đè mật khẩu admin sau khi load data store.
+// Lý do: app_data_store.json (được commit trong repo) có thể chứa hash bcrypt cũ/không khớp
+// với mật khẩu mong muốn — nếu không override, admin sẽ không đăng nhập được sau khi redeploy.
+// Cách dùng: set env ADMIN_SEED_PASSWORD=admin (hoặc mật khẩu tùy ý) trên Render.
+if (process.env.ADMIN_SEED_PASSWORD) {
+  const seedPw = String(process.env.ADMIN_SEED_PASSWORD);
+  const adminUser = usersStore.find(u => u.role === 'admin' && u.email === 'admin@chocudan24h.com');
+  if (adminUser) {
+    adminUser.password = bcrypt.hashSync(seedPw, BCRYPT_SALT_ROUNDS);
+    console.log('[Security] ADMIN_SEED_PASSWORD override applied for admin@chocudan24h.com');
+  } else {
+    usersStore.push({
+      id: 'user-admin',
+      name: 'Nhà đẹp Vinhomes (Admin)',
+      email: 'admin@chocudan24h.com',
+      phone: '0868.499.929',
+      role: 'admin',
+      password: bcrypt.hashSync(seedPw, BCRYPT_SALT_ROUNDS),
+      provider: 'local',
+      upTinCredits: 100,
+      tier: 'kim-cuong',
+      registeredAt: new Date().toISOString()
+    });
+    console.log('[Security] ADMIN_SEED_PASSWORD created admin@chocudan24h.com');
+  }
+}
 
 // Interval auto-save every 30 seconds as bulletproof background backup
 setInterval(() => {
@@ -2595,6 +2641,27 @@ app.post("/api/ads/click", (req, res) => {
     saveDataStore();
   }
   res.json({ success: true });
+});
+
+// ==================== HOMEPAGE CATEGORY IMAGES (Ảnh 4 nhóm ngành) ====================
+// GET: công khai — trả 4 ảnh nhóm ngành cho trang chủ
+app.get("/api/homepage-category-images", (req, res) => {
+  res.json(homepageCategoryImagesStore);
+});
+
+// PUT: admin — cập nhật ảnh/link của 1 nhóm ngành
+app.put("/api/homepage-category-images/:key", authenticateToken, requireAdmin, (req, res) => {
+  const { key } = req.params;
+  const idx = homepageCategoryImagesStore.findIndex(c => c.key === key);
+  if (idx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy nhóm ngành này." });
+  }
+  const { image, link, label } = req.body || {};
+  if (image) homepageCategoryImagesStore[idx].image = image;
+  if (link) homepageCategoryImagesStore[idx].link = link;
+  if (label) homepageCategoryImagesStore[idx].label = label;
+  saveDataStore();
+  res.json({ success: true, categories: homepageCategoryImagesStore });
 });
 
 // Resident Services Endpoints (Dịch Vụ Cư Dân)
@@ -6441,7 +6508,106 @@ app.post("/api/recruitment/candidates/:id/toggle-seeking", (req, res) => {
 });
 
 
+// ==================== SEO META INJECTION (SSR-lite) ====================
+// Chèn title/description/og:image động vào HTML trả về cho các trang chi tiết
+// (tin bất động sản + bài viết) để Facebook/Zalo/Google hiển thị đúng khi share link.
+function escapeHtml(str: string): string {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatPriceForSeo(p: any): string {
+  if (!p) return '';
+  if (p.type === 'rent') {
+    return `${p.price} Tr/tháng`;
+  }
+  return `${p.price} Tỷ`;
+}
+
+function injectSeoMeta(html: string, title: string, description: string, image: string, canonicalPath: string): string {
+  const safeTitle = escapeHtml(title);
+  const safeDesc = escapeHtml(description);
+  const safeImage = escapeHtml(image);
+  const safeCanonical = escapeHtml(canonicalPath);
+  const siteName = 'Chợ Cư Dân 24H';
+
+  return html
+    .replace(/<title>[^<]*<\/title>/i, `<title>${safeTitle}</title>`)
+    .replace(/<meta name="description"[^>]*>/i, `<meta name="description" content="${safeDesc}" />`)
+    .replace(/<meta property="og:title"[^>]*>/i, `<meta property="og:title" content="${safeTitle}" />`)
+    .replace(/<meta property="og:description"[^>]*>/i, `<meta property="og:description" content="${safeDesc}" />`)
+    .replace(/<meta property="og:image"[^>]*>/i, `<meta property="og:image" content="${safeImage}" />`)
+    .replace(/<meta property="og:url"[^>]*>/i, `<meta property="og:url" content="https://chocudan24h.com${safeCanonical}" />`)
+    .replace(/<link rel="canonical"[^>]*>/i, `<link rel="canonical" href="https://chocudan24h.com${safeCanonical}" />`)
+    .replace(/<meta property="og:site_name"[^>]*>/i, `<meta property="og:site_name" content="${siteName}" />`);
+}
+
+function registerSeoMetaMiddleware(app: express.Express) {
+  // Đọc file index.html 1 lần khi server start, để inject SEO meta
+  const indexHtmlPath = path.join(process.cwd(), 'dist', 'index.html');
+
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' || req.path.startsWith('/api/') || req.path.includes('.')) {
+      return next();
+    }
+
+    const reqPath = req.path;
+    const segments = reqPath.split('/').filter(Boolean);
+
+    let property: any = null;
+    if (segments.length >= 2) {
+      const lastSeg = segments[segments.length - 1];
+      const firstSeg = segments[0];
+      const isPropertyPath =
+        ['bat-dong-san', 'ban', 'cho-thue', 'thue'].includes(firstSeg) ||
+        (segments.length === 2 && !['tin-tuc', 'du-an', 'phan-khu', 'tien-ich', 'gian-hang', 'san-pham', 'hang-hoa', 'dich-vu-cu-dan', 'cong-dong', 'tuyen-dung', 'nha-tuyen-dung'].includes(firstSeg));
+      if (isPropertyPath) {
+        property = propertiesStore.find((p: any) => String(p.id) === lastSeg) || null;
+      }
+    }
+
+    let post: any = null;
+    if (segments[0] === 'tin-tuc' && segments.length >= 2) {
+      const postSlug = segments[segments.length - 1];
+      post = reputationPostsStore.find((p: any) => p.slug === postSlug || p.id === postSlug) || null;
+    }
+
+    if (!property && !post) {
+      return next();
+    }
+
+    let title = '';
+    let desc = '';
+    let image = '';
+    if (property) {
+      title = `${property.title} - ${formatPriceForSeo(property)} | Chợ Cư Dân 24H`;
+      desc = (property.description || '').slice(0, 160);
+      image = Array.isArray(property.images) && property.images.length > 0 ? property.images[0] : '';
+    } else if (post) {
+      title = `${post.title || post.name || 'Bài viết'} | Chợ Cư Dân 24H`;
+      desc = (post.excerpt || post.description || post.content || '').slice(0, 160);
+      image = post.image || post.thumbnail || (Array.isArray(post.images) && post.images[0]) || '';
+    }
+
+    try {
+      const html = fs.readFileSync(indexHtmlPath, 'utf-8');
+      const injected = injectSeoMeta(html, title, desc, image, reqPath);
+      res.type('html').send(injected);
+    } catch (err) {
+      console.error('[SEO] Failed to read index.html:', err);
+      next();
+    }
+  });
+}
+
 async function startServer() {
+  // SEO: chèn meta động (title/description/og:image) cho trang chi tiết trước khi serve HTML
+  registerSeoMetaMiddleware(app);
+
   // Vite middleware setup for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
