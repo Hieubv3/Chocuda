@@ -405,51 +405,86 @@ const PENDING_TOTP_TTL = 5 * 60 * 1000; // 5 phút
 // (không commit dữ liệu thật), KHÔNG BAO GIỜ ở trong source code.
 let usersStore: StoredUser[] = [];
 
-// SECURITY: Bootstrap tài khoản admin đầu tiên từ biến môi trường.
-// - Nếu chưa có user admin nào (lần chạy đầu / mới xóa data), tự tạo 1 admin.
-// - Ưu tiên ADMIN_EMAIL/ADMIN_PASSWORD từ .env. Nếu không set ADMIN_PASSWORD,
-//   tự sinh mật khẩu ngẫu nhiên mạnh và chỉ in ra console MỘT LẦN DUY NHẤT lúc
-//   khởi động — không bao giờ ghi xuống file bị commit.
-async function ensureDefaultAdmin() {
-  const hasAdmin = usersStore.some(u => u.role === 'admin');
-  if (hasAdmin) return;
+// SECURITY: Bootstrap + tự vá tài khoản admin lúc khởi động.
+// - Nếu chưa có admin nào: tạo mới từ ADMIN_EMAIL/ADMIN_PASSWORD (hoặc sinh
+//   mật khẩu ngẫu nhiên, in ra console đúng 1 lần).
+// - QUAN TRỌNG: nếu ĐÃ có admin (từ app_data_store.json cũ còn sót lại trên
+//   máy/server — ví dụ từ trước khi source code này được vá) nhưng mật khẩu
+//   đang là plaintext yếu kiểu 'admin'/'123456'/... thì bị RESET NGAY LẬP TỨC,
+//   không được để tồn tại. Trước đây lỗ hổng nằm ở chỗ: chỉ tạo admin mới khi
+//   "chưa có admin nào", nên nếu data cũ đã có sẵn admin/admin thì bị bỏ qua
+//   và vẫn đăng nhập được bằng admin/admin dù source code đã sửa.
+const WEAK_ADMIN_PASSWORDS = ['admin', 'admin123', '123456', 'password', '12345678', '1234', '123', 'admin@123', 'chocudan24h'];
 
+async function isWeakAdminPassword(stored: string): Promise<boolean> {
+  if (!stored) return true;
+  if (!stored.startsWith('$2')) {
+    // Plaintext: yếu nếu nằm trong danh sách phổ biến, hoặc ngắn hơn 8 ký tự
+    return WEAK_ADMIN_PASSWORDS.includes(stored) || stored.length < 8;
+  }
+  // Đã là bcrypt hash — kiểm tra xem hash đó có khớp 1 trong các mật khẩu yếu phổ biến không
+  for (const weak of WEAK_ADMIN_PASSWORDS) {
+    if (await comparePassword(weak, stored)) return true;
+  }
+  return false;
+}
+
+async function ensureDefaultAdmin() {
   const email = (process.env.ADMIN_EMAIL || 'admin@chocudan24h.com').trim().toLowerCase();
   let plainPassword = process.env.ADMIN_PASSWORD;
   let generated = false;
-
   if (!plainPassword || plainPassword.length < 8) {
-    plainPassword = crypto.randomBytes(12).toString('base64url'); // mật khẩu ngẫu nhiên mạnh
+    plainPassword = crypto.randomBytes(12).toString('base64url');
     generated = true;
   }
 
-  const hashed = await hashPassword(plainPassword);
+  const admins = usersStore.filter(u => u.role === 'admin');
 
-  usersStore.push({
-    id: 'user-admin',
-    name: 'Quản trị viên',
-    email,
-    phone: '',
-    role: 'admin',
-    password: hashed,
-    provider: 'local',
-    upTinCredits: 0,
-    tier: 'kim-cuong',
-    registeredAt: new Date().toISOString()
-  } as StoredUser);
+  if (admins.length === 0) {
+    const hashed = await hashPassword(plainPassword);
+    usersStore.push({
+      id: 'user-admin',
+      name: 'Quản trị viên',
+      email,
+      phone: '',
+      role: 'admin',
+      password: hashed,
+      provider: 'local',
+      upTinCredits: 0,
+      tier: 'kim-cuong',
+      registeredAt: new Date().toISOString()
+    } as StoredUser);
+    saveDataStore();
 
-  saveDataStore();
-
-  console.warn('==========================================');
-  console.warn('[SECURITY] Đã tự tạo tài khoản admin đầu tiên:');
-  console.warn(`[SECURITY]   Email: ${email}`);
-  if (generated) {
-    console.warn(`[SECURITY]   Mật khẩu (CHỈ HIỂN THỊ 1 LẦN, hãy lưu lại ngay): ${plainPassword}`);
-    console.warn('[SECURITY]   Khuyến nghị: đặt ADMIN_PASSWORD trong .env để cố định mật khẩu admin.');
-  } else {
-    console.warn('[SECURITY]   Mật khẩu: lấy từ biến môi trường ADMIN_PASSWORD.');
+    console.warn('==========================================');
+    console.warn('[SECURITY] Đã tự tạo tài khoản admin đầu tiên:');
+    console.warn(`[SECURITY]   Email: ${email}`);
+    if (generated) {
+      console.warn(`[SECURITY]   Mật khẩu (CHỈ HIỂN THỊ 1 LẦN, hãy lưu lại ngay): ${plainPassword}`);
+      console.warn('[SECURITY]   Khuyến nghị: đặt ADMIN_PASSWORD trong .env để cố định mật khẩu admin.');
+    } else {
+      console.warn('[SECURITY]   Mật khẩu: lấy từ biến môi trường ADMIN_PASSWORD.');
+    }
+    console.warn('==========================================');
+    return;
   }
-  console.warn('==========================================');
+
+  // Đã có admin — quét xem có ai đang dùng mật khẩu yếu/plaintext không, ép reset ngay
+  for (const admin of admins) {
+    if (await isWeakAdminPassword(admin.password || '')) {
+      admin.password = await hashPassword(plainPassword);
+      saveDataStore();
+      console.warn('==========================================');
+      console.warn('[SECURITY] ⚠️  PHÁT HIỆN admin dùng mật khẩu yếu/plaintext — đã RESET tự động:');
+      console.warn(`[SECURITY]   Email: ${admin.email}`);
+      if (generated) {
+        console.warn(`[SECURITY]   Mật khẩu mới (CHỈ HIỂN THỊ 1 LẦN, hãy lưu lại ngay): ${plainPassword}`);
+      } else {
+        console.warn('[SECURITY]   Mật khẩu mới: lấy từ biến môi trường ADMIN_PASSWORD.');
+      }
+      console.warn('==========================================');
+    }
+  }
 }
 
 // SECURITY: Hash mật khẩu seed ngay khi khởi động (bcrypt) — không lưu plaintext
