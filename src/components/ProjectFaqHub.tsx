@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PROJECT_FAQ_DATA, ProjectFaqItem } from '../data/projectFaqData';
 import { SeoJsonLd } from './SeoJsonLd';
 import { HelpCircle, Search, Calendar, RefreshCw, CheckCircle2, Shield, Sparkles, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
@@ -14,10 +14,24 @@ export const ProjectFaqHub: React.FC<ProjectFaqHubProps> = ({
 }) => {
   const [activeCategory, setActiveCategory] = useState<'all' | 'investor' | 'resident' | 'tenant' | 'legal_planning'>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [faqItems, setFaqItems] = useState<ProjectFaqItem[]>(PROJECT_FAQ_DATA);
   const [openFaqId, setOpenFaqId] = useState<string | null>(PROJECT_FAQ_DATA[0]?.id || null);
 
+  // Load FAQ from server (admin-managed), fallback to static data
+  useEffect(() => {
+    fetch('/api/faq')
+      .then(r => r.ok ? r.json() : { faq: [] })
+      .then((data: any) => {
+        if (Array.isArray(data.faq) && data.faq.length > 0) {
+          setFaqItems(data.faq);
+          setOpenFaqId(data.faq[0]?.id || null);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Filter FAQ items based on category, project, and search term
-  const filteredFaqs = PROJECT_FAQ_DATA.filter((item) => {
+  const filteredFaqs = faqItems.filter((item) => {
     const matchesProject = selectedProjectFilter === 'all' || item.projectId === 'all' || item.projectId === selectedProjectFilter;
     const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
     const query = searchTerm.toLowerCase();
@@ -94,7 +108,7 @@ export const ProjectFaqHub: React.FC<ProjectFaqHubProps> = ({
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
             }`}
           >
-            Tất Cả ({PROJECT_FAQ_DATA.length})
+            Tất Cả ({faqItems.length})
           </button>
           <button
             onClick={() => setActiveCategory('investor')}

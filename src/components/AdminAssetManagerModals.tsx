@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Property, Project, NewsArticle, ProjectCategory } from '../types';
-import { X, Save, Image as ImageIcon, Trash2, Plus, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield } from 'lucide-react';
+import { X, Save, Image as ImageIcon, Trash2, Plus, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield, HelpCircle } from 'lucide-react';
 import { SoDoCensorEditor } from './SoDoCensorEditor';
 import { compressImageFile } from '../lib/imageUtils';
 import { uploadBase64DataUrl, isBase64DataUrl } from '../lib/uploadService';
@@ -939,6 +939,167 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
               className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl shadow-lg flex items-center gap-1.5"
             >
               <Save className="w-4 h-4" /> Xuất Bản Bài Viết & Hình Ảnh
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// 4. EDIT FAQ / Q&A MODAL (SOẠN CÂU HỎI & TRẢ LỜI)
+// ==========================================
+interface EditFaqModalProps {
+  faqItem: any | null;
+  isCreate?: boolean;
+  onClose: () => void;
+  onSave: (item: any) => void;
+}
+
+export const EditFaqModal: React.FC<EditFaqModalProps> = ({
+  faqItem,
+  isCreate = false,
+  onClose,
+  onSave
+}) => {
+  const [formData, setFormData] = useState<any>(
+    faqItem || {
+      id: `faq-${Date.now()}`,
+      projectId: 'all',
+      category: 'investor',
+      question: '',
+      answer: '',
+      keywords: [],
+      updatedAt: new Date().toISOString().split('T')[0]
+    }
+  );
+  const [keywordsText, setKeywordsText] = useState<string>(
+    (faqItem?.keywords || []).join(', ')
+  );
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.question || !formData.answer) {
+      alert('Vui lòng nhập đầy đủ câu hỏi và câu trả lời!');
+      return;
+    }
+    const finalItem = {
+      ...formData,
+      keywords: keywordsText.split(',').map(k => k.trim()).filter(Boolean)
+    };
+    onSave(finalItem);
+    alert(`Đã ${isCreate ? 'thêm mới' : 'cập nhật'} câu hỏi Q&A thành công!`);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl my-8 overflow-hidden text-xs">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 bg-slate-900 text-white border-b border-slate-800">
+          <div className="flex items-center space-x-3">
+            <span className="p-2 bg-emerald-600 rounded-xl text-white">
+              <HelpCircle className="w-5 h-5" />
+            </span>
+            <div>
+              <h2 className="text-base font-black text-emerald-400">
+                {isCreate ? 'THÊM CÂU HỎI Q&A MỚI' : 'CHỈNH SỬA CÂU HỎI Q&A'}
+              </h2>
+              <p className="text-[11px] text-slate-300">Quản lý câu hỏi & trả lời hiển thị trên trang dự án</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white bg-slate-800 rounded-xl">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Dự Án:</label>
+              <select
+                value={formData.projectId}
+                onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+              >
+                <option value="all">Tất cả dự án</option>
+                <option value="ocean-park-1">Vinhomes Ocean Park 1 (Gia Lâm)</option>
+                <option value="ocean-park-2">Vinhomes Ocean Park 2 (The Empire)</option>
+                <option value="ocean-park-3">Vinhomes Ocean Park 3 (Grand Park)</option>
+                <option value="ha-long-xanh">Vinhomes Hạ Long Xanh (Quảng Ninh)</option>
+                <option value="green-paradise-can-gio">Vinhomes Green Paradise Cần Giờ</option>
+                <option value="tan-my-hau-nghia">Vinhomes Tân Mỹ - Hậu Nghĩa Long An</option>
+                <option value="green-city-hoc-mon">Vinhomes Green City Hóc Môn</option>
+                <option value="lang-van-da-nang">Vinhomes Làng Vân Đà Nẵng</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Chuyên Mục:</label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+              >
+                <option value="investor">Nhà Đầu Tư</option>
+                <option value="resident">Cư Dân</option>
+                <option value="tenant">Khách Thuê</option>
+                <option value="legal_planning">Pháp Lý & Quy Hoạch</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Câu Hỏi:</label>
+            <textarea
+              rows={2}
+              required
+              value={formData.question}
+              onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+              className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              placeholder="VD: Vinhomes Ocean Park 2 có những phân khu nào?"
+            />
+          </div>
+
+          <div>
+            <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Câu Trả Lời:</label>
+            <textarea
+              rows={5}
+              required
+              value={formData.answer}
+              onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+              className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              placeholder="Nhập câu trả lời chi tiết..."
+            />
+          </div>
+
+          <div>
+            <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+              Từ Khóa SEO (phân tách bằng dấu phẩy):
+            </label>
+            <input
+              type="text"
+              value={keywordsText}
+              onChange={(e) => setKeywordsText(e.target.value)}
+              className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              placeholder="VD: vinhomes ocean park 2, phân khu, đầu tư"
+            />
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl"
+            >
+              Hủy Bỏ
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg flex items-center gap-1.5"
+            >
+              <Save className="w-4 h-4" /> Lưu Câu Hỏi Q&A
             </button>
           </div>
         </form>

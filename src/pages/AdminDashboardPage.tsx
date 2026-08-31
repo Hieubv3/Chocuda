@@ -23,7 +23,7 @@ interface ReputationPost {
 import { AiUrlTrackerModal } from '../components/AiUrlTrackerModal';
 import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
 import { uploadBase64DataUrl, isBase64DataUrl, uploadFiles } from '../lib/uploadService';
-import { EditPropertyModal, EditProjectModal, EditNewsModal } from '../components/AdminAssetManagerModals';
+import { EditPropertyModal, EditProjectModal, EditNewsModal, EditFaqModal } from '../components/AdminAssetManagerModals';
 import { AdminMarketingCenter } from '../components/AdminMarketingCenter';
 import { AdminSeoCenter } from '../components/AdminSeoCenter';
 import { AdminZaloGroupCenter } from '../components/AdminZaloGroupCenter';
@@ -901,6 +901,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
   const [isAddingNews, setIsAddingNews] = useState(false);
+  const [adminFaq, setAdminFaq] = useState<any[]>([]);
+  const [editingFaq, setEditingFaq] = useState<any | null>(null);
+  const [isAddingFaq, setIsAddingFaq] = useState(false);
 
   // User Add / Edit Modal States
   const [isAddingUser, setIsAddingUser] = useState(false);
@@ -1001,6 +1004,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       .then(r => r.ok ? r.json() : [])
       .then((data: any[]) => {
         if (Array.isArray(data) && data.length > 0) setCategoryImages(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Fetch FAQ / Q&A items
+  React.useEffect(() => {
+    fetch('/api/faq')
+      .then(r => r.ok ? r.json() : { faq: [] })
+      .then((data: any) => {
+        if (Array.isArray(data.faq)) setAdminFaq(data.faq);
       })
       .catch(() => {});
   }, []);
@@ -2249,6 +2262,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   >
                     <span>• Tin Tức & Bài Viết</span>
                     <span className="font-mono text-[10px]">{news.length}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('faq')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'faq'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Q&A / FAQ</span>
+                    <span className="font-mono text-[10px]">{adminFaq.length}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('pricing')}
@@ -5312,6 +5336,111 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
+      {/* Tab: FAQ / Q&A Management */}
+      {activeTab === 'faq' && (
+        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
+                QUẢN LÝ CÂU HỎI Q&A / FAQ ({adminFaq.length} CÂU HỎI)
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Thêm, sửa, xóa câu hỏi & trả lời hiển thị trên trang chi tiết dự án (tối ưu SEO).
+              </p>
+            </div>
+            <button
+              onClick={() => setIsAddingFaq(true)}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0"
+            >
+              <Plus className="w-4 h-4" /> + Thêm Câu Hỏi Q&A
+            </button>
+          </div>
+
+          {/* Responsive card grid — gọn gàng trên di động */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {adminFaq.map((item) => (
+              <div
+                key={item.id}
+                className="bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col"
+              >
+                <div className="p-4 space-y-2.5 flex flex-col flex-1">
+                  {/* Badges */}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-extrabold rounded-md text-[10px] uppercase">
+                      {item.category}
+                    </span>
+                    <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-md text-[10px]">
+                      {item.projectId === 'all' ? 'Tất cả dự án' : item.projectId}
+                    </span>
+                  </div>
+
+                  {/* Question */}
+                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white leading-snug line-clamp-2">
+                    ❓ {item.question}
+                  </h4>
+
+                  {/* Answer */}
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-3">
+                    {item.answer}
+                  </p>
+
+                  {/* Keywords */}
+                  {item.keywords && item.keywords.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {item.keywords.slice(0, 3).map((k: string, idx: number) => (
+                        <span key={idx} className="px-1.5 py-0.5 bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold text-[9px] rounded">
+                          #{k}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="text-[10px] text-slate-400 pt-1">
+                    Cập nhật: {item.updatedAt}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 pt-1 mt-auto">
+                    <button
+                      onClick={() => setEditingFaq(item)}
+                      className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center justify-center gap-1 text-[11px]"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" /> Sửa
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (!window.confirm('Xóa câu hỏi Q&A này?')) return;
+                        try {
+                          const token = localStorage.getItem('token');
+                          const res = await fetch(`/api/faq/${item.id}`, {
+                            method: 'DELETE',
+                            headers: token ? { Authorization: `Bearer ${token}` } : {}
+                          });
+                          if (res.ok) {
+                            setAdminFaq(prev => prev.filter(f => f.id !== item.id));
+                          }
+                        } catch (err) {
+                          console.error('Error deleting FAQ:', err);
+                        }
+                      }}
+                      className="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition flex items-center justify-center gap-1 text-[11px]"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" /> Xóa
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {adminFaq.length === 0 && (
+            <div className="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+              Chưa có câu hỏi Q&A nào. Nhấn "Thêm Câu Hỏi Q&A" để bắt đầu.
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Tab 2: Pricing Setup Form */}
       {activeTab === 'pricing' && (
         <form onSubmit={handleSavePricing} className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 space-y-6 shadow-xl">
@@ -7412,6 +7541,41 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             }
             setEditingNews(null);
             setIsAddingNews(false);
+          }}
+        />
+      )}
+
+      {/* Edit / Add FAQ Modal */}
+      {(editingFaq || isAddingFaq) && (
+        <EditFaqModal
+          faqItem={editingFaq}
+          isCreate={isAddingFaq}
+          onClose={() => {
+            setEditingFaq(null);
+            setIsAddingFaq(false);
+          }}
+          onSave={async (item) => {
+            try {
+              const token = localStorage.getItem('token');
+              const isEdit = Boolean(editingFaq);
+              const res = await fetch(`/api/faq${isEdit ? `/${item.id}` : ''}`, {
+                method: isEdit ? 'PUT' : 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify(item)
+              });
+              if (res.ok) {
+                // Refresh FAQ list
+                const data = await fetch('/api/faq').then(r => r.json());
+                if (Array.isArray(data.faq)) setAdminFaq(data.faq);
+              }
+            } catch (err) {
+              console.error('Error saving FAQ:', err);
+            }
+            setEditingFaq(null);
+            setIsAddingFaq(false);
           }}
         />
       )}

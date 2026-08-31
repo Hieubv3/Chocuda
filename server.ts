@@ -7,6 +7,7 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import nodemailer from "nodemailer";
 import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS, INITIAL_ADS } from "./src/data/initialData.ts";
+import { PROJECT_FAQ_DATA } from "./src/data/projectFaqData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
 import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile, RECRUITMENT_PACKAGES, INITIAL_EMPLOYER_REGISTRATIONS, INITIAL_TASK_DELEGATIONS } from "./src/data/recruitmentData.ts";
@@ -781,6 +782,11 @@ let upTinOrdersStore: any[] = [];
 // then it flips to 'approved' and the corresponding business action is applied.
 let paymentOrdersStore: any[] = [];
 
+// FAQ / Q&A Store (quản lý câu hỏi & trả lời từ Admin)
+// Khởi tạo từ dữ liệu static PROJECT_FAQ_DATA, sau đó có thể quản lý (thêm/sửa/xóa)
+// qua API /api/faq và được lưu vào data store.
+let faqStore: any[] = [...PROJECT_FAQ_DATA];
+
 // SePay webhook authentication token (from .env). When set, the webhook
 // endpoint requires the "Authorization: Apikey <token>" header that SePay sends.
 const SEPAY_API_TOKEN = process.env.SEPAY_API_TOKEN || '';
@@ -1070,6 +1076,7 @@ function loadDataStore() {
       if (Array.isArray(data.withdrawalRequests)) withdrawalRequestsStore = data.withdrawalRequests;
       if (Array.isArray(data.upTinOrders) && data.upTinOrders.length > 0) upTinOrdersStore = data.upTinOrders;
       if (Array.isArray(data.paymentOrders) && data.paymentOrders.length > 0) paymentOrdersStore = data.paymentOrders;
+      if (Array.isArray(data.faq) && data.faq.length > 0) faqStore = data.faq;
       if (data.taxConfig) taxConfigStore = data.taxConfig;
       if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
 
@@ -1156,6 +1163,7 @@ ads: adsStore,
       withdrawalRequests: withdrawalRequestsStore,
       upTinOrders: upTinOrdersStore,
       paymentOrders: paymentOrdersStore,
+      faq: faqStore,
       taxConfig: taxConfigStore,
       taxLedger: taxLedgerStore,
       recruitmentJobs: recruitmentJobsStore,
@@ -2296,6 +2304,63 @@ app.get("/api/payment/orders/:id", (req, res) => {
     return res.status(404).json({ error: "Không tìm thấy đơn hàng thanh toán." });
   }
   res.json({ success: true, order });
+});
+
+// ==========================================
+// FAQ / Q&A MANAGEMENT (quản lý câu hỏi & trả lời từ Admin)
+// ==========================================
+
+// GET /api/faq — list all FAQ items (public, no auth needed)
+app.get("/api/faq", (req, res) => {
+  res.json({ success: true, faq: faqStore });
+});
+
+// POST /api/faq — create a new FAQ item (admin only)
+app.post("/api/faq", authenticateToken, requireAdmin, (req, res) => {
+  const { projectId, category, question, answer, keywords } = req.body || {};
+  if (!question || !answer) {
+    return res.status(400).json({ error: "Vui lòng nhập câu hỏi và câu trả lời." });
+  }
+  const item = {
+    id: `faq-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    projectId: projectId || 'all',
+    category: ['investor', 'resident', 'tenant', 'legal_planning'].includes(category) ? category : 'investor',
+    question,
+    answer,
+    keywords: Array.isArray(keywords) ? keywords : [],
+    updatedAt: new Date().toISOString().split('T')[0]
+  };
+  faqStore.unshift(item);
+  saveDataStore();
+  res.status(201).json({ success: true, item });
+});
+
+// PUT /api/faq/:id — update an existing FAQ item (admin only)
+app.put("/api/faq/:id", authenticateToken, requireAdmin, (req, res) => {
+  const item = faqStore.find((f: any) => f.id === req.params.id);
+  if (!item) {
+    return res.status(404).json({ error: "Không tìm thấy câu hỏi Q&A." });
+  }
+  const { projectId, category, question, answer, keywords } = req.body || {};
+  if (question) item.question = question;
+  if (answer) item.answer = answer;
+  if (projectId) item.projectId = projectId;
+  if (category && ['investor', 'resident', 'tenant', 'legal_planning'].includes(category)) item.category = category;
+  if (Array.isArray(keywords)) item.keywords = keywords;
+  item.updatedAt = new Date().toISOString().split('T')[0];
+  saveDataStore();
+  res.json({ success: true, item });
+});
+
+// DELETE /api/faq/:id — delete an FAQ item (admin only)
+app.delete("/api/faq/:id", authenticateToken, requireAdmin, (req, res) => {
+  const idx = faqStore.findIndex((f: any) => f.id === req.params.id);
+  if (idx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy câu hỏi Q&A." });
+  }
+  faqStore.splice(idx, 1);
+  saveDataStore();
+  res.json({ success: true, message: "Đã xóa câu hỏi Q&A." });
 });
 
 // ------------------- API ROUTES -------------------
