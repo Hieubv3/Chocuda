@@ -224,7 +224,9 @@ app.use("/uploads", express.static(UPLOADS_DIR, {
 
 const ALLOWED_MIME = new Set([
   "image/jpeg", "image/png", "image/webp", "image/gif",
-  "image/bmp", "image/avif", "image/svg+xml"
+  "image/bmp", "image/avif"
+  // SECURITY: KHÔNG cho phép image/svg+xml — SVG có thể nhúng <script>/onload,
+  // nếu mở trực tiếp URL ảnh sẽ chạy script trong domain của web (stored XSS).
 ]);
 
 const upload = multer({
@@ -232,7 +234,7 @@ const upload = multer({
     destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
     filename: (_req, file, cb) => {
       const ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, "") || ".jpg";
-      const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".avif", ".svg"].includes(ext) ? ext : ".jpg";
+      const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".avif"].includes(ext) ? ext : ".jpg";
       const name = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}${safeExt}`;
       cb(null, name);
     }
@@ -242,13 +244,13 @@ const upload = multer({
     if (ALLOWED_MIME.has(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error("Chỉ chấp nhận file ảnh (JPG, PNG, WEBP, GIF, BMP, AVIF, SVG)!") as any);
+      cb(new Error("Chỉ chấp nhận file ảnh (JPG, PNG, WEBP, GIF, BMP, AVIF)!") as any);
     }
   }
 });
 
 // POST /api/upload - Upload 1 hoặc nhiều ảnh, trả về mảng URL
-app.post("/api/upload", upload.array("images", 20), (req, res) => {
+app.post("/api/upload", authenticateToken, upload.array("images", 20), (req, res) => {
   const files = (req.files as Express.Multer.File[]) || [];
   if (files.length === 0) {
     return res.status(400).json({ success: false, error: "Không có file ảnh nào được gửi lên!" });
@@ -258,7 +260,7 @@ app.post("/api/upload", upload.array("images", 20), (req, res) => {
 });
 
 // POST /api/upload/base64 - Nhận base64 data URL, lưu thành file, trả URL
-app.post("/api/upload/base64", (req, res) => {
+app.post("/api/upload/base64", authenticateToken, (req, res) => {
   const { dataUrl, folder } = req.body || {};
   if (!dataUrl || typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/")) {
     return res.status(400).json({ success: false, error: "Dữ liệu ảnh base64 không hợp lệ!" });
@@ -270,9 +272,12 @@ app.post("/api/upload/base64", (req, res) => {
     }
     const mime = match[1];
     const base64Data = match[2];
+    if (!ALLOWED_MIME.has(mime)) {
+      return res.status(400).json({ success: false, error: "Định dạng ảnh không được hỗ trợ!" });
+    }
     const extMap: Record<string, string> = {
       "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp",
-      "image/gif": ".gif", "image/bmp": ".bmp", "image/avif": ".avif", "image/svg+xml": ".svg"
+      "image/gif": ".gif", "image/bmp": ".bmp", "image/avif": ".avif"
     };
     const ext = extMap[mime] || ".jpg";
     const subDir = folder && /^[a-z0-9-_]+$/i.test(String(folder)) ? String(folder) : "general";
@@ -289,7 +294,7 @@ app.post("/api/upload/base64", (req, res) => {
 });
 
 // DELETE /api/upload - Xóa file ảnh đã upload (dọn dẹp khi xóa tin)
-app.delete("/api/upload", (req, res) => {
+app.delete("/api/upload", authenticateToken, (req, res) => {
   const { url } = req.body || {};
   if (!url || typeof url !== "string" || !url.startsWith("/uploads/")) {
     return res.status(400).json({ success: false, error: "URL ảnh không hợp lệ!" });
@@ -3173,11 +3178,11 @@ app.post("/api/contacts", (req, res) => {
   res.status(201).json({ message: "Đặt lịch tư vấn thành công! Khách hàng sẽ kết nối trực tiếp với người đăng tin.", lead: newLead });
 });
 
-app.get("/api/contacts", (req, res) => {
+app.get("/api/contacts", authenticateToken, requireAdmin, (req, res) => {
   res.json(contactsStore);
 });
 
-app.patch("/api/contacts/:id", (req, res) => {
+app.patch("/api/contacts/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
   const lead = contactsStore.find(c => c.id === id);
@@ -3188,7 +3193,7 @@ app.patch("/api/contacts/:id", (req, res) => {
   res.json({ message: "Cập nhật trạng thái thành công", lead });
 });
 
-app.delete("/api/contacts/:id", (req, res) => {
+app.delete("/api/contacts/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   contactsStore = contactsStore.filter(c => c.id !== id);
   res.json({ message: "Xóa yêu cầu thành công" });
