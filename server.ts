@@ -2383,11 +2383,17 @@ app.put("/api/properties/:id", authenticateToken, (req, res) => {
   
   // SECURITY: Prevent editing sensitive fields
   const { approved, status, featured, userId, ...safeUpdates } = req.body;
-  if (jwtUser.role === 'admin') {
-    propertiesStore[index] = { ...prop, ...req.body };
-  } else {
-    propertiesStore[index] = { ...prop, ...safeUpdates };
+  const merged = jwtUser.role === 'admin' ? { ...prop, ...req.body } : { ...prop, ...safeUpdates };
+
+  // SECURITY: Never let an update silently wipe existing photos. If the client
+  // sends an empty/missing `images` array (broken form not re-loading old photos,
+  // or a save fired before uploads finished), keep the listing's current images
+  // instead of overwriting them with nothing.
+  if (!Array.isArray(merged.images) || merged.images.length === 0) {
+    merged.images = prop.images;
   }
+
+  propertiesStore[index] = merged;
   saveDataStore();
   res.json({ message: "Cập nhật thành công!", property: propertiesStore[index] });
 });
@@ -5013,32 +5019,49 @@ app.post("/api/stores/:storeId/products", (req, res) => {
 });
 
 // Admin Update single product in ANY store
-app.put("/api/stores/:storeId/products/:productId", (req, res) => {
+// SECURITY: Only the store owner or an admin may edit a product in that store.
+app.put("/api/stores/:storeId/products/:productId", authenticateToken, (req, res) => {
   const { storeId, productId } = req.params;
+  const jwtUser = (req as any).user;
   const storeIdx = storesStore.findIndex(s => s.id === storeId || s.userId === storeId);
   if (storeIdx === -1) {
     return res.status(404).json({ error: "Không tìm thấy gian hàng." });
   }
-  const prods = storesStore[storeIdx].products || [];
+  const store = storesStore[storeIdx];
+  if (jwtUser.role !== 'admin' && jwtUser.userId !== store.userId) {
+    return res.status(403).json({ error: "Không có quyền chỉnh sửa sản phẩm của gian hàng này!" });
+  }
+  const prods = store.products || [];
   const pIdx = prods.findIndex(p => p.id === productId);
   if (pIdx === -1) {
     return res.status(404).json({ error: "Không tìm thấy sản phẩm." });
   }
-  prods[pIdx] = { ...prods[pIdx], ...req.body };
+  const merged = { ...prods[pIdx], ...req.body };
+  // SECURITY: Never let an update silently wipe existing product photos when
+  // the client sends an empty/missing `images` array.
+  if (!Array.isArray(merged.images) || merged.images.length === 0) {
+    merged.images = prods[pIdx].images;
+  }
+  prods[pIdx] = merged;
   storesStore[storeIdx].products = prods;
   saveDataStore();
   res.json({ success: true, message: "Đã cập nhật sản phẩm thành công!", product: prods[pIdx], store: storesStore[storeIdx] });
 });
 
-// Admin Delete product from ANY store
-app.delete("/api/stores/:storeId/products/:productId", (req, res) => {
+// SECURITY: Only the store owner or an admin may delete a product from that store.
+app.delete("/api/stores/:storeId/products/:productId", authenticateToken, (req, res) => {
   const { storeId, productId } = req.params;
+  const jwtUser = (req as any).user;
   const storeIdx = storesStore.findIndex(s => s.id === storeId || s.userId === storeId);
   if (storeIdx === -1) {
     return res.status(404).json({ error: "Không tìm thấy gian hàng." });
   }
+  const store = storesStore[storeIdx];
+  if (jwtUser.role !== 'admin' && jwtUser.userId !== store.userId) {
+    return res.status(403).json({ error: "Không có quyền xóa sản phẩm của gian hàng này!" });
+  }
 
-  const filteredProds = (storesStore[storeIdx].products || []).filter(p => p.id !== productId);
+  const filteredProds = (store.products || []).filter(p => p.id !== productId);
   storesStore[storeIdx].products = filteredProds;
   saveDataStore();
   res.json({ success: true, message: "Đã xóa sản phẩm khỏi gian hàng!" });
