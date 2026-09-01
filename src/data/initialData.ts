@@ -11,7 +11,11 @@ export const INITIAL_PROJECTS: Project[] = [
     status: 'Đã hoàn thiện & Bàn giao nhận nhà ngay',
     description: 'Tên thương mại: Vinhomes Ocean Park 2 - The Empire (Tên thường gọi: Vin Ocean Park 2, Ocean City Hưng Yên). Siêu quần thể đô thị biển hàng đầu miền Bắc sở hữu Tổ hợp công viên sóng nhân tạo Royal Wave Park 18 ha & Mega Grand World Hà Nội.',
     image: '/images/demo/project-tower.jpg',
+    images: ['/images/demo/project-tower.jpg', '/images/demo/project-apartment.jpg', '/images/demo/project-villa.jpg', '/images/demo/amenity-beach.jpg'],
     masterplanUrl: '',
+    youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    legalInfo: '- Chủ đầu tư: Công ty Cổ phần Vinhomes (thuộc Tập đoàn Vingroup)\n- Hình thức sở hữu: Sổ hồng vĩnh viễn (sở hữu lâu dài)\n- Pháp lý: Đã hoàn thiện hồ sơ pháp lý, bàn giao sổ đỏ từng căn\n- Quy hoạch: Đã được phê duyệt quy hoạch chi tiết 1/500',
+    currentStatus: '- Đã bàn giao 100% các phân khu thấp tầng\n- Hạ tầng khu đô thị hoàn thiện đồng bộ\n- Công viên sóng Royal Wave Park 18ha đã đưa vào vận hành\n- Cư dân đã về ở đông đúc, tiện ích hoạt động đầy đủ',
     subdivisions: ['Chà Là', 'Cọ Xanh', 'San Hô', 'Hải Tăng', 'Sao Biển', 'Đảo Ngọc', 'Chợ Đêm Grand World'],
     amenities: ['Công viên sóng Royal Wave Park 18ha', 'Quảng trường Kinh đô Ánh sáng', 'Bệnh viện Vinmec Health Resort 5 sao', 'Trung tâm thương mại Vincom Mega Mall', 'Hệ thống liên cấp Vinschool', 'Xe buýt VinBus nội khu 24/7']
   },
@@ -25,7 +29,11 @@ export const INITIAL_PROJECTS: Project[] = [
     status: 'Đang bàn giao & Hoàn thiện nội thất',
     description: 'Tên thương mại: Vinhomes Ocean Park 3 - Grand Park (Tên thường gọi: Vin Ocean Park 3, Vịnh biển thiên đường Hưng Yên). Mảnh ghép hoàn hảo của Siêu quần thể 1.200ha với Vịnh biển Paradise Bay 12 ha và công viên nước Aqua Bay độc đáo.',
     image: '/images/demo/project-apartment.jpg',
+    images: ['/images/demo/project-apartment.jpg', '/images/demo/project-tower.jpg', '/images/demo/hero-city-1.jpg'],
     masterplanUrl: '',
+    youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    legalInfo: '- Chủ đầu tư: Công ty Cổ phần Vinhomes (thuộc Tập đoàn Vingroup)\n- Hình thức sở hữu: Sổ hồng vĩnh viễn\n- Pháp lý: Đang hoàn thiện hồ sơ pháp lý từng phân khu\n- Quy hoạch: Đã được phê duyệt quy hoạch chi tiết 1/500',
+    currentStatus: '- Đang bàn giao các phân khu thấp tầng đợt 1\n- Vịnh biển Paradise Bay 12ha đã hoàn thiện\n- Hạ tầng giao thông nội khu hoàn thiện 90%\n- Công viên Aqua Bay đang hoàn thiện giai đoạn cuối',
     subdivisions: ['Phố Biển', 'Vịnh Thiên Đường', 'Ánh Dương', 'Thời Đại', 'Vịnh Tây', 'Vịnh Hải Tăng'],
     amenities: ['Vịnh biển Paradise Bay 12ha', 'Hồ bơi bốn mùa Tropical Surf', 'Công viên Aqua Bay với cầu trượt cảm giác mạnh', 'Khu phố thương mại sầm uất Grand World', 'Sân thể thao đa năng & Gym outdoor']
   },

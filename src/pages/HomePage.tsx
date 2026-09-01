@@ -818,7 +818,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   href={cat.link}
                   onClick={(e) => {
                     e.preventDefault();
-                    setCurrentTab(cat.key === 'mua-ban' ? 'sale' : cat.key === 'cho-thue' ? 'rent' : 'services');
+                    setCurrentTab(cat.key === 'mua-ban' ? 'sale' : cat.key === 'cho-thue' ? 'rent' : cat.key === 'tuyen-dung' ? 'recruitment' : 'services');
                   }}
                   className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 block"
                 >

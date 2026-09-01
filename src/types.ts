@@ -154,7 +154,11 @@ export interface Project {
   status: string;
   description: string;
   image: string;
+  images?: string[];
   masterplanUrl: string;
+  youtubeUrl?: string;
+  legalInfo?: string;
+  currentStatus?: string;
   subdivisions: string[];
   amenities: string[];
 }

@@ -514,7 +514,7 @@ let homepageCategoryImagesStore: { key: string; label: string; image: string; li
   { key: 'mua-ban', label: 'Mua Bán BĐS', image: '/images/demo/property-house.jpg', link: '/mua-ban' },
   { key: 'cho-thue', label: 'Cho Thuê BĐS', image: '/images/demo/property-interior-1.jpg', link: '/cho-thue' },
   { key: 'dich-vu', label: 'Dịch Vụ Nội Khu', image: '/images/demo/ad-service.jpg', link: '/dich-vu-cu-dan' },
-  { key: 'hang-hoa', label: 'Hàng Hóa & Chợ', image: '/images/demo/ad-food.jpg', link: '/hang-hoa' }
+  { key: 'tuyen-dung', label: 'Tuyển Dụng', image: '/images/demo/ad-service.jpg', link: '/tuyen-dung' }
 ];
 
 let reputationPostsStore: any[] = [
@@ -1005,7 +1005,19 @@ function loadDataStore() {
       if (Array.isArray(data.projects) && data.projects.length > 0) {
         const projMap = new Map(data.projects.map((p: any) => [p.id, p]));
         INITIAL_PROJECTS.forEach(ip => {
-          if (!projMap.has(ip.id)) projMap.set(ip.id, ip);
+          if (!projMap.has(ip.id)) {
+            projMap.set(ip.id, ip);
+          } else {
+            // Nâng cấp các trường mới (images, youtubeUrl, legalInfo, currentStatus) nếu bản persist cũ thiếu
+            const existing = projMap.get(ip.id) as any;
+            projMap.set(ip.id, {
+              ...existing,
+              images: existing.images || ip.images || [],
+              youtubeUrl: existing.youtubeUrl || ip.youtubeUrl || '',
+              legalInfo: existing.legalInfo || ip.legalInfo || '',
+              currentStatus: existing.currentStatus || ip.currentStatus || ''
+            });
+          }
         });
         projectsStore = Array.from(projMap.values()) as Project[];
       }
@@ -1048,11 +1060,14 @@ function loadDataStore() {
 
       // 6b. Homepage Category Images (ảnh 4 nhóm ngành)
       if (Array.isArray(data.homepageCategoryImages) && data.homepageCategoryImages.length > 0) {
+        const defaultKeys = homepageCategoryImagesStore.map(d => d.key);
         const catMap = new Map(data.homepageCategoryImages.map((c: any) => [c.key, c]));
         homepageCategoryImagesStore.forEach(def => {
           if (!catMap.has(def.key)) catMap.set(def.key, def);
         });
-        homepageCategoryImagesStore = Array.from(catMap.values()) as any;
+        // Chỉ giữ các key nằm trong danh sách mặc định (loại bỏ key cũ đã bỏ như hang-hoa)
+        homepageCategoryImagesStore = Array.from(catMap.values())
+          .filter((c: any) => defaultKeys.includes(c.key)) as any;
       }
 
       // 7. Users
@@ -1128,7 +1143,10 @@ function loadDataStore() {
         if (Array.isArray(data.residentServices)) residentServicesStore = data.residentServices;
         if (Array.isArray(data.stores)) storesStore = data.stores;
         if (Array.isArray(data.ads)) adsStore = data.ads;
-        if (Array.isArray(data.homepageCategoryImages) && data.homepageCategoryImages.length > 0) homepageCategoryImagesStore = data.homepageCategoryImages;
+        if (Array.isArray(data.homepageCategoryImages) && data.homepageCategoryImages.length > 0) {
+          const defaultKeys = homepageCategoryImagesStore.map(d => d.key);
+          homepageCategoryImagesStore = data.homepageCategoryImages.filter((c: any) => defaultKeys.includes(c.key));
+        }
         if (Array.isArray(data.storeOrders)) storeOrdersStore = data.storeOrders;
         if (Array.isArray(data.storePackages)) storePackagesStore = data.storePackages;
         if (Array.isArray(data.packageOrders)) packageOrdersStore = data.packageOrders;

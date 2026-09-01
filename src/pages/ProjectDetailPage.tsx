@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Building2, MapPin, CheckCircle2, ChevronRight, Home, 
   Layers, Filter, Sparkles, Phone, MessageCircle, ExternalLink,
-  Compass, ShieldCheck, Share2, ArrowLeft
+  Compass, ShieldCheck, Share2, ArrowLeft, PlayCircle
 } from 'lucide-react';
 import { Project, Property, Language, ProjectCategory } from '../types';
 import { SEOHead } from '../components/SEOHead';
@@ -41,6 +41,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
 
   const [activeTab, setActiveTab] = useState<'all' | 'sale' | 'rent'>('all');
   const [showShareModal, setShowShareModal] = useState(false);
+  const [activeSection, setActiveSection] = useState<'overview' | 'masterplan' | 'legal' | 'status' | 'video'>('overview');
 
   if (!project) {
     return (
@@ -228,6 +229,181 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
         </div>
       </div>
 
+      {/* Project Section Tabs — Menu riêng cho dự án */}
+      <div className="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-2.5 scrollbar-none">
+            {([
+              { key: 'overview', label: 'Tổng Quan', icon: Building2 },
+              { key: 'masterplan', label: 'Tổng Mặt Bằng', icon: Layers },
+              { key: 'legal', label: 'Pháp Lý', icon: ShieldCheck },
+              { key: 'status', label: 'Hiện Trạng', icon: Compass },
+              { key: 'video', label: 'Video Giới Thiệu', icon: PlayCircle }
+            ] as const).map(tab => {
+              const Icon = tab.icon;
+              const isActive = activeSection === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveSection(tab.key)}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ============ TAB: TỔNG MẶT BẰNG ============ */}
+      {activeSection === 'masterplan' && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <Layers className="w-5 h-5 text-emerald-500" />
+              <span>Tổng Mặt Bằng & Sơ Đồ Quy Hoạch {projectName}</span>
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Sơ đồ quy hoạch tổng thể toàn dự án — bấm vào ảnh để xem kích thước đầy đủ
+            </p>
+          </div>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md">
+            <a href={project.masterplanUrl || project.image} target="_blank" rel="noopener noreferrer" className="block">
+              <img
+                loading="lazy"
+                src={project.masterplanUrl || project.image}
+                alt={`Tổng mặt bằng ${projectName}`}
+                className="w-full h-auto object-contain"
+              />
+            </a>
+          </div>
+          <p className="text-[11px] text-slate-400 text-center">
+            Bấm vào ảnh để mở sơ đồ quy hoạch kích thước đầy đủ trong tab mới
+          </p>
+        </div>
+      )}
+
+      {/* ============ TAB: PHÁP LÝ ============ */}
+      {activeSection === 'legal' && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-emerald-500" />
+              <span>Pháp Lý Dự Án {projectName}</span>
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Thông tin pháp lý minh bạch, đầy đủ hồ sơ — đảm bảo an toàn cho khách hàng
+            </p>
+          </div>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-md">
+            {project.legalInfo ? (
+              <div className="space-y-3">
+                {project.legalInfo.split('\n').filter(Boolean).map((line, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{line}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 space-y-2">
+                <ShieldCheck className="w-10 h-10 text-slate-300 mx-auto" />
+                <p className="text-sm font-bold text-slate-500">
+                  Thông tin pháp lý đang được cập nhật
+                </p>
+                <p className="text-xs text-slate-400">
+                  Liên hệ Hotline 0868.499.929 để được tư vấn chi tiết hồ sơ pháp lý dự án
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ============ TAB: HIỆN TRẠNG ============ */}
+      {activeSection === 'status' && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <Compass className="w-5 h-5 text-emerald-500" />
+              <span>Hiện Trạng & Tiến Độ {projectName}</span>
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Cập nhật tiến độ thi công, bàn giao và hiện trạng thực tế dự án
+            </p>
+          </div>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-md">
+            {project.currentStatus ? (
+              <div className="space-y-3">
+                {project.currentStatus.split('\n').filter(Boolean).map((line, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <Compass className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{line}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 space-y-2">
+                <Compass className="w-10 h-10 text-slate-300 mx-auto" />
+                <p className="text-sm font-bold text-slate-500">
+                  Thông tin hiện trạng đang được cập nhật
+                </p>
+                <p className="text-xs text-slate-400">
+                  Liên hệ Hotline 0868.499.929 để nhận cập nhật tiến độ mới nhất
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ============ TAB: VIDEO GIỚI THIỆU ============ */}
+      {activeSection === 'video' && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <PlayCircle className="w-5 h-5 text-red-500" />
+              <span>Video Giới Thiệu {projectName}</span>
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Video chính thức từ kênh YouTube được chỉ định trên quản trị admin
+            </p>
+          </div>
+          {project.youtubeUrl ? (
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 shadow-md">
+              <div className="aspect-video rounded-2xl overflow-hidden bg-slate-950">
+                <iframe
+                  src={project.youtubeUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                  title={`Video giới thiệu ${projectName}`}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-10 text-center shadow-md space-y-3">
+              <PlayCircle className="w-12 h-12 text-slate-300 mx-auto" />
+              <h3 className="font-black text-base text-slate-700 dark:text-slate-200">
+                Video giới thiệu đang được cập nhật
+              </h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                Admin có thể thêm video YouTube giới thiệu dự án trong mục Quản Trị &gt; Dự Án &gt; Chỉnh Sửa Dự Án
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ============ TAB: TỔNG QUAN (mặc định) ============ */}
+      {activeSection === 'overview' && (
+      <>
       {/* Subdivisions List */}
       {normalizedSubdivisions.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
@@ -405,6 +581,8 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
           onOpenPostModal={() => navigate('/dang-tin')}
         />
       </div>
+      </>
+      )}
 
       {/* Share Modal */}
       {showShareModal && (

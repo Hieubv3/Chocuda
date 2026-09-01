@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2 } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
+import { AdminKycManager } from '../components/AdminKycManager';
 import { calculateExpiryInfo } from '../lib/expiration';
 
 interface ReputationPost {
@@ -1309,8 +1310,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     try {
       const updated = { ...srv, verified: !isCurrentlyVerified, kycStatus: newKycStatus as any, kycBadgeType: newBadgeType as any };
       setAdminResidentServices(prev => prev.map(s => s.id === srv.id ? updated : s));
-      await fetch('/api/resident-services', {
-        method: 'POST',
+      await fetch(`/api/resident-services/${srv.id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated)
       });
@@ -1356,6 +1357,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
     const payload: Partial<ResidentServiceItem> = {
       id: editingService ? editingService.id : `srv-${Date.now()}`,
+      userId: 'user-admin',
       title: newSrvTitle,
       categoryId: newSrvCategory,
       subCategory: newSrvSubCat || '',
@@ -2970,6 +2972,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 );
               })}
           </div>
+
+          {/* KYC Manager — Admin duyệt/cấp/thu hồi Nút Xanh Định Danh */}
+          <AdminKycManager
+            services={adminResidentServices}
+            onUpdateServiceKyc={async (serviceId, updates) => {
+              setAdminResidentServices(prev => prev.map(s => s.id === serviceId ? { ...s, ...updates } : s));
+              const target = adminResidentServices.find(s => s.id === serviceId);
+              if (target) {
+                try {
+                  await fetch(`/api/resident-services/${serviceId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...target, ...updates })
+                  });
+                } catch (e) {
+                  console.error('Error saving KYC update:', e);
+                }
+              }
+            }}
+            onRefreshData={fetchResidentServices}
+          />
         </div>
       )}
 

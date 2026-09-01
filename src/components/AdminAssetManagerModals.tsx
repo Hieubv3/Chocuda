@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Property, Project, NewsArticle, ProjectCategory } from '../types';
-import { X, Save, Image as ImageIcon, Trash2, Plus, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield, HelpCircle } from 'lucide-react';
+import { X, Save, Image as ImageIcon, Trash2, Plus, Upload, Check, Star, MapPin, Building2, Sparkles, AlertCircle, Lock, Shield, HelpCircle, Youtube } from 'lucide-react';
 import { SoDoCensorEditor } from './SoDoCensorEditor';
 import { compressImageFile } from '../lib/imageUtils';
 import { uploadBase64DataUrl, isBase64DataUrl } from '../lib/uploadService';
@@ -489,7 +489,11 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
       title: '',
       name: '',
       image: '',
+      images: [],
       masterplanUrl: '',
+      youtubeUrl: '',
+      legalInfo: '',
+      currentStatus: '',
       location: '',
       areaSize: '',
       totalUnits: '',
@@ -543,6 +547,39 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         console.error('Error compressing masterplan image:', err);
       }
     }
+  };
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const newUrls: string[] = [];
+    for (const file of Array.from(files) as File[]) {
+      if (file.size > 15 * 1024 * 1024) {
+        alert(`Ảnh ${file.name} quá lớn (tối đa 15MB)`);
+        continue;
+      }
+      try {
+        const compressed = await compressImageFile(file, 1600, 1200, 0.82);
+        if (compressed) {
+          const url = isBase64DataUrl(compressed)
+            ? await uploadBase64DataUrl(compressed, 'projects')
+            : compressed;
+          if (url) newUrls.push(url);
+        }
+      } catch (err) {
+        console.error('Error compressing gallery image:', err);
+      }
+    }
+    if (newUrls.length > 0) {
+      setFormData(prev => ({ ...prev, images: [...(prev.images || []), ...newUrls] }));
+    }
+  };
+
+  const removeGalleryImage = (idx: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: (prev.images || []).filter((_, i) => i !== idx)
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -637,6 +674,63 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             </div>
           </div>
 
+          {/* Gallery Images (Nhiều ảnh dự án) */}
+          <div className="p-4 bg-slate-50 dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+            <h4 className="font-extrabold text-xs text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <ImageIcon className="w-4 h-4 text-sky-500" /> 3. Gallery Ảnh Dự Án (nhiều ảnh)
+            </h4>
+            <div className="flex flex-wrap gap-3">
+              {(formData.images || []).map((img, idx) => (
+                <div key={idx} className="relative group">
+                  <img loading="lazy" src={img} alt={`Gallery ${idx + 1}`} className="w-28 h-20 object-cover rounded-xl border border-slate-300 shadow" />
+                  <button
+                    type="button"
+                    onClick={() => removeGalleryImage(idx)}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center shadow text-[10px] font-black opacity-0 group-hover:opacity-100 transition"
+                    title="Xóa ảnh"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              <label className="w-28 h-20 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-500 cursor-pointer transition">
+                <Upload className="w-4 h-4" />
+                <span className="text-[9px] font-bold mt-0.5">Thêm Ảnh</span>
+                <input type="file" accept="image/*" multiple onChange={handleGalleryUpload} className="hidden" />
+              </label>
+            </div>
+            <p className="text-[10px] text-slate-400">Có thể chọn nhiều ảnh cùng lúc. Ảnh gallery sẽ hiển thị trong tab "Tổng Quan" của trang dự án.</p>
+          </div>
+
+          {/* Video YouTube Giới Thiệu */}
+          <div className="p-4 bg-slate-50 dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+            <h4 className="font-extrabold text-xs text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <Youtube className="w-4 h-4 text-red-500" /> 4. Video Giới Thiệu (YouTube)
+            </h4>
+            <div className="space-y-2">
+              <label className="text-[10px] text-slate-400 block font-bold">URL video YouTube (admin chỉ định kênh/video):</label>
+              <input
+                type="text"
+                value={formData.youtubeUrl || ''}
+                onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+              {formData.youtubeUrl && (
+                <div className="aspect-video rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 bg-slate-950">
+                  <iframe
+                    src={formData.youtubeUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                    title="YouTube video player"
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              )}
+              <p className="text-[10px] text-slate-400">Video sẽ hiển thị trong tab "Video Giới Thiệu" của trang dự án.</p>
+            </div>
+          </div>
+
           {/* Basic Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -725,6 +819,36 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
               />
               <p className="text-[10px] text-slate-400 mt-1">Mỗi dòng là một tiện ích. Các tiện ích này sẽ hiển thị trong trang chi tiết dự án.</p>
+            </div>
+
+            {/* Pháp Lý (Legal Info) */}
+            <div className="md:col-span-2">
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                Thông Tin Pháp Lý Dự Án:
+              </label>
+              <textarea
+                rows={3}
+                value={formData.legalInfo || ''}
+                onChange={(e) => setFormData({ ...formData, legalInfo: e.target.value })}
+                placeholder={'VD:\n- Chủ đầu tư: Công ty CP Vinhomes\n- Sổ đỏ: Sổ hồng vĩnh viễn\n- Pháp lý: Đã hoàn thiện hồ sơ pháp lý, bàn giao sổ đỏ từng căn'}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              />
+              <p className="text-[10px] text-slate-400 mt-1">Hiển thị trong tab "Pháp Lý" của trang dự án.</p>
+            </div>
+
+            {/* Hiện Trạng / Tiến Độ (Current Status) */}
+            <div className="md:col-span-2">
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                Hiện Trạng / Tiến Độ Dự Án:
+              </label>
+              <textarea
+                rows={3}
+                value={formData.currentStatus || ''}
+                onChange={(e) => setFormData({ ...formData, currentStatus: e.target.value })}
+                placeholder={'VD:\n- Đã bàn giao 70% căn hộ\n- Hạ tầng khu đô thị hoàn thiện 90%\n- Công viên trung tâm đã đưa vào sử dụng'}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+              />
+              <p className="text-[10px] text-slate-400 mt-1">Hiển thị trong tab "Hiện Trạng" của trang dự án.</p>
             </div>
           </div>
 
