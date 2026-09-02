@@ -2504,7 +2504,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 type="button"
                 onClick={() => {
                   handleSelectMainTab('ads');
-                  setActiveTab('ads_mgmt');
+                  setActiveTab('ads');
                 }}
                 className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
                   effectiveMainTab === 'ads'
@@ -2670,7 +2670,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <UserCheck className="w-4 h-4" /> 5. Thành Viên
               </button>
               <button
-                onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads_mgmt'); setIsSubNavDropdownOpen(false); }}
+                onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-rose-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <Sparkles className="w-4 h-4" /> 6. Quảng Cáo
