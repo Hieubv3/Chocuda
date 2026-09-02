@@ -985,6 +985,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newAdWidthSize, setNewAdWidthSize] = useState<'small' | 'medium' | 'large' | 'compact'>('medium');
   const [newAdDisplayStyle, setNewAdDisplayStyle] = useState<'card_full' | 'image_only' | 'glowing_border' | 'minimal'>('glowing_border');
   const [newAdBadgeText, setNewAdBadgeText] = useState('QC CẠNH PHẢI');
+  const [newAdParentId, setNewAdParentId] = useState<string>('');
+  const [expandedAds, setExpandedAds] = useState<Set<string>>(new Set());
   const [editingAd, setEditingAd] = useState<AdBanner | null>(null);
 
   // Sync adsList to localStorage
@@ -1061,6 +1063,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewAdWidthSize(ad.widthSize || 'medium');
     setNewAdDisplayStyle(ad.displayStyle || 'card_full');
     setNewAdBadgeText(ad.badgeText || 'QC CẠNH PHẢI');
+    setNewAdParentId(ad.parentId || '');
     
     // Scroll smoothly to form section
     window.scrollTo({ top: 120, behavior: 'smooth' });
@@ -1075,6 +1078,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewAdWidthSize('medium');
     setNewAdDisplayStyle('card_full');
     setNewAdBadgeText('QC CẠNH PHẢI');
+    setNewAdParentId('');
   };
 
   const handleAdFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, targetAdId?: string) => {
@@ -1140,6 +1144,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         widthSize: newAdWidthSize,
         displayStyle: newAdDisplayStyle,
         badgeText: newAdBadgeText,
+        parentId: newAdParentId || undefined,
         active: isAct,
         isActive: isAct
       } : a);
@@ -1158,6 +1163,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         widthSize: newAdWidthSize,
         displayStyle: newAdDisplayStyle,
         badgeText: newAdBadgeText,
+        parentId: newAdParentId || undefined,
         active: true,
         isActive: true,
         clickCount: 0,
@@ -1183,6 +1189,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         handleCancelEditAd();
       }
     }
+  };
+
+  // Quảng cáo cha (không có parentId) và con
+  const parentAds = adsList.filter(a => !a.parentId);
+  const childAds = (parentId: string) => adsList.filter(a => a.parentId === parentId);
+  const toggleExpandAd = (adId: string) => {
+    setExpandedAds(prev => {
+      const next = new Set(prev);
+      if (next.has(adId)) next.delete(adId);
+      else next.add(adId);
+      return next;
+    });
   };
 
   // Property Statistics & Category Breakdown
@@ -4057,22 +4075,40 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">3. Vị trí hiển thị trên website (*)</label>
-                    <select
-                      value={newAdPos}
-                      onChange={e => setNewAdPos(e.target.value as any)}
-                      className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-amber-300 dark:border-slate-700 rounded-2xl text-amber-600 dark:text-amber-400 font-black text-xs focus:ring-2 focus:ring-amber-500 outline-none shadow-sm"
-                    >
-                      <option value="float_right_pc">📌 Cạnh Phải Web Bám Đuổi trên PC (Sticky Float Right - Có nút tắt ❌)</option>
-                      <option value="header_top">📌 Thanh trên cùng Header (Top Banner Bar)</option>
-                      <option value="float_left_pc">📌 Cạnh Trái Web Bám Đuổi trên PC (Sticky Float Left - Có nút tắt ❌)</option>
-                      <option value="home_middle">📌 Giữa Trang Chủ (Nằm giữa danh sách tin)</option>
-                      <option value="home_sidebar">📌 Cột Phải Trang Chủ (Sidebar Banner)</option>
-                      <option value="property_detail">📌 Trang Chi Tiết BĐS (Detail Page Banner)</option>
-                      <option value="popup_modal">📌 Pop-Up Nổi Trung Tâm Màn Hình (Center Popup - Có nút tắt ❌)</option>
-                    </select>
-                  </div>
+                   <div>
+                     <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">3. Vị trí hiển thị trên website (*)</label>
+                     <select
+                       value={newAdPos}
+                       onChange={e => setNewAdPos(e.target.value as any)}
+                       className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-amber-300 dark:border-slate-700 rounded-2xl text-amber-600 dark:text-amber-400 font-black text-xs focus:ring-2 focus:ring-amber-500 outline-none shadow-sm"
+                     >
+                       <option value="float_right_pc">📌 Cạnh Phải Web Bám Đuổi trên PC (Sticky Float Right - Có nút tắt ❌)</option>
+                       <option value="header_top">📌 Thanh trên cùng Header (Top Banner Bar)</option>
+                       <option value="float_left_pc">📌 Cạnh Trái Web Bám Đuổi trên PC (Sticky Float Left - Có nút tắt ❌)</option>
+                       <option value="home_middle">📌 Giữa Trang Chủ (Nằm giữa danh sách tin)</option>
+                       <option value="home_sidebar">📌 Cột Phải Trang Chủ (Sidebar Banner)</option>
+                       <option value="property_detail">📌 Trang Chi Tiết BĐS (Detail Page Banner)</option>
+                       <option value="popup_modal">📌 Pop-Up Nổi Trung Tâm Màn Hình (Center Popup - Có nút tắt ❌)</option>
+                     </select>
+                   </div>
+
+                   {/* Chọn quảng cáo cha (nếu là quảng cáo con) */}
+                   <div>
+                     <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">4. Gán vào Quảng cáo Cha (nếu có)</label>
+                     <select
+                       value={newAdParentId}
+                       onChange={e => setNewAdParentId(e.target.value || '')}
+                       className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white font-bold text-xs focus:ring-2 focus:ring-amber-500 outline-none"
+                     >
+                       <option value="">— Không gán (là quảng cáo cha độc lẵn) —</option>
+                       {parentAds.filter(a => a.id !== editingAd?.id).map(ad => (
+                         <option key={ad.id} value={ad.id}>
+                           {ad.title} ({ad.position})
+                         </option>
+                       ))}
+                     </select>
+                     <p className="text-[10px] text-slate-400 mt-1">Chọn quảng cáo cha để gắn vào nhóm. Quảng cáo con sẽ hiển thị dưới quảng cáo cha trong menu.</p>
+                   </div>
 
                   {/* Quản Trị Kích Thước & Kiểu Hiển Thị Banner Cạnh Phải */}
                   <div className="bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-3.5 space-y-3">
@@ -4322,69 +4358,68 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-black text-sm text-slate-900 dark:text-white uppercase tracking-wider">
-                DANH SÁCH BANNER QUẢNG CÁO ĐANG HOẠT ĐỘNG ({adsList.length})
+                DANH SÁCH BANNER QUẢNG CÁO ĐANG HOẠT ĐỘNG ({parentAds.length} nhóm, {adsList.length} tổng)
               </h3>
               <span className="text-[11px] text-slate-400">Ấn nút ✏️ Sửa để chỉnh sửa trực tiếp thông tin ở khung trên</span>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-xs text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 font-bold">
-                    <th className="p-3">Hình ảnh Banner</th>
-                    <th className="p-3">Tiêu đề quảng cáo</th>
-                    <th className="p-3">Vị trí</th>
-                    <th className="p-3">Lượt click</th>
-                    <th className="p-3">Trạng thái</th>
-                    <th className="p-3 text-right">Thao tác sửa</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {adsList.map(ad => {
-                    const isBeingEdited = editingAd?.id === ad.id;
-                    return (
-                      <tr 
-                        key={ad.id} 
-                        className={`transition ${
-                          isBeingEdited 
-                            ? 'bg-amber-50/80 dark:bg-amber-950/30 border-l-4 border-amber-500' 
-                            : 'hover:bg-slate-50 dark:hover:bg-slate-900/50'
-                        }`}
-                      >
-                        <td className="p-3">
-                          <div className="relative group w-24">
-                            <img loading="lazy" src={ad.imageUrl} alt={ad.title} className="w-24 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm" />
-                            <label 
-                              className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center rounded-xl cursor-pointer text-white text-[9px] font-extrabold transition"
-                              title="Tải ảnh mới trực tiếp"
-                            >
-                              <Upload className="w-3.5 h-3.5 mb-0.5 text-amber-400" />
-                              <span>Đổi ảnh</span>
-                              <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e, ad.id)} />
-                            </label>
+              {/* Tree View cho quảng cáo cha/con */}
+              <div className="space-y-1">
+                {parentAds.map(ad => {
+                  const isBeingEdited = editingAd?.id === ad.id;
+                  const isExpanded = expandedAds.has(ad.id);
+                  const children = childAds(ad.id);
+                  return (
+                    <div key={ad.id} className="space-y-1">
+                      {/* Quảng cáo cha */}
+                      <div className={`flex items-center gap-2 p-3 rounded-xl transition ${
+                        isBeingEdited 
+                          ? 'bg-amber-50/80 dark:bg-amber-950/30 border-l-4 border-amber-500' 
+                          : 'bg-white dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-900/50 border border-slate-200 dark:border-slate-700'
+                      }`}>
+                        {children.length > 0 && (
+                          <button
+                            onClick={() => toggleExpandAd(ad.id)}
+                            className="p-1 text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition"
+                            title={isExpanded ? 'Thu gọn' : 'Mở rộng'}
+                          >
+                            <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                          </button>
+                        )}
+                        <div className="relative group w-16 shrink-0">
+                          <img loading="lazy" src={ad.imageUrl} alt={ad.title} className="w-16 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm" />
+                          <label 
+                            className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-lg cursor-pointer text-white text-[9px] font-extrabold transition"
+                            title="Tải ảnh mới trực tiếp"
+                          >
+                            <Upload className="w-3 h-3 text-amber-400" />
+                            <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e, ad.id)} />
+                          </label>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-slate-900 dark:text-white line-clamp-1">{ad.title}</p>
+                          <div className="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400">
+                            <span className="text-amber-600 dark:text-amber-400 font-extrabold">
+                              {ad.position === 'header_top' && '📌 Top Header'}
+                              {ad.position === 'float_right_pc' && '📌 Cạnh Phải PC'}
+                              {ad.position === 'float_left_pc' && '📌 Cạnh Trái PC'}
+                              {ad.position === 'home_middle' && '📌 Giữa Trang Chủ'}
+                              {ad.position === 'home_sidebar' && '📌 Sidebar'}
+                              {ad.position === 'property_detail' && '📌 Chi Tiết BĐS'}
+                              {ad.position === 'popup_modal' && '📌 Pop-Up'}
+                              {!['header_top','float_right_pc','float_left_pc','home_middle','home_sidebar','property_detail','popup_modal'].includes(ad.position) && ad.position}
+                            </span>
+                            <span className="text-emerald-600 dark:text-emerald-400">{(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} lượt</span>
+                            <span className={(ad.active ?? ad.isActive ?? true) ? 'text-emerald-600 dark:text-emerald-400 font-black' : 'text-slate-500'}>
+                              {(ad.active ?? ad.isActive ?? true) ? '✓ Hiện' : '✕ Ẩn'}
+                            </span>
                           </div>
-                        </td>
-                        <td className="p-3 font-bold text-slate-900 dark:text-white max-w-xs">
-                          <p className="line-clamp-2">{ad.title}</p>
-                          <a href={ad.linkUrl} target="_blank" rel="noreferrer" className="text-[10px] text-amber-500 hover:underline">
-                            {ad.linkUrl}
-                          </a>
-                        </td>
-                        <td className="p-3 font-extrabold text-amber-600 dark:text-amber-400">
-                          {ad.position === 'header_top' && '📌 Top Header'}
-                          {ad.position === 'float_right_pc' && '📌 Cạnh Phải PC (Bám đuổi ❌)'}
-                          {ad.position === 'float_left_pc' && '📌 Cạnh Trái PC (Bám đuổi ❌)'}
-                          {ad.position === 'home_middle' && '📌 Giữa Trang Chủ'}
-                          {ad.position === 'home_sidebar' && '📌 Sidebar Cột Phải'}
-                          {ad.position === 'property_detail' && '📌 Chi Tiết BĐS'}
-                          {ad.position === 'popup_modal' && '📌 Pop-Up Nổi (Modal ❌)'}
-                          {!['header_top','float_right_pc','float_left_pc','home_middle','home_sidebar','property_detail','popup_modal'].includes(ad.position) && ad.position}
-                        </td>
-                        <td className="p-3 font-black text-emerald-600">{(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} lượt</td>
-                        <td className="p-3">
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
                           <button
                             onClick={() => handleToggleAdActive(ad.id)}
-                            className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition ${
+                            className={`px-2 py-1 rounded-lg text-[10px] font-black transition ${
                               (ad.active ?? ad.isActive ?? true)
                                 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
                                 : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
@@ -4392,35 +4427,104 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           >
                             {(ad.active ?? ad.isActive ?? true) ? '✓ Đang Hiện' : '✕ Đã Ẩn'}
                           </button>
-                        </td>
-                        <td className="p-3 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => handleStartEditAd(ad)}
-                              className={`px-3 py-1.5 rounded-xl font-black text-xs flex items-center gap-1.5 transition shadow-sm border ${
-                                isBeingEdited
-                                  ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400'
-                                  : 'bg-amber-500 hover:bg-amber-600 text-slate-950 border-amber-400'
-                              }`}
-                              title="Sửa thông tin banner quảng cáo ở ô trên"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                              <span>{isBeingEdited ? '✏️ Đang Sửa...' : '✏️ SỬA BANNER'}</span>
-                            </button>
-                            <button
-                              onClick={() => handleDeleteAd(ad.id)}
-                              className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-xl transition"
-                              title="Xóa quảng cáo"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          <button
+                            onClick={() => handleStartEditAd(ad)}
+                            className={`px-2.5 py-1 rounded-lg font-black text-xs flex items-center gap-1 transition shadow-sm border ${
+                              isBeingEdited
+                                ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400'
+                                : 'bg-amber-500 hover:bg-amber-600 text-slate-950 border-amber-400'
+                            }`}
+                            title="Sửa thông tin banner quảng cáo ở khung trên"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            {isBeingEdited ? '✏️ Đang Sửa' : '✏️ SỬA'}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAd(ad.id)}
+                            className="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg transition"
+                            title="Xóa quảng cáo"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Quảng cáo con */}
+                      {isExpanded && children.length > 0 && (
+                        <div className="ml-8 space-y-1">
+                          {children.map(childAd => {
+                            const childEdited = editingAd?.id === childAd.id;
+                            return (
+                              <div key={childAd.id} className={`flex items-center gap-2 p-2.5 rounded-lg transition ${
+                                childEdited 
+                                  ? 'bg-amber-50/80 dark:bg-amber-950/30 border-l-2 border-amber-500' 
+                                  : 'bg-slate-50 dark:bg-slate-900/30 hover:bg-slate-100 dark:hover:bg-slate-900/50 border border-slate-200 dark:border-slate-700'
+                              }`}>
+                                <div className="relative group w-12 shrink-0">
+                                  <img loading="lazy" src={childAd.imageUrl} alt={childAd.title} className="w-12 h-8 object-cover rounded border border-slate-200 dark:border-slate-700 shadow-sm" />
+                                  <label 
+                                    className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded cursor-pointer text-white text-[8px] transition"
+                                    title="Tải ảnh mới trực tiếp"
+                                  >
+                                    <Upload className="w-2.5 h-2.5 text-amber-400" />
+                                    <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e, childAd.id)} />
+                                  </label>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-bold text-slate-800 dark:text-slate-200 line-clamp-1 text-xs">{childAd.title}</p>
+                                  <div className="flex items-center gap-2 text-[9px] text-slate-500 dark:text-slate-400">
+                                    <span className="text-amber-600 dark:text-amber-400 font-extrabold">
+                                      {childAd.position === 'header_top' && '📌 Top Header'}
+                                      {childAd.position === 'float_right_pc' && '📌 Cạnh Phải PC'}
+                                      {childAd.position === 'float_left_pc' && '📌 Cạnh Trái PC'}
+                                      {childAd.position === 'home_middle' && '📌 Giữa Trang Chủ'}
+                                      {childAd.position === 'home_sidebar' && '📌 Sidebar'}
+                                      {childAd.position === 'property_detail' && '📌 Chi Tiết BĐS'}
+                                      {childAd.position === 'popup_modal' && '📌 Pop-Up'}
+                                    </span>
+                                    <span className="text-emerald-600 dark:text-emerald-400">{(childAd.clickCount || childAd.clicks || 0).toLocaleString('vi-VN')}</span>
+                                    <span className={(childAd.active ?? childAd.isActive ?? true) ? 'text-emerald-600 dark:text-emerald-400 font-black' : 'text-slate-500'}>
+                                      {(childAd.active ?? childAd.isActive ?? true) ? '✓' : '✕'}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <button
+                                    onClick={() => handleToggleAdActive(childAd.id)}
+                                    className={`px-1.5 py-0.5 rounded text-[9px] font-black transition ${
+                                      (childAd.active ?? childAd.isActive ?? true)
+                                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                        : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
+                                    }`}
+                                  >
+                                    {(childAd.active ?? childAd.isActive ?? true) ? '✓' : '✕'}
+                                  </button>
+                                  <button
+                                    onClick={() => handleStartEditAd(childAd)}
+                                    className={`p-1 rounded text-amber-600 hover:bg-amber-100 dark:hover:bg-amber-950/50 transition ${
+                                      childEdited ? 'bg-amber-400/30' : ''
+                                    }`}
+                                    title="Sửa"
+                                  >
+                                    <Edit3 className="w-3 h-3" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteAd(childAd.id)}
+                                    className="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded transition"
+                                    title="Xóa"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

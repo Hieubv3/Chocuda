@@ -1,6 +1,7 @@
 export type PropertyType = 'sale' | 'rent';
 
 export type ProjectCategory = 
+  | 'ocean-park'
   | 'ocean-park-2' 
   | 'ocean-park-3' 
   | 'ocean-park-1' 
@@ -161,6 +162,7 @@ export interface Project {
   currentStatus?: string;
   subdivisions: string[];
   amenities: string[];
+  parentId?: ProjectCategory;
 }
 
 export interface NewsArticle {
@@ -345,6 +347,7 @@ export interface AdBanner {
   clickCount: number;
   clicks?: number;
   createdAt: string;
+  parentId?: string; // quảng cáo cha (nếu là quảng cáo con)
 }
 
 // Video Nhận Định Thị Trường Nhà đẹp Vinhomes

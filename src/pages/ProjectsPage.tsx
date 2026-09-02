@@ -32,8 +32,22 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
 }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectCategory>(selectedProjectId || 'ocean-park-2');
+  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set());
 
   const currentProject = projects.find(p => p.id === activeTab) || projects[0];
+
+  // Dự án cha (có parentId === undefined) và dự án con (có parentId)
+  const parentProjects = projects.filter(p => !p.parentId);
+  const childProjects = (parentId: string) => projects.filter(p => p.parentId === parentId);
+
+  const toggleExpand = (projectId: string) => {
+    setExpandedProjects(prev => {
+      const next = new Set(prev);
+      if (next.has(projectId)) next.delete(projectId);
+      else next.add(projectId);
+      return next;
+    });
+  };
 
   // Quy định: Các căn bán trong phần dự án chỉ hiển thị căn bán và cho thuê của admin và admin tổng đăng (các đối tác khác không hiển thị)
   const adminProjectProperties = useMemo(() => {
@@ -69,46 +83,83 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
         </p>
       </div>
 
-      {/* Project Selector Tabs - Responsive Rectangular Columns */}
+      {/* Project Selector Tree View */}
       <div className="w-full space-y-2">
         <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 px-1">
           <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300 font-black">
-            🏛️ DANH SÁCH DỰ ÁN DẠNG CỘT HỘP CHỮ NHẬT ({projects.length}):
+            🏛️ DANH SÁCH DỰ ÁN ({projects.length}):
           </span>
           <span className="text-[11px] text-amber-500 font-extrabold hidden sm:inline">
             Click chọn xem chi tiết & sơ đồ từng dự án
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 p-2.5 bg-slate-100 dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner">
-          {projects.map((p) => {
+        <div className="p-2.5 bg-slate-100 dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner space-y-1">
+          {parentProjects.map((p) => {
             const isSelected = activeTab === p.id;
+            const isExpanded = expandedProjects.has(p.id);
+            const children = childProjects(p.id);
             const displayName = p.name.split('-')[0].trim();
             const projectUrl = `/du-an/${getProjectSlug(p.id)}`;
             return (
-              <button
-                key={p.id}
-                onClick={() => {
-                  setActiveTab(p.id);
-                  navigate(projectUrl);
-                }}
-                className={`w-full py-2.5 px-3 rounded-xl text-xs font-black transition-all flex flex-col items-center justify-center text-center border min-h-[48px] relative group cursor-pointer ${
-                  isSelected
-                    ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg ring-2 ring-amber-400/50 scale-[1.02] z-10'
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-400 hover:shadow-md'
-                }`}
-              >
-                <span className="line-clamp-2 leading-tight">
-                  {displayName}
-                </span>
-                {isSelected ? (
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-950 mt-1 animate-ping" />
-                ) : (
-                  <span className="text-[9px] font-mono text-slate-400 opacity-0 group-hover:opacity-100 transition mt-0.5">
-                    {projectUrl}
-                  </span>
+              <div key={p.id} className="space-y-1">
+                {/* Dự án cha */}
+                <div className="flex items-center gap-1">
+                  {children.length > 0 && (
+                    <button
+                      onClick={() => toggleExpand(p.id)}
+                      className="p-1 text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition"
+                      title={isExpanded ? 'Thu gọn' : 'Mở rộng'}
+                    >
+                      <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setActiveTab(p.id);
+                      navigate(projectUrl);
+                    }}
+                    className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center text-center border min-h-[48px] relative group cursor-pointer ${
+                      isSelected
+                        ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg ring-2 ring-amber-400/50 scale-[1.02] z-10'
+                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-400 hover:shadow-md'
+                    }`}
+                  >
+                    <span className="line-clamp-2 leading-tight">{displayName}</span>
+                    {isSelected && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-950 mt-1 animate-ping" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Dự án con */}
+                {isExpanded && children.length > 0 && (
+                  <div className="ml-6 space-y-1">
+                    {children.map((child) => {
+                      const childSelected = activeTab === child.id;
+                      const childUrl = `/du-an/${getProjectSlug(child.id)}`;
+                      const childName = child.name.split('-')[0].trim();
+                      return (
+                        <button
+                          key={child.id}
+                          onClick={() => {
+                            setActiveTab(child.id);
+                            navigate(childUrl);
+                          }}
+                          className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border min-h-[40px] cursor-pointer ${
+                            childSelected
+                              ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
+                              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-400'
+                          }`}
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
+                          <span className="line-clamp-1">{childName}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>

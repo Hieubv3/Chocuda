@@ -1025,7 +1025,8 @@ function loadDataStore() {
               images: existing.images || ip.images || [],
               youtubeUrl: existing.youtubeUrl || ip.youtubeUrl || '',
               legalInfo: existing.legalInfo || ip.legalInfo || '',
-              currentStatus: existing.currentStatus || ip.currentStatus || ''
+              currentStatus: existing.currentStatus || ip.currentStatus || '',
+              parentId: existing.parentId || ip.parentId || undefined
             });
           }
         });

@@ -2,6 +2,25 @@ import { Property, Project, NewsArticle, AdBanner, MarketVideo } from '../types'
 
 export const INITIAL_PROJECTS: Project[] = [
   {
+    id: 'ocean-park',
+    name: 'Vinhomes Ocean Park - Tổng Thể',
+    location: 'Huyện Văn Giang & Gia Lâm, Tỉnh Hưng Yên & Thủ đô Hà Nội',
+    areaSize: '1.172 ha (tổng hợp OP1 + OP2 + OP3)',
+    totalUnits: '21.300+ căn thấp tầng & 84 tòa căn hộ cao tầng',
+    priceRange: '1.2 tỷ - 45 tỷ VNĐ',
+    status: 'Đã hoàn thiện & Bàn giao',
+    description: 'Tên thương mại: Vinhomes Ocean Park (Tên thường gọi: Vin Ocean Park, Thành phố Biển hồ Singapore). Siêu quần thể đô thương biển hàng đầu miền Bắc với 3 khu vực chính: Ocean Park 1 (Gia Lâm), Ocean Park 2 (The Empire - Hưng Yên) và Ocean Park 3 (Grand Park - Hưng Yên).',
+    image: '/images/demo/project-tower.jpg',
+    images: ['/images/demo/project-tower.jpg', '/images/demo/project-apartment.jpg', '/images/demo/project-villa.jpg', '/images/demo/amenity-beach.jpg'],
+    masterplanUrl: '',
+    youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    legalInfo: '- Chủ đầu tư: Công ty Cổ phần Vinhomes (thuộc Tập đoàn Vingroup)\n- Hình thức sở hữu: Sổ hồng vĩnh viễn\n- Pháp lý: Đã hoàn thiện hồ sơ pháp lý toàn bộ 3 giai đoạn\n- Quy hoạch: Đã được phê duyệt quy hoạch chi tiết 1/500',
+    currentStatus: '- Đã bàn giao 100% các giai đoạn\n- Hạ tầng khu đô thị hoàn thiện đồng bộ\n- Công viên sóng Royal Wave Park 18ha đã vận hành\n- Cư dân đã về ở đông đúc, tiện ích hoạt động đầy đủ',
+    subdivisions: [],
+    amenities: ['Công viên sóng Royal Wave Park 18ha', 'Quảng trường Kinh đô Ánh sáng', 'Bệnh viện Vinmec Health Resort 5 sao', 'Trung tâm thương mại Vincom Mega Mall', 'Hệ thống liên cấp Vinschool', 'Xe buýt VinBus nội khu 24/7'],
+    parentId: undefined
+  },
+  {
     id: 'ocean-park-2',
     name: 'Vinhomes Ocean Park 2 - The Empire',
     location: 'Huyện Văn Giang, Tỉnh Hưng Yên (Nút giao Cổ Linh & Vành đai 3.5)',
@@ -17,7 +36,8 @@ export const INITIAL_PROJECTS: Project[] = [
     legalInfo: '- Chủ đầu tư: Công ty Cổ phần Vinhomes (thuộc Tập đoàn Vingroup)\n- Hình thức sở hữu: Sổ hồng vĩnh viễn (sở hữu lâu dài)\n- Pháp lý: Đã hoàn thiện hồ sơ pháp lý, bàn giao sổ đỏ từng căn\n- Quy hoạch: Đã được phê duyệt quy hoạch chi tiết 1/500',
     currentStatus: '- Đã bàn giao 100% các phân khu thấp tầng\n- Hạ tầng khu đô thị hoàn thiện đồng bộ\n- Công viên sóng Royal Wave Park 18ha đã đưa vào vận hành\n- Cư dân đã về ở đông đúc, tiện ích hoạt động đầy đủ',
     subdivisions: ['Chà Là', 'Cọ Xanh', 'San Hô', 'Hải Tăng', 'Sao Biển', 'Đảo Ngọc', 'Chợ Đêm Grand World'],
-    amenities: ['Công viên sóng Royal Wave Park 18ha', 'Quảng trường Kinh đô Ánh sáng', 'Bệnh viện Vinmec Health Resort 5 sao', 'Trung tâm thương mại Vincom Mega Mall', 'Hệ thống liên cấp Vinschool', 'Xe buýt VinBus nội khu 24/7']
+    amenities: ['Công viên sóng Royal Wave Park 18ha', 'Quảng trường Kinh đô Ánh sáng', 'Bệnh viện Vinmec Health Resort 5 sao', 'Trung tâm thương mại Vincom Mega Mall', 'Hệ thống liên cấp Vinschool', 'Xe buýt VinBus nội khu 24/7'],
+    parentId: 'ocean-park'
   },
   {
     id: 'ocean-park-3',
@@ -35,7 +55,8 @@ export const INITIAL_PROJECTS: Project[] = [
     legalInfo: '- Chủ đầu tư: Công ty Cổ phần Vinhomes (thuộc Tập đoàn Vingroup)\n- Hình thức sở hữu: Sổ hồng vĩnh viễn\n- Pháp lý: Đang hoàn thiện hồ sơ pháp lý từng phân khu\n- Quy hoạch: Đã được phê duyệt quy hoạch chi tiết 1/500',
     currentStatus: '- Đang bàn giao các phân khu thấp tầng đợt 1\n- Vịnh biển Paradise Bay 12ha đã hoàn thiện\n- Hạ tầng giao thông nội khu hoàn thiện 90%\n- Công viên Aqua Bay đang hoàn thiện giai đoạn cuối',
     subdivisions: ['Phố Biển', 'Vịnh Thiên Đường', 'Ánh Dương', 'Thời Đại', 'Vịnh Tây', 'Vịnh Hải Tăng'],
-    amenities: ['Vịnh biển Paradise Bay 12ha', 'Hồ bơi bốn mùa Tropical Surf', 'Công viên Aqua Bay với cầu trượt cảm giác mạnh', 'Khu phố thương mại sầm uất Grand World', 'Sân thể thao đa năng & Gym outdoor']
+    amenities: ['Vịnh biển Paradise Bay 12ha', 'Hồ bơi bốn mùa Tropical Surf', 'Công viên Aqua Bay với cầu trượt cảm giác mạnh', 'Khu phố thương mại sầm uất Grand World', 'Sân thể thao đa năng & Gym outdoor'],
+    parentId: 'ocean-park'
   },
   {
     id: 'ocean-park-1',
@@ -49,7 +70,8 @@ export const INITIAL_PROJECTS: Project[] = [
     image: '/images/demo/project-villa.jpg',
     masterplanUrl: '',
     subdivisions: ['Sapphire 1 & 2', 'Zen Park', 'Masteri Waterfront', 'Ngọc Trai', 'San Hô', 'Hải Tăng', 'Sao Biển'],
-    amenities: ['Biển hồ nước mặn Crystal Lagoon 6.1ha', 'Hồ nước ngọt Ngọc Trai 24.5ha', 'Trường Đại học VinUni', 'Vincom Mega Mall Gia Lâm', 'Tuyến xe điện VinBus kết nối Hà Nội']
+    amenities: ['Biển hồ nước mặn Crystal Lagoon 6.1ha', 'Hồ nước ngọt Ngọc Trai 24.5ha', 'Trường Đại học VinUni', 'Vincom Mega Mall Gia Lâm', 'Tuyến xe điện VinBus kết nối Hà Nội'],
+    parentId: 'ocean-park'
   },
   {
     id: 'ha-long-xanh',

@@ -43,6 +43,10 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
   const [showShareModal, setShowShareModal] = useState(false);
   const [activeSection, setActiveSection] = useState<'overview' | 'masterplan' | 'legal' | 'status' | 'video'>('overview');
 
+  // Dự án con (nếu đây là dự án cha)
+  const childProjects = projects.filter(p => p.parentId === project.id);
+  const isParentProject = childProjects.length > 0;
+
   if (!project) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
@@ -179,7 +183,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
         </div>
       </div>
 
-      {/* Project Hero Banner */}
+      {/* Project Hero Banner — ảnh rộng bộ mặt dự án */}
       <div className="relative bg-slate-950 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img loading="lazy"
@@ -229,6 +233,27 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
         </div>
       </div>
 
+      {/* Gallery ảnh dự án (nếu có) */}
+      {project.images && project.images.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <h3 className="text-sm font-black text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wider">
+            Thư viện ảnh dự án
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {project.images.map((img, idx) => (
+              <div key={idx} className="aspect-[4/3] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-md group">
+                <img
+                  loading="lazy"
+                  src={img}
+                  alt={`${projectName} ảnh ${idx + 1}`}
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Project Section Tabs — Menu riêng cho dự án */}
       <div className="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -260,6 +285,54 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Dự án con (nếu đây là dự án cha) */}
+      {isParentProject && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <Layers className="w-5 h-5 text-emerald-500" />
+              <span>Các Dự Án Con Thuộc {projectName}</span>
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Chọn một dự án con để xem chi tiết phân khu, tiện ích và quỹ căn
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {childProjects.map(child => {
+              const childUrl = `/du-an/${getProjectSlug(child.id)}`;
+              const childName = child.name.split('-')[0].trim();
+              return (
+                <div
+                  key={child.id}
+                  onClick={() => navigate(childUrl)}
+                  className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 shadow-md hover:shadow-xl transition cursor-pointer"
+                >
+                  <div className="aspect-[16/10] overflow-hidden relative bg-slate-950">
+                    <img loading="lazy"
+                      src={child.image}
+                      alt={child.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    />
+                  </div>
+                  <div className="p-4 space-y-2">
+                    <h3 className="font-black text-slate-900 dark:text-white text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition truncate">
+                      {childName}
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                      {child.description}
+                    </p>
+                    <div className="pt-2 flex items-center justify-between text-[11px] font-bold text-emerald-600 dark:text-emerald-400 border-t border-slate-100 dark:border-slate-800">
+                      <span>Xem chi tiết & sơ đồ</span>
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ============ TAB: TỔNG MẶT BẰNG ============ */}
       {activeSection === 'masterplan' && (
