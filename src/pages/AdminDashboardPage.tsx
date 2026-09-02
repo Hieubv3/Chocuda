@@ -1025,10 +1025,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     try {
       // Nén nhẹ ảnh trước khi upload (giữ dung lượng nhỏ)
       const compressed = await addWatermarkToImage(file, { skipWatermark: true, maxDim: 800 });
+      // Upload lên server lấy URL public /uploads/... thay vì lưu base64 thô vào data store
+      const url = await uploadBase64DataUrl(compressed, 'category-images');
+      if (!url) {
+        alert('❌ Upload ảnh thất bại. Vui lòng thử lại!');
+        return;
+      }
       const res = await fetch(`/api/homepage-category-images/${key}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: compressed })
+        body: JSON.stringify({ image: url })
       });
       if (res.ok) {
         const data = await res.json();
