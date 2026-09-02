@@ -509,6 +509,16 @@ let storesStore: UserStorefront[] = [...INITIAL_USER_STOREFRONTS];
 let storeOrdersStore: StoreOrder[] = [...INITIAL_STORE_ORDERS];
 let adsStore: AdBanner[] = [...INITIAL_ADS];
 
+// Danh sách id đã bị xóa (để merge seed data không thêm lại bài đã xóa khi restart)
+let deletedIds: Record<string, string[]> = {
+  properties: [],
+  projects: [],
+  news: [],
+  residentServices: [],
+  stores: [],
+  ads: []
+};
+
 // Ảnh đại diện 4 nhóm ngành trên trang chủ (admin có thể đổi trong Admin Dashboard)
 let homepageCategoryImagesStore: { key: string; label: string; image: string; link: string }[] = [
   { key: 'mua-ban', label: 'Mua Bán BĐS', image: '/images/demo/property-house.jpg', link: '/mua-ban' },
@@ -1058,6 +1068,26 @@ function loadDataStore() {
         adsStore = Array.from(adsMap.values()) as any;
       }
 
+      // 7. Deleted IDs — đọc danh sách id đã xóa để không merge lại bài đã xóa
+      if (data.deletedIds && typeof data.deletedIds === 'object') {
+        deletedIds = {
+          properties: Array.isArray(data.deletedIds.properties) ? data.deletedIds.properties : [],
+          projects: Array.isArray(data.deletedIds.projects) ? data.deletedIds.projects : [],
+          news: Array.isArray(data.deletedIds.news) ? data.deletedIds.news : [],
+          residentServices: Array.isArray(data.deletedIds.residentServices) ? data.deletedIds.residentServices : [],
+          stores: Array.isArray(data.deletedIds.stores) ? data.deletedIds.stores : [],
+          ads: Array.isArray(data.deletedIds.ads) ? data.deletedIds.ads : []
+        };
+      }
+
+      // Áp dụng deletedIds: loại bỏ bài đã xóa khỏi các store
+      propertiesStore = propertiesStore.filter(p => !deletedIds.properties.includes(p.id));
+      projectsStore = projectsStore.filter(p => !deletedIds.projects.includes(p.id));
+      newsStore = newsStore.filter(n => !deletedIds.news.includes(n.id));
+      residentServicesStore = residentServicesStore.filter((s: any) => !deletedIds.residentServices.includes(s.id));
+      storesStore = storesStore.filter((st: any) => !deletedIds.stores.includes(st.id));
+      adsStore = adsStore.filter(a => !deletedIds.ads.includes(a.id));
+
       // 6b. Homepage Category Images (ảnh 4 nhóm ngành)
       if (Array.isArray(data.homepageCategoryImages) && data.homepageCategoryImages.length > 0) {
         const defaultKeys = homepageCategoryImagesStore.map(d => d.key);
@@ -1189,6 +1219,7 @@ ads: adsStore,
       employers: employersStore,
       jobApplications: jobApplicationsStore,
       cvUnlocks: cvUnlocksStore,
+      deletedIds,
       savedAt: new Date().toISOString()
     };
     const jsonStr = JSON.stringify(payload, null, 2);
@@ -2611,6 +2642,7 @@ app.put("/api/properties/:id/approve", (req, res) => {
 app.delete("/api/properties/:id", (req, res) => {
   const { id } = req.params;
   propertiesStore = propertiesStore.filter(p => p.id !== id);
+  if (!deletedIds.properties.includes(id)) deletedIds.properties.push(id);
   saveDataStore();
   res.json({ message: "Đã xóa bài đăng." });
 });
@@ -2680,6 +2712,7 @@ app.put("/api/projects/:id", (req, res) => {
 app.delete("/api/projects/:id", (req, res) => {
   const { id } = req.params;
   projectsStore = projectsStore.filter(p => p.id !== id);
+  if (!deletedIds.projects.includes(id)) deletedIds.projects.push(id);
   saveDataStore();
   res.json({ message: "Đã xóa dự án thành công." });
 });
@@ -2725,6 +2758,7 @@ app.put("/api/news/:id", (req, res) => {
 app.delete("/api/news/:id", (req, res) => {
   const { id } = req.params;
   newsStore = newsStore.filter(n => n.id !== id);
+  if (!deletedIds.news.includes(id)) deletedIds.news.push(id);
   saveDataStore();
   res.json({ message: "Đã xóa bài viết thành công." });
 });
@@ -2896,6 +2930,7 @@ app.put("/api/ads/:id", (req, res) => {
 app.delete("/api/ads/:id", (req, res) => {
   const { id } = req.params;
   adsStore = adsStore.filter(a => a.id !== id);
+  if (!deletedIds.ads.includes(id)) deletedIds.ads.push(id);
   saveDataStore();
   res.json({ success: true, message: "Đã xóa banner quảng cáo.", ads: adsStore });
 });
@@ -3038,6 +3073,7 @@ app.put("/api/resident-services/:id/approve", (req, res) => {
 app.delete("/api/resident-services/:id", (req, res) => {
   const { id } = req.params;
   residentServicesStore = residentServicesStore.filter(s => s.id !== id);
+  if (!deletedIds.residentServices.includes(id)) deletedIds.residentServices.push(id);
   saveDataStore();
   res.json({ message: "Đã xóa bài dịch vụ cư dân." });
 });
@@ -3216,6 +3252,7 @@ app.get("/api/store-orders", authenticateToken, requireAdmin, (req, res) => {
 app.delete("/api/stores/:id", (req, res) => {
   const { id } = req.params;
   storesStore = storesStore.filter(s => s.id !== id && s.userId !== id);
+  if (!deletedIds.stores.includes(id)) deletedIds.stores.push(id);
   saveDataStore();
   res.json({ message: "Đã xóa gian hàng cư dân." });
 });
@@ -4823,6 +4860,7 @@ app.delete("/api/stores/:id", (req, res) => {
   if (storesStore.length === initLen) {
     return res.status(404).json({ error: "Không tìm thấy gian hàng để xóa." });
   }
+  if (!deletedIds.stores.includes(id)) deletedIds.stores.push(id);
   saveDataStore();
   res.json({ success: true, message: "Admin đã xóa gian hàng cư dân khỏi hệ thống!" });
 });
