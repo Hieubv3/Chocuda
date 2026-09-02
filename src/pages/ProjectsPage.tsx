@@ -83,7 +83,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
         </p>
       </div>
 
-      {/* Project Selector Tree View */}
+      {/* Project Selector Tree View — ngang, tràn 2 dòng tối đa */}
       <div className="w-full space-y-2">
         <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 px-1">
           <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300 font-black">
@@ -94,74 +94,76 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
           </span>
         </div>
 
-        <div className="p-2.5 bg-slate-100 dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner space-y-1">
-          {parentProjects.map((p) => {
-            const isSelected = activeTab === p.id;
-            const isExpanded = expandedProjects.has(p.id);
-            const children = childProjects(p.id);
-            const displayName = p.name.split('-')[0].trim();
-            const projectUrl = `/du-an/${getProjectSlug(p.id)}`;
-            return (
-              <div key={p.id} className="space-y-1">
-                {/* Dự án cha */}
-                <div className="flex items-center gap-1">
-                  {children.length > 0 && (
-                    <button
-                      onClick={() => toggleExpand(p.id)}
-                      className="p-1 text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition"
-                      title={isExpanded ? 'Thu gọn' : 'Mở rộng'}
-                    >
-                      <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
-                    </button>
-                  )}
-                  <button
-                    onClick={() => {
-                      setActiveTab(p.id);
-                      navigate(projectUrl);
-                    }}
-                    className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center text-center border min-h-[48px] relative group cursor-pointer ${
-                      isSelected
-                        ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg ring-2 ring-amber-400/50 scale-[1.02] z-10'
-                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-400 hover:shadow-md'
-                    }`}
-                  >
-                    <span className="line-clamp-2 leading-tight">{displayName}</span>
-                    {isSelected && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-slate-950 mt-1 animate-ping" />
+        <div className="p-2.5 bg-slate-100 dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner">
+          <div className="flex flex-wrap items-center gap-2">
+            {parentProjects.map((p) => {
+              const isSelected = activeTab === p.id;
+              const isExpanded = expandedProjects.has(p.id);
+              const children = childProjects(p.id);
+              const displayName = p.name.split('-')[0].trim();
+              const projectUrl = `/du-an/${getProjectSlug(p.id)}`;
+              return (
+                <div key={p.id} className="flex items-center gap-1.5">
+                  {/* Dự án cha */}
+                  <div className="flex items-center gap-1">
+                    {children.length > 0 && (
+                      <button
+                        onClick={() => toggleExpand(p.id)}
+                        className="p-0.5 text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition"
+                        title={isExpanded ? 'Thu gọn' : 'Mở rộng'}
+                      >
+                        <ChevronRight className={`w-3.5 h-3.5 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                      </button>
                     )}
-                  </button>
-                </div>
-
-                {/* Dự án con */}
-                {isExpanded && children.length > 0 && (
-                  <div className="ml-6 space-y-1">
-                    {children.map((child) => {
-                      const childSelected = activeTab === child.id;
-                      const childUrl = `/du-an/${getProjectSlug(child.id)}`;
-                      const childName = child.name.split('-')[0].trim();
-                      return (
-                        <button
-                          key={child.id}
-                          onClick={() => {
-                            setActiveTab(child.id);
-                            navigate(childUrl);
-                          }}
-                          className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border min-h-[40px] cursor-pointer ${
-                            childSelected
-                              ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
-                              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-400'
-                          }`}
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
-                          <span className="line-clamp-1">{childName}</span>
-                        </button>
-                      );
-                    })}
+                    <button
+                      onClick={() => {
+                        setActiveTab(p.id);
+                        navigate(projectUrl);
+                      }}
+                      className={`py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center text-center border min-h-[40px] relative group cursor-pointer ${
+                        isSelected
+                          ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg ring-2 ring-amber-400/50 scale-[1.02] z-10'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-400 hover:shadow-md'
+                      }`}
+                    >
+                      <span className="line-clamp-1 leading-tight">{displayName}</span>
+                      {isSelected && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-950 mt-1 animate-ping" />
+                      )}
+                    </button>
                   </div>
-                )}
-              </div>
-            );
-          })}
+
+                  {/* Dự án con — hiển thị ngang khi mở rộng */}
+                  {isExpanded && children.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {children.map((child) => {
+                        const childSelected = activeTab === child.id;
+                        const childUrl = `/du-an/${getProjectSlug(child.id)}`;
+                        const childName = child.name.split('-')[0].trim();
+                        return (
+                          <button
+                            key={child.id}
+                            onClick={() => {
+                              setActiveTab(child.id);
+                              navigate(childUrl);
+                            }}
+                            className={`py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border min-h-[36px] cursor-pointer ${
+                              childSelected
+                                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
+                                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-400'
+                            }`}
+                          >
+                            <span className="w-1 h-1 rounded-full bg-slate-400 shrink-0" />
+                            <span className="line-clamp-1">{childName}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
