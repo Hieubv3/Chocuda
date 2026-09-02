@@ -200,9 +200,13 @@ export async function uploadBase64DataUrl(dataUrl: string, folder?: string): Pro
     if (approxBytes > MAX_FILE_SIZE) {
       finalDataUrl = await compressDataUrlToLimit(dataUrl);
     }
+    // Lấy token từ localStorage để xác thực upload
+    const token = localStorage.getItem('chocudan24h_token');
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
     const res = await fetch('/api/upload/base64', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ dataUrl: finalDataUrl, folder })
     });
     const data = await res.json();
