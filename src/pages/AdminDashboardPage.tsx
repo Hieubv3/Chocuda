@@ -902,6 +902,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isAddingProject, setIsAddingProject] = useState(false);
+  const [projectSearchQuery, setProjectSearchQuery] = useState('');
+  const [projectCategoryFilter, setProjectCategoryFilter] = useState<string>('all');
+  const [projectStatusFilter, setProjectStatusFilter] = useState<string>('all');
   const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
   const [isAddingNews, setIsAddingNews] = useState(false);
   const [adminFaq, setAdminFaq] = useState<any[]>([]);
@@ -5441,9 +5444,76 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </button>
           </div>
 
+          {/* ===== SUB-MENU: Filter bar for projects ===== */}
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+            {/* Search */}
+            <div className="relative flex-1 min-w-[180px]">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Tìm dự án, tòa nhà..."
+                value={projectSearchQuery}
+                onChange={(e) => setProjectSearchQuery(e.target.value)}
+                className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-amber-500 outline-none"
+              />
+            </div>
+            {/* Category filter */}
+            <select
+              value={projectCategoryFilter}
+              onChange={(e) => setProjectCategoryFilter(e.target.value)}
+              className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-amber-500 outline-none min-w-[140px]"
+            >
+              <option value="all">Tất cả dự án</option>
+              <option value="ocean-park">Ocean Park</option>
+              <option value="ocean-park-2">Ocean Park 2</option>
+              <option value="ocean-park-3">Ocean Park 3</option>
+              <option value="ocean-park-1">Ocean Park 1</option>
+              <option value="ha-long-xanh">Hạ Long Xanh</option>
+              <option value="green-paradise-can-gio">Green Paradise Cần Giờ</option>
+              <option value="tan-my-hau-nghia">Tân Mỹ - Hậu Nghĩa</option>
+              <option value="green-city-hoc-mon">Green City Hóc Môn</option>
+              <option value="lang-van-da-nang">Lăng Vân Đà Nẵng</option>
+              <option value="smart-city">Smart City</option>
+              <option value="khac">Khác</option>
+            </select>
+            {/* Status filter */}
+            <select
+              value={projectStatusFilter}
+              onChange={(e) => setProjectStatusFilter(e.target.value)}
+              className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-amber-500 outline-none min-w-[130px]"
+            >
+              <option value="all">Tất cả trạng thái</option>
+              <option value="Dang mo ban">Đang mở bán</option>
+              <option value="Hoan thanh">Hoàn thiện</option>
+              <option value="Dang xay dung">Đang xây dựng</option>
+              <option value="Sap mo ban">Sắp mở bán</option>
+            </select>
+            {/* Clear filters */}
+            {(projectSearchQuery || projectCategoryFilter !== 'all' || projectStatusFilter !== 'all') && (
+              <button
+                onClick={() => { setProjectSearchQuery(''); setProjectCategoryFilter('all'); setProjectStatusFilter('all'); }}
+                className="px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1 transition"
+                title="Xóa bộ lọc"
+              >
+                <X className="w-3.5 h-3.5" /> Xóa
+              </button>
+            )}
+          </div>
+
           {/* Responsive card grid — gọn gàng trên di động */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects.map((proj) => (
+            {projects
+              .filter(proj => {
+                const matchesSearch = !projectSearchQuery ||
+                  proj.title?.toLowerCase().includes(projectSearchQuery.toLowerCase()) ||
+                  proj.name?.toLowerCase().includes(projectSearchQuery.toLowerCase()) ||
+                  proj.location?.toLowerCase().includes(projectSearchQuery.toLowerCase());
+                const matchesCategory = projectCategoryFilter === 'all' || proj.id === projectCategoryFilter;
+                const matchesStatus = projectStatusFilter === 'all' ||
+                  (proj.status || '').toLowerCase().includes(projectStatusFilter.toLowerCase());
+                return matchesSearch && matchesCategory && matchesStatus;
+              })
+              .map((proj) => (
               <div
                 key={proj.id}
                 className="bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-md transition"
