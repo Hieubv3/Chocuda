@@ -48,6 +48,7 @@ import { INITIAL_RESIDENT_SERVICES } from './data/residentServicesData';
 import { INITIAL_RECRUITMENT_JOBS } from './data/recruitmentData';
 import { safeLocalStorageGet, safeLocalStorageSet } from './lib/imageUtils';
 import { getProjectSlug } from './lib/slugs';
+import { clearToken } from './lib/api';
 
 export const App: React.FC = () => {
   const navigate = useNavigate();
@@ -89,6 +90,37 @@ export const App: React.FC = () => {
       balance: raw.balance || 0
     };
   });
+
+  // ===== ĐĂNG XUẤT (dùng chung cho mọi nơi) =====
+  // Xóa token JWT + toàn bộ key user để thực sự thoát phiên đăng nhập.
+  const handleLogout = () => {
+    // 1) Invalidate token trên server (best-effort, không chặn logout nếu lỗi)
+    try {
+      const token = localStorage.getItem('chocudan24h_token');
+      if (token) {
+        fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        }).catch(() => {});
+      }
+    } catch (e) { /* ignore */ }
+
+    // 2) Xóa token JWT khỏi localStorage
+    clearToken();
+
+    // 3) Xóa toàn bộ key user (localStorage + sessionStorage)
+    try {
+      localStorage.removeItem('hb_user');
+      localStorage.removeItem('chocudan24h_user');
+      localStorage.removeItem('chocudan24h_resident_user');
+      sessionStorage.removeItem('hb_user');
+      sessionStorage.removeItem('chocudan24h_user');
+    } catch (e) { /* ignore */ }
+
+    // 4) Reset state user
+    setUser(null);
+    navigate('/');
+  };
 
   // Up-Tin & VietQR Pricing Config State
   const [pricingConfig, setPricingConfig] = useState<UpTinPricingConfig>({
@@ -359,7 +391,9 @@ export const App: React.FC = () => {
     };
 
     fetchLatestUserProfile();
-    const interval = setInterval(fetchLatestUserProfile, 4000); // Polling every 4s for instant balance updates
+    // Polling mỗi 30s (thay vì 4s) để không vượt apiLimiter (100 req/15 phút/IP).
+    // Vẫn fetch ngay khi tab được focus để số dư cập nhật tức thì.
+    const interval = setInterval(fetchLatestUserProfile, 30000);
     const handleFocus = () => fetchLatestUserProfile();
     window.addEventListener('focus', handleFocus);
     window.addEventListener('visibilitychange', handleFocus);
@@ -760,11 +794,7 @@ export const App: React.FC = () => {
         setCurrentTab={handleTabSwitch}
         currentUser={user}
         onOpenAuth={() => setAuthModalOpen(true)}
-        onLogout={() => {
-          setUser(null);
-          localStorage.removeItem('hb_user');
-          navigate('/');
-        }}
+        onLogout={handleLogout}
         savedCount={savedIds.length}
         compareCount={compareIds.length}
         onOpenSaved={() => navigate('/mua-ban')}
@@ -1541,11 +1571,7 @@ export const App: React.FC = () => {
                   onSelectProperty={(prop) => navigate(getPropertyDetailUrl(prop))}
                   onOpenAiWriter={() => setAiWriterModalOpen(true)}
                   onRefreshData={refreshServerData}
-                  onLogout={() => {
-                    setUser(null);
-                    safeLocalStorageSet('hb_user', null);
-                    navigate('/');
-                  }}
+                  onLogout={handleLogout}
                 />
               ) : (
                 <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4 shadow-xl">
@@ -1618,11 +1644,7 @@ export const App: React.FC = () => {
                   onOpenAiWriter={() => setAiWriterModalOpen(true)}
                   onRefreshData={refreshServerData}
                   onSeed1000Properties={handleSeed1000Properties}
-                  onLogout={() => {
-                    setUser(null);
-                    safeLocalStorageSet('hb_user', null);
-                    navigate('/');
-                  }}
+                  onLogout={handleLogout}
                 />
               ) : (
                 <AdminLoginPage
