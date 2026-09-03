@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
-import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2 } from 'lucide-react';
+import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2, Save } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { AdminKycManager } from '../components/AdminKycManager';
 import { calculateExpiryInfo } from '../lib/expiration';
@@ -24,6 +24,8 @@ interface ReputationPost {
 import { AiUrlTrackerModal } from '../components/AiUrlTrackerModal';
 import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
 import { uploadBase64DataUrl, isBase64DataUrl, uploadFiles } from '../lib/uploadService';
+import { compressImageFile } from '../lib/imageUtils';
+import { HeroCardConfig, loadHeroCards, saveHeroCards } from '../data/heroCardsData';
 import { EditPropertyModal, EditProjectModal, EditNewsModal, EditFaqModal } from '../components/AdminAssetManagerModals';
 import { AdminMarketingCenter } from '../components/AdminMarketingCenter';
 import { AdminSeoCenter } from '../components/AdminSeoCenter';
@@ -988,6 +990,56 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newAdParentId, setNewAdParentId] = useState<string>('');
   const [expandedAds, setExpandedAds] = useState<Set<string>>(new Set());
   const [editingAd, setEditingAd] = useState<AdBanner | null>(null);
+
+  // ===== HERO CARDS (4 thẻ danh mục trang chủ - quản lý ảnh đại diện) =====
+  const [heroCards, setHeroCards] = useState<HeroCardConfig[]>(() => loadHeroCards());
+  const [heroCardSaved, setHeroCardSaved] = useState(false);
+
+  const handleHeroCardImageUpload = async (cardId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 15 * 1024 * 1024) {
+      alert('Kích thước ảnh tối đa là 15MB');
+      return;
+    }
+    try {
+      const compressedDataUrl = await compressImageFile(file, 1200, 900, 0.82);
+      if (!compressedDataUrl) return;
+      const url = isBase64DataUrl(compressedDataUrl)
+        ? await uploadBase64DataUrl(compressedDataUrl, 'hero-cards')
+        : compressedDataUrl;
+      if (url) {
+        setHeroCards(prev => prev.map(c => (c.id === cardId ? { ...c, image: url } : c)));
+        setHeroCardSaved(false);
+      }
+    } catch (err) {
+      console.error('Error uploading hero card image:', err);
+    }
+  };
+
+  const handleHeroCardUrlChange = (cardId: string, url: string) => {
+    setHeroCards(prev => prev.map(c => (c.id === cardId ? { ...c, image: url } : c)));
+    setHeroCardSaved(false);
+  };
+
+  const handleHeroCardToggle = (cardId: string) => {
+    setHeroCards(prev => prev.map(c => (c.id === cardId ? { ...c, active: !c.active } : c)));
+    setHeroCardSaved(false);
+  };
+
+  const handleSaveHeroCards = () => {
+    saveHeroCards(heroCards);
+    setHeroCardSaved(true);
+    setTimeout(() => setHeroCardSaved(false), 2500);
+  };
+
+  const handleResetHeroCards = () => {
+    if (!confirm('Khôi phục ảnh mặc định cho 4 thẻ danh mục?')) return;
+    setHeroCards(loadHeroCards());
+    localStorage.removeItem('chocudan24h_hero_cards');
+    setHeroCardSaved(true);
+    setTimeout(() => setHeroCardSaved(false), 2500);
+  };
 
   // Sync adsList to localStorage
   React.useEffect(() => {
@@ -4526,6 +4578,112 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 })}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== HERO CARDS IMAGE MANAGEMENT (4 thẻ danh mục trang chủ) ===== */}
+      {activeTab === 'ads' && (
+        <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 space-y-4 shadow-xl">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-700/60">
+            <div>
+              <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-amber-500" />
+                QUẢN LÝ ẢNH THẺ DANH MỤC TRANG CHỦ (4 thẻ hero)
+              </h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                Thay đổi ảnh đại diện cho 4 thẻ: Mua Bán BĐS, Cho Thuê BĐS, Dịch Vụ Cư Dân, Tuyển Dụng Việc Làm. Ảnh sẽ hiển thị ngay trên trang chủ.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleResetHeroCards}
+                className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1 transition"
+                title="Khôi phục ảnh mặc định"
+              >
+                <RefreshCw className="w-3.5 h-3.5" /> Đặt lại mặc định
+              </button>
+              <button
+                onClick={handleSaveHeroCards}
+                className="px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1 transition shadow"
+              >
+                <Save className="w-3.5 h-3.5" /> Lưu tất cả
+              </button>
+            </div>
+          </div>
+
+          {heroCardSaved && (
+            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4" /> Đã lưu cấu hình ảnh thẻ danh mục!
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            {heroCards.map((card) => (
+              <div
+                key={card.id}
+                className={`border rounded-2xl p-3 space-y-3 transition-all ${
+                  card.active
+                    ? 'border-amber-500/40 bg-amber-50/5 dark:bg-amber-950/10'
+                    : 'border-slate-300 dark:border-slate-600 opacity-60'
+                }`}
+              >
+                {/* Image Preview */}
+                <div className="relative h-28 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700">
+                  <img
+                    loading="lazy"
+                    src={card.image || '/images/demo/placeholder.jpg'}
+                    alt={card.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/demo/placeholder.jpg'; }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent" />
+                  <div className="absolute bottom-1 left-1.5 right-1.5">
+                    <span className="text-white font-black text-[10px] bg-slate-950/80 px-1.5 py-0.5 rounded truncate block">
+                      {card.title}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Upload + URL */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5">
+                    <label className="flex-1 cursor-pointer px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1 transition">
+                      <Upload className="w-3.5 h-3.5" /> Tải ảnh
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleHeroCardImageUpload(card.id, e)}
+                        className="hidden"
+                      />
+                    </label>
+                    <label className="flex-1 text-[9px] font-bold text-slate-500 dark:text-slate-400">hoặc dán URL</label>
+                  </div>
+                  <input
+                    type="url"
+                    placeholder="https://images.unsplash.com/..."
+                    value={card.image}
+                    onChange={(e) => handleHeroCardUrlChange(card.id, e.target.value)}
+                    className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-[10px] focus:ring-1 focus:ring-amber-500 outline-none"
+                  />
+                </div>
+
+                {/* Active toggle */}
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">Hiển thị</span>
+                  <button
+                    onClick={() => handleHeroCardToggle(card.id)}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                      card.active ? 'bg-amber-500' : 'bg-slate-400'
+                    }`}
+                  >
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                      card.active ? 'translate-x-5' : 'translate-x-1'
+                    }`} />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

@@ -11,6 +11,7 @@ import { VinhomesProjectSelectModal } from '../components/VinhomesProjectSelectM
 import { PopularVinhomesLinksSection } from '../components/PopularVinhomesLinksSection';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
 import { HIEU_BUI_PROFILE, INITIAL_ADS } from '../data/initialData';
+import { loadHeroCards } from '../data/heroCardsData';
 import { getTranslation } from '../lib/i18n';
 
 interface HomePageProps {
@@ -55,6 +56,11 @@ export const HomePage: React.FC<HomePageProps> = ({
     }
     return INITIAL_ADS;
   }, []);
+
+  // Read hero card images (admin-managed via localStorage, fallback to defaults)
+  const heroCards = React.useMemo(() => loadHeroCards(), []);
+  const heroCardImage = (id: string, fallback: string) =>
+    heroCards.find(c => c.id === id && c.active)?.image || fallback;
 
   // Search state
   const [searchType, setSearchType] = React.useState<PropertyType>('sale');
@@ -150,7 +156,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-            src="/images/demo/project-tower.jpg"
+            src={heroCardImage('sale', '/images/demo/project-tower.jpg')}
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -200,7 +206,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-            src="/images/demo/project-apartment.jpg"
+            src={heroCardImage('rent', '/images/demo/project-apartment.jpg')}
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -243,7 +249,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-            src="/images/demo/ad-service.jpg"
+            src={heroCardImage('services', '/images/demo/ad-service.jpg')}
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -286,7 +292,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {/* Image Simulation Preview */}
                 <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-            src="/images/demo/hero-city-2.jpg"
+            src={heroCardImage('recruitment', '/images/demo/hero-city-2.jpg')}
                     alt="Tuyển Dụng Việc Làm"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
@@ -338,7 +344,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-            src="/images/demo/property-house.jpg"
+            src={heroCardImage('sale', '/images/demo/property-house.jpg')}
                     alt="Mua Bán BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
@@ -366,7 +372,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-            src="/images/demo/property-interior-2.jpg"
+            src={heroCardImage('rent', '/images/demo/property-interior-2.jpg')}
                     alt="Cho Thuê BĐS"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
@@ -387,7 +393,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-            src="/images/demo/amenity-pool.jpg"
+            src={heroCardImage('services', '/images/demo/amenity-pool.jpg')}
                     alt="Dịch Vụ Cư Dân"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
@@ -408,7 +414,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
                   <img loading="lazy"
-            src="/images/demo/hero-skyline.jpg"
+            src={heroCardImage('recruitment', '/images/demo/hero-skyline.jpg')}
                     alt="Việc Làm"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
