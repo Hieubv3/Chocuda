@@ -925,6 +925,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newAmenityName, setNewAmenityName] = useState('');
   const [addingAmenityTo, setAddingAmenityTo] = useState<string | null>(null); // projectId
 
+  // Sidebar "Dự Án & Mặt Bằng" dropdown submenu state
+  const [sidebarProjectsOpen, setSidebarProjectsOpen] = useState(false);
+  const [sidebarExpandedProjects, setSidebarExpandedProjects] = useState<Set<string>>(new Set());
+  const toggleSidebarProject = (id: string) => {
+    setSidebarExpandedProjects(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
   const toggleProjectTree = (id: string) => {
     setExpandedProjectTree(prev => {
       const next = new Set(prev);
@@ -2421,16 +2432,103 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <span className="font-mono text-[10px] text-amber-400 font-bold">{pendingProperties.length}</span>
                   </button>
                   <button
-                    onClick={() => setActiveTab('projects')}
+                    onClick={() => { setActiveTab('projects'); setSidebarProjectsOpen(prev => !prev); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'projects'
                         ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Dự Án & Mặt Bằng</span>
-                    <span className="font-mono text-[10px]">{projects.length}</span>
+                    <span className="flex items-center gap-1 min-w-0">
+                      <ChevronRight className={`w-3 h-3 shrink-0 transition-transform ${sidebarProjectsOpen ? 'rotate-90' : ''}`} />
+                      <span className="truncate">• Dự Án & Mặt Bằng</span>
+                    </span>
+                    <span className="font-mono text-[10px] shrink-0">{projects.length}</span>
                   </button>
+                  {sidebarProjectsOpen && (
+                    <div className="pl-2 pr-1 py-1 space-y-0.5 border-l-2 border-emerald-500/40 ml-3.5 animate-in fade-in duration-150">
+                      {parentProjects.map((p) => {
+                        const pExpanded = sidebarExpandedProjects.has(p.id);
+                        const children = childProjects(p.id);
+                        const subs = p.subdivisions || [];
+                        const hasChildren = children.length > 0 || subs.length > 0;
+                        return (
+                          <div key={p.id} className="space-y-0.5">
+                            <div
+                              className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-300 hover:bg-slate-800/60 cursor-pointer"
+                              onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(p.id); }}
+                            >
+                              {hasChildren && (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); toggleSidebarProject(p.id); }}
+                                  className="p-0.5 hover:bg-slate-700 rounded shrink-0"
+                                >
+                                  <ChevronRight className={`w-3 h-3 transition-transform ${pExpanded ? 'rotate-90' : ''}`} />
+                                </button>
+                              )}
+                              <Building2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                              <span className="truncate">{p.name.split(' - ')[0]}</span>
+                            </div>
+                            {pExpanded && (
+                              <div className="ml-3 border-l border-slate-700 pl-2 space-y-0.5">
+                                {children.map((child) => {
+                                  const cExpanded = sidebarExpandedProjects.has(child.id);
+                                  const cSubs = child.subdivisions || [];
+                                  return (
+                                    <div key={child.id} className="space-y-0.5">
+                                      <div
+                                        className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-300 hover:bg-slate-800/60 cursor-pointer"
+                                        onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(child.id); }}
+                                      >
+                                        {cSubs.length > 0 && (
+                                          <button
+                                            onClick={(e) => { e.stopPropagation(); toggleSidebarProject(child.id); }}
+                                            className="p-0.5 hover:bg-slate-700 rounded shrink-0"
+                                          >
+                                            <ChevronRight className={`w-3 h-3 transition-transform ${cExpanded ? 'rotate-90' : ''}`} />
+                                          </button>
+                                        )}
+                                        <Building2 className="w-3 h-3 text-emerald-400/70 shrink-0" />
+                                        <span className="truncate">{child.name.split(' - ')[0]}</span>
+                                      </div>
+                                      {cExpanded && cSubs.length > 0 && (
+                                        <div className="ml-3 border-l border-slate-700 pl-2 space-y-0.5">
+                                          {cSubs.map((sub: any) => (
+                                            <div
+                                              key={sub.id}
+                                              className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-400 hover:bg-slate-800/60 cursor-pointer"
+                                              onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(child.id); }}
+                                            >
+                                              <MapPin className="w-3 h-3 text-amber-400/70 shrink-0" />
+                                              <span className="truncate">{sub.name}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                                {subs.length > 0 && (
+                                  <div className="ml-3 border-l border-slate-700 pl-2 space-y-0.5">
+                                    {subs.map((sub: any) => (
+                                      <div
+                                        key={sub.id}
+                                        className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-400 hover:bg-slate-800/60 cursor-pointer"
+                                        onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(p.id); }}
+                                      >
+                                        <MapPin className="w-3 h-3 text-amber-400/70 shrink-0" />
+                                        <span className="truncate">{sub.name}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                   <button
                     onClick={() => setActiveTab('news')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
