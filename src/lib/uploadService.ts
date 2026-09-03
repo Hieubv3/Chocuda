@@ -161,8 +161,12 @@ export async function uploadFiles(files: File[]): Promise<string[]> {
   prepared.forEach(f => formData.append('images', f));
 
   try {
+    const token = localStorage.getItem('chocudan24h_token');
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
     const res = await fetch('/api/upload', {
       method: 'POST',
+      headers,
       body: formData
     });
     const data = await res.json();
@@ -246,9 +250,12 @@ export async function normalizeImageRefs(refs: (string | null | undefined)[]): P
 export async function deleteUploadedImage(url: string): Promise<void> {
   if (!isUploadedUrl(url)) return;
   try {
+    const token = localStorage.getItem('chocudan24h_token');
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
     await fetch('/api/upload', {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ url })
     });
   } catch (err) {
