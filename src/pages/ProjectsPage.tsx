@@ -232,11 +232,11 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
               <div className="flex flex-wrap gap-2 text-xs font-bold">
                 {currentProject.subdivisions.map((sub, idx) => (
                   <button
-                    key={idx}
-                    onClick={() => handleSubdivisionClick(sub)}
+                    key={sub.id || idx}
+                    onClick={() => handleSubdivisionClick(sub.name)}
                     className="px-3.5 py-2 bg-gradient-to-r from-amber-500/10 via-amber-500/20 to-amber-500/10 hover:from-amber-500 hover:to-amber-600 text-slate-900 dark:text-amber-300 hover:text-slate-950 rounded-xl border border-amber-500/30 hover:border-amber-500 transition shadow-sm flex items-center gap-1.5 group"
                   >
-                    <span>Phân khu {sub}</span>
+                    <span>Phân khu {sub.name}</span>
                     <Sparkles className="w-3.5 h-3.5 text-amber-500 group-hover:text-slate-950 transition" />
                   </button>
                 ))}

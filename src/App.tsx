@@ -40,7 +40,6 @@ import { AiWriterModal } from './components/AiWriterModal';
 import { OmnichannelBulkMarketingModal } from './components/OmnichannelBulkMarketingModal';
 import { AndroidApkModal } from './components/AndroidApkModal';
 import { AdBannerWidget } from './components/AdBannerWidget';
-import { DraggableSidebarAds } from './components/DraggableSidebarAds';
 import { HashtagExploreModal } from './components/HashtagExploreModal';
 import { PopularVinhomesLinksSection } from './components/PopularVinhomesLinksSection';
 import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig, AdBanner } from './types';
@@ -1809,9 +1808,6 @@ export const App: React.FC = () => {
 
       {/* Global Modals & Popup */}
       <AdBannerWidget ads={ads} position="popup_modal" />
-
-      {/* Floating Draggable Sidebar Ads on Right Edge */}
-      <DraggableSidebarAds ads={ads} />
 
       {/* Global Hashtag Explore Modal */}
       <HashtagExploreModal

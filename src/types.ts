@@ -144,6 +144,12 @@ export interface ReputationPost {
   status?: 'approved' | 'pending' | 'rejected';
 }
 
+export interface ProjectSubdivision {
+  id: string;
+  name: string;
+  streets: string[]; // Dãy phố trong phân khu
+}
+
 export interface Project {
   id: ProjectCategory;
   name: string;
@@ -160,7 +166,7 @@ export interface Project {
   youtubeUrl?: string;
   legalInfo?: string;
   currentStatus?: string;
-  subdivisions: string[];
+  subdivisions: ProjectSubdivision[];
   amenities: string[];
   parentId?: ProjectCategory;
 }

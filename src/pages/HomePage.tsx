@@ -9,6 +9,7 @@ import { AdBannerWidget } from '../components/AdBannerWidget';
 import { ProjectFaqHub } from '../components/ProjectFaqHub';
 import { VinhomesProjectSelectModal } from '../components/VinhomesProjectSelectModal';
 import { PopularVinhomesLinksSection } from '../components/PopularVinhomesLinksSection';
+import { RealTimeNewsBoard } from '../components/RealTimeNewsBoard';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
 import { HIEU_BUI_PROFILE, INITIAL_ADS } from '../data/initialData';
 import { loadHeroCards } from '../data/heroCardsData';
@@ -107,7 +108,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/40" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto space-y-4 sm:space-y-8 text-center sm:text-left">
+        <div className="relative max-w-[1400px] mx-auto space-y-4 sm:space-y-8 text-center sm:text-left">
           
           {/* Top Badge */}
           <div className="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-extrabold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md">
@@ -136,8 +137,9 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
           </div>
 
-          {/* Search Box Widget */}
-          <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-3 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white max-w-4xl">
+          {/* Search Box Widget (4 nhóm ngành + form) */}
+          <div className="max-w-[920px]">
+          <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-3 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white">
             
             {/* Desktop 4 Services Cards (Horizontal Grid) */}
             <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-3 border-b border-slate-200 dark:border-slate-800 pb-5 mb-5">
@@ -494,7 +496,20 @@ export const HomePage: React.FC<HomePageProps> = ({
             <p className="mt-3 text-[11px] text-slate-500 dark:text-slate-400">
               {t.hero.quickTags}
             </p>
-          </div>
+            </div>
+            {/* Đóng search box */}
+            </div>
+            {/* Đóng wrapper search box */}
+
+            {/* Bảng tin real-time — trong banner tối, bên phải, kéo dài từ ngang badge xuống đáy search box */}
+            <div className="hidden lg:block absolute top-0 bottom-0 right-0 w-[416px]">
+              <RealTimeNewsBoard
+                properties={properties}
+                news={news}
+                onSelectProperty={onSelectProperty}
+                setCurrentTab={setCurrentTab}
+              />
+            </div>
 
         </div>
       </section>

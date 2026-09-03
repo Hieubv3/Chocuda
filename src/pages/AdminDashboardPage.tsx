@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2, Save } from 'lucide-react';
@@ -80,14 +80,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate();
-  // 7 Mảng Quản Trị Chuyên Biệt Tách Rời (1. BĐS, 2. Thợ Dịch Vụ, 3. Tuyển Dụng, 4. Dịch Vụ Cư Dân, 5. Người Dùng, 6. Quảng Cáo, 7. Công Cụ)
+  // 7 Máº£ng Quáº£n Trá»‹ ChuyÃªn Biá»‡t TÃ¡ch Rá»i (1. BÄS, 2. Thá»£ Dá»‹ch Vá»¥, 3. Tuyá»ƒn Dá»¥ng, 4. Dá»‹ch Vá»¥ CÆ° DÃ¢n, 5. NgÆ°á»i DÃ¹ng, 6. Quáº£ng CÃ¡o, 7. CÃ´ng Cá»¥)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
     | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync' | 'faq'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
   >('properties');
 
-  // Compute active main category (Phân rõ các tab riêng biệt không bị gộp chung)
+  // Compute active main category (PhÃ¢n rÃµ cÃ¡c tab riÃªng biá»‡t khÃ´ng bá»‹ gá»™p chung)
   const effectiveMainTab: 'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' = (() => {
     if (['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt', 'faq'].includes(activeTab)) return 'bds';
     if (activeTab === 'resident_services_mgmt') return 'technicians';
@@ -128,7 +128,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     }
   };
 
-  // Mobile Gesture Navigation (Gạt sang trái: Sang Tab tiếp theo / Sổ menu | Gạt sang phải: Quay lại Tab trước)
+  // Mobile Gesture Navigation (Gáº¡t sang trÃ¡i: Sang Tab tiáº¿p theo / Sá»• menu | Gáº¡t sang pháº£i: Quay láº¡i Tab trÆ°á»›c)
   const MAIN_TAB_KEYS: Array<'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools'> = [
     'bds',
     'technicians',
@@ -167,13 +167,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     const deltaX = touchEndX - touchStartX;
     const deltaY = touchEndY - touchStartY;
 
-    // Ngưỡng vuốt ngang (threshold: 45px và góc chủ đạo là trục X)
+    // NgÆ°á»¡ng vuá»‘t ngang (threshold: 45px vÃ  gÃ³c chá»§ Ä‘áº¡o lÃ  trá»¥c X)
     if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.25) {
       if (deltaX < 0) {
-        // Gạt sang trái (Swipe Left) -> Chuyển sang Tab kế tiếp
+        // Gáº¡t sang trÃ¡i (Swipe Left) -> Chuyá»ƒn sang Tab káº¿ tiáº¿p
         handleNextTab();
       } else {
-        // Gạt sang phải (Swipe Right) -> Quay lại Tab trước đó
+        // Gáº¡t sang pháº£i (Swipe Right) -> Quay láº¡i Tab trÆ°á»›c Ä‘Ã³
         handlePrevTab();
       }
     }
@@ -314,7 +314,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const handleSavePackageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pkgFormData.name || !pkgFormData.priceDisplay) {
-      alert('Vui lòng điền Tên gói dịch vụ và Giá hiển thị!');
+      alert('Vui lÃ²ng Ä‘iá»n TÃªn gÃ³i dá»‹ch vá»¥ vÃ  GiÃ¡ hiá»ƒn thá»‹!');
       return;
     }
 
@@ -344,12 +344,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       });
 
       if (res.ok) {
-        alert(editingPkgModal ? '🎉 Đã cập nhật gói dịch vụ thành công!' : '🎉 Đã tạo gói dịch vụ mới!');
+        alert(editingPkgModal ? 'ðŸŽ‰ ÄÃ£ cáº­p nháº­t gÃ³i dá»‹ch vá»¥ thÃ nh cÃ´ng!' : 'ðŸŽ‰ ÄÃ£ táº¡o gÃ³i dá»‹ch vá»¥ má»›i!');
         setShowAddPkgModal(false);
         setEditingPkgModal(null);
         fetchStorePackages();
       } else {
-        alert('Có lỗi xảy ra khi lưu gói dịch vụ.');
+        alert('CÃ³ lá»—i xáº£y ra khi lÆ°u gÃ³i dá»‹ch vá»¥.');
       }
     } catch (err) {
       console.error('Error saving package:', err);
@@ -357,11 +357,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleDeletePackageClick = async (pkgId: string, pkgName: string) => {
-    if (!confirm(`Bạn có chắc muốn xóa gói dịch vụ "${pkgName}"?`)) return;
+    if (!confirm(`Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a gÃ³i dá»‹ch vá»¥ "${pkgName}"?`)) return;
     try {
       const res = await fetch(`/api/admin/store-packages/${pkgId}`, { method: 'DELETE' });
       if (res.ok) {
-        alert('Đã xóa gói dịch vụ!');
+        alert('ÄÃ£ xÃ³a gÃ³i dá»‹ch vá»¥!');
         fetchStorePackages();
       }
     } catch (err) {
@@ -377,7 +377,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         body: JSON.stringify({ status })
       });
       if (res.ok) {
-        alert(status === 'approved' ? '🎉 Đã phê duyệt & kích hoạt Gói Dịch Vụ cho khách hàng!' : 'Đã chuyển đơn đăng ký sang trạng thái Từ chối.');
+        alert(status === 'approved' ? 'ðŸŽ‰ ÄÃ£ phÃª duyá»‡t & kÃ­ch hoáº¡t GÃ³i Dá»‹ch Vá»¥ cho khÃ¡ch hÃ ng!' : 'ÄÃ£ chuyá»ƒn Ä‘Æ¡n Ä‘Äƒng kÃ½ sang tráº¡ng thÃ¡i Tá»« chá»‘i.');
         fetchPackageOrders();
       }
     } catch (err) {
@@ -433,14 +433,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       });
       const data = await res.json();
       if (res.ok) {
-        alert(`🎉 Đã gia hạn bài dịch vụ "${title || 'Cư dân'}" thành công thêm 30 ngày!`);
+        alert(`ðŸŽ‰ ÄÃ£ gia háº¡n bÃ i dá»‹ch vá»¥ "${title || 'CÆ° dÃ¢n'}" thÃ nh cÃ´ng thÃªm 30 ngÃ y!`);
         fetchResidentServices();
       } else {
-        alert(data.error || 'Có lỗi khi gia hạn dịch vụ.');
+        alert(data.error || 'CÃ³ lá»—i khi gia háº¡n dá»‹ch vá»¥.');
       }
     } catch (e) {
       console.error('Error renewing resident service:', e);
-      alert('Không thể kết nối đến máy chủ.');
+      alert('KhÃ´ng thá»ƒ káº¿t ná»‘i Ä‘áº¿n mÃ¡y chá»§.');
     }
   };
 
@@ -537,7 +537,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         if (typeof cfg.servicePackage3MonthPrice === 'number') setServicePackage3MonthPrice(cfg.servicePackage3MonthPrice);
       }
     } catch (err) {
-      console.warn('Không thể tải cấu hình affiliate:', err);
+      console.warn('KhÃ´ng thá»ƒ táº£i cáº¥u hÃ¬nh affiliate:', err);
     }
   };
 
@@ -557,12 +557,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       });
       const data = await res.json();
       if (res.ok) {
-        alert('🎉 Đã lưu cấu hình Hoa Hồng & Thu Phí Nền Tảng xuống server thành công!');
+        alert('ðŸŽ‰ ÄÃ£ lÆ°u cáº¥u hÃ¬nh Hoa Há»“ng & Thu PhÃ­ Ná»n Táº£ng xuá»‘ng server thÃ nh cÃ´ng!');
       } else {
-        alert(data.error || 'Lưu cấu hình thất bại.');
+        alert(data.error || 'LÆ°u cáº¥u hÃ¬nh tháº¥t báº¡i.');
       }
     } catch (err) {
-      alert('Lỗi máy chủ khi lưu cấu hình.');
+      alert('Lá»—i mÃ¡y chá»§ khi lÆ°u cáº¥u hÃ¬nh.');
     } finally {
       setIsSavingAffiliateConfig(false);
     }
@@ -582,7 +582,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         setAffiliateStats({ totalPaid, refUserCount });
       }
     } catch (err) {
-      console.warn('Không thể tải số liệu affiliate:', err);
+      console.warn('KhÃ´ng thá»ƒ táº£i sá»‘ liá»‡u affiliate:', err);
     }
   };
 
@@ -593,7 +593,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       const data = await res.json();
       if (Array.isArray(data)) setPayoutRequests(data);
     } catch (err) {
-      console.warn('Không thể tải danh sách yêu cầu rút tiền:', err);
+      console.warn('KhÃ´ng thá»ƒ táº£i danh sÃ¡ch yÃªu cáº§u rÃºt tiá»n:', err);
     } finally {
       setPayoutRequestsLoading(false);
     }
@@ -615,17 +615,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       if (res.ok) {
         await fetchPayoutRequests();
       } else {
-        alert(data.error || 'Duyệt lệnh rút tiền thất bại.');
+        alert(data.error || 'Duyá»‡t lá»‡nh rÃºt tiá»n tháº¥t báº¡i.');
       }
     } catch (err) {
-      alert('Lỗi máy chủ khi duyệt lệnh rút tiền.');
+      alert('Lá»—i mÃ¡y chá»§ khi duyá»‡t lá»‡nh rÃºt tiá»n.');
     } finally {
       setPayoutActionId(null);
     }
   };
 
   const handleRejectPayout = async (id: string) => {
-    const reason = window.prompt('Lý do từ chối (tiền sẽ được hoàn lại vào ví cư dân):', 'Thông tin ngân hàng không khớp');
+    const reason = window.prompt('LÃ½ do tá»« chá»‘i (tiá»n sáº½ Ä‘Æ°á»£c hoÃ n láº¡i vÃ o vÃ­ cÆ° dÃ¢n):', 'ThÃ´ng tin ngÃ¢n hÃ ng khÃ´ng khá»›p');
     if (reason === null) return;
     setPayoutActionId(id);
     try {
@@ -638,10 +638,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       if (res.ok) {
         await fetchPayoutRequests();
       } else {
-        alert(data.error || 'Từ chối lệnh rút tiền thất bại.');
+        alert(data.error || 'Tá»« chá»‘i lá»‡nh rÃºt tiá»n tháº¥t báº¡i.');
       }
     } catch (err) {
-      alert('Lỗi máy chủ khi từ chối lệnh rút tiền.');
+      alert('Lá»—i mÃ¡y chá»§ khi tá»« chá»‘i lá»‡nh rÃºt tiá»n.');
     } finally {
       setPayoutActionId(null);
     }
@@ -681,16 +681,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setTimeout(() => {
       setIsSyncingPublic(false);
       alert(
-        `✅ ĐÃ ĐỒNG BỘ NỘI DUNG LÊN PUBLIC WEBSITE THÀNH CÔNG!\n\n` +
-        `• Đã phê duyệt mới: ${newlyApprovedProperties} tin BĐS chờ duyệt, ${newlyPublishedNews} bài viết tin tức.\n` +
-        `• Tổng dữ liệu hiển thị public: ${properties.length} tin BĐS, ${news.length} tin tức, ${projects.length} sơ đồ dự án.\n` +
-        `• Toàn bộ Admin cấp dưới & Khách hàng đã có thể xem dữ liệu mới nhất trên giao diện Web Public.`
+        `âœ… ÄÃƒ Äá»’NG Bá»˜ Ná»˜I DUNG LÃŠN PUBLIC WEBSITE THÃ€NH CÃ”NG!\n\n` +
+        `â€¢ ÄÃ£ phÃª duyá»‡t má»›i: ${newlyApprovedProperties} tin BÄS chá» duyá»‡t, ${newlyPublishedNews} bÃ i viáº¿t tin tá»©c.\n` +
+        `â€¢ Tá»•ng dá»¯ liá»‡u hiá»ƒn thá»‹ public: ${properties.length} tin BÄS, ${news.length} tin tá»©c, ${projects.length} sÆ¡ Ä‘á»“ dá»± Ã¡n.\n` +
+        `â€¢ ToÃ n bá»™ Admin cáº¥p dÆ°á»›i & KhÃ¡ch hÃ ng Ä‘Ã£ cÃ³ thá»ƒ xem dá»¯ liá»‡u má»›i nháº¥t trÃªn giao diá»‡n Web Public.`
       );
     }, 600);
   };
 
   const handleUnapproveProperty = (p: Property) => {
-    if (confirm(`Bạn có chắc muốn trả tin "${p.title}" về trạng thái Chờ Duyệt?`)) {
+    if (confirm(`Báº¡n cÃ³ cháº¯c muá»‘n tráº£ tin "${p.title}" vá» tráº¡ng thÃ¡i Chá» Duyá»‡t?`)) {
       if (onUpdateProperty) {
         onUpdateProperty({ ...p, approved: false, status: 'pending', approvalStatus: 'pending', rejectionReason: undefined, adminNote: undefined });
       }
@@ -722,7 +722,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleDeleteLead = async (id: string) => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa yêu cầu xem nhà này?')) return;
+    if (!window.confirm('Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n xÃ³a yÃªu cáº§u xem nhÃ  nÃ y?')) return;
     try {
       setLocalContacts(prev => prev.filter(c => c.id !== id));
       await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
@@ -734,24 +734,24 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
   const handleExportLeadsCSV = (listToExport: LeadContact[]) => {
     if (!listToExport || listToExport.length === 0) {
-      alert('Chưa có dữ liệu đặt lịch xem nhà để xuất file!');
+      alert('ChÆ°a cÃ³ dá»¯ liá»‡u Ä‘áº·t lá»‹ch xem nhÃ  Ä‘á»ƒ xuáº¥t file!');
       return;
     }
 
     const headers = [
       'STT',
-      'Họ và Tên Khách Hàng',
-      'Số Điện Thoại Zalo',
+      'Há» vÃ  TÃªn KhÃ¡ch HÃ ng',
+      'Sá»‘ Äiá»‡n Thoáº¡i Zalo',
       'Email',
-      'Dự Án Quan Tâm',
-      'Căn BĐS Đặt Lịch Xem',
-      'Người Đăng Tin (Chủ Nhà / Admin)',
-      'SĐT Người Đăng Tin',
-      'Thời Gian Muốn Xem',
-      'Ghi Chú Yêu Cầu',
-      'Loại Yêu Cầu',
-      'Trạng Thái',
-      'Thời Gian Gửi Yêu Cầu'
+      'Dá»± Ãn Quan TÃ¢m',
+      'CÄƒn BÄS Äáº·t Lá»‹ch Xem',
+      'NgÆ°á»i ÄÄƒng Tin (Chá»§ NhÃ  / Admin)',
+      'SÄT NgÆ°á»i ÄÄƒng Tin',
+      'Thá»i Gian Muá»‘n Xem',
+      'Ghi ChÃº YÃªu Cáº§u',
+      'Loáº¡i YÃªu Cáº§u',
+      'Tráº¡ng ThÃ¡i',
+      'Thá»i Gian Gá»­i YÃªu Cáº§u'
     ];
 
     const rows = listToExport.map((c, index) => [
@@ -761,12 +761,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       `"${(c.email || '').replace(/"/g, '""')}"`,
       `"${(c.projectInterest || '').replace(/"/g, '""')}"`,
       `"${(c.propertyTitle || '').replace(/"/g, '""')}"`,
-      `"${(c.sellerName || 'Người đăng tin').replace(/"/g, '""')}"`,
+      `"${(c.sellerName || 'NgÆ°á»i Ä‘Äƒng tin').replace(/"/g, '""')}"`,
       `"${(c.sellerPhone || '').replace(/"/g, '""')}"`,
       `"${(c.preferredTime || '').replace(/"/g, '""')}"`,
       `"${(c.note || '').replace(/"/g, '""')}"`,
-      c.type === 'viewing' ? 'Đặt lịch xem nhà' : c.type === 'deposit' ? 'Cọc giữ chỗ' : 'Tư vấn',
-      c.status === 'done' ? 'Đã hoàn tất' : c.status === 'contacted' ? 'Đã liên hệ' : 'Yêu cầu mới',
+      c.type === 'viewing' ? 'Äáº·t lá»‹ch xem nhÃ ' : c.type === 'deposit' ? 'Cá»c giá»¯ chá»—' : 'TÆ° váº¥n',
+      c.status === 'done' ? 'ÄÃ£ hoÃ n táº¥t' : c.status === 'contacted' ? 'ÄÃ£ liÃªn há»‡' : 'YÃªu cáº§u má»›i',
       `"${new Date(c.createdAt).toLocaleString('vi-VN')}"`
     ]);
 
@@ -845,11 +845,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleAdjustUpTinCredits = async (userId: string, currentCredits: number) => {
-    const input = window.prompt(`Nhập số lượt Up Tin mới cho tài khoản (Hiện tại: ${currentCredits} lượt):`, String(currentCredits + 10));
+    const input = window.prompt(`Nháº­p sá»‘ lÆ°á»£t Up Tin má»›i cho tÃ i khoáº£n (Hiá»‡n táº¡i: ${currentCredits} lÆ°á»£t):`, String(currentCredits + 10));
     if (input === null) return;
     const newAmount = parseInt(input, 10);
     if (isNaN(newAmount) || newAmount < 0) {
-      alert('Vui lòng nhập số hợp lệ!');
+      alert('Vui lÃ²ng nháº­p sá»‘ há»£p lá»‡!');
       return;
     }
 
@@ -860,7 +860,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ upTinCredits: newAmount })
       });
-      alert(`Đã cấp ${newAmount} lượt Up Tin thành công!`);
+      alert(`ÄÃ£ cáº¥p ${newAmount} lÆ°á»£t Up Tin thÃ nh cÃ´ng!`);
       fetchUsers();
     } catch (e) {
       console.error('Error adjusting UpTin credits:', e);
@@ -868,8 +868,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleToggleBlockUser = async (userId: string, currentBlocked: boolean) => {
-    const actionName = currentBlocked ? 'MỞ KHÓA' : 'TẠM KHÓA';
-    if (!window.confirm(`Bạn có chắc chắn muốn ${actionName} tài khoản này?`)) return;
+    const actionName = currentBlocked ? 'Má»ž KHÃ“A' : 'Táº M KHÃ“A';
+    if (!window.confirm(`Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n ${actionName} tÃ i khoáº£n nÃ y?`)) return;
 
     try {
       setRegisteredUsers(prev => prev.map(u => u.id === userId ? { ...u, isBlocked: !currentBlocked } : u));
@@ -885,12 +885,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!window.confirm('⚠️ CẢNH BÁO: Xóa tài khoản này khỏi hệ thống vĩnh viễn?')) return;
+    if (!window.confirm('âš ï¸ Cáº¢NH BÃO: XÃ³a tÃ i khoáº£n nÃ y khá»i há»‡ thá»‘ng vÄ©nh viá»…n?')) return;
 
     try {
       setRegisteredUsers(prev => prev.filter(u => u.id !== userId));
       await fetch(`/api/auth/users/${userId}`, { method: 'DELETE' });
-      alert('Đã xóa tài khoản thành công!');
+      alert('ÄÃ£ xÃ³a tÃ i khoáº£n thÃ nh cÃ´ng!');
       fetchUsers();
     } catch (e) {
       console.error('Error deleting user:', e);
@@ -905,23 +905,109 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [projectSearchQuery, setProjectSearchQuery] = useState('');
   const [projectCategoryFilter, setProjectCategoryFilter] = useState<string>('all');
   const [projectStatusFilter, setProjectStatusFilter] = useState<string>('all');
-  const [expandedProjectTree, setExpandedProjectTree] = useState<Set<string>>(new Set());
 
   // Project hierarchy: parent projects (no parentId) and their children
   const parentProjects = projects.filter(p => !p.parentId);
   const childProjects = (parentId: string) => projects.filter(p => p.parentId === parentId);
-  const toggleProjectTree = (projectId: string) => {
-    setExpandedProjectTree(prev => {
-      const next = new Set(prev);
-      if (next.has(projectId)) next.delete(projectId); else next.add(projectId);
-      return next;
-    });
-  };
   const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
   const [isAddingNews, setIsAddingNews] = useState(false);
   const [adminFaq, setAdminFaq] = useState<any[]>([]);
   const [editingFaq, setEditingFaq] = useState<any | null>(null);
   const [isAddingFaq, setIsAddingFaq] = useState(false);
+
+  // Project Tree State â€” quáº£n lÃ½ cÃ¢y dá»± Ã¡n (dá»± Ã¡n â†’ phÃ¢n khu â†’ dÃ£y phá»‘)
+  const [expandedProjectTree, setExpandedProjectTree] = useState<Set<string>>(new Set());
+  const [expandedSubdivisionTree, setExpandedSubdivisionTree] = useState<Set<string>>(new Set());
+  const [addingSubdivisionTo, setAddingSubdivisionTo] = useState<string | null>(null); // projectId
+  const [addingStreetTo, setAddingStreetTo] = useState<string | null>(null); // subdivisionId
+  const [newSubdivisionName, setNewSubdivisionName] = useState('');
+  const [newStreetName, setNewStreetName] = useState('');
+  const [newAmenityName, setNewAmenityName] = useState('');
+  const [addingAmenityTo, setAddingAmenityTo] = useState<string | null>(null); // projectId
+
+  const toggleProjectTree = (id: string) => {
+    setExpandedProjectTree(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const toggleSubdivisionTree = (id: string) => {
+    setExpandedSubdivisionTree(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  // ThÃªm phÃ¢n khu vÃ o dá»± Ã¡n
+  const handleAddSubdivision = (projectId: string) => {
+    const name = newSubdivisionName.trim();
+    if (!name) return;
+    const proj = projects.find(p => p.id === projectId);
+    if (!proj || !onUpdateProject) return;
+    const newSub = { id: `sub-${Date.now()}`, name, streets: [] };
+    onUpdateProject({ ...proj, subdivisions: [...(proj.subdivisions || []), newSub] });
+    setNewSubdivisionName('');
+    setAddingSubdivisionTo(null);
+    setExpandedProjectTree(prev => new Set(prev).add(projectId));
+  };
+
+  // ThÃªm dÃ£y phá»‘ vÃ o phÃ¢n khu
+  const handleAddStreet = (projectId: string, subdivisionId: string) => {
+    const name = newStreetName.trim();
+    if (!name) return;
+    const proj = projects.find(p => p.id === projectId);
+    if (!proj || !onUpdateProject) return;
+    const updatedSubs = (proj.subdivisions || []).map((s: any) => {
+      if (s.id === subdivisionId) {
+        return { ...s, streets: [...(s.streets || []), name] };
+      }
+      return s;
+    });
+    onUpdateProject({ ...proj, subdivisions: updatedSubs });
+    setNewStreetName('');
+    setAddingStreetTo(null);
+    setExpandedSubdivisionTree(prev => new Set(prev).add(subdivisionId));
+  };
+
+  // ThÃªm tiá»‡n Ã­ch vÃ o dá»± Ã¡n
+  const handleAddAmenity = (projectId: string) => {
+    const name = newAmenityName.trim();
+    if (!name) return;
+    const proj = projects.find(p => p.id === projectId);
+    if (!proj || !onUpdateProject) return;
+    onUpdateProject({ ...proj, amenities: [...(proj.amenities || []), name] });
+    setNewAmenityName('');
+    setAddingAmenityTo(null);
+  };
+
+  // XÃ³a phÃ¢n khu
+  const handleDeleteSubdivision = (projectId: string, subdivisionId: string) => {
+    const proj = projects.find(p => p.id === projectId);
+    if (!proj || !onUpdateProject) return;
+    onUpdateProject({ ...proj, subdivisions: (proj.subdivisions || []).filter((s: any) => s.id !== subdivisionId) });
+  };
+
+  // XÃ³a dÃ£y phá»‘
+  const handleDeleteStreet = (projectId: string, subdivisionId: string, streetName: string) => {
+    const proj = projects.find(p => p.id === projectId);
+    if (!proj || !onUpdateProject) return;
+    const updatedSubs = (proj.subdivisions || []).map((s: any) => {
+      if (s.id === subdivisionId) {
+        return { ...s, streets: (s.streets || []).filter((st: string) => st !== streetName) };
+      }
+      return s;
+    });
+    onUpdateProject({ ...proj, subdivisions: updatedSubs });
+  };
+
+  // XÃ³a tiá»‡n Ã­ch
+  const handleDeleteAmenity = (projectId: string, amenityName: string) => {
+    const proj = projects.find(p => p.id === projectId);
+    if (!proj || !onUpdateProject) return;
+    onUpdateProject({ ...proj, amenities: (proj.amenities || []).filter((a: string) => a !== amenityName) });
+  };
 
   // User Add / Edit Modal States
   const [isAddingUser, setIsAddingUser] = useState(false);
@@ -945,13 +1031,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         body: JSON.stringify(userFormData)
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Lỗi khi tạo tài khoản');
-      alert(data.message || 'Thêm thành viên mới thành công!');
+      if (!res.ok) throw new Error(data.error || 'Lá»—i khi táº¡o tÃ i khoáº£n');
+      alert(data.message || 'ThÃªm thÃ nh viÃªn má»›i thÃ nh cÃ´ng!');
       setIsAddingUser(false);
       setUserFormData({ name: '', email: '', phone: '', role: '', upTinCredits: 0, balance: 0, password: '' });
       fetchUsers();
     } catch (err: any) {
-      alert(err.message || 'Lỗi hệ thống');
+      alert(err.message || 'Lá»—i há»‡ thá»‘ng');
     }
   };
 
@@ -972,12 +1058,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Lỗi khi cập nhật tài khoản');
-      alert(data.message || 'Cập nhật tài khoản thành công!');
+      if (!res.ok) throw new Error(data.error || 'Lá»—i khi cáº­p nháº­t tÃ i khoáº£n');
+      alert(data.message || 'Cáº­p nháº­t tÃ i khoáº£n thÃ nh cÃ´ng!');
       setEditingUser(null);
       fetchUsers();
     } catch (err: any) {
-      alert(err.message || 'Lỗi hệ thống');
+      alert(err.message || 'Lá»—i há»‡ thá»‘ng');
     }
   };
 
@@ -1001,12 +1087,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newAdPos, setNewAdPos] = useState<string>('float_right_pc');
   const [newAdWidthSize, setNewAdWidthSize] = useState<'small' | 'medium' | 'large' | 'compact'>('medium');
   const [newAdDisplayStyle, setNewAdDisplayStyle] = useState<'card_full' | 'image_only' | 'glowing_border' | 'minimal'>('glowing_border');
-  const [newAdBadgeText, setNewAdBadgeText] = useState('QC CẠNH PHẢI');
+  const [newAdBadgeText, setNewAdBadgeText] = useState('QC Cáº NH PHáº¢I');
   const [newAdParentId, setNewAdParentId] = useState<string>('');
   const [expandedAds, setExpandedAds] = useState<Set<string>>(new Set());
   const [editingAd, setEditingAd] = useState<AdBanner | null>(null);
 
-  // ===== HERO CARDS (4 thẻ danh mục trang chủ - quản lý ảnh đại diện) =====
+  // ===== HERO CARDS (4 tháº» danh má»¥c trang chá»§ - quáº£n lÃ½ áº£nh Ä‘áº¡i diá»‡n) =====
   const [heroCards, setHeroCards] = useState<HeroCardConfig[]>(() => loadHeroCards());
   const [heroCardSaved, setHeroCardSaved] = useState(false);
 
@@ -1014,7 +1100,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 15 * 1024 * 1024) {
-      alert('Kích thước ảnh tối đa là 15MB');
+      alert('KÃ­ch thÆ°á»›c áº£nh tá»‘i Ä‘a lÃ  15MB');
       return;
     }
     try {
@@ -1049,7 +1135,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleResetHeroCards = () => {
-    if (!confirm('Khôi phục ảnh mặc định cho 4 thẻ danh mục?')) return;
+    if (!confirm('KhÃ´i phá»¥c áº£nh máº·c Ä‘á»‹nh cho 4 tháº» danh má»¥c?')) return;
     setHeroCards(loadHeroCards());
     localStorage.removeItem('chocudan24h_hero_cards');
     setHeroCardSaved(true);
@@ -1065,7 +1151,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     }
   }, [adsList]);
 
-  // ===== Ảnh 4 nhóm ngành trên trang chủ (Homepage Category Images) =====
+  // ===== áº¢nh 4 nhÃ³m ngÃ nh trÃªn trang chá»§ (Homepage Category Images) =====
   const [categoryImages, setCategoryImages] = useState<{ key: string; label: string; image: string; link: string }[]>([]);
   const [categoryImageBusy, setCategoryImageBusy] = useState<string | null>(null);
 
@@ -1092,12 +1178,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (!file) return;
     setCategoryImageBusy(key);
     try {
-      // Nén nhẹ ảnh trước khi upload (giữ dung lượng nhỏ)
+      // NÃ©n nháº¹ áº£nh trÆ°á»›c khi upload (giá»¯ dung lÆ°á»£ng nhá»)
       const compressed = await addWatermarkToImage(file, { skipWatermark: true, maxDim: 800 });
-      // Upload lên server lấy URL public /uploads/... thay vì lưu base64 thô vào data store
+      // Upload lÃªn server láº¥y URL public /uploads/... thay vÃ¬ lÆ°u base64 thÃ´ vÃ o data store
       const url = await uploadBase64DataUrl(compressed, 'category-images');
       if (!url) {
-        alert('❌ Upload ảnh thất bại. Vui lòng thử lại!');
+        alert('âŒ Upload áº£nh tháº¥t báº¡i. Vui lÃ²ng thá»­ láº¡i!');
         return;
       }
       const res = await fetch(`/api/homepage-category-images/${key}`, {
@@ -1108,13 +1194,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data.categories)) setCategoryImages(data.categories);
-        alert('✅ Đã cập nhật ảnh nhóm ngành!');
+        alert('âœ… ÄÃ£ cáº­p nháº­t áº£nh nhÃ³m ngÃ nh!');
       } else {
-        alert('❌ Lỗi khi lưu ảnh. Vui lòng thử lại.');
+        alert('âŒ Lá»—i khi lÆ°u áº£nh. Vui lÃ²ng thá»­ láº¡i.');
       }
     } catch (e) {
       console.error('Upload category image failed:', e);
-      alert('❌ Lỗi khi upload ảnh.');
+      alert('âŒ Lá»—i khi upload áº£nh.');
     } finally {
       setCategoryImageBusy(null);
     }
@@ -1129,7 +1215,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewAdPos(ad.position || 'float_right_pc');
     setNewAdWidthSize(ad.widthSize || 'medium');
     setNewAdDisplayStyle(ad.displayStyle || 'card_full');
-    setNewAdBadgeText(ad.badgeText || 'QC CẠNH PHẢI');
+    setNewAdBadgeText(ad.badgeText || 'QC Cáº NH PHáº¢I');
     setNewAdParentId(ad.parentId || '');
     
     // Scroll smoothly to form section
@@ -1144,7 +1230,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setNewAdPos('float_right_pc');
     setNewAdWidthSize('medium');
     setNewAdDisplayStyle('card_full');
-    setNewAdBadgeText('QC CẠNH PHẢI');
+    setNewAdBadgeText('QC Cáº NH PHáº¢I');
     setNewAdParentId('');
   };
 
@@ -1152,14 +1238,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 8 * 1024 * 1024) {
-        alert('Dung lượng ảnh vượt quá 8MB, vui lòng chọn file nhẹ hơn.');
+        alert('Dung lÆ°á»£ng áº£nh vÆ°á»£t quÃ¡ 8MB, vui lÃ²ng chá»n file nháº¹ hÆ¡n.');
         return;
       }
-      // Upload ảnh lên server -> nhận URL public (thay vì lưu base64)
+      // Upload áº£nh lÃªn server -> nháº­n URL public (thay vÃ¬ lÆ°u base64)
       try {
         const url = await uploadBase64DataUrl(await fileToDataUrl(file), 'ads');
         if (!url) {
-          alert('Upload ảnh banner thất bại. Vui lòng thử lại!');
+          alert('Upload áº£nh banner tháº¥t báº¡i. Vui lÃ²ng thá»­ láº¡i!');
           return;
         }
         if (targetAdId) {
@@ -1170,18 +1256,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             setEditingAd({ ...editingAd, imageUrl: url });
             setNewAdImage(url);
           }
-          alert('Cập nhật ảnh Banner trực tiếp thành công!');
+          alert('Cáº­p nháº­t áº£nh Banner trá»±c tiáº¿p thÃ nh cÃ´ng!');
         } else {
           setNewAdImage(url);
         }
       } catch (err) {
-        console.error('Lỗi upload ảnh banner:', err);
-        alert('Lỗi khi upload ảnh banner. Vui lòng thử lại!');
+        console.error('Lá»—i upload áº£nh banner:', err);
+        alert('Lá»—i khi upload áº£nh banner. Vui lÃ²ng thá»­ láº¡i!');
       }
     }
   };
 
-  // Helper: đọc File -> base64 data URL (dùng cho upload banner)
+  // Helper: Ä‘á»c File -> base64 data URL (dÃ¹ng cho upload banner)
   const fileToDataUrl = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -1194,7 +1280,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const handleSaveFormAd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newAdTitle || !newAdImage) {
-      alert('Vui lòng điền đầy đủ tiêu đề và hình ảnh banner.');
+      alert('Vui lÃ²ng Ä‘iá»n Ä‘áº§y Ä‘á»§ tiÃªu Ä‘á» vÃ  hÃ¬nh áº£nh banner.');
       return;
     }
 
@@ -1217,7 +1303,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       } : a);
       setAdsList(updated);
       handleCancelEditAd();
-      alert('Cập nhật Banner Quảng Cáo thành công!');
+      alert('Cáº­p nháº­t Banner Quáº£ng CÃ¡o thÃ nh cÃ´ng!');
     } else {
       // Add new
       const newBanner: AdBanner = {
@@ -1239,7 +1325,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       };
       setAdsList([newBanner, ...adsList]);
       handleCancelEditAd();
-      alert('Thêm Banner Quảng Cáo mới thành công!');
+      alert('ThÃªm Banner Quáº£ng CÃ¡o má»›i thÃ nh cÃ´ng!');
     }
   };
 
@@ -1249,7 +1335,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleDeleteAd = (id: string) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa Banner quảng cáo này?')) {
+    if (window.confirm('Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n xÃ³a Banner quáº£ng cÃ¡o nÃ y?')) {
       const updated = adsList.filter(a => a.id !== id);
       setAdsList(updated);
       if (editingAd && editingAd.id === id) {
@@ -1258,7 +1344,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     }
   };
 
-  // Quảng cáo cha (không có parentId) và con
+  // Quáº£ng cÃ¡o cha (khÃ´ng cÃ³ parentId) vÃ  con
   const parentAds = adsList.filter(a => !a.parentId);
   const childAds = (parentId: string) => adsList.filter(a => a.parentId === parentId);
   const toggleExpandAd = (adId: string) => {
@@ -1294,7 +1380,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     // Format post date (DD/MM/YYYY)
     const postDateFormatted = !isNaN(baseDate.getTime()) 
       ? `${String(baseDate.getDate()).padStart(2, '0')}/${String(baseDate.getMonth() + 1).padStart(2, '0')}/${baseDate.getFullYear()}`
-      : '—';
+      : 'â€”';
 
     // Calculate exact expiration date
     const expiryDateObj = new Date(baseDate.getTime() + EXPIRY_DAYS * 24 * 60 * 60 * 1000);
@@ -1330,7 +1416,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     };
     if (onUpdateProperty) {
       onUpdateProperty(updated);
-      alert(`⚡ Đã Up Tin thành công cho căn "${property.title}"! Đã gia hạn +20 ngày hiển thị.`);
+      alert(`âš¡ ÄÃ£ Up Tin thÃ nh cÃ´ng cho cÄƒn "${property.title}"! ÄÃ£ gia háº¡n +20 ngÃ y hiá»ƒn thá»‹.`);
     }
   };
 
@@ -1350,16 +1436,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (onUpdateProperty) {
       onUpdateProperty(updated);
       alert(isCurrentlyArchived 
-        ? `🟢 Đã phục hồi tin "${property.title}" ra danh sách hiển thị!`
-        : `📁 Đã chuyển căn "${property.title}" vào Kho Lưu Trữ (vẫn bảo lưu 100% Thông tin Người đăng & Căn BĐS)!`
+        ? `ðŸŸ¢ ÄÃ£ phá»¥c há»“i tin "${property.title}" ra danh sÃ¡ch hiá»ƒn thá»‹!`
+        : `ðŸ“ ÄÃ£ chuyá»ƒn cÄƒn "${property.title}" vÃ o Kho LÆ°u Trá»¯ (váº«n báº£o lÆ°u 100% ThÃ´ng tin NgÆ°á»i Ä‘Äƒng & CÄƒn BÄS)!`
       );
     }
   };
 
   const handleRejectProperty = (property: Property) => {
     const reason = window.prompt(
-      `Nhập lý do từ chối bài đăng "${property.title}":`,
-      'Hình ảnh hoặc thông tin bài đăng chưa đạt tiêu chuẩn kiểm duyệt.'
+      `Nháº­p lÃ½ do tá»« chá»‘i bÃ i Ä‘Äƒng "${property.title}":`,
+      'HÃ¬nh áº£nh hoáº·c thÃ´ng tin bÃ i Ä‘Äƒng chÆ°a Ä‘áº¡t tiÃªu chuáº©n kiá»ƒm duyá»‡t.'
     );
     if (reason === null) return;
 
@@ -1368,12 +1454,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       approved: false,
       status: 'rejected',
       approvalStatus: 'rejected',
-      rejectionReason: reason || 'Hình ảnh hoặc thông tin bài đăng chưa đạt tiêu chuẩn kiểm duyệt.',
-      adminNote: reason || 'Hình ảnh hoặc thông tin bài đăng chưa đạt tiêu chuẩn kiểm duyệt.'
+      rejectionReason: reason || 'HÃ¬nh áº£nh hoáº·c thÃ´ng tin bÃ i Ä‘Äƒng chÆ°a Ä‘áº¡t tiÃªu chuáº©n kiá»ƒm duyá»‡t.',
+      adminNote: reason || 'HÃ¬nh áº£nh hoáº·c thÃ´ng tin bÃ i Ä‘Äƒng chÆ°a Ä‘áº¡t tiÃªu chuáº©n kiá»ƒm duyá»‡t.'
     };
     if (onUpdateProperty) {
       onUpdateProperty(updated);
-      alert(`🔴 Đã từ chối bài đăng "${property.title}". Lý do đã được lưu và gửi tới người đăng.`);
+      alert(`ðŸ”´ ÄÃ£ tá»« chá»‘i bÃ i Ä‘Äƒng "${property.title}". LÃ½ do Ä‘Ã£ Ä‘Æ°á»£c lÆ°u vÃ  gá»­i tá»›i ngÆ°á»i Ä‘Äƒng.`);
     }
   };
 
@@ -1406,18 +1492,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated)
       });
-      alert(isCurrentlyVerified ? `Đã gỡ Nút Xanh KYC của dịch vụ "${srv.title}"` : `🎉 Đã cấp NÚT XANH VERIFIED KYC cho dịch vụ "${srv.title}"!`);
+      alert(isCurrentlyVerified ? `ÄÃ£ gá»¡ NÃºt Xanh KYC cá»§a dá»‹ch vá»¥ "${srv.title}"` : `ðŸŽ‰ ÄÃ£ cáº¥p NÃšT XANH VERIFIED KYC cho dá»‹ch vá»¥ "${srv.title}"!`);
     } catch (e) {
       console.error('Error toggling KYC:', e);
     }
   };
 
   const handleDeleteService = async (id: string, title: string) => {
-    if (!confirm(`Bạn có chắc muốn xóa dịch vụ "${title}"?`)) return;
+    if (!confirm(`Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a dá»‹ch vá»¥ "${title}"?`)) return;
     try {
       setAdminResidentServices(prev => prev.filter(s => s.id !== id));
       await fetch(`/api/resident-services/${id}`, { method: 'DELETE' });
-      alert('Đã xóa dịch vụ cư dân thành công!');
+      alert('ÄÃ£ xÃ³a dá»‹ch vá»¥ cÆ° dÃ¢n thÃ nh cÃ´ng!');
     } catch (e) {
       console.error('Error deleting service:', e);
     }
@@ -1442,7 +1528,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const handleSaveResidentServiceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSrvTitle || !newSrvProviderPhone) {
-      alert('Vui lòng điền Tiêu đề dịch vụ và Số điện thoại liên hệ!');
+      alert('Vui lÃ²ng Ä‘iá»n TiÃªu Ä‘á» dá»‹ch vá»¥ vÃ  Sá»‘ Ä‘iá»‡n thoáº¡i liÃªn há»‡!');
       return;
     }
 
@@ -1476,7 +1562,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         body: JSON.stringify(payload)
       });
       if (res.ok) {
-        alert(editingService ? '🎉 Đã cập nhật Dịch Vụ Cư Dân!' : '🎉 Đã thêm Dịch Vụ Cư Dân mới thành công!');
+        alert(editingService ? 'ðŸŽ‰ ÄÃ£ cáº­p nháº­t Dá»‹ch Vá»¥ CÆ° DÃ¢n!' : 'ðŸŽ‰ ÄÃ£ thÃªm Dá»‹ch Vá»¥ CÆ° DÃ¢n má»›i thÃ nh cÃ´ng!');
         setShowAddServiceModal(false);
         setEditingService(null);
         resetNewSrvForm();
@@ -1488,12 +1574,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleDeleteStore = async (id: string, storeName: string) => {
-    if (!confirm(`Bạn có chắc muốn xóa gian hàng cư dân "${storeName}"?`)) return;
+    if (!confirm(`Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a gian hÃ ng cÆ° dÃ¢n "${storeName}"?`)) return;
     try {
       setAdminStores(prev => prev.filter(s => s.id !== id));
       if (selectedAdminStore?.id === id) setSelectedAdminStore(null);
       await fetch(`/api/stores/${id}`, { method: 'DELETE' });
-      alert('Đã xóa gian hàng thành công!');
+      alert('ÄÃ£ xÃ³a gian hÃ ng thÃ nh cÃ´ng!');
     } catch (e) {
       console.error('Error deleting store:', e);
     }
@@ -1543,14 +1629,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const handleSaveStoreFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!storeFormData.storeName.trim() || !storeFormData.ownerPhone.trim()) {
-      alert('Vui lòng nhập Tên gian hàng và Số điện thoại!');
+      alert('Vui lÃ²ng nháº­p TÃªn gian hÃ ng vÃ  Sá»‘ Ä‘iá»‡n thoáº¡i!');
       return;
     }
 
     const payload: UserStorefront = {
       id: editingStoreItem ? editingStoreItem.id : `store-${Date.now()}`,
       userId: editingStoreItem ? editingStoreItem.userId : `usr-${Date.now()}`,
-      ownerName: storeFormData.ownerName || 'Cư dân Vinhomes',
+      ownerName: storeFormData.ownerName || 'CÆ° dÃ¢n Vinhomes',
       ownerPhone: storeFormData.ownerPhone,
       ownerZalo: storeFormData.ownerZalo || storeFormData.ownerPhone,
       storeName: storeFormData.storeName,
@@ -1561,7 +1647,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       project: storeFormData.project,
       subdivision: storeFormData.subdivision,
       address: storeFormData.address,
-      description: storeFormData.description || 'Gian hàng cư dân phục vụ nội khu chuẩn chất lượng.',
+      description: storeFormData.description || 'Gian hÃ ng cÆ° dÃ¢n phá»¥c vá»¥ ná»™i khu chuáº©n cháº¥t lÆ°á»£ng.',
       verified: storeFormData.verified,
       status: storeFormData.status,
       rating: editingStoreItem?.rating || 0,
@@ -1579,7 +1665,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        alert('🎉 Đã cập nhật thông tin gian hàng thành công!');
+        alert('ðŸŽ‰ ÄÃ£ cáº­p nháº­t thÃ´ng tin gian hÃ ng thÃ nh cÃ´ng!');
       } else {
         setAdminStores(prev => [payload, ...prev]);
         await fetch('/api/stores', {
@@ -1587,7 +1673,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        alert('🎉 Đã tạo gian hàng cư dân mới thành công!');
+        alert('ðŸŽ‰ ÄÃ£ táº¡o gian hÃ ng cÆ° dÃ¢n má»›i thÃ nh cÃ´ng!');
       }
       setShowStoreFormModal(false);
       setEditingStoreItem(null);
@@ -1607,7 +1693,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated)
       });
-      alert(nextStatus === 'approved' ? '✓ Đã duyệt gian hàng và hiển thị công khai trên website!' : '⏳ Đã chuyển gian hàng về trạng thái Chờ duyệt / Ẩn.');
+      alert(nextStatus === 'approved' ? 'âœ“ ÄÃ£ duyá»‡t gian hÃ ng vÃ  hiá»ƒn thá»‹ cÃ´ng khai trÃªn website!' : 'â³ ÄÃ£ chuyá»ƒn gian hÃ ng vá» tráº¡ng thÃ¡i Chá» duyá»‡t / áº¨n.');
     } catch (e) {
       console.error(e);
     }
@@ -1654,7 +1740,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     e.preventDefault();
     if (!selectedAdminStore) return;
     if (!storeProductForm.name.trim()) {
-      alert('Vui lòng nhập tên sản phẩm!');
+      alert('Vui lÃ²ng nháº­p tÃªn sáº£n pháº©m!');
       return;
     }
 
@@ -1665,7 +1751,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       name: storeProductForm.name,
       category: storeProductForm.category,
       price: Number(storeProductForm.price) || 0,
-      unit: storeProductForm.unit || 'suất',
+      unit: storeProductForm.unit || 'suáº¥t',
       stockQuantity: Number(storeProductForm.stockQuantity) || 0,
       images: storeProductForm.images,
       description: storeProductForm.description,
@@ -1694,7 +1780,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(prodPayload)
       });
-      alert(editingStoreProduct ? '🎉 Đã cập nhật sản phẩm thành công!' : '🎉 Đã thêm sản phẩm mới vào gian hàng!');
+      alert(editingStoreProduct ? 'ðŸŽ‰ ÄÃ£ cáº­p nháº­t sáº£n pháº©m thÃ nh cÃ´ng!' : 'ðŸŽ‰ ÄÃ£ thÃªm sáº£n pháº©m má»›i vÃ o gian hÃ ng!');
     } catch (e) {
       console.error(e);
     }
@@ -1723,14 +1809,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedProd)
       });
-      alert(nextStatus === 'approved' ? '✓ Đã DUYỆT sản phẩm! Sản phẩm hiện đã xuất hiện trên website Chợ Cư Dân 24H.' : '⏳ Đã chuyển sản phẩm về trạng thái CHỜ DUYỆT (Ẩn khỏi website công khai).');
+      alert(nextStatus === 'approved' ? 'âœ“ ÄÃ£ DUYá»†T sáº£n pháº©m! Sáº£n pháº©m hiá»‡n Ä‘Ã£ xuáº¥t hiá»‡n trÃªn website Chá»£ CÆ° DÃ¢n 24H.' : 'â³ ÄÃ£ chuyá»ƒn sáº£n pháº©m vá» tráº¡ng thÃ¡i CHá»œ DUYá»†T (áº¨n khá»i website cÃ´ng khai).');
     } catch (e) {
       console.error(e);
     }
   };
 
   const handleDeleteStoreProduct = async (storeId: string, prodId: string) => {
-    if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi gian hàng?')) return;
+    if (!confirm('Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a sáº£n pháº©m nÃ y khá»i gian hÃ ng?')) return;
     if (!selectedAdminStore) return;
 
     const updatedProds = (selectedAdminStore.products || []).filter(p => p.id !== prodId);
@@ -1740,7 +1826,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
     try {
       await fetch(`/api/stores/${storeId}/products/${prodId}`, { method: 'DELETE' });
-      alert('Đã xóa sản phẩm thành công!');
+      alert('ÄÃ£ xÃ³a sáº£n pháº©m thÃ nh cÃ´ng!');
     } catch (e) {
       console.error(e);
     }
@@ -1752,7 +1838,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       setAdminResidentServices(prev => prev.map(s => s.id === serviceId ? { ...s, status: 'approved', approved: true } : s));
       const res = await fetch(`/api/resident-services/${serviceId}/approve`, { method: 'PUT' });
       if (res.ok) {
-        alert('🎉 ĐÃ PHÊ DUYỆT! Dịch vụ cư dân hiện đã xuất hiện công khai trên Website.');
+        alert('ðŸŽ‰ ÄÃƒ PHÃŠ DUYá»†T! Dá»‹ch vá»¥ cÆ° dÃ¢n hiá»‡n Ä‘Ã£ xuáº¥t hiá»‡n cÃ´ng khai trÃªn Website.');
         fetchResidentServices();
       }
     } catch (e) {
@@ -1770,7 +1856,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         body: JSON.stringify({ status: nextStatus, approved: nextStatus === 'approved' })
       });
       if (res.ok) {
-        alert(nextStatus === 'approved' ? '✓ ĐÃ DUYỆT! Dịch vụ đã hiển thị lên Website.' : '⏳ Đã chuyển dịch vụ về trạng thái Chờ Duyệt (Chỉ cư dân thấy).');
+        alert(nextStatus === 'approved' ? 'âœ“ ÄÃƒ DUYá»†T! Dá»‹ch vá»¥ Ä‘Ã£ hiá»ƒn thá»‹ lÃªn Website.' : 'â³ ÄÃ£ chuyá»ƒn dá»‹ch vá»¥ vá» tráº¡ng thÃ¡i Chá» Duyá»‡t (Chá»‰ cÆ° dÃ¢n tháº¥y).');
         fetchResidentServices();
       }
     } catch (e) {
@@ -1779,11 +1865,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleDeleteResidentService = async (serviceId: string) => {
-    if (!confirm('Bạn có chắc muốn xóa bài dịch vụ cư dân này khỏi hệ thống?')) return;
+    if (!confirm('Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a bÃ i dá»‹ch vá»¥ cÆ° dÃ¢n nÃ y khá»i há»‡ thá»‘ng?')) return;
     try {
       setAdminResidentServices(prev => prev.filter(s => s.id !== serviceId));
       await fetch(`/api/resident-services/${serviceId}`, { method: 'DELETE' });
-      alert('Đã xóa dịch vụ thành công!');
+      alert('ÄÃ£ xÃ³a dá»‹ch vá»¥ thÃ nh cÃ´ng!');
       fetchResidentServices();
     } catch (e) {
       console.error(e);
@@ -1794,7 +1880,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const handleSyncAllToWebsite = () => {
     fetchResidentServices();
     fetchStores();
-    alert('⚡ HỆ THỐNG ĐÃ ĐỒNG BỘ THÀNH CÔNG!\nTất cả dữ liệu Gian Hàng, Dịch Vụ Cư Dân, Sản Phẩm đã được cập nhật trực tiếp lên hệ thống website chocudan24h.com');
+    alert('âš¡ Há»† THá»NG ÄÃƒ Äá»’NG Bá»˜ THÃ€NH CÃ”NG!\nTáº¥t cáº£ dá»¯ liá»‡u Gian HÃ ng, Dá»‹ch Vá»¥ CÆ° DÃ¢n, Sáº£n Pháº©m Ä‘Ã£ Ä‘Æ°á»£c cáº­p nháº­t trá»±c tiáº¿p lÃªn há»‡ thá»‘ng website chocudan24h.com');
   };
 
   const handleUpdateStoreOrderStatus = async (orderId: string, newOrderStatus: string, newPaymentStatus?: string) => {
@@ -1810,7 +1896,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderStatus: newOrderStatus, ...(newPaymentStatus && { paymentStatus: newPaymentStatus }) })
       });
-      alert('🎉 Đã cập nhật trạng thái đơn hàng chợ cư dân!');
+      alert('ðŸŽ‰ ÄÃ£ cáº­p nháº­t tráº¡ng thÃ¡i Ä‘Æ¡n hÃ ng chá»£ cÆ° dÃ¢n!');
     } catch (e) {
       console.error('Error updating order status:', e);
     }
@@ -1819,11 +1905,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   return (
     <div className="max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4">
       
-      {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Điều hướng nhanh trực tiếp bên trong Admin */}
+      {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Äiá»u hÆ°á»›ng nhanh trá»±c tiáº¿p bÃªn trong Admin */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
         <div className="flex items-center gap-1.5 flex-wrap font-bold text-slate-700 dark:text-slate-300">
           <span className="text-slate-400 text-[11px] uppercase tracking-wider font-extrabold hidden md:inline">
-            ĐIỀU HƯỚNG NHANH PHÂN HỆ:
+            ÄIá»€U HÆ¯á»šNG NHANH PHÃ‚N Há»†:
           </span>
           
           <button
@@ -1838,10 +1924,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
             }`}
-            title="Quản lý toàn bộ Bất Động Sản"
+            title="Quáº£n lÃ½ toÃ n bá»™ Báº¥t Äá»™ng Sáº£n"
           >
             <Home className="w-3.5 h-3.5 text-emerald-500" />
-            <span>Tổng Quan BĐS</span>
+            <span>Tá»•ng Quan BÄS</span>
           </button>
 
           <button
@@ -1856,10 +1942,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 ? 'bg-blue-600 text-white shadow-xs'
                 : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
             }`}
-            title="Lọc danh sách BĐS Mua Bán"
+            title="Lá»c danh sÃ¡ch BÄS Mua BÃ¡n"
           >
             <Building2 className="w-3.5 h-3.5 text-blue-500" />
-            <span>BĐS Mua Bán</span>
+            <span>BÄS Mua BÃ¡n</span>
           </button>
 
           <button
@@ -1874,10 +1960,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
                 : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
             }`}
-            title="Lọc danh sách BĐS Cho Thuê"
+            title="Lá»c danh sÃ¡ch BÄS Cho ThuÃª"
           >
             <Zap className="w-3.5 h-3.5 text-amber-500" />
-            <span>Cho Thuê</span>
+            <span>Cho ThuÃª</span>
           </button>
 
           <button
@@ -1891,10 +1977,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 ? 'bg-orange-500 text-slate-950 font-black shadow-xs'
                 : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
             }`}
-            title="Quản lý Thợ Dịch Vụ Cư Dân"
+            title="Quáº£n lÃ½ Thá»£ Dá»‹ch Vá»¥ CÆ° DÃ¢n"
           >
             <Wrench className="w-3.5 h-3.5 text-orange-500" />
-            <span>Dịch Vụ &amp; Thợ</span>
+            <span>Dá»‹ch Vá»¥ &amp; Thá»£</span>
           </button>
 
           <button
@@ -1908,10 +1994,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 ? 'bg-teal-500 text-slate-950 font-black shadow-xs'
                 : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
             }`}
-            title="Quản lý Việc Làm & Tuyển Dụng"
+            title="Quáº£n lÃ½ Viá»‡c LÃ m & Tuyá»ƒn Dá»¥ng"
           >
             <Briefcase className="w-3.5 h-3.5 text-purple-500" />
-            <span>Tuyển Dụng &amp; CV</span>
+            <span>Tuyá»ƒn Dá»¥ng &amp; CV</span>
           </button>
 
           <button
@@ -1925,10 +2011,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 ? 'bg-amber-600 text-white shadow-xs'
                 : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
             }`}
-            title="Quản lý Chợ Cư Dân & Gian Hàng"
+            title="Quáº£n lÃ½ Chá»£ CÆ° DÃ¢n & Gian HÃ ng"
           >
             <Store className="w-3.5 h-3.5 text-amber-500" />
-            <span>Chợ Cư Dân</span>
+            <span>Chá»£ CÆ° DÃ¢n</span>
           </button>
 
           <button
@@ -1942,10 +2028,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 ? 'bg-blue-600 text-white shadow-xs'
                 : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
             }`}
-            title="Quản lý Thành Viên & Khách Hàng"
+            title="Quáº£n lÃ½ ThÃ nh ViÃªn & KhÃ¡ch HÃ ng"
           >
             <UserCheck className="w-3.5 h-3.5 text-blue-500" />
-            <span>Thành Viên</span>
+            <span>ThÃ nh ViÃªn</span>
           </button>
         </div>
 
@@ -1954,23 +2040,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             type="button"
             onClick={() => navigate('/')}
             className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl flex items-center gap-1 transition cursor-pointer active:scale-95 border border-slate-200 dark:border-slate-700"
-            title="Mở xem website công khai ngoài trang chủ"
+            title="Má»Ÿ xem website cÃ´ng khai ngoÃ i trang chá»§"
           >
             <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
-            <span className="hidden sm:inline">Xem Web Ngoài</span>
+            <span className="hidden sm:inline">Xem Web NgoÃ i</span>
           </button>
 
           <button
             type="button"
             onClick={() => navigate('/tai-khoan')}
             className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold rounded-xl flex items-center gap-1.5 transition cursor-pointer active:scale-95 border border-emerald-300 dark:border-emerald-700"
-            title="Xem Trang Cá Nhân của bạn"
+            title="Xem Trang CÃ¡ NhÃ¢n cá»§a báº¡n"
           >
             <UserIcon className="w-3.5 h-3.5 text-emerald-500" />
-            <span className="hidden sm:inline">Dashboard Cá Nhân</span>
+            <span className="hidden sm:inline">Dashboard CÃ¡ NhÃ¢n</span>
           </button>
 
-          {/* NÚT ĐĂNG XUẤT ADMIN */}
+          {/* NÃšT ÄÄ‚NG XUáº¤T ADMIN */}
           <button
             type="button"
             onClick={() => {
@@ -1982,15 +2068,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               }
             }}
             className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-xs"
-            title="Đăng xuất khỏi quyền Admin"
+            title="ÄÄƒng xuáº¥t khá»i quyá»n Admin"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span>Đăng Xuất</span>
+            <span>ÄÄƒng Xuáº¥t</span>
           </button>
         </div>
       </div>
 
-      {/* 1. TOP HEADER - Tinh gọn, hiện đại, không chiếm diện tích */}
+      {/* 1. TOP HEADER - Tinh gá»n, hiá»‡n Ä‘áº¡i, khÃ´ng chiáº¿m diá»‡n tÃ­ch */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl border border-slate-800 shadow-xl">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-600/20 text-emerald-400 rounded-xl border border-emerald-500/30 shrink-0">
@@ -1998,19 +2084,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase bg-emerald-500 text-slate-950 px-2 py-0.5 rounded">ADMIN TỔNG</span>
+              <span className="text-[10px] font-black uppercase bg-emerald-500 text-slate-950 px-2 py-0.5 rounded">ADMIN Tá»”NG</span>
               <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                Hệ Thống Đang Hoạt Động Realtime
+                Há»‡ Thá»‘ng Äang Hoáº¡t Äá»™ng Realtime
               </span>
             </div>
             <h1 className="text-sm sm:text-base font-black text-white tracking-tight mt-0.5">
-              TRUNG TÂM QUẢN TRỊ HỆ THỐNG CHỢ CƯ DÂN 24H
+              TRUNG TÃ‚M QUáº¢N TRá»Š Há»† THá»NG CHá»¢ CÆ¯ DÃ‚N 24H
             </h1>
           </div>
         </div>
 
-        {/* Toolbar Nút Thao Tác Nhanh */}
+        {/* Toolbar NÃºt Thao TÃ¡c Nhanh */}
         <div className="flex items-center gap-1.5 flex-wrap">
           <button
             onClick={handleSyncToPublicWeb}
@@ -2020,44 +2106,44 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 ring-2 ring-amber-300 animate-pulse'
                 : 'bg-emerald-600 hover:bg-emerald-500 text-white'
             }`}
-            title="Phê duyệt tin & Xuất bản trực tiếp lên Website công khai"
+            title="PhÃª duyá»‡t tin & Xuáº¥t báº£n trá»±c tiáº¿p lÃªn Website cÃ´ng khai"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSyncingPublic ? 'animate-spin' : ''}`} />
-            <span>{isSyncingPublic ? 'Đang đồng bộ...' : `🔄 Đồng Bộ Web ${pendingProperties.length > 0 ? `(${pendingProperties.length} Chờ Duyệt)` : 'Public'}`}</span>
+            <span>{isSyncingPublic ? 'Äang Ä‘á»“ng bá»™...' : `ðŸ”„ Äá»“ng Bá»™ Web ${pendingProperties.length > 0 ? `(${pendingProperties.length} Chá» Duyá»‡t)` : 'Public'}`}</span>
           </button>
 
           <button
             onClick={() => setShowTaxModal(true)}
             className="px-3 py-2 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/30 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
-            title="Khai báo thuế TMĐT Quốc Gia"
+            title="Khai bÃ¡o thuáº¿ TMÄT Quá»‘c Gia"
           >
             <Shield className="w-3.5 h-3.5 text-indigo-300" />
-            <span className="hidden sm:inline">Thuế TMĐT</span>
+            <span className="hidden sm:inline">Thuáº¿ TMÄT</span>
           </button>
 
           <button
             onClick={() => setShowAiUrlTracker(true)}
             className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
-            title="Theo dõi Website & Google AI Index"
+            title="Theo dÃµi Website & Google AI Index"
           >
             <Globe className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden sm:inline">Theo Dõi AI</span>
+            <span className="hidden sm:inline">Theo DÃµi AI</span>
           </button>
 
           <button
             onClick={handleSeed1000Click}
             disabled={isSeeding}
             className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
-            title="Tạo nhanh 1,000 tin mẫu kiểm thử"
+            title="Táº¡o nhanh 1,000 tin máº«u kiá»ƒm thá»­"
           >
             <Zap className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="hidden sm:inline">{isSeeding ? 'Đang tạo...' : 'Test 1K Tin'}</span>
+            <span className="hidden sm:inline">{isSeeding ? 'Äang táº¡o...' : 'Test 1K Tin'}</span>
           </button>
 
           <button
             onClick={onOpenAiWriter}
             className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
-            title="Viết bài tự động bằng AI"
+            title="Viáº¿t bÃ i tá»± Ä‘á»™ng báº±ng AI"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span className="hidden sm:inline">AI Writer</span>
@@ -2066,14 +2152,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <button
             onClick={onRefreshData}
             className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition cursor-pointer border border-slate-700"
-            title="Làm mới dữ liệu"
+            title="LÃ m má»›i dá»¯ liá»‡u"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
-      {/* 2. LIVE METRICS - THỐNG KÊ NHANH (Sổ ra / Thu gọn để tiết kiệm tối đa không gian) */}
+      {/* 2. LIVE METRICS - THá»NG KÃŠ NHANH (Sá»• ra / Thu gá»n Ä‘á»ƒ tiáº¿t kiá»‡m tá»‘i Ä‘a khÃ´ng gian) */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-xs transition">
         <div className="flex items-center justify-between gap-2">
           {/* Quick summary inline text/chips */}
@@ -2081,34 +2167,34 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             type="button"
             onClick={() => setShowMetricsDropdown(!showMetricsDropdown)}
             className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-none text-left cursor-pointer py-0.5"
-            title="Bấm để mở rộng / thu gọn thẻ thống kê chi tiết"
+            title="Báº¥m Ä‘á»ƒ má»Ÿ rá»™ng / thu gá»n tháº» thá»‘ng kÃª chi tiáº¿t"
           >
             <span className="p-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md font-bold text-xs shrink-0 flex items-center gap-1">
-              📊 <span className="font-extrabold hidden xs:inline">Chỉ số:</span>
+              ðŸ“Š <span className="font-extrabold hidden xs:inline">Chá»‰ sá»‘:</span>
             </span>
             
             <div className="flex items-center gap-1.5 text-xs font-bold shrink-0">
               <span className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 whitespace-nowrap">
-                🏠 {saleProperties.length} Bán
+                ðŸ  {saleProperties.length} BÃ¡n
               </span>
               <span className="px-2 py-0.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 whitespace-nowrap">
-                🔑 {rentProperties.length} Thuê
+                ðŸ”‘ {rentProperties.length} ThuÃª
               </span>
               <span className={`px-2 py-0.5 rounded-lg border whitespace-nowrap ${
                 pendingProperties.length > 0
                   ? 'bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-300 border-amber-300 dark:border-amber-700 animate-pulse'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
               }`}>
-                ⏳ {pendingProperties.length} Duyệt
+                â³ {pendingProperties.length} Duyá»‡t
               </span>
               <span className="px-2 py-0.5 rounded-lg bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60 whitespace-nowrap">
-                🛠️ {adminResidentServices.length} Thợ
+                ðŸ› ï¸ {adminResidentServices.length} Thá»£
               </span>
               <span className="px-2 py-0.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 whitespace-nowrap">
-                🏪 {adminStores.length} Shop
+                ðŸª {adminStores.length} Shop
               </span>
               <span className="px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 whitespace-nowrap">
-                💼 {contacts.length} Việc
+                ðŸ’¼ {contacts.length} Viá»‡c
               </span>
             </div>
           </button>
@@ -2119,14 +2205,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             onClick={() => setShowMetricsDropdown(!showMetricsDropdown)}
             className="py-1 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 text-xs font-bold flex items-center gap-1 cursor-pointer shrink-0 active:scale-95 transition"
           >
-            <span>{showMetricsDropdown ? 'Thu gọn ▲' : 'Chi tiết ▼'}</span>
+            <span>{showMetricsDropdown ? 'Thu gá»n â–²' : 'Chi tiáº¿t â–¼'}</span>
           </button>
         </div>
 
         {/* Collapsible Expanded Metrics Cards */}
         {showMetricsDropdown && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs pt-2.5 mt-2 border-t border-slate-200 dark:border-slate-800 animate-in fade-in duration-150">
-            {/* BĐS Bán */}
+            {/* BÄS BÃ¡n */}
             <button
               onClick={() => {
                 handleSelectMainTab('bds');
@@ -2140,13 +2226,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="p-1 bg-emerald-500/10 text-emerald-500 rounded-md font-bold text-sm">🏠</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">BĐS Bán</span>
+                <span className="p-1 bg-emerald-500/10 text-emerald-500 rounded-md font-bold text-sm">ðŸ </span>
+                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">BÄS BÃ¡n</span>
               </div>
               <span className="font-mono font-black text-slate-900 dark:text-emerald-400 text-sm">{saleProperties.length}</span>
             </button>
 
-            {/* Cho Thuê */}
+            {/* Cho ThuÃª */}
             <button
               onClick={() => {
                 handleSelectMainTab('bds');
@@ -2160,13 +2246,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="p-1 bg-teal-500/10 text-teal-500 rounded-md font-bold text-sm">🔑</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Cho Thuê</span>
+                <span className="p-1 bg-teal-500/10 text-teal-500 rounded-md font-bold text-sm">ðŸ”‘</span>
+                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Cho ThuÃª</span>
               </div>
               <span className="font-mono font-black text-slate-900 dark:text-teal-400 text-sm">{rentProperties.length}</span>
             </button>
 
-            {/* Chờ Duyệt */}
+            {/* Chá» Duyá»‡t */}
             <button
               onClick={() => {
                 handleSelectMainTab('bds');
@@ -2180,15 +2266,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="p-1 bg-amber-500/10 text-amber-500 rounded-md font-bold text-sm">⏳</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Chờ Duyệt</span>
+                <span className="p-1 bg-amber-500/10 text-amber-500 rounded-md font-bold text-sm">â³</span>
+                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Chá» Duyá»‡t</span>
               </div>
               <span className={`font-mono font-black text-sm ${pendingProperties.length > 0 ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`}>
                 {pendingProperties.length}
               </span>
             </button>
 
-            {/* Thợ Dịch Vụ */}
+            {/* Thá»£ Dá»‹ch Vá»¥ */}
             <button
               onClick={() => {
                 handleSelectMainTab('technicians');
@@ -2201,13 +2287,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="p-1 bg-orange-500/10 text-orange-500 rounded-md font-bold text-sm">🛠️</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Thợ Dịch Vụ</span>
+                <span className="p-1 bg-orange-500/10 text-orange-500 rounded-md font-bold text-sm">ðŸ› ï¸</span>
+                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Thá»£ Dá»‹ch Vá»¥</span>
               </div>
               <span className="font-mono font-black text-slate-900 dark:text-orange-400 text-sm">{adminResidentServices.length}</span>
             </button>
 
-            {/* Gian Hàng */}
+            {/* Gian HÃ ng */}
             <button
               onClick={() => {
                 handleSelectMainTab('resident_market');
@@ -2220,13 +2306,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="p-1 bg-purple-500/10 text-purple-500 rounded-md font-bold text-sm">🏪</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Gian Hàng</span>
+                <span className="p-1 bg-purple-500/10 text-purple-500 rounded-md font-bold text-sm">ðŸª</span>
+                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Gian HÃ ng</span>
               </div>
               <span className="font-mono font-black text-slate-900 dark:text-purple-400 text-sm">{adminStores.length}</span>
             </button>
 
-            {/* Khách & Việc */}
+            {/* KhÃ¡ch & Viá»‡c */}
             <button
               onClick={() => {
                 handleSelectMainTab('recruitment');
@@ -2239,8 +2325,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="p-1 bg-blue-500/10 text-blue-500 rounded-md font-bold text-sm">💼</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">Khách & Việc</span>
+                <span className="p-1 bg-blue-500/10 text-blue-500 rounded-md font-bold text-sm">ðŸ’¼</span>
+                <span className="text-slate-700 dark:text-slate-300 font-bold text-[11px]">KhÃ¡ch & Viá»‡c</span>
               </div>
               <span className="font-mono font-black text-slate-900 dark:text-blue-400 text-sm">{contacts.length}</span>
             </button>
@@ -2251,12 +2337,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* 3. MAIN ADMIN WORKSPACE: 2-COLUMN WITH PERSISTENT LEFT SIDEBAR + MAIN WORKSPACE */}
       <div className="flex flex-col lg:flex-row items-start gap-4">
         
-        {/* === CỘT TAB QUẢN TRỊ BÊN TRÁI (PERSISTENT LEFT SIDEBAR FOR DESKTOP) === */}
+        {/* === Cá»˜T TAB QUáº¢N TRá»Š BÃŠN TRÃI (PERSISTENT LEFT SIDEBAR FOR DESKTOP) === */}
         <aside className="w-full lg:w-64 xl:w-72 shrink-0 lg:sticky lg:top-3 bg-slate-900 text-white border border-slate-800 rounded-2xl p-3 shadow-xl space-y-3 lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin">
           <div className="flex items-center justify-between px-2 py-1 border-b border-slate-800/80 pb-2">
             <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
               <Layers className="w-3.5 h-3.5 text-emerald-400" />
-              MENU QUẢN TRỊ (7)
+              MENU QUáº¢N TRá»Š (7)
             </span>
             <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded">
               v3.8
@@ -2264,7 +2350,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </div>
 
           <nav className="space-y-1 text-xs" aria-label="Admin Navigation">
-            {/* 1. Bất Động Sản */}
+            {/* 1. Báº¥t Äá»™ng Sáº£n */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2280,7 +2366,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Building2 className={`w-4 h-4 ${effectiveMainTab === 'bds' ? 'text-white' : 'text-emerald-400'}`} />
-                  <span className="text-[12px] font-extrabold">1. Bất Động Sản</span>
+                  <span className="text-[12px] font-extrabold">1. Báº¥t Äá»™ng Sáº£n</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
                   {properties.length}
@@ -2298,7 +2384,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Tất Cả BĐS</span>
+                    <span>â€¢ Táº¥t Cáº£ BÄS</span>
                     <span className="font-mono text-[10px]">{properties.length}</span>
                   </button>
                   <button
@@ -2309,7 +2395,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Mua Bán</span>
+                    <span>â€¢ Mua BÃ¡n</span>
                     <span className="font-mono text-[10px]">{saleProperties.length}</span>
                   </button>
                   <button
@@ -2320,7 +2406,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Cho Thuê</span>
+                    <span>â€¢ Cho ThuÃª</span>
                     <span className="font-mono text-[10px]">{rentProperties.length}</span>
                   </button>
                   <button
@@ -2331,7 +2417,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Chờ Duyệt</span>
+                    <span>â€¢ Chá» Duyá»‡t</span>
                     <span className="font-mono text-[10px] text-amber-400 font-bold">{pendingProperties.length}</span>
                   </button>
                   <button
@@ -2342,7 +2428,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Dự Án & Mặt Bằng</span>
+                    <span>â€¢ Dá»± Ãn & Máº·t Báº±ng</span>
                     <span className="font-mono text-[10px]">{projects.length}</span>
                   </button>
                   <button
@@ -2353,7 +2439,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Tin Tức & Bài Viết</span>
+                    <span>â€¢ Tin Tá»©c & BÃ i Viáº¿t</span>
                     <span className="font-mono text-[10px]">{news.length}</span>
                   </button>
                   <button
@@ -2364,7 +2450,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Q&A / FAQ</span>
+                    <span>â€¢ Q&A / FAQ</span>
                     <span className="font-mono text-[10px]">{adminFaq.length}</span>
                   </button>
                   <button
@@ -2375,7 +2461,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Bảng Giá Dịch Vụ
+                    â€¢ Báº£ng GiÃ¡ Dá»‹ch Vá»¥
                   </button>
                   <button
                     onClick={() => setActiveTab('affiliate_mgmt')}
@@ -2385,13 +2471,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Đối Tác & Hoa Hồng
+                    â€¢ Äá»‘i TÃ¡c & Hoa Há»“ng
                   </button>
                 </div>
               )}
             </div>
 
-            {/* 2. Thợ Dịch Vụ & Kỹ Thuật */}
+            {/* 2. Thá»£ Dá»‹ch Vá»¥ & Ká»¹ Thuáº­t */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2407,7 +2493,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Wrench className={`w-4 h-4 ${effectiveMainTab === 'technicians' ? 'text-slate-950' : 'text-orange-400'}`} />
-                  <span className="text-[12px] font-extrabold">2. Thợ & Dịch Vụ</span>
+                  <span className="text-[12px] font-extrabold">2. Thá»£ & Dá»‹ch Vá»¥</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
                   {adminResidentServices.length}
@@ -2415,7 +2501,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
             </div>
 
-            {/* 3. Tuyển Dụng & Việc Làm */}
+            {/* 3. Tuyá»ƒn Dá»¥ng & Viá»‡c LÃ m */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2431,15 +2517,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Briefcase className={`w-4 h-4 ${effectiveMainTab === 'recruitment' ? 'text-slate-950' : 'text-teal-400'}`} />
-                  <span className="text-[12px] font-extrabold">3. Tuyển Dụng & CV</span>
+                  <span className="text-[12px] font-extrabold">3. Tuyá»ƒn Dá»¥ng & CV</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-bold">
-                  Việc làm
+                  Viá»‡c lÃ m
                 </span>
               </button>
             </div>
 
-            {/* 4. Chợ Cư Dân */}
+            {/* 4. Chá»£ CÆ° DÃ¢n */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2455,7 +2541,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Store className={`w-4 h-4 ${effectiveMainTab === 'resident_market' ? 'text-slate-950' : 'text-amber-400'}`} />
-                  <span className="text-[12px] font-extrabold">4. Chợ Cư Dân</span>
+                  <span className="text-[12px] font-extrabold">4. Chá»£ CÆ° DÃ¢n</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
                   {adminStores.length}
@@ -2472,7 +2558,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Gian Hàng & Shop</span>
+                    <span>â€¢ Gian HÃ ng & Shop</span>
                     <span className="font-mono text-[10px]">{adminStores.length}</span>
                   </button>
                   <button
@@ -2483,7 +2569,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Quản Lý Đơn Hàng</span>
+                    <span>â€¢ Quáº£n LÃ½ ÄÆ¡n HÃ ng</span>
                     <span className="font-mono text-[10px]">{adminStoreOrders.length}</span>
                   </button>
                   <button
@@ -2494,7 +2580,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Gói Tiện Ích Cư Dân</span>
+                    <span>â€¢ GÃ³i Tiá»‡n Ãch CÆ° DÃ¢n</span>
                     <span className="font-mono text-[10px]">{adminPackageOrders.length}</span>
                   </button>
                   <button
@@ -2505,7 +2591,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Doanh Thu & Quyết Toán
+                    â€¢ Doanh Thu & Quyáº¿t ToÃ¡n
                   </button>
                   <button
                     onClick={() => setActiveTab('partners_reputation')}
@@ -2515,14 +2601,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Đánh Giá Uy Tín</span>
+                    <span>â€¢ ÄÃ¡nh GiÃ¡ Uy TÃ­n</span>
                     <span className="font-mono text-[10px]">{adminReputationPosts.length}</span>
                   </button>
                 </div>
               )}
             </div>
 
-            {/* 5. Thành Viên & Khách Hàng */}
+            {/* 5. ThÃ nh ViÃªn & KhÃ¡ch HÃ ng */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2538,7 +2624,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <UserCheck className={`w-4 h-4 ${effectiveMainTab === 'users_leads' ? 'text-white' : 'text-blue-400'}`} />
-                  <span className="text-[12px] font-extrabold">5. Thành Viên & Khách</span>
+                  <span className="text-[12px] font-extrabold">5. ThÃ nh ViÃªn & KhÃ¡ch</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
                   {registeredUsers.length}
@@ -2555,7 +2641,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Danh Sách Thành Viên</span>
+                    <span>â€¢ Danh SÃ¡ch ThÃ nh ViÃªn</span>
                     <span className="font-mono text-[10px]">{registeredUsers.length}</span>
                   </button>
                   <button
@@ -2566,7 +2652,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    <span>• Khách Hẹn Xem Nhà</span>
+                    <span>â€¢ KhÃ¡ch Háº¹n Xem NhÃ </span>
                     <span className="font-mono text-[10px]">{contacts.length}</span>
                   </button>
                   <button
@@ -2577,13 +2663,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Phân Quyền & Quản Trị
+                    â€¢ PhÃ¢n Quyá»n & Quáº£n Trá»‹
                   </button>
                 </div>
               )}
             </div>
 
-            {/* 6. Banner & Quảng Cáo */}
+            {/* 6. Banner & Quáº£ng CÃ¡o */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2599,7 +2685,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Sparkles className={`w-4 h-4 ${effectiveMainTab === 'ads' ? 'text-white' : 'text-rose-400'}`} />
-                  <span className="text-[12px] font-extrabold">6. Quảng Cáo Banner</span>
+                  <span className="text-[12px] font-extrabold">6. Quáº£ng CÃ¡o Banner</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
                   {adsList.length}
@@ -2607,7 +2693,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
             </div>
 
-            {/* 7. Công Cụ & Hệ Thống */}
+            {/* 7. CÃ´ng Cá»¥ & Há»‡ Thá»‘ng */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2623,7 +2709,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Settings className={`w-4 h-4 ${effectiveMainTab === 'tools' ? 'text-white' : 'text-indigo-400'}`} />
-                  <span className="text-[12px] font-extrabold">7. Công Cụ &amp; Bot</span>
+                  <span className="text-[12px] font-extrabold">7. CÃ´ng Cá»¥ &amp; Bot</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-bold">
                   SEO
@@ -2640,7 +2726,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Thống Kê Truy Cập
+                    â€¢ Thá»‘ng KÃª Truy Cáº­p
                   </button>
                   <button
                     onClick={() => setActiveTab('seo')}
@@ -2650,7 +2736,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Tối Ưu SEO
+                    â€¢ Tá»‘i Æ¯u SEO
                   </button>
                   <button
                     onClick={() => setActiveTab('marketing')}
@@ -2660,7 +2746,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Truyền Thông & Social
+                    â€¢ Truyá»n ThÃ´ng & Social
                   </button>
                   <button
                     onClick={() => setActiveTab('zalo')}
@@ -2670,7 +2756,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Cộng Đồng Zalo
+                    â€¢ Cá»™ng Äá»“ng Zalo
                   </button>
                   <button
                     onClick={() => setActiveTab('workspace_sync')}
@@ -2680,7 +2766,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Google Workspace
+                    â€¢ Google Workspace
                   </button>
                   <button
                     onClick={() => setActiveTab('n8n')}
@@ -2690,7 +2776,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
                     }`}
                   >
-                    • Tự Động Hóa n8n
+                    â€¢ Tá»± Äá»™ng HÃ³a n8n
                   </button>
                 </div>
               )}
@@ -2698,27 +2784,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </nav>
         </aside>
 
-        {/* === CỘT NỘI DUNG CHÍNH (MAIN WORKSPACE AREA) === */}
+        {/* === Cá»˜T Ná»˜I DUNG CHÃNH (MAIN WORKSPACE AREA) === */}
         <div className="flex-1 min-w-0 w-full space-y-4">
           
-          {/* Thanh chuyển đổi nhanh trên Mobile / Tablet (< lg) */}
+          {/* Thanh chuyá»ƒn Ä‘á»•i nhanh trÃªn Mobile / Tablet (< lg) */}
           <div className="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-2.5 shadow-md flex items-center justify-between gap-2">
             <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
               <Layers className="w-3.5 h-3.5" />
-              {effectiveMainTab === 'bds' && '1. Bất Động Sản'}
-              {effectiveMainTab === 'technicians' && '2. Thợ & Dịch Vụ'}
-              {effectiveMainTab === 'recruitment' && '3. Tuyển Dụng'}
-              {effectiveMainTab === 'resident_market' && '4. Chợ Cư Dân'}
-              {effectiveMainTab === 'users_leads' && '5. Thành Viên'}
+              {effectiveMainTab === 'bds' && '1. Báº¥t Äá»™ng Sáº£n'}
+              {effectiveMainTab === 'technicians' && '2. Thá»£ & Dá»‹ch Vá»¥'}
+              {effectiveMainTab === 'recruitment' && '3. Tuyá»ƒn Dá»¥ng'}
+              {effectiveMainTab === 'resident_market' && '4. Chá»£ CÆ° DÃ¢n'}
+              {effectiveMainTab === 'users_leads' && '5. ThÃ nh ViÃªn'}
               {effectiveMainTab === 'ads' && '6. Banner QC'}
-              {effectiveMainTab === 'tools' && '7. Công Cụ'}
+              {effectiveMainTab === 'tools' && '7. CÃ´ng Cá»¥'}
             </span>
             <button
               type="button"
               onClick={() => setIsSubNavDropdownOpen(!isSubNavDropdownOpen)}
               className="py-1 px-2.5 bg-amber-500 text-slate-950 font-black text-[11px] rounded-lg cursor-pointer"
             >
-              {isSubNavDropdownOpen ? 'Đóng Menu ▲' : 'Chọn Phân Hệ ▼'}
+              {isSubNavDropdownOpen ? 'ÄÃ³ng Menu â–²' : 'Chá»n PhÃ¢n Há»‡ â–¼'}
             </button>
           </div>
 
@@ -2728,48 +2814,48 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-emerald-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Building2 className="w-4 h-4" /> 1. BĐS ({properties.length})
+                <Building2 className="w-4 h-4" /> 1. BÄS ({properties.length})
               </button>
               <button
                 onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-orange-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Wrench className="w-4 h-4" /> 2. Thợ ({adminResidentServices.length})
+                <Wrench className="w-4 h-4" /> 2. Thá»£ ({adminResidentServices.length})
               </button>
               <button
                 onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-teal-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Briefcase className="w-4 h-4" /> 3. Tuyển Dụng
+                <Briefcase className="w-4 h-4" /> 3. Tuyá»ƒn Dá»¥ng
               </button>
               <button
                 onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-amber-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Store className="w-4 h-4" /> 4. Chợ ({adminStores.length})
+                <Store className="w-4 h-4" /> 4. Chá»£ ({adminStores.length})
               </button>
               <button
                 onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('users'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-blue-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <UserCheck className="w-4 h-4" /> 5. Thành Viên
+                <UserCheck className="w-4 h-4" /> 5. ThÃ nh ViÃªn
               </button>
               <button
                 onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-rose-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Sparkles className="w-4 h-4" /> 6. Quảng Cáo
+                <Sparkles className="w-4 h-4" /> 6. Quáº£ng CÃ¡o
               </button>
               <button
                 onClick={() => { handleSelectMainTab('tools'); setActiveTab('analytics'); setIsSubNavDropdownOpen(false); }}
                 className="col-span-2 p-2 bg-slate-900 text-indigo-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Settings className="w-4 h-4" /> 7. Công Cụ & Bot Hệ Thống
+                <Settings className="w-4 h-4" /> 7. CÃ´ng Cá»¥ & Bot Há»‡ Thá»‘ng
               </button>
             </div>
           )}
 
-      {/* ==================== TAB THỢ DỊCH VỤ & KỸ THUẬT CƯ DÂN ==================== */}
+      {/* ==================== TAB THá»¢ Dá»ŠCH Vá»¤ & Ká»¸ THUáº¬T CÆ¯ DÃ‚N ==================== */}
       {activeTab === 'resident_services_mgmt' && (
         <div className="space-y-4">
           {/* Header Banner - Compact & focused on Technicians */}
@@ -2777,18 +2863,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2 py-0.5 bg-orange-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">
-                  THỢ DỊCH VỤ & KỸ THUẬT CƯ DÂN
+                  THá»¢ Dá»ŠCH Vá»¤ & Ká»¸ THUáº¬T CÆ¯ DÃ‚N
                 </span>
                 <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-500/40 font-bold text-[10px] rounded flex items-center gap-1">
-                  <BadgeCheck className="w-3 h-3 text-blue-400" /> NÚT XANH VERIFIED KYC
+                  <BadgeCheck className="w-3 h-3 text-blue-400" /> NÃšT XANH VERIFIED KYC
                 </span>
               </div>
               <h2 className="text-base sm:text-lg font-black text-orange-400 mt-1 flex items-center gap-2">
                 <Wrench className="w-5 h-5 text-orange-400" />
-                <span>QUẢN LÝ THỢ KỸ THUẬT, SỬA CHỮA ĐIỆN NƯỚC & DỊCH VỤ CƯ DÂN</span>
+                <span>QUáº¢N LÃ THá»¢ Ká»¸ THUáº¬T, Sá»¬A CHá»®A ÄIá»†N NÆ¯á»šC & Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N</span>
               </h2>
               <p className="text-xs text-slate-300 mt-0.5 max-w-2xl">
-                Quản lý đội ngũ Thợ Điện Nước, Điện Lạnh, Thợ Khóa, Cửa Cuốn, Nhôm Kính, Dọn Vệ Sinh & Taxi Cư Dân. Cấp Nút Xanh KYC để định danh uy tín.
+                Quáº£n lÃ½ Ä‘á»™i ngÅ© Thá»£ Äiá»‡n NÆ°á»›c, Äiá»‡n Láº¡nh, Thá»£ KhÃ³a, Cá»­a Cuá»‘n, NhÃ´m KÃ­nh, Dá»n Vá»‡ Sinh & Taxi CÆ° DÃ¢n. Cáº¥p NÃºt Xanh KYC Ä‘á»ƒ Ä‘á»‹nh danh uy tÃ­n.
               </p>
             </div>
 
@@ -2801,7 +2887,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               className="px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 border border-orange-300 cursor-pointer shrink-0"
             >
               <PlusCircle className="w-4 h-4 text-slate-950" />
-              <span>➕ Thêm Thợ / Dịch Vụ Mới</span>
+              <span>âž• ThÃªm Thá»£ / Dá»‹ch Vá»¥ Má»›i</span>
             </button>
           </div>
 
@@ -2813,7 +2899,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
-                  placeholder="Tìm theo tên dịch vụ, số điện thoại, tên nhà cung cấp..."
+                  placeholder="TÃ¬m theo tÃªn dá»‹ch vá»¥, sá»‘ Ä‘iá»‡n thoáº¡i, tÃªn nhÃ  cung cáº¥p..."
                   value={resServiceSearch}
                   onChange={(e) => setResServiceSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-2xl border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-amber-500 outline-none"
@@ -2827,9 +2913,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   onChange={(e) => setResServiceKycFilter(e.target.value)}
                   className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-amber-500 outline-none"
                 >
-                  <option value="all">Tất cả KYC</option>
-                  <option value="verified">🔵 Đã Cấp Nút Xanh KYC</option>
-                  <option value="unverified">⚪ Chưa Cấp Nút Xanh</option>
+                  <option value="all">Táº¥t cáº£ KYC</option>
+                  <option value="verified">ðŸ”µ ÄÃ£ Cáº¥p NÃºt Xanh KYC</option>
+                  <option value="unverified">âšª ChÆ°a Cáº¥p NÃºt Xanh</option>
                 </select>
 
                 <select
@@ -2837,10 +2923,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   onChange={(e) => setResServiceExpiryFilter(e.target.value as any)}
                   className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-amber-500 outline-none"
                 >
-                  <option value="all">Tất cả thời hạn</option>
-                  <option value="active">🟢 Đang hiển thị</option>
-                  <option value="expiring">⏰ Sắp hết hạn (≤ 5 ngày)</option>
-                  <option value="expired">🛑 Đã ẩn tự động (&gt; 30 ngày)</option>
+                  <option value="all">Táº¥t cáº£ thá»i háº¡n</option>
+                  <option value="active">ðŸŸ¢ Äang hiá»ƒn thá»‹</option>
+                  <option value="expiring">â° Sáº¯p háº¿t háº¡n (â‰¤ 5 ngÃ y)</option>
+                  <option value="expired">ðŸ›‘ ÄÃ£ áº©n tá»± Ä‘á»™ng (&gt; 30 ngÃ y)</option>
                 </select>
               </div>
             </div>
@@ -2855,7 +2941,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
                 }`}
               >
-                Tất Cả ({adminResidentServices.length})
+                Táº¥t Cáº£ ({adminResidentServices.length})
               </button>
               {BUSINESS_CATEGORIES.map(cat => {
                 const count = adminResidentServices.filter(s => s.categoryId === cat.id).length;
@@ -2926,7 +3012,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           className="w-full h-full object-cover"
                         />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs font-bold">Chưa có ảnh</div>
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs font-bold">ChÆ°a cÃ³ áº£nh</div>
                         )}
                         <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
                           <span className="px-2.5 py-1 bg-slate-950/80 backdrop-blur-md text-amber-400 font-extrabold text-[10px] rounded-lg border border-amber-500/30">
@@ -2946,7 +3032,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           ) : (
                             <span className="px-2.5 py-1 bg-slate-900/80 backdrop-blur-md text-slate-300 font-bold text-[10px] rounded-full border border-slate-700 flex items-center gap-1">
                               <ShieldAlert className="w-3 h-3 text-amber-400" />
-                              <span>Chưa KYC</span>
+                              <span>ChÆ°a KYC</span>
                             </span>
                           )}
                         </div>
@@ -2957,15 +3043,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         <div className="flex items-center gap-1.5 mb-1">
                           {expiry.isExpired ? (
                             <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-400">
-                              🛑 Đã ẩn sau 30 ngày
+                              ðŸ›‘ ÄÃ£ áº©n sau 30 ngÃ y
                             </span>
                           ) : expiry.statusBadge === 'expiring_soon' ? (
                             <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-400 animate-pulse">
-                              ⏰ Sắp hết hạn (Còn {expiry.daysRemaining} ngày)
+                              â° Sáº¯p háº¿t háº¡n (CÃ²n {expiry.daysRemaining} ngÃ y)
                             </span>
                           ) : (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-400">
-                              🟢 Hiển thị: Còn {expiry.daysRemaining} ngày
+                              ðŸŸ¢ Hiá»ƒn thá»‹: CÃ²n {expiry.daysRemaining} ngÃ y
                             </span>
                           )}
                         </div>
@@ -2975,7 +3061,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         </h3>
                         <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
                           <span className="font-black text-amber-600 dark:text-amber-400 text-sm">
-                            {srv.priceDisplay || '—'}
+                            {srv.priceDisplay || 'â€”'}
                           </span>
                           <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
                             <Star className="w-3.5 h-3.5 fill-amber-400" />
@@ -2987,23 +3073,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       {/* Provider Contact Info */}
                       <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl text-xs space-y-1.5 border border-slate-100 dark:border-slate-800">
                         <div className="flex items-center justify-between font-bold">
-                          <span className="text-slate-500 dark:text-slate-400">Nhà cung cấp:</span>
-                          <span className="text-slate-900 dark:text-white font-black">{srv.providerName || 'Cư Dân Vinhomes'}</span>
+                          <span className="text-slate-500 dark:text-slate-400">NhÃ  cung cáº¥p:</span>
+                          <span className="text-slate-900 dark:text-white font-black">{srv.providerName || 'CÆ° DÃ¢n Vinhomes'}</span>
                         </div>
                         <div className="flex items-center justify-between font-bold">
-                          <span className="text-slate-500 dark:text-slate-400">Số Điện Thoại:</span>
+                          <span className="text-slate-500 dark:text-slate-400">Sá»‘ Äiá»‡n Thoáº¡i:</span>
                           <a href={`tel:${srv.providerPhone}`} className="text-emerald-600 dark:text-emerald-400 font-black hover:underline flex items-center gap-1">
                             <Phone className="w-3 h-3" />
                             <span>{srv.providerPhone}</span>
                           </a>
                         </div>
                         <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-                          <span>Đăng: {expiry.postDateFormatted}</span>
-                          <span>Hết hạn: {expiry.expiresAtFormatted}</span>
+                          <span>ÄÄƒng: {expiry.postDateFormatted}</span>
+                          <span>Háº¿t háº¡n: {expiry.expiresAtFormatted}</span>
                         </div>
                         {srv.providerZalo && (
                           <div className="flex items-center justify-between font-bold">
-                            <span className="text-slate-500 dark:text-slate-400">Zalo Chính Chủ:</span>
+                            <span className="text-slate-500 dark:text-slate-400">Zalo ChÃ­nh Chá»§:</span>
                             <span className="text-blue-600 dark:text-blue-400 font-bold">{srv.providerZalo}</span>
                           </div>
                         )}
@@ -3028,16 +3114,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           }`}
                         >
                           <BadgeCheck className="w-3.5 h-3.5" />
-                          <span>{isVerified ? 'Gỡ KYC' : 'Cấp KYC'}</span>
+                          <span>{isVerified ? 'Gá»¡ KYC' : 'Cáº¥p KYC'}</span>
                         </button>
 
                         <button
                           onClick={() => handleRenewResidentService(srv.id, srv.title)}
                           className="py-2.5 rounded-xl font-black text-[11px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 transition flex items-center justify-center gap-1 shadow-md cursor-pointer"
-                          title="Gia hạn thêm 30 ngày hiển thị"
+                          title="Gia háº¡n thÃªm 30 ngÃ y hiá»ƒn thá»‹"
                         >
                           <RefreshCw className="w-3.5 h-3.5" />
-                          <span>Gia Hạn +30 Ngày</span>
+                          <span>Gia Háº¡n +30 NgÃ y</span>
                         </button>
                       </div>
 
@@ -3047,7 +3133,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           className="py-2 bg-slate-100 dark:bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition cursor-pointer"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
-                          <span>Chỉnh Sửa</span>
+                          <span>Chá»‰nh Sá»­a</span>
                         </button>
 
                         <button
@@ -3055,7 +3141,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           className="py-2 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                          <span>Xóa Bỏ</span>
+                          <span>XÃ³a Bá»</span>
                         </button>
                       </div>
                     </div>
@@ -3064,7 +3150,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               })}
           </div>
 
-          {/* KYC Manager — Admin duyệt/cấp/thu hồi Nút Xanh Định Danh */}
+          {/* KYC Manager â€” Admin duyá»‡t/cáº¥p/thu há»“i NÃºt Xanh Äá»‹nh Danh */}
           <AdminKycManager
             services={adminResidentServices}
             onUpdateServiceKyc={async (serviceId, updates) => {
@@ -3087,12 +3173,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ==================== MẢNG 2: TAB TUYỂN DỤNG & VIỆC LÀM CƯ DÂN ==================== */}
+      {/* ==================== Máº¢NG 2: TAB TUYá»‚N Dá»¤NG & VIá»†C LÃ€M CÆ¯ DÃ‚N ==================== */}
       {activeTab === 'recruitment_mgmt' && (
         <AdminRecruitmentManager onRefresh={onRefreshData} />
       )}
 
-      {/* ==================== MẢNG 2: TAB 2 - GIAN HÀNG & DỊCH VỤ CƯ DÂN ==================== */}
+      {/* ==================== Máº¢NG 2: TAB 2 - GIAN HÃ€NG & Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N ==================== */}
       {activeTab === 'stores_mgmt' && (() => {
         // Calculate dynamic stats
         const allStoreProds = adminStores.flatMap(s => s.products || []);
@@ -3139,23 +3225,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                    QUẢN LÝ GIAN HÀNG & DỊCH VỤ CƯ DÂN
+                    QUáº¢N LÃ GIAN HÃ€NG & Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N
                   </span>
                   <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[10px] rounded-full">
-                    ● BỘ LỌC DUYỆT ĐĂNG WEBSITE 24H
+                    â— Bá»˜ Lá»ŒC DUYá»†T ÄÄ‚NG WEBSITE 24H
                   </span>
                   {totalPendingModeration > 0 && (
                     <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full animate-pulse flex items-center gap-1">
-                      <Clock className="w-3 h-3" /> {totalPendingModeration} MỤC CHỜ DUYỆT
+                      <Clock className="w-3 h-3" /> {totalPendingModeration} Má»¤C CHá»œ DUYá»†T
                     </span>
                   )}
                 </div>
                 <h2 className="text-xl font-black text-emerald-400 mt-1.5 flex items-center gap-2">
                   <Store className="w-6 h-6 text-emerald-400" />
-                  <span>HỆ THỐNG GIAN HÀNG CƯ DÂN & KIỂM DUYỆT DỊCH VỤ</span>
+                  <span>Há»† THá»NG GIAN HÃ€NG CÆ¯ DÃ‚N & KIá»‚M DUYá»†T Dá»ŠCH Vá»¤</span>
                 </h2>
                 <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                  Quản lý toàn bộ danh mục sản phẩm & dịch vụ cư dân cung cấp. Admin có thể thêm, sửa, xóa, duyệt đăng hoặc tạm ẩn từng sản phẩm/dịch vụ để hiển thị lên Website.
+                  Quáº£n lÃ½ toÃ n bá»™ danh má»¥c sáº£n pháº©m & dá»‹ch vá»¥ cÆ° dÃ¢n cung cáº¥p. Admin cÃ³ thá»ƒ thÃªm, sá»­a, xÃ³a, duyá»‡t Ä‘Äƒng hoáº·c táº¡m áº©n tá»«ng sáº£n pháº©m/dá»‹ch vá»¥ Ä‘á»ƒ hiá»ƒn thá»‹ lÃªn Website.
                 </p>
               </div>
 
@@ -3165,14 +3251,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow transition cursor-pointer"
                 >
                   <RefreshCw className="w-4 h-4" />
-                  <span>Đồng Bộ Lên Web</span>
+                  <span>Äá»“ng Bá»™ LÃªn Web</span>
                 </button>
                 <button
                   onClick={handleOpenCreateStore}
                   className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-black text-xs flex items-center gap-1.5 shadow-lg hover:shadow-emerald-500/25 transition cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>➕ Tạo Gian Hàng Mới</span>
+                  <span>âž• Táº¡o Gian HÃ ng Má»›i</span>
                 </button>
               </div>
             </div>
@@ -3184,7 +3270,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <Store className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[11px] text-slate-400 font-bold block">Tổng Gian Hàng</span>
+                  <span className="text-[11px] text-slate-400 font-bold block">Tá»•ng Gian HÃ ng</span>
                   <span className="text-lg font-black text-slate-900 dark:text-white">{adminStores.length}</span>
                 </div>
               </div>
@@ -3194,7 +3280,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <ShoppingBag className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[11px] text-slate-400 font-bold block">Sản Phẩm & Dịch Vụ</span>
+                  <span className="text-[11px] text-slate-400 font-bold block">Sáº£n Pháº©m & Dá»‹ch Vá»¥</span>
                   <span className="text-lg font-black text-slate-900 dark:text-white">{totalProds + totalServs}</span>
                 </div>
               </div>
@@ -3208,8 +3294,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[11px] text-amber-700 dark:text-amber-300 font-bold block">Chờ Duyệt Lên Web</span>
-                  <span className="text-lg font-black text-amber-600 dark:text-amber-400">{totalPendingModeration} mục</span>
+                  <span className="text-[11px] text-amber-700 dark:text-amber-300 font-bold block">Chá» Duyá»‡t LÃªn Web</span>
+                  <span className="text-lg font-black text-amber-600 dark:text-amber-400">{totalPendingModeration} má»¥c</span>
                 </div>
               </div>
 
@@ -3219,7 +3305,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
                 <div>
                   <span className="text-[11px] text-slate-400 font-bold block">KiotViet POS Live</span>
-                  <span className="text-lg font-black text-purple-600 dark:text-purple-400">{connectedStores} gian hàng</span>
+                  <span className="text-lg font-black text-purple-600 dark:text-purple-400">{connectedStores} gian hÃ ng</span>
                 </div>
               </div>
             </div>
@@ -3231,7 +3317,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="text"
-                    placeholder="Tìm theo tên gian hàng, tên chủ shop, số điện thoại, phân khu..."
+                    placeholder="TÃ¬m theo tÃªn gian hÃ ng, tÃªn chá»§ shop, sá»‘ Ä‘iá»‡n thoáº¡i, phÃ¢n khu..."
                     value={storeSearchQuery}
                     onChange={(e) => setStoreSearchQuery(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -3241,7 +3327,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       onClick={() => setStoreSearchQuery('')}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs font-bold"
                     >
-                      ✕
+                      âœ•
                     </button>
                   )}
                 </div>
@@ -3252,12 +3338,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onChange={(e) => setStoreProjectFilter(e.target.value)}
                     className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white font-bold"
                   >
-                    <option value="all">🏢 Tất Cả Dự Án Vinhomes</option>
-                    <option value="ocean-park-1">Ocean Park 1 (Gia Lâm)</option>
+                    <option value="all">ðŸ¢ Táº¥t Cáº£ Dá»± Ãn Vinhomes</option>
+                    <option value="ocean-park-1">Ocean Park 1 (Gia LÃ¢m)</option>
                     <option value="ocean-park-2">Ocean Park 2 (The Empire)</option>
                     <option value="ocean-park-3">Ocean Park 3 (The Crown)</option>
-                    <option value="smart-city">Smart City (Tây Mỗ)</option>
-                    <option value="grand-park">Grand Park (TP. Thủ Đức)</option>
+                    <option value="smart-city">Smart City (TÃ¢y Má»—)</option>
+                    <option value="grand-park">Grand Park (TP. Thá»§ Äá»©c)</option>
                   </select>
                 </div>
               </div>
@@ -3265,7 +3351,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               {/* Status Tabs */}
               <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <span className="text-[11px] font-bold text-slate-400 mr-1 flex items-center gap-1">
-                  <Filter className="w-3.5 h-3.5" /> Lọc trạng thái:
+                  <Filter className="w-3.5 h-3.5" /> Lá»c tráº¡ng thÃ¡i:
                 </span>
                 <button
                   onClick={() => setStoreModerationFilter('all')}
@@ -3275,7 +3361,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
                   }`}
                 >
-                  Tất cả ({adminStores.length})
+                  Táº¥t cáº£ ({adminStores.length})
                 </button>
                 <button
                   onClick={() => setStoreModerationFilter('pending')}
@@ -3286,7 +3372,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   }`}
                 >
                   <Clock className="w-3 h-3" />
-                  <span>Có bài chờ duyệt ({totalPendingModeration})</span>
+                  <span>CÃ³ bÃ i chá» duyá»‡t ({totalPendingModeration})</span>
                 </button>
                 <button
                   onClick={() => setStoreModerationFilter('approved')}
@@ -3297,7 +3383,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   }`}
                 >
                   <CheckCircle2 className="w-3 h-3" />
-                  <span>Đã duyệt hiển thị Web</span>
+                  <span>ÄÃ£ duyá»‡t hiá»ƒn thá»‹ Web</span>
                 </button>
                 <button
                   onClick={() => setStoreModerationFilter('kiotviet')}
@@ -3318,12 +3404,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               {filteredAdminStores.length === 0 ? (
                 <div className="col-span-2 text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500 space-y-3">
                   <Store className="w-12 h-12 text-slate-400 mx-auto" />
-                  <p className="font-bold text-sm">Không tìm thấy gian hàng nào phù hợp với bộ lọc.</p>
+                  <p className="font-bold text-sm">KhÃ´ng tÃ¬m tháº¥y gian hÃ ng nÃ o phÃ¹ há»£p vá»›i bá»™ lá»c.</p>
                   <button
                     onClick={() => { setStoreSearchQuery(''); setStoreProjectFilter('all'); setStoreModerationFilter('all'); }}
                     className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-200"
                   >
-                    Xóa Bộ Lọc
+                    XÃ³a Bá»™ Lá»c
                   </button>
                 </div>
               ) : (
@@ -3365,13 +3451,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 </h3>
                               </div>
                               <div className="text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2 mt-0.5">
-                                <span className="font-bold text-emerald-600 dark:text-emerald-400">{st.category || 'Gian hàng cư dân'}</span>
-                                <span>•</span>
+                                <span className="font-bold text-emerald-600 dark:text-emerald-400">{st.category || 'Gian hÃ ng cÆ° dÃ¢n'}</span>
+                                <span>â€¢</span>
                                 <span>{st.project?.toUpperCase() || 'VINHOMES'}</span>
                               </div>
                               <div className="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-1.5 mt-1">
                                 <UserIcon className="w-3.5 h-3.5 text-slate-400" />
-                                <span className="font-bold">{st.ownerName || 'Cư dân'}</span>
+                                <span className="font-bold">{st.ownerName || 'CÆ° dÃ¢n'}</span>
                                 {storePhone && (
                                   <a 
                                     href={`tel:${storePhone}`}
@@ -3391,11 +3477,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
                                 : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
                             }`}>
-                              {isStoreApproved ? '✓ Đã Duyệt Web' : '⏳ Chờ Duyệt'}
+                              {isStoreApproved ? 'âœ“ ÄÃ£ Duyá»‡t Web' : 'â³ Chá» Duyá»‡t'}
                             </span>
                             {st.kiotVietConfig?.syncStatus === 'connected' && (
                               <span className="px-2 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 text-[9px] font-bold rounded-md">
-                                ⚡ KiotViet POS
+                                âš¡ KiotViet POS
                               </span>
                             )}
                           </div>
@@ -3403,7 +3489,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                         {/* Description */}
                         <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
-                          {st.description || 'Gian hàng sản phẩm & dịch vụ phục vụ cư dân nội khu đô thị.'}
+                          {st.description || 'Gian hÃ ng sáº£n pháº©m & dá»‹ch vá»¥ phá»¥c vá»¥ cÆ° dÃ¢n ná»™i khu Ä‘Ã´ thá»‹.'}
                         </p>
 
                         {/* Pending Alert if has pending items */}
@@ -3411,10 +3497,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-between text-xs text-amber-700 dark:text-amber-300">
                             <div className="flex items-center gap-1.5 font-black">
                               <span className="inline-block w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-                              <span>🔔 CÓ {storeTotalPending} MỤC ĐANG CHỜ ADMIN DUYỆT!</span>
+                              <span>ðŸ”” CÃ“ {storeTotalPending} Má»¤C ÄANG CHá»œ ADMIN DUYá»†T!</span>
                             </div>
                             <span className="text-[10px] font-bold underline cursor-pointer" onClick={() => setSelectedAdminStore(st)}>
-                              Duyệt ngay →
+                              Duyá»‡t ngay â†’
                             </span>
                           </div>
                         )}
@@ -3422,20 +3508,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         {/* Metrics Bar */}
                         <div className="grid grid-cols-3 gap-2 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl text-center text-xs">
                           <div>
-                            <span className="text-slate-400 text-[10px] block font-bold">Sản phẩm</span>
+                            <span className="text-slate-400 text-[10px] block font-bold">Sáº£n pháº©m</span>
                             <span className="font-black text-slate-900 dark:text-white text-sm">
-                              {storeProds.length} <span className="text-[10px] text-slate-400 font-normal">món</span>
+                              {storeProds.length} <span className="text-[10px] text-slate-400 font-normal">mÃ³n</span>
                             </span>
                           </div>
                           <div>
-                            <span className="text-slate-400 text-[10px] block font-bold">Dịch vụ cung cấp</span>
+                            <span className="text-slate-400 text-[10px] block font-bold">Dá»‹ch vá»¥ cung cáº¥p</span>
                             <span className="font-black text-blue-600 dark:text-blue-400 text-sm">
-                              {matchingServs.length} <span className="text-[10px] text-slate-400 font-normal">dịch vụ</span>
+                              {matchingServs.length} <span className="text-[10px] text-slate-400 font-normal">dá»‹ch vá»¥</span>
                             </span>
                           </div>
                           <div>
-                            <span className="text-slate-400 text-[10px] block font-bold">Đánh giá</span>
-                            <span className="font-black text-amber-500 text-sm">⭐ {st.rating || 0}</span>
+                            <span className="text-slate-400 text-[10px] block font-bold">ÄÃ¡nh giÃ¡</span>
+                            <span className="font-black text-amber-500 text-sm">â­ {st.rating || 0}</span>
                           </div>
                         </div>
                       </div>
@@ -3450,13 +3536,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           className="w-full sm:w-auto flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-md hover:shadow-emerald-500/25 transition flex items-center justify-center gap-1.5 cursor-pointer"
                         >
                           <Eye className="w-4 h-4" />
-                          <span>XEM & QUẢN LÝ TẤT CẢ DỊCH VỤ / SẢN PHẨM ({storeProds.length + matchingServs.length})</span>
+                          <span>XEM & QUáº¢N LÃ Táº¤T Cáº¢ Dá»ŠCH Vá»¤ / Sáº¢N PHáº¨M ({storeProds.length + matchingServs.length})</span>
                         </button>
 
                         <div className="flex items-center gap-1.5 w-full sm:w-auto justify-end">
                           <button
                             onClick={() => handleToggleStoreStatus(st)}
-                            title={isStoreApproved ? "Tạm ẩn gian hàng khỏi website" : "Duyệt gian hàng lên website"}
+                            title={isStoreApproved ? "Táº¡m áº©n gian hÃ ng khá»i website" : "Duyá»‡t gian hÃ ng lÃªn website"}
                             className={`p-2.5 rounded-xl font-bold text-xs transition cursor-pointer flex items-center gap-1 ${
                               isStoreApproved
                                 ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 hover:bg-amber-500 hover:text-white'
@@ -3468,7 +3554,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                           <button
                             onClick={() => handleOpenEditStore(st)}
-                            title="Chỉnh sửa thông tin gian hàng"
+                            title="Chá»‰nh sá»­a thÃ´ng tin gian hÃ ng"
                             className="p-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-bold text-xs transition cursor-pointer"
                           >
                             <Edit3 className="w-4 h-4" />
@@ -3476,7 +3562,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                           <button
                             onClick={() => handleDeleteStore(st.id, st.storeName)}
-                            title="Xóa gian hàng khỏi hệ thống"
+                            title="XÃ³a gian hÃ ng khá»i há»‡ thá»‘ng"
                             className="p-2.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 font-bold rounded-xl text-xs transition cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -3492,31 +3578,31 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         );
       })()}
 
-      {/* ==================== MẢNG 2: TAB 3 - TỔNG QUAN ĐƠN HÀNG ĐỐI TÁC (ĐỐI TÁC TỰ QUẢN LÝ) ==================== */}
+      {/* ==================== Máº¢NG 2: TAB 3 - Tá»”NG QUAN ÄÆ N HÃ€NG Äá»I TÃC (Äá»I TÃC Tá»° QUáº¢N LÃ) ==================== */}
       {activeTab === 'orders_mgmt' && (
         <div className="space-y-6">
           <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 rounded-3xl border-2 border-blue-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                  MÔ HÌNH PHÂN QUYỀN ĐỐI TÁC TỰ QUẢN LÝ
+                  MÃ” HÃŒNH PHÃ‚N QUYá»€N Äá»I TÃC Tá»° QUáº¢N LÃ
                 </span>
               </div>
               <h2 className="text-xl font-black text-blue-400 mt-1.5 flex items-center gap-2">
                 <ShoppingBag className="w-6 h-6 text-blue-400" />
-                <span>TỔNG QUAN ĐƠN HÀNG CHỢ CƯ DÂN (ĐỐI TÁC TỰ QUẢN LÝ)</span>
+                <span>Tá»”NG QUAN ÄÆ N HÃ€NG CHá»¢ CÆ¯ DÃ‚N (Äá»I TÃC Tá»° QUáº¢N LÃ)</span>
               </h2>
               <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                Hệ thống tuân thủ quy trình phân quyền: Admin không trực tiếp quản lý hay can thiệp đơn hàng của từng đối tác. Mỗi cư dân/chủ gian hàng tự quản lý đơn hàng, xem lịch sử giao dịch & doanh thu riêng trong trang Quản Lý Gian Hàng của mình.
+                Há»‡ thá»‘ng tuÃ¢n thá»§ quy trÃ¬nh phÃ¢n quyá»n: Admin khÃ´ng trá»±c tiáº¿p quáº£n lÃ½ hay can thiá»‡p Ä‘Æ¡n hÃ ng cá»§a tá»«ng Ä‘á»‘i tÃ¡c. Má»—i cÆ° dÃ¢n/chá»§ gian hÃ ng tá»± quáº£n lÃ½ Ä‘Æ¡n hÃ ng, xem lá»‹ch sá»­ giao dá»‹ch & doanh thu riÃªng trong trang Quáº£n LÃ½ Gian HÃ ng cá»§a mÃ¬nh.
               </p>
             </div>
           </div>
 
           <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl text-xs text-amber-700 dark:text-amber-300 font-medium flex items-start gap-3">
-            <span className="text-xl">💡</span>
+            <span className="text-xl">ðŸ’¡</span>
             <div>
-              <strong className="font-extrabold block text-slate-900 dark:text-white mb-0.5">Lưu ý phân quyền Quản trị:</strong>
-              Mỗi đối tác/chủ cửa hàng có không gian làm việc độc lập. Họ theo dõi doanh thu bán hàng thực tế, cập nhật tiến độ giao hàng, thanh toán VietQR và tự động xuất hóa đơn VAT KiotViet / MISA trong trang <code className="bg-amber-500/20 px-1.5 py-0.5 rounded font-mono font-bold text-amber-600 dark:text-amber-400">UserStorefrontManager</code>.
+              <strong className="font-extrabold block text-slate-900 dark:text-white mb-0.5">LÆ°u Ã½ phÃ¢n quyá»n Quáº£n trá»‹:</strong>
+              Má»—i Ä‘á»‘i tÃ¡c/chá»§ cá»­a hÃ ng cÃ³ khÃ´ng gian lÃ m viá»‡c Ä‘á»™c láº­p. Há» theo dÃµi doanh thu bÃ¡n hÃ ng thá»±c táº¿, cáº­p nháº­t tiáº¿n Ä‘á»™ giao hÃ ng, thanh toÃ¡n VietQR vÃ  tá»± Ä‘á»™ng xuáº¥t hÃ³a Ä‘Æ¡n VAT KiotViet / MISA trong trang <code className="bg-amber-500/20 px-1.5 py-0.5 rounded font-mono font-bold text-amber-600 dark:text-amber-400">UserStorefrontManager</code>.
             </div>
           </div>
 
@@ -3525,7 +3611,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="block md:hidden space-y-2.5">
               {adminStoreOrders.length === 0 ? (
                 <div className="text-center py-8 text-slate-400 text-xs">
-                  Chưa có đơn hàng nào trên Chợ Cư Dân.
+                  ChÆ°a cÃ³ Ä‘Æ¡n hÃ ng nÃ o trÃªn Chá»£ CÆ° DÃ¢n.
                 </div>
               ) : (
                 adminStoreOrders.map(order => {
@@ -3542,15 +3628,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             #{order.id.slice(-6)}
                           </span>
                           <span className="font-bold text-slate-900 dark:text-white text-xs truncate">
-                            {order.customerName || 'Khách Vãng Lai'}
+                            {order.customerName || 'KhÃ¡ch VÃ£ng Lai'}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <span className="font-black text-xs text-emerald-600 dark:text-emerald-400">
-                            {order.totalAmount ? order.totalAmount.toLocaleString('vi-VN') : 0} đ
+                            {order.totalAmount ? order.totalAmount.toLocaleString('vi-VN') : 0} Ä‘
                           </span>
                           <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-                            ▼
+                            â–¼
                           </span>
                         </div>
                       </div>
@@ -3558,12 +3644,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       {/* Brief single line summary */}
                       <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
                         <span className="truncate max-w-[140px] text-teal-600 dark:text-teal-400 font-semibold">
-                          🏪 {order.storeName}
+                          ðŸª {order.storeName}
                         </span>
                         <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                           order.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
                         }`}>
-                          {order.paymentMethod === 'vietqr' ? 'VietQR' : 'COD'} • {order.paymentStatus === 'paid' ? 'Đã Thanh Toán' : 'Chưa Trả'}
+                          {order.paymentMethod === 'vietqr' ? 'VietQR' : 'COD'} â€¢ {order.paymentStatus === 'paid' ? 'ÄÃ£ Thanh ToÃ¡n' : 'ChÆ°a Tráº£'}
                         </span>
                       </div>
 
@@ -3572,45 +3658,45 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2 text-xs">
                           <div className="grid grid-cols-2 gap-2 text-[11px]">
                             <div>
-                              <span className="text-slate-400 block text-[10px]">SĐT Khách Hàng:</span>
+                              <span className="text-slate-400 block text-[10px]">SÄT KhÃ¡ch HÃ ng:</span>
                               <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
-                                📞 {order.customerPhone || 'Chưa cập nhật'}
+                                ðŸ“ž {order.customerPhone || 'ChÆ°a cáº­p nháº­t'}
                               </span>
                             </div>
                             <div>
-                              <span className="text-slate-400 block text-[10px]">Địa Chỉ Nhận:</span>
+                              <span className="text-slate-400 block text-[10px]">Äá»‹a Chá»‰ Nháº­n:</span>
                               <span className="font-medium text-slate-800 dark:text-slate-200">
-                                📍 {order.customerAddress || 'Giao tại căn hộ'}
+                                ðŸ“ {order.customerAddress || 'Giao táº¡i cÄƒn há»™'}
                               </span>
                             </div>
                             <div>
-                              <span className="text-slate-400 block text-[10px]">Trạng Thái Giao Hàng:</span>
+                              <span className="text-slate-400 block text-[10px]">Tráº¡ng ThÃ¡i Giao HÃ ng:</span>
                               <span className="font-bold text-blue-600 dark:text-blue-400">
-                                {order.orderStatus === 'new' && '🆕 Đơn Mới'}
-                                {order.orderStatus === 'confirmed' && '✓ Đã Xác Nhận'}
-                                {order.orderStatus === 'delivering' && '🚚 Đang Giao Hàng'}
-                                {order.orderStatus === 'completed' && '🎉 Hoàn Thành'}
-                                {order.orderStatus === 'cancelled' && '❌ Đã Hủy'}
+                                {order.orderStatus === 'new' && 'ðŸ†• ÄÆ¡n Má»›i'}
+                                {order.orderStatus === 'confirmed' && 'âœ“ ÄÃ£ XÃ¡c Nháº­n'}
+                                {order.orderStatus === 'delivering' && 'ðŸšš Äang Giao HÃ ng'}
+                                {order.orderStatus === 'completed' && 'ðŸŽ‰ HoÃ n ThÃ nh'}
+                                {order.orderStatus === 'cancelled' && 'âŒ ÄÃ£ Há»§y'}
                               </span>
                             </div>
                             <div>
-                              <span className="text-slate-400 block text-[10px]">Quyền Quản Lý:</span>
+                              <span className="text-slate-400 block text-[10px]">Quyá»n Quáº£n LÃ½:</span>
                               <span className="text-purple-600 dark:text-purple-400 font-bold">
-                                👤 Đối tác tự xử lý
+                                ðŸ‘¤ Äá»‘i tÃ¡c tá»± xá»­ lÃ½
                               </span>
                             </div>
                           </div>
                           
                           {order.items && order.items.length > 0 && (
                             <div className="bg-slate-100 dark:bg-slate-900/80 p-2 rounded-xl mt-2 space-y-1">
-                              <span className="text-[10px] font-black uppercase text-slate-500 block">Sản Phẩm Đã Đặt:</span>
+                              <span className="text-[10px] font-black uppercase text-slate-500 block">Sáº£n Pháº©m ÄÃ£ Äáº·t:</span>
                               {order.items.map((item, i) => (
                                 <div key={i} className="flex justify-between text-[11px]">
                                   <span className="text-slate-700 dark:text-slate-300 font-medium">
-                                    • {item.productName} x{item.quantity}
+                                    â€¢ {item.productName} x{item.quantity}
                                   </span>
                                   <span className="font-mono text-slate-900 dark:text-white font-bold">
-                                    {(item.price * item.quantity).toLocaleString('vi-VN')} đ
+                                    {(item.price * item.quantity).toLocaleString('vi-VN')} Ä‘
                                   </span>
                                 </div>
                               ))}
@@ -3629,20 +3715,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 font-black uppercase tracking-wider">
-                    <th className="py-3 px-2">Mã Đơn</th>
-                    <th className="py-3 px-2">Khách Hàng</th>
-                    <th className="py-3 px-2">Gian Hàng</th>
-                    <th className="py-3 px-2">Tổng Tiền</th>
-                    <th className="py-3 px-2">Thanh Toán</th>
-                    <th className="py-3 px-2">Trạng Thái Đơn</th>
-                    <th className="py-3 px-2 text-right">Quyền Quản Lý</th>
+                    <th className="py-3 px-2">MÃ£ ÄÆ¡n</th>
+                    <th className="py-3 px-2">KhÃ¡ch HÃ ng</th>
+                    <th className="py-3 px-2">Gian HÃ ng</th>
+                    <th className="py-3 px-2">Tá»•ng Tiá»n</th>
+                    <th className="py-3 px-2">Thanh ToÃ¡n</th>
+                    <th className="py-3 px-2">Tráº¡ng ThÃ¡i ÄÆ¡n</th>
+                    <th className="py-3 px-2 text-right">Quyá»n Quáº£n LÃ½</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {adminStoreOrders.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="text-center py-8 text-slate-500">
-                        Chưa có đơn hàng nào trên Chợ Cư Dân.
+                        ChÆ°a cÃ³ Ä‘Æ¡n hÃ ng nÃ o trÃªn Chá»£ CÆ° DÃ¢n.
                       </td>
                     </tr>
                   ) : (
@@ -3655,27 +3741,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         </td>
                         <td className="py-3 px-2 font-bold text-emerald-600 dark:text-emerald-400">{order.storeName}</td>
                         <td className="py-3 px-2 font-black text-amber-600 dark:text-amber-400">
-                          {order.totalAmount ? order.totalAmount.toLocaleString('vi-VN') : 0} đ
+                          {order.totalAmount ? order.totalAmount.toLocaleString('vi-VN') : 0} Ä‘
                         </td>
                         <td className="py-3 px-2 font-bold">
                           <span className={`px-2 py-0.5 rounded-full text-[10px] ${
                             order.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
                           }`}>
-                            {order.paymentMethod === 'vietqr' ? 'VietQR' : 'COD'} • {order.paymentStatus === 'paid' ? 'Đã Thanh Toán' : 'Chưa Trả'}
+                            {order.paymentMethod === 'vietqr' ? 'VietQR' : 'COD'} â€¢ {order.paymentStatus === 'paid' ? 'ÄÃ£ Thanh ToÃ¡n' : 'ChÆ°a Tráº£'}
                           </span>
                         </td>
                         <td className="py-3 px-2 font-bold">
                           <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700">
-                            {order.orderStatus === 'new' && '🆕 Đơn Mới'}
-                            {order.orderStatus === 'confirmed' && '✓ Đã Xác Nhận'}
-                            {order.orderStatus === 'delivering' && '🚚 Đang Giao Hàng'}
-                            {order.orderStatus === 'completed' && '🎉 Hoàn Thành'}
-                            {order.orderStatus === 'cancelled' && '❌ Đã Hủy'}
+                            {order.orderStatus === 'new' && 'ðŸ†• ÄÆ¡n Má»›i'}
+                            {order.orderStatus === 'confirmed' && 'âœ“ ÄÃ£ XÃ¡c Nháº­n'}
+                            {order.orderStatus === 'delivering' && 'ðŸšš Äang Giao HÃ ng'}
+                            {order.orderStatus === 'completed' && 'ðŸŽ‰ HoÃ n ThÃ nh'}
+                            {order.orderStatus === 'cancelled' && 'âŒ ÄÃ£ Há»§y'}
                           </span>
                         </td>
                         <td className="py-3 px-2 text-right">
                           <span className="px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold rounded-lg text-[10px]">
-                            👤 Đối tác tự xử lý
+                            ðŸ‘¤ Äá»‘i tÃ¡c tá»± xá»­ lÃ½
                           </span>
                         </td>
                       </tr>
@@ -3688,22 +3774,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ==================== MẢNG 2: TAB 4 - BÀI VIẾT PR ĐỐI TÁC & UY TÍN ==================== */}
+      {/* ==================== Máº¢NG 2: TAB 4 - BÃ€I VIáº¾T PR Äá»I TÃC & UY TÃN ==================== */}
       {activeTab === 'partners_reputation' && (
         <div className="space-y-6">
           <div className="bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 p-6 rounded-3xl border-2 border-purple-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 bg-purple-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                  PR & UY TÍN ĐỐI TÁC
+                  PR & UY TÃN Äá»I TÃC
                 </span>
               </div>
               <h2 className="text-xl font-black text-purple-400 mt-1.5 flex items-center gap-2">
                 <Star className="w-6 h-6 text-purple-400" />
-                <span>QUẢN LÝ ĐỐI TÁC & BÀI VIẾT ĐÁNH GIÁ UY TÍN / PR REVIEW</span>
+                <span>QUáº¢N LÃ Äá»I TÃC & BÃ€I VIáº¾T ÄÃNH GIÃ UY TÃN / PR REVIEW</span>
               </h2>
               <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                Kiểm duyệt các bài bóc phốt, khen thưởng đối tác thi công nội thất, sửa chữa, giúp việc, homestay cư dân Vinhomes. Tích hợp video YouTube review thực tế.
+                Kiá»ƒm duyá»‡t cÃ¡c bÃ i bÃ³c phá»‘t, khen thÆ°á»Ÿng Ä‘á»‘i tÃ¡c thi cÃ´ng ná»™i tháº¥t, sá»­a chá»¯a, giÃºp viá»‡c, homestay cÆ° dÃ¢n Vinhomes. TÃ­ch há»£p video YouTube review thá»±c táº¿.
               </p>
             </div>
           </div>
@@ -3712,23 +3798,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             {adminReputationPosts.length === 0 ? (
               <div className="col-span-2 text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500">
                 <Sparkles className="w-12 h-12 text-slate-400 mx-auto mb-2" />
-                <p className="font-bold text-sm">Chưa có bài viết đánh giá uy tín đối tác nào.</p>
+                <p className="font-bold text-sm">ChÆ°a cÃ³ bÃ i viáº¿t Ä‘Ã¡nh giÃ¡ uy tÃ­n Ä‘á»‘i tÃ¡c nÃ o.</p>
               </div>
             ) : (
               adminReputationPosts.map(post => (
                 <div key={post.id} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="px-2.5 py-0.5 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-extrabold text-[10px] rounded-full">
-                      {post.category || 'Review Dịch Vụ'}
+                      {post.category || 'Review Dá»‹ch Vá»¥'}
                     </span>
-                    <span className="text-amber-500 font-black text-xs">⭐ {post.rating || 0} / 5</span>
+                    <span className="text-amber-500 font-black text-xs">â­ {post.rating || 0} / 5</span>
                   </div>
 
                   <h3 className="font-black text-base text-slate-900 dark:text-white">{post.title}</h3>
                   <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-3">{post.content}</p>
 
                   <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-                    <span className="font-bold text-slate-500">Đối tác: <strong className="text-slate-900 dark:text-white">{post.partnerName}</strong></span>
+                    <span className="font-bold text-slate-500">Äá»‘i tÃ¡c: <strong className="text-slate-900 dark:text-white">{post.partnerName}</strong></span>
                     <span className="font-bold text-emerald-600 dark:text-emerald-400">{post.authorName}</span>
                   </div>
                 </div>
@@ -3738,55 +3824,55 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ==================== MẢNG 2: TAB 5 - TÀI CHÍNH & CHIẾT KHẤU CHỢ ==================== */}
+      {/* ==================== Máº¢NG 2: TAB 5 - TÃ€I CHÃNH & CHIáº¾T KHáº¤U CHá»¢ ==================== */}
       {activeTab === 'resident_finance' && (
         <div className="space-y-6">
           <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 p-6 rounded-3xl border-2 border-teal-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 bg-teal-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                  TÀI CHÍNH CHỢ CƯ DÂN
+                  TÃ€I CHÃNH CHá»¢ CÆ¯ DÃ‚N
                 </span>
               </div>
               <h2 className="text-xl font-black text-teal-400 mt-1.5 flex items-center gap-2">
                 <Wallet className="w-6 h-6 text-teal-400" />
-                <span>QUẢN LÝ TÀI CHÍNH & PHÍ CHIẾT KHẤU DỊCH VỤ CƯ DÂN</span>
+                <span>QUáº¢N LÃ TÃ€I CHÃNH & PHÃ CHIáº¾T KHáº¤U Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N</span>
               </h2>
               <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                Theo dõi tổng giao dịch chợ cư dân, doanh thu gói duy trì gian hàng chính chủ & đối soát VietQR tự động.
+                Theo dÃµi tá»•ng giao dá»‹ch chá»£ cÆ° dÃ¢n, doanh thu gÃ³i duy trÃ¬ gian hÃ ng chÃ­nh chá»§ & Ä‘á»‘i soÃ¡t VietQR tá»± Ä‘á»™ng.
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-2">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Doanh Thu Giao Dịch Chợ</span>
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Doanh Thu Giao Dá»‹ch Chá»£</span>
               <div className="text-2xl font-black text-teal-600 dark:text-teal-400">
-                {adminStoreOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0).toLocaleString('vi-VN')} VNĐ
+                {adminStoreOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0).toLocaleString('vi-VN')} VNÄ
               </div>
-              <span className="text-[10px] text-emerald-600 font-bold block">✓ Tổng đơn hàng trên hệ thống</span>
+              <span className="text-[10px] text-emerald-600 font-bold block">âœ“ Tá»•ng Ä‘Æ¡n hÃ ng trÃªn há»‡ thá»‘ng</span>
             </div>
 
             <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-2">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Gian Hàng Đã Thu Phí</span>
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Gian HÃ ng ÄÃ£ Thu PhÃ­</span>
               <div className="text-2xl font-black text-amber-500">
-                {(adminStores.length * 199000).toLocaleString('vi-VN')} VNĐ
+                {(adminStores.length * 199000).toLocaleString('vi-VN')} VNÄ
               </div>
-              <span className="text-[10px] text-amber-500 font-bold block">Gói 199k VNĐ/tháng</span>
+              <span className="text-[10px] text-amber-500 font-bold block">GÃ³i 199k VNÄ/thÃ¡ng</span>
             </div>
 
             <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-2">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Dịch Vụ KYC Đã Cấp</span>
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Dá»‹ch Vá»¥ KYC ÄÃ£ Cáº¥p</span>
               <div className="text-2xl font-black text-blue-600 dark:text-blue-400">
                 {adminResidentServices.filter(s => s.verified || s.kycStatus === 'verified').length} / {adminResidentServices.length} DV
               </div>
-              <span className="text-[10px] text-blue-500 font-bold block">✓ Đã gắn Nút Xanh Chính Chủ</span>
+              <span className="text-[10px] text-blue-500 font-bold block">âœ“ ÄÃ£ gáº¯n NÃºt Xanh ChÃ­nh Chá»§</span>
             </div>
           </div>
         </div>
       )}
 
-      {/* ==================== MẢNG 2: TAB 6 - QUẢN LÝ GÓI DỊCH VỤ & ĐƠN ĐĂNG KÝ ==================== */}
+      {/* ==================== Máº¢NG 2: TAB 6 - QUáº¢N LÃ GÃ“I Dá»ŠCH Vá»¤ & ÄÆ N ÄÄ‚NG KÃ ==================== */}
       {activeTab === 'package_orders_mgmt' && (
         <div className="space-y-6">
           {/* Header Banner */}
@@ -3794,18 +3880,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                  QUẢN TRỊ BÁO GIÁ & GÓI CỬA HÀNG 24H
+                  QUáº¢N TRá»Š BÃO GIÃ & GÃ“I Cá»¬A HÃ€NG 24H
                 </span>
                 <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 font-bold text-[10px] rounded-full border border-emerald-500/30">
-                  ● ACTIVE STORE PACKAGES
+                  â— ACTIVE STORE PACKAGES
                 </span>
               </div>
               <h2 className="text-xl font-black text-amber-400 mt-1.5 flex items-center gap-2">
                 <Package className="w-6 h-6 text-amber-400" />
-                <span>QUẢN LÝ 6 GÓI DỊCH VỤ & ĐƠN ĐĂNG KÝ TỪ CỬA HÀNG CƯ DÂN</span>
+                <span>QUáº¢N LÃ 6 GÃ“I Dá»ŠCH Vá»¤ & ÄÆ N ÄÄ‚NG KÃ Tá»ª Cá»¬A HÃ€NG CÆ¯ DÃ‚N</span>
               </h2>
               <p className="text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed">
-                Hệ thống báo giá linh hoạt. Cư dân & Nhà cung cấp dịch vụ kết nối trực tiếp không chiết khấu sàn. Admin quản lý các gói hiển thị &amp; phê duyệt các đơn đăng ký dịch vụ nhanh chóng.
+                Há»‡ thá»‘ng bÃ¡o giÃ¡ linh hoáº¡t. CÆ° dÃ¢n & NhÃ  cung cáº¥p dá»‹ch vá»¥ káº¿t ná»‘i trá»±c tiáº¿p khÃ´ng chiáº¿t kháº¥u sÃ n. Admin quáº£n lÃ½ cÃ¡c gÃ³i hiá»ƒn thá»‹ &amp; phÃª duyá»‡t cÃ¡c Ä‘Æ¡n Ä‘Äƒng kÃ½ dá»‹ch vá»¥ nhanh chÃ³ng.
               </p>
             </div>
 
@@ -3814,7 +3900,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               className="px-5 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:brightness-110 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2 shrink-0 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>TẠO GÓI DỊCH VỤ MỚI</span>
+              <span>Táº O GÃ“I Dá»ŠCH Vá»¤ Má»šI</span>
             </button>
           </div>
 
@@ -3824,30 +3910,30 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-amber-500 rounded-full animate-ping"></div>
                 <h3 className="font-extrabold text-base text-slate-900 dark:text-white uppercase">
-                  📦 ĐƠN ĐĂNG KÝ GÓI CẦN DUYỆT ({adminPackageOrders.length})
+                  ðŸ“¦ ÄÆ N ÄÄ‚NG KÃ GÃ“I Cáº¦N DUYá»†T ({adminPackageOrders.length})
                 </h3>
               </div>
               <span className="text-xs text-slate-500 font-bold">
-                Chờ duyệt: <strong className="text-amber-500 font-black">{adminPackageOrders.filter(o => o.status === 'pending').length} đơn</strong>
+                Chá» duyá»‡t: <strong className="text-amber-500 font-black">{adminPackageOrders.filter(o => o.status === 'pending').length} Ä‘Æ¡n</strong>
               </span>
             </div>
 
             {adminPackageOrders.length === 0 ? (
               <div className="text-center py-8 text-slate-500 text-xs">
-                Chưa có đơn đăng ký gói dịch vụ nào. Khách hàng gửi yêu cầu sẽ xuất hiện ở đây.
+                ChÆ°a cÃ³ Ä‘Æ¡n Ä‘Äƒng kÃ½ gÃ³i dá»‹ch vá»¥ nÃ o. KhÃ¡ch hÃ ng gá»­i yÃªu cáº§u sáº½ xuáº¥t hiá»‡n á»Ÿ Ä‘Ã¢y.
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-extrabold uppercase border-b border-slate-200 dark:border-slate-700">
-                      <th className="p-3">Mã & Ngày</th>
-                      <th className="p-3">Khách Hàng / SĐT</th>
-                      <th className="p-3">Gian Hàng / Căn Hộ</th>
-                      <th className="p-3">Gói Dịch Vụ & Giá</th>
-                      <th className="p-3">Ghi Chú Yêu Cầu</th>
-                      <th className="p-3">Trạng Thái</th>
-                      <th className="p-3 text-right">Thao Tác Admin</th>
+                      <th className="p-3">MÃ£ & NgÃ y</th>
+                      <th className="p-3">KhÃ¡ch HÃ ng / SÄT</th>
+                      <th className="p-3">Gian HÃ ng / CÄƒn Há»™</th>
+                      <th className="p-3">GÃ³i Dá»‹ch Vá»¥ & GiÃ¡</th>
+                      <th className="p-3">Ghi ChÃº YÃªu Cáº§u</th>
+                      <th className="p-3">Tráº¡ng ThÃ¡i</th>
+                      <th className="p-3 text-right">Thao TÃ¡c Admin</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
@@ -3865,31 +3951,31 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           </a>
                         </td>
                         <td className="p-3">
-                          <span className="font-bold text-slate-800 dark:text-slate-200">{ord.storeName || 'Cư dân nội khu'}</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-200">{ord.storeName || 'CÆ° dÃ¢n ná»™i khu'}</span>
                         </td>
                         <td className="p-3">
                           <span className="font-extrabold text-slate-900 dark:text-white uppercase block">{ord.packageName}</span>
                           <span className="text-emerald-600 dark:text-emerald-400 font-black">
-                            {(ord.packagePrice || 0).toLocaleString('vi-VN')}đ {ord.unit}
+                            {(ord.packagePrice || 0).toLocaleString('vi-VN')}Ä‘ {ord.unit}
                           </span>
                         </td>
                         <td className="p-3 max-w-xs text-slate-600 dark:text-slate-300 truncate">
-                          {ord.note || 'Không có ghi chú'}
+                          {ord.note || 'KhÃ´ng cÃ³ ghi chÃº'}
                         </td>
                         <td className="p-3">
                           {ord.status === 'pending' && (
                             <span className="px-2.5 py-1 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[10px] font-black rounded-full uppercase border border-amber-300">
-                              🟡 CHỜ DUYỆT
+                              ðŸŸ¡ CHá»œ DUYá»†T
                             </span>
                           )}
                           {ord.status === 'approved' && (
                             <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 text-[10px] font-black rounded-full uppercase border border-emerald-300">
-                              🟢 ĐÃ KÍCH HOẠT
+                              ðŸŸ¢ ÄÃƒ KÃCH HOáº T
                             </span>
                           )}
                           {ord.status === 'rejected' && (
                             <span className="px-2.5 py-1 bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 text-[10px] font-black rounded-full uppercase border border-rose-300">
-                              🔴 TỪ CHỐI
+                              ðŸ”´ Tá»ª CHá»I
                             </span>
                           )}
                         </td>
@@ -3901,17 +3987,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[11px] transition cursor-pointer flex items-center gap-1"
                               >
                                 <Check className="w-3.5 h-3.5" />
-                                <span>DUYỆT</span>
+                                <span>DUYá»†T</span>
                               </button>
                               <button
                                 onClick={() => handleUpdatePackageOrderStatus(ord.id, 'rejected')}
                                 className="px-2.5 py-1.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-500 hover:text-white font-bold rounded-lg text-[11px] transition cursor-pointer"
                               >
-                                Từ Chối
+                                Tá»« Chá»‘i
                               </button>
                             </div>
                           ) : (
-                            <span className="text-[10px] text-slate-400 font-bold">Đã xử lý</span>
+                            <span className="text-[10px] text-slate-400 font-bold">ÄÃ£ xá»­ lÃ½</span>
                           )}
                         </td>
                       </tr>
@@ -3927,14 +4013,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <h3 className="font-extrabold text-base text-slate-900 dark:text-white uppercase flex items-center gap-2">
                 <Star className="w-5 h-5 text-amber-500" />
-                CẤU HÌNH DANH SÁCH GÓI DỊCH VỤ HIỂN THỊ ({adminStorePackages.length} Gói)
+                Cáº¤U HÃŒNH DANH SÃCH GÃ“I Dá»ŠCH Vá»¤ HIá»‚N THá»Š ({adminStorePackages.length} GÃ³i)
               </h3>
               <button
                 onClick={handleOpenAddPkgModal}
                 className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition flex items-center gap-1"
               >
                 <Plus className="w-4 h-4" />
-                <span>Thêm Gói Mới</span>
+                <span>ThÃªm GÃ³i Má»›i</span>
               </button>
             </div>
 
@@ -3949,11 +4035,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-500">
-                        {pkg.badge || 'GÓI CHUẨN'}
+                        {pkg.badge || 'GÃ“I CHUáº¨N'}
                       </span>
                       {pkg.popular && (
                         <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-amber-500 text-slate-950 rounded-full">
-                          🔥 POPULAR
+                          ðŸ”¥ POPULAR
                         </span>
                       )}
                     </div>
@@ -3986,12 +4072,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-bold rounded-lg text-xs transition cursor-pointer flex items-center gap-1"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
-                      <span>Sửa Gói</span>
+                      <span>Sá»­a GÃ³i</span>
                     </button>
                     <button
                       onClick={() => handleDeletePackageClick(pkg.id, pkg.name)}
                       className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition cursor-pointer"
-                      title="Xóa gói"
+                      title="XÃ³a gÃ³i"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -4003,7 +4089,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ==================== MẢNG 2: TAB QUẢN TRỊ TUYỂN DỤNG & VIỆC LÀM ==================== */}
+      {/* ==================== Máº¢NG 2: TAB QUáº¢N TRá»Š TUYá»‚N Dá»¤NG & VIá»†C LÃ€M ==================== */}
       {activeTab === 'recruitment_mgmt' && (
         <AdminRecruitmentManager onRefresh={onRefreshData} />
       )}
@@ -4031,18 +4117,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         />
       )}
 
-      {/* Tab: Quảng Cáo Management */}
+      {/* Tab: Quáº£ng CÃ¡o Management */}
       {activeTab === 'ads' && (
         <div className="space-y-6">
-          {/* ===== ẢNH 4 NHÓM NGÀNH TRANG CHỦ ===== */}
+          {/* ===== áº¢NH 4 NHÃ“M NGÃ€NH TRANG CHá»¦ ===== */}
           {categoryImages.length > 0 && (
             <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-black text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                   <ImageIcon className="w-5 h-5 text-amber-500" />
-                  <span>ẢNH 4 NHÓM NGÀNH TRANG CHỦ</span>
+                  <span>áº¢NH 4 NHÃ“M NGÃ€NH TRANG CHá»¦</span>
                 </h3>
-                <span className="text-[10px] text-slate-400 font-bold">Hiển thị trên trang chủ</span>
+                <span className="text-[10px] text-slate-400 font-bold">Hiá»ƒn thá»‹ trÃªn trang chá»§</span>
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {categoryImages.map(cat => (
@@ -4059,7 +4145,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       ) : (
                         <Upload className="w-3.5 h-3.5" />
                       )}
-                      <span>{categoryImageBusy === cat.key ? 'ĐANG LƯU...' : 'ĐỔI ẢNH'}</span>
+                      <span>{categoryImageBusy === cat.key ? 'ÄANG LÆ¯U...' : 'Äá»”I áº¢NH'}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -4088,12 +4174,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 {editingAd ? (
                   <>
                     <Edit3 className="w-5 h-5 text-amber-500 animate-bounce" />
-                    <span>CHỈNH SỬA BANNER QUẢNG CÁO</span>
+                    <span>CHá»ˆNH Sá»¬A BANNER QUáº¢NG CÃO</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-5 h-5 text-amber-500" />
-                    <span>THÊM BANNER QUẢNG CÁO MỚI (DÀNH RIÊNG CHO ADMIN)</span>
+                    <span>THÃŠM BANNER QUáº¢NG CÃO Má»šI (DÃ€NH RIÃŠNG CHO ADMIN)</span>
                   </>
                 )}
               </h3>
@@ -4103,15 +4189,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   onClick={handleCancelEditAd}
                   className="px-3 py-1 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1"
                 >
-                  <X className="w-4 h-4" /> Hủy Sửa (Trở về Thêm Mới)
+                  <X className="w-4 h-4" /> Há»§y Sá»­a (Trá»Ÿ vá» ThÃªm Má»›i)
                 </button>
               )}
             </div>
 
             {editingAd && (
               <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-center justify-between text-xs font-bold text-amber-800 dark:text-amber-300">
-                <span>⚠️ Bạn đang chỉnh sửa Banner: <strong>"{editingAd.title}"</strong></span>
-                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal">Thay đổi thông tin bên dưới và nhấn "Lưu Cập Nhật Banner"</span>
+                <span>âš ï¸ Báº¡n Ä‘ang chá»‰nh sá»­a Banner: <strong>"{editingAd.title}"</strong></span>
+                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal">Thay Ä‘á»•i thÃ´ng tin bÃªn dÆ°á»›i vÃ  nháº¥n "LÆ°u Cáº­p Nháº­t Banner"</span>
               </div>
             )}
             
@@ -4120,11 +4206,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 {/* Column 1: Text details */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">1. Tiêu đề quảng cáo (*)</label>
+                    <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">1. TiÃªu Ä‘á» quáº£ng cÃ¡o (*)</label>
                     <input
                       type="text"
                       required
-                      placeholder="Ví dụ: Quỹ căn Shophouse Chà Là cắt lỗ 2 tỷ..."
+                      placeholder="VÃ­ dá»¥: Quá»¹ cÄƒn Shophouse ChÃ  LÃ  cáº¯t lá»— 2 tá»·..."
                       value={newAdTitle}
                       onChange={e => setNewAdTitle(e.target.value)}
                       className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs font-bold"
@@ -4132,10 +4218,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">2. Đường dẫn liên kết (Link Web / Zalo)</label>
+                    <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">2. ÄÆ°á»ng dáº«n liÃªn káº¿t (Link Web / Zalo)</label>
                     <input
                       type="text"
-                      placeholder="Ví dụ: https://zalo.me/0912345678"
+                      placeholder="VÃ­ dá»¥: https://zalo.me/0912345678"
                       value={newAdLink}
                       onChange={e => setNewAdLink(e.target.value)}
                       className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-xs"
@@ -4143,84 +4229,84 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </div>
 
                    <div>
-                     <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">3. Vị trí hiển thị trên website (*)</label>
+                     <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">3. Vá»‹ trÃ­ hiá»ƒn thá»‹ trÃªn website (*)</label>
                      <select
                        value={newAdPos}
                        onChange={e => setNewAdPos(e.target.value as any)}
                        className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-amber-300 dark:border-slate-700 rounded-2xl text-amber-600 dark:text-amber-400 font-black text-xs focus:ring-2 focus:ring-amber-500 outline-none shadow-sm"
                      >
-                       <option value="float_right_pc">📌 Cạnh Phải Web Bám Đuổi trên PC (Sticky Float Right - Có nút tắt ❌)</option>
-                       <option value="header_top">📌 Thanh trên cùng Header (Top Banner Bar)</option>
-                       <option value="float_left_pc">📌 Cạnh Trái Web Bám Đuổi trên PC (Sticky Float Left - Có nút tắt ❌)</option>
-                       <option value="home_middle">📌 Giữa Trang Chủ (Nằm giữa danh sách tin)</option>
-                       <option value="home_sidebar">📌 Cột Phải Trang Chủ (Sidebar Banner)</option>
-                       <option value="property_detail">📌 Trang Chi Tiết BĐS (Detail Page Banner)</option>
-                       <option value="popup_modal">📌 Pop-Up Nổi Trung Tâm Màn Hình (Center Popup - Có nút tắt ❌)</option>
+                       <option value="float_right_pc">ðŸ“Œ Cáº¡nh Pháº£i Web BÃ¡m Äuá»•i trÃªn PC (Sticky Float Right - CÃ³ nÃºt táº¯t âŒ)</option>
+                       <option value="header_top">ðŸ“Œ Thanh trÃªn cÃ¹ng Header (Top Banner Bar)</option>
+                       <option value="float_left_pc">ðŸ“Œ Cáº¡nh TrÃ¡i Web BÃ¡m Äuá»•i trÃªn PC (Sticky Float Left - CÃ³ nÃºt táº¯t âŒ)</option>
+                       <option value="home_middle">ðŸ“Œ Giá»¯a Trang Chá»§ (Náº±m giá»¯a danh sÃ¡ch tin)</option>
+                       <option value="home_sidebar">ðŸ“Œ Cá»™t Pháº£i Trang Chá»§ (Sidebar Banner)</option>
+                       <option value="property_detail">ðŸ“Œ Trang Chi Tiáº¿t BÄS (Detail Page Banner)</option>
+                       <option value="popup_modal">ðŸ“Œ Pop-Up Ná»•i Trung TÃ¢m MÃ n HÃ¬nh (Center Popup - CÃ³ nÃºt táº¯t âŒ)</option>
                      </select>
                    </div>
 
-                   {/* Chọn quảng cáo cha (nếu là quảng cáo con) */}
+                   {/* Chá»n quáº£ng cÃ¡o cha (náº¿u lÃ  quáº£ng cÃ¡o con) */}
                    <div>
-                     <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">4. Gán vào Quảng cáo Cha (nếu có)</label>
+                     <label className="block text-slate-700 dark:text-slate-300 mb-1.5 font-extrabold">4. GÃ¡n vÃ o Quáº£ng cÃ¡o Cha (náº¿u cÃ³)</label>
                      <select
                        value={newAdParentId}
                        onChange={e => setNewAdParentId(e.target.value || '')}
                        className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white font-bold text-xs focus:ring-2 focus:ring-amber-500 outline-none"
                      >
-                       <option value="">— Không gán (là quảng cáo cha độc lẵn) —</option>
+                       <option value="">â€” KhÃ´ng gÃ¡n (lÃ  quáº£ng cÃ¡o cha Ä‘á»™c láºµn) â€”</option>
                        {parentAds.filter(a => a.id !== editingAd?.id).map(ad => (
                          <option key={ad.id} value={ad.id}>
                            {ad.title} ({ad.position})
                          </option>
                        ))}
                      </select>
-                     <p className="text-[10px] text-slate-400 mt-1">Chọn quảng cáo cha để gắn vào nhóm. Quảng cáo con sẽ hiển thị dưới quảng cáo cha trong menu.</p>
+                     <p className="text-[10px] text-slate-400 mt-1">Chá»n quáº£ng cÃ¡o cha Ä‘á»ƒ gáº¯n vÃ o nhÃ³m. Quáº£ng cÃ¡o con sáº½ hiá»ƒn thá»‹ dÆ°á»›i quáº£ng cÃ¡o cha trong menu.</p>
                    </div>
 
-                  {/* Quản Trị Kích Thước & Kiểu Hiển Thị Banner Cạnh Phải */}
+                  {/* Quáº£n Trá»‹ KÃ­ch ThÆ°á»›c & Kiá»ƒu Hiá»ƒn Thá»‹ Banner Cáº¡nh Pháº£i */}
                   <div className="bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-3.5 space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="font-extrabold text-amber-600 dark:text-amber-400 text-xs flex items-center gap-1.5 uppercase">
-                        <Sparkles className="w-4 h-4 text-amber-500" /> TÙY CHỈNH KÍCH THƯỚC & KIỂU HIỂN THỊ CẠNH PHẢI:
+                        <Sparkles className="w-4 h-4 text-amber-500" /> TÃ™Y CHá»ˆNH KÃCH THÆ¯á»šC & KIá»‚U HIá»‚N THá»Š Cáº NH PHáº¢I:
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                       <div>
-                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">📐 Kích thước bề rộng (Size):</label>
+                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">ðŸ“ KÃ­ch thÆ°á»›c bá» rá»™ng (Size):</label>
                         <select
                           value={newAdWidthSize}
                           onChange={(e) => setNewAdWidthSize(e.target.value as any)}
                           className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                         >
-                          <option value="medium">Vừa (Medium - ~210px Chuẩn Web)</option>
-                          <option value="large">Rộng / Lớn (VIP Large - ~260px)</option>
-                          <option value="small">Nhỏ (Small - ~170px Tiết kiệm)</option>
-                          <option value="compact">Siêu Gọn (Compact - ~140px Mini)</option>
+                          <option value="medium">Vá»«a (Medium - ~210px Chuáº©n Web)</option>
+                          <option value="large">Rá»™ng / Lá»›n (VIP Large - ~260px)</option>
+                          <option value="small">Nhá» (Small - ~170px Tiáº¿t kiá»‡m)</option>
+                          <option value="compact">SiÃªu Gá»n (Compact - ~140px Mini)</option>
                         </select>
                       </div>
 
                       <div>
-                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">🎨 Kiểu hiển thị (Style):</label>
+                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">ðŸŽ¨ Kiá»ƒu hiá»ƒn thá»‹ (Style):</label>
                         <select
                           value={newAdDisplayStyle}
                           onChange={(e) => setNewAdDisplayStyle(e.target.value as any)}
                           className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                         >
-                          <option value="glowing_border">✨ VIP Viền Phát Sáng Gold Glow (Gây chú ý)</option>
-                          <option value="card_full">Thẻ Đầy Đủ (Hình + Tiêu đề + Nút bấm)</option>
-                          <option value="image_only">🖼️ Chỉ Hình Ảnh Banner (Tràn viền + Nút tắt ❌)</option>
-                          <option value="minimal">⚪ Tối Giản Sáng (Clean Light Minimalist)</option>
+                          <option value="glowing_border">âœ¨ VIP Viá»n PhÃ¡t SÃ¡ng Gold Glow (GÃ¢y chÃº Ã½)</option>
+                          <option value="card_full">Tháº» Äáº§y Äá»§ (HÃ¬nh + TiÃªu Ä‘á» + NÃºt báº¥m)</option>
+                          <option value="image_only">ðŸ–¼ï¸ Chá»‰ HÃ¬nh áº¢nh Banner (TrÃ n viá»n + NÃºt táº¯t âŒ)</option>
+                          <option value="minimal">âšª Tá»‘i Giáº£n SÃ¡ng (Clean Light Minimalist)</option>
                         </select>
                       </div>
 
                       <div>
-                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">🏷️ Nhãn Badge hiển thị:</label>
+                        <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">ðŸ·ï¸ NhÃ£n Badge hiá»ƒn thá»‹:</label>
                         <input
                           type="text"
                           value={newAdBadgeText}
                           onChange={(e) => setNewAdBadgeText(e.target.value)}
-                          placeholder="Ví dụ: QUẢNG CÁO CẠNH PHẢI..."
+                          placeholder="VÃ­ dá»¥: QUáº¢NG CÃO Cáº NH PHáº¢I..."
                           className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                         />
                       </div>
@@ -4231,16 +4317,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <div className="bg-slate-900 border-2 border-amber-500/40 rounded-2xl p-3 space-y-2 text-white">
                     <div className="flex items-center justify-between">
                       <span className="font-extrabold text-amber-400 text-[11px] uppercase flex items-center gap-1">
-                        <Layout className="w-3.5 h-3.5" /> SƠ ĐỒ VỊ TRÍ TRỰC QUAN (BẤM VÀO ĐỂ CHỌN):
+                        <Layout className="w-3.5 h-3.5" /> SÆ  Äá»’ Vá»Š TRÃ TRá»°C QUAN (Báº¤M VÃ€O Äá»‚ CHá»ŒN):
                       </span>
                       <span className="text-[10px] text-emerald-400 font-bold uppercase">
                         {newAdPos === 'header_top' && 'Top Header'}
-                        {newAdPos === 'float_right_pc' && 'Cạnh Phải PC (Bám đuổi)'}
-                        {newAdPos === 'float_left_pc' && 'Cạnh Trái PC (Bám đuổi)'}
-                        {newAdPos === 'home_middle' && 'Giữa Trang Chủ'}
-                        {newAdPos === 'home_sidebar' && 'Sidebar Cột Phải'}
-                        {newAdPos === 'property_detail' && 'Trang Chi Tiết'}
-                        {newAdPos === 'popup_modal' && 'Pop-Up Nổi'}
+                        {newAdPos === 'float_right_pc' && 'Cáº¡nh Pháº£i PC (BÃ¡m Ä‘uá»•i)'}
+                        {newAdPos === 'float_left_pc' && 'Cáº¡nh TrÃ¡i PC (BÃ¡m Ä‘uá»•i)'}
+                        {newAdPos === 'home_middle' && 'Giá»¯a Trang Chá»§'}
+                        {newAdPos === 'home_sidebar' && 'Sidebar Cá»™t Pháº£i'}
+                        {newAdPos === 'property_detail' && 'Trang Chi Tiáº¿t'}
+                        {newAdPos === 'popup_modal' && 'Pop-Up Ná»•i'}
                       </span>
                     </div>
 
@@ -4254,7 +4340,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             : 'bg-slate-800 text-amber-300 border-amber-500/30 hover:bg-slate-750'
                         }`}
                       >
-                        <span>📌 Thanh Trên Cùng Header</span>
+                        <span>ðŸ“Œ Thanh TrÃªn CÃ¹ng Header</span>
                         <span className="text-[9px] opacity-80">({adsList.filter(a => a.position === 'header_top').length})</span>
                       </div>
 
@@ -4268,8 +4354,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               : 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30 hover:bg-emerald-900/40'
                           }`}
                         >
-                          <span className="text-[9px]">📌 Cạnh Trái (PC)</span>
-                          <span className="text-[8px] text-emerald-200">Bám đuổi ❌</span>
+                          <span className="text-[9px]">ðŸ“Œ Cáº¡nh TrÃ¡i (PC)</span>
+                          <span className="text-[8px] text-emerald-200">BÃ¡m Ä‘uá»•i âŒ</span>
                         </div>
 
                         <div className="col-span-6 space-y-1">
@@ -4281,7 +4367,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 : 'bg-amber-950/40 text-amber-300 border-amber-500/30 hover:bg-amber-900/40'
                             }`}
                           >
-                            <span>📌 Giữa Trang Chủ</span>
+                            <span>ðŸ“Œ Giá»¯a Trang Chá»§</span>
                           </div>
                           <div
                             onClick={() => setNewAdPos('property_detail')}
@@ -4291,7 +4377,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 : 'bg-purple-950/40 text-purple-300 border-purple-500/30 hover:bg-purple-900/40'
                             }`}
                           >
-                            <span className="text-[9px]">📌 Trang Chi Tiết BĐS</span>
+                            <span className="text-[9px]">ðŸ“Œ Trang Chi Tiáº¿t BÄS</span>
                           </div>
                         </div>
 
@@ -4304,7 +4390,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 : 'bg-blue-950/40 text-blue-300 border-blue-500/30 hover:bg-blue-900/40'
                             }`}
                           >
-                            <span className="text-[9px]">📌 Sidebar Cột Phải</span>
+                            <span className="text-[9px]">ðŸ“Œ Sidebar Cá»™t Pháº£i</span>
                           </div>
                           <div
                             onClick={() => setNewAdPos('float_right_pc')}
@@ -4314,7 +4400,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 : 'bg-amber-950/40 text-amber-300 border-amber-500/30 hover:bg-amber-900/40'
                             }`}
                           >
-                            <span className="text-[9px]">📌 Cạnh Phải (PC) ❌</span>
+                            <span className="text-[9px]">ðŸ“Œ Cáº¡nh Pháº£i (PC) âŒ</span>
                           </div>
                         </div>
                       </div>
@@ -4328,7 +4414,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             : 'bg-rose-950/40 text-rose-300 border-rose-500/30 hover:bg-rose-900/40'
                         }`}
                       >
-                        <span>📌 Pop-Up Nổi Trung Tâm (Center Popup Modal)</span>
+                        <span>ðŸ“Œ Pop-Up Ná»•i Trung TÃ¢m (Center Popup Modal)</span>
                         <span className="text-[9px] opacity-80">({adsList.filter(a => a.position === 'popup_modal').length})</span>
                       </div>
                     </div>
@@ -4337,23 +4423,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                 {/* Column 2: Image Upload & Preview */}
                 <div className="space-y-4">
-                  <label className="block text-slate-700 dark:text-slate-300 font-extrabold">4. Hình ảnh Banner (*)</label>
+                  <label className="block text-slate-700 dark:text-slate-300 font-extrabold">4. HÃ¬nh áº£nh Banner (*)</label>
 
                   {/* High visibility upload button */}
                   <label className="flex flex-col items-center justify-center p-5 bg-gradient-to-br from-amber-50 to-amber-100/80 dark:from-amber-950/40 dark:to-slate-900 border-2 border-dashed border-amber-400 hover:border-amber-500 rounded-2xl cursor-pointer transition text-center group shadow-sm">
                     <Upload className="w-8 h-8 text-amber-500 mb-1.5 group-hover:scale-110 transition-transform animate-pulse" />
                     <span className="text-amber-950 dark:text-amber-300 font-black text-xs uppercase tracking-wider">
-                      📁 BẤM VÀO ĐÂY ĐỂ TẢI ẢNH TỪ MÁY TÍNH (PC)
+                      ðŸ“ Báº¤M VÃ€O ÄÃ‚Y Äá»‚ Táº¢I áº¢NH Tá»ª MÃY TÃNH (PC)
                     </span>
                     <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-normal">
-                      Hỗ trợ định dạng JPG, PNG, WEBP (Dung lượng max 8MB)
+                      Há»— trá»£ Ä‘á»‹nh dáº¡ng JPG, PNG, WEBP (Dung lÆ°á»£ng max 8MB)
                     </span>
                     <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e)} />
                   </label>
 
                   {/* Fallback URL input */}
                   <div>
-                    <label className="block text-slate-500 dark:text-slate-400 mb-1 text-[11px] font-medium">Hoặc dán URL link ảnh có sẵn:</label>
+                    <label className="block text-slate-500 dark:text-slate-400 mb-1 text-[11px] font-medium">Hoáº·c dÃ¡n URL link áº£nh cÃ³ sáºµn:</label>
                     <input
                       type="text"
                       required
@@ -4369,10 +4455,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-amber-300 dark:border-amber-800/60 shadow-sm space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                          <Check className="w-4 h-4" /> xem trước ảnh banner:
+                          <Check className="w-4 h-4" /> xem trÆ°á»›c áº£nh banner:
                         </span>
                         <label className="text-[10px] font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer">
-                          Đổi ảnh từ PC
+                          Äá»•i áº£nh tá»« PC
                           <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e)} />
                         </label>
                       </div>
@@ -4397,11 +4483,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   >
                     {editingAd ? (
                       <>
-                        <Check className="w-5 h-5" /> 💾 LƯU CẬP NHẬT BANNER
+                        <Check className="w-5 h-5" /> ðŸ’¾ LÆ¯U Cáº¬P NHáº¬T BANNER
                       </>
                     ) : (
                       <>
-                        <Plus className="w-5 h-5" /> + THÊM BANNER QUẢNG CÁO MỚI
+                        <Plus className="w-5 h-5" /> + THÃŠM BANNER QUáº¢NG CÃO Má»šI
                       </>
                     )}
                   </button>
@@ -4411,12 +4497,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       onClick={handleCancelEditAd}
                       className="px-5 py-3.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-2xl text-xs transition flex items-center gap-1.5"
                     >
-                      <X className="w-4 h-4" /> HỦY SỬA (TRỞ VỀ THÊM MỚI)
+                      <X className="w-4 h-4" /> Há»¦Y Sá»¬A (TRá»ž Vá»€ THÃŠM Má»šI)
                     </button>
                   )}
                 </div>
                 <p className="text-[11px] text-slate-400 font-medium">
-                  * Banner mới đăng hoặc vừa cập nhật sẽ được hiển thị ngay lập tức ngoài trang chủ.
+                  * Banner má»›i Ä‘Äƒng hoáº·c vá»«a cáº­p nháº­t sáº½ Ä‘Æ°á»£c hiá»ƒn thá»‹ ngay láº­p tá»©c ngoÃ i trang chá»§.
                 </p>
               </div>
             </form>
@@ -4425,13 +4511,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-black text-sm text-slate-900 dark:text-white uppercase tracking-wider">
-                DANH SÁCH BANNER QUẢNG CÁO ĐANG HOẠT ĐỘNG ({parentAds.length} nhóm, {adsList.length} tổng)
+                DANH SÃCH BANNER QUáº¢NG CÃO ÄANG HOáº T Äá»˜NG ({parentAds.length} nhÃ³m, {adsList.length} tá»•ng)
               </h3>
-              <span className="text-[11px] text-slate-400">Ấn nút ✏️ Sửa để chỉnh sửa trực tiếp thông tin ở khung trên</span>
+              <span className="text-[11px] text-slate-400">áº¤n nÃºt âœï¸ Sá»­a Ä‘á»ƒ chá»‰nh sá»­a trá»±c tiáº¿p thÃ´ng tin á»Ÿ khung trÃªn</span>
             </div>
 
             <div className="overflow-x-auto">
-              {/* Tree View cho quảng cáo cha/con */}
+              {/* Tree View cho quáº£ng cÃ¡o cha/con */}
               <div className="space-y-1">
                 {parentAds.map(ad => {
                   const isBeingEdited = editingAd?.id === ad.id;
@@ -4439,7 +4525,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   const children = childAds(ad.id);
                   return (
                     <div key={ad.id} className="space-y-1">
-                      {/* Quảng cáo cha */}
+                      {/* Quáº£ng cÃ¡o cha */}
                       <div className={`flex items-center gap-2 p-3 rounded-xl transition ${
                         isBeingEdited 
                           ? 'bg-amber-50/80 dark:bg-amber-950/30 border-l-4 border-amber-500' 
@@ -4449,7 +4535,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           <button
                             onClick={() => toggleExpandAd(ad.id)}
                             className="p-1 text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition"
-                            title={isExpanded ? 'Thu gọn' : 'Mở rộng'}
+                            title={isExpanded ? 'Thu gá»n' : 'Má»Ÿ rá»™ng'}
                           >
                             <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                           </button>
@@ -4458,7 +4544,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           <img loading="lazy" src={ad.imageUrl} alt={ad.title} className="w-16 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm" />
                           <label 
                             className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-lg cursor-pointer text-white text-[9px] font-extrabold transition"
-                            title="Tải ảnh mới trực tiếp"
+                            title="Táº£i áº£nh má»›i trá»±c tiáº¿p"
                           >
                             <Upload className="w-3 h-3 text-amber-400" />
                             <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e, ad.id)} />
@@ -4468,18 +4554,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           <p className="font-bold text-slate-900 dark:text-white line-clamp-1">{ad.title}</p>
                           <div className="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400">
                             <span className="text-amber-600 dark:text-amber-400 font-extrabold">
-                              {ad.position === 'header_top' && '📌 Top Header'}
-                              {ad.position === 'float_right_pc' && '📌 Cạnh Phải PC'}
-                              {ad.position === 'float_left_pc' && '📌 Cạnh Trái PC'}
-                              {ad.position === 'home_middle' && '📌 Giữa Trang Chủ'}
-                              {ad.position === 'home_sidebar' && '📌 Sidebar'}
-                              {ad.position === 'property_detail' && '📌 Chi Tiết BĐS'}
-                              {ad.position === 'popup_modal' && '📌 Pop-Up'}
+                              {ad.position === 'header_top' && 'ðŸ“Œ Top Header'}
+                              {ad.position === 'float_right_pc' && 'ðŸ“Œ Cáº¡nh Pháº£i PC'}
+                              {ad.position === 'float_left_pc' && 'ðŸ“Œ Cáº¡nh TrÃ¡i PC'}
+                              {ad.position === 'home_middle' && 'ðŸ“Œ Giá»¯a Trang Chá»§'}
+                              {ad.position === 'home_sidebar' && 'ðŸ“Œ Sidebar'}
+                              {ad.position === 'property_detail' && 'ðŸ“Œ Chi Tiáº¿t BÄS'}
+                              {ad.position === 'popup_modal' && 'ðŸ“Œ Pop-Up'}
                               {!['header_top','float_right_pc','float_left_pc','home_middle','home_sidebar','property_detail','popup_modal'].includes(ad.position) && ad.position}
                             </span>
-                            <span className="text-emerald-600 dark:text-emerald-400">{(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} lượt</span>
+                            <span className="text-emerald-600 dark:text-emerald-400">{(ad.clickCount || ad.clicks || 0).toLocaleString('vi-VN')} lÆ°á»£t</span>
                             <span className={(ad.active ?? ad.isActive ?? true) ? 'text-emerald-600 dark:text-emerald-400 font-black' : 'text-slate-500'}>
-                              {(ad.active ?? ad.isActive ?? true) ? '✓ Hiện' : '✕ Ẩn'}
+                              {(ad.active ?? ad.isActive ?? true) ? 'âœ“ Hiá»‡n' : 'âœ• áº¨n'}
                             </span>
                           </div>
                         </div>
@@ -4492,7 +4578,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
                             }`}
                           >
-                            {(ad.active ?? ad.isActive ?? true) ? '✓ Đang Hiện' : '✕ Đã Ẩn'}
+                            {(ad.active ?? ad.isActive ?? true) ? 'âœ“ Äang Hiá»‡n' : 'âœ• ÄÃ£ áº¨n'}
                           </button>
                           <button
                             onClick={() => handleStartEditAd(ad)}
@@ -4501,22 +4587,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400'
                                 : 'bg-amber-500 hover:bg-amber-600 text-slate-950 border-amber-400'
                             }`}
-                            title="Sửa thông tin banner quảng cáo ở khung trên"
+                            title="Sá»­a thÃ´ng tin banner quáº£ng cÃ¡o á»Ÿ khung trÃªn"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
-                            {isBeingEdited ? '✏️ Đang Sửa' : '✏️ SỬA'}
+                            {isBeingEdited ? 'âœï¸ Äang Sá»­a' : 'âœï¸ Sá»¬A'}
                           </button>
                           <button
                             onClick={() => handleDeleteAd(ad.id)}
                             className="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg transition"
-                            title="Xóa quảng cáo"
+                            title="XÃ³a quáº£ng cÃ¡o"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
 
-                      {/* Quảng cáo con */}
+                      {/* Quáº£ng cÃ¡o con */}
                       {isExpanded && children.length > 0 && (
                         <div className="ml-8 space-y-1">
                           {children.map(childAd => {
@@ -4531,7 +4617,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   <img loading="lazy" src={childAd.imageUrl} alt={childAd.title} className="w-12 h-8 object-cover rounded border border-slate-200 dark:border-slate-700 shadow-sm" />
                                   <label 
                                     className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded cursor-pointer text-white text-[8px] transition"
-                                    title="Tải ảnh mới trực tiếp"
+                                    title="Táº£i áº£nh má»›i trá»±c tiáº¿p"
                                   >
                                     <Upload className="w-2.5 h-2.5 text-amber-400" />
                                     <input type="file" accept="image/*" className="hidden" onChange={e => handleAdFileUpload(e, childAd.id)} />
@@ -4541,17 +4627,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   <p className="font-bold text-slate-800 dark:text-slate-200 line-clamp-1 text-xs">{childAd.title}</p>
                                   <div className="flex items-center gap-2 text-[9px] text-slate-500 dark:text-slate-400">
                                     <span className="text-amber-600 dark:text-amber-400 font-extrabold">
-                                      {childAd.position === 'header_top' && '📌 Top Header'}
-                                      {childAd.position === 'float_right_pc' && '📌 Cạnh Phải PC'}
-                                      {childAd.position === 'float_left_pc' && '📌 Cạnh Trái PC'}
-                                      {childAd.position === 'home_middle' && '📌 Giữa Trang Chủ'}
-                                      {childAd.position === 'home_sidebar' && '📌 Sidebar'}
-                                      {childAd.position === 'property_detail' && '📌 Chi Tiết BĐS'}
-                                      {childAd.position === 'popup_modal' && '📌 Pop-Up'}
+                                      {childAd.position === 'header_top' && 'ðŸ“Œ Top Header'}
+                                      {childAd.position === 'float_right_pc' && 'ðŸ“Œ Cáº¡nh Pháº£i PC'}
+                                      {childAd.position === 'float_left_pc' && 'ðŸ“Œ Cáº¡nh TrÃ¡i PC'}
+                                      {childAd.position === 'home_middle' && 'ðŸ“Œ Giá»¯a Trang Chá»§'}
+                                      {childAd.position === 'home_sidebar' && 'ðŸ“Œ Sidebar'}
+                                      {childAd.position === 'property_detail' && 'ðŸ“Œ Chi Tiáº¿t BÄS'}
+                                      {childAd.position === 'popup_modal' && 'ðŸ“Œ Pop-Up'}
                                     </span>
                                     <span className="text-emerald-600 dark:text-emerald-400">{(childAd.clickCount || childAd.clicks || 0).toLocaleString('vi-VN')}</span>
                                     <span className={(childAd.active ?? childAd.isActive ?? true) ? 'text-emerald-600 dark:text-emerald-400 font-black' : 'text-slate-500'}>
-                                      {(childAd.active ?? childAd.isActive ?? true) ? '✓' : '✕'}
+                                      {(childAd.active ?? childAd.isActive ?? true) ? 'âœ“' : 'âœ•'}
                                     </span>
                                   </div>
                                 </div>
@@ -4564,21 +4650,21 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                         : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
                                     }`}
                                   >
-                                    {(childAd.active ?? childAd.isActive ?? true) ? '✓' : '✕'}
+                                    {(childAd.active ?? childAd.isActive ?? true) ? 'âœ“' : 'âœ•'}
                                   </button>
                                   <button
                                     onClick={() => handleStartEditAd(childAd)}
                                     className={`p-1 rounded text-amber-600 hover:bg-amber-100 dark:hover:bg-amber-950/50 transition ${
                                       childEdited ? 'bg-amber-400/30' : ''
                                     }`}
-                                    title="Sửa"
+                                    title="Sá»­a"
                                   >
                                     <Edit3 className="w-3 h-3" />
                                   </button>
                                   <button
                                     onClick={() => handleDeleteAd(childAd.id)}
                                     className="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded transition"
-                                    title="Xóa"
+                                    title="XÃ³a"
                                   >
                                     <Trash2 className="w-3 h-3" />
                                   </button>
@@ -4597,39 +4683,39 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ===== HERO CARDS IMAGE MANAGEMENT (4 thẻ danh mục trang chủ) ===== */}
+      {/* ===== HERO CARDS IMAGE MANAGEMENT (4 tháº» danh má»¥c trang chá»§) ===== */}
       {activeTab === 'ads' && (
         <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 space-y-4 shadow-xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-700/60">
             <div>
               <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                 <ImageIcon className="w-5 h-5 text-amber-500" />
-                QUẢN LÝ ẢNH THẺ DANH MỤC TRANG CHỦ (4 thẻ hero)
+                QUáº¢N LÃ áº¢NH THáºº DANH Má»¤C TRANG CHá»¦ (4 tháº» hero)
               </h3>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                Thay đổi ảnh đại diện cho 4 thẻ: Mua Bán BĐS, Cho Thuê BĐS, Dịch Vụ Cư Dân, Tuyển Dụng Việc Làm. Ảnh sẽ hiển thị ngay trên trang chủ.
+                Thay Ä‘á»•i áº£nh Ä‘áº¡i diá»‡n cho 4 tháº»: Mua BÃ¡n BÄS, Cho ThuÃª BÄS, Dá»‹ch Vá»¥ CÆ° DÃ¢n, Tuyá»ƒn Dá»¥ng Viá»‡c LÃ m. áº¢nh sáº½ hiá»ƒn thá»‹ ngay trÃªn trang chá»§.
               </p>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleResetHeroCards}
                 className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1 transition"
-                title="Khôi phục ảnh mặc định"
+                title="KhÃ´i phá»¥c áº£nh máº·c Ä‘á»‹nh"
               >
-                <RefreshCw className="w-3.5 h-3.5" /> Đặt lại mặc định
+                <RefreshCw className="w-3.5 h-3.5" /> Äáº·t láº¡i máº·c Ä‘á»‹nh
               </button>
               <button
                 onClick={handleSaveHeroCards}
                 className="px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1 transition shadow"
               >
-                <Save className="w-3.5 h-3.5" /> Lưu tất cả
+                <Save className="w-3.5 h-3.5" /> LÆ°u táº¥t cáº£
               </button>
             </div>
           </div>
 
           {heroCardSaved && (
             <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4" /> Đã lưu cấu hình ảnh thẻ danh mục!
+              <CheckCircle2 className="w-4 h-4" /> ÄÃ£ lÆ°u cáº¥u hÃ¬nh áº£nh tháº» danh má»¥c!
             </div>
           )}
 
@@ -4664,7 +4750,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <div className="space-y-2">
                   <div className="flex items-center gap-1.5">
                     <label className="flex-1 cursor-pointer px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1 transition">
-                      <Upload className="w-3.5 h-3.5" /> Tải ảnh
+                      <Upload className="w-3.5 h-3.5" /> Táº£i áº£nh
                       <input
                         type="file"
                         accept="image/*"
@@ -4672,7 +4758,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         className="hidden"
                       />
                     </label>
-                    <label className="flex-1 text-[9px] font-bold text-slate-500 dark:text-slate-400">hoặc dán URL</label>
+                    <label className="flex-1 text-[9px] font-bold text-slate-500 dark:text-slate-400">hoáº·c dÃ¡n URL</label>
                   </div>
                   <input
                     type="url"
@@ -4685,7 +4771,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                 {/* Active toggle */}
                 <div className="flex items-center justify-between pt-1">
-                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">Hiển thị</span>
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">Hiá»ƒn thá»‹</span>
                   <button
                     onClick={() => handleHeroCardToggle(card.id)}
                     className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
@@ -4710,10 +4796,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-700/60">
             <div>
               <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <span>🏢</span> QUẢN LÝ TẤT CẢ BẤT ĐỘNG SẢN ({properties.length} CĂN)
+                <span>ðŸ¢</span> QUáº¢N LÃ Táº¤T Cáº¢ Báº¤T Äá»˜NG Sáº¢N ({properties.length} CÄ‚N)
               </h3>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                Tự động hết hạn hiển thị sau 15–25 ngày. Dữ liệu Người đăng & Chi tiết căn được bảo lưu đầy đủ trong Kho Lưu Trữ.
+                Tá»± Ä‘á»™ng háº¿t háº¡n hiá»ƒn thá»‹ sau 15â€“25 ngÃ y. Dá»¯ liá»‡u NgÆ°á»i Ä‘Äƒng & Chi tiáº¿t cÄƒn Ä‘Æ°á»£c báº£o lÆ°u Ä‘áº§y Ä‘á»§ trong Kho LÆ°u Trá»¯.
               </p>
             </div>
 
@@ -4727,9 +4813,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
                       : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
                   }`}
-                  title="Chế độ biểu tượng thu gọn"
+                  title="Cháº¿ Ä‘á»™ biá»ƒu tÆ°á»£ng thu gá»n"
                 >
-                  <span>⚡ Icon Thu Gọn</span>
+                  <span>âš¡ Icon Thu Gá»n</span>
                 </button>
                 <button
                   onClick={() => setAdminViewMode('detailed')}
@@ -4738,9 +4824,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
                       : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
                   }`}
-                  title="Chế độ chi tiết đầy đủ"
+                  title="Cháº¿ Ä‘á»™ chi tiáº¿t Ä‘áº§y Ä‘á»§"
                 >
-                  <span>📋 Chi Tiết</span>
+                  <span>ðŸ“‹ Chi Tiáº¿t</span>
                 </button>
               </div>
 
@@ -4759,16 +4845,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   toggleExpandAllAdminProps(currentFiltered);
                 }}
                 className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold text-[11px] rounded-xl transition cursor-pointer"
-                title="Mở rộng hoặc thu gọn tất cả dòng"
+                title="Má»Ÿ rá»™ng hoáº·c thu gá»n táº¥t cáº£ dÃ²ng"
               >
-                Mở rộng / Thu gọn ▾
+                Má»Ÿ rá»™ng / Thu gá»n â–¾
               </button>
 
               <button
                 onClick={handleSeed1000Click}
                 className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-extrabold rounded-xl text-[11px] shrink-0 transition flex items-center gap-1"
               >
-                <span>✨</span> + 1,000 Tin Test
+                <span>âœ¨</span> + 1,000 Tin Test
               </button>
             </div>
           </div>
@@ -4783,7 +4869,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
               }`}
             >
-              Tất Cả ({properties.length})
+              Táº¥t Cáº£ ({properties.length})
             </button>
 
             <button
@@ -4794,7 +4880,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100'
               }`}
             >
-              🏠 Bán ({saleProperties.length})
+              ðŸ  BÃ¡n ({saleProperties.length})
             </button>
 
             <button
@@ -4805,7 +4891,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   : 'bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100'
               }`}
             >
-              🔑 Thuê ({rentProperties.length})
+              ðŸ”‘ ThuÃª ({rentProperties.length})
             </button>
 
             <button
@@ -4816,7 +4902,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100'
               }`}
             >
-              ⚡ Tin Nổi Bật ({pushedProperties.length})
+              âš¡ Tin Ná»•i Báº­t ({pushedProperties.length})
             </button>
 
             <button
@@ -4827,7 +4913,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100'
               }`}
             >
-              ⏰ Sắp Hết Hạn ({expiringSoonProperties.length})
+              â° Sáº¯p Háº¿t Háº¡n ({expiringSoonProperties.length})
             </button>
 
             <button
@@ -4838,7 +4924,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   : 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 hover:bg-purple-100'
               }`}
             >
-              📁 Tin Đã Đóng ({archivedProperties.length})
+              ðŸ“ Tin ÄÃ£ ÄÃ³ng ({archivedProperties.length})
             </button>
 
             <button
@@ -4849,7 +4935,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100'
               }`}
             >
-              ⏳ Chờ Phê Duyệt ({pendingProperties.length})
+              â³ Chá» PhÃª Duyá»‡t ({pendingProperties.length})
             </button>
           </div>
 
@@ -4869,8 +4955,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               .slice(0, 150)
               .map((p) => {
                 const expiryInfo = getPropertyExpiryInfo(p);
-                const sellerPhoneFormatted = p.sellerPhone || 'Chưa có số liên hệ';
-                const sellerNameFormatted = p.sellerName || 'Chính Chủ / Chuyên Viên BĐS';
+                const sellerPhoneFormatted = p.sellerPhone || 'ChÆ°a cÃ³ sá»‘ liÃªn há»‡';
+                const sellerNameFormatted = p.sellerName || 'ChÃ­nh Chá»§ / ChuyÃªn ViÃªn BÄS';
                 const isApproved = p.status === 'approved' || p.approved || p.approvalStatus === 'approved';
                 const isRejected = p.status === 'rejected' || p.approvalStatus === 'rejected';
                 const isExpanded = adminViewMode === 'detailed' || Boolean(expandedAdminPropIds[p.id]);
@@ -4892,7 +4978,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           className="w-14 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700"
                         />
                         <span className="absolute bottom-0 right-0 px-1 py-0.2 bg-slate-950/80 text-white text-[8px] font-bold rounded">
-                          {p.images?.length || 1}📷
+                          {p.images?.length || 1}ðŸ“·
                         </span>
                       </div>
 
@@ -4908,23 +4994,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                         <div className="flex items-center gap-1.5 text-[9px] text-slate-500 dark:text-slate-400 mt-0.5 flex-wrap">
                           <span className="text-emerald-600 dark:text-emerald-400 font-bold uppercase">
-                            📍 {p.project}
+                            ðŸ“ {p.project}
                           </span>
-                          <span>•</span>
-                          <span className="font-mono">📐 {p.area}m²</span>
+                          <span>â€¢</span>
+                          <span className="font-mono">ðŸ“ {p.area}mÂ²</span>
                           {p.bedrooms && (
                             <>
-                              <span>•</span>
-                              <span>🛏️ {p.bedrooms}PN</span>
+                              <span>â€¢</span>
+                              <span>ðŸ›ï¸ {p.bedrooms}PN</span>
                             </>
                           )}
-                          <span>•</span>
-                          <span>{p.type === 'sale' ? '🏠 Bán' : '🔑 Thuê'}</span>
+                          <span>â€¢</span>
+                          <span>{p.type === 'sale' ? 'ðŸ  BÃ¡n' : 'ðŸ”‘ ThuÃª'}</span>
                         </div>
 
                         <div className="flex items-center justify-between gap-1 mt-1 text-[10px]">
                           <span className="text-slate-600 dark:text-slate-300 truncate font-semibold">
-                            👤 {sellerNameFormatted}
+                            ðŸ‘¤ {sellerNameFormatted}
                           </span>
                           <span className={`text-[8px] font-black px-1.5 py-0.2 rounded-full shrink-0 ${
                             isApproved
@@ -4933,7 +5019,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
                               : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
                           }`}>
-                            {isApproved ? '🟢 Đã duyệt' : isRejected ? '🔴 Từ chối' : '🟡 Chờ duyệt'}
+                            {isApproved ? 'ðŸŸ¢ ÄÃ£ duyá»‡t' : isRejected ? 'ðŸ”´ Tá»« chá»‘i' : 'ðŸŸ¡ Chá» duyá»‡t'}
                           </span>
                         </div>
                       </div>
@@ -4945,17 +5031,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         <button
                           onClick={() => handlePushPropertyNow(p)}
                           className="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg text-[9px] flex items-center gap-0.5 cursor-pointer shadow-xs"
-                          title="Đẩy tin lên đầu (+20 ngày)"
+                          title="Äáº©y tin lÃªn Ä‘áº§u (+20 ngÃ y)"
                         >
                           <Zap className="w-2.5 h-2.5 fill-slate-950" />
-                          <span>Đẩy Tin</span>
+                          <span>Äáº©y Tin</span>
                         </button>
                         <a
                           href={`tel:${sellerPhoneFormatted.replace(/\D/g, '')}`}
                           className="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold rounded-lg text-[9px] flex items-center gap-0.5"
                         >
                           <Phone className="w-2.5 h-2.5" />
-                          <span>Gọi Điện</span>
+                          <span>Gá»i Äiá»‡n</span>
                         </a>
                         <a
                           href={`https://zalo.me/${sellerPhoneFormatted.replace(/\D/g, '')}`}
@@ -4963,7 +5049,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           rel="noreferrer"
                           className="px-2 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold rounded-lg text-[9px] flex items-center gap-0.5"
                         >
-                          <span>Nhắn Zalo</span>
+                          <span>Nháº¯n Zalo</span>
                         </a>
                       </div>
 
@@ -4973,7 +5059,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             onClick={() => onApproveProperty(p.id)}
                             className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg text-[9px] flex items-center gap-0.5 cursor-pointer shadow-xs"
                           >
-                            <Check className="w-2.5 h-2.5" /> Duyệt
+                            <Check className="w-2.5 h-2.5" /> Duyá»‡t
                           </button>
                         )}
                         {!isRejected && (
@@ -4981,7 +5067,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             onClick={() => handleRejectProperty(p)}
                             className="px-1.5 py-1 bg-rose-600 text-white font-bold rounded-lg text-[9px] cursor-pointer"
                           >
-                            ✕
+                            âœ•
                           </button>
                         )}
                         <button
@@ -5008,17 +5094,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               <img loading="lazy"
                                 key={idx}
                                 src={imgUrl}
-                                alt="Căn hộ"
+                                alt="CÄƒn há»™"
                                 className="w-20 h-14 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shrink-0"
                               />
                             ))}
                           </div>
                         )}
                         <div className="grid grid-cols-2 gap-1.5 text-[9px] bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
-                          <div>📍 Vị trí: <strong>{p.address || p.location || p.project}</strong></div>
-                          <div>🧭 Hướng: <strong>{p.direction || 'Đông Nam'}</strong></div>
-                          <div>📜 Pháp lý: <strong>{p.legalStatus || 'Sổ đỏ'}</strong></div>
-                          <div>🛋️ Nội thất: <strong>{p.furniture || 'Đầy đủ'}</strong></div>
+                          <div>ðŸ“ Vá»‹ trÃ­: <strong>{p.address || p.location || p.project}</strong></div>
+                          <div>ðŸ§­ HÆ°á»›ng: <strong>{p.direction || 'ÄÃ´ng Nam'}</strong></div>
+                          <div>ðŸ“œ PhÃ¡p lÃ½: <strong>{p.legalStatus || 'Sá»• Ä‘á»'}</strong></div>
+                          <div>ðŸ›‹ï¸ Ná»™i tháº¥t: <strong>{p.furniture || 'Äáº§y Ä‘á»§'}</strong></div>
                         </div>
                         {p.description && (
                           <p className="text-[10px] text-slate-600 dark:text-slate-400 line-clamp-3 bg-slate-50 dark:bg-slate-950 p-2 rounded-xl">
@@ -5030,13 +5116,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             onClick={() => setSelectedSellerDetail(p)}
                             className="px-2.5 py-1 bg-blue-600 text-white font-bold rounded-lg text-[9px] flex items-center gap-1"
                           >
-                            <Eye className="w-3 h-3" /> Xem Thông Tin Liên Hệ
+                            <Eye className="w-3 h-3" /> Xem ThÃ´ng Tin LiÃªn Há»‡
                           </button>
                           <button
                             onClick={() => onDeleteProperty(p.id)}
                             className="px-2 py-1 bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 font-bold rounded-lg text-[9px] flex items-center gap-0.5"
                           >
-                            <Trash2 className="w-3 h-3" /> Xóa
+                            <Trash2 className="w-3 h-3" /> XÃ³a
                           </button>
                         </div>
                       </div>
@@ -5051,13 +5137,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <table className="w-full text-xs text-left border-collapse">
               <thead className="sticky top-0 bg-slate-100 dark:bg-slate-900 z-10 shadow-xs">
                 <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
-                  <th className="p-2.5 w-14">Ảnh</th>
-                  <th className="p-2.5 min-w-[220px]">Bất Động Sản & Dự Án</th>
-                  <th className="p-2.5 min-w-[140px]">Người Đăng</th>
-                  <th className="p-2.5 w-28">Giá & Loại</th>
-                  <th className="p-2.5 w-28">Trạng Thái</th>
-                  <th className="p-2.5 w-28">Thời Hạn</th>
-                  <th className="p-2.5 text-center min-w-[260px]">Thao Tác</th>
+                  <th className="p-2.5 w-14">áº¢nh</th>
+                  <th className="p-2.5 min-w-[220px]">Báº¥t Äá»™ng Sáº£n & Dá»± Ãn</th>
+                  <th className="p-2.5 min-w-[140px]">NgÆ°á»i ÄÄƒng</th>
+                  <th className="p-2.5 w-28">GiÃ¡ & Loáº¡i</th>
+                  <th className="p-2.5 w-28">Tráº¡ng ThÃ¡i</th>
+                  <th className="p-2.5 w-28">Thá»i Háº¡n</th>
+                  <th className="p-2.5 text-center min-w-[260px]">Thao TÃ¡c</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -5075,8 +5161,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   .slice(0, 150)
                   .map((p) => {
                     const expiryInfo = getPropertyExpiryInfo(p);
-                    const sellerPhoneFormatted = p.sellerPhone || 'Chưa cập nhật SĐT';
-                    const sellerNameFormatted = p.sellerName || 'Chủ Hộ / Sale BĐS';
+                    const sellerPhoneFormatted = p.sellerPhone || 'ChÆ°a cáº­p nháº­t SÄT';
+                    const sellerNameFormatted = p.sellerName || 'Chá»§ Há»™ / Sale BÄS';
                     const isApproved = p.status === 'approved' || p.approved || p.approvalStatus === 'approved';
                     const isRejected = p.status === 'rejected' || p.approvalStatus === 'rejected';
                     const isExpanded = adminViewMode === 'detailed' || Boolean(expandedAdminPropIds[p.id]);
@@ -5089,7 +5175,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             <div 
                               onClick={() => toggleExpandAdminProp(p.id)}
                               className="relative cursor-pointer group"
-                              title="Bấm để xem album ảnh"
+                              title="Báº¥m Ä‘á»ƒ xem album áº£nh"
                             >
                               <img loading="lazy"
                                 src={p.images[0] || ''}
@@ -5097,7 +5183,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 className="w-12 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:opacity-85 transition"
                               />
                               <span className="absolute bottom-0.5 right-0.5 px-1 py-0.2 bg-slate-950/80 text-white text-[7px] font-bold rounded">
-                                {p.images?.length || 1}📷
+                                {p.images?.length || 1}ðŸ“·
                               </span>
                             </div>
                           </td>
@@ -5113,14 +5199,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             </button>
                             <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                               <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-extrabold uppercase">
-                                📍 {p.project}
+                                ðŸ“ {p.project}
                               </span>
-                              <span className="text-slate-300 dark:text-slate-600">•</span>
-                              <span className="text-[9px] text-slate-500 font-medium font-mono">📐 {p.area} m²</span>
+                              <span className="text-slate-300 dark:text-slate-600">â€¢</span>
+                              <span className="text-[9px] text-slate-500 font-medium font-mono">ðŸ“ {p.area} mÂ²</span>
                               {p.bedrooms && (
                                 <>
-                                  <span className="text-slate-300 dark:text-slate-600">•</span>
-                                  <span className="text-[9px] text-slate-500 font-medium">🛏️ {p.bedrooms}PN</span>
+                                  <span className="text-slate-300 dark:text-slate-600">â€¢</span>
+                                  <span className="text-[9px] text-slate-500 font-medium">ðŸ›ï¸ {p.bedrooms}PN</span>
                                 </>
                               )}
                             </div>
@@ -5132,11 +5218,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               <div className="flex items-center gap-1">
                                 {p.sellerRole === 'owner' ? (
                                   <span className="px-1.5 py-0.5 bg-amber-500/15 text-amber-700 dark:text-amber-400 font-bold rounded text-[9px]">
-                                    🏠 Chủ Nhà
+                                    ðŸ  Chá»§ NhÃ 
                                   </span>
                                 ) : (
                                   <span className="px-1.5 py-0.5 bg-teal-500/15 text-teal-700 dark:text-teal-400 font-bold rounded text-[9px]">
-                                    💼 Môi Giới
+                                    ðŸ’¼ MÃ´i Giá»›i
                                   </span>
                                 )}
                               </div>
@@ -5149,7 +5235,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 rel="noreferrer"
                                 className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-0.5"
                               >
-                                📞 {sellerPhoneFormatted}
+                                ðŸ“ž {sellerPhoneFormatted}
                               </a>
                             </div>
                           </td>
@@ -5157,12 +5243,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           {/* 4. Price & Type */}
                           <td className="p-2">
                             <span className="font-black text-emerald-600 dark:text-emerald-400 block text-xs font-mono">
-                              💰 {p.priceDisplay}
+                              ðŸ’° {p.priceDisplay}
                             </span>
                             <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold inline-block mt-0.5 ${
                               p.type === 'sale' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300'
                             }`}>
-                              {p.type === 'sale' ? '🏠 BÁN' : '🔑 CHO THUÊ'}
+                              {p.type === 'sale' ? 'ðŸ  BÃN' : 'ðŸ”‘ CHO THUÃŠ'}
                             </span>
                           </td>
 
@@ -5176,9 +5262,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-500/30'
                                   : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-500/30'
                               }`}>
-                                {isApproved && '🟢 Đang hiện'}
-                                {isRejected && '🔴 Từ chối'}
-                                {!isApproved && !isRejected && '🟡 Chờ duyệt'}
+                                {isApproved && 'ðŸŸ¢ Äang hiá»‡n'}
+                                {isRejected && 'ðŸ”´ Tá»« chá»‘i'}
+                                {!isApproved && !isRejected && 'ðŸŸ¡ Chá» duyá»‡t'}
                               </span>
                               {p.rejectionReason && (
                                 <div className="text-[9px] text-rose-600 dark:text-rose-400 font-medium line-clamp-1 max-w-[110px]" title={p.rejectionReason}>
@@ -5192,20 +5278,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           <td className="p-2">
                             <div className="space-y-0.5 text-[10px]">
                               <div className="text-slate-500 dark:text-slate-400 text-[9px]">
-                                Đăng: <span className="font-semibold text-slate-700 dark:text-slate-300">{expiryInfo.postDateFormatted}</span>
+                                ÄÄƒng: <span className="font-semibold text-slate-700 dark:text-slate-300">{expiryInfo.postDateFormatted}</span>
                               </div>
 
                               {expiryInfo.isExpired ? (
                                 <span className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-950/70 border border-purple-300 dark:border-purple-800 rounded text-purple-900 dark:text-purple-300 text-[9px] font-bold block">
-                                  📁 Lưu trữ: {expiryInfo.archiveDaysLeft}d
+                                  ðŸ“ LÆ°u trá»¯: {expiryInfo.archiveDaysLeft}d
                                 </span>
                               ) : expiryInfo.daysRemaining <= 5 ? (
                                 <span className="px-1.5 py-0.5 bg-amber-100 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-800 rounded text-amber-900 dark:text-amber-300 text-[9px] font-bold block">
-                                  ⏰ Còn {expiryInfo.daysRemaining} ngày
+                                  â° CÃ²n {expiryInfo.daysRemaining} ngÃ y
                                 </span>
                               ) : (
                                 <span className="text-emerald-700 dark:text-emerald-400 text-[9px] font-bold block">
-                                  ⚡ Còn <b>{expiryInfo.daysRemaining} ngày</b>
+                                  âš¡ CÃ²n <b>{expiryInfo.daysRemaining} ngÃ y</b>
                                 </span>
                               )}
                             </div>
@@ -5219,7 +5305,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 type="button"
                                 onClick={() => handlePushPropertyNow(p)}
                                 className="w-7 h-7 flex items-center justify-center rounded-lg bg-amber-500/15 hover:bg-amber-500 text-amber-600 dark:text-amber-400 hover:text-slate-950 transition cursor-pointer"
-                                title="Đẩy tin lên đầu & gia hạn (+20 ngày)"
+                                title="Äáº©y tin lÃªn Ä‘áº§u & gia háº¡n (+20 ngÃ y)"
                               >
                                 <Zap className="w-3.5 h-3.5 fill-current" />
                               </button>
@@ -5229,7 +5315,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 type="button"
                                 onClick={() => setSelectedSellerDetail(p)}
                                 className="w-7 h-7 flex items-center justify-center rounded-lg bg-blue-500/15 hover:bg-blue-600 text-blue-600 dark:text-blue-400 hover:text-white transition cursor-pointer"
-                                title="Xem chi tiết căn & SĐT chính chủ"
+                                title="Xem chi tiáº¿t cÄƒn & SÄT chÃ­nh chá»§"
                               >
                                 <Eye className="w-3.5 h-3.5" />
                               </button>
@@ -5239,7 +5325,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 type="button"
                                 onClick={() => setEditingProperty(p)}
                                 className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-700/70 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition cursor-pointer"
-                                title="Chỉnh sửa nội dung & che mờ ảnh"
+                                title="Chá»‰nh sá»­a ná»™i dung & che má» áº£nh"
                               >
                                 <Edit3 className="w-3.5 h-3.5" />
                               </button>
@@ -5249,7 +5335,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 type="button"
                                 onClick={() => setSharingProperty(p)}
                                 className="w-7 h-7 flex items-center justify-center rounded-lg bg-sky-500/15 hover:bg-sky-500 text-sky-600 dark:text-sky-400 hover:text-white transition cursor-pointer"
-                                title="Chia sẻ tin lên Zalo, Facebook"
+                                title="Chia sáº» tin lÃªn Zalo, Facebook"
                               >
                                 <Share2 className="w-3.5 h-3.5" />
                               </button>
@@ -5260,17 +5346,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   type="button"
                                   onClick={() => onApproveProperty(p.id)}
                                   className="h-7 px-2 flex items-center gap-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] transition shadow-xs cursor-pointer"
-                                  title="Phê duyệt tin đăng"
+                                  title="PhÃª duyá»‡t tin Ä‘Äƒng"
                                 >
                                   <Check className="w-3 h-3" />
-                                  <span>Duyệt</span>
+                                  <span>Duyá»‡t</span>
                                 </button>
                               ) : (
                                 <button
                                   type="button"
                                   onClick={() => handleRejectProperty(p)}
                                   className="w-7 h-7 flex items-center justify-center rounded-lg bg-rose-500/15 hover:bg-rose-600 text-rose-600 dark:text-rose-400 hover:text-white transition cursor-pointer"
-                                  title="Từ chối / Gỡ tin"
+                                  title="Tá»« chá»‘i / Gá»¡ tin"
                                 >
                                   <X className="w-3.5 h-3.5" />
                                 </button>
@@ -5282,7 +5368,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   type="button"
                                   onClick={() => handleUnapproveProperty(p)}
                                   className="w-7 h-7 flex items-center justify-center rounded-lg bg-amber-500/15 hover:bg-amber-500 text-amber-600 dark:text-amber-400 hover:text-slate-950 transition cursor-pointer"
-                                  title="Đưa về trạng thái Chờ Duyệt"
+                                  title="ÄÆ°a vá» tráº¡ng thÃ¡i Chá» Duyá»‡t"
                                 >
                                   <Clock className="w-3.5 h-3.5" />
                                 </button>
@@ -5297,7 +5383,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                     ? 'bg-emerald-500/15 hover:bg-emerald-600 text-emerald-600 dark:text-emerald-400 hover:text-white'
                                     : 'bg-purple-500/15 hover:bg-purple-600 text-purple-600 dark:text-purple-400 hover:text-white'
                                 }`}
-                                title={expiryInfo.isExpired ? 'Phục hồi hiển thị tin' : 'Chuyển vào Kho Lưu Trữ'}
+                                title={expiryInfo.isExpired ? 'Phá»¥c há»“i hiá»ƒn thá»‹ tin' : 'Chuyá»ƒn vÃ o Kho LÆ°u Trá»¯'}
                               >
                                 {expiryInfo.isExpired ? <RotateCcw className="w-3.5 h-3.5" /> : <Archive className="w-3.5 h-3.5" />}
                               </button>
@@ -5307,7 +5393,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 type="button"
                                 onClick={() => onDeleteProperty(p.id)}
                                 className="w-7 h-7 flex items-center justify-center rounded-lg bg-rose-500/15 hover:bg-rose-600 text-rose-600 dark:text-rose-400 hover:text-white transition cursor-pointer"
-                                title="Xóa vĩnh viễn"
+                                title="XÃ³a vÄ©nh viá»…n"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -5317,7 +5403,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 type="button"
                                 onClick={() => toggleExpandAdminProp(p.id)}
                                 className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition cursor-pointer"
-                                title={isExpanded ? 'Thu gọn chi tiết' : 'Mở rộng album ảnh & thông số'}
+                                title={isExpanded ? 'Thu gá»n chi tiáº¿t' : 'Má»Ÿ rá»™ng album áº£nh & thÃ´ng sá»‘'}
                               >
                                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
                               </button>
@@ -5334,14 +5420,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 {p.images && p.images.length > 0 && (
                                   <div>
                                     <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1.5">
-                                      📷 Toàn Bộ Album Ảnh Căn Hộ / Biệt Thự ({p.images.length} ảnh):
+                                      ðŸ“· ToÃ n Bá»™ Album áº¢nh CÄƒn Há»™ / Biá»‡t Thá»± ({p.images.length} áº£nh):
                                     </span>
                                     <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                                       {p.images.map((imgUrl, imgIndex) => (
                                         <img loading="lazy"
                                           key={imgIndex}
                                           src={imgUrl}
-                                          alt={`${p.title} - ảnh ${imgIndex + 1}`}
+                                          alt={`${p.title} - áº£nh ${imgIndex + 1}`}
                                           className="w-24 h-16 sm:w-28 sm:h-20 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs"
                                         />
                                       ))}
@@ -5352,30 +5438,30 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 {/* Technical Specs Grid */}
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
                                   <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <span className="text-slate-400 block text-[10px]">Dự Án / Vị Trí:</span>
+                                    <span className="text-slate-400 block text-[10px]">Dá»± Ãn / Vá»‹ TrÃ­:</span>
                                     <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
-                                      📍 {p.project} • {p.address || p.location || 'Vinhomes'}
+                                      ðŸ“ {p.project} â€¢ {p.address || p.location || 'Vinhomes'}
                                     </span>
                                   </div>
 
                                   <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <span className="text-slate-400 block text-[10px]">Cơ Cấu / Phòng:</span>
+                                    <span className="text-slate-400 block text-[10px]">CÆ¡ Cáº¥u / PhÃ²ng:</span>
                                     <span className="font-bold text-slate-800 dark:text-slate-200 block">
-                                      🛏️ {p.bedrooms || 1} PN • 🚿 {p.bathrooms || 1} WC • 📐 {p.area} m²
+                                      ðŸ›ï¸ {p.bedrooms || 1} PN â€¢ ðŸš¿ {p.bathrooms || 1} WC â€¢ ðŸ“ {p.area} mÂ²
                                     </span>
                                   </div>
 
                                   <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <span className="text-slate-400 block text-[10px]">Hướng / Tầng:</span>
+                                    <span className="text-slate-400 block text-[10px]">HÆ°á»›ng / Táº§ng:</span>
                                     <span className="font-bold text-slate-800 dark:text-slate-200 block">
-                                      🧭 {p.direction || 'Đông Nam'} {p.floor ? `• Tầng ${p.floor}` : ''}
+                                      ðŸ§­ {p.direction || 'ÄÃ´ng Nam'} {p.floor ? `â€¢ Táº§ng ${p.floor}` : ''}
                                     </span>
                                   </div>
 
                                   <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <span className="text-slate-400 block text-[10px]">Pháp Lý & Nội Thất:</span>
+                                    <span className="text-slate-400 block text-[10px]">PhÃ¡p LÃ½ & Ná»™i Tháº¥t:</span>
                                     <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
-                                      📜 {p.legalStatus || 'Sổ đỏ lâu dài'} • {p.furniture || 'Đầy đủ'}
+                                      ðŸ“œ {p.legalStatus || 'Sá»• Ä‘á» lÃ¢u dÃ i'} â€¢ {p.furniture || 'Äáº§y Ä‘á»§'}
                                     </span>
                                   </div>
                                 </div>
@@ -5384,7 +5470,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 {p.description && (
                                   <div className="bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
                                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
-                                      📝 Nội Dung Bài Đăng Đầy Đủ:
+                                      ðŸ“ Ná»™i Dung BÃ i ÄÄƒng Äáº§y Äá»§:
                                     </span>
                                     <p className="text-slate-700 dark:text-slate-300 text-xs whitespace-pre-line leading-relaxed">
                                       {p.description}
@@ -5395,13 +5481,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 {/* Direct Actions bar inside accordion */}
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
                                   <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                                    <span>👤 Người đăng: <strong>{sellerNameFormatted}</strong></span>
-                                    <span>•</span>
+                                    <span>ðŸ‘¤ NgÆ°á»i Ä‘Äƒng: <strong>{sellerNameFormatted}</strong></span>
+                                    <span>â€¢</span>
                                     <a
                                       href={`tel:${sellerPhoneFormatted}`}
                                       className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
                                     >
-                                      📞 {sellerPhoneFormatted}
+                                      ðŸ“ž {sellerPhoneFormatted}
                                     </a>
                                   </div>
 
@@ -5411,7 +5497,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                       className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl flex items-center gap-1 shadow-xs"
                                     >
                                       <Eye className="w-3.5 h-3.5" />
-                                      <span>Xem SĐT Gốc & Căn Hộ</span>
+                                      <span>Xem SÄT Gá»‘c & CÄƒn Há»™</span>
                                     </button>
 
                                     <button
@@ -5419,7 +5505,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                       className="px-2.5 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl flex items-center gap-1"
                                     >
                                       <Edit3 className="w-3.5 h-3.5" />
-                                      <span>Sửa Nội Dung & Ảnh</span>
+                                      <span>Sá»­a Ná»™i Dung & áº¢nh</span>
                                     </button>
                                   </div>
                                 </div>
@@ -5442,17 +5528,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
-                QUẢN LÝ DỰ ÁN VINHOMES & SƠ ĐỒ QUY HOẠCH ({projects.length} DỰ ÁN)
+                QUáº¢N LÃ Dá»° ÃN VINHOMES & SÆ  Äá»’ QUY HOáº CH ({projects.length} Dá»° ÃN)
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Chỉnh sửa thông tin thương mại, hình ảnh banner chính, sơ đồ quy hoạch masterplan hoặc thêm dự án / tòa nhà mới vào hệ thống.
+                Chá»‰nh sá»­a thÃ´ng tin thÆ°Æ¡ng máº¡i, hÃ¬nh áº£nh banner chÃ­nh, sÆ¡ Ä‘á»“ quy hoáº¡ch masterplan hoáº·c thÃªm dá»± Ã¡n / tÃ²a nhÃ  má»›i vÃ o há»‡ thá»‘ng.
               </p>
             </div>
             <button
               onClick={() => setIsAddingProject(true)}
               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0"
             >
-              <Plus className="w-4 h-4" /> + Thêm Dự Án / Tòa Nhà Mới
+              <Plus className="w-4 h-4" /> + ThÃªm Dá»± Ãn / TÃ²a NhÃ  Má»›i
             </button>
           </div>
 
@@ -5463,7 +5549,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
-                placeholder="Tìm dự án, tòa nhà..."
+                placeholder="TÃ¬m dá»± Ã¡n, tÃ²a nhÃ ..."
                 value={projectSearchQuery}
                 onChange={(e) => setProjectSearchQuery(e.target.value)}
                 className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-amber-500 outline-none"
@@ -5477,13 +5563,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-amber-500 outline-none min-w-[140px] flex items-center gap-1.5"
               >
                 <Building2 className="w-3.5 h-3.5" />
-                <span>{projectCategoryFilter === 'all' ? 'Tất cả dự án' : (projects.find(p => p.id === projectCategoryFilter)?.name || projectCategoryFilter)}</span>
+                <span>{projectCategoryFilter === 'all' ? 'Táº¥t cáº£ dá»± Ã¡n' : (projects.find(p => p.id === projectCategoryFilter)?.name || projectCategoryFilter)}</span>
                 <ChevronDown className="w-3 h-3 ml-auto" />
               </button>
               {/* Tree dropdown */}
               <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-20 max-h-80 overflow-y-auto">
                 <div className="p-1.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">
-                  Cây dự án
+                  CÃ¢y dá»± Ã¡n
                 </div>
                 {parentProjects.map((p) => {
                   const isExpanded = expandedProjectTree.has(p.id);
@@ -5552,115 +5638,228 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               onChange={(e) => setProjectStatusFilter(e.target.value)}
               className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-amber-500 outline-none min-w-[130px]"
             >
-              <option value="all">Tất cả trạng thái</option>
-              <option value="Dang mo ban">Đang mở bán</option>
-              <option value="Hoan thanh">Hoàn thiện</option>
-              <option value="Dang xay dung">Đang xây dựng</option>
-              <option value="Sap mo ban">Sắp mở bán</option>
+              <option value="all">Táº¥t cáº£ tráº¡ng thÃ¡i</option>
+              <option value="Dang mo ban">Äang má»Ÿ bÃ¡n</option>
+              <option value="Hoan thanh">HoÃ n thiá»‡n</option>
+              <option value="Dang xay dung">Äang xÃ¢y dá»±ng</option>
+              <option value="Sap mo ban">Sáº¯p má»Ÿ bÃ¡n</option>
             </select>
             {/* Clear filters */}
             {(projectSearchQuery || projectCategoryFilter !== 'all' || projectStatusFilter !== 'all') && (
               <button
                 onClick={() => { setProjectSearchQuery(''); setProjectCategoryFilter('all'); setProjectStatusFilter('all'); }}
                 className="px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1 transition"
-                title="Xóa bộ lọc"
+                title="XÃ³a bá»™ lá»c"
               >
-                <X className="w-3.5 h-3.5" /> Xóa
+                <X className="w-3.5 h-3.5" /> XÃ³a
               </button>
             )}
           </div>
-
-          {/* Responsive card grid — gọn gàng trên di động */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects
-              .filter(proj => {
-                const matchesSearch = !projectSearchQuery ||
-                  proj.title?.toLowerCase().includes(projectSearchQuery.toLowerCase()) ||
-                  proj.name?.toLowerCase().includes(projectSearchQuery.toLowerCase()) ||
-                  proj.location?.toLowerCase().includes(projectSearchQuery.toLowerCase());
-                const matchesCategory = projectCategoryFilter === 'all' || proj.id === projectCategoryFilter;
-                const matchesStatus = projectStatusFilter === 'all' ||
-                  (proj.status || '').toLowerCase().includes(projectStatusFilter.toLowerCase());
-                return matchesSearch && matchesCategory && matchesStatus;
-              })
-              .map((proj) => (
-              <div
-                key={proj.id}
-                className="bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-md transition"
-              >
-                {/* Ảnh banner + sơ đồ */}
-                <div className="relative h-32 bg-slate-950">
-                  <img loading="lazy" src={proj.image} alt={proj.title} className="w-full h-full object-cover" />
-                  {proj.masterplanUrl && (
-                    <img
-                      loading="lazy"
-                      src={proj.masterplanUrl}
-                      alt="Sơ đồ quy hoạch"
-                      className="absolute bottom-2 right-2 w-16 h-12 object-cover rounded-lg border-2 border-white/80 shadow-lg"
-                      title="Sơ đồ quy hoạch"
-                    />
-                  )}
-                  <span className="absolute top-2 left-2 px-2 py-0.5 bg-slate-950/80 text-emerald-400 font-black text-[10px] rounded-full backdrop-blur-sm">
-                    {proj.status || 'Dự án'}
-                  </span>
-                </div>
-
-                {/* Thông tin dự án */}
-                <div className="p-4 space-y-2.5">
-                  <div>
-                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white leading-snug">
-                      {proj.title}
-                    </h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 flex items-start gap-1">
-                      <MapPin className="w-3 h-3 shrink-0 mt-0.5 text-red-500" />
-                      <span>{proj.location}</span>
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                    <div className="bg-white dark:bg-slate-800 rounded-lg p-2">
-                      <span className="text-[9px] text-slate-400 font-bold uppercase block">Quy mô</span>
-                      <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 block truncate">
-                        {proj.areaSize || '—'}
-                      </span>
-                    </div>
-                    <div className="bg-white dark:bg-slate-800 rounded-lg p-2">
-                      <span className="text-[9px] text-slate-400 font-bold uppercase block">Căn hộ</span>
-                      <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200 block truncate">
-                        {proj.totalUnits || '—'}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-amber-50 dark:bg-amber-950/40 rounded-lg p-2 flex items-center gap-1.5">
-                    <DollarSign className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
-                    <span className="text-[11px] font-black text-amber-700 dark:text-amber-400 truncate">
-                      {proj.priceRange || 'Liên hệ'}
-                    </span>
-                  </div>
-
-                  {/* Thao tác */}
-                  <div className="flex items-center gap-2 pt-1">
+          <div className="space-y-3">
+            {projects.map((proj) => {
+              const isExpanded = expandedProjectTree.has(proj.id);
+              const subs = proj.subdivisions || [];
+              const amens = proj.amenities || [];
+              return (
+                <div key={proj.id} className="bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  {/* DÃ²ng dá»± Ã¡n */}
+                  <div className="flex items-center gap-2 p-3 bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700">
                     <button
-                      onClick={() => setEditingProject(proj)}
-                      className="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition flex items-center justify-center gap-1 text-[11px]"
-                      title="Sửa thông tin & Thay ảnh"
+                      onClick={() => toggleProjectTree(proj.id)}
+                      className="p-1 text-slate-600 dark:text-slate-400 hover:text-amber-600 transition"
+                      title={isExpanded ? 'Thu gá»n' : 'Má»Ÿ rá»™ng'}
                     >
-                      <Edit3 className="w-3.5 h-3.5" /> Sửa & Thay Ảnh
+                      <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                     </button>
-                    {onDeleteProject && (
+                    <img src={proj.image} alt={proj.title} className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-extrabold text-sm text-slate-900 dark:text-white truncate">
+                        {proj.title || proj.name}
+                      </div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                        {proj.location} Â· {subs.length} phÃ¢n khu Â· {amens.length} tiá»‡n Ã­ch
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <button
-                        onClick={() => onDeleteProject(proj.id)}
-                        className="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg transition flex items-center justify-center gap-1 text-[11px]"
-                        title="Xóa dự án này"
+                        onClick={() => { setAddingSubdivisionTo(proj.id); setNewSubdivisionName(''); }}
+                        className="px-2 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[10px] flex items-center gap-1"
+                        title="ThÃªm phÃ¢n khu"
                       >
-                        <Trash2 className="w-3.5 h-3.5" /> Xóa
+                        <Plus className="w-3 h-3" /> PhÃ¢n khu
                       </button>
-                    )}
+                      <button
+                        onClick={() => { setAddingAmenityTo(proj.id); setNewAmenityName(''); }}
+                        className="px-2 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-[10px] flex items-center gap-1"
+                        title="ThÃªm tiá»‡n Ã­ch"
+                      >
+                        <Plus className="w-3 h-3" /> Tiá»‡n Ã­ch
+                      </button>
+                      <button
+                        onClick={() => setEditingProject(proj)}
+                        className="px-2 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-[10px] flex items-center gap-1"
+                        title="Sá»­a dá»± Ã¡n"
+                      >
+                        <Edit3 className="w-3 h-3" /> Sá»­a
+                      </button>
+                      {onDeleteProject && (
+                        <button
+                          onClick={() => onDeleteProject(proj.id)}
+                          className="px-2 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-[10px] flex items-center gap-1"
+                          title="XÃ³a dá»± Ã¡n"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Ná»™i dung má»Ÿ rá»™ng: phÃ¢n khu + tiá»‡n Ã­ch */}
+                  {isExpanded && (
+                    <div className="p-3 space-y-3">
+                      {/* Form thÃªm phÃ¢n khu */}
+                      {addingSubdivisionTo === proj.id && (
+                        <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl p-2 border border-emerald-200 dark:border-emerald-800">
+                          <input
+                            autoFocus
+                            value={newSubdivisionName}
+                            onChange={(e) => setNewSubdivisionName(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') handleAddSubdivision(proj.id); }}
+                            placeholder="TÃªn phÃ¢n khu má»›i..."
+                            className="flex-1 px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-xs text-slate-900 dark:text-white"
+                          />
+                          <button onClick={() => handleAddSubdivision(proj.id)} className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs">ThÃªm</button>
+                          <button onClick={() => setAddingSubdivisionTo(null)} className="px-2 py-1.5 text-slate-500 hover:text-slate-700 text-xs">Há»§y</button>
+                        </div>
+                      )}
+
+                      {/* Form thÃªm tiá»‡n Ã­ch */}
+                      {addingAmenityTo === proj.id && (
+                        <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/40 rounded-xl p-2 border border-blue-200 dark:border-blue-800">
+                          <input
+                            autoFocus
+                            value={newAmenityName}
+                            onChange={(e) => setNewAmenityName(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') handleAddAmenity(proj.id); }}
+                            placeholder="TÃªn tiá»‡n Ã­ch má»›i..."
+                            className="flex-1 px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-xs text-slate-900 dark:text-white"
+                          />
+                          <button onClick={() => handleAddAmenity(proj.id)} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs">ThÃªm</button>
+                          <button onClick={() => setAddingAmenityTo(null)} className="px-2 py-1.5 text-slate-500 hover:text-slate-700 text-xs">Há»§y</button>
+                        </div>
+                      )}
+
+                      {/* PhÃ¢n khu */}
+                      <div className="space-y-2">
+                        <div className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                          ðŸ˜ï¸ PhÃ¢n Khu ({subs.length})
+                        </div>
+                        {subs.length === 0 && (
+                          <div className="text-xs text-slate-400 italic px-2">ChÆ°a cÃ³ phÃ¢n khu. Nháº¥n "+ PhÃ¢n khu" Ä‘á»ƒ thÃªm.</div>
+                        )}
+                        {subs.map((sub: any) => {
+                          const subExpanded = expandedSubdivisionTree.has(sub.id);
+                          const streets = sub.streets || [];
+                          return (
+                            <div key={sub.id} className="ml-4 border-l-2 border-slate-200 dark:border-slate-700 pl-3 space-y-1.5">
+                              {/* DÃ²ng phÃ¢n khu */}
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => toggleSubdivisionTree(sub.id)}
+                                  className="p-0.5 text-slate-500 hover:text-amber-600 transition"
+                                  title={subExpanded ? 'Thu gá»n' : 'Má»Ÿ rá»™ng'}
+                                >
+                                  <ChevronRight className={`w-3.5 h-3.5 transition-transform ${subExpanded ? 'rotate-90' : ''}`} />
+                                </button>
+                                <span className="font-bold text-xs text-slate-800 dark:text-slate-200 flex-1">
+                                  {sub.name}
+                                </span>
+                                <button
+                                  onClick={() => { setAddingStreetTo(sub.id); setNewStreetName(''); }}
+                                  className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[10px] flex items-center gap-1"
+                                  title="ThÃªm dÃ£y phá»‘"
+                                >
+                                  <Plus className="w-3 h-3" /> DÃ£y phá»‘
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteSubdivision(proj.id, sub.id)}
+                                  className="px-1.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[10px]"
+                                  title="XÃ³a phÃ¢n khu"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              </div>
+
+                              {/* Form thÃªm dÃ£y phá»‘ */}
+                              {addingStreetTo === sub.id && (
+                                <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg p-1.5 border border-emerald-200 dark:border-emerald-800 ml-5">
+                                  <input
+                                    autoFocus
+                                    value={newStreetName}
+                                    onChange={(e) => setNewStreetName(e.target.value)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter') handleAddStreet(proj.id, sub.id); }}
+                                    placeholder="TÃªn dÃ£y phá»‘..."
+                                    className="flex-1 px-2 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-xs text-slate-900 dark:text-white"
+                                  />
+                                  <button onClick={() => handleAddStreet(proj.id, sub.id)} className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs">ThÃªm</button>
+                                  <button onClick={() => setAddingStreetTo(null)} className="px-1.5 py-1 text-slate-500 hover:text-slate-700 text-xs">Há»§y</button>
+                                </div>
+                              )}
+
+                              {/* DÃ£y phá»‘ */}
+                              {subExpanded && (
+                                <div className="ml-5 space-y-1">
+                                  {streets.length === 0 && (
+                                    <div className="text-[11px] text-slate-400 italic">ChÆ°a cÃ³ dÃ£y phá»‘.</div>
+                                  )}
+                                  {streets.map((street: string, si: number) => (
+                                    <div key={si} className="flex items-center gap-2 bg-white dark:bg-slate-800 rounded-lg px-2 py-1 border border-slate-200 dark:border-slate-700">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                                      <span className="text-xs text-slate-700 dark:text-slate-300 flex-1">{street}</span>
+                                      <button
+                                        onClick={() => handleDeleteStreet(proj.id, sub.id, street)}
+                                        className="px-1 py-0.5 text-rose-500 hover:text-rose-700 text-[10px]"
+                                        title="XÃ³a dÃ£y phá»‘"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Tiá»‡n Ã­ch */}
+                      <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                        <div className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                          ðŸŠ Tiá»‡n Ãch ({amens.length})
+                        </div>
+                        {amens.length === 0 && (
+                          <div className="text-xs text-slate-400 italic px-2">ChÆ°a cÃ³ tiá»‡n Ã­ch. Nháº¥n "+ Tiá»‡n Ã­ch" Ä‘á»ƒ thÃªm.</div>
+                        )}
+                        <div className="flex flex-wrap gap-1.5">
+                          {amens.map((amenity: string, ai: number) => (
+                            <span key={ai} className="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 rounded-lg px-2 py-1 text-[11px] font-bold border border-blue-200 dark:border-blue-800">
+                              {amenity}
+                              <button
+                                onClick={() => handleDeleteAmenity(proj.id, amenity)}
+                                className="text-rose-500 hover:text-rose-700"
+                                title="XÃ³a tiá»‡n Ã­ch"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -5671,28 +5870,28 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
-                QUẢN LÝ BÀI VIẾT & TIN TỨC BĐS CHUẨN SEO ({news.length} BÀI)
+                QUáº¢N LÃ BÃ€I VIáº¾T & TIN Tá»¨C BÄS CHUáº¨N SEO ({news.length} BÃ€I)
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Soạn bài viết tin tức, cập nhật thông tin dự án, chỉnh sửa nội dung và thay đổi hình ảnh đại diện.
+                Soáº¡n bÃ i viáº¿t tin tá»©c, cáº­p nháº­t thÃ´ng tin dá»± Ã¡n, chá»‰nh sá»­a ná»™i dung vÃ  thay Ä‘á»•i hÃ¬nh áº£nh Ä‘áº¡i diá»‡n.
               </p>
             </div>
             <button
               onClick={() => setIsAddingNews(true)}
               className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow"
             >
-              <Plus className="w-4 h-4" /> Thêm Bài Viết Mới
+              <Plus className="w-4 h-4" /> ThÃªm BÃ i Viáº¿t Má»›i
             </button>
           </div>
 
-          {/* Responsive card grid — gọn gàng trên di động */}
+          {/* Responsive card grid â€” gá»n gÃ ng trÃªn di Ä‘á»™ng */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {news.map((item) => (
               <div
                 key={item.id}
                 className="bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col"
               >
-                {/* Ảnh bìa */}
+                {/* áº¢nh bÃ¬a */}
                 <div className="relative h-32 bg-slate-950">
                   <img loading="lazy" src={item.image} alt={item.title} className="w-full h-full object-cover" />
                   <span className="absolute top-2 left-2 px-2 py-0.5 bg-slate-950/80 text-emerald-400 font-black text-[10px] rounded-full backdrop-blur-sm uppercase">
@@ -5700,16 +5899,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </span>
                   {item.status === 'published' ? (
                     <span className="absolute top-2 right-2 px-2 py-0.5 bg-emerald-600/90 text-white font-black text-[10px] rounded-full">
-                      🟢 Đã Đồng Bộ
+                      ðŸŸ¢ ÄÃ£ Äá»“ng Bá»™
                     </span>
                   ) : (
                     <span className="absolute top-2 right-2 px-2 py-0.5 bg-amber-500/90 text-slate-950 font-black text-[10px] rounded-full">
-                      🟡 Chờ Duyệt
+                      ðŸŸ¡ Chá» Duyá»‡t
                     </span>
                   )}
                 </div>
 
-                {/* Nội dung bài viết */}
+                {/* Ná»™i dung bÃ i viáº¿t */}
                 <div className="p-4 space-y-2.5 flex flex-col flex-1">
                   <h4 className="font-extrabold text-sm text-slate-900 dark:text-white leading-snug line-clamp-2">
                     {item.title}
@@ -5723,38 +5922,38 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <div className="text-[10px] text-slate-400">{item.publishedAt}</div>
                   </div>
 
-                  {/* Thao tác */}
+                  {/* Thao tÃ¡c */}
                   <div className="flex items-center gap-2 pt-1 mt-auto">
                     {item.status === 'published' ? (
                       <button
                         onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'draft' })}
                         className="flex-1 px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold rounded-lg transition text-[11px]"
-                        title="Chuyển bài này về trạng thái Chờ Duyệt"
+                        title="Chuyá»ƒn bÃ i nÃ y vá» tráº¡ng thÃ¡i Chá» Duyá»‡t"
                       >
-                        🟡 Trả Chờ Duyệt
+                        ðŸŸ¡ Tráº£ Chá» Duyá»‡t
                       </button>
                     ) : (
                       <button
                         onClick={() => onUpdateNews && onUpdateNews({ ...item, status: 'published' })}
                         className="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg transition shadow text-[11px]"
-                        title="Phê duyệt bài viết và xuất bản lên Web Public"
+                        title="PhÃª duyá»‡t bÃ i viáº¿t vÃ  xuáº¥t báº£n lÃªn Web Public"
                       >
-                        🟢 Duyệt & Đăng Public
+                        ðŸŸ¢ Duyá»‡t & ÄÄƒng Public
                       </button>
                     )}
 
                     <button
                       onClick={() => setEditingNews(item)}
                       className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center gap-1 text-[11px]"
-                      title="Sửa bài & Thay ảnh"
+                      title="Sá»­a bÃ i & Thay áº£nh"
                     >
-                      <Edit3 className="w-3.5 h-3.5" /> Sửa
+                      <Edit3 className="w-3.5 h-3.5" /> Sá»­a
                     </button>
                     {onDeleteNews && (
                       <button
                         onClick={() => onDeleteNews(item.id)}
                         className="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition"
-                        title="Xóa bài viết"
+                        title="XÃ³a bÃ i viáº¿t"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -5773,21 +5972,21 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
-                QUẢN LÝ CÂU HỎI Q&A / FAQ ({adminFaq.length} CÂU HỎI)
+                QUáº¢N LÃ CÃ‚U Há»ŽI Q&A / FAQ ({adminFaq.length} CÃ‚U Há»ŽI)
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Thêm, sửa, xóa câu hỏi & trả lời hiển thị trên trang chi tiết dự án (tối ưu SEO).
+                ThÃªm, sá»­a, xÃ³a cÃ¢u há»i & tráº£ lá»i hiá»ƒn thá»‹ trÃªn trang chi tiáº¿t dá»± Ã¡n (tá»‘i Æ°u SEO).
               </p>
             </div>
             <button
               onClick={() => setIsAddingFaq(true)}
               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0"
             >
-              <Plus className="w-4 h-4" /> + Thêm Câu Hỏi Q&A
+              <Plus className="w-4 h-4" /> + ThÃªm CÃ¢u Há»i Q&A
             </button>
           </div>
 
-          {/* Responsive card grid — gọn gàng trên di động */}
+          {/* Responsive card grid â€” gá»n gÃ ng trÃªn di Ä‘á»™ng */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {adminFaq.map((item) => (
               <div
@@ -5801,13 +6000,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       {item.category}
                     </span>
                     <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-md text-[10px]">
-                      {item.projectId === 'all' ? 'Tất cả dự án' : item.projectId}
+                      {item.projectId === 'all' ? 'Táº¥t cáº£ dá»± Ã¡n' : item.projectId}
                     </span>
                   </div>
 
                   {/* Question */}
                   <h4 className="font-extrabold text-sm text-slate-900 dark:text-white leading-snug line-clamp-2">
-                    ❓ {item.question}
+                    â“ {item.question}
                   </h4>
 
                   {/* Answer */}
@@ -5827,7 +6026,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   )}
 
                   <div className="text-[10px] text-slate-400 pt-1">
-                    Cập nhật: {item.updatedAt}
+                    Cáº­p nháº­t: {item.updatedAt}
                   </div>
 
                   {/* Actions */}
@@ -5836,11 +6035,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       onClick={() => setEditingFaq(item)}
                       className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center justify-center gap-1 text-[11px]"
                     >
-                      <Edit3 className="w-3.5 h-3.5" /> Sửa
+                      <Edit3 className="w-3.5 h-3.5" /> Sá»­a
                     </button>
                     <button
                       onClick={async () => {
-                        if (!window.confirm('Xóa câu hỏi Q&A này?')) return;
+                        if (!window.confirm('XÃ³a cÃ¢u há»i Q&A nÃ y?')) return;
                         try {
                           const token = localStorage.getItem('token');
                           const res = await fetch(`/api/faq/${item.id}`, {
@@ -5856,7 +6055,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       }}
                       className="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition flex items-center justify-center gap-1 text-[11px]"
                     >
-                      <Trash2 className="w-3.5 h-3.5" /> Xóa
+                      <Trash2 className="w-3.5 h-3.5" /> XÃ³a
                     </button>
                   </div>
                 </div>
@@ -5866,7 +6065,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
           {adminFaq.length === 0 && (
             <div className="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
-              Chưa có câu hỏi Q&A nào. Nhấn "Thêm Câu Hỏi Q&A" để bắt đầu.
+              ChÆ°a cÃ³ cÃ¢u há»i Q&A nÃ o. Nháº¥n "ThÃªm CÃ¢u Há»i Q&A" Ä‘á»ƒ báº¯t Ä‘áº§u.
             </div>
           )}
         </div>
@@ -5877,17 +6076,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         <form onSubmit={handleSavePricing} className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 space-y-6 shadow-xl">
           <div>
             <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-              ⚙️ CẤU HÌNH BẬT/TẮT THANH TOÁN & BẢNG GIÁ UP TIN / VIETQR DONATE
+              âš™ï¸ Cáº¤U HÃŒNH Báº¬T/Táº®T THANH TOÃN & Báº¢NG GIÃ UP TIN / VIETQR DONATE
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Admin thiết lập Bật/Tắt chế độ thu phí. Khi Tắt thanh toán, hệ thống chuyển sang chế độ <strong>Donate Miễn Phí tùy tâm</strong> cho khách hàng.
+              Admin thiáº¿t láº­p Báº­t/Táº¯t cháº¿ Ä‘á»™ thu phÃ­. Khi Táº¯t thanh toÃ¡n, há»‡ thá»‘ng chuyá»ƒn sang cháº¿ Ä‘á»™ <strong>Donate Miá»…n PhÃ­ tÃ¹y tÃ¢m</strong> cho khÃ¡ch hÃ ng.
             </p>
           </div>
 
           {savedSuccess && (
             <div className="p-4 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-bold rounded-2xl border border-emerald-300 flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-              Đã lưu thay đổi cấu hình Thanh toán & VietQR Donate thành công!
+              ÄÃ£ lÆ°u thay Ä‘á»•i cáº¥u hÃ¬nh Thanh toÃ¡n & VietQR Donate thÃ nh cÃ´ng!
             </div>
           )}
 
@@ -5896,10 +6095,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <span className="bg-amber-500 text-slate-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                  CÀI ĐẶT CỔNG CƠ CHẾ BẬT / TẮT THANH TOÁN
+                  CÃ€I Äáº¶T Cá»”NG CÆ  CHáº¾ Báº¬T / Táº®T THANH TOÃN
                 </span>
                 <h4 className="text-sm font-black text-slate-900 dark:text-white mt-1">
-                  Chế Độ Hiện Tại: {localConfig.paymentEnabled !== false ? '💳 BẬT THU PHÍ THEO BẢNG GIÁ' : '🎁 TẮT THU PHÍ — CHUYỂN SANG DONATE TÙY TÂM (MIỄN PHÍ)'}
+                  Cháº¿ Äá»™ Hiá»‡n Táº¡i: {localConfig.paymentEnabled !== false ? 'ðŸ’³ Báº¬T THU PHÃ THEO Báº¢NG GIÃ' : 'ðŸŽ Táº®T THU PHÃ â€” CHUYá»‚N SANG DONATE TÃ™Y TÃ‚M (MIá»„N PHÃ)'}
                 </h4>
               </div>
 
@@ -5913,7 +6112,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  💳 Bật Thanh Toán
+                  ðŸ’³ Báº­t Thanh ToÃ¡n
                 </button>
                 <button
                   type="button"
@@ -5924,7 +6123,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       : 'text-slate-500 hover:text-amber-500'
                   }`}
                 >
-                  🎁 Tắt Thanh Toán (Bật Donate)
+                  ðŸŽ Táº¯t Thanh ToÃ¡n (Báº­t Donate)
                 </button>
               </div>
             </div>
@@ -5932,17 +6131,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             {localConfig.paymentEnabled === false && (
               <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-amber-500/30 space-y-3">
                 <label className="font-bold text-xs text-slate-800 dark:text-slate-200 block">
-                  Lời nhắn Donate hiển thị khi khách bấm Up-Tin / Nạp Phí:
+                  Lá»i nháº¯n Donate hiá»ƒn thá»‹ khi khÃ¡ch báº¥m Up-Tin / Náº¡p PhÃ­:
                 </label>
                 <textarea
                   rows={2}
                   value={localConfig.donateMessage || ''}
                   onChange={(e) => setLocalConfig({ ...localConfig, donateMessage: e.target.value })}
                   className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-xs font-medium text-slate-900 dark:text-slate-100"
-                  placeholder="Nhập thông điệp Donate tùy tâm..."
+                  placeholder="Nháº­p thÃ´ng Ä‘iá»‡p Donate tÃ¹y tÃ¢m..."
                 />
                 <p className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">
-                  ⚡ Khi Tắt Thanh Toán, người dùng bấm "Up Tin" hoặc "Nạp tiền" sẽ được Up-Tin thành công ngay lập tức MIỄN PHÍ, đồng thời hiển thị tùy chọn Donate chuyển khoản tùy tâm.
+                  âš¡ Khi Táº¯t Thanh ToÃ¡n, ngÆ°á»i dÃ¹ng báº¥m "Up Tin" hoáº·c "Náº¡p tiá»n" sáº½ Ä‘Æ°á»£c Up-Tin thÃ nh cÃ´ng ngay láº­p tá»©c MIá»„N PHÃ, Ä‘á»“ng thá»i hiá»ƒn thá»‹ tÃ¹y chá»n Donate chuyá»ƒn khoáº£n tÃ¹y tÃ¢m.
                 </p>
               </div>
             )}
@@ -5951,13 +6150,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           {/* Pricing Section */}
           <div className="space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-              1. Bảng Giá Gói Dịch Vụ Up Tin Khi Bật Thu Phí (VNĐ)
+              1. Báº£ng GiÃ¡ GÃ³i Dá»‹ch Vá»¥ Up Tin Khi Báº­t Thu PhÃ­ (VNÄ)
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Giá Up Tin 1 Lượt (VNĐ):
+                  GiÃ¡ Up Tin 1 LÆ°á»£t (VNÄ):
                 </label>
                 <input
                   type="number"
@@ -5969,7 +6168,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Gói Auto-Push 5 Lượt (VNĐ):
+                  GÃ³i Auto-Push 5 LÆ°á»£t (VNÄ):
                 </label>
                 <input
                   type="number"
@@ -5981,7 +6180,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  VIP Bạc (VNĐ / Ngày):
+                  VIP Báº¡c (VNÄ / NgÃ y):
                 </label>
                 <input
                   type="number"
@@ -5993,7 +6192,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  VIP Vàng (VNĐ / Ngày):
+                  VIP VÃ ng (VNÄ / NgÃ y):
                 </label>
                 <input
                   type="number"
@@ -6005,7 +6204,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  VIP Kim Cương (VNĐ / Ngày):
+                  VIP Kim CÆ°Æ¡ng (VNÄ / NgÃ y):
                 </label>
                 <input
                   type="number"
@@ -6020,13 +6219,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           {/* Bank Details Section */}
           <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-700">
             <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-              2. Thông Tin Tài Khoản Nhận Chuyển Khoản VietQR / Donate
+              2. ThÃ´ng Tin TÃ i Khoáº£n Nháº­n Chuyá»ƒn Khoáº£n VietQR / Donate
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Tên Ngân Hàng:
+                  TÃªn NgÃ¢n HÃ ng:
                 </label>
                 <input
                   type="text"
@@ -6039,7 +6238,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Số Tài Khoản:
+                  Sá»‘ TÃ i Khoáº£n:
                 </label>
                 <input
                   type="text"
@@ -6051,7 +6250,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Tên Chủ Tài Khoản:
+                  TÃªn Chá»§ TÃ i Khoáº£n:
                 </label>
                 <input
                   type="text"
@@ -6068,7 +6267,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               type="submit"
               className="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-emerald-600/30 transition transform active:scale-95"
             >
-              Lưu Cấu Hình Giá & Ngân Hàng
+              LÆ°u Cáº¥u HÃ¬nh GiÃ¡ & NgÃ¢n HÃ ng
             </button>
           </div>
         </form>
@@ -6082,10 +6281,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div>
               <h3 className="font-black text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-amber-500" />
-                DANH SÁCH YÊU CẦU ĐẶT LỊCH XEM NHÀ & TƯ VẤN (QUẢN TRỊ LEADS CHỦ NHÀ & ADMIN)
+                DANH SÃCH YÃŠU Cáº¦U Äáº¶T Lá»ŠCH XEM NHÃ€ & TÆ¯ Váº¤N (QUáº¢N TRá»Š LEADS CHá»¦ NHÃ€ & ADMIN)
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Tất cả lượt đặt lịch xem nhà của khách hàng (gửi tới người đăng tin/chủ nhà & hệ thống) được tổng hợp chi tiết và có thể xuất ra file Excel/CSV.
+                Táº¥t cáº£ lÆ°á»£t Ä‘áº·t lá»‹ch xem nhÃ  cá»§a khÃ¡ch hÃ ng (gá»­i tá»›i ngÆ°á»i Ä‘Äƒng tin/chá»§ nhÃ  & há»‡ thá»‘ng) Ä‘Æ°á»£c tá»•ng há»£p chi tiáº¿t vÃ  cÃ³ thá»ƒ xuáº¥t ra file Excel/CSV.
               </p>
             </div>
 
@@ -6095,14 +6294,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl flex items-center gap-2 transition text-xs shadow-md"
               >
                 <Download className="w-4 h-4" />
-                Xuất File Excel / CSV ({filteredContacts.length})
+                Xuáº¥t File Excel / CSV ({filteredContacts.length})
               </button>
               <button
                 onClick={onRefreshData}
                 className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl flex items-center gap-1.5 transition text-xs"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                Làm Mới Dữ Liệu
+                LÃ m Má»›i Dá»¯ Liá»‡u
               </button>
             </div>
           </div>
@@ -6110,23 +6309,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           {/* Metrics Summary Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl">
-              <span className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 tracking-wider">TỔNG YÊU CẦU</span>
+              <span className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 tracking-wider">Tá»”NG YÃŠU Cáº¦U</span>
               <div className="text-xl font-black text-emerald-700 dark:text-emerald-300 mt-1">{localContacts.length}</div>
             </div>
             <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-2xl">
-              <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 tracking-wider">YÊU CẦU MỚI (CHỜ GỌI)</span>
+              <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 tracking-wider">YÃŠU Cáº¦U Má»šI (CHá»œ Gá»ŒI)</span>
               <div className="text-xl font-black text-amber-700 dark:text-amber-300 mt-1">
                 {localContacts.filter(c => c.status === 'new' || !c.status).length}
               </div>
             </div>
             <div className="p-3.5 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/50 rounded-2xl">
-              <span className="text-[10px] font-black uppercase text-sky-600 dark:text-sky-400 tracking-wider">LỊCH HẸN XEM NHÀ</span>
+              <span className="text-[10px] font-black uppercase text-sky-600 dark:text-sky-400 tracking-wider">Lá»ŠCH Háº¸N XEM NHÃ€</span>
               <div className="text-xl font-black text-sky-700 dark:text-sky-300 mt-1">
                 {localContacts.filter(c => c.type === 'viewing').length}
               </div>
             </div>
             <div className="p-3.5 bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/50 rounded-2xl">
-              <span className="text-[10px] font-black uppercase text-purple-600 dark:text-purple-400 tracking-wider">ĐÃ LIÊN HỆ / XỬ LÝ</span>
+              <span className="text-[10px] font-black uppercase text-purple-600 dark:text-purple-400 tracking-wider">ÄÃƒ LIÃŠN Há»† / Xá»¬ LÃ</span>
               <div className="text-xl font-black text-purple-700 dark:text-purple-300 mt-1">
                 {localContacts.filter(c => c.status === 'done' || c.status === 'contacted').length}
               </div>
@@ -6141,7 +6340,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 type="text"
                 value={leadSearch}
                 onChange={(e) => setLeadSearch(e.target.value)}
-                placeholder="Tìm tên khách, SĐT, tên căn, người đăng tin..."
+                placeholder="TÃ¬m tÃªn khÃ¡ch, SÄT, tÃªn cÄƒn, ngÆ°á»i Ä‘Äƒng tin..."
                 className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
               />
             </div>
@@ -6152,10 +6351,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 onChange={(e) => setLeadStatusFilter(e.target.value)}
                 className="p-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200"
               >
-                <option value="all">Tất cả trạng thái</option>
-                <option value="new">🔴 Yêu cầu mới</option>
-                <option value="contacted">🟡 Đã liên hệ</option>
-                <option value="done">🟢 Hoàn tất</option>
+                <option value="all">Táº¥t cáº£ tráº¡ng thÃ¡i</option>
+                <option value="new">ðŸ”´ YÃªu cáº§u má»›i</option>
+                <option value="contacted">ðŸŸ¡ ÄÃ£ liÃªn há»‡</option>
+                <option value="done">ðŸŸ¢ HoÃ n táº¥t</option>
               </select>
 
               <select
@@ -6163,10 +6362,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 onChange={(e) => setLeadTypeFilter(e.target.value)}
                 className="p-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200"
               >
-                <option value="all">Tất cả loại yêu cầu</option>
-                <option value="viewing">📅 Đặt lịch xem nhà</option>
-                <option value="consultation">💬 Tư vấn chung</option>
-                <option value="deposit">💰 Cọc giữ chỗ</option>
+                <option value="all">Táº¥t cáº£ loáº¡i yÃªu cáº§u</option>
+                <option value="viewing">ðŸ“… Äáº·t lá»‹ch xem nhÃ </option>
+                <option value="consultation">ðŸ’¬ TÆ° váº¥n chung</option>
+                <option value="deposit">ðŸ’° Cá»c giá»¯ chá»—</option>
               </select>
             </div>
           </div>
@@ -6175,7 +6374,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           {filteredContacts.length === 0 ? (
             <div className="py-12 text-center space-y-2 border border-dashed border-slate-200 dark:border-slate-700 rounded-2xl">
               <Calendar className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">Chưa có dữ liệu đặt lịch xem nhà nào phù hợp với bộ lọc.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">ChÆ°a cÃ³ dá»¯ liá»‡u Ä‘áº·t lá»‹ch xem nhÃ  nÃ o phÃ¹ há»£p vá»›i bá»™ lá»c.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -6199,7 +6398,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           </span>
                           {c.type === 'viewing' && (
                             <span className="px-1.5 py-0.2 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[9px] rounded font-bold shrink-0">
-                              Xem Nhà
+                              Xem NhÃ 
                             </span>
                           )}
                         </div>
@@ -6212,10 +6411,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300'
                               : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
                           }`}>
-                            {c.status === 'done' ? '🟢 Hoàn tất' : c.status === 'contacted' ? '🟡 Đã liên hệ' : '🔴 Mới'}
+                            {c.status === 'done' ? 'ðŸŸ¢ HoÃ n táº¥t' : c.status === 'contacted' ? 'ðŸŸ¡ ÄÃ£ liÃªn há»‡' : 'ðŸ”´ Má»›i'}
                           </span>
                           <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-                            ▼
+                            â–¼
                           </span>
                         </div>
                       </div>
@@ -6223,14 +6422,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       {/* Summary line */}
                       <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
                         <span className="truncate max-w-[170px] text-slate-800 dark:text-slate-200 font-semibold">
-                          🏢 {c.propertyTitle || c.projectInterest}
+                          ðŸ¢ {c.propertyTitle || c.projectInterest}
                         </span>
                         <a
                           href={`tel:${c.phone}`}
                           onClick={e => e.stopPropagation()}
                           className="font-mono text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1"
                         >
-                          📞 {c.phone}
+                          ðŸ“ž {c.phone}
                         </a>
                       </div>
 
@@ -6239,21 +6438,21 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
                           <div className="grid grid-cols-2 gap-2 text-[11px]">
                             <div>
-                              <span className="text-slate-400 block text-[10px]">Người Đăng / Chủ Nhà:</span>
+                              <span className="text-slate-400 block text-[10px]">NgÆ°á»i ÄÄƒng / Chá»§ NhÃ :</span>
                               <span className="font-bold text-slate-800 dark:text-slate-200">
-                                {c.sellerName || 'Admin / Ban Quản Trị'}
+                                {c.sellerName || 'Admin / Ban Quáº£n Trá»‹'}
                               </span>
                               {c.sellerPhone && (
                                 <span className="block text-slate-500 font-mono text-[10px]">
-                                  SĐT: {c.sellerPhone}
+                                  SÄT: {c.sellerPhone}
                                 </span>
                               )}
                             </div>
 
                             <div>
-                              <span className="text-slate-400 block text-[10px]">Lịch Hẹn Xem:</span>
+                              <span className="text-slate-400 block text-[10px]">Lá»‹ch Háº¹n Xem:</span>
                               <span className="font-bold text-amber-600 dark:text-amber-400">
-                                {c.preferredTime || 'Càng sớm càng tốt'}
+                                {c.preferredTime || 'CÃ ng sá»›m cÃ ng tá»‘t'}
                               </span>
                             </div>
                           </div>
@@ -6271,9 +6470,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 onChange={(e) => handleUpdateLeadStatus(c.id, e.target.value as any)}
                                 className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold"
                               >
-                                <option value="new">🔴 Yêu cầu mới</option>
-                                <option value="contacted">🟡 Đã liên hệ</option>
-                                <option value="done">🟢 Hoàn tất</option>
+                                <option value="new">ðŸ”´ YÃªu cáº§u má»›i</option>
+                                <option value="contacted">ðŸŸ¡ ÄÃ£ liÃªn há»‡</option>
+                                <option value="done">ðŸŸ¢ HoÃ n táº¥t</option>
                               </select>
                             </div>
 
@@ -6283,7 +6482,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl font-bold text-xs flex items-center gap-1"
                               >
                                 <Phone className="w-3 h-3" />
-                                <span>Gọi</span>
+                                <span>Gá»i</span>
                               </a>
                               <a
                                 href={`https://zalo.me/${c.phone.replace(/\D/g, '')}`}
@@ -6296,7 +6495,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               <button
                                 onClick={() => handleDeleteLead(c.id)}
                                 className="p-1.5 bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-300 rounded-xl"
-                                title="Xóa"
+                                title="XÃ³a"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -6315,12 +6514,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <thead>
                     <tr className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold uppercase text-[10px] tracking-wider">
                       <th className="py-3 px-3">STT</th>
-                      <th className="py-3 px-3">Khách Hàng Đặt Lịch</th>
-                      <th className="py-3 px-3">Căn BĐS Quan Tâm</th>
-                      <th className="py-3 px-3">Người Đăng Tin (Chủ Nhà / Admin)</th>
-                      <th className="py-3 px-3">Lịch Hẹn & Ghi Chú</th>
-                      <th className="py-3 px-3">Trạng Thái</th>
-                      <th className="py-3 px-3 text-right">Thao Tác</th>
+                      <th className="py-3 px-3">KhÃ¡ch HÃ ng Äáº·t Lá»‹ch</th>
+                      <th className="py-3 px-3">CÄƒn BÄS Quan TÃ¢m</th>
+                      <th className="py-3 px-3">NgÆ°á»i ÄÄƒng Tin (Chá»§ NhÃ  / Admin)</th>
+                      <th className="py-3 px-3">Lá»‹ch Háº¹n & Ghi ChÃº</th>
+                      <th className="py-3 px-3">Tráº¡ng ThÃ¡i</th>
+                      <th className="py-3 px-3 text-right">Thao TÃ¡c</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-800/40">
@@ -6334,7 +6533,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             {c.fullName}
                             {c.type === 'viewing' && (
                               <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[9px] rounded-md font-bold">
-                                Xem Nhà
+                                Xem NhÃ 
                               </span>
                             )}
                           </div>
@@ -6363,28 +6562,28 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">{c.projectInterest}</span>
                             </div>
                           ) : (
-                            <span className="text-slate-400 italic">Yêu cầu tư vấn dự án {c.projectInterest}</span>
+                            <span className="text-slate-400 italic">YÃªu cáº§u tÆ° váº¥n dá»± Ã¡n {c.projectInterest}</span>
                           )}
                         </td>
 
                         {/* Seller info */}
                         <td className="py-3.5 px-3">
-                          <div className="font-bold text-slate-800 dark:text-slate-200">{c.sellerName || 'Người đăng tin'}</div>
+                          <div className="font-bold text-slate-800 dark:text-slate-200">{c.sellerName || 'NgÆ°á»i Ä‘Äƒng tin'}</div>
                           <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
                             {c.sellerPhone ? (
                               <>
-                                <span>SĐT: {c.sellerPhone}</span>
+                                <span>SÄT: {c.sellerPhone}</span>
                                 <a
-                                  href={`https://zalo.me/${c.sellerPhone.replace(/\D/g, '')}?text=Báo%20lịch%20xem%20nhà%3A%20${encodeURIComponent(c.fullName)}%20(${c.phone})`}
+                                  href={`https://zalo.me/${c.sellerPhone.replace(/\D/g, '')}?text=BÃ¡o%20lá»‹ch%20xem%20nhÃ %3A%20${encodeURIComponent(c.fullName)}%20(${c.phone})`}
                                   target="_blank"
                                   rel="noreferrer"
                                   className="text-[9px] text-blue-500 font-bold hover:underline"
                                 >
-                                  (Báo Chủ)
+                                  (BÃ¡o Chá»§)
                                 </a>
                               </>
                             ) : (
-                              <span className="italic text-slate-400">Chưa có SĐT</span>
+                              <span className="italic text-slate-400">ChÆ°a cÃ³ SÄT</span>
                             )}
                           </div>
                         </td>
@@ -6402,7 +6601,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               "{c.note}"
                             </p>
                           ) : (
-                            <span className="text-slate-400 text-[10px]">Không có ghi chú</span>
+                            <span className="text-slate-400 text-[10px]">KhÃ´ng cÃ³ ghi chÃº</span>
                           )}
                           <div className="text-[9px] text-slate-400 mt-1">
                             {new Date(c.createdAt).toLocaleString('vi-VN')}
@@ -6422,9 +6621,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 : 'bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800'
                             }`}
                           >
-                            <option value="new">🔴 Yêu cầu mới</option>
-                            <option value="contacted">🟡 Đã liên hệ</option>
-                            <option value="done">🟢 Hoàn tất</option>
+                            <option value="new">ðŸ”´ YÃªu cáº§u má»›i</option>
+                            <option value="contacted">ðŸŸ¡ ÄÃ£ liÃªn há»‡</option>
+                            <option value="done">ðŸŸ¢ HoÃ n táº¥t</option>
                           </select>
                         </td>
 
@@ -6434,14 +6633,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             <a
                               href={`tel:${c.phone}`}
                               className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[11px] flex items-center gap-1 transition"
-                              title="Gọi ngay cho khách"
+                              title="Gá»i ngay cho khÃ¡ch"
                             >
                               <Phone className="w-3.5 h-3.5" />
                             </a>
                             <button
                               onClick={() => handleDeleteLead(c.id)}
                               className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-lg transition"
-                              title="Xóa yêu cầu"
+                              title="XÃ³a yÃªu cáº§u"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -6465,29 +6664,29 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div>
               <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
                 <UserCheck className="w-5 h-5 text-amber-500" />
-                QUẢN LÝ THÀNH VIÊN, CƯ DÂN & PHÂN CẤP QUẢN TRỊ
+                QUáº¢N LÃ THÃ€NH VIÃŠN, CÆ¯ DÃ‚N & PHÃ‚N Cáº¤P QUáº¢N TRá»Š
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Xem thống kê tài khoản, tạo mới user, phân vai trò (Admin / Cư Dân / Môi Giới), cộng lượt Up Tin & tạm khóa tài khoản
+                Xem thá»‘ng kÃª tÃ i khoáº£n, táº¡o má»›i user, phÃ¢n vai trÃ² (Admin / CÆ° DÃ¢n / MÃ´i Giá»›i), cá»™ng lÆ°á»£t Up Tin & táº¡m khÃ³a tÃ i khoáº£n
               </p>
             </div>
 
             {/* Quick User Stats Pills & Add Button */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                👥 Tổng: <strong className="text-amber-500">{registeredUsers.length}</strong>
+                ðŸ‘¥ Tá»•ng: <strong className="text-amber-500">{registeredUsers.length}</strong>
               </span>
               <span className="px-3 py-1.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                🏢 Doanh Nghiệp: <strong>{registeredUsers.filter(u => u.accountType === 'business_enterprise' || u.role === 'partner' || u.companyName).length}</strong>
+                ðŸ¢ Doanh Nghiá»‡p: <strong>{registeredUsers.filter(u => u.accountType === 'business_enterprise' || u.role === 'partner' || u.companyName).length}</strong>
               </span>
               <span className="px-3 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                🏠 Cư Dân: <strong>{registeredUsers.filter(u => u.role === 'owner' || (!u.companyName && u.accountType !== 'business_enterprise' && u.role !== 'sale' && u.role !== 'admin')).length}</strong>
+                ðŸ  CÆ° DÃ¢n: <strong>{registeredUsers.filter(u => u.role === 'owner' || (!u.companyName && u.accountType !== 'business_enterprise' && u.role !== 'sale' && u.role !== 'admin')).length}</strong>
               </span>
               <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                💼 Môi Giới/Sale: <strong>{registeredUsers.filter(u => u.role === 'sale').length}</strong>
+                ðŸ’¼ MÃ´i Giá»›i/Sale: <strong>{registeredUsers.filter(u => u.role === 'sale').length}</strong>
               </span>
               <span className="px-3 py-1.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 rounded-xl font-extrabold flex items-center gap-1.5 text-xs">
-                👑 Admin: <strong>{registeredUsers.filter(u => u.role === 'admin').length}</strong>
+                ðŸ‘‘ Admin: <strong>{registeredUsers.filter(u => u.role === 'admin').length}</strong>
               </span>
 
               <button
@@ -6495,7 +6694,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md flex items-center gap-1.5 cursor-pointer"
               >
                 <UserPlus className="w-4 h-4" />
-                <span>+ THÊM THÀNH VIÊN MỚI</span>
+                <span>+ THÃŠM THÃ€NH VIÃŠN Má»šI</span>
               </button>
             </div>
           </div>
@@ -6506,7 +6705,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="relative flex-1 max-w-md">
               <input
                 type="text"
-                placeholder="Tìm theo Tên, SĐT, Email, MST, Tên Công Ty..."
+                placeholder="TÃ¬m theo TÃªn, SÄT, Email, MST, TÃªn CÃ´ng Ty..."
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
                 className="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs"
@@ -6524,7 +6723,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                 }`}
               >
-                Tất Cả ({registeredUsers.length})
+                Táº¥t Cáº£ ({registeredUsers.length})
               </button>
               <button
                 onClick={() => setUserRoleFilter('business')}
@@ -6534,7 +6733,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                 }`}
               >
-                🏢 Doanh Nghiệp (B2B)
+                ðŸ¢ Doanh Nghiá»‡p (B2B)
               </button>
               <button
                 onClick={() => setUserRoleFilter('owner')}
@@ -6544,7 +6743,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                 }`}
               >
-                🏠 Cư Dân / Chính Chủ
+                ðŸ  CÆ° DÃ¢n / ChÃ­nh Chá»§
               </button>
               <button
                 onClick={() => setUserRoleFilter('sale')}
@@ -6554,7 +6753,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                 }`}
               >
-                💼 Môi Giới / Sale
+                ðŸ’¼ MÃ´i Giá»›i / Sale
               </button>
               <button
                 onClick={() => setUserRoleFilter('admin')}
@@ -6564,12 +6763,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                 }`}
               >
-                👑 Quản Trị Viên
+                ðŸ‘‘ Quáº£n Trá»‹ ViÃªn
               </button>
               <button
                 onClick={fetchUsers}
                 className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center gap-1 transition text-xs shadow-xs shrink-0"
-                title="Làm mới danh sách"
+                title="LÃ m má»›i danh sÃ¡ch"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
               </button>
@@ -6579,7 +6778,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           {registeredUsers.length === 0 ? (
             <div className="text-center py-12 space-y-2">
               <UserX className="w-8 h-8 text-slate-400 mx-auto" />
-              <p className="text-xs text-slate-400 font-medium">Chưa có dữ liệu thành viên phù hợp.</p>
+              <p className="text-xs text-slate-400 font-medium">ChÆ°a cÃ³ dá»¯ liá»‡u thÃ nh viÃªn phÃ¹ há»£p.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -6630,10 +6829,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             )}
                             <div className="min-w-0">
                               <span className="font-extrabold text-slate-900 dark:text-white text-xs block truncate">
-                                {u.name || 'Người dùng'}
+                                {u.name || 'NgÆ°á»i dÃ¹ng'}
                               </span>
                               <span className="text-[10px] text-slate-400 block truncate">
-                                {u.email || u.phone || 'Chưa cập nhật email'}
+                                {u.email || u.phone || 'ChÆ°a cáº­p nháº­t email'}
                               </span>
                             </div>
                           </div>
@@ -6646,19 +6845,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
                                 : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
                             }`}>
-                              {u.role === 'admin' ? '👑 Admin' : u.role === 'owner' ? '🏠 Cư Dân' : '💼 Môi Giới'}
+                              {u.role === 'admin' ? 'ðŸ‘‘ Admin' : u.role === 'owner' ? 'ðŸ  CÆ° DÃ¢n' : 'ðŸ’¼ MÃ´i Giá»›i'}
                             </span>
                             <span className={`text-[10px] transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-                              ▼
+                              â–¼
                             </span>
                           </div>
                         </div>
 
                         {/* Brief summary row */}
                         <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
-                          <span>📦 <b>{userPropertiesList.length}</b> BĐS • ⚡ <b>{u.upTinCredits || 0}</b> Lượt Up</span>
+                          <span>ðŸ“¦ <b>{userPropertiesList.length}</b> BÄS â€¢ âš¡ <b>{u.upTinCredits || 0}</b> LÆ°á»£t Up</span>
                           <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                            {(u.balance || 0).toLocaleString('vi-VN')} đ
+                            {(u.balance || 0).toLocaleString('vi-VN')} Ä‘
                           </span>
                         </div>
 
@@ -6667,23 +6866,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-2.5 text-xs">
                             <div className="grid grid-cols-2 gap-2 text-[11px]">
                               <div>
-                                <span className="text-slate-400 block text-[10px]">SĐT / Zalo:</span>
+                                <span className="text-slate-400 block text-[10px]">SÄT / Zalo:</span>
                                 {u.phone ? (
                                   <a
                                     href={`tel:${u.phone}`}
                                     onClick={e => e.stopPropagation()}
                                     className="font-mono font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
                                   >
-                                    📞 {u.phone}
+                                    ðŸ“ž {u.phone}
                                   </a>
                                 ) : (
-                                  <span className="text-slate-400 italic">Chưa có SĐT</span>
+                                  <span className="text-slate-400 italic">ChÆ°a cÃ³ SÄT</span>
                                 )}
                               </div>
                               <div>
-                                <span className="text-slate-400 block text-[10px]">Trạng Thái:</span>
+                                <span className="text-slate-400 block text-[10px]">Tráº¡ng ThÃ¡i:</span>
                                 <span className={isUserBlocked ? 'font-bold text-rose-600' : 'font-bold text-emerald-600'}>
-                                  {isUserBlocked ? '🔴 Tạm Khóa' : '🟢 Hoạt Động'}
+                                  {isUserBlocked ? 'ðŸ”´ Táº¡m KhÃ³a' : 'ðŸŸ¢ Hoáº¡t Äá»™ng'}
                                 </span>
                               </div>
                             </div>
@@ -6694,9 +6893,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
                                 className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold"
                               >
-                                <option value="owner">🏠 Chủ Nhà / Cư Dân</option>
-                                <option value="sale">💼 Môi Giới / Sale</option>
-                                <option value="admin">👑 Quản Trị Viên (Admin)</option>
+                                <option value="owner">ðŸ  Chá»§ NhÃ  / CÆ° DÃ¢n</option>
+                                <option value="sale">ðŸ’¼ MÃ´i Giá»›i / Sale</option>
+                                <option value="admin">ðŸ‘‘ Quáº£n Trá»‹ ViÃªn (Admin)</option>
                               </select>
 
                               <div className="flex items-center gap-1">
@@ -6704,7 +6903,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   onClick={() => setUserForCreditInjector(u)}
                                   className="px-2 py-1 bg-amber-500 text-slate-950 rounded-lg font-bold text-[10px]"
                                 >
-                                  💵 Bơm Ví/Lượt
+                                  ðŸ’µ BÆ¡m VÃ­/LÆ°á»£t
                                 </button>
                                 <button
                                   onClick={() => handleToggleBlockUser(u.id, !!isUserBlocked)}
@@ -6712,19 +6911,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                     isUserBlocked ? 'bg-emerald-600 text-white' : 'bg-amber-100 text-amber-800'
                                   }`}
                                 >
-                                  {isUserBlocked ? 'Mở Khóa' : 'Khóa'}
+                                  {isUserBlocked ? 'Má»Ÿ KhÃ³a' : 'KhÃ³a'}
                                 </button>
                                 <button
                                   onClick={() => setEditingUser(u)}
                                   className="p-1 bg-blue-50 text-blue-600 rounded-lg"
-                                  title="Sửa"
+                                  title="Sá»­a"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteUser(u.id)}
                                   className="p-1 bg-rose-50 text-rose-600 rounded-lg"
-                                  title="Xóa"
+                                  title="XÃ³a"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -6742,15 +6941,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-extrabold uppercase text-[10px] tracking-wider">
-                      <th className="py-3 px-3.5">Họ & Tên</th>
-                      <th className="py-3 px-3">Email liên hệ</th>
-                      <th className="py-3 px-3">SĐT / Zalo</th>
-                      <th className="py-3 px-3 text-center">BĐS Đã Đăng</th>
-                      <th className="py-3 px-3 text-center">Lượt Up Tin</th>
-                      <th className="py-3 px-3 text-center">Ví VNĐ & Điểm</th>
-                      <th className="py-3 px-3">Vai Trò / Cấp Bậc</th>
-                      <th className="py-3 px-3 text-center">Trạng Thái</th>
-                      <th className="py-3 px-3.5 text-right">Thao Tác Admin</th>
+                      <th className="py-3 px-3.5">Há» & TÃªn</th>
+                      <th className="py-3 px-3">Email liÃªn há»‡</th>
+                      <th className="py-3 px-3">SÄT / Zalo</th>
+                      <th className="py-3 px-3 text-center">BÄS ÄÃ£ ÄÄƒng</th>
+                      <th className="py-3 px-3 text-center">LÆ°á»£t Up Tin</th>
+                      <th className="py-3 px-3 text-center">VÃ­ VNÄ & Äiá»ƒm</th>
+                      <th className="py-3 px-3">Vai TrÃ² / Cáº¥p Báº­c</th>
+                      <th className="py-3 px-3 text-center">Tráº¡ng ThÃ¡i</th>
+                      <th className="py-3 px-3.5 text-right">Thao TÃ¡c Admin</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -6803,16 +7002,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                     <span className="text-[9px] px-1.5 py-0.2 bg-blue-600 text-white font-bold rounded">DN</span>
                                   )}
                                   {u.businessLicenseUrl && (
-                                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-600 text-white font-bold rounded" title="Đã có Giấy phép ĐKKD">ĐKKD ✓</span>
+                                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-600 text-white font-bold rounded" title="ÄÃ£ cÃ³ Giáº¥y phÃ©p ÄKKD">ÄKKD âœ“</span>
                                   )}
                                 </div>
                                 {u.companyName && (
                                   <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold block truncate max-w-[180px]">
-                                    🏢 {u.companyName} {u.taxCode ? `(MST: ${u.taxCode})` : ''}
+                                    ðŸ¢ {u.companyName} {u.taxCode ? `(MST: ${u.taxCode})` : ''}
                                   </span>
                                 )}
                                 <span className="text-[10px] text-slate-400 block font-normal">
-                                  Đăng ký: {u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('vi-VN') : 'Mới tạo'}
+                                  ÄÄƒng kÃ½: {u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('vi-VN') : 'Má»›i táº¡o'}
                                 </span>
                               </div>
                             </td>
@@ -6843,7 +7042,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   </a>
                                 </div>
                               ) : (
-                                <span className="text-slate-400 italic text-xs">Chưa cập nhật SĐT</span>
+                                <span className="text-slate-400 italic text-xs">ChÆ°a cáº­p nháº­t SÄT</span>
                               )}
                             </td>
 
@@ -6858,13 +7057,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             {/* UpTin Credits */}
                             <td className="py-3 px-3 text-center">
                               <div className="inline-flex items-center gap-1.5">
-                                <span className="font-black text-amber-500 text-xs">{u.upTinCredits || 0} lượt</span>
+                                <span className="font-black text-amber-500 text-xs">{u.upTinCredits || 0} lÆ°á»£t</span>
                                 <button
                                   onClick={() => setUserForCreditInjector(u)}
                                   className="p-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-lg transition text-[10px] shadow-xs"
-                                  title="Cộng hoặc điều chỉnh lượt Up Tin"
+                                  title="Cá»™ng hoáº·c Ä‘iá»u chá»‰nh lÆ°á»£t Up Tin"
                                 >
-                                  + Tặng
+                                  + Táº·ng
                                 </button>
                               </div>
                             </td>
@@ -6873,15 +7072,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             <td className="py-3 px-3 text-center">
                               <div className="flex flex-col items-center gap-1">
                                 <span className="font-black text-emerald-600 dark:text-emerald-400 text-xs">
-                                  {(u.balance || 0).toLocaleString('vi-VN')}đ
+                                  {(u.balance || 0).toLocaleString('vi-VN')}Ä‘
                                 </span>
                                 <button
                                   onClick={() => setUserForCreditInjector(u)}
                                   className="px-2 py-0.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-md text-[10px] shadow-xs flex items-center gap-1 transition cursor-pointer"
-                                  title="Mở công cụ bơm tiền ví, lượt Up-Tin và điểm thưởng"
+                                  title="Má»Ÿ cÃ´ng cá»¥ bÆ¡m tiá»n vÃ­, lÆ°á»£t Up-Tin vÃ  Ä‘iá»ƒm thÆ°á»Ÿng"
                                 >
                                   <Wallet className="w-2.5 h-2.5 text-emerald-200" />
-                                  <span>💵 Bơm Ví</span>
+                                  <span>ðŸ’µ BÆ¡m VÃ­</span>
                                 </button>
                               </div>
                             </td>
@@ -6899,9 +7098,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                     : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
                                 }`}
                               >
-                                <option value="owner">🏠 Chủ Nhà / Cư Dân</option>
-                                <option value="sale">💼 Môi Giới / Sale</option>
-                                <option value="admin">👑 Quản Trị Viên (Admin)</option>
+                                <option value="owner">ðŸ  Chá»§ NhÃ  / CÆ° DÃ¢n</option>
+                                <option value="sale">ðŸ’¼ MÃ´i Giá»›i / Sale</option>
+                                <option value="admin">ðŸ‘‘ Quáº£n Trá»‹ ViÃªn (Admin)</option>
                               </select>
                             </td>
 
@@ -6910,12 +7109,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               {isUserBlocked ? (
                                 <span className="px-2.5 py-1 bg-rose-500/20 text-rose-600 dark:text-rose-400 font-extrabold rounded-lg border border-rose-500/40 text-[10px] inline-flex items-center gap-1">
                                   <Ban className="w-3 h-3 text-rose-500" />
-                                  Tạm Khóa
+                                  Táº¡m KhÃ³a
                                 </span>
                               ) : (
                                 <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold rounded-lg border border-emerald-500/30 text-[10px] inline-flex items-center gap-1">
                                   <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                  Hoạt Động
+                                  Hoáº¡t Äá»™ng
                                 </span>
                               )}
                             </td>
@@ -6926,7 +7125,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 <button
                                   onClick={() => setEditingUser(u)}
                                   className="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:hover:bg-blue-900 dark:text-blue-300 rounded-xl transition cursor-pointer"
-                                  title="Sửa thông tin tài khoản"
+                                  title="Sá»­a thÃ´ng tin tÃ i khoáº£n"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
                                 </button>
@@ -6938,16 +7137,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                       ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                                       : 'bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 border border-amber-500/30'
                                   }`}
-                                  title={isUserBlocked ? 'Mở khóa tài khoản' : 'Khóa tạm thời'}
+                                  title={isUserBlocked ? 'Má»Ÿ khÃ³a tÃ i khoáº£n' : 'KhÃ³a táº¡m thá»i'}
                                 >
                                   {isUserBlocked ? <ShieldCheck className="w-3 h-3" /> : <Ban className="w-3 h-3" />}
-                                  {isUserBlocked ? 'Mở Khóa' : 'Khóa TK'}
+                                  {isUserBlocked ? 'Má»Ÿ KhÃ³a' : 'KhÃ³a TK'}
                                 </button>
 
                                 <button
                                   onClick={() => handleDeleteUser(u.id)}
                                   className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-900 dark:text-rose-300 rounded-xl transition cursor-pointer"
-                                  title="Xóa người dùng"
+                                  title="XÃ³a ngÆ°á»i dÃ¹ng"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -6972,10 +7171,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div>
               <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-blue-500" />
-                BỘ QUẢN TRỊ THỐNG KÊ TRAFFIC & KHÁCH HÀNG CRM CAO CẤP
+                Bá»˜ QUáº¢N TRá»Š THá»NG KÃŠ TRAFFIC & KHÃCH HÃ€NG CRM CAO Cáº¤P
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Phân tích lưu lượng truy cập realtime, tỷ lệ chuyển đổi Lead, doanh thu dịch vụ & hoạt động cư dân
+                PhÃ¢n tÃ­ch lÆ°u lÆ°á»£ng truy cáº­p realtime, tá»· lá»‡ chuyá»ƒn Ä‘á»•i Lead, doanh thu dá»‹ch vá»¥ & hoáº¡t Ä‘á»™ng cÆ° dÃ¢n
               </p>
             </div>
 
@@ -6990,7 +7189,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
                   }`}
                 >
-                  Hôm Nay
+                  HÃ´m Nay
                 </button>
                 <button
                   onClick={() => setAnalyticsTimeFrame('7d')}
@@ -7000,7 +7199,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
                   }`}
                 >
-                  7 Ngày
+                  7 NgÃ y
                 </button>
                 <button
                   onClick={() => setAnalyticsTimeFrame('30d')}
@@ -7010,7 +7209,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
                   }`}
                 >
-                  30 Ngày
+                  30 NgÃ y
                 </button>
                 <button
                   onClick={() => setAnalyticsTimeFrame('all')}
@@ -7020,7 +7219,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
                   }`}
                 >
-                  Tất Cả
+                  Táº¥t Cáº£
                 </button>
               </div>
 
@@ -7028,7 +7227,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 onClick={fetchAnalyticsStats}
                 className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center gap-1 transition text-xs shadow-xs"
               >
-                <RefreshCw className="w-3.5 h-3.5" /> Data Trực Tiếp
+                <RefreshCw className="w-3.5 h-3.5" /> Data Trá»±c Tiáº¿p
               </button>
             </div>
           </div>
@@ -7037,7 +7236,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 dark:from-blue-950/40 dark:to-indigo-950/40 rounded-2xl border border-blue-500/30 space-y-2">
               <div className="flex items-center justify-between text-blue-600 dark:text-blue-400 font-extrabold text-xs">
-                <span>LƯỢT TRUY CẬP ({analyticsTimeFrame.toUpperCase()})</span>
+                <span>LÆ¯á»¢T TRUY Cáº¬P ({analyticsTimeFrame.toUpperCase()})</span>
                 <Eye className="w-5 h-5" />
               </div>
               <span className="text-2xl font-black text-slate-900 dark:text-white block">
@@ -7049,26 +7248,26 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 ).toLocaleString('vi-VN')}
               </span>
               <span className="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-                <TrendingUp className="w-3.5 h-3.5" /> {analyticsData?.growthPercent ? `${analyticsData.growthPercent}% tăng trưởng` : '—'}
+                <TrendingUp className="w-3.5 h-3.5" /> {analyticsData?.growthPercent ? `${analyticsData.growthPercent}% tÄƒng trÆ°á»Ÿng` : 'â€”'}
               </span>
             </div>
 
             <div className="p-4 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-950/40 dark:to-teal-950/40 rounded-2xl border border-emerald-500/30 space-y-2">
               <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-extrabold text-xs">
-                <span>TỈ LỆ CHUYỂN ĐỔI LEAD CRM</span>
+                <span>Tá»ˆ Lá»† CHUYá»‚N Äá»”I LEAD CRM</span>
                 <Activity className="w-5 h-5" />
               </div>
               <span className="text-2xl font-black text-slate-900 dark:text-white block">
-                {contacts.length > 0 && analyticsData?.todayVisits ? `${((contacts.length / analyticsData.todayVisits) * 100).toFixed(1)}%` : '—'}
+                {contacts.length > 0 && analyticsData?.todayVisits ? `${((contacts.length / analyticsData.todayVisits) * 100).toFixed(1)}%` : 'â€”'}
               </span>
               <span className="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> {contacts.length} Khách gửi lịch hẹn
+                <CheckCircle2 className="w-3.5 h-3.5" /> {contacts.length} KhÃ¡ch gá»­i lá»‹ch háº¹n
               </span>
             </div>
 
             <div className="p-4 bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-950/40 dark:to-orange-950/40 rounded-2xl border border-amber-500/30 space-y-2">
               <div className="flex items-center justify-between text-amber-600 dark:text-amber-400 font-extrabold text-xs">
-                <span>KHÁCH ĐANG ONLINE REALTIME</span>
+                <span>KHÃCH ÄANG ONLINE REALTIME</span>
                 <Zap className="w-5 h-5 text-amber-500 animate-pulse" />
               </div>
               <span className="text-2xl font-black text-amber-600 dark:text-amber-400 block flex items-center gap-2">
@@ -7076,20 +7275,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
               </span>
               <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                Đang lướt xem căn & sơ đồ masterplan
+                Äang lÆ°á»›t xem cÄƒn & sÆ¡ Ä‘á»“ masterplan
               </span>
             </div>
 
             <div className="p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:from-purple-950/40 dark:to-pink-950/40 rounded-2xl border border-purple-500/30 space-y-2">
               <div className="flex items-center justify-between text-purple-600 dark:text-purple-400 font-extrabold text-xs">
-                <span>DOANH THU ĐÃ THU</span>
+                <span>DOANH THU ÄÃƒ THU</span>
                 <Award className="w-5 h-5" />
               </div>
               <span className="text-2xl font-black text-purple-600 dark:text-purple-300 block">
-                {(analyticsData?.revenue || 0).toLocaleString('vi-VN')} VNĐ
+                {(analyticsData?.revenue || 0).toLocaleString('vi-VN')} VNÄ
               </span>
               <span className="text-[11px] text-purple-600 font-bold">
-                ✓ Phí Up-tin MSB & Gói thành viên
+                âœ“ PhÃ­ Up-tin MSB & GÃ³i thÃ nh viÃªn
               </span>
             </div>
           </div>
@@ -7099,36 +7298,36 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-emerald-500" />
-                PHỄU CHUYỂN ĐỔI KHÁCH HÀNG CRM (CONVERSION FUNNEL)
+                PHá»„U CHUYá»‚N Äá»”I KHÃCH HÃ€NG CRM (CONVERSION FUNNEL)
               </span>
-              <span className="text-xs text-amber-500 font-bold">Tỉ lệ chốt cuộc hẹn: {analyticsData?.appointmentRate ? `${analyticsData.appointmentRate}%` : '—'}</span>
+              <span className="text-xs text-amber-500 font-bold">Tá»‰ lá»‡ chá»‘t cuá»™c háº¹n: {analyticsData?.appointmentRate ? `${analyticsData.appointmentRate}%` : 'â€”'}</span>
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
               <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 relative overflow-hidden">
-                <div className="text-[10px] text-slate-400 font-bold uppercase">Bước 1: Lượt Xem Web</div>
+                <div className="text-[10px] text-slate-400 font-bold uppercase">BÆ°á»›c 1: LÆ°á»£t Xem Web</div>
                 <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{analyticsData?.funnelStep1 || 0}</div>
                 <div className="text-[10px] text-emerald-600 font-bold">100% Traffic</div>
                 <div className="w-full h-1 bg-blue-500 rounded-full mt-2"></div>
               </div>
 
               <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 relative overflow-hidden">
-                <div className="text-[10px] text-slate-400 font-bold uppercase">Bước 2: Tìm Kiếm / Lọc Căn</div>
+                <div className="text-[10px] text-slate-400 font-bold uppercase">BÆ°á»›c 2: TÃ¬m Kiáº¿m / Lá»c CÄƒn</div>
                 <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{analyticsData?.funnelStep2 || 0}</div>
-                <div className="text-[10px] text-blue-600 font-bold">{analyticsData?.funnelStep2Rate ? `${analyticsData.funnelStep2Rate}% Chuyển đổi` : '—'}</div>
+                <div className="text-[10px] text-blue-600 font-bold">{analyticsData?.funnelStep2Rate ? `${analyticsData.funnelStep2Rate}% Chuyá»ƒn Ä‘á»•i` : 'â€”'}</div>
                 <div className="w-full h-1 bg-teal-500 rounded-full mt-2"></div>
               </div>
 
               <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 relative overflow-hidden">
-                <div className="text-[10px] text-slate-400 font-bold uppercase">Bước 3: Bấm Xem Chi Tiết Căn</div>
+                <div className="text-[10px] text-slate-400 font-bold uppercase">BÆ°á»›c 3: Báº¥m Xem Chi Tiáº¿t CÄƒn</div>
                 <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{analyticsData?.funnelStep3 || 0}</div>
-                <div className="text-[10px] text-purple-600 font-bold">{analyticsData?.funnelStep3Rate ? `${analyticsData.funnelStep3Rate}% Chuyển đổi` : '—'}</div>
+                <div className="text-[10px] text-purple-600 font-bold">{analyticsData?.funnelStep3Rate ? `${analyticsData.funnelStep3Rate}% Chuyá»ƒn Ä‘á»•i` : 'â€”'}</div>
                 <div className="w-full h-1 bg-purple-500 rounded-full mt-2"></div>
               </div>
 
               <div className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-amber-500/40 bg-amber-500/5 relative overflow-hidden">
-                <div className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase">Bước 4: Đặt Lịch Xem / Gọi Điện</div>
-                <div className="text-lg font-black text-amber-600 dark:text-amber-400 mt-1">{contacts.length || 0} Khách CRM</div>
+                <div className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase">BÆ°á»›c 4: Äáº·t Lá»‹ch Xem / Gá»i Äiá»‡n</div>
+                <div className="text-lg font-black text-amber-600 dark:text-amber-400 mt-1">{contacts.length || 0} KhÃ¡ch CRM</div>
                 <div className="text-[10px] text-amber-600 font-bold">Hot Leads</div>
                 <div className="w-full h-1 bg-amber-500 rounded-full mt-2"></div>
               </div>
@@ -7141,14 +7340,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
               <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
                 <Smartphone className="w-4 h-4 text-emerald-500" />
-                THIẾT BỊ TRUY CẬP WEBSITE
+                THIáº¾T Bá»Š TRUY Cáº¬P WEBSITE
               </h4>
 
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between font-bold text-xs mb-1">
                     <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                      <Smartphone className="w-3.5 h-3.5 text-emerald-500" /> Điện Thoại Di Động (iOS & Android)
+                      <Smartphone className="w-3.5 h-3.5 text-emerald-500" /> Äiá»‡n Thoáº¡i Di Äá»™ng (iOS & Android)
                     </span>
                     <span className="text-emerald-600 dark:text-emerald-400 font-black">{analyticsData?.deviceBreakdown?.mobile || 0}%</span>
                   </div>
@@ -7160,7 +7359,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <div>
                   <div className="flex justify-between font-bold text-xs mb-1">
                     <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                      <Monitor className="w-3.5 h-3.5 text-blue-500" /> Máy Tính Laptop / PC
+                      <Monitor className="w-3.5 h-3.5 text-blue-500" /> MÃ¡y TÃ­nh Laptop / PC
                     </span>
                     <span className="text-blue-600 dark:text-blue-400 font-black">{analyticsData?.deviceBreakdown?.desktop || 0}%</span>
                   </div>
@@ -7172,7 +7371,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <div>
                   <div className="flex justify-between font-bold text-xs mb-1">
                     <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                      <Tablet className="w-3.5 h-3.5 text-purple-500" /> Máy Tính Bảng (Tablet/iPad)
+                      <Tablet className="w-3.5 h-3.5 text-purple-500" /> MÃ¡y TÃ­nh Báº£ng (Tablet/iPad)
                     </span>
                     <span className="text-purple-600 dark:text-purple-400 font-black">{analyticsData?.deviceBreakdown?.tablet || 0}%</span>
                   </div>
@@ -7187,47 +7386,47 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
               <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
                 <Globe className="w-4 h-4 text-blue-500" />
-                NGUỒN KÉO KHIẾN KHÁCH VÀO WEBSITE
+                NGUá»’N KÃ‰O KHIáº¾N KHÃCH VÃ€O WEBSITE
               </h4>
 
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                   <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-200">
                     <MessageSquare className="w-4 h-4 text-blue-500" />
-                    <span>Nhóm Zalo Cư Dân Vinhomes</span>
+                    <span>NhÃ³m Zalo CÆ° DÃ¢n Vinhomes</span>
                   </div>
                    <span className="px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black rounded-lg text-xs">
-                     {analyticsData?.trafficSources?.zalo ? `${analyticsData.trafficSources.zalo.percent}% (${analyticsData.trafficSources.zalo.visits.toLocaleString('vi-VN')} lượt)` : '—'}
+                     {analyticsData?.trafficSources?.zalo ? `${analyticsData.trafficSources.zalo.percent}% (${analyticsData.trafficSources.zalo.visits.toLocaleString('vi-VN')} lÆ°á»£t)` : 'â€”'}
                    </span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                   <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-200">
                     <Globe className="w-4 h-4 text-amber-500" />
-                    <span>Google Tìm Kiếm (SEO Web)</span>
+                    <span>Google TÃ¬m Kiáº¿m (SEO Web)</span>
                   </div>
                    <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black rounded-lg text-xs">
-                     {analyticsData?.trafficSources?.google ? `${analyticsData.trafficSources.google.percent}% (${analyticsData.trafficSources.google.visits.toLocaleString('vi-VN')} lượt)` : '—'}
+                     {analyticsData?.trafficSources?.google ? `${analyticsData.trafficSources.google.percent}% (${analyticsData.trafficSources.google.visits.toLocaleString('vi-VN')} lÆ°á»£t)` : 'â€”'}
                    </span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                   <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-200">
                     <ArrowUpRight className="w-4 h-4 text-emerald-500" />
-                    <span>Truy Cập Trực Tiếp (Bookmark/Gõ URL)</span>
+                    <span>Truy Cáº­p Trá»±c Tiáº¿p (Bookmark/GÃµ URL)</span>
                   </div>
                    <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black rounded-lg text-xs">
-                     {analyticsData?.trafficSources?.direct ? `${analyticsData.trafficSources.direct.percent}% (${analyticsData.trafficSources.direct.visits.toLocaleString('vi-VN')} lượt)` : '—'}
+                     {analyticsData?.trafficSources?.direct ? `${analyticsData.trafficSources.direct.percent}% (${analyticsData.trafficSources.direct.visits.toLocaleString('vi-VN')} lÆ°á»£t)` : 'â€”'}
                    </span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                   <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-200">
                     <Share2 className="w-4 h-4 text-purple-500" />
-                    <span>Facebook & Mạng Xã Hội Chia Sẻ</span>
+                    <span>Facebook & Máº¡ng XÃ£ Há»™i Chia Sáº»</span>
                   </div>
                    <span className="px-2.5 py-1 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-black rounded-lg text-xs">
-                     {analyticsData?.trafficSources?.social ? `${analyticsData.trafficSources.social.percent}% (${analyticsData.trafficSources.social.visits.toLocaleString('vi-VN')} lượt)` : '—'}
+                     {analyticsData?.trafficSources?.social ? `${analyticsData.trafficSources.social.percent}% (${analyticsData.trafficSources.social.visits.toLocaleString('vi-VN')} lÆ°á»£t)` : 'â€”'}
                    </span>
                 </div>
               </div>
@@ -7238,23 +7437,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="p-5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
             <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
               <Building2 className="w-4 h-4 text-amber-500" />
-              TOP DỰ ÁN ĐƯỢC TÌM KIẾM & XEM NHIỀU NHẤT
+              TOP Dá»° ÃN ÄÆ¯á»¢C TÃŒM KIáº¾M & XEM NHIá»€U NHáº¤T
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {analyticsData?.topProjects && analyticsData.topProjects.length > 0 ? (
                 analyticsData.topProjects.map((proj, idx) => (
                   <div key={proj.id || idx} className="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">Xếp hạng #{idx + 1}</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase">Xáº¿p háº¡ng #{idx + 1}</span>
                     <p className="font-extrabold text-slate-900 dark:text-white text-xs">{proj.name}</p>
                     <div className="flex justify-between items-center text-xs pt-1">
-                      <span className={`font-black ${['text-amber-500', 'text-emerald-500', 'text-blue-500', 'text-purple-500'][idx % 4]}`}>{proj.views.toLocaleString('vi-VN')} lượt xem</span>
+                      <span className={`font-black ${['text-amber-500', 'text-emerald-500', 'text-blue-500', 'text-purple-500'][idx % 4]}`}>{proj.views.toLocaleString('vi-VN')} lÆ°á»£t xem</span>
                       <span className={`px-2 py-0.5 bg-${['amber', 'emerald', 'blue', 'purple'][idx % 4]}-500/10 text-${['amber', 'emerald', 'blue', 'purple'][idx % 4]}-600 font-bold rounded text-[10px]`}>{proj.percent}%</span>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="col-span-4 text-center py-4 text-slate-500 dark:text-slate-400">Chưa có dữ liệu dự án</div>
+                <div className="col-span-4 text-center py-4 text-slate-500 dark:text-slate-400">ChÆ°a cÃ³ dá»¯ liá»‡u dá»± Ã¡n</div>
               )}
             </div>
           </div>
@@ -7264,9 +7463,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <h4 className="font-extrabold text-xs text-amber-400 uppercase tracking-wider flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
-                NHẬT KÝ HOẠT ĐỘNG KHÁCH HÀNG REALTIME (LIVE EVENT STREAM)
+                NHáº¬T KÃ HOáº T Äá»˜NG KHÃCH HÃ€NG REALTIME (LIVE EVENT STREAM)
               </span>
-              <span className="text-[10px] text-emerald-400 font-mono">● STREAMING ACTIVE</span>
+              <span className="text-[10px] text-emerald-400 font-mono">â— STREAMING ACTIVE</span>
             </h4>
 
             <div className="space-y-2 text-xs font-mono">
@@ -7274,14 +7473,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 analyticsData.liveEvents.map((event, idx) => (
                   <div key={idx} className="p-2 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className={event.type === 'appointment' ? 'text-emerald-400' : event.type === 'upTin' ? 'text-blue-400' : 'text-amber-400'}>[Vừa xong]</span>
+                      <span className={event.type === 'appointment' ? 'text-emerald-400' : event.type === 'upTin' ? 'text-blue-400' : 'text-amber-400'}>[Vá»«a xong]</span>
                       <span className="text-slate-300">{event.message}</span>
                     </div>
                     <span className="text-[10px] text-slate-500">{event.timeAgo}</span>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-4 text-slate-500 dark:text-slate-400">Chưa có hoạt động nào</div>
+                <div className="text-center py-4 text-slate-500 dark:text-slate-400">ChÆ°a cÃ³ hoáº¡t Ä‘á»™ng nÃ o</div>
               )}
             </div>
           </div>
@@ -7307,7 +7506,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* Tab 4: n8n */}
       {activeTab === 'n8n' && (
         <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-xl text-xs">
-          <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">CẤU HÌNH TỰ ĐỘNG ĐỒNG BỘ N8N WORKFLOW</h3>
+          <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Cáº¤U HÃŒNH Tá»° Äá»˜NG Äá»’NG Bá»˜ N8N WORKFLOW</h3>
           <div className="p-4 bg-slate-900 text-white rounded-2xl font-mono">
             <p className="text-emerald-400 font-bold mb-2">Endpoint URL:</p>
             <div className="p-3 bg-slate-950 rounded-xl text-emerald-400">
@@ -7346,10 +7545,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
               <div>
                 <span className="px-2.5 py-1 bg-amber-500/20 text-amber-700 dark:text-amber-400 font-extrabold text-[10px] rounded-lg tracking-wider uppercase block w-max">
-                  THÔNG TIN NGƯỜI ĐĂNG & CHI TIẾT CĂN BĐS
+                  THÃ”NG TIN NGÆ¯á»œI ÄÄ‚NG & CHI TIáº¾T CÄ‚N BÄS
                 </span>
                 <h3 className="font-black text-base text-slate-900 dark:text-white mt-1">
-                  Mã Căn: #{selectedSellerDetail.id}
+                  MÃ£ CÄƒn: #{selectedSellerDetail.id}
                 </h3>
               </div>
               <button
@@ -7363,47 +7562,47 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             {/* Seller Contact Info Box */}
             <div className="p-4 bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 text-white rounded-2xl space-y-3 border border-emerald-500/30 shadow-inner">
               <h4 className="font-extrabold text-xs text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                👤 XÁC NHẬN THÔNG TIN NGƯỜI ĐĂNG TIN
+                ðŸ‘¤ XÃC NHáº¬N THÃ”NG TIN NGÆ¯á»œI ÄÄ‚NG TIN
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-slate-400 block text-[11px]">Họ và tên người đăng:</span>
-                  <span className="font-black text-white text-sm">{selectedSellerDetail.sellerName || 'Chủ Hộ / Chuyên Viên Sale'}</span>
+                  <span className="text-slate-400 block text-[11px]">Há» vÃ  tÃªn ngÆ°á»i Ä‘Äƒng:</span>
+                  <span className="font-black text-white text-sm">{selectedSellerDetail.sellerName || 'Chá»§ Há»™ / ChuyÃªn ViÃªn Sale'}</span>
                 </div>
 
                 <div>
-                  <span className="text-slate-400 block text-[11px]">Vai trò tài khoản:</span>
+                  <span className="text-slate-400 block text-[11px]">Vai trÃ² tÃ i khoáº£n:</span>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-black inline-block mt-0.5 ${
                     selectedSellerDetail.sellerRole === 'owner' ? 'bg-amber-500 text-slate-950' : 'bg-teal-500 text-slate-950'
                   }`}>
-                    {selectedSellerDetail.sellerRole === 'owner' ? '🏠 CHỦ NHÀ GỐC' : '💼 MÔI GIỚI / SALE'}
+                    {selectedSellerDetail.sellerRole === 'owner' ? 'ðŸ  CHá»¦ NHÃ€ Gá»C' : 'ðŸ’¼ MÃ”I GIá»šI / SALE'}
                   </span>
                 </div>
 
                 <div>
-                  <span className="text-slate-400 block text-[11px]">Số điện thoại chính:</span>
+                  <span className="text-slate-400 block text-[11px]">Sá»‘ Ä‘iá»‡n thoáº¡i chÃ­nh:</span>
                   {selectedSellerDetail.sellerPhone ? (
                     <a
                       href={`tel:${selectedSellerDetail.sellerPhone}`}
                       className="font-black text-amber-400 hover:underline text-sm block"
                     >
-                      📞 {selectedSellerDetail.sellerPhone}
+                      ðŸ“ž {selectedSellerDetail.sellerPhone}
                     </a>
                   ) : (
-                    <span className="text-slate-400 text-xs italic">Chưa cập nhật SĐT</span>
+                    <span className="text-slate-400 text-xs italic">ChÆ°a cáº­p nháº­t SÄT</span>
                   )}
                 </div>
 
                 {selectedSellerDetail.sellerPhone && (
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Mở Trực Tiếp Zalo:</span>
+                    <span className="text-slate-400 block text-[11px]">Má»Ÿ Trá»±c Tiáº¿p Zalo:</span>
                     <a
                       href={`https://zalo.me/${selectedSellerDetail.sellerPhone.replace(/\D/g, '')}`}
                       target="_blank"
                       rel="noreferrer"
                       className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-[11px] inline-flex items-center gap-1 mt-1 transition shadow"
                     >
-                      💬 Chat Zalo Với Người Đăng
+                      ðŸ’¬ Chat Zalo Vá»›i NgÆ°á»i ÄÄƒng
                     </a>
                   </div>
                 )}
@@ -7413,19 +7612,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             {/* Retention & Expiration Status */}
             <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs space-y-2">
               <h4 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                ⏰ THỜI GIAN HIỂN THỊ & BẢO LƯU DỮ LIỆU
+                â° THá»œI GIAN HIá»‚N THá»Š & Báº¢O LÆ¯U Dá»® LIá»†U
               </h4>
               <div className="grid grid-cols-2 gap-2 text-slate-600 dark:text-slate-300">
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Ngày đăng bài:</span>
+                  <span className="text-slate-400 block text-[10px]">NgÃ y Ä‘Äƒng bÃ i:</span>
                   <span className="font-bold text-slate-900 dark:text-white">{getPropertyExpiryInfo(selectedSellerDetail).postDateFormatted}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Hạn hiển thị web (20 ngày):</span>
+                  <span className="text-slate-400 block text-[10px]">Háº¡n hiá»ƒn thá»‹ web (20 ngÃ y):</span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400">{getPropertyExpiryInfo(selectedSellerDetail).expiryDateFormatted}</span>
                 </div>
                 <div className="col-span-2 pt-1 border-t border-slate-200 dark:border-slate-700/60 text-[11px] font-bold text-purple-700 dark:text-purple-300">
-                  📁 Bảo lưu dữ liệu: <span className="font-normal text-slate-600 dark:text-slate-400">Tin bị ẩn sau 15–25 ngày vẫn được giữ nguyên 100% SĐT, Tên Chủ Căn & Pháp Lý trong 30 ngày.</span>
+                  ðŸ“ Báº£o lÆ°u dá»¯ liá»‡u: <span className="font-normal text-slate-600 dark:text-slate-400">Tin bá»‹ áº©n sau 15â€“25 ngÃ y váº«n Ä‘Æ°á»£c giá»¯ nguyÃªn 100% SÄT, TÃªn Chá»§ CÄƒn & PhÃ¡p LÃ½ trong 30 ngÃ y.</span>
                 </div>
               </div>
             </div>
@@ -7433,7 +7632,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             {/* Property Overview Details */}
             <div className="space-y-3 text-xs">
               <h4 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px]">
-                🏡 CHI TIẾT CĂN BẤT ĐỘNG SẢN
+                ðŸ¡ CHI TIáº¾T CÄ‚N Báº¤T Äá»˜NG Sáº¢N
               </h4>
 
               <div className="flex gap-3">
@@ -7450,39 +7649,39 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     {selectedSellerDetail.priceDisplay}
                   </p>
                   <p className="text-slate-500 dark:text-slate-400">
-                    Dự án: <b className="text-slate-800 dark:text-slate-200 uppercase">{selectedSellerDetail.project}</b> • Phân khu: <b>{selectedSellerDetail.subdivision}</b>
+                    Dá»± Ã¡n: <b className="text-slate-800 dark:text-slate-200 uppercase">{selectedSellerDetail.project}</b> â€¢ PhÃ¢n khu: <b>{selectedSellerDetail.subdivision}</b>
                   </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-center text-[11px]">
                 <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                  <span className="text-slate-400 block">Diện tích</span>
-                  <span className="font-bold text-slate-900 dark:text-white">{selectedSellerDetail.area} m²</span>
+                  <span className="text-slate-400 block">Diá»‡n tÃ­ch</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{selectedSellerDetail.area} mÂ²</span>
                 </div>
                 <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                  <span className="text-slate-400 block">Phòng ngủ</span>
+                  <span className="text-slate-400 block">PhÃ²ng ngá»§</span>
                   <span className="font-bold text-slate-900 dark:text-white">{selectedSellerDetail.bedrooms} PN</span>
                 </div>
                 <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                  <span className="text-slate-400 block">Hướng cửa</span>
-                  <span className="font-bold text-slate-900 dark:text-white">{selectedSellerDetail.direction || 'Đông Nam'}</span>
+                  <span className="text-slate-400 block">HÆ°á»›ng cá»­a</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{selectedSellerDetail.direction || 'ÄÃ´ng Nam'}</span>
                 </div>
                 <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                  <span className="text-slate-400 block">Nội thất</span>
-                  <span className="font-bold text-slate-900 dark:text-white">{selectedSellerDetail.furniture || 'Đầy đủ'}</span>
+                  <span className="text-slate-400 block">Ná»™i tháº¥t</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{selectedSellerDetail.furniture || 'Äáº§y Ä‘á»§'}</span>
                 </div>
               </div>
 
-              {/* Redacted Sổ Đỏ / Legal */}
+              {/* Redacted Sá»• Äá» / Legal */}
               {selectedSellerDetail.redactedRedBookUrl && (
                 <div className="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200 dark:border-amber-800 space-y-1">
                   <span className="font-extrabold text-amber-800 dark:text-amber-300 text-[11px] block">
-                    📜 SỔ ĐỎ / PHÁP LÝ ĐÃ CHE THÔNG TIN RIÊNG
+                    ðŸ“œ Sá»” Äá»Ž / PHÃP LÃ ÄÃƒ CHE THÃ”NG TIN RIÃŠNG
                   </span>
                   <img loading="lazy"
                     src={selectedSellerDetail.redactedRedBookUrl}
-                    alt="Sổ đỏ"
+                    alt="Sá»• Ä‘á»"
                     className="w-full max-h-48 object-contain rounded-lg border shadow-sm"
                   />
                 </div>
@@ -7497,7 +7696,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 }}
                 className="px-4 py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-extrabold rounded-xl text-xs transition shadow flex items-center gap-1.5"
               >
-                <Share2 className="w-4 h-4" /> Chia Sẻ Zalo/FB
+                <Share2 className="w-4 h-4" /> Chia Sáº» Zalo/FB
               </button>
               <button
                 onClick={() => {
@@ -7506,13 +7705,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 }}
                 className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs transition shadow flex items-center gap-1.5"
               >
-                ⚡ Up Tin (+20 Ngày)
+                âš¡ Up Tin (+20 NgÃ y)
               </button>
               <button
                 onClick={() => setSelectedSellerDetail(null)}
                 className="px-4 py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs transition"
               >
-                Đóng
+                ÄÃ³ng
               </button>
             </div>
           </div>
@@ -7527,13 +7726,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <span className="px-3 py-1 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                  HỆ THỐNG THU PHÍ NỀN TẢNG & AFFILIATE TỰ ĐỘNG
+                  Há»† THá»NG THU PHÃ Ná»€N Táº¢NG & AFFILIATE Tá»° Äá»˜NG
                 </span>
                 <h2 className="text-xl sm:text-2xl font-black text-amber-400 mt-1">
-                  QUẢN LÝ THU PHÍ DỊCH VỤ CƯ DÂN & CHIA SẺ DOANH THU 2 TẦNG
+                  QUáº¢N LÃ THU PHÃ Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N & CHIA Sáºº DOANH THU 2 Táº¦NG
                 </h2>
                 <p className="text-xs text-slate-300">
-                  Cấu hình tỉ lệ hoa hồng giới thiệu, giá niêm yết gian hàng dịch vụ VIP & duyệt lệnh rút tiền VietQR cho cư dân.
+                  Cáº¥u hÃ¬nh tá»‰ lá»‡ hoa há»“ng giá»›i thiá»‡u, giÃ¡ niÃªm yáº¿t gian hÃ ng dá»‹ch vá»¥ VIP & duyá»‡t lá»‡nh rÃºt tiá»n VietQR cho cÆ° dÃ¢n.
                 </p>
               </div>
 
@@ -7543,27 +7742,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 className="px-5 py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-black text-xs rounded-xl shadow-lg transition uppercase tracking-wider shrink-0 flex items-center gap-1.5"
               >
                 <Check className="w-4 h-4" />
-                <span>{isSavingAffiliateConfig ? 'ĐANG LƯU...' : 'LƯU CẤU HÌNH HỆ THỐNG'}</span>
+                <span>{isSavingAffiliateConfig ? 'ÄANG LÆ¯U...' : 'LÆ¯U Cáº¤U HÃŒNH Há»† THá»NG'}</span>
               </button>
             </div>
 
             {/* Quick Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-slate-700/80 text-xs">
               <div className="bg-slate-900/80 p-3 rounded-2xl border border-amber-500/30">
-                <span className="text-slate-400 block font-bold mb-0.5">Thu Phí Gian Hàng Dịch Vụ:</span>
-                <span className="text-sm font-black text-slate-400">Chưa theo dõi</span>
+                <span className="text-slate-400 block font-bold mb-0.5">Thu PhÃ­ Gian HÃ ng Dá»‹ch Vá»¥:</span>
+                <span className="text-sm font-black text-slate-400">ChÆ°a theo dÃµi</span>
               </div>
               <div className="bg-slate-900/80 p-3 rounded-2xl border border-emerald-500/30">
-                <span className="text-slate-400 block font-bold mb-0.5">Hoa Hồng Đã Trả Cư Dân:</span>
-                <span className="text-xl font-black text-emerald-400">{affiliateStats ? `${affiliateStats.totalPaid.toLocaleString('vi-VN')}đ` : '...'}</span>
+                <span className="text-slate-400 block font-bold mb-0.5">Hoa Há»“ng ÄÃ£ Tráº£ CÆ° DÃ¢n:</span>
+                <span className="text-xl font-black text-emerald-400">{affiliateStats ? `${affiliateStats.totalPaid.toLocaleString('vi-VN')}Ä‘` : '...'}</span>
               </div>
               <div className="bg-slate-900/80 p-3 rounded-2xl border border-blue-500/30">
-                <span className="text-slate-400 block font-bold mb-0.5">Số Cư Dân Có Mã Ref:</span>
-                <span className="text-xl font-black text-blue-400">{affiliateStats ? `${affiliateStats.refUserCount} Cư Dân` : '...'}</span>
+                <span className="text-slate-400 block font-bold mb-0.5">Sá»‘ CÆ° DÃ¢n CÃ³ MÃ£ Ref:</span>
+                <span className="text-xl font-black text-blue-400">{affiliateStats ? `${affiliateStats.refUserCount} CÆ° DÃ¢n` : '...'}</span>
               </div>
               <div className="bg-slate-900/80 p-3 rounded-2xl border border-purple-500/30">
-                <span className="text-slate-400 block font-bold mb-0.5">Yêu Cầu Rút Chờ Duyệt:</span>
-                <span className="text-xl font-black text-rose-400">{payoutRequests.filter(p => p.status === 'pending').length} Lệnh</span>
+                <span className="text-slate-400 block font-bold mb-0.5">YÃªu Cáº§u RÃºt Chá» Duyá»‡t:</span>
+                <span className="text-xl font-black text-rose-400">{payoutRequests.filter(p => p.status === 'pending').length} Lá»‡nh</span>
               </div>
             </div>
           </div>
@@ -7574,13 +7773,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-sm">
               <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-3">
                 <Award className="w-5 h-5 text-amber-500" />
-                CẤU HÌNH TỈ LỆ HOA HỒNG CHIẾT KHẤU 2 TẦNG
+                Cáº¤U HÃŒNH Tá»ˆ Lá»† HOA Há»’NG CHIáº¾T KHáº¤U 2 Táº¦NG
               </h3>
 
               <div className="space-y-4 text-xs">
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Tỉ Lệ Hoa Hồng Cấp F1 (Người Giới Thiệu Trực Tiếp) %:
+                    Tá»‰ Lá»‡ Hoa Há»“ng Cáº¥p F1 (NgÆ°á»i Giá»›i Thiá»‡u Trá»±c Tiáº¿p) %:
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -7591,12 +7790,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     />
                     <span className="font-bold text-slate-500 shrink-0">% Doanh Thu</span>
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Khuyên dùng 15% - 20% để kích thích cư dân chia sẻ link mạnh mẽ.</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">KhuyÃªn dÃ¹ng 15% - 20% Ä‘á»ƒ kÃ­ch thÃ­ch cÆ° dÃ¢n chia sáº» link máº¡nh máº½.</span>
                 </div>
 
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Tỉ Lệ Hoa Hồng Cấp F2 (Người Giới Thiệu Gián Tiếp) %:
+                    Tá»‰ Lá»‡ Hoa Há»“ng Cáº¥p F2 (NgÆ°á»i Giá»›i Thiá»‡u GiÃ¡n Tiáº¿p) %:
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -7607,12 +7806,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     />
                     <span className="font-bold text-slate-500 shrink-0">% Doanh Thu</span>
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Thường cài 5% để tạo động lực xây dựng mạng lưới thụ động.</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">ThÆ°á»ng cÃ i 5% Ä‘á»ƒ táº¡o Ä‘á»™ng lá»±c xÃ¢y dá»±ng máº¡ng lÆ°á»›i thá»¥ Ä‘á»™ng.</span>
                 </div>
 
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Thưởng Lượt Up-Tin BĐS Miễn Phí Mỗi Lượt Giới Thiệu Mới:
+                    ThÆ°á»Ÿng LÆ°á»£t Up-Tin BÄS Miá»…n PhÃ­ Má»—i LÆ°á»£t Giá»›i Thiá»‡u Má»›i:
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -7621,9 +7820,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       onChange={(e) => setRefBonusUpTin(Number(e.target.value))}
                       className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-emerald-500 text-sm"
                     />
-                    <span className="font-bold text-slate-500 shrink-0">Lượt / Cư Dân</span>
+                    <span className="font-bold text-slate-500 shrink-0">LÆ°á»£t / CÆ° DÃ¢n</span>
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Tặng +5 lượt Up Tin ngay khi tài khoản mới đăng ký qua ref link.</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">Táº·ng +5 lÆ°á»£t Up Tin ngay khi tÃ i khoáº£n má»›i Ä‘Äƒng kÃ½ qua ref link.</span>
                 </div>
               </div>
             </div>
@@ -7632,13 +7831,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-sm">
               <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-3">
                 <Building2 className="w-5 h-5 text-emerald-500" />
-                CẤU HÌNH THU PHÍ GIAN HÀNG DỊCH VỤ CƯ DÂN
+                Cáº¤U HÃŒNH THU PHÃ GIAN HÃ€NG Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N
               </h3>
 
               <div className="space-y-4 text-xs">
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Giá Gói Gian Hàng Dịch Vụ Cư Dân VIP (1 Tháng) VNĐ:
+                    GiÃ¡ GÃ³i Gian HÃ ng Dá»‹ch Vá»¥ CÆ° DÃ¢n VIP (1 ThÃ¡ng) VNÄ:
                   </label>
                   <input
                     type="number"
@@ -7646,12 +7845,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onChange={(e) => setServicePackageMonthPrice(Number(e.target.value))}
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-emerald-600 text-sm"
                   />
-                  <span className="text-[10px] text-slate-400 mt-1 block">Gian hàng được ghim TOP 1 danh mục Dịch vụ, gắn tích xanh Uy Tín.</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">Gian hÃ ng Ä‘Æ°á»£c ghim TOP 1 danh má»¥c Dá»‹ch vá»¥, gáº¯n tÃ­ch xanh Uy TÃ­n.</span>
                 </div>
 
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Giá Gói Gian Hàng Dịch Vụ VIP Ưu Đãi (3 Tháng) VNĐ:
+                    GiÃ¡ GÃ³i Gian HÃ ng Dá»‹ch Vá»¥ VIP Æ¯u ÄÃ£i (3 ThÃ¡ng) VNÄ:
                   </label>
                   <input
                     type="number"
@@ -7659,13 +7858,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onChange={(e) => setServicePackage3MonthPrice(Number(e.target.value))}
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-amber-500 text-sm"
                   />
-                  <span className="text-[10px] text-slate-400 mt-1 block">Tiết kiệm 20% cho đơn vị đăng ký theo quý (Sửa chữa, Giặt là, Vận chuyển...).</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">Tiáº¿t kiá»‡m 20% cho Ä‘Æ¡n vá»‹ Ä‘Äƒng kÃ½ theo quÃ½ (Sá»­a chá»¯a, Giáº·t lÃ , Váº­n chuyá»ƒn...).</span>
                 </div>
 
                 <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 p-3.5 rounded-2xl space-y-1">
-                  <span className="font-extrabold text-emerald-700 dark:text-emerald-300 block">💡 Cơ chế Thu Phí Hoa Hồng Theo Đơn Hàng (Success Commission):</span>
+                  <span className="font-extrabold text-emerald-700 dark:text-emerald-300 block">ðŸ’¡ CÆ¡ cháº¿ Thu PhÃ­ Hoa Há»“ng Theo ÄÆ¡n HÃ ng (Success Commission):</span>
                   <p className="text-[11px] text-slate-600 dark:text-slate-300">
-                    Thu phí <strong>5% - 8%</strong> trên các hợp đồng thi công nội thất hoặc dịch vụ giá trị cao khi khách hàng kết nối qua nền tảng.
+                    Thu phÃ­ <strong>5% - 8%</strong> trÃªn cÃ¡c há»£p Ä‘á»“ng thi cÃ´ng ná»™i tháº¥t hoáº·c dá»‹ch vá»¥ giÃ¡ trá»‹ cao khi khÃ¡ch hÃ ng káº¿t ná»‘i qua ná»n táº£ng.
                   </p>
                 </div>
               </div>
@@ -7677,10 +7876,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-4">
               <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
                 <Wallet className="w-5 h-5 text-amber-500" />
-                DANH SÁCH YÊU CẦU RÚT TIỀN HOA HỒNG (VIETQR PAYOUT)
+                DANH SÃCH YÃŠU Cáº¦U RÃšT TIá»€N HOA Há»’NG (VIETQR PAYOUT)
               </h3>
               <span className="text-xs text-amber-600 font-bold bg-amber-50 dark:bg-amber-950/60 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-800">
-                Admin xác nhận chuyển khoản ngân hàng
+                Admin xÃ¡c nháº­n chuyá»ƒn khoáº£n ngÃ¢n hÃ ng
               </span>
             </div>
 
@@ -7688,21 +7887,21 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 font-bold text-[10px] uppercase tracking-wider bg-slate-50 dark:bg-slate-900/60">
-                    <th className="p-3">Mã Lệnh</th>
-                    <th className="p-3">User ID Cư Dân</th>
-                    <th className="p-3">Số Tiền Rút</th>
-                    <th className="p-3">Ngân Hàng & Số TK Thụ Hưởng</th>
-                    <th className="p-3">Thời Gian</th>
-                    <th className="p-3 text-center">Trạng Thái</th>
-                    <th className="p-3 text-center">Thao Tác Admin</th>
+                    <th className="p-3">MÃ£ Lá»‡nh</th>
+                    <th className="p-3">User ID CÆ° DÃ¢n</th>
+                    <th className="p-3">Sá»‘ Tiá»n RÃºt</th>
+                    <th className="p-3">NgÃ¢n HÃ ng & Sá»‘ TK Thá»¥ HÆ°á»Ÿng</th>
+                    <th className="p-3">Thá»i Gian</th>
+                    <th className="p-3 text-center">Tráº¡ng ThÃ¡i</th>
+                    <th className="p-3 text-center">Thao TÃ¡c Admin</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                   {payoutRequestsLoading && (
-                    <tr><td colSpan={7} className="p-6 text-center text-slate-400 font-bold">Đang tải danh sách...</td></tr>
+                    <tr><td colSpan={7} className="p-6 text-center text-slate-400 font-bold">Äang táº£i danh sÃ¡ch...</td></tr>
                   )}
                   {!payoutRequestsLoading && payoutRequests.length === 0 && (
-                    <tr><td colSpan={7} className="p-6 text-center text-slate-400 font-bold">Chưa có yêu cầu rút tiền nào.</td></tr>
+                    <tr><td colSpan={7} className="p-6 text-center text-slate-400 font-bold">ChÆ°a cÃ³ yÃªu cáº§u rÃºt tiá»n nÃ o.</td></tr>
                   )}
                   {payoutRequests.map((po) => (
                     <tr key={po.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition">
@@ -7711,7 +7910,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         {po.userId}
                       </td>
                       <td className="p-3 font-black text-amber-600 dark:text-amber-400 text-sm">
-                        {Number(po.amount || 0).toLocaleString('vi-VN')} VNĐ
+                        {Number(po.amount || 0).toLocaleString('vi-VN')} VNÄ
                       </td>
                       <td className="p-3 font-medium">
                         <span className="font-bold text-slate-900 dark:text-white">{po.bankDetails?.bankName}</span>
@@ -7722,15 +7921,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       <td className="p-3 text-center">
                         {po.status === 'approved' ? (
                           <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black rounded-full text-[10px]">
-                            ✓ Đã Chuyển Khoản
+                            âœ“ ÄÃ£ Chuyá»ƒn Khoáº£n
                           </span>
                         ) : po.status === 'rejected' ? (
                           <span className="px-2.5 py-1 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-black rounded-full text-[10px]">
-                            ✕ Đã Từ Chối
+                            âœ• ÄÃ£ Tá»« Chá»‘i
                           </span>
                         ) : (
                           <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black rounded-full text-[10px] animate-pulse">
-                            ⏳ Chờ Admin Duyệt
+                            â³ Chá» Admin Duyá»‡t
                           </span>
                         )}
                       </td>
@@ -7742,19 +7941,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               onClick={() => handleApprovePayout(po.id)}
                               className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold rounded-lg text-[11px] transition shadow-xs"
                             >
-                              {payoutActionId === po.id ? '...' : '✓ Duyệt Chuyển'}
+                              {payoutActionId === po.id ? '...' : 'âœ“ Duyá»‡t Chuyá»ƒn'}
                             </button>
                             <button
                               disabled={payoutActionId === po.id}
                               onClick={() => handleRejectPayout(po.id)}
                               className="px-2.5 py-1.5 bg-rose-100 hover:bg-rose-200 disabled:opacity-50 text-rose-700 font-bold rounded-lg text-[11px] transition"
                             >
-                              ✕ Từ Chối
+                              âœ• Tá»« Chá»‘i
                             </button>
                           </div>
                         ) : (
                           <span className="text-[11px] text-slate-400 font-bold">
-                            {po.status === 'rejected' ? 'Đã hoàn tiền vào ví' : 'Đã hoàn tất'}
+                            {po.status === 'rejected' ? 'ÄÃ£ hoÃ n tiá»n vÃ o vÃ­' : 'ÄÃ£ hoÃ n táº¥t'}
                           </span>
                         )}
                       </td>
@@ -7775,28 +7974,28 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 bg-purple-500/20 text-purple-300 border border-purple-500/40 font-black text-xs rounded-full uppercase tracking-wider">
-                  📰 QUẢN TRỊ BẢNG TIN CƯ DÂN & YOUTUBE PR
+                  ðŸ“° QUáº¢N TRá»Š Báº¢NG TIN CÆ¯ DÃ‚N & YOUTUBE PR
                 </span>
                 <span className="bg-emerald-500/20 text-emerald-300 font-bold text-xs px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-                  {adminReputationPosts.length} Bài Viết Live
+                  {adminReputationPosts.length} BÃ i Viáº¿t Live
                 </span>
               </div>
-              <h2 className="text-xl font-black">QUẢN LÝ BÀI PR VÀ VIDEO REVIEW TRẢI NGHIỆM</h2>
+              <h2 className="text-xl font-black">QUáº¢N LÃ BÃ€I PR VÃ€ VIDEO REVIEW TRáº¢I NGHIá»†M</h2>
               <p className="text-xs text-slate-300 max-w-2xl">
-                Kiểm duyệt, xóa bài viết vi phạm hoặc đăng mới video YouTube trải nghiệm thực tế từ cư dân chính chủ. Toàn bộ nội dung tự động đồng bộ trên trang Dịch Vụ Cư Dân.
+                Kiá»ƒm duyá»‡t, xÃ³a bÃ i viáº¿t vi pháº¡m hoáº·c Ä‘Äƒng má»›i video YouTube tráº£i nghiá»‡m thá»±c táº¿ tá»« cÆ° dÃ¢n chÃ­nh chá»§. ToÃ n bá»™ ná»™i dung tá»± Ä‘á»™ng Ä‘á»“ng bá»™ trÃªn trang Dá»‹ch Vá»¥ CÆ° DÃ¢n.
               </p>
             </div>
 
             <button
               onClick={() => {
-                const title = prompt('Nhập tiêu đề bài PR / Review:');
+                const title = prompt('Nháº­p tiÃªu Ä‘á» bÃ i PR / Review:');
                 if (!title) return;
-                const partnerName = prompt('Tên cửa hàng / Đối tác:') || 'Cửa hàng xác minh';
-                const partnerCategory = prompt('Danh mục (F&B / Giặt là / Sửa chữa...):') || 'Dịch Vụ Cư Dân';
-                const youtubeUrl = prompt('Link Video YouTube (nếu có):') || '';
-                const content = prompt('Nội dung bài viết review:') || 'Bài viết review trải nghiệm từ cư dân.';
-                const authorName = prompt('Tên người đăng:') || 'BQL / Cư Dân';
-                const authorRoom = prompt('Số căn / Tòa nhà:') || 'Vinhomes';
+                const partnerName = prompt('TÃªn cá»­a hÃ ng / Äá»‘i tÃ¡c:') || 'Cá»­a hÃ ng xÃ¡c minh';
+                const partnerCategory = prompt('Danh má»¥c (F&B / Giáº·t lÃ  / Sá»­a chá»¯a...):') || 'Dá»‹ch Vá»¥ CÆ° DÃ¢n';
+                const youtubeUrl = prompt('Link Video YouTube (náº¿u cÃ³):') || '';
+                const content = prompt('Ná»™i dung bÃ i viáº¿t review:') || 'BÃ i viáº¿t review tráº£i nghiá»‡m tá»« cÆ° dÃ¢n.';
+                const authorName = prompt('TÃªn ngÆ°á»i Ä‘Äƒng:') || 'BQL / CÆ° DÃ¢n';
+                const authorRoom = prompt('Sá»‘ cÄƒn / TÃ²a nhÃ :') || 'Vinhomes';
 
                 fetch('/api/reputation-posts', {
                   method: 'POST',
@@ -7816,17 +8015,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 .then(res => res.json())
                 .then(newPost => {
                   setAdminReputationPosts(prev => [newPost, ...prev]);
-                  alert('🎉 Đăng bài PR thành công!');
+                  alert('ðŸŽ‰ ÄÄƒng bÃ i PR thÃ nh cÃ´ng!');
                 })
                 .catch(err => {
                   console.error(err);
-                  alert('Lỗi đăng bài PR');
+                  alert('Lá»—i Ä‘Äƒng bÃ i PR');
                 });
               }}
               className="px-5 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs rounded-2xl shadow-lg transition flex items-center gap-2 shrink-0 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>+ Đăng Bài PR Admin</span>
+              <span>+ ÄÄƒng BÃ i PR Admin</span>
             </button>
           </div>
 
@@ -7861,8 +8060,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     </h3>
 
                     <div className="text-xs font-bold text-amber-500 flex items-center justify-between">
-                      <span>🏪 {post.partnerName}</span>
-                      <span className="text-xs text-amber-500 font-extrabold">⭐ {post.rating}.0</span>
+                      <span>ðŸª {post.partnerName}</span>
+                      <span className="text-xs text-amber-500 font-extrabold">â­ {post.rating}.0</span>
                     </div>
 
                     {embedUrl && (
@@ -7884,12 +8083,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
                     <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                      ✍️ {post.authorName} ({post.authorRoom})
+                      âœï¸ {post.authorName} ({post.authorRoom})
                     </span>
 
                     <button
                       onClick={() => {
-                        if (confirm(`Bạn có chắc muốn xóa bài PR "${post.title}"?`)) {
+                        if (confirm(`Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a bÃ i PR "${post.title}"?`)) {
                           fetch(`/api/reputation-posts/${post.id}`, { method: 'DELETE' })
                             .then(() => {
                               setAdminReputationPosts(prev => prev.filter(p => p.id !== post.id));
@@ -7899,7 +8098,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       }}
                       className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-xl font-bold text-xs transition border border-rose-200 dark:border-rose-800 cursor-pointer"
                     >
-                      🗑️ Xóa Bài
+                      ðŸ—‘ï¸ XÃ³a BÃ i
                     </button>
                   </div>
                 </div>
@@ -8031,7 +8230,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
                 <UserPlus className="w-5 h-5 text-amber-500" />
-                THÊM THÀNH VIÊN / TÀI KHOẢN MỚI
+                THÃŠM THÃ€NH VIÃŠN / TÃ€I KHOáº¢N Má»šI
               </h3>
               <button
                 onClick={() => setIsAddingUser(false)}
@@ -8043,11 +8242,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
             <form onSubmit={handleCreateUserSubmit} className="space-y-4">
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Họ & Tên thành viên *</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Há» & TÃªn thÃ nh viÃªn *</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ví dụ: Nguyễn Văn A"
+                  placeholder="VÃ­ dá»¥: Nguyá»…n VÄƒn A"
                   value={userFormData.name}
                   onChange={(e) => setUserFormData(p => ({ ...p, name: e.target.value }))}
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -8068,7 +8267,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số điện thoại / Zalo</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Sá»‘ Ä‘iá»‡n thoáº¡i / Zalo</label>
                   <input
                     type="text"
                     placeholder="VD: 0912.345.678"
@@ -8081,20 +8280,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Vai trò & Cấp bậc</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Vai trÃ² & Cáº¥p báº­c</label>
                   <select
                     value={userFormData.role}
                     onChange={(e) => setUserFormData(p => ({ ...p, role: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
                   >
-                    <option value="owner">🏠 Cư Dân / Chủ Nhà</option>
-                    <option value="sale">💼 Môi Giới / Sale BĐS</option>
-                    <option value="admin">👑 Quản Trị Viên (Admin)</option>
+                    <option value="owner">ðŸ  CÆ° DÃ¢n / Chá»§ NhÃ </option>
+                    <option value="sale">ðŸ’¼ MÃ´i Giá»›i / Sale BÄS</option>
+                    <option value="admin">ðŸ‘‘ Quáº£n Trá»‹ ViÃªn (Admin)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mật khẩu ban đầu</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Máº­t kháº©u ban Ä‘áº§u</label>
                   <input
                     type="text"
                     placeholder="123456"
@@ -8107,7 +8306,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Lượt Up-Tin tặng ban đầu</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">LÆ°á»£t Up-Tin táº·ng ban Ä‘áº§u</label>
                   <input
                     type="number"
                     value={userFormData.upTinCredits}
@@ -8117,7 +8316,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số dư Ví VNĐ (đ)</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Sá»‘ dÆ° VÃ­ VNÄ (Ä‘)</label>
                   <input
                     type="number"
                     value={userFormData.balance}
@@ -8133,13 +8332,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   onClick={() => setIsAddingUser(false)}
                   className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 transition cursor-pointer"
                 >
-                  Hủy Bỏ
+                  Há»§y Bá»
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition shadow-md cursor-pointer"
                 >
-                  TẠO THÀNH VIÊN
+                  Táº O THÃ€NH VIÃŠN
                 </button>
               </div>
             </form>
@@ -8154,7 +8353,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
                 <Edit3 className="w-5 h-5 text-blue-500" />
-                CẬP NHẬT THÔNG TIN THÀNH VIÊN
+                Cáº¬P NHáº¬T THÃ”NG TIN THÃ€NH VIÃŠN
               </h3>
               <button
                 onClick={() => setEditingUser(null)}
@@ -8166,7 +8365,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
             <form onSubmit={handleUpdateUserSubmit} className="space-y-4">
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Họ & Tên</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Há» & TÃªn</label>
                 <input
                   type="text"
                   required
@@ -8189,7 +8388,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số điện thoại / Zalo</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Sá»‘ Ä‘iá»‡n thoáº¡i / Zalo</label>
                   <input
                     type="text"
                     value={editingUser.phone || ''}
@@ -8201,20 +8400,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Vai trò & Cấp bậc</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Vai trÃ² & Cáº¥p báº­c</label>
                   <select
                     value={editingUser.role}
                     onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value as any })}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                   >
-                    <option value="owner">🏠 Cư Dân / Chủ Nhà</option>
-                    <option value="sale">💼 Môi Giới / Sale BĐS</option>
-                    <option value="admin">👑 Quản Trị Viên (Admin)</option>
+                    <option value="owner">ðŸ  CÆ° DÃ¢n / Chá»§ NhÃ </option>
+                    <option value="sale">ðŸ’¼ MÃ´i Giá»›i / Sale BÄS</option>
+                    <option value="admin">ðŸ‘‘ Quáº£n Trá»‹ ViÃªn (Admin)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Lượt Up-Tin</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">LÆ°á»£t Up-Tin</label>
                   <input
                     type="number"
                     value={editingUser.upTinCredits || 0}
@@ -8229,17 +8428,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <div className="flex items-center justify-between">
                   <span className="font-extrabold text-blue-600 dark:text-blue-400 text-[11px] uppercase flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5" />
-                    Hồ Sơ Doanh Nghiệp & Pháp Lý (MST / ĐKKD)
+                    Há»“ SÆ¡ Doanh Nghiá»‡p & PhÃ¡p LÃ½ (MST / ÄKKD)
                   </span>
-                  <span className="text-[10px] text-slate-400 font-bold">Xác minh B2B</span>
+                  <span className="text-[10px] text-slate-400 font-bold">XÃ¡c minh B2B</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   <div>
-                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Tên Công Ty / Doanh Nghiệp</label>
+                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">TÃªn CÃ´ng Ty / Doanh Nghiá»‡p</label>
                     <input
                       type="text"
-                      placeholder="VD: Sàn BĐS NewHome / Cty Xây Dựng An Phát"
+                      placeholder="VD: SÃ n BÄS NewHome / Cty XÃ¢y Dá»±ng An PhÃ¡t"
                       value={editingUser.companyName || ''}
                       onChange={(e) => setEditingUser({ ...editingUser, companyName: e.target.value })}
                       className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
@@ -8247,7 +8446,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Mã Số Thuế (MST)</label>
+                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">MÃ£ Sá»‘ Thuáº¿ (MST)</label>
                     <input
                       type="text"
                       placeholder="VD: 0109988776"
@@ -8260,7 +8459,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   <div>
-                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Link Ảnh Giấy Phép ĐKKD</label>
+                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Link áº¢nh Giáº¥y PhÃ©p ÄKKD</label>
                     <input
                       type="text"
                       placeholder="https://..."
@@ -8271,10 +8470,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Chứng Chỉ Nghề / Giấy Phép Con</label>
+                    <label className="block font-bold text-slate-600 dark:text-slate-400 mb-0.5">Chá»©ng Chá»‰ Nghá» / Giáº¥y PhÃ©p Con</label>
                     <input
                       type="text"
-                      placeholder="Chứng chỉ Môi giới BĐS / Dược / ATTP..."
+                      placeholder="Chá»©ng chá»‰ MÃ´i giá»›i BÄS / DÆ°á»£c / ATTP..."
                       value={editingUser.brokerLicenseUrl || ''}
                       onChange={(e) => setEditingUser({ ...editingUser, brokerLicenseUrl: e.target.value })}
                       className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
@@ -8284,7 +8483,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số dư Ví VNĐ (đ)</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Sá»‘ dÆ° VÃ­ VNÄ (Ä‘)</label>
                 <input
                   type="number"
                   value={editingUser.balance || 0}
@@ -8299,13 +8498,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   onClick={() => setEditingUser(null)}
                   className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 transition cursor-pointer"
                 >
-                  Hủy Bỏ
+                  Há»§y Bá»
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl transition shadow-md cursor-pointer"
                 >
-                  LƯU THAY ĐỔI
+                  LÆ¯U THAY Äá»”I
                 </button>
               </div>
             </form>
@@ -8330,7 +8529,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <div className="flex items-center gap-2">
                 <Wrench className="w-5 h-5 text-amber-400" />
                 <h3 className="font-black text-sm sm:text-base text-amber-400">
-                  {editingService ? '✏️ CHỈNH SỬA DỊCH VỤ CƯ DÂN' : '➕ THÊM DỊCH VỤ CƯ DÂN MỚI'}
+                  {editingService ? 'âœï¸ CHá»ˆNH Sá»¬A Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N' : 'âž• THÃŠM Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N Má»šI'}
                 </h3>
               </div>
               <button
@@ -8340,19 +8539,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 }}
                 className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold transition cursor-pointer"
               >
-                ✕
+                âœ•
               </button>
             </div>
 
             <form onSubmit={handleSaveResidentServiceSubmit} className="p-4 sm:p-6 space-y-4 text-xs pb-28 sm:pb-6">
               <div>
                 <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                  Tên Dịch Vụ / Ngành Nghề Cư Dân (*):
+                  TÃªn Dá»‹ch Vá»¥ / NgÃ nh Nghá» CÆ° DÃ¢n (*):
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="Ví dụ: Sửa Chữa Thang Máy, Lắp Đặt Smarthome, Taxi Nội Khu..."
+                  placeholder="VÃ­ dá»¥: Sá»­a Chá»¯a Thang MÃ¡y, Láº¯p Äáº·t Smarthome, Taxi Ná»™i Khu..."
                   value={newSrvTitle}
                   onChange={(e) => setNewSrvTitle(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
@@ -8362,7 +8561,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Danh Mục Ngành Nghề (*):
+                    Danh Má»¥c NgÃ nh Nghá» (*):
                   </label>
                   <select
                     value={newSrvCategory}
@@ -8379,7 +8578,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                 <div>
                   <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Khu Đô Thị / Dự Án (*):
+                    Khu ÄÃ´ Thá»‹ / Dá»± Ãn (*):
                   </label>
                   <select
                     value={newSrvProject}
@@ -8391,7 +8590,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <option value="Vinhomes Ocean Park 3">Vinhomes Ocean Park 3</option>
                     <option value="Vinhomes Smart City">Vinhomes Smart City</option>
                     <option value="Vinhomes Grand Park">Vinhomes Grand Park</option>
-                    <option value="Toàn Hệ Thống Vinhomes">Toàn Hệ Thống Vinhomes</option>
+                    <option value="ToÃ n Há»‡ Thá»‘ng Vinhomes">ToÃ n Há»‡ Thá»‘ng Vinhomes</option>
                   </select>
                 </div>
               </div>
@@ -8399,12 +8598,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Họ Tên Nhà Cung Cấp / Cư Dân:
+                    Há» TÃªn NhÃ  Cung Cáº¥p / CÆ° DÃ¢n:
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Nguyễn Văn A"
+                    placeholder="Nguyá»…n VÄƒn A"
                     value={newSrvProviderName}
                     onChange={(e) => setNewSrvProviderName(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
@@ -8413,7 +8612,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                 <div>
                   <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Số Điện Thoại (*):
+                    Sá»‘ Äiá»‡n Thoáº¡i (*):
                   </label>
                   <input
                     type="text"
@@ -8427,11 +8626,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                 <div>
                   <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Link/SĐT Zalo Chính Chủ:
+                    Link/SÄT Zalo ChÃ­nh Chá»§:
                   </label>
                   <input
                     type="text"
-                    placeholder="0987654321 hoặc link Zalo"
+                    placeholder="0987654321 hoáº·c link Zalo"
                     value={newSrvProviderZalo}
                     onChange={(e) => setNewSrvProviderZalo(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
@@ -8441,11 +8640,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                  Giá Hiển Thị (Ví dụ: 150.000đ/giờ, Báo giá theo khối lượng...):
+                  GiÃ¡ Hiá»ƒn Thá»‹ (VÃ­ dá»¥: 150.000Ä‘/giá», BÃ¡o giÃ¡ theo khá»‘i lÆ°á»£ng...):
                 </label>
                 <input
                   type="text"
-                  placeholder="Thỏa thuận / 200.000đ"
+                  placeholder="Thá»a thuáº­n / 200.000Ä‘"
                   value={newSrvPrice}
                   onChange={(e) => setNewSrvPrice(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
@@ -8454,11 +8653,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                  Địa Chỉ / Căn Hộ / Tòa Nhà:
+                  Äá»‹a Chá»‰ / CÄƒn Há»™ / TÃ²a NhÃ :
                 </label>
                 <input
                   type="text"
-                  placeholder="Ví dụ: Tòa S2.01, Ocean Park 1"
+                  placeholder="VÃ­ dá»¥: TÃ²a S2.01, Ocean Park 1"
                   value={newSrvAddress}
                   onChange={(e) => setNewSrvAddress(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
@@ -8467,11 +8666,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                  Mô Tả Chi Tiết Dịch Vụ:
+                  MÃ´ Táº£ Chi Tiáº¿t Dá»‹ch Vá»¥:
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="Mô tả năng lực, trang thiết bị, thời gian phục vụ, cam kết chất lượng..."
+                  placeholder="MÃ´ táº£ nÄƒng lá»±c, trang thiáº¿t bá»‹, thá»i gian phá»¥c vá»¥, cam káº¿t cháº¥t lÆ°á»£ng..."
                   value={newSrvDesc}
                   onChange={(e) => setNewSrvDesc(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none scroll-mt-24"
@@ -8481,11 +8680,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <div className="space-y-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between">
                   <label className="font-extrabold text-slate-700 dark:text-slate-300 text-xs">
-                    📷 Hình Ảnh Dịch Vụ:
+                    ðŸ“· HÃ¬nh áº¢nh Dá»‹ch Vá»¥:
                   </label>
                   <label className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl cursor-pointer inline-flex items-center gap-1.5 shadow-xs transition">
                     <Upload className="w-3.5 h-3.5" />
-                    <span>📁 Tải Ảnh Từ Máy</span>
+                    <span>ðŸ“ Táº£i áº¢nh Tá»« MÃ¡y</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -8495,7 +8694,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           try {
                             const preview = await createInstantPreview(file);
                             setNewSrvImage(preview);
-                            // Upload lên server -> URL public
+                            // Upload lÃªn server -> URL public
                             const urls = await uploadFiles([file]);
                             if (urls[0]) setNewSrvImage(urls[0]);
                           } catch (err) {
@@ -8515,7 +8714,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       onClick={() => setNewSrvImage('')}
                       className="absolute top-1 right-1 w-6 h-6 bg-rose-600 text-white rounded-md flex items-center justify-center text-xs"
                     >
-                      ✕
+                      âœ•
                     </button>
                   </div>
                 )}
@@ -8530,13 +8729,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   }}
                   className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 transition cursor-pointer"
                 >
-                  Hủy Bỏ
+                  Há»§y Bá»
                 </button>
                 <button
                   type="submit"
                   className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black rounded-xl transition shadow-lg hover:brightness-110 cursor-pointer"
                 >
-                  {editingService ? 'LƯU CẬP NHẬT' : '➕ THÊM DỊCH VỤ MỚI'}
+                  {editingService ? 'LÆ¯U Cáº¬P NHáº¬T' : 'âž• THÃŠM Dá»ŠCH Vá»¤ Má»šI'}
                 </button>
               </div>
             </form>
@@ -8551,7 +8750,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
                 <Package className="w-5 h-5 text-amber-500" />
-                {editingPkgModal ? `SỬA GÓI: ${editingPkgModal.name}` : 'THÊM GÓI DỊCH VỤ MỚI'}
+                {editingPkgModal ? `Sá»¬A GÃ“I: ${editingPkgModal.name}` : 'THÃŠM GÃ“I Dá»ŠCH Vá»¤ Má»šI'}
               </h3>
               <button
                 onClick={() => setShowAddPkgModal(false)}
@@ -8563,11 +8762,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
             <form onSubmit={handleSavePackageSubmit} className="space-y-3">
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tên Gói Dịch Vụ *</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">TÃªn GÃ³i Dá»‹ch Vá»¥ *</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ví dụ: GÓI CỬA HÀNG ĐẢM BẢO"
+                  placeholder="VÃ­ dá»¥: GÃ“I Cá»¬A HÃ€NG Äáº¢M Báº¢O"
                   value={pkgFormData.name}
                   onChange={(e) => setPkgFormData(p => ({ ...p, name: e.target.value }))}
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
@@ -8576,11 +8775,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Giá Hiển Thị *</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">GiÃ¡ Hiá»ƒn Thá»‹ *</label>
                   <input
                     type="text"
                     required
-                    placeholder="1.990.000đ"
+                    placeholder="1.990.000Ä‘"
                     value={pkgFormData.priceDisplay}
                     onChange={(e) => setPkgFormData(p => ({ ...p, priceDisplay: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
@@ -8588,7 +8787,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số Tiền Số (đ)</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Sá»‘ Tiá»n Sá»‘ (Ä‘)</label>
                   <input
                     type="number"
                     placeholder="1990000"
@@ -8601,10 +8800,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Đơn Vị Tính</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">ÄÆ¡n Vá»‹ TÃ­nh</label>
                   <input
                     type="text"
-                    placeholder="/ năm, / tháng, / bài"
+                    placeholder="/ nÄƒm, / thÃ¡ng, / bÃ i"
                     value={pkgFormData.unit}
                     onChange={(e) => setPkgFormData(p => ({ ...p, unit: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
@@ -8612,10 +8811,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Nhãn Huy Hiệu (Badge)</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">NhÃ£n Huy Hiá»‡u (Badge)</label>
                   <input
                     type="text"
-                    placeholder="🔥 NỔI BẬT NHẤT"
+                    placeholder="ðŸ”¥ Ná»”I Báº¬T NHáº¤T"
                     value={pkgFormData.badge}
                     onChange={(e) => setPkgFormData(p => ({ ...p, badge: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
@@ -8624,10 +8823,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mô Tả Ngắn</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">MÃ´ Táº£ Ngáº¯n</label>
                 <input
                   type="text"
-                  placeholder="Mô tả công dụng gói..."
+                  placeholder="MÃ´ táº£ cÃ´ng dá»¥ng gÃ³i..."
                   value={pkgFormData.description}
                   onChange={(e) => setPkgFormData(p => ({ ...p, description: e.target.value }))}
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
@@ -8635,10 +8834,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tính Năng Bao Gồm (Mỗi dòng 1 tính năng)</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">TÃ­nh NÄƒng Bao Gá»“m (Má»—i dÃ²ng 1 tÃ­nh nÄƒng)</label>
                 <textarea
                   rows={4}
-                  placeholder="Bao gồm toàn bộ gói Tick Xanh&#10;Huy hiệu Cửa Hàng Đảm Bảo&#10;Ưu tiên hỗ trợ từ Admin"
+                  placeholder="Bao gá»“m toÃ n bá»™ gÃ³i Tick Xanh&#10;Huy hiá»‡u Cá»­a HÃ ng Äáº£m Báº£o&#10;Æ¯u tiÃªn há»— trá»£ tá»« Admin"
                   value={pkgFormData.featuresStr}
                   onChange={(e) => setPkgFormData(p => ({ ...p, featuresStr: e.target.value }))}
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
@@ -8654,7 +8853,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500"
                 />
                 <label htmlFor="chk-popular" className="font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
-                  Đánh dấu Gói ĐƯỢC CHỌN NHIỀU NHẤT (Nổi bật)
+                  ÄÃ¡nh dáº¥u GÃ³i ÄÆ¯á»¢C CHá»ŒN NHIá»€U NHáº¤T (Ná»•i báº­t)
                 </label>
               </div>
 
@@ -8664,13 +8863,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   onClick={() => setShowAddPkgModal(false)}
                   className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
                 >
-                  Hủy Bỏ
+                  Há»§y Bá»
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
                 >
-                  LƯU GÓI DỊCH VỤ
+                  LÆ¯U GÃ“I Dá»ŠCH Vá»¤
                 </button>
               </div>
             </form>
@@ -8678,7 +8877,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ==================== MODAL: QUẢN TRỊ CHI TIẾT GIAN HÀNG & DỊCH VỤ CƯ DÂN ==================== */}
+      {/* ==================== MODAL: QUáº¢N TRá»Š CHI TIáº¾T GIAN HÃ€NG & Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N ==================== */}
       {selectedAdminStore && (() => {
         const storeProds = selectedAdminStore.products || [];
         const storePhone = selectedAdminStore.ownerPhone || (selectedAdminStore as any).phone || '';
@@ -8705,25 +8904,25 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full uppercase">
-                        {selectedAdminStore.category || 'Gian Hàng Cư Dân'}
+                        {selectedAdminStore.category || 'Gian HÃ ng CÆ° DÃ¢n'}
                       </span>
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
                         selectedAdminStore.status === 'approved' || selectedAdminStore.status === undefined
                           ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                           : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                       }`}>
-                        {selectedAdminStore.status === 'approved' || selectedAdminStore.status === undefined ? '✓ Đang Hiển Thị Web' : '⏳ Chờ Duyệt / Tạm Ẩn'}
+                        {selectedAdminStore.status === 'approved' || selectedAdminStore.status === undefined ? 'âœ“ Äang Hiá»ƒn Thá»‹ Web' : 'â³ Chá» Duyá»‡t / Táº¡m áº¨n'}
                       </span>
                     </div>
                     <h2 className="text-lg sm:text-xl font-black text-emerald-400 mt-1">
                       {selectedAdminStore.storeName}
                     </h2>
                     <div className="text-xs text-slate-300 flex flex-wrap items-center gap-3 mt-1 font-medium">
-                      <span>👤 Chủ shop: <strong>{selectedAdminStore.ownerName}</strong></span>
+                      <span>ðŸ‘¤ Chá»§ shop: <strong>{selectedAdminStore.ownerName}</strong></span>
                       {storePhone && (
-                        <span>📞 SĐT: <a href={`tel:${storePhone}`} className="text-amber-400 hover:underline font-mono font-bold">{storePhone}</a></span>
+                        <span>ðŸ“ž SÄT: <a href={`tel:${storePhone}`} className="text-amber-400 hover:underline font-mono font-bold">{storePhone}</a></span>
                       )}
-                      <span>📍 Dự án: <strong>{selectedAdminStore.project?.toUpperCase() || 'VINHOMES'}</strong></span>
+                      <span>ðŸ“ Dá»± Ã¡n: <strong>{selectedAdminStore.project?.toUpperCase() || 'VINHOMES'}</strong></span>
                     </div>
                   </div>
                 </div>
@@ -8732,7 +8931,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   onClick={() => setSelectedAdminStore(null)}
                   className="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold text-base transition cursor-pointer"
                 >
-                  ✕
+                  âœ•
                 </button>
               </div>
 
@@ -8748,10 +8947,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     }`}
                   >
                     <ShoppingBag className="w-3.5 h-3.5" />
-                    <span>Sản Phẩm Gian Hàng ({storeProds.length})</span>
+                    <span>Sáº£n Pháº©m Gian HÃ ng ({storeProds.length})</span>
                     {pendingProdsCount > 0 && (
                       <span className="px-1.5 py-0.2 bg-amber-400 text-slate-950 text-[10px] font-black rounded-full">
-                        {pendingProdsCount} chờ
+                        {pendingProdsCount} chá»
                       </span>
                     )}
                   </button>
@@ -8765,10 +8964,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     }`}
                   >
                     <Wrench className="w-3.5 h-3.5" />
-                    <span>Dịch Vụ Cư Dân Cung Cấp ({matchingServs.length})</span>
+                    <span>Dá»‹ch Vá»¥ CÆ° DÃ¢n Cung Cáº¥p ({matchingServs.length})</span>
                     {pendingServsCount > 0 && (
                       <span className="px-1.5 py-0.2 bg-amber-400 text-slate-950 text-[10px] font-black rounded-full">
-                        {pendingServsCount} chờ
+                        {pendingServsCount} chá»
                       </span>
                     )}
                   </button>
@@ -8782,7 +8981,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     }`}
                   >
                     <Settings className="w-3.5 h-3.5" />
-                    <span>Thông Tin & KiotViet POS</span>
+                    <span>ThÃ´ng Tin & KiotViet POS</span>
                   </button>
                 </div>
 
@@ -8793,7 +8992,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Thêm Sản Phẩm Mới</span>
+                      <span>ThÃªm Sáº£n Pháº©m Má»›i</span>
                     </button>
                   )}
                   {storeDetailActiveTab === 'services' && (
@@ -8811,7 +9010,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Thêm Dịch Vụ Mới</span>
+                      <span>ThÃªm Dá»‹ch Vá»¥ Má»›i</span>
                     </button>
                   )}
                 </div>
@@ -8820,20 +9019,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               {/* Modal Body Content */}
               <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
                 
-                {/* TAB 1: SẢN PHẨM GIAN HÀNG */}
+                {/* TAB 1: Sáº¢N PHáº¨M GIAN HÃ€NG */}
                 {storeDetailActiveTab === 'products' && (
                   <div className="space-y-4">
                     {storeProds.length === 0 ? (
                       <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 space-y-3">
                         <ShoppingBag className="w-10 h-10 text-slate-400 mx-auto" />
                         <p className="font-bold text-sm text-slate-600 dark:text-slate-400">
-                          Gian hàng này chưa có sản phẩm nào.
+                          Gian hÃ ng nÃ y chÆ°a cÃ³ sáº£n pháº©m nÃ o.
                         </p>
                         <button
                           onClick={() => handleOpenAddProduct(selectedAdminStore.id)}
                           className="px-4 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow hover:bg-emerald-500"
                         >
-                          ➕ Thêm Sản Phẩm Đầu Tiên
+                          âž• ThÃªm Sáº£n Pháº©m Äáº§u TiÃªn
                         </button>
                       </div>
                     ) : (
@@ -8863,13 +9062,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   </h4>
                                   <div className="flex items-center gap-1.5 text-xs">
                                     <span className="font-black text-amber-500">
-                                      {prod.price.toLocaleString('vi-VN')}đ
+                                      {prod.price.toLocaleString('vi-VN')}Ä‘
                                     </span>
                                     {prod.unit && <span className="text-slate-400 text-[10px]">/ {prod.unit}</span>}
                                   </div>
                                   <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                                    <span>Tồn: <strong>{prod.stockQuantity}</strong></span>
-                                    <span>•</span>
+                                    <span>Tá»“n: <strong>{prod.stockQuantity}</strong></span>
+                                    <span>â€¢</span>
                                     <span>{prod.category}</span>
                                   </div>
                                 </div>
@@ -8880,15 +9079,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 <div>
                                   {isPending ? (
                                     <span className="px-2 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold text-[10px] rounded-md border border-amber-500/30 flex items-center gap-1">
-                                      ⏳ Chờ duyệt (Chỉ cư dân thấy)
+                                      â³ Chá» duyá»‡t (Chá»‰ cÆ° dÃ¢n tháº¥y)
                                     </span>
                                   ) : isApproved ? (
                                     <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-md border border-emerald-500/30 flex items-center gap-1">
-                                      ✓ Đã duyệt • Hiện trên Web
+                                      âœ“ ÄÃ£ duyá»‡t â€¢ Hiá»‡n trÃªn Web
                                     </span>
                                   ) : (
                                     <span className="px-2 py-0.5 bg-red-500/20 text-red-600 dark:text-red-400 font-extrabold text-[10px] rounded-md border border-red-500/30 flex items-center gap-1">
-                                      ❌ Tạm ẩn
+                                      âŒ Táº¡m áº©n
                                     </span>
                                   )}
                                 </div>
@@ -8905,14 +9104,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 <button
                                   type="button"
                                   onClick={() => handleToggleProductApproval(selectedAdminStore.id, prod.id)}
-                                  title={isApproved ? "Chuyển về Chờ duyệt / Tạm ẩn" : "Duyệt hiển thị lên Website"}
+                                  title={isApproved ? "Chuyá»ƒn vá» Chá» duyá»‡t / Táº¡m áº©n" : "Duyá»‡t hiá»ƒn thá»‹ lÃªn Website"}
                                   className={`py-1.5 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
                                     isApproved
                                       ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white'
                                       : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'
                                   }`}
                                 >
-                                  {isApproved ? 'Ẩn web' : '✓ Duyệt'}
+                                  {isApproved ? 'áº¨n web' : 'âœ“ Duyá»‡t'}
                                 </button>
 
                                 <button
@@ -8921,7 +9120,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   className="py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
                                 >
                                   <Edit3 className="w-3 h-3 text-blue-500" />
-                                  <span>Sửa</span>
+                                  <span>Sá»­a</span>
                                 </button>
 
                                 <button
@@ -8930,7 +9129,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   className="py-1.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
                                 >
                                   <Trash2 className="w-3 h-3" />
-                                  <span>Xóa</span>
+                                  <span>XÃ³a</span>
                                 </button>
                               </div>
                             </div>
@@ -8941,14 +9140,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </div>
                 )}
 
-                {/* TAB 2: DỊCH VỤ CƯ DÂN LIÊN QUAN */}
+                {/* TAB 2: Dá»ŠCH Vá»¤ CÆ¯ DÃ‚N LIÃŠN QUAN */}
                 {storeDetailActiveTab === 'services' && (
                   <div className="space-y-4">
                     {matchingServs.length === 0 ? (
                       <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 space-y-3">
                         <Wrench className="w-10 h-10 text-slate-400 mx-auto" />
                         <p className="font-bold text-sm text-slate-600 dark:text-slate-400">
-                          Chưa có bài dịch vụ cư dân nào được liên kết với số điện thoại này.
+                          ChÆ°a cÃ³ bÃ i dá»‹ch vá»¥ cÆ° dÃ¢n nÃ o Ä‘Æ°á»£c liÃªn káº¿t vá»›i sá»‘ Ä‘iá»‡n thoáº¡i nÃ y.
                         </p>
                         <button
                           onClick={() => {
@@ -8963,7 +9162,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           }}
                           className="px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow hover:bg-blue-500"
                         >
-                          ➕ Thêm Dịch Vụ Mới
+                          âž• ThÃªm Dá»‹ch Vá»¥ Má»›i
                         </button>
                       </div>
                     ) : (
@@ -9002,7 +9201,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                     {srv.title}
                                   </h4>
                                   <div className="text-[11px] font-black text-amber-500">
-                                    {srv.priceDisplay || srv.price || 'Thỏa thuận'}
+                                    {srv.priceDisplay || srv.price || 'Thá»a thuáº­n'}
                                   </div>
                                 </div>
                               </div>
@@ -9012,16 +9211,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 <div>
                                   {isApproved ? (
                                     <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-md border border-emerald-500/30 flex items-center gap-1">
-                                      ✓ Đã duyệt • Hiện trên Web
+                                      âœ“ ÄÃ£ duyá»‡t â€¢ Hiá»‡n trÃªn Web
                                     </span>
                                   ) : (
                                     <span className="px-2 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold text-[10px] rounded-md border border-amber-500/30 flex items-center gap-1">
-                                      ⏳ Chờ duyệt (Chỉ cư dân thấy)
+                                      â³ Chá» duyá»‡t (Chá»‰ cÆ° dÃ¢n tháº¥y)
                                     </span>
                                   )}
                                 </div>
                                 <span className="text-[10px] text-slate-400 font-medium">
-                                  {srv.createdAt || 'Mới đăng'}
+                                  {srv.createdAt || 'Má»›i Ä‘Äƒng'}
                                 </span>
                               </div>
 
@@ -9036,7 +9235,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                       : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'
                                   }`}
                                 >
-                                  {isApproved ? 'Ẩn web' : '✓ Duyệt'}
+                                  {isApproved ? 'áº¨n web' : 'âœ“ Duyá»‡t'}
                                 </button>
 
                                 <button
@@ -9045,7 +9244,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   className="py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
                                 >
                                   <Edit3 className="w-3 h-3 text-blue-500" />
-                                  <span>Sửa</span>
+                                  <span>Sá»­a</span>
                                 </button>
 
                                 <button
@@ -9054,7 +9253,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   className="py-1.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
                                 >
                                   <Trash2 className="w-3 h-3" />
-                                  <span>Xóa</span>
+                                  <span>XÃ³a</span>
                                 </button>
                               </div>
                             </div>
@@ -9065,32 +9264,32 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </div>
                 )}
 
-                {/* TAB 3: THÔNG TIN GIAN HÀNG & KIOTVIET POS */}
+                {/* TAB 3: THÃ”NG TIN GIAN HÃ€NG & KIOTVIET POS */}
                 {storeDetailActiveTab === 'info' && (
                   <div className="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                       <div>
-                        <span className="text-slate-400 font-bold block mb-1">Tên Gian Hàng:</span>
+                        <span className="text-slate-400 font-bold block mb-1">TÃªn Gian HÃ ng:</span>
                         <p className="font-black text-slate-900 dark:text-white text-sm">{selectedAdminStore.storeName}</p>
                       </div>
                       <div>
-                        <span className="text-slate-400 font-bold block mb-1">Chủ Sở Hữu & SĐT:</span>
+                        <span className="text-slate-400 font-bold block mb-1">Chá»§ Sá»Ÿ Há»¯u & SÄT:</span>
                         <p className="font-black text-slate-900 dark:text-white text-sm">
-                          {selectedAdminStore.ownerName} • {storePhone}
+                          {selectedAdminStore.ownerName} â€¢ {storePhone}
                         </p>
                       </div>
                       <div>
-                        <span className="text-slate-400 font-bold block mb-1">Địa Chỉ Phục Vụ:</span>
+                        <span className="text-slate-400 font-bold block mb-1">Äá»‹a Chá»‰ Phá»¥c Vá»¥:</span>
                         <p className="font-medium text-slate-700 dark:text-slate-300">{selectedAdminStore.address}</p>
                       </div>
                       <div>
-                        <span className="text-slate-400 font-bold block mb-1">Dự Án & Phân Khu:</span>
+                        <span className="text-slate-400 font-bold block mb-1">Dá»± Ãn & PhÃ¢n Khu:</span>
                         <p className="font-medium text-slate-700 dark:text-slate-300">
-                          {selectedAdminStore.project?.toUpperCase()} • {selectedAdminStore.subdivision || 'Nội khu'}
+                          {selectedAdminStore.project?.toUpperCase()} â€¢ {selectedAdminStore.subdivision || 'Ná»™i khu'}
                         </p>
                       </div>
                       <div className="md:col-span-2">
-                        <span className="text-slate-400 font-bold block mb-1">Mô Tả Gian Hàng:</span>
+                        <span className="text-slate-400 font-bold block mb-1">MÃ´ Táº£ Gian HÃ ng:</span>
                         <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{selectedAdminStore.description}</p>
                       </div>
                     </div>
@@ -9102,14 +9301,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
                             : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
                         }`}>
-                          {selectedAdminStore.kiotVietConfig?.syncStatus === 'connected' ? '⚡ KiotViet POS Live Connected' : 'Chưa kết nối API POS KiotViet'}
+                          {selectedAdminStore.kiotVietConfig?.syncStatus === 'connected' ? 'âš¡ KiotViet POS Live Connected' : 'ChÆ°a káº¿t ná»‘i API POS KiotViet'}
                         </span>
                       </div>
                       <button
                         onClick={() => handleOpenEditStore(selectedAdminStore)}
                         className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs rounded-xl hover:opacity-90 transition cursor-pointer"
                       >
-                        Chỉnh Sửa Thông Tin Gian Hàng
+                        Chá»‰nh Sá»­a ThÃ´ng Tin Gian HÃ ng
                       </button>
                     </div>
                   </div>
@@ -9120,7 +9319,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               <div className="p-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span>Mọi thay đổi được tự động cập nhật ngay trên hệ thống Chợ Cư Dân 24H.</span>
+                  <span>Má»i thay Ä‘á»•i Ä‘Æ°á»£c tá»± Ä‘á»™ng cáº­p nháº­t ngay trÃªn há»‡ thá»‘ng Chá»£ CÆ° DÃ¢n 24H.</span>
                 </div>
 
                 <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
@@ -9128,7 +9327,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setSelectedAdminStore(null)}
                     className="px-4 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl hover:bg-slate-300 cursor-pointer"
                   >
-                    Đóng
+                    ÄÃ³ng
                   </button>
                   <button
                     onClick={() => {
@@ -9138,7 +9337,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg hover:shadow-emerald-500/25 transition cursor-pointer flex items-center gap-1.5"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    <span>CẬP NHẬT & ĐỒNG BỘ LÊN WEBSITE</span>
+                    <span>Cáº¬P NHáº¬T & Äá»’NG Bá»˜ LÃŠN WEBSITE</span>
                   </button>
                 </div>
               </div>
@@ -9148,30 +9347,30 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         );
       })()}
 
-      {/* ==================== MODAL: THÊM / SỬA SẢN PHẨM GIAN HÀNG ==================== */}
+      {/* ==================== MODAL: THÃŠM / Sá»¬A Sáº¢N PHáº¨M GIAN HÃ€NG ==================== */}
       {showStoreProductModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-emerald-500" />
-                <span>{editingStoreProduct ? 'CHỈNH SỬA SẢN PHẨM' : 'THÊM SẢN PHẨM MỚI'}</span>
+                <span>{editingStoreProduct ? 'CHá»ˆNH Sá»¬A Sáº¢N PHáº¨M' : 'THÃŠM Sáº¢N PHáº¨M Má»šI'}</span>
               </h3>
               <button
                 onClick={() => setShowStoreProductModal(false)}
                 className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
               >
-                ✕
+                âœ•
               </button>
             </div>
 
             <form onSubmit={handleSaveStoreProductSubmit} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tên Sản Phẩm (*)</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">TÃªn Sáº£n Pháº©m (*)</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ví dụ: Cơm Gà Xối Mỡ Sốt Chua Ngọt"
+                  placeholder="VÃ­ dá»¥: CÆ¡m GÃ  Xá»‘i Má»¡ Sá»‘t Chua Ngá»t"
                   value={storeProductForm.name}
                   onChange={(e) => setStoreProductForm(p => ({ ...p, name: e.target.value }))}
                   className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
@@ -9180,7 +9379,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mã SKU</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">MÃ£ SKU</label>
                   <input
                     type="text"
                     value={storeProductForm.code}
@@ -9190,24 +9389,24 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Danh Mục</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Danh Má»¥c</label>
                   <select
                     value={storeProductForm.category}
                     onChange={(e) => setStoreProductForm(p => ({ ...p, category: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                   >
-                    <option value="Món Ăn & Đồ Uống">Món Ăn & Đồ Uống</option>
-                    <option value="Thực Phẩm Tươi Sống">Thực Phẩm Tươi Sống</option>
-                    <option value="Hàng Tiêu Dùng & Tạp Hóa">Hàng Tiêu Dùng & Tạp Hóa</option>
-                    <option value="Đồ Gia Dụng & Nội Thất">Đồ Gia Dụng & Nội Thất</option>
-                    <option value="Dịch Vụ Cư Dân">Dịch Vụ Cư Dân</option>
+                    <option value="MÃ³n Ä‚n & Äá»“ Uá»‘ng">MÃ³n Ä‚n & Äá»“ Uá»‘ng</option>
+                    <option value="Thá»±c Pháº©m TÆ°Æ¡i Sá»‘ng">Thá»±c Pháº©m TÆ°Æ¡i Sá»‘ng</option>
+                    <option value="HÃ ng TiÃªu DÃ¹ng & Táº¡p HÃ³a">HÃ ng TiÃªu DÃ¹ng & Táº¡p HÃ³a</option>
+                    <option value="Äá»“ Gia Dá»¥ng & Ná»™i Tháº¥t">Äá»“ Gia Dá»¥ng & Ná»™i Tháº¥t</option>
+                    <option value="Dá»‹ch Vá»¥ CÆ° DÃ¢n">Dá»‹ch Vá»¥ CÆ° DÃ¢n</option>
                   </select>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-1">
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Giá Bán (VNĐ) (*)</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">GiÃ¡ BÃ¡n (VNÄ) (*)</label>
                   <input
                     type="number"
                     required
@@ -9220,10 +9419,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Đơn Vị</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">ÄÆ¡n Vá»‹</label>
                   <input
                     type="text"
-                    placeholder="suất, hộp, cái..."
+                    placeholder="suáº¥t, há»™p, cÃ¡i..."
                     value={storeProductForm.unit}
                     onChange={(e) => setStoreProductForm(p => ({ ...p, unit: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
@@ -9231,7 +9430,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tồn Kho</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tá»“n Kho</label>
                   <input
                     type="number"
                     min="0"
@@ -9244,10 +9443,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">Hình Ảnh Sản Phẩm (Dưới 10MB)</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">HÃ¬nh áº¢nh Sáº£n Pháº©m (DÆ°á»›i 10MB)</label>
                   <label className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
                     <Upload className="w-3 h-3" />
-                    <span>📁 Tải Từ Máy</span>
+                    <span>ðŸ“ Táº£i Tá»« MÃ¡y</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -9265,7 +9464,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                           addWatermarkToImage(file).then(async compressed => {
                             if (compressed) {
-                              // Upload lên server -> URL public
+                              // Upload lÃªn server -> URL public
                               const url = isBase64DataUrl(compressed)
                                 ? await uploadBase64DataUrl(compressed, 'store-products')
                                 : compressed;
@@ -9296,10 +9495,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mô Tả Sản Phẩm</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">MÃ´ Táº£ Sáº£n Pháº©m</label>
                 <textarea
                   rows={2}
-                  placeholder="Mô tả sản phẩm, thành phần, cam kết vệ sinh an toàn..."
+                  placeholder="MÃ´ táº£ sáº£n pháº©m, thÃ nh pháº§n, cam káº¿t vá»‡ sinh an toÃ n..."
                   value={storeProductForm.description}
                   onChange={(e) => setStoreProductForm(p => ({ ...p, description: e.target.value }))}
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
@@ -9309,7 +9508,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               {/* Moderation Status selector */}
               <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
                 <label className="block font-extrabold text-slate-700 dark:text-slate-300">
-                  Phê Duyệt Hiển Thị Website:
+                  PhÃª Duyá»‡t Hiá»ƒn Thá»‹ Website:
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -9322,7 +9521,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     }`}
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>✓ Đã Duyệt (Hiện Web)</span>
+                    <span>âœ“ ÄÃ£ Duyá»‡t (Hiá»‡n Web)</span>
                   </button>
 
                   <button
@@ -9335,7 +9534,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     }`}
                   >
                     <Clock className="w-3.5 h-3.5" />
-                    <span>⏳ Chờ Duyệt (Ẩn Web)</span>
+                    <span>â³ Chá» Duyá»‡t (áº¨n Web)</span>
                   </button>
                 </div>
               </div>
@@ -9346,13 +9545,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   onClick={() => setShowStoreProductModal(false)}
                   className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
                 >
-                  Hủy Bỏ
+                  Há»§y Bá»
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
                 >
-                  LƯU SẢN PHẨM
+                  LÆ¯U Sáº¢N PHáº¨M
                 </button>
               </div>
             </form>
@@ -9360,30 +9559,30 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-      {/* ==================== MODAL: THÊM / SỬA GIAN HÀNG CƯ DÂN ==================== */}
+      {/* ==================== MODAL: THÃŠM / Sá»¬A GIAN HÃ€NG CÆ¯ DÃ‚N ==================== */}
       {showStoreFormModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
                 <Store className="w-5 h-5 text-emerald-500" />
-                <span>{editingStoreItem ? 'CHỈNH SỬA GIAN HÀNG CƯ DÂN' : 'TẠO GIAN HÀNG MỚI'}</span>
+                <span>{editingStoreItem ? 'CHá»ˆNH Sá»¬A GIAN HÃ€NG CÆ¯ DÃ‚N' : 'Táº O GIAN HÃ€NG Má»šI'}</span>
               </h3>
               <button
                 onClick={() => setShowStoreFormModal(false)}
                 className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
               >
-                ✕
+                âœ•
               </button>
             </div>
 
             <form onSubmit={handleSaveStoreFormSubmit} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tên Gian Hàng (*)</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">TÃªn Gian HÃ ng (*)</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ví dụ: Bếp Cư Dân Vin - Cơm Niêu Singapore"
+                  placeholder="VÃ­ dá»¥: Báº¿p CÆ° DÃ¢n Vin - CÆ¡m NiÃªu Singapore"
                   value={storeFormData.storeName}
                   onChange={(e) => setStoreFormData(p => ({ ...p, storeName: e.target.value }))}
                   className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
@@ -9392,10 +9591,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Tên Chủ Shop</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">TÃªn Chá»§ Shop</label>
                   <input
                     type="text"
-                    placeholder="Nguyễn Văn A"
+                    placeholder="Nguyá»…n VÄƒn A"
                     value={storeFormData.ownerName}
                     onChange={(e) => setStoreFormData(p => ({ ...p, ownerName: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold"
@@ -9403,7 +9602,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Số Điện Thoại (*)</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Sá»‘ Äiá»‡n Thoáº¡i (*)</label>
                   <input
                     type="tel"
                     required
@@ -9417,42 +9616,42 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Dự Án Vinhomes</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Dá»± Ãn Vinhomes</label>
                   <select
                     value={storeFormData.project}
                     onChange={(e) => setStoreFormData(p => ({ ...p, project: e.target.value as any }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                   >
-                    <option value="ocean-park-1">Ocean Park 1 (Gia Lâm)</option>
+                    <option value="ocean-park-1">Ocean Park 1 (Gia LÃ¢m)</option>
                     <option value="ocean-park-2">Ocean Park 2 (The Empire)</option>
                     <option value="ocean-park-3">Ocean Park 3 (The Crown)</option>
-                    <option value="smart-city">Smart City (Tây Mỗ)</option>
-                    <option value="grand-park">Grand Park (TP. Thủ Đức)</option>
+                    <option value="smart-city">Smart City (TÃ¢y Má»—)</option>
+                    <option value="grand-park">Grand Park (TP. Thá»§ Äá»©c)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Ngành Hàng</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">NgÃ nh HÃ ng</label>
                   <select
                     value={storeFormData.category}
                     onChange={(e) => setStoreFormData(p => ({ ...p, category: e.target.value }))}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                   >
-                    <option value="Thực Phẩm & Ăn Uống">Thực Phẩm & Ăn Uống</option>
-                    <option value="Nội Thất & Gia Dụng">Nội Thất & Gia Dụng</option>
-                    <option value="Bảo Trì & Sửa Chữa">Bảo Trì & Sửa Chữa</option>
-                    <option value="Chăm Sóc & Làm Đẹp">Chăm Sóc & Làm Đẹp</option>
-                    <option value="Vận Tải & Chuyển Nhà">Vận Tải & Chuyển Nhà</option>
-                    <option value="Giáo Dục & Rèn Luyện">Giáo Dục & Rèn Luyện</option>
+                    <option value="Thá»±c Pháº©m & Ä‚n Uá»‘ng">Thá»±c Pháº©m & Ä‚n Uá»‘ng</option>
+                    <option value="Ná»™i Tháº¥t & Gia Dá»¥ng">Ná»™i Tháº¥t & Gia Dá»¥ng</option>
+                    <option value="Báº£o TrÃ¬ & Sá»­a Chá»¯a">Báº£o TrÃ¬ & Sá»­a Chá»¯a</option>
+                    <option value="ChÄƒm SÃ³c & LÃ m Äáº¹p">ChÄƒm SÃ³c & LÃ m Äáº¹p</option>
+                    <option value="Váº­n Táº£i & Chuyá»ƒn NhÃ ">Váº­n Táº£i & Chuyá»ƒn NhÃ </option>
+                    <option value="GiÃ¡o Dá»¥c & RÃ¨n Luyá»‡n">GiÃ¡o Dá»¥c & RÃ¨n Luyá»‡n</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Địa Chỉ Phục Vụ</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Äá»‹a Chá»‰ Phá»¥c Vá»¥</label>
                 <input
                   type="text"
-                  placeholder="Ví dụ: Shophouse Sao Biển 12-34, Vinhomes Ocean Park 2"
+                  placeholder="VÃ­ dá»¥: Shophouse Sao Biá»ƒn 12-34, Vinhomes Ocean Park 2"
                   value={storeFormData.address}
                   onChange={(e) => setStoreFormData(p => ({ ...p, address: e.target.value }))}
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
@@ -9461,10 +9660,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">Logo Gian Hàng (Dưới 10MB)</label>
+                  <label className="block font-extrabold text-slate-700 dark:text-slate-300">Logo Gian HÃ ng (DÆ°á»›i 10MB)</label>
                   <label className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg cursor-pointer flex items-center gap-1 shadow transition">
                     <Upload className="w-3 h-3" />
-                    <span>📁 Tải Logo</span>
+                    <span>ðŸ“ Táº£i Logo</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -9482,7 +9681,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                           addWatermarkToImage(file, { skipWatermark: true, maxDim: 600 }).then(async compressed => {
                             if (compressed) {
-                              // Upload lên server -> URL public
+                              // Upload lÃªn server -> URL public
                               const url = isBase64DataUrl(compressed)
                                 ? await uploadBase64DataUrl(compressed, 'store-logos')
                                 : compressed;
@@ -9504,10 +9703,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">Mô Tả Gian Hàng</label>
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">MÃ´ Táº£ Gian HÃ ng</label>
                 <textarea
                   rows={2}
-                  placeholder="Mô tả phong cách, sản phẩm chính, uy tín..."
+                  placeholder="MÃ´ táº£ phong cÃ¡ch, sáº£n pháº©m chÃ­nh, uy tÃ­n..."
                   value={storeFormData.description}
                   onChange={(e) => setStoreFormData(p => ({ ...p, description: e.target.value }))}
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
@@ -9517,7 +9716,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               {/* Status toggle */}
               <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
                 <label className="block font-extrabold text-slate-700 dark:text-slate-300">
-                  Trạng Thái Phê Duyệt Gian Hàng:
+                  Tráº¡ng ThÃ¡i PhÃª Duyá»‡t Gian HÃ ng:
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -9530,7 +9729,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     }`}
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>✓ Đã Duyệt (Hiện Web)</span>
+                    <span>âœ“ ÄÃ£ Duyá»‡t (Hiá»‡n Web)</span>
                   </button>
 
                   <button
@@ -9543,7 +9742,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     }`}
                   >
                     <Clock className="w-3.5 h-3.5" />
-                    <span>⏳ Chờ Duyệt (Tạm Ẩn)</span>
+                    <span>â³ Chá» Duyá»‡t (Táº¡m áº¨n)</span>
                   </button>
                 </div>
               </div>
@@ -9554,13 +9753,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   onClick={() => setShowStoreFormModal(false)}
                   className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
                 >
-                  Hủy Bỏ
+                  Há»§y Bá»
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md cursor-pointer"
                 >
-                  LƯU GIAN HÀNG
+                  LÆ¯U GIAN HÃ€NG
                 </button>
               </div>
             </form>

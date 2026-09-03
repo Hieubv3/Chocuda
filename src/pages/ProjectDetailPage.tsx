@@ -61,7 +61,9 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
   const projectName = project.title || project.name || 'Dự án Vinhomes';
 
   // Safely normalize subdivisions
-  const rawSubdivisions: string[] = Array.isArray(project.subdivisions) ? project.subdivisions : [];
+  const rawSubdivisions: string[] = Array.isArray(project.subdivisions)
+    ? project.subdivisions.map((s: any) => (typeof s === 'string' ? s : s.name))
+    : [];
   const normalizedSubdivisions: SubdivisionSEOInfo[] = rawSubdivisions.map(subItem => {
     if (typeof subItem === 'string') {
       const existing = SUBDIVISION_SEO_DATA[subItem];

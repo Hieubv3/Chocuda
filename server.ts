@@ -1020,13 +1020,23 @@ function loadDataStore() {
           } else {
             // Nâng cấp các trường mới (images, youtubeUrl, legalInfo, currentStatus) nếu bản persist cũ thiếu
             const existing = projMap.get(ip.id) as any;
+            // Nâng cấp subdivisions: nếu là mảng string cũ -> chuyển thành mảng object ProjectSubdivision
+            let upgradedSubdivisions = existing.subdivisions;
+            if (Array.isArray(existing.subdivisions) && existing.subdivisions.length > 0 && typeof existing.subdivisions[0] === 'string') {
+              upgradedSubdivisions = (existing.subdivisions as string[]).map((name, i) => ({
+                id: `${ip.id}-sub-${i}`,
+                name,
+                streets: []
+              }));
+            }
             projMap.set(ip.id, {
               ...existing,
               images: existing.images || ip.images || [],
               youtubeUrl: existing.youtubeUrl || ip.youtubeUrl || '',
               legalInfo: existing.legalInfo || ip.legalInfo || '',
               currentStatus: existing.currentStatus || ip.currentStatus || '',
-              parentId: existing.parentId || ip.parentId || undefined
+              parentId: existing.parentId || ip.parentId || undefined,
+              subdivisions: upgradedSubdivisions || ip.subdivisions || []
             });
           }
         });

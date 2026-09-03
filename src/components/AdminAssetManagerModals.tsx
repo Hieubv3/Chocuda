@@ -792,10 +792,17 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
               </label>
               <textarea
                 rows={3}
-                value={(formData.subdivisions || []).join('\n')}
+                value={(formData.subdivisions || []).map((s: any) => (typeof s === 'string' ? s : s.name)).join('\n')}
                 onChange={(e) => setFormData({
                   ...formData,
-                  subdivisions: e.target.value.split('\n').map(s => s.trim()).filter(Boolean)
+                  subdivisions: e.target.value.split('\n').map((s, i) => {
+                    const name = s.trim();
+                    if (!name) return null;
+                    const existing = (formData.subdivisions || [])[i];
+                    return typeof existing === 'object' && existing
+                      ? { ...existing, name }
+                      : { id: `sub-${Date.now()}-${i}`, name, streets: [] };
+                  }).filter(Boolean)
                 })}
                 placeholder={'VD:\nChà Là\nSan Hô\nHải Tăng\nCổ Loa'}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"

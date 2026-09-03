@@ -35,7 +35,15 @@ export const INITIAL_PROJECTS: Project[] = [
     youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     legalInfo: '- Chủ đầu tư: Công ty Cổ phần Vinhomes (thuộc Tập đoàn Vingroup)\n- Hình thức sở hữu: Sổ hồng vĩnh viễn (sở hữu lâu dài)\n- Pháp lý: Đã hoàn thiện hồ sơ pháp lý, bàn giao sổ đỏ từng căn\n- Quy hoạch: Đã được phê duyệt quy hoạch chi tiết 1/500',
     currentStatus: '- Đã bàn giao 100% các phân khu thấp tầng\n- Hạ tầng khu đô thị hoàn thiện đồng bộ\n- Công viên sóng Royal Wave Park 18ha đã đưa vào vận hành\n- Cư dân đã về ở đông đúc, tiện ích hoạt động đầy đủ',
-    subdivisions: ['Chà Là', 'Cọ Xanh', 'San Hô', 'Hải Tăng', 'Sao Biển', 'Đảo Ngọc', 'Chợ Đêm Grand World'],
+    subdivisions: [
+      { id: 'op2-cha-la', name: 'Chà Là', streets: ['Dãy A', 'Dãy B', 'Dãy C'] },
+      { id: 'op2-co-xanh', name: 'Cọ Xanh', streets: ['Dãy D', 'Dãy E'] },
+      { id: 'op2-san-ho', name: 'San Hô', streets: ['Dãy F', 'Dãy G', 'Dãy H'] },
+      { id: 'op2-hai-tang', name: 'Hải Tăng', streets: ['Dãy I', 'Dãy J'] },
+      { id: 'op2-sao-bien', name: 'Sao Biển', streets: ['Dãy K'] },
+      { id: 'op2-dao-ngoc', name: 'Đảo Ngọc', streets: ['Dãy L', 'Dãy M'] },
+      { id: 'op2-cho-dem', name: 'Chợ Đêm Grand World', streets: ['Dãy N'] }
+    ],
     amenities: ['Công viên sóng Royal Wave Park 18ha', 'Quảng trường Kinh đô Ánh sáng', 'Bệnh viện Vinmec Health Resort 5 sao', 'Trung tâm thương mại Vincom Mega Mall', 'Hệ thống liên cấp Vinschool', 'Xe buýt VinBus nội khu 24/7'],
     parentId: 'ocean-park'
   },
@@ -54,7 +62,14 @@ export const INITIAL_PROJECTS: Project[] = [
     youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     legalInfo: '- Chủ đầu tư: Công ty Cổ phần Vinhomes (thuộc Tập đoàn Vingroup)\n- Hình thức sở hữu: Sổ hồng vĩnh viễn\n- Pháp lý: Đang hoàn thiện hồ sơ pháp lý từng phân khu\n- Quy hoạch: Đã được phê duyệt quy hoạch chi tiết 1/500',
     currentStatus: '- Đang bàn giao các phân khu thấp tầng đợt 1\n- Vịnh biển Paradise Bay 12ha đã hoàn thiện\n- Hạ tầng giao thông nội khu hoàn thiện 90%\n- Công viên Aqua Bay đang hoàn thiện giai đoạn cuối',
-    subdivisions: ['Phố Biển', 'Vịnh Thiên Đường', 'Ánh Dương', 'Thời Đại', 'Vịnh Tây', 'Vịnh Hải Tăng'],
+    subdivisions: [
+      { id: 'op3-pho-bien', name: 'Phố Biển', streets: ['Dãy A', 'Dãy B'] },
+      { id: 'op3-vinh-thien-duong', name: 'Vịnh Thiên Đường', streets: ['Dãy C', 'Dãy D', 'Dãy E'] },
+      { id: 'op3-anh-duong', name: 'Ánh Dương', streets: ['Dãy F'] },
+      { id: 'op3-thoi-dai', name: 'Thời Đại', streets: ['Dãy G', 'Dãy H'] },
+      { id: 'op3-vinh-tay', name: 'Vịnh Tây', streets: ['Dãy I'] },
+      { id: 'op3-vinh-hai-tang', name: 'Vịnh Hải Tăng', streets: ['Dãy J', 'Dãy K'] }
+    ],
     amenities: ['Vịnh biển Paradise Bay 12ha', 'Hồ bơi bốn mùa Tropical Surf', 'Công viên Aqua Bay với cầu trượt cảm giác mạnh', 'Khu phố thương mại sầm uất Grand World', 'Sân thể thao đa năng & Gym outdoor'],
     parentId: 'ocean-park'
   },
@@ -69,7 +84,15 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Tên thương mại: Vinhomes Ocean Park 1 (Tên thường gọi: Vin Ocean Park 1, Thành phố Biển hồ Singapore). Biển hồ nước mặn Crystal Lagoon 6.1ha & Hồ Ngọc Trai 24.5ha trải cát trắng mịn tạo không gian nghỉ dưỡng ngay trong lòng Thủ đô.',
     image: '/images/demo/project-villa.jpg',
     masterplanUrl: '',
-    subdivisions: ['Sapphire 1 & 2', 'Zen Park', 'Masteri Waterfront', 'Ngọc Trai', 'San Hô', 'Hải Tăng', 'Sao Biển'],
+    subdivisions: [
+      { id: 'op1-sapphire', name: 'Sapphire 1 & 2', streets: ['Dãy A', 'Dãy B'] },
+      { id: 'op1-zen-park', name: 'Zen Park', streets: ['Dãy C'] },
+      { id: 'op1-masteri', name: 'Masteri Waterfront', streets: ['Dãy D', 'Dãy E'] },
+      { id: 'op1-ngoc-trai', name: 'Ngọc Trai', streets: ['Dãy F', 'Dãy G'] },
+      { id: 'op1-san-ho', name: 'San Hô', streets: ['Dãy H'] },
+      { id: 'op1-hai-tang', name: 'Hải Tăng', streets: ['Dãy I', 'Dãy J'] },
+      { id: 'op1-sao-bien', name: 'Sao Biển', streets: ['Dãy K'] }
+    ],
     amenities: ['Biển hồ nước mặn Crystal Lagoon 6.1ha', 'Hồ nước ngọt Ngọc Trai 24.5ha', 'Trường Đại học VinUni', 'Vincom Mega Mall Gia Lâm', 'Tuyến xe điện VinBus kết nối Hà Nội'],
     parentId: 'ocean-park'
   },
@@ -84,7 +107,13 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Tên thương mại chính thức: Vinhomes Hạ Long Xanh (Khu đô thị phức hợp Hạ Long Xanh) - Tên thường gọi: Vin Hạ Long Xanh, Siêu đô thị Hạ Long Xanh. Dự án đại đô thị sinh thái ven biển lớn nhất Quảng Ninh với bến du thuyền 5 sao & sân Golf 36 hố.',
     image: '/images/demo/amenity-beach.jpg',
     masterplanUrl: '',
-    subdivisions: ['Phân khu Hoàng Tân', 'Phân khu Hà An', 'Phân khu Bến du thuyền Đảo', 'Phân khu Sân Golf 36 hố PGA', 'Phân khu Căn hộ sinh thái cao tầng'],
+    subdivisions: [
+      { id: 'hlx-hoang-tan', name: 'Phân khu Hoàng Tân', streets: ['Dãy A', 'Dãy B'] },
+      { id: 'hlx-ha-an', name: 'Phân khu Hà An', streets: ['Dãy C'] },
+      { id: 'hlx-ben-du-thuyen', name: 'Phân khu Bến du thuyền Đảo', streets: ['Dãy D', 'Dãy E'] },
+      { id: 'hlx-san-golf', name: 'Phân khu Sân Golf 36 hố PGA', streets: ['Dãy F'] },
+      { id: 'hlx-can-ho', name: 'Phân khu Căn hộ sinh thái cao tầng', streets: ['Dãy G', 'Dãy H'] }
+    ],
     amenities: ['Sân Golf 36 hố tiêu chuẩn PGA', 'Bến du thuyền quốc tế 5 sao', 'Công viên giải trí VinWonders Hạ Long Xanh', 'Trung tâm tài chính - thương mại quốc tế Vincom', 'Bệnh viện Vinmec Medical Resort']
   },
   {
@@ -98,7 +127,13 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Tên thương mại chính thức: Vinhomes Green Paradise Cần Giờ (Vinhomes Long Beach Cần Giờ) - Tên thường gọi: Vin Cần Giờ, Đô thị lấn biển Cần Giờ. Siêu đô thị lấn biển duy nhất tại TP.HCM với tổng vốn hơn 10 tỷ USD sở hữu Biển hồ nhân tạo Lagoon 400ha.',
     image: '/images/demo/amenity-beach.jpg',
     masterplanUrl: '',
-    subdivisions: ['Phân khu A (Sinh thái nghỉ dưỡng)', 'Phân khu B (Thương mại & VinWonders)', 'Phân khu C (Trung tâm Tài chính 108 tầng & Bến du thuyền)', 'Phân khu D (Khu du lịch cao cấp)', 'Phân khu E (Đô thị Biển thông minh)'],
+    subdivisions: [
+      { id: 'gp-a', name: 'Phân khu A (Sinh thái nghỉ dưỡng)', streets: ['Dãy A', 'Dãy B'] },
+      { id: 'gp-b', name: 'Phân khu B (Thương mại & VinWonders)', streets: ['Dãy C'] },
+      { id: 'gp-c', name: 'Phân khu C (Trung tâm Tài chính 108 tầng & Bến du thuyền)', streets: ['Dãy D'] },
+      { id: 'gp-d', name: 'Phân khu D (Khu du lịch cao cấp)', streets: ['Dãy E', 'Dãy F'] },
+      { id: 'gp-e', name: 'Phân khu E (Đô thị Biển thông minh)', streets: ['Dãy G'] }
+    ],
     amenities: ['Biển hồ lấn biển Lagoon 400ha', 'Tháp tài chính biểu tượng 108 tầng', 'Bến du thuyền siêu sang 6 sao', 'Sân Golf 36 hố tiêu chuẩn quốc tế', 'Công viên Safari Cần Giờ', 'TTTM Vincom Mega Mall Cần Giờ']
   },
   {
@@ -112,7 +147,12 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Tên thương mại chính thức: Vinhomes Tân Mỹ - Hậu Nghĩa (Vinhomes Hậu Nghĩa Đức Hòa) - Tên thường gọi: Vin Hậu Nghĩa, Vin Đức Hòa, Vinhomes Long An. Dự án đô thị kiểu mẫu cửa ngõ Tây Bắc TP.HCM kết nối trực tiếp Vành Đai 3, Vành Đai 4.',
     image: '/images/demo/project-tower.jpg',
     masterplanUrl: '',
-    subdivisions: ['Phân khu Biệt thự Sinh thái', 'Phân khu Nhà phố thương mại Shophouse', 'Phân khu Căn hộ cao tầng Hậu Nghĩa', 'Phân khu Công viên trung tâm'],
+    subdivisions: [
+      { id: 'tm-biet-thu', name: 'Phân khu Biệt thự Sinh thái', streets: ['Dãy A', 'Dãy B'] },
+      { id: 'tm-shophouse', name: 'Phân khu Nhà phố thương mại Shophouse', streets: ['Dãy C', 'Dãy D'] },
+      { id: 'tm-can-ho', name: 'Phân khu Căn hộ cao tầng Hậu Nghĩa', streets: ['Dãy E'] },
+      { id: 'tm-cong-vien', name: 'Phân khu Công viên trung tâm', streets: ['Dãy F'] }
+    ],
     amenities: ['Công viên hồ điều hòa trung tâm 15ha', 'Trung tâm thương mại Vincom Plaza Hậu Nghĩa', 'Trường học liên cấp Vinschool', 'Bệnh viện đa khoa Vinmec Hậu Nghĩa', 'Khu thể thao phức hợp & Hồ bơi Olympic']
   },
   {
@@ -126,7 +166,12 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Tên thương mại chính thức: Vinhomes Green City Hóc Môn (Khu đô thị Đại học Quốc tế Hóc Môn do Vingroup đầu tư) - Tên thường gọi: Vin Hóc Môn, Đô thị sinh thái Hóc Môn. Siêu dự án phía Tây Bắc TP.HCM sở hữu Làng Đại học VinUni cơ sở 2.',
     image: '/images/demo/property-house.jpg',
     masterplanUrl: '',
-    subdivisions: ['Phân khu Đô thị Sinh thái', 'Phân khu Làng Đại học Quốc tế', 'Phân khu Trung tâm Tài chính & Công nghệ cao', 'Phân khu Biệt thự & Nhà phố'],
+    subdivisions: [
+      { id: 'gc-sinh-thai', name: 'Phân khu Đô thị Sinh thái', streets: ['Dãy A', 'Dãy B'] },
+      { id: 'gc-dai-hoc', name: 'Phân khu Làng Đại học Quốc tế', streets: ['Dãy C'] },
+      { id: 'gc-tai-chinh', name: 'Phân khu Trung tâm Tài chính & Công nghệ cao', streets: ['Dãy D', 'Dãy E'] },
+      { id: 'gc-biet-thu', name: 'Phân khu Biệt thự & Nhà phố', streets: ['Dãy F', 'Dãy G'] }
+    ],
     amenities: ['Công viên trung tâm Hóc Môn 50ha', 'Trường Đại học Quốc tế VinUni cơ sở 2', 'Bệnh viện quốc tế Vinmec Hóc Môn', 'TTTM Vincom Mega Mall', 'Hồ sinh thái cảnh quan & Khu công nghệ cao']
   },
   {
@@ -140,7 +185,12 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Tên thương mại chính thức: Vinhomes Làng Vân Đà Nẵng (Khu du lịch sinh thái nghỉ dưỡng Làng Vân) - Tên thường gọi: Vin Làng Vân, Siêu nghỉ dưỡng Làng Vân Đà Nẵng. Kỳ quan nghỉ dưỡng tọa sơn hướng thủy lớn nhất miền Trung gần Cảng nước sâu Liên Chiểu.',
     image: '/images/demo/hero-skyline.jpg',
     masterplanUrl: '',
-    subdivisions: ['Phân khu Biệt thự biển Đồi Hải Vân', 'Phân khu Căn hộ Condotel cao cấp', 'Phân khu Resort 6 sao Vinpearl Làng Vân', 'Phân khu Tổ hợp Giải trí & Casino'],
+    subdivisions: [
+      { id: 'lv-biet-thu-bien', name: 'Phân khu Biệt thự biển Đồi Hải Vân', streets: ['Dãy A', 'Dãy B'] },
+      { id: 'lv-condotel', name: 'Phân khu Căn hộ Condotel cao cấp', streets: ['Dãy C', 'Dãy D'] },
+      { id: 'lv-resort', name: 'Phân khu Resort 6 sao Vinpearl Làng Vân', streets: ['Dãy E'] },
+      { id: 'lv-giai-tri', name: 'Phân khu Tổ hợp Giải trí & Casino', streets: ['Dãy F'] }
+    ],
     amenities: ['Tổ hợp Khách sạn & Resort 6 sao Vinpearl', 'Bến du thuyền quốc tế Liên Chiểu', 'Sân Golf 18 hố ven biển', 'Tuyến Cáp treo Làng Vân', 'Công viên giải trí VinWonders Làng Vân', 'Casino & Trung tâm hội nghị quốc tế']
   },
   {
@@ -154,7 +204,13 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Thành phố thông minh quốc tế tích hợp hệ sinh thái AI - IoT vận hành hiện đại hàng đầu Thủ đô, liền kề Đại lộ Thăng Long và tuyến Metro số 5, 6, 7.',
     image: '/images/demo/hero-city-1.jpg',
     masterplanUrl: '',
-    subdivisions: ['Sapphire Parkville', 'Tonkin', 'Masteri West Heights', 'Imperia Smart City', 'The Canopy'],
+    subdivisions: [
+      { id: 'sc-sapphire', name: 'Sapphire Parkville', streets: ['Dãy A', 'Dãy B'] },
+      { id: 'sc-tonkin', name: 'Tonkin', streets: ['Dãy C'] },
+      { id: 'sc-masteri', name: 'Masteri West Heights', streets: ['Dãy D', 'Dãy E'] },
+      { id: 'sc-imperia', name: 'Imperia Smart City', streets: ['Dãy F'] },
+      { id: 'sc-canopy', name: 'The Canopy', streets: ['Dãy G', 'Dãy H'] }
+    ],
     amenities: ['Bộ 3 công viên liên hoàn 16.3ha', 'Vườn Nhật Zen Park lớn nhất Việt Nam', 'TTTM Vincom Mega Mall Smart City', 'Bệnh viện Vinmec']
   }
 ];
