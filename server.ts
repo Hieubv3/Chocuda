@@ -2435,6 +2435,45 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// ============================================================
+// KHẨN CẤP — Route khôi phục mật khẩu admin khi không truy cập được database.
+// CHỈ hoạt động khi biến môi trường EMERGENCY_RESET_KEY được cấu hình trên Render.
+// SAU KHI DÙNG XONG: xóa biến EMERGENCY_RESET_KEY khỏi Render VÀ xóa route này khỏi
+// code rồi deploy lại — không được để route này tồn tại lâu dài trên production.
+// ============================================================
+app.post("/api/emergency/reset-admin-password", authLimiter, async (req, res) => {
+  const emergencyKey = process.env.EMERGENCY_RESET_KEY;
+  if (!emergencyKey) {
+    return res.status(404).json({ error: "Not found" }); // Giả vờ route không tồn tại nếu chưa cấu hình
+  }
+
+  const { key, newPassword } = req.body;
+  if (!key || key !== emergencyKey) {
+    console.error("[EMERGENCY] Sai khóa khôi phục — có thể đang bị dò/tấn công!");
+    return res.status(403).json({ error: "Sai khóa khôi phục" });
+  }
+
+  if (!newPassword || String(newPassword).length < 8) {
+    return res.status(400).json({ error: "Mật khẩu mới phải có ít nhất 8 ký tự" });
+  }
+
+  const admin = usersStore.find(u => u.role === 'admin');
+  if (!admin) {
+    return res.status(404).json({ error: "Không tìm thấy tài khoản admin nào trong hệ thống" });
+  }
+
+  admin.password = await hashPassword(String(newPassword));
+  saveDataStore();
+
+  console.log(`[EMERGENCY] Đã reset mật khẩu admin (${admin.email}) qua cổng khẩn cấp lúc ${new Date().toISOString()}`);
+
+  res.json({
+    success: true,
+    message: `Đã đổi mật khẩu thành công cho ${admin.email}. HÃY XÓA BIẾN EMERGENCY_RESET_KEY VÀ ROUTE NÀY NGAY BÂY GIỜ.`,
+    email: admin.email
+  });
+});
+
 // Server-side expiration checker (Default 30 days auto-hide for public visibility)
 function checkServerPostExpiry(item: any, defaultDays = 30) {
   const duration = Number(item.durationDays) || defaultDays;
