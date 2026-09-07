@@ -35,8 +35,10 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const [currentUserState, setCurrentUserState] = useState<UserType | null>(() => {
     if (initialUser) return initialUser;
     try {
-      const saved = localStorage.getItem('chocudan24h_user') || 
+      const saved = localStorage.getItem('hb_user') || 
+                    localStorage.getItem('chocudan24h_user') || 
                     localStorage.getItem('chocudan24h_resident_user') || 
+                    sessionStorage.getItem('hb_user') || 
                     sessionStorage.getItem('chocudan24h_user');
       if (saved) return JSON.parse(saved);
     } catch (e) {}

@@ -1445,8 +1445,9 @@ export const App: React.FC = () => {
               user ? (
                 <PostPropertyPage
                   language={language}
-                  currentUser={user}
+                  user={user}
                   pricingConfig={pricingConfig}
+                  onOpenAuth={() => setAuthModalOpen(true)}
                   onAddProperty={(prop) => {
                     setProperties(prev => [prop, ...prev]);
                     navigate('/tai-khoan');
