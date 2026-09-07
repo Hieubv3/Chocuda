@@ -266,7 +266,8 @@ const [totpCode, setTotpCode] = useState('');
     }
 
     const redirectUri = `${window.location.origin}/auth/callback`;
-    const fbAuthUrl = `https://www.facebook.com/v18.0/dialog/oauth?` + new URLSearchParams({
+    // Không hardcode version API (v18.0 đã bị Facebook ngừng hỗ trợ) — dùng version mặc định của app
+    const fbAuthUrl = `https://www.facebook.com/dialog/oauth?` + new URLSearchParams({
       client_id: facebookAppId,
       redirect_uri: redirectUri,
       scope: 'email,public_profile',

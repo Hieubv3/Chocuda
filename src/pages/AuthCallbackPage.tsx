@@ -94,8 +94,19 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
               avatar = fbData.picture?.data?.url;
               provider = 'facebook';
               providerId = fbData.id;
+            } else {
+              // Hiện lỗi thật từ Facebook thay vì thông báo chung chung
+              let fbErrMsg = `Lỗi Facebook (HTTP ${fbRes.status})`;
+              try {
+                const fbErr = await fbRes.json();
+                if (fbErr?.error?.message) fbErrMsg = `Facebook: ${fbErr.error.message}`;
+              } catch (e) { /* ignore */ }
+              throw new Error(fbErrMsg);
             }
-          } catch (e) {
+          } catch (e: any) {
+            if (e?.message?.startsWith('Facebook:')) {
+              throw e;
+            }
             console.warn('Facebook graph lookup failed:', e);
           }
         }
