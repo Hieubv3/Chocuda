@@ -144,6 +144,14 @@ function authenticateToken(req: express.Request, res: express.Response, next: ex
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    // SECURITY: Tài khoản bị khóa bị chặn mọi thao tác (đọc store để lấy trạng thái mới nhất)
+    const dbUser = usersStore.find(u => u.id === decoded.userId);
+    if (dbUser && dbUser.isBlocked && dbUser.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Tài khoản của bạn đã bị tạm khóa. Vui lòng liên hệ Admin!'
+      });
+    }
     (req as any).user = decoded;
     next();
   } catch (error) {
@@ -1557,6 +1565,13 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
     });
   }
 
+  // SECURITY: Tài khoản bị khóa không được đăng nhập
+  if (user.isBlocked && user.role !== 'admin') {
+    return res.status(403).json({
+      error: "Tài khoản của bạn đã bị tạm khóa. Vui lòng liên hệ Admin!"
+    });
+  }
+
   // SECURITY: Neu tai khoan da bat xac thuc 2 lop (TOTP), yeu cau nhap ma 2FA
   if (user.totpEnabled && user.totpSecret) {
     const pendingToken2 = crypto.randomBytes(24).toString('hex');
@@ -1654,6 +1669,9 @@ app.post("/api/auth/google", (req, res) => {
     };
     usersStore.push(user);
   } else {
+    if (user.isBlocked && user.role !== 'admin') {
+      return res.status(403).json({ error: "Tài khoản của bạn đã bị tạm khóa. Vui lòng liên hệ Admin!" });
+    }
     if (name) user.name = String(name);
     if (avatar) user.avatar = String(avatar);
     user.provider = 'google';
@@ -1696,6 +1714,9 @@ app.post("/api/auth/facebook", (req, res) => {
     };
     usersStore.push(user);
   } else {
+    if (user.isBlocked && user.role !== 'admin') {
+      return res.status(403).json({ error: "Tài khoản của bạn đã bị tạm khóa. Vui lòng liên hệ Admin!" });
+    }
     if (name) user.name = String(name);
     if (avatar) user.avatar = String(avatar);
     user.provider = 'facebook';
@@ -1736,6 +1757,9 @@ app.post("/api/auth/zalo", (req, res) => {
     };
     usersStore.push(user);
   } else {
+    if (user.isBlocked && user.role !== 'admin') {
+      return res.status(403).json({ error: "Tài khoản của bạn đã bị tạm khóa. Vui lòng liên hệ Admin!" });
+    }
     if (name) user.name = String(name);
     if (avatar) user.avatar = String(avatar);
     user.provider = 'zalo';
