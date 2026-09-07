@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { safeLocalStorageSet } from '../lib/imageUtils';
+import { setToken } from '../lib/api';
 import { User } from '../types';
 
 interface AuthCallbackPageProps {
@@ -51,7 +52,8 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
         let email = '';
         let name = '';
         let avatar = '';
-        let googleId = '';
+        let provider: 'google' | 'facebook' = 'google';
+        let providerId = '';
 
         if (idToken) {
           const payload = parseJwt(idToken);
@@ -59,7 +61,7 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
             email = payload.email;
             name = payload.name || payload.given_name;
             avatar = payload.picture;
-            googleId = payload.sub;
+            providerId = payload.sub;
           }
         }
 
@@ -74,7 +76,7 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
               email = userInfo.email;
               name = userInfo.name || userInfo.given_name;
               avatar = userInfo.picture;
-              googleId = userInfo.sub;
+              providerId = userInfo.sub;
             }
           } catch (e) {
             console.warn('Could not fetch Google userinfo directly:', e);
@@ -90,7 +92,8 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
               email = fbData.email || `fb_${fbData.id}@chocudan24h.com`;
               name = fbData.name;
               avatar = fbData.picture?.data?.url;
-              googleId = fbData.id;
+              provider = 'facebook';
+              providerId = fbData.id;
             }
           } catch (e) {
             console.warn('Facebook graph lookup failed:', e);
@@ -104,20 +107,21 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
             email = emailParam;
             name = searchParams.get('name') || email.split('@')[0];
           } else {
-            throw new Error('Không nhận được thông tin xác thực từ tài khoản Google.');
+            throw new Error('Không nhận được thông tin xác thực từ tài khoản mạng xã hội.');
           }
         }
 
+        // Route to the correct backend endpoint based on provider
+        const authEndpoint = provider === 'facebook' ? '/api/auth/facebook' : '/api/auth/google';
+        const authBody = provider === 'facebook'
+          ? { email, name: name || email.split('@')[0], avatar, facebookId: providerId }
+          : { email, name: name || email.split('@')[0], avatar, googleId: providerId };
+
         // Send to backend API to create or fetch user session
-        const res = await fetch('/api/auth/google', {
+        const res = await fetch(authEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email,
-            name: name || email.split('@')[0],
-            avatar,
-            googleId
-          })
+          body: JSON.stringify(authBody)
         });
 
         const data = await res.json();
@@ -127,6 +131,10 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
 
         const loggedInUser: User = data.user;
         safeLocalStorageSet('hb_user', loggedInUser);
+        // Lưu token JWT để mọi request sau tự động xác thực
+        if (data.token) {
+          setToken(data.token);
+        }
 
         if (onLoginSuccess) {
           onLoginSuccess(loggedInUser);
@@ -139,6 +147,7 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
           window.opener.postMessage(
             {
               type: 'GOOGLE_OAUTH_SUCCESS',
+              token: data.token,
               user: loggedInUser
             },
             '*'
@@ -154,7 +163,7 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
         }
       } catch (err: any) {
         setStatus('error');
-        setErrorMsg(err.message || 'Lỗi xác thực Google');
+        setErrorMsg(err.message || 'Lỗi xác thực mạng xã hội');
         if (window.opener && !window.opener.closed) {
           window.opener.postMessage(
             {

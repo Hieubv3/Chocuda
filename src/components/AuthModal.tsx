@@ -11,6 +11,8 @@ interface AuthModalProps {
 }
 
 const DEFAULT_GOOGLE_CLIENT_ID = '676805214069-67li6kv4ppmc1jmff5u29lcns84idk6a.apps.googleusercontent.com';
+// Facebook App ID — điền ID thật từ developers.facebook.com (giống cách đã làm với Google)
+const DEFAULT_FACEBOOK_APP_ID = '';
 
 export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess }) => {
   const [isRegister, setIsRegister] = useState(false);
@@ -256,7 +258,12 @@ const [totpCode, setTotpCode] = useState('');
     setErrorMsg('');
     setSuccessMsg('');
 
-    const facebookAppId = (import.meta as any).env?.VITE_FACEBOOK_APP_ID || localStorage.getItem('VITE_FACEBOOK_APP_ID') || '1000000000000000';
+    const facebookAppId = (import.meta as any).env?.VITE_FACEBOOK_APP_ID || localStorage.getItem('VITE_FACEBOOK_APP_ID') || DEFAULT_FACEBOOK_APP_ID;
+
+    if (!facebookAppId) {
+      setErrorMsg('Đăng nhập Facebook chưa được cấu hình. Vui lòng liên hệ Admin để kích hoạt!');
+      return;
+    }
 
     const redirectUri = `${window.location.origin}/auth/callback`;
     const fbAuthUrl = `https://www.facebook.com/v18.0/dialog/oauth?` + new URLSearchParams({
