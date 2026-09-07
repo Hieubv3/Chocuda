@@ -45,10 +45,13 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               ...prev,
               images: [url, ...prev.images]
             }));
+          } else {
+            alert('Upload ảnh thất bại. Vui lòng thử lại!');
           }
         }
-      } catch (err) {
-        console.error('Error compressing image file:', err);
+      } catch (err: any) {
+        console.error('Error compressing/uploading image file:', err);
+        alert(err?.message || 'Không thể upload ảnh. Vui lòng kiểm tra kết nối!');
       }
     }
   };
@@ -512,18 +515,23 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         alert('Kích thước ảnh tối đa là 15MB');
         return;
       }
-      try {
-        const compressed = await compressImageFile(file, 1400, 1000, 0.82);
-        if (compressed) {
-          // Upload lên server -> URL public
-          const url = isBase64DataUrl(compressed)
-            ? await uploadBase64DataUrl(compressed, 'projects')
-            : compressed;
-          if (url) setFormData(prev => ({ ...prev, image: url }));
-        }
-      } catch (err) {
-        console.error('Error compressing banner image:', err);
-      }
+       try {
+         const compressed = await compressImageFile(file, 1400, 1000, 0.82);
+         if (compressed) {
+           // Upload lên server -> URL public
+           try {
+             const url = isBase64DataUrl(compressed)
+               ? await uploadBase64DataUrl(compressed, 'projects')
+               : compressed;
+             if (url) setFormData(prev => ({ ...prev, image: url }));
+             else alert('Upload ảnh banner thất bại!');
+           } catch (err: any) {
+             alert(err?.message || 'Không thể upload ảnh banner!');
+           }
+         }
+       } catch (err) {
+         console.error('Error compressing banner image:', err);
+       }
     }
   };
 
@@ -534,18 +542,23 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         alert('Kích thước ảnh tối đa là 15MB');
         return;
       }
-      try {
-        const compressed = await compressImageFile(file, 1600, 1200, 0.82);
-        if (compressed) {
-          // Upload lên server -> URL public
-          const url = isBase64DataUrl(compressed)
-            ? await uploadBase64DataUrl(compressed, 'projects')
-            : compressed;
-          if (url) setFormData(prev => ({ ...prev, masterplanUrl: url }));
-        }
-      } catch (err) {
-        console.error('Error compressing masterplan image:', err);
-      }
+       try {
+         const compressed = await compressImageFile(file, 1600, 1200, 0.82);
+         if (compressed) {
+           // Upload lên server -> URL public
+           try {
+             const url = isBase64DataUrl(compressed)
+               ? await uploadBase64DataUrl(compressed, 'projects')
+               : compressed;
+             if (url) setFormData(prev => ({ ...prev, masterplanUrl: url }));
+             else alert('Upload ảnh masterplan thất bại!');
+           } catch (err: any) {
+             alert(err?.message || 'Không thể upload ảnh masterplan!');
+           }
+         }
+       } catch (err) {
+         console.error('Error compressing masterplan image:', err);
+       }
     }
   };
 
@@ -558,17 +571,22 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         alert(`Ảnh ${file.name} quá lớn (tối đa 15MB)`);
         continue;
       }
-      try {
-        const compressed = await compressImageFile(file, 1600, 1200, 0.82);
-        if (compressed) {
-          const url = isBase64DataUrl(compressed)
-            ? await uploadBase64DataUrl(compressed, 'projects')
-            : compressed;
-          if (url) newUrls.push(url);
-        }
-      } catch (err) {
-        console.error('Error compressing gallery image:', err);
-      }
+       try {
+         const compressed = await compressImageFile(file, 1600, 1200, 0.82);
+         if (compressed) {
+           try {
+             const url = isBase64DataUrl(compressed)
+               ? await uploadBase64DataUrl(compressed, 'projects')
+               : compressed;
+             if (url) newUrls.push(url);
+             else alert(`Upload ảnh ${file.name} thất bại!`);
+           } catch (err: any) {
+             alert(err?.message || `Không thể upload ảnh ${file.name}!`);
+           }
+         }
+       } catch (err) {
+         console.error('Error compressing gallery image:', err);
+       }
     }
     if (newUrls.length > 0) {
       setFormData(prev => ({ ...prev, images: [...(prev.images || []), ...newUrls] }));
@@ -918,18 +936,23 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
         alert('Kích thước ảnh tối đa là 15MB');
         return;
       }
-      try {
-        const compressed = await compressImageFile(file, 1200, 900, 0.82);
-        if (compressed) {
-          // Upload lên server -> URL public
-          const url = isBase64DataUrl(compressed)
-            ? await uploadBase64DataUrl(compressed, 'news')
-            : compressed;
-          if (url) setFormData(prev => ({ ...prev, image: url }));
-        }
-      } catch (err) {
-        console.error('Error compressing news image:', err);
-      }
+       try {
+         const compressed = await compressImageFile(file, 1200, 900, 0.82);
+         if (compressed) {
+           // Upload lên server -> URL public
+           try {
+             const url = isBase64DataUrl(compressed)
+               ? await uploadBase64DataUrl(compressed, 'news')
+               : compressed;
+             if (url) setFormData(prev => ({ ...prev, image: url }));
+             else alert('Upload ảnh tin tức thất bại!');
+           } catch (err: any) {
+             alert(err?.message || 'Không thể upload ảnh tin tức!');
+           }
+         }
+       } catch (err) {
+         console.error('Error compressing news image:', err);
+       }
     }
   };
 

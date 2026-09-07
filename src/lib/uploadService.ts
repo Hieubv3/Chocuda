@@ -215,13 +215,14 @@ export async function uploadBase64DataUrl(dataUrl: string, folder?: string): Pro
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
-      console.error('[UploadService] base64 upload failed:', data.error);
-      return '';
+      const errMsg = data.error || `Upload thất bại (status ${res.status})`;
+      console.error('[UploadService] base64 upload failed:', errMsg);
+      throw new Error(errMsg);
     }
     return data.url as string;
-  } catch (err) {
+  } catch (err: any) {
     console.error('[UploadService] base64 upload error:', err);
-    return '';
+    throw new Error(err?.message || 'Không thể kết nối máy chủ để upload ảnh. Vui lòng kiểm tra kết nối!');
   }
 }
 

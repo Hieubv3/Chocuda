@@ -175,20 +175,25 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                         return;
                       }
                       setIdCardFrontUrl(createInstantPreview(file));
-                      try {
-                        const watermarked = await addWatermarkToImage(file);
-                        if (watermarked) {
-                          // Upload lên server -> URL public
-                          const url = watermarked.startsWith('data:image/')
-                            ? await uploadBase64DataUrl(watermarked, 'kyc')
-                            : watermarked;
-                          if (url) setIdCardFrontUrl(url);
-                        }
-                      } catch (err) {
-                        console.error('Lỗi tải CCCD trước:', err);
-                      } finally {
-                        e.target.value = '';
-                      }
+                       try {
+                         const watermarked = await addWatermarkToImage(file);
+                         if (watermarked) {
+                           // Upload lên server -> URL public
+                           try {
+                             const url = watermarked.startsWith('data:image/')
+                               ? await uploadBase64DataUrl(watermarked, 'kyc')
+                               : watermarked;
+                             if (url) setIdCardFrontUrl(url);
+                             else alert('Upload CCCD trước thất bại!');
+                           } catch (err: any) {
+                             alert(err?.message || 'Không thể upload CCCD trước!');
+                           }
+                         }
+                       } catch (err) {
+                         console.error('Lỗi tải CCCD trước:', err);
+                       } finally {
+                         e.target.value = '';
+                       }
                     }
                   }}
                 />
@@ -217,20 +222,25 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                         return;
                       }
                       setIdCardBackUrl(createInstantPreview(file));
-                      try {
-                        const watermarked = await addWatermarkToImage(file);
-                        if (watermarked) {
-                          // Upload lên server -> URL public
-                          const url = watermarked.startsWith('data:image/')
-                            ? await uploadBase64DataUrl(watermarked, 'kyc')
-                            : watermarked;
-                          if (url) setIdCardBackUrl(url);
-                        }
-                      } catch (err) {
-                        console.error('Lỗi tải CCCD sau:', err);
-                      } finally {
-                        e.target.value = '';
-                      }
+                       try {
+                         const watermarked = await addWatermarkToImage(file);
+                         if (watermarked) {
+                           // Upload lên server -> URL public
+                           try {
+                             const url = watermarked.startsWith('data:image/')
+                               ? await uploadBase64DataUrl(watermarked, 'kyc')
+                               : watermarked;
+                             if (url) setIdCardBackUrl(url);
+                             else alert('Upload CCCD sau thất bại!');
+                           } catch (err: any) {
+                             alert(err?.message || 'Không thể upload CCCD sau!');
+                           }
+                         }
+                       } catch (err) {
+                         console.error('Lỗi tải CCCD sau:', err);
+                       } finally {
+                         e.target.value = '';
+                       }
                     }
                   }}
                 />
@@ -266,20 +276,25 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                           return;
                         }
                         setBrokerLicenseUrl(createInstantPreview(file));
-                        try {
-                          const watermarked = await addWatermarkToImage(file);
-                          if (watermarked) {
-                            // Upload lên server -> URL public
-                            const url = watermarked.startsWith('data:image/')
-                              ? await uploadBase64DataUrl(watermarked, 'kyc')
-                              : watermarked;
-                            if (url) setBrokerLicenseUrl(url);
-                          }
-                        } catch (err) {
-                          console.error('Lỗi tải chứng chỉ:', err);
-                        } finally {
-                          e.target.value = '';
-                        }
+                         try {
+                           const watermarked = await addWatermarkToImage(file);
+                           if (watermarked) {
+                             // Upload lên server -> URL public
+                             try {
+                               const url = watermarked.startsWith('data:image/')
+                                 ? await uploadBase64DataUrl(watermarked, 'kyc')
+                                 : watermarked;
+                               if (url) setBrokerLicenseUrl(url);
+                               else alert('Upload chứng chỉ thất bại!');
+                             } catch (err: any) {
+                               alert(err?.message || 'Không thể upload chứng chỉ!');
+                             }
+                           }
+                         } catch (err) {
+                           console.error('Lỗi tải chứng chỉ:', err);
+                         } finally {
+                           e.target.value = '';
+                         }
                       }
                     }}
                   />

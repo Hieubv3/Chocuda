@@ -31,11 +31,22 @@ export const compressImageFile = (
           ctx.drawImage(img, 0, 0, width, height);
           resolve(canvas.toDataURL('image/jpeg', quality));
         } else {
-          resolve((e.target?.result as string) || '');
+          resolve('');
         }
       };
-      img.onerror = () => resolve((e.target?.result as string) || '');
+      img.onerror = () => {
+        console.warn('[compressImageFile] Image load error for file:', file.name);
+        resolve('');
+      };
       img.src = (e.target?.result as string) || '';
+    };
+    reader.onerror = () => {
+      console.warn('[compressImageFile] FileReader error for file:', file.name);
+      reader.abort();
+      resolve('');
+    };
+    reader.onabort = () => {
+      resolve('');
     };
     reader.readAsDataURL(file);
   });

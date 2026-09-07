@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder } from '../types';
+import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder, AmenityArticle } from '../types';
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2, Save } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { AdminKycManager } from '../components/AdminKycManager';
@@ -925,6 +925,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newSubdivisionName, setNewSubdivisionName] = useState('');
   const [newStreetName, setNewStreetName] = useState('');
   const [newAmenityName, setNewAmenityName] = useState('');
+  const [newAmenityImages, setNewAmenityImages] = useState<string[]>([]);
+  const [newAmenityVideo, setNewAmenityVideo] = useState('');
   const [addingAmenityTo, setAddingAmenityTo] = useState<string | null>(null); // projectId
 
   // Sidebar "Dự Án & Mặt Bằng" dropdown submenu state
@@ -936,6 +938,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
+  };
+
+  // Sidebar collapsible state
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [expandedSidebarItem, setExpandedSidebarItem] = useState<string | null>(null);
+  const toggleSidebarItem = (item: string) => {
+    setExpandedSidebarItem(prev => prev === item ? null : item);
   };
 
   const toggleProjectTree = (id: string) => {
@@ -998,12 +1007,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
   // Thêm tiện ích vào dự án
   const handleAddAmenity = (projectId: string) => {
-    const name = newAmenityName.trim();
-    if (!name) return;
+    if (!newAmenityName.trim()) return;
     const proj = projects.find(p => p.id === projectId);
     if (!proj || !onUpdateProject) return;
-    onUpdateProject({ ...proj, amenities: [...(proj.amenities || []), name] });
+    const newAmenity: AmenityArticle = {
+      id: `amenity-${Date.now()}`,
+      name: newAmenityName.trim(),
+      images: newAmenityImages.length > 0 ? newAmenityImages : undefined,
+      youtubeUrl: newAmenityVideo.trim() || undefined
+    };
+    onUpdateProject({ ...proj, amenities: [...(proj.amenities || []), newAmenity] });
     setNewAmenityName('');
+    setNewAmenityImages([]);
+    setNewAmenityVideo('');
     setAddingAmenityTo(null);
   };
 
@@ -1028,10 +1044,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   // Xóa tiện ích
-  const handleDeleteAmenity = (projectId: string, amenityName: string) => {
+  const handleDeleteAmenity = (projectId: string, amenityId: string) => {
     const proj = projects.find(p => p.id === projectId);
     if (!proj || !onUpdateProject) return;
-    onUpdateProject({ ...proj, amenities: (proj.amenities || []).filter((a: string) => a !== amenityName) });
+    onUpdateProject({ ...proj, amenities: (proj.amenities || []).filter((a: AmenityArticle) => a.id !== amenityId) });
   };
 
   // User Add / Edit Modal States
@@ -1121,27 +1137,30 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [heroCards, setHeroCards] = useState<HeroCardConfig[]>(() => loadHeroCards());
   const [heroCardSaved, setHeroCardSaved] = useState(false);
 
-  const handleHeroCardImageUpload = async (cardId: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 15 * 1024 * 1024) {
-      alert('Kích thước ảnh tối đa là 15MB');
-      return;
-    }
-    try {
-      const compressedDataUrl = await compressImageFile(file, 1200, 900, 0.82);
-      if (!compressedDataUrl) return;
-      const url = isBase64DataUrl(compressedDataUrl)
-        ? await uploadBase64DataUrl(compressedDataUrl, 'hero-cards')
-        : compressedDataUrl;
-      if (url) {
-        setHeroCards(prev => prev.map(c => (c.id === cardId ? { ...c, image: url } : c)));
-        setHeroCardSaved(false);
-      }
-    } catch (err) {
-      console.error('Error uploading hero card image:', err);
-    }
-  };
+   const handleHeroCardImageUpload = async (cardId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+     const file = e.target.files?.[0];
+     if (!file) return;
+     if (file.size > 15 * 1024 * 1024) {
+       alert('Kích thước ảnh tối đa là 15MB');
+       return;
+     }
+     try {
+       const compressedDataUrl = await compressImageFile(file, 1200, 900, 0.82);
+       if (!compressedDataUrl) return;
+       const url = isBase64DataUrl(compressedDataUrl)
+         ? await uploadBase64DataUrl(compressedDataUrl, 'hero-cards')
+         : compressedDataUrl;
+       if (url) {
+         setHeroCards(prev => prev.map(c => (c.id === cardId ? { ...c, image: url } : c)));
+         setHeroCardSaved(false);
+       } else {
+         alert('Upload ảnh thất bại. Vui lòng thử lại!');
+       }
+     } catch (err: any) {
+       console.error('Error uploading hero card image:', err);
+       alert(err?.message || 'Không thể upload ảnh. Vui lòng kiểm tra kết nối!');
+     }
+   };
 
   const handleHeroCardUrlChange = (cardId: string, url: string) => {
     setHeroCards(prev => prev.map(c => (c.id === cardId ? { ...c, image: url } : c)));
@@ -2362,19 +2381,33 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* 3. MAIN ADMIN WORKSPACE: 2-COLUMN WITH PERSISTENT LEFT SIDEBAR + MAIN WORKSPACE */}
       <div className="flex flex-col lg:flex-row items-start gap-4">
         
-        {/* === CỘT TAB QUẢN TRỊ BÊN TRÁI (PERSISTENT LEFT SIDEBAR FOR DESKTOP) === */}
-        <aside className="w-full lg:w-64 xl:w-72 shrink-0 lg:sticky lg:top-3 bg-slate-900 text-white border border-slate-800 rounded-2xl p-3 shadow-xl space-y-3 lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin">
-          <div className="flex items-center justify-between px-2 py-1 border-b border-slate-800/80 pb-2">
-            <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-emerald-400" />
-              MENU QUẢN TRỊ (7)
-            </span>
-            <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded">
-              v3.8
-            </span>
-          </div>
+         {/* === CỘT TAB QUẢN TRỊ BÊN TRÁI (PERSISTENT LEFT SIDEBAR FOR DESKTOP) === */}
+         <aside className={`${sidebarCollapsed ? 'w-14' : 'w-full lg:w-64 xl:w-72'} shrink-0 lg:sticky lg:top-3 bg-slate-900 text-white border border-slate-800 rounded-2xl shadow-xl lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin transition-all duration-200`}>
+           <div className="flex items-center justify-between px-2 py-1 border-b border-slate-800/80 pb-2">
+             {!sidebarCollapsed && (
+               <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
+                 <Layers className="w-3.5 h-3.5 text-emerald-400" />
+                 MENU QUẢN TRỊ (7)
+               </span>
+             )}
+             <div className="flex items-center gap-1">
+               {!sidebarCollapsed && (
+                 <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded">
+                   v3.8
+                 </span>
+               )}
+               <button
+                 type="button"
+                 onClick={() => setSidebarCollapsed(prev => !prev)}
+                 className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                 title={sidebarCollapsed ? "Mở menu" : "Thu gọn menu"}
+               >
+                 {sidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+               </button>
+             </div>
+           </div>
 
-          <nav className="space-y-1 text-xs" aria-label="Admin Navigation">
+           <nav className="space-y-1 text-xs" aria-label="Admin Navigation">
             {/* 1. Bất Động Sản */}
             <div className="space-y-0.5">
               <button
@@ -5849,7 +5882,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
                       {/* Form thêm tiện ích */}
                       {addingAmenityTo === proj.id && (
-                        <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/40 rounded-xl p-2 border border-blue-200 dark:border-blue-800">
+                        <div className="flex flex-col gap-2 bg-blue-50 dark:bg-blue-950/40 rounded-xl p-3 border border-blue-200 dark:border-blue-800">
                           <input
                             autoFocus
                             value={newAmenityName}
@@ -5858,8 +5891,36 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             placeholder="Tên tiện ích mới..."
                             className="flex-1 px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-xs text-slate-900 dark:text-white"
                           />
-                          <button onClick={() => handleAddAmenity(proj.id)} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs">Thêm</button>
-                          <button onClick={() => setAddingAmenityTo(null)} className="px-2 py-1.5 text-slate-500 hover:text-slate-700 text-xs">Hủy</button>
+                          <div className="flex gap-2 items-center">
+                            <label className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg text-xs cursor-pointer flex items-center gap-1">
+                              <Upload className="w-3 h-3" /> Ảnh
+                              <input type="file" accept="image/*" multiple onChange={(e) => {
+                                const files = e.target.files;
+                                if (files) {
+                                  const newImages = Array.from(files as FileList).map(f => URL.createObjectURL(f));
+                                  setNewAmenityImages([...newAmenityImages, ...newImages]);
+                                }
+                              }} className="hidden" />
+                            </label>
+                            <input
+                              type="text"
+                              value={newAmenityVideo}
+                              onChange={(e) => setNewAmenityVideo(e.target.value)}
+                              placeholder="URL video (YouTube)..."
+                              className="flex-1 px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-xs text-slate-900 dark:text-white"
+                            />
+                          </div>
+                          {newAmenityImages.length > 0 && (
+                            <div className="flex gap-1 flex-wrap">
+                              {newAmenityImages.map((img, i) => (
+                                <img key={i} src={img} className="w-12 h-12 object-cover rounded-lg" />
+                              ))}
+                            </div>
+                          )}
+                          <div className="flex gap-2">
+                            <button onClick={() => handleAddAmenity(proj.id)} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs">Thêm</button>
+                            <button onClick={() => { setAddingAmenityTo(null); setNewAmenityImages([]); setNewAmenityVideo(''); }} className="px-2 py-1.5 text-slate-500 hover:text-slate-700 text-xs">Hủy</button>
+                          </div>
                         </div>
                       )}
 
@@ -5955,11 +6016,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           <div className="text-xs text-slate-400 italic px-2">Chưa có tiện ích. Nhấn "+ Tiện ích" để thêm.</div>
                         )}
                         <div className="flex flex-wrap gap-1.5">
-                          {amens.map((amenity: string, ai: number) => (
-                            <span key={ai} className="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 rounded-lg px-2 py-1 text-[11px] font-bold border border-blue-200 dark:border-blue-800">
-                              {amenity}
+                          {amens.map((amenity: AmenityArticle) => (
+                            <span key={amenity.id} className="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 rounded-lg px-2 py-1 text-[11px] font-bold border border-blue-200 dark:border-blue-800">
+                              {amenity.name}
+                              {amenity.images && amenity.images.length > 0 && (
+                                <span title="Có ảnh" className="text-emerald-600">📷</span>
+                              )}
+                              {amenity.youtubeUrl && (
+                                <span title="Có video" className="text-red-600">🎬</span>
+                              )}
                               <button
-                                onClick={() => handleDeleteAmenity(proj.id, amenity)}
+                                onClick={() => handleDeleteAmenity(proj.id, amenity.id)}
                                 className="text-rose-500 hover:text-rose-700"
                                 title="Xóa tiện ích"
                               >
@@ -8805,15 +8872,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          try {
-                            const preview = await createInstantPreview(file);
-                            setNewSrvImage(preview);
-                            // Upload lên server -> URL public
-                            const urls = await uploadFiles([file]);
-                            if (urls[0]) setNewSrvImage(urls[0]);
-                          } catch (err) {
-                            console.error(err);
-                          }
+                           try {
+                             const preview = await createInstantPreview(file);
+                             setNewSrvImage(preview);
+                             // Upload lên server -> URL public
+                             const urls = await uploadFiles([file]);
+                             if (urls[0]) setNewSrvImage(urls[0]);
+                             else alert('Upload ảnh thất bại. Vui lòng thử lại!');
+                           } catch (err: any) {
+                             console.error(err);
+                             alert(err?.message || 'Không thể upload ảnh. Vui lòng kiểm tra kết nối!');
+                           }
                         }
                       }}
                       className="hidden"
@@ -9579,12 +9648,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           addWatermarkToImage(file).then(async compressed => {
                             if (compressed) {
                               // Upload lên server -> URL public
-                              const url = isBase64DataUrl(compressed)
-                                ? await uploadBase64DataUrl(compressed, 'store-products')
-                                : compressed;
-                              if (url) setStoreProductForm(p => ({ ...p, images: [url] }));
+                              try {
+                                const url = isBase64DataUrl(compressed)
+                                  ? await uploadBase64DataUrl(compressed, 'store-products')
+                                  : compressed;
+                                if (url) setStoreProductForm(p => ({ ...p, images: [url] }));
+                                else alert('Upload ảnh sản phẩm thất bại!');
+                              } catch (err: any) {
+                                alert(err?.message || 'Không thể upload ảnh sản phẩm!');
+                              }
                             }
-                          }).catch(console.error);
+                          }).catch(err => console.error(err));
                         }
                       }}
                     />
@@ -9796,12 +9870,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                           addWatermarkToImage(file, { skipWatermark: true, maxDim: 600 }).then(async compressed => {
                             if (compressed) {
                               // Upload lên server -> URL public
-                              const url = isBase64DataUrl(compressed)
-                                ? await uploadBase64DataUrl(compressed, 'store-logos')
-                                : compressed;
-                              if (url) setStoreFormData(p => ({ ...p, logoUrl: url }));
+                              try {
+                                const url = isBase64DataUrl(compressed)
+                                  ? await uploadBase64DataUrl(compressed, 'store-logos')
+                                  : compressed;
+                                if (url) setStoreFormData(p => ({ ...p, logoUrl: url }));
+                                else alert('Upload logo cửa hàng thất bại!');
+                              } catch (err: any) {
+                                alert(err?.message || 'Không thể upload logo cửa hàng!');
+                              }
                             }
-                          }).catch(console.error);
+                          }).catch(err => console.error(err));
                         }
                       }}
                     />

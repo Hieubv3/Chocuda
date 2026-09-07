@@ -242,7 +242,7 @@ export const App: React.FC = () => {
     fetch('/api/projects')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setProjects(data);
           safeLocalStorageSet('hb_projects', data);
         }
@@ -252,7 +252,7 @@ export const App: React.FC = () => {
     fetch('/api/news')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setNews(data);
           safeLocalStorageSet('hb_news', data);
         }
@@ -280,7 +280,7 @@ export const App: React.FC = () => {
     fetch('/api/ads')
       .then(res => res.json())
       .then((data: AdBanner[]) => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setAds(data);
           safeLocalStorageSet('hb_ads', data);
         }

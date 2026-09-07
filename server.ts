@@ -1000,30 +1000,23 @@ function loadDataStore() {
       const raw = fs.readFileSync(targetPath, "utf-8");
       const data = JSON.parse(raw);
       
-      // 1. Properties
+      // 1. Properties — dùng dữ liệu đã persist, KHÔNG merge INITIAL_PROPERTIES
       if (Array.isArray(data.properties) && data.properties.length > 0) {
-        const savedMap = new Map(data.properties.map((p: any) => [p.id, p]));
-        INITIAL_PROPERTIES.forEach(ip => {
-          if (!savedMap.has(ip.id)) savedMap.set(ip.id, ip);
-        });
-        propertiesStore = Array.from(savedMap.values()) as Property[];
+        propertiesStore = data.properties as Property[];
       } else {
         propertiesStore = [...INITIAL_PROPERTIES];
       }
 
-      // 2. Projects
+      // 2. Projects — dùng dữ liệu đã persist, chỉ upgrade trường mới cho project đã có
       if (Array.isArray(data.projects) && data.projects.length > 0) {
         const projMap = new Map(data.projects.map((p: any) => [p.id, p]));
         INITIAL_PROJECTS.forEach(ip => {
-          if (!projMap.has(ip.id)) {
-            projMap.set(ip.id, ip);
-          } else {
+          const existing = projMap.get(ip.id) as any;
+          if (existing) {
             // Nâng cấp các trường mới (images, youtubeUrl, legalInfo, currentStatus) nếu bản persist cũ thiếu
-            const existing = projMap.get(ip.id) as any;
-            // Nâng cấp subdivisions: nếu là mảng string cũ -> chuyển thành mảng object ProjectSubdivision
             let upgradedSubdivisions = existing.subdivisions;
             if (Array.isArray(existing.subdivisions) && existing.subdivisions.length > 0 && typeof existing.subdivisions[0] === 'string') {
-              upgradedSubdivisions = (existing.subdivisions as string[]).map((name, i) => ({
+              upgradedSubdivisions = (existing.subdivisions as string[]).map((name: string, i: number) => ({
                 id: `${ip.id}-sub-${i}`,
                 name,
                 streets: []
@@ -1041,42 +1034,36 @@ function loadDataStore() {
           }
         });
         projectsStore = Array.from(projMap.values()) as Project[];
+      } else {
+        projectsStore = [...INITIAL_PROJECTS];
       }
 
-      // 3. News
+      // 3. News — dùng dữ liệu đã persist, KHÔNG merge INITIAL_NEWS
       if (Array.isArray(data.news) && data.news.length > 0) {
-        const newsMap = new Map(data.news.map((n: any) => [n.id, n]));
-        INITIAL_NEWS.forEach(inews => {
-          if (!newsMap.has(inews.id)) newsMap.set(inews.id, inews);
-        });
-        newsStore = Array.from(newsMap.values()) as NewsArticle[];
+        newsStore = data.news as NewsArticle[];
+      } else {
+        newsStore = [...INITIAL_NEWS];
       }
 
-      // 4. Resident Services
+      // 4. Resident Services — dùng dữ liệu đã persist, KHÔNG merge
       if (Array.isArray(data.residentServices) && data.residentServices.length > 0) {
-        const servMap = new Map(data.residentServices.map((s: any) => [s.id, s]));
-        INITIAL_RESIDENT_SERVICES.forEach(iserv => {
-          if (!servMap.has(iserv.id)) servMap.set(iserv.id, iserv);
-        });
-        residentServicesStore = Array.from(servMap.values()) as any;
+        residentServicesStore = data.residentServices as any;
+      } else {
+        residentServicesStore = [...INITIAL_RESIDENT_SERVICES];
       }
 
-      // 5. Stores
+      // 5. Stores — dùng dữ liệu đã persist, KHÔNG merge
       if (Array.isArray(data.stores) && data.stores.length > 0) {
-        const storeMap = new Map(data.stores.map((st: any) => [st.id, st]));
-        INITIAL_USER_STOREFRONTS.forEach(istore => {
-          if (!storeMap.has(istore.id)) storeMap.set(istore.id, istore);
-        });
-        storesStore = Array.from(storeMap.values()) as any;
+        storesStore = data.stores as any;
+      } else {
+        storesStore = [...INITIAL_USER_STOREFRONTS];
       }
 
-      // 6. Ads / Banners
+      // 6. Ads / Banners — dùng dữ liệu đã persist, KHÔNG merge
       if (Array.isArray(data.ads) && data.ads.length > 0) {
-        const adsMap = new Map(data.ads.map((a: any) => [a.id, a]));
-        INITIAL_ADS.forEach(iad => {
-          if (!adsMap.has(iad.id)) adsMap.set(iad.id, iad);
-        });
-        adsStore = Array.from(adsMap.values()) as any;
+        adsStore = data.ads as any;
+      } else {
+        adsStore = [...INITIAL_ADS];
       }
 
       // 7. Deleted IDs — đọc danh sách id đã xóa để không merge lại bài đã xóa

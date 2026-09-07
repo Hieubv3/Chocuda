@@ -147,7 +147,18 @@ export interface ReputationPost {
 export interface ProjectSubdivision {
   id: string;
   name: string;
+  description?: string;
+  images?: string[];
+  youtubeUrl?: string;
   streets: string[]; // Dãy phố trong phân khu
+}
+
+export interface AmenityArticle {
+  id: string;
+  name: string;
+  description?: string;
+  images?: string[];
+  youtubeUrl?: string;
 }
 
 export interface Project {
@@ -167,7 +178,7 @@ export interface Project {
   legalInfo?: string;
   currentStatus?: string;
   subdivisions: ProjectSubdivision[];
-  amenities: string[];
+  amenities: AmenityArticle[];
   parentId?: ProjectCategory;
 }
 

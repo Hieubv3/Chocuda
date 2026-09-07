@@ -2186,21 +2186,27 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                             imagesText: prev.imagesText ? `${prev.imagesText}\n${previewUrl}` : previewUrl
                           }));
 
-                          // Asynchronous background compression & watermarking -> upload server
-                          addWatermarkToImage(file).then(async compressedUrl => {
-                            if (compressedUrl) {
-                              // Upload lên server -> URL public (thay vì base64)
-                              const url = compressedUrl.startsWith('data:image/')
-                                ? await uploadBase64DataUrl(compressedUrl, 'services')
-                                : compressedUrl;
-                              if (url) {
-                                setPostForm(prev => ({
-                                  ...prev,
-                                  imagesText: prev.imagesText.replace(previewUrl, url)
-                                }));
-                              }
-                            }
-                          }).catch(err => console.error('Error background compressing image:', err));
+                           // Asynchronous background compression & watermarking -> upload server
+                           addWatermarkToImage(file).then(async compressedUrl => {
+                             if (compressedUrl) {
+                               // Upload lên server -> URL public (thay vì base64)
+                               try {
+                                 const url = compressedUrl.startsWith('data:image/')
+                                   ? await uploadBase64DataUrl(compressedUrl, 'services')
+                                   : compressedUrl;
+                                 if (url) {
+                                   setPostForm(prev => ({
+                                     ...prev,
+                                     imagesText: prev.imagesText.replace(previewUrl, url)
+                                   }));
+                                 } else {
+                                   alert('Upload ảnh dịch vụ thất bại!');
+                                 }
+                               } catch (err: any) {
+                                 alert(err?.message || 'Không thể upload ảnh dịch vụ!');
+                               }
+                             }
+                           }).catch(err => console.error('Error background compressing image:', err));
                         }
                         e.target.value = '';
                       }}
@@ -2519,20 +2525,25 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                           }
                           const previewUrl = createInstantPreview(file);
                           setNewPRForm(prev => ({ ...prev, imageUrl: previewUrl }));
-                          try {
-                            const compressed = await addWatermarkToImage(file);
-                            if (compressed) {
-                              // Upload lên server -> URL public
-                              const url = compressed.startsWith('data:image/')
-                                ? await uploadBase64DataUrl(compressed, 'services')
-                                : compressed;
-                              if (url) setNewPRForm(prev => ({ ...prev, imageUrl: url }));
-                            }
-                          } catch (err) {
-                            console.error('Error compressing PR image:', err);
-                          } finally {
-                            e.target.value = '';
-                          }
+                         try {
+                           const compressed = await addWatermarkToImage(file);
+                           if (compressed) {
+                             // Upload lên server -> URL public
+                             try {
+                               const url = compressed.startsWith('data:image/')
+                                 ? await uploadBase64DataUrl(compressed, 'services')
+                                 : compressed;
+                               if (url) setNewPRForm(prev => ({ ...prev, imageUrl: url }));
+                               else alert('Upload ảnh PR thất bại!');
+                             } catch (err: any) {
+                               alert(err?.message || 'Không thể upload ảnh PR!');
+                             }
+                           }
+                         } catch (err) {
+                           console.error('Error compressing PR image:', err);
+                         } finally {
+                           e.target.value = '';
+                         }
                         }
                       }}
                     />
@@ -2918,16 +2929,21 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                               continue;
                             }
                             const preview = createInstantPreview(file);
-                            setTransportImages(prev => [...prev, preview]);
-                            addWatermarkToImage(file).then(async comp => {
-                              if (comp) {
-                                // Upload lên server -> URL public
-                                const url = comp.startsWith('data:image/')
-                                  ? await uploadBase64DataUrl(comp, 'services')
-                                  : comp;
-                                if (url) setTransportImages(prev => prev.map(p => p === preview ? url : p));
-                              }
-                            }).catch(() => {});
+                             setTransportImages(prev => [...prev, preview]);
+                             addWatermarkToImage(file).then(async comp => {
+                               if (comp) {
+                                 // Upload lên server -> URL public
+                                 try {
+                                   const url = comp.startsWith('data:image/')
+                                     ? await uploadBase64DataUrl(comp, 'services')
+                                     : comp;
+                                   if (url) setTransportImages(prev => prev.map(p => p === preview ? url : p));
+                                   else alert('Upload ảnh vận chuyển thất bại!');
+                                 } catch (err: any) {
+                                   alert(err?.message || 'Không thể upload ảnh vận chuyển!');
+                                 }
+                               }
+                             }).catch(err => console.error('Error:', err));
                           }
                           e.target.value = '';
                         }}
