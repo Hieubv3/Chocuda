@@ -11,8 +11,8 @@ interface AuthModalProps {
 }
 
 const DEFAULT_GOOGLE_CLIENT_ID = '676805214069-67li6kv4ppmc1jmff5u29lcns84idk6a.apps.googleusercontent.com';
-// Facebook App ID — điền ID thật từ developers.facebook.com (giống cách đã làm với Google)
-const DEFAULT_FACEBOOK_APP_ID = '';
+// Facebook App ID — từ developers.facebook.com (app "Chợ Cư Dân 24H")
+const DEFAULT_FACEBOOK_APP_ID = '2269478757153781';
 
 export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess }) => {
   const [isRegister, setIsRegister] = useState(false);
