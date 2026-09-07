@@ -185,10 +185,22 @@ function requireAdmin(req: express.Request, res: express.Response, next: express
 }
 
 // Require quyền sở hữu tài nguyên (userId trong token phải khớp userId trong URL)
+// Admin có quyền quản lý tất cả người dùng
 function requireOwnership(req: express.Request, res: express.Response, next: express.NextFunction) {
   const user = (req as any).user;
-  const targetId = req.params.userId;
-  if (!user || !targetId || user.userId !== targetId) {
+  // Route params có thể là :id hoặc :userId
+  const targetId = req.params.userId || req.params.id;
+  if (!user || !targetId) {
+    return res.status(403).json({
+      success: false,
+      error: 'Không có quyền truy cập tài khoản này!'
+    });
+  }
+  // Admin có thể quản lý tất cả người dùng
+  if (user.role === 'admin') {
+    return next();
+  }
+  if (user.userId !== targetId) {
     return res.status(403).json({
       success: false,
       error: 'Không có quyền truy cập tài khoản này!'
