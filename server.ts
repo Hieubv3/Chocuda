@@ -63,12 +63,26 @@ app.use((req, res, next) => {
 });
 
 // SECURITY: Rate Limiting — chống spam / tấn công tải
+// Lưu ý: trang BĐS tải nhiều dữ liệu (properties, news, projects, stores...),
+// mỗi lần mở trang gọi 10+ API nên giới hạn phải đủ rộng để không chặn người dùng thật.
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 phút
-  max: 100, // tối đa 100 request / IP / window
+  max: 1000, // tối đa 1000 request / IP / window (chống DDoS nhưng không chặn duyệt web bình thường)
   message: {
     success: false,
     error: 'Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau 15 phút.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Giới hạn chặt hơn cho thao tác GHI (POST/PUT/PATCH/DELETE) — chống spam đăng tin, xóa, sửa
+const writeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 phút
+  max: 200, // tối đa 200 thao tác ghi / IP / window
+  message: {
+    success: false,
+    error: 'Quá nhiều thao tác ghi dữ liệu, vui lòng thử lại sau 15 phút.'
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -87,6 +101,13 @@ const authLimiter = rateLimit({
 
 // Gắn rate limiter toàn cục cho toàn bộ API
 app.use('/api', apiLimiter);
+// Thao tác ghi dữ liệu bị giới hạn chặt hơn
+app.use('/api', (req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
+    return writeLimiter(req, res, next);
+  }
+  next();
+});
 
 // ==========================================
 // SECURITY: JWT AUTHENTICATION
