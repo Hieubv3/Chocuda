@@ -12,6 +12,7 @@ import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
 import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile, RECRUITMENT_PACKAGES, INITIAL_EMPLOYER_REGISTRATIONS, INITIAL_TASK_DELEGATIONS } from "./src/data/recruitmentData.ts";
 import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation } from "./src/types.ts";
+import { slugify, extractIdFromSlug, getProjectIdFromSlug } from "./src/lib/slugs.ts";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import cors from "cors";
@@ -1034,6 +1035,14 @@ function loadDataStore() {
                 streets: []
               }));
             }
+            // Nâng cấp amenities từ string[] cũ sang AmenityArticle[] ({id, name, description?, images?, youtubeUrl?})
+            let upgradedAmenities = existing.amenities;
+            if (Array.isArray(existing.amenities) && existing.amenities.length > 0 && typeof existing.amenities[0] === 'string') {
+              upgradedAmenities = (existing.amenities as string[]).map((name: string, i: number) => ({
+                id: `${ip.id}-amenity-${i}`,
+                name
+              }));
+            }
             projMap.set(ip.id, {
               ...existing,
               images: existing.images || ip.images || [],
@@ -1041,7 +1050,8 @@ function loadDataStore() {
               legalInfo: existing.legalInfo || ip.legalInfo || '',
               currentStatus: existing.currentStatus || ip.currentStatus || '',
               parentId: existing.parentId || ip.parentId || undefined,
-              subdivisions: upgradedSubdivisions || ip.subdivisions || []
+              subdivisions: upgradedSubdivisions || ip.subdivisions || [],
+              amenities: upgradedAmenities || ip.amenities || []
             });
           }
         });
@@ -6882,7 +6892,7 @@ function formatPriceForSeo(p: any): string {
   return `${p.price} Tỷ`;
 }
 
-function injectSeoMeta(html: string, title: string, description: string, image: string, canonicalPath: string): string {
+function injectSeoMeta(html: string, title: string, description: string, image: string, canonicalPath: string, ogType = 'website'): string {
   const safeTitle = escapeHtml(title);
   const safeDesc = escapeHtml(description);
   const safeImage = escapeHtml(image);
@@ -6896,8 +6906,12 @@ function injectSeoMeta(html: string, title: string, description: string, image: 
     .replace(/<meta property="og:description"[^>]*>/i, `<meta property="og:description" content="${safeDesc}" />`)
     .replace(/<meta property="og:image"[^>]*>/i, `<meta property="og:image" content="${safeImage}" />`)
     .replace(/<meta property="og:url"[^>]*>/i, `<meta property="og:url" content="https://chocudan24h.com${safeCanonical}" />`)
+    .replace(/<meta property="og:type"[^>]*>/i, `<meta property="og:type" content="${ogType}" />`)
     .replace(/<link rel="canonical"[^>]*>/i, `<link rel="canonical" href="https://chocudan24h.com${safeCanonical}" />`)
-    .replace(/<meta property="og:site_name"[^>]*>/i, `<meta property="og:site_name" content="${siteName}" />`);
+    .replace(/<meta property="og:site_name"[^>]*>/i, `<meta property="og:site_name" content="${siteName}" />`)
+    .replace(/<meta name="twitter:title"[^>]*>/i, `<meta name="twitter:title" content="${safeTitle}" />`)
+    .replace(/<meta name="twitter:description"[^>]*>/i, `<meta name="twitter:description" content="${safeDesc}" />`)
+    .replace(/<meta name="twitter:image"[^>]*>/i, `<meta name="twitter:image" content="${safeImage}" />`);
 }
 
 function registerSeoMetaMiddleware(app: express.Express) {
@@ -6911,45 +6925,213 @@ function registerSeoMetaMiddleware(app: express.Express) {
 
     const reqPath = req.path;
     const segments = reqPath.split('/').filter(Boolean);
+    if (segments.length === 0) return next();
 
-    let property: any = null;
-    if (segments.length >= 2) {
-      const lastSeg = segments[segments.length - 1];
-      const firstSeg = segments[0];
-      const isPropertyPath =
-        ['bat-dong-san', 'ban', 'cho-thue', 'thue'].includes(firstSeg) ||
-        (segments.length === 2 && !['tin-tuc', 'du-an', 'phan-khu', 'tien-ich', 'gian-hang', 'san-pham', 'hang-hoa', 'dich-vu-cu-dan', 'cong-dong', 'tuyen-dung', 'nha-tuyen-dung'].includes(firstSeg));
-      if (isPropertyPath) {
-        property = propertiesStore.find((p: any) => String(p.id) === lastSeg) || null;
+    const firstSeg = segments[0];
+    const lastSeg = segments[segments.length - 1];
+
+    // Chuyển ảnh tương đối (/uploads/..., /images/...) thành URL tuyệt đối cho OG tags
+    const toAbsoluteImage = (img: string): string => {
+      if (!img) return '';
+      if (/^https?:\/\//i.test(img)) return img;
+      return `https://chocudan24h.com${img.startsWith('/') ? img : `/${img}`}`;
+    };
+
+    // Tìm sản phẩm theo id trong tất cả gian hàng
+    const findProduct = (productId: string): { product: any; store: any } | null => {
+      for (const store of storesStore) {
+        const products = (store as any).products || [];
+        const product = products.find((p: any) => String(p.id) === String(productId));
+        if (product) return { product, store };
       }
-    }
-
-    let post: any = null;
-    if (segments[0] === 'tin-tuc' && segments.length >= 2) {
-      const postSlug = segments[segments.length - 1];
-      post = reputationPostsStore.find((p: any) => p.slug === postSlug || p.id === postSlug) || null;
-    }
-
-    if (!property && !post) {
-      return next();
-    }
+      return null;
+    };
 
     let title = '';
     let desc = '';
     let image = '';
-    if (property) {
-      title = `${property.title} - ${formatPriceForSeo(property)} | Chợ Cư Dân 24H`;
-      desc = (property.description || '').slice(0, 160);
-      image = Array.isArray(property.images) && property.images.length > 0 ? property.images[0] : '';
-    } else if (post) {
-      title = `${post.title || post.name || 'Bài viết'} | Chợ Cư Dân 24H`;
-      desc = (post.excerpt || post.description || post.content || '').slice(0, 160);
-      image = post.image || post.thumbnail || (Array.isArray(post.images) && post.images[0]) || '';
+    let ogType = 'website';
+
+    // ============ 1. BẤT ĐỘNG SẢN ============
+    // /bat-dong-san/:id, /ban/:id, /cho-thue/:id, /thue/:id, /:projectSlug/:id
+    const PROPERTY_PREFIXES = ['bat-dong-san', 'ban', 'cho-thue', 'thue'];
+    const KNOWN_PREFIXES = ['tin-tuc', 'du-an', 'phan-khu', 'tien-ich', 'gian-hang', 'san-pham', 'hang-hoa', 'dich-vu-cu-dan', 'cong-dong', 'tuyen-dung', 'nha-tuyen-dung', 'cho-cu-dan', 'sitemap', 'so-do-website', 'dang-tin', 'tai-khoan', 've-chung-toi', 'gioi-thieu', 'chuyen-gia', 'tinh-lai-vay', 'admin', 'quantri', 'quantri24h', 'admin-login', 'auth', 'bui-van-hieu', 'bui-trung-hieu', 'chinh-sach-bao-mat', 'privacy', 'privacy-policy', 'dieu-khoan-su-dung', 'terms', 'terms-of-service'];
+    const isPropertyPath =
+      PROPERTY_PREFIXES.includes(firstSeg) ||
+      (segments.length === 2 && !KNOWN_PREFIXES.includes(firstSeg));
+
+    if (!title && isPropertyPath) {
+      const property = propertiesStore.find((p: any) => String(p.id) === lastSeg) || null;
+      if (property) {
+        title = `${property.title} - ${formatPriceForSeo(property)} | Chợ Cư Dân 24H`;
+        desc = (property.description || '').slice(0, 160);
+        image = Array.isArray(property.images) && property.images.length > 0 ? property.images[0] : '';
+        ogType = 'article';
+      }
+    }
+
+    // ============ 2. TIN TỨC ============
+    // /tin-tuc/:categorySlug/:postSlug, /tin-tuc/bai-viet/:postSlug
+    if (!title && firstSeg === 'tin-tuc' && segments.length >= 2) {
+      const postSlug = lastSeg;
+      const extractedId = extractIdFromSlug(postSlug);
+      const post = newsStore.find((n: any) =>
+        n.id === postSlug || n.id === extractedId || slugify(n.title) === postSlug
+      ) || reputationPostsStore.find((p: any) => p.slug === postSlug || p.id === postSlug) || null;
+      if (post) {
+        title = `${post.title || post.name || 'Bài viết'} | Chợ Cư Dân 24H`;
+        desc = (post.summary || post.excerpt || post.description || post.content || '').slice(0, 160);
+        image = post.image || post.thumbnail || (Array.isArray(post.images) && post.images[0]) || '';
+        ogType = 'article';
+      }
+    }
+
+    // ============ 3. SẢN PHẨM ============
+    // /san-pham/:productId/:productSlug, /san-pham/:productId,
+    // /hang-hoa/:productId/:productSlug, /hang-hoa/:productId,
+    // /cho-cu-dan/san-pham/:productId/:productSlug, /cho-cu-dan/san-pham/:productId
+    if (!title && (firstSeg === 'san-pham' || firstSeg === 'hang-hoa' || (firstSeg === 'cho-cu-dan' && segments[1] === 'san-pham'))) {
+      const productId = (firstSeg === 'cho-cu-dan' && segments[1] === 'san-pham') ? segments[2] : segments[1];
+      const found = productId ? findProduct(productId) : null;
+      if (found) {
+        const { product, store } = found;
+        title = `${product.name} | ${(store as any).storeName || 'Gian Hàng'} | Chợ Cư Dân 24H`;
+        desc = (product.description || '').slice(0, 160);
+        image = Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : (store as any).logoUrl || '';
+        ogType = 'product';
+      }
+    }
+
+    // ============ 4. SẢN PHẨM TRONG GIAN HÀNG ============
+    // /gian-hang/:storeSlug/san-pham/:productId/:productSlug, /gian-hang/:storeSlug/san-pham/:productId
+    if (!title && firstSeg === 'gian-hang' && segments.length >= 4 && segments[2] === 'san-pham') {
+      const productId = segments[3];
+      const found = productId ? findProduct(productId) : null;
+      if (found) {
+        const { product, store } = found;
+        title = `${product.name} | ${(store as any).storeName || 'Gian Hàng'} | Chợ Cư Dân 24H`;
+        desc = (product.description || '').slice(0, 160);
+        image = Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : (store as any).logoUrl || '';
+        ogType = 'product';
+      }
+    }
+
+    // ============ 5. GIAN HÀNG ============
+    // /gian-hang/:storeSlug
+    if (!title && firstSeg === 'gian-hang' && segments.length === 2) {
+      const store = storesStore.find((s: any) => s.slug === lastSeg || s.id === lastSeg) || null;
+      if (store) {
+        title = `${(store as any).storeName || 'Gian Hàng'} | Chợ Cư Dân 24H`;
+        desc = ((store as any).description || '').slice(0, 160);
+        image = (store as any).logoUrl || (store as any).bannerUrl || '';
+      }
+    }
+
+    // ============ 6. DỰ ÁN ============
+    // /du-an/:projectSlug
+    if (!title && firstSeg === 'du-an' && segments.length === 2) {
+      const projectId = getProjectIdFromSlug(lastSeg);
+      const project = projectsStore.find((p: any) => p.id === projectId || slugify(p.name) === lastSeg) || null;
+      if (project) {
+        title = `${project.name} | Chợ Cư Dân 24H`;
+        desc = (project.description || '').slice(0, 160);
+        image = project.image || (Array.isArray(project.images) && project.images[0]) || '';
+      }
+    }
+
+    // ============ 7. PHÂN KHU ============
+    // /du-an/:projectSlug/phan-khu/:subdivisionSlug, /phan-khu/:subdivisionSlug
+    if (!title && (firstSeg === 'phan-khu' || (firstSeg === 'du-an' && segments[2] === 'phan-khu'))) {
+      const subSlug = lastSeg;
+      const project = firstSeg === 'phan-khu'
+        ? projectsStore.find((p: any) => (p.subdivisions || []).some((s: any) => slugify(s.name) === subSlug || s.id === subSlug)) || null
+        : (() => {
+            const projectId = getProjectIdFromSlug(segments[1]);
+            return projectsStore.find((p: any) => p.id === projectId || slugify(p.name) === segments[1]) || null;
+          })();
+      if (project) {
+        const sub = (project.subdivisions || []).find((s: any) => slugify(s.name) === subSlug || s.id === subSlug) || null;
+        if (sub) {
+          title = `${sub.name} - ${project.name} | Chợ Cư Dân 24H`;
+          desc = (sub.description || project.description || '').slice(0, 160);
+          image = (Array.isArray(sub.images) && sub.images[0]) || project.image || (Array.isArray(project.images) && project.images[0]) || '';
+        }
+      }
+    }
+
+    // ============ 8. TIỆN ÍCH ============
+    // /tien-ich/:amenitySlug, /du-an/:projectSlug/tien-ich/:amenitySlug
+    if (!title && (firstSeg === 'tien-ich' || (firstSeg === 'du-an' && segments[2] === 'tien-ich'))) {
+      const amenitySlug = lastSeg;
+      const project = firstSeg === 'tien-ich'
+        ? projectsStore.find((p: any) => (p.amenities || []).some((a: any) => slugify(a.name) === amenitySlug || a.id === amenitySlug)) || null
+        : (() => {
+            const projectId = getProjectIdFromSlug(segments[1]);
+            return projectsStore.find((p: any) => p.id === projectId || slugify(p.name) === segments[1]) || null;
+          })();
+      if (project) {
+        const amenity = (project.amenities || []).find((a: any) => slugify(a.name) === amenitySlug || a.id === amenitySlug) || null;
+        if (amenity) {
+          title = `${amenity.name} - ${project.name} | Chợ Cư Dân 24H`;
+          desc = (amenity.description || project.description || '').slice(0, 160);
+          image = (Array.isArray(amenity.images) && amenity.images[0]) || project.image || (Array.isArray(project.images) && project.images[0]) || '';
+        }
+      }
+    }
+
+    // ============ 9. DỊCH VỤ CƯ DÂN ============
+    // /dich-vu-cu-dan/:serviceSlug
+    if (!title && firstSeg === 'dich-vu-cu-dan' && segments.length === 2) {
+      const service = residentServicesStore.find((s: any) => s.id === lastSeg || slugify(s.title || s.name) === lastSeg) || null;
+      if (service) {
+        title = `${service.title || service.name || 'Dịch vụ'} | Chợ Cư Dân 24H`;
+        desc = (service.description || service.summary || '').slice(0, 160);
+        image = service.image || (Array.isArray(service.images) && service.images[0]) || '';
+      }
+    }
+
+    // ============ 10. VIỆC LÀM ============
+    // /tuyen-dung/viec-lam/:jobId/:slug, /tuyen-dung/viec-lam/:jobId
+    if (!title && firstSeg === 'tuyen-dung' && segments[1] === 'viec-lam' && segments.length >= 3) {
+      const job = recruitmentJobsStore.find((j: any) => String(j.id) === segments[2]) || null;
+      if (job) {
+        title = `${job.title} | ${job.companyName || 'Tuyển Dụng'} | Chợ Cư Dân 24H`;
+        desc = (job.description || '').slice(0, 160);
+        image = job.companyLogo || '';
+        ogType = 'article';
+      }
+    }
+
+    // ============ 11. ỨNG VIÊN ============
+    // /tuyen-dung/ung-vien/:candidateId/:slug, /tuyen-dung/ung-vien/:candidateId
+    if (!title && firstSeg === 'tuyen-dung' && segments[1] === 'ung-vien' && segments.length >= 3) {
+      const cand = candidateProfilesStore.find((c: any) => String(c.id) === segments[2]) || null;
+      if (cand) {
+        title = `${cand.fullName || cand.name || 'Ứng viên'} | Tuyển Dụng | Chợ Cư Dân 24H`;
+        desc = (cand.introduction || cand.summary || cand.bio || '').slice(0, 160);
+        image = cand.avatarUrl || cand.avatar || cand.image || '';
+        ogType = 'profile';
+      }
+    }
+
+    // ============ 12. NHÀ TUYỂN DỤNG ============
+    // /tuyen-dung/nha-tuyen-dung/:employerId/:slug, /tuyen-dung/nha-tuyen-dung/:employerId
+    if (!title && firstSeg === 'tuyen-dung' && segments[1] === 'nha-tuyen-dung' && segments.length >= 3) {
+      const emp = employersStore.find((e: any) => String(e.id) === segments[2] || String(e.employerUserId) === segments[2]) || null;
+      if (emp) {
+        title = `${emp.companyName || emp.brandName || emp.name || 'Nhà tuyển dụng'} | Chợ Cư Dân 24H`;
+        desc = (emp.introduction || emp.tagline || emp.description || '').slice(0, 160);
+        image = emp.logoUrl || emp.logo || emp.bannerUrl || '';
+      }
+    }
+
+    if (!title) {
+      return next();
     }
 
     try {
       const html = fs.readFileSync(indexHtmlPath, 'utf-8');
-      const injected = injectSeoMeta(html, title, desc, image, reqPath);
+      const injected = injectSeoMeta(html, title, desc, toAbsoluteImage(image), reqPath, ogType);
       res.type('html').send(injected);
     } catch (err) {
       console.error('[SEO] Failed to read index.html:', err);
