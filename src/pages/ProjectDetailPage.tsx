@@ -115,6 +115,11 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
     }
   });
 
+  // Safely normalize amenities (server may return objects {id, name} or plain strings)
+  const normalizedAmenities: string[] = Array.isArray(project.amenities)
+    ? project.amenities.map((a: any) => (typeof a === 'string' ? a : a.name))
+    : [];
+
   // Filter properties belonging to this project
   const projectProperties = properties.filter(p => p.project === project.id);
   const displayedProperties = projectProperties.filter(p => {
@@ -544,7 +549,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       )}
 
       {/* Amenities Section with Dedicated Links */}
-      {project.amenities && project.amenities.length > 0 && (
+      {normalizedAmenities.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
@@ -559,7 +564,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-            {project.amenities.map((amenity, idx) => (
+            {normalizedAmenities.map((amenity, idx) => (
               <div
                 key={idx}
                 onClick={() => navigate(getAmenityUrl(project.id, amenity))}

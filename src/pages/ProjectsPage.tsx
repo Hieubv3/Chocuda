@@ -67,6 +67,11 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
     navigate(getAmenityUrl(currentProject.id, amenityTitle));
   };
 
+  // Safely normalize amenities (server may return objects {id, name} or plain strings)
+  const normalizedAmenities: string[] = Array.isArray(currentProject.amenities)
+    ? currentProject.amenities.map((a: any) => (typeof a === 'string' ? a : a.name))
+    : [];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
@@ -258,7 +263,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                 Nhấp vào tiện ích bên dưới để đọc bài viết đánh giá chi tiết quy mô & đặc quyền cư dân:
               </p>
               <div className="space-y-2 text-xs">
-                {currentProject.amenities.map((amenity, idx) => (
+                {normalizedAmenities.map((amenity, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleAmenityClick(amenity)}
