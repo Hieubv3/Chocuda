@@ -759,6 +759,7 @@ export const App: React.FC = () => {
             onOpenAiWriter={() => setAiWriterModalOpen(true)}
             onRefreshData={refreshServerData}
             onSeed1000Properties={handleSeed1000Properties}
+            onLogout={handleLogout}
           />
         ) : (
           <AdminLoginPage

@@ -2108,7 +2108,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 onLogout();
               } else {
                 localStorage.removeItem('hb_user');
-                navigate('/');
+                localStorage.removeItem('chocudan24h_user');
+                localStorage.removeItem('chocudan24h_resident_user');
+                localStorage.removeItem('chocudan24h_token');
+                sessionStorage.removeItem('hb_user');
+                sessionStorage.removeItem('chocudan24h_user');
+                window.location.href = '/';
               }
             }}
             className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-xs"
