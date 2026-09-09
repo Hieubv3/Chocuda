@@ -9,6 +9,7 @@ import { Project, Property, Language, ProjectCategory } from '../types';
 import { SEOHead } from '../components/SEOHead';
 import { PropertyCard } from '../components/PropertyCard';
 import { ProjectFaqHub } from '../components/ProjectFaqHub';
+import { DeveloperUnitsPublic } from '../components/DeveloperUnitsPublic';
 import { getProjectIdFromSlug, getProjectSlug, getSubdivisionUrl, getAmenityUrl, getPropertyDetailUrl } from '../lib/slugs';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { SUBDIVISION_SEO_DATA, SubdivisionSEOInfo } from '../data/subdivisionData';
@@ -484,6 +485,9 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {/* ============ TAB: TỔNG QUAN (mặc định) ============ */}
       {activeSection === 'overview' && (
       <>
+      {/* Mặt Bằng Quỹ Căn — CĐT & Đại lý F1 (sơ đồ trái + danh sách phải) */}
+      <DeveloperUnitsPublic projectId={project.id} projectName={projectName} />
+
       {/* Subdivisions List */}
       {normalizedSubdivisions.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">

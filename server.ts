@@ -11,7 +11,7 @@ import { PROJECT_FAQ_DATA } from "./src/data/projectFaqData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
 import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile, RECRUITMENT_PACKAGES, INITIAL_EMPLOYER_REGISTRATIONS, INITIAL_TASK_DELEGATIONS } from "./src/data/recruitmentData.ts";
-import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation } from "./src/types.ts";
+import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation, DeveloperUnit, F1Agent, DeveloperPolicy, DeveloperInstallment, DeveloperBank, DeveloperFloorplan } from "./src/types.ts";
 import { slugify, extractIdFromSlug, getProjectIdFromSlug } from "./src/lib/slugs.ts";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -1027,6 +1027,162 @@ let taxLedgerStore: any[] = [
   }
 ];
 
+// ==========================================
+// MẶT BẰNG & BẢNG HÀNG CHỦ ĐẦU TƯ (Developer Units / F1)
+// ==========================================
+let developerUnitsStore: DeveloperUnit[] = [];
+let f1AgentsStore: F1Agent[] = [];
+let developerPoliciesStore: DeveloperPolicy[] = [];
+let developerInstallmentsStore: DeveloperInstallment[] = [];
+let developerBanksStore: DeveloperBank[] = [];
+let developerFloorplansStore: DeveloperFloorplan[] = [];
+
+// Cấu hình phân khu theo dự án: subdivisionId -> { prefix, tier }
+const DEVELOPER_SUB_CONFIG: Record<string, { prefix: string; tier: 'cao' | 'thap' }> = {
+  // Vinhomes Ocean Park 2
+  'op2-cha-la': { prefix: 'CL', tier: 'thap' },
+  'op2-co-xanh': { prefix: 'CX', tier: 'thap' },
+  'op2-hai-tang': { prefix: 'HA', tier: 'cao' },
+  'op2-san-ho': { prefix: 'SH', tier: 'thap' },
+  // Vinhomes Ocean Park 1
+  'op1-san-ho': { prefix: 'SH', tier: 'thap' },
+  'op1-ngoc-trai': { prefix: 'NT', tier: 'thap' }
+};
+
+function seedDeveloperUnits() {
+  if (developerUnitsStore.length > 0) return;
+  const statuses: DeveloperUnit['status'][] = ['conhang','conhang','conhang','dabooking','dacoc','daban','daban','thuhoi','conhang','conhang','dacoc','conhang'];
+  const areas = [75, 90, 105, 120, 135, 150, 165, 180, 200, 95, 110, 140];
+  const prices = [12.5, 13.8, 15.2, 16.9, 18.5, 20.1, 22.4, 24.8, 27.5, 14.2, 17.3, 19.6];
+  const types = ['Nhà phố thương mại','Shophouse','Nhà liền kề','Biệt thự đơn lập'];
+  const subPlan: Record<string, { projectId: string; count: number }> = {
+    'op2-cha-la': { projectId: 'ocean-park-2', count: 12 },
+    'op2-co-xanh': { projectId: 'ocean-park-2', count: 8 },
+    'op2-hai-tang': { projectId: 'ocean-park-2', count: 6 },
+    'op2-san-ho': { projectId: 'ocean-park-2', count: 6 },
+    'op1-san-ho': { projectId: 'ocean-park-1', count: 5 },
+    'op1-ngoc-trai': { projectId: 'ocean-park-1', count: 4 }
+  };
+  let idc = 1;
+  let si = 0;
+  Object.keys(subPlan).forEach(subId => {
+    const cfg = DEVELOPER_SUB_CONFIG[subId];
+    const plan = subPlan[subId];
+    for (let i = 0; i < plan.count; i++) {
+      const st = statuses[(i + si * 3) % statuses.length];
+      const price = prices[i % prices.length];
+      const area = areas[i % areas.length];
+      developerUnitsStore.push({
+        id: 'du-' + (idc++),
+        projectId: plan.projectId,
+        subdivisionId: subId,
+        code: cfg.prefix + '-' + (100 + i + 1),
+        type: types[i % 4],
+        area,
+        price,
+        priceDisplay: price + ' tỷ',
+        status: st,
+        source: 'cdt',
+        tier: cfg.tier,
+        x: 12 + ((i * 37) % 76),
+        y: 14 + ((i * 53 + si * 17) % 68),
+        floor: cfg.tier === 'cao' ? `Tầng ${(i % 5) + 1}` : undefined,
+        note: i % 3 === 0 ? 'Giá rẻ' : '',
+        updatedAt: new Date().toISOString()
+      });
+    }
+    si++;
+  });
+}
+
+function seedF1Agents() {
+  if (f1AgentsStore.length > 0) return;
+  f1AgentsStore = [
+    { id: 'f1a', name: 'Đại lý Hưng Thịnh', phone: '0901 234 567', approvedCount: 7, totalCount: 9, color: '#3b82f6' },
+    { id: 'f1b', name: 'Đại lý Phú Mỹ', phone: '0902 345 678', approvedCount: 4, totalCount: 6, color: '#8b5cf6' },
+    { id: 'f1c', name: 'Đại lý An Cư', phone: '0903 456 789', approvedCount: 5, totalCount: 5, color: '#06b6d4' }
+  ];
+  // F1 units (chưa duyệt = chưa đưa vào developerUnitsStore; duyệt sẽ chuyển sang store chính)
+  const f1Prefixes = ['CL','CX','HA','SH'];
+  const f1Statuses: DeveloperUnit['status'][] = ['conhang','conhang','dabooking','dacoc','conhang','daban'];
+  const f1Areas = [75, 90, 105, 120, 135, 150];
+  const f1Prices = [12.8, 14.1, 15.6, 17.2, 18.9, 20.5];
+  const subByPrefix: Record<string, string> = { CL: 'op2-cha-la', CX: 'op2-co-xanh', HA: 'op2-hai-tang', SH: 'op2-san-ho' };
+  let n = 1;
+  f1AgentsStore.forEach((ag, ai) => {
+    for (let i = 0; i < ag.totalCount; i++) {
+      const p = f1Prefixes[(i + ai) % 4];
+      const subId = subByPrefix[p];
+      const cfg = DEVELOPER_SUB_CONFIG[subId];
+      developerUnitsStore.push({
+        id: 'f1u-' + (n++),
+        projectId: 'ocean-park-2',
+        subdivisionId: subId,
+        code: p + '-F1-' + (100 + i + 1),
+        type: 'Nhà phố thương mại',
+        area: f1Areas[i % f1Areas.length],
+        price: f1Prices[(i + ai) % f1Prices.length],
+        priceDisplay: f1Prices[(i + ai) % f1Prices.length] + ' tỷ',
+        status: f1Statuses[(i + ai * 2) % f1Statuses.length],
+        source: 'f1',
+        tier: cfg.tier,
+        x: 12 + ((i * 37 + 8) % 76),
+        y: 14 + ((i * 53 + ai * 17 + 10) % 68),
+        agentId: ag.id,
+        note: i < ag.approvedCount ? 'approved' : 'pending',
+        updatedAt: new Date().toISOString()
+      });
+    }
+  });
+}
+
+function seedDeveloperExtras() {
+  if (developerPoliciesStore.length === 0) {
+    developerPoliciesStore = [{
+      id: 'pol-1',
+      projectId: 'ocean-park-2',
+      title: 'Chính sách bán hàng CĐT',
+      content: JSON.stringify({
+        pDeposit: '200,000,000', refundDays: '30', bankInfo: 'TECHCOMBANK - STK 22335899 - CN Hạ Long',
+        disc1: '1%', disc2: '2%', disc3: '3%', loanRate: '70%', loanRate2: '6.5%', loanTerm: '25 năm',
+        bankList: 'Mirae Asset, VPBank, BIDV, Techcombank', buildDeposit: '30%', buildTime: '24 tháng',
+        loyalty: 'Giảm 0.5%', notes: 'Áp dụng đến 31/12/2026'
+      }),
+      updatedAt: new Date().toISOString()
+    }];
+  }
+  if (developerInstallmentsStore.length === 0) {
+    developerInstallmentsStore = [
+      { id: 'inst-1', projectId: 'ocean-park-2', name: 'Đặt cọc', percent: 10, dueDate: 'T+15 ngày' },
+      { id: 'inst-2', projectId: 'ocean-park-2', name: 'Ký HĐMB', percent: 15, dueDate: 'T+15 ngày' },
+      { id: 'inst-3', projectId: 'ocean-park-2', name: 'D1 - Móng', percent: 10, dueDate: 'D+24 tháng' },
+      { id: 'inst-4', projectId: 'ocean-park-2', name: 'D2 - Tầng 1', percent: 10, dueDate: 'D+24 tháng' },
+      { id: 'inst-5', projectId: 'ocean-park-2', name: 'D3 - Tầng 5', percent: 10, dueDate: 'D+24 tháng' },
+      { id: 'inst-6', projectId: 'ocean-park-2', name: 'D4 - Tầng 10', percent: 10, dueDate: 'D+24 tháng' },
+      { id: 'inst-7', projectId: 'ocean-park-2', name: 'D5 - Tầng 15', percent: 10, dueDate: 'D+24 tháng' },
+      { id: 'inst-8', projectId: 'ocean-park-2', name: 'D6 - Bàn giao', percent: 15, dueDate: 'D+24 tháng' }
+    ];
+  }
+  if (developerBanksStore.length === 0) {
+    developerBanksStore = [
+      { id: 'bank-1', projectId: 'ocean-park-2', name: 'Mirae Asset', support: 'Hỗ trợ 70% giá trị', rate: '5.9%', maxLoan: '70%', term: '25 năm' },
+      { id: 'bank-2', projectId: 'ocean-park-2', name: 'VPBank', support: 'Hỗ trợ 70% giá trị', rate: '6.0%', maxLoan: '70%', term: '30 năm' },
+      { id: 'bank-3', projectId: 'ocean-park-2', name: 'BIDV', support: 'Hỗ trợ 70% giá trị', rate: '5.8%', maxLoan: '70%', term: '25 năm' },
+      { id: 'bank-4', projectId: 'ocean-park-2', name: 'Techcombank', support: 'Hỗ trợ 70% giá trị', rate: '6.2%', maxLoan: '70%', term: '35 năm' }
+    ];
+  }
+  if (developerFloorplansStore.length === 0) {
+    developerFloorplansStore = [
+      { id: 'fp-1', projectId: 'ocean-park-2', subdivisionId: 'op2-cha-la', image: '/images/demo/project-tower.jpg', label: 'Sơ đồ phân khu Chà Là' },
+      { id: 'fp-2', projectId: 'ocean-park-2', subdivisionId: 'op2-hai-tang', image: '/images/demo/project-tower.jpg', label: 'Sơ đồ phân khu Hải Tăng' }
+    ];
+  }
+}
+
+seedDeveloperUnits();
+seedF1Agents();
+seedDeveloperExtras();
+
 // Data Store File Persistence (Local JSON Database)
 const DATA_STORE_PATH = path.join(process.cwd(), "app_data_store.json");
 const DATA_STORE_BACKUP_PATH = path.join(process.cwd(), "app_data_store.backup.json");
@@ -1174,6 +1330,14 @@ function loadDataStore() {
       if (data.taxConfig) taxConfigStore = data.taxConfig;
       if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
 
+      // Developer Units / F1 (Mặt Bằng & Bảng Hàng CĐT)
+      if (Array.isArray(data.developerUnits) && data.developerUnits.length > 0) developerUnitsStore = data.developerUnits;
+      if (Array.isArray(data.f1Agents) && data.f1Agents.length > 0) f1AgentsStore = data.f1Agents;
+      if (Array.isArray(data.developerPolicies) && data.developerPolicies.length > 0) developerPoliciesStore = data.developerPolicies;
+      if (Array.isArray(data.developerInstallments) && data.developerInstallments.length > 0) developerInstallmentsStore = data.developerInstallments;
+      if (Array.isArray(data.developerBanks) && data.developerBanks.length > 0) developerBanksStore = data.developerBanks;
+      if (Array.isArray(data.developerFloorplans) && data.developerFloorplans.length > 0) developerFloorplansStore = data.developerFloorplans;
+
       // 8. Recruitment Jobs
       if (Array.isArray(data.recruitmentJobs) && data.recruitmentJobs.length > 0) {
         const jobMap = new Map(data.recruitmentJobs.map((j: any) => [j.id, j]));
@@ -1263,6 +1427,12 @@ ads: adsStore,
       faq: faqStore,
       taxConfig: taxConfigStore,
       taxLedger: taxLedgerStore,
+      developerUnits: developerUnitsStore,
+      f1Agents: f1AgentsStore,
+      developerPolicies: developerPoliciesStore,
+      developerInstallments: developerInstallmentsStore,
+      developerBanks: developerBanksStore,
+      developerFloorplans: developerFloorplansStore,
       recruitmentJobs: recruitmentJobsStore,
       candidateProfiles: candidateProfilesStore,
       employers: employersStore,
@@ -2487,6 +2657,286 @@ app.get("/api/health", (req, res) => {
     domain: "chocudan24h.com",
     timestamp: new Date().toISOString()
   });
+});
+
+// ============================================================
+// MẶT BẰNG & BẢNG HÀNG CHỦ ĐẦU TƯ (Developer Units / F1)
+// ============================================================
+
+// GET /api/developer-units — lọc theo project/subdivision/tier/source/status
+app.get("/api/developer-units", (req, res) => {
+  const { project, subdivision, tier, source, status, approved } = req.query;
+  let filtered = [...developerUnitsStore];
+  if (project) filtered = filtered.filter(u => u.projectId === project);
+  if (subdivision) filtered = filtered.filter(u => u.subdivisionId === subdivision);
+  if (tier) filtered = filtered.filter(u => u.tier === tier);
+  if (source) filtered = filtered.filter(u => u.source === source);
+  if (status) filtered = filtered.filter(u => u.status === status);
+  if (approved === 'true') filtered = filtered.filter(u => u.note !== 'pending');
+  res.json(filtered);
+});
+
+// POST /api/developer-units — thêm căn (admin)
+app.post("/api/developer-units", authenticateToken, requireAdmin, (req, res) => {
+  const data = req.body;
+  const cfg = DEVELOPER_SUB_CONFIG[data.subdivisionId];
+  const newUnit: DeveloperUnit = {
+    id: data.id || `du-${Date.now()}`,
+    projectId: data.projectId || 'ocean-park-2',
+    subdivisionId: data.subdivisionId || 'op2-cha-la',
+    code: data.code || `U-${Date.now()}`,
+    type: data.type || 'Nhà phố thương mại',
+    area: Number(data.area) || 0,
+    price: Number(data.price) || 0,
+    priceDisplay: data.priceDisplay || `${Number(data.price) || 0} tỷ`,
+    status: data.status || 'conhang',
+    source: data.source || 'cdt',
+    tier: data.tier || cfg?.tier || 'thap',
+    x: data.x !== undefined ? Number(data.x) : 12,
+    y: data.y !== undefined ? Number(data.y) : 14,
+    floor: data.floor,
+    note: data.note,
+    agentId: data.agentId,
+    updatedAt: new Date().toISOString()
+  };
+  developerUnitsStore.push(newUnit);
+  saveDataStore();
+  res.json({ success: true, unit: newUnit });
+});
+
+// PUT /api/developer-units/:id — cập nhật căn (admin)
+app.put("/api/developer-units/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const idx = developerUnitsStore.findIndex(u => u.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy căn." });
+  const data = req.body;
+  const cfg = DEVELOPER_SUB_CONFIG[data.subdivisionId || developerUnitsStore[idx].subdivisionId];
+  developerUnitsStore[idx] = {
+    ...developerUnitsStore[idx],
+    ...data,
+    area: data.area !== undefined ? Number(data.area) : developerUnitsStore[idx].area,
+    price: data.price !== undefined ? Number(data.price) : developerUnitsStore[idx].price,
+    x: data.x !== undefined ? Number(data.x) : developerUnitsStore[idx].x,
+    y: data.y !== undefined ? Number(data.y) : developerUnitsStore[idx].y,
+    tier: data.tier || cfg?.tier || developerUnitsStore[idx].tier,
+    priceDisplay: data.priceDisplay || (data.price !== undefined ? `${Number(data.price)} tỷ` : developerUnitsStore[idx].priceDisplay),
+    updatedAt: new Date().toISOString()
+  };
+  saveDataStore();
+  res.json({ success: true, unit: developerUnitsStore[idx] });
+});
+
+// POST /api/developer-units/:id/status — đổi trạng thái nhanh (admin)
+app.post("/api/developer-units/:id/status", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const unit = developerUnitsStore.find(u => u.id === id);
+  if (!unit) return res.status(404).json({ error: "Không tìm thấy căn." });
+  unit.status = status;
+  unit.updatedAt = new Date().toISOString();
+  saveDataStore();
+  res.json({ success: true, unit });
+});
+
+// DELETE /api/developer-units/:id — xóa căn (admin)
+app.delete("/api/developer-units/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const idx = developerUnitsStore.findIndex(u => u.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy căn." });
+  developerUnitsStore.splice(idx, 1);
+  saveDataStore();
+  res.json({ success: true });
+});
+
+// F1 Agents
+app.get("/api/developer-f1-agents", (req, res) => {
+  res.json(f1AgentsStore);
+});
+
+app.post("/api/developer-f1-agents", authenticateToken, requireAdmin, (req, res) => {
+  const data = req.body;
+  const agent: F1Agent = {
+    id: data.id || `f1-${Date.now()}`,
+    name: data.name || 'Đại lý mới',
+    phone: data.phone || '',
+    approvedCount: Number(data.approvedCount) || 0,
+    totalCount: Number(data.totalCount) || 0,
+    color: data.color || '#3b82f6'
+  };
+  f1AgentsStore.push(agent);
+  saveDataStore();
+  res.json({ success: true, agent });
+});
+
+app.put("/api/developer-f1-agents/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const idx = f1AgentsStore.findIndex(a => a.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy đại lý." });
+  f1AgentsStore[idx] = { ...f1AgentsStore[idx], ...req.body };
+  saveDataStore();
+  res.json({ success: true, agent: f1AgentsStore[idx] });
+});
+
+app.delete("/api/developer-f1-agents/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const idx = f1AgentsStore.findIndex(a => a.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy đại lý." });
+  f1AgentsStore.splice(idx, 1);
+  saveDataStore();
+  res.json({ success: true });
+});
+
+// POST /api/developer-f1-agents/:id/approve-unit — duyệt căn F1 (admin)
+app.post("/api/developer-f1-agents/:id/approve-unit", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const { unitId } = req.body;
+  const unit = developerUnitsStore.find(u => u.id === unitId && u.source === 'f1' && u.agentId === id);
+  if (!unit) return res.status(404).json({ error: "Không tìm thấy căn F1." });
+  unit.note = 'approved';
+  unit.updatedAt = new Date().toISOString();
+  const agent = f1AgentsStore.find(a => a.id === id);
+  if (agent) agent.approvedCount = Math.min(agent.approvedCount + 1, agent.totalCount);
+  saveDataStore();
+  res.json({ success: true, unit, agent });
+});
+
+// Chính sách bán hàng
+app.get("/api/developer-policies", (req, res) => {
+  const { project } = req.query;
+  let list = developerPoliciesStore;
+  if (project) list = list.filter(p => p.projectId === project);
+  res.json(list);
+});
+
+app.post("/api/developer-policies", authenticateToken, requireAdmin, (req, res) => {
+  const data = req.body;
+  const policy: DeveloperPolicy = {
+    id: data.id || `pol-${Date.now()}`,
+    projectId: data.projectId || 'ocean-park-2',
+    subdivisionId: data.subdivisionId,
+    title: data.title || 'Chính sách bán hàng',
+    content: typeof data.content === 'string' ? data.content : JSON.stringify(data.content || {}),
+    updatedAt: new Date().toISOString()
+  };
+  developerPoliciesStore.push(policy);
+  saveDataStore();
+  res.json({ success: true, policy });
+});
+
+app.put("/api/developer-policies/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const idx = developerPoliciesStore.findIndex(p => p.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy chính sách." });
+  developerPoliciesStore[idx] = { ...developerPoliciesStore[idx], ...req.body, updatedAt: new Date().toISOString() };
+  saveDataStore();
+  res.json({ success: true, policy: developerPoliciesStore[idx] });
+});
+
+// Đợt thanh toán
+app.get("/api/developer-installments", (req, res) => {
+  const { project } = req.query;
+  let list = developerInstallmentsStore;
+  if (project) list = list.filter(p => p.projectId === project);
+  res.json(list);
+});
+
+app.post("/api/developer-installments", authenticateToken, requireAdmin, (req, res) => {
+  const data = req.body;
+  const inst: DeveloperInstallment = {
+    id: data.id || `inst-${Date.now()}`,
+    projectId: data.projectId || 'ocean-park-2',
+    subdivisionId: data.subdivisionId,
+    name: data.name || 'Đợt mới',
+    percent: Number(data.percent) || 0,
+    dueDate: data.dueDate || '',
+    note: data.note
+  };
+  developerInstallmentsStore.push(inst);
+  saveDataStore();
+  res.json({ success: true, installment: inst });
+});
+
+app.put("/api/developer-installments/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const idx = developerInstallmentsStore.findIndex(p => p.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy đợt thanh toán." });
+  developerInstallmentsStore[idx] = { ...developerInstallmentsStore[idx], ...req.body };
+  saveDataStore();
+  res.json({ success: true, installment: developerInstallmentsStore[idx] });
+});
+
+app.delete("/api/developer-installments/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const idx = developerInstallmentsStore.findIndex(p => p.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy đợt thanh toán." });
+  developerInstallmentsStore.splice(idx, 1);
+  saveDataStore();
+  res.json({ success: true });
+});
+
+// Ngân hàng hỗ trợ
+app.get("/api/developer-banks", (req, res) => {
+  const { project } = req.query;
+  let list = developerBanksStore;
+  if (project) list = list.filter(p => p.projectId === project);
+  res.json(list);
+});
+
+app.post("/api/developer-banks", authenticateToken, requireAdmin, (req, res) => {
+  const data = req.body;
+  const bank: DeveloperBank = {
+    id: data.id || `bank-${Date.now()}`,
+    projectId: data.projectId || 'ocean-park-2',
+    name: data.name || 'Ngân hàng mới',
+    support: data.support || '',
+    rate: data.rate || '?',
+    maxLoan: data.maxLoan || '?',
+    term: data.term || '?'
+  };
+  developerBanksStore.push(bank);
+  saveDataStore();
+  res.json({ success: true, bank });
+});
+
+app.delete("/api/developer-banks/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const idx = developerBanksStore.findIndex(p => p.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy ngân hàng." });
+  developerBanksStore.splice(idx, 1);
+  saveDataStore();
+  res.json({ success: true });
+});
+
+// Sơ đồ mặt bằng
+app.get("/api/developer-floorplans", (req, res) => {
+  const { project, subdivision } = req.query;
+  let list = developerFloorplansStore;
+  if (project) list = list.filter(p => p.projectId === project);
+  if (subdivision) list = list.filter(p => p.subdivisionId === subdivision);
+  res.json(list);
+});
+
+app.post("/api/developer-floorplans", authenticateToken, requireAdmin, (req, res) => {
+  const data = req.body;
+  const fp: DeveloperFloorplan = {
+    id: data.id || `fp-${Date.now()}`,
+    projectId: data.projectId || 'ocean-park-2',
+    subdivisionId: data.subdivisionId || 'op2-cha-la',
+    image: data.image || '/images/demo/project-tower.jpg',
+    label: data.label || 'Sơ đồ mặt bằng'
+  };
+  developerFloorplansStore.push(fp);
+  saveDataStore();
+  res.json({ success: true, floorplan: fp });
+});
+
+app.delete("/api/developer-floorplans/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const idx = developerFloorplansStore.findIndex(p => p.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy sơ đồ." });
+  developerFloorplansStore.splice(idx, 1);
+  saveDataStore();
+  res.json({ success: true });
 });
 
 // ============================================================

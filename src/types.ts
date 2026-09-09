@@ -1027,3 +1027,86 @@ export interface AdminTaskDelegation {
   updatedAt: string;
 }
 
+// ==========================================
+// MẶT BẰNG & BẢNG HÀNG CHỦ ĐẦU TƯ (Developer Units / F1)
+// ==========================================
+
+export type DeveloperUnitStatus = 'conhang' | 'dabooking' | 'dacoc' | 'daban' | 'thuhoi';
+
+export const DEVELOPER_UNIT_STATUS_LABELS: Record<DeveloperUnitStatus, string> = {
+  conhang: 'Còn hàng',
+  dabooking: 'Đã booking',
+  dacoc: 'Đã cọc',
+  daban: 'Đã bán',
+  thuhoi: 'Thu hồi'
+};
+
+export type DeveloperUnitSource = 'cdt' | 'f1';
+export type DeveloperUnitTier = 'cao' | 'thap';
+
+export interface DeveloperUnit {
+  id: string;
+  projectId: string;        // 'ocean-park-2' | 'ocean-park-1' | ...
+  subdivisionId: string;    // 'op2-cha-la' | 'op2-hai-au' | ...
+  code: string;             // 'CL-01', 'HA-01'...
+  type: string;             // 'Nhà phố thương mại', 'Shophouse', 'Căn hộ 2PN'...
+  area: number;             // m2
+  price: number;            // tỷ VND
+  priceDisplay: string;
+  status: DeveloperUnitStatus;
+  source: DeveloperUnitSource;
+  tier: DeveloperUnitTier;  // cao tầng / thấp tầng
+  x: number;                // vị trí trên sơ đồ (%)
+  y: number;
+  floor?: string;           // tầng (cao tầng)
+  note?: string;
+  agentId?: string;         // F1 agent id nếu source = f1
+  updatedAt: string;
+}
+
+export interface F1Agent {
+  id: string;
+  name: string;
+  phone: string;
+  approvedCount: number;
+  totalCount: number;
+  color: string;
+}
+
+export interface DeveloperPolicy {
+  id: string;
+  projectId: string;
+  subdivisionId?: string;
+  title: string;
+  content: string;
+  updatedAt: string;
+}
+
+export interface DeveloperInstallment {
+  id: string;
+  projectId: string;
+  subdivisionId?: string;
+  name: string;          // 'Đợt 1', 'Đợt 2'...
+  percent: number;       // % giá trị
+  dueDate: string;       // mô tả thời hạn
+  note?: string;
+}
+
+export interface DeveloperBank {
+  id: string;
+  projectId: string;
+  name: string;          // 'Vietcombank', 'BIDV'...
+  support: string;       // 'Hỗ trợ 70% giá trị, lãi suất 0% 24 tháng'
+  rate: string;
+  maxLoan: string;
+  term: string;
+}
+
+export interface DeveloperFloorplan {
+  id: string;
+  projectId: string;
+  subdivisionId: string;
+  image: string;         // URL ảnh sơ đồ
+  label: string;
+}
+

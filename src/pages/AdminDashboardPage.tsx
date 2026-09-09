@@ -4,6 +4,7 @@ import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTran
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2, Save } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { AdminKycManager } from '../components/AdminKycManager';
+import { DeveloperUnitsAdmin } from '../components/DeveloperUnitsAdmin';
 import { calculateExpiryInfo } from '../lib/expiration';
 
 interface ReputationPost {
@@ -85,11 +86,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [activeTab, setActiveTab] = useState<
     | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync' | 'faq'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
+    | 'developer_units'
   >('properties');
+  const [devSubTab, setDevSubTab] = useState('matbang');
 
   // Compute active main category (Phân rõ các tab riêng biệt không bị gộp chung)
-  const effectiveMainTab: 'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' = (() => {
+  const effectiveMainTab: 'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' = (() => {
     if (['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt', 'faq'].includes(activeTab)) return 'bds';
+    if (activeTab === 'developer_units') return 'developer_units';
     if (activeTab === 'resident_services_mgmt') return 'technicians';
     if (activeTab === 'recruitment_mgmt') return 'recruitment';
     if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
@@ -98,11 +102,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     return 'tools';
   })();
 
-  const handleSelectMainTab = (tab: 'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools') => {
+  const handleSelectMainTab = (tab: 'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools') => {
     if (tab === 'bds') {
       setAdminSector('bds');
       if (!['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt', 'faq'].includes(activeTab)) {
         setActiveTab('properties');
+      }
+    } else if (tab === 'developer_units') {
+      setAdminSector('bds');
+      if (activeTab !== 'developer_units') {
+        setActiveTab('developer_units');
       }
     } else if (tab === 'technicians') {
       setAdminSector('resident_market');
@@ -129,8 +138,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   // Mobile Gesture Navigation (Gạt sang trái: Sang Tab tiếp theo / Sổ menu | Gạt sang phải: Quay lại Tab trước)
-  const MAIN_TAB_KEYS: Array<'bds' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools'> = [
+  const MAIN_TAB_KEYS: Array<'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools'> = [
     'bds',
+    'developer_units',
     'technicians',
     'recruitment',
     'resident_market',
@@ -2627,7 +2637,127 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               )}
             </div>
 
-            {/* 2. Thợ Dịch Vụ & Kỹ Thuật */}
+            {/* 2. Bảng Hàng CĐT (MỚI — Mặt Bằng & Bảng Hàng Chủ Đầu Tư) */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('developer_units');
+                  setDevSubTab('matbang');
+                }}
+                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                  effectiveMainTab === 'developer_units'
+                    ? 'bg-violet-600 text-white shadow-md ring-1 ring-violet-400'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <MapPin className={`w-4 h-4 ${effectiveMainTab === 'developer_units' ? 'text-white' : 'text-violet-400'}`} />
+                  <span className="text-[12px] font-extrabold">2. Bảng Hàng CĐT</span>
+                </div>
+                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                  9
+                </span>
+              </button>
+
+              {effectiveMainTab === 'developer_units' && (
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-violet-500/40 ml-3.5 animate-in fade-in duration-150">
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('matbang'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'developer_units' && devSubTab === 'matbang'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• ✨ Mặt Bằng & Bảng Hàng CĐT</span>
+                    <span className="font-mono text-[10px] text-violet-400">32</span>
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('dashboard'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'dashboard'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📊 Dashboard
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('import'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'import'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📥 Import Sheet
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('sodo'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'sodo'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 🗺️ Sơ đồ MB
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('danhsach'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'danhsach'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 🏘️ Danh sách căn
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('chinhsach'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'chinhsach'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📋 Chính sách BH
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('dottt'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'dottt'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📅 Đợt thanh toán
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('nganhang'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'nganhang'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 🏦 Ngân hàng
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('export'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'export'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📤 Export
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 3. Thợ Dịch Vụ & Kỹ Thuật */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2643,7 +2773,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Wrench className={`w-4 h-4 ${effectiveMainTab === 'technicians' ? 'text-slate-950' : 'text-orange-400'}`} />
-                  <span className="text-[12px] font-extrabold">2. Thợ & Dịch Vụ</span>
+                  <span className="text-[12px] font-extrabold">3. Thợ & Dịch Vụ</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
                   {adminResidentServices.length}
@@ -2651,7 +2781,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
             </div>
 
-            {/* 3. Tuyển Dụng & Việc Làm */}
+            {/* 4. Tuyển Dụng & Việc Làm */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2667,7 +2797,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Briefcase className={`w-4 h-4 ${effectiveMainTab === 'recruitment' ? 'text-slate-950' : 'text-teal-400'}`} />
-                  <span className="text-[12px] font-extrabold">3. Tuyển Dụng & CV</span>
+                  <span className="text-[12px] font-extrabold">4. Tuyển Dụng & CV</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-bold">
                   Việc làm
@@ -2675,7 +2805,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
             </div>
 
-            {/* 4. Chợ Cư Dân */}
+            {/* 5. Chợ Cư Dân */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2691,7 +2821,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Store className={`w-4 h-4 ${effectiveMainTab === 'resident_market' ? 'text-slate-950' : 'text-amber-400'}`} />
-                  <span className="text-[12px] font-extrabold">4. Chợ Cư Dân</span>
+                  <span className="text-[12px] font-extrabold">5. Chợ Cư Dân</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
                   {adminStores.length}
@@ -2758,7 +2888,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               )}
             </div>
 
-            {/* 5. Thành Viên & Khách Hàng */}
+            {/* 6. Thành Viên & Khách Hàng */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2774,7 +2904,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <UserCheck className={`w-4 h-4 ${effectiveMainTab === 'users_leads' ? 'text-white' : 'text-blue-400'}`} />
-                  <span className="text-[12px] font-extrabold">5. Thành Viên & Khách</span>
+                  <span className="text-[12px] font-extrabold">6. Thành Viên & Khách</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
                   {registeredUsers.length}
@@ -2819,7 +2949,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               )}
             </div>
 
-            {/* 6. Banner & Quảng Cáo */}
+            {/* 7. Banner & Quảng Cáo */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2835,7 +2965,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Sparkles className={`w-4 h-4 ${effectiveMainTab === 'ads' ? 'text-white' : 'text-rose-400'}`} />
-                  <span className="text-[12px] font-extrabold">6. Quảng Cáo Banner</span>
+                  <span className="text-[12px] font-extrabold">7. Quảng Cáo Banner</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
                   {adsList.length}
@@ -2843,7 +2973,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
             </div>
 
-            {/* 7. Công Cụ & Hệ Thống */}
+            {/* 8. Công Cụ & Hệ Thống */}
             <div className="space-y-0.5">
               <button
                 type="button"
@@ -2859,7 +2989,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Settings className={`w-4 h-4 ${effectiveMainTab === 'tools' ? 'text-white' : 'text-indigo-400'}`} />
-                  <span className="text-[12px] font-extrabold">7. Công Cụ &amp; Bot</span>
+                  <span className="text-[12px] font-extrabold">8. Công Cụ &amp; Bot</span>
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-bold">
                   SEO
@@ -2967,43 +3097,54 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <Building2 className="w-4 h-4" /> 1. BĐS ({properties.length})
               </button>
               <button
+                onClick={() => { handleSelectMainTab('developer_units'); setActiveTab('developer_units'); setDevSubTab('matbang'); setIsSubNavDropdownOpen(false); }}
+                className="p-2 bg-slate-900 text-violet-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <MapPin className="w-4 h-4" /> 2. Bảng Hàng CĐT
+              </button>
+              <button
                 onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-orange-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Wrench className="w-4 h-4" /> 2. Thợ ({adminResidentServices.length})
+                <Wrench className="w-4 h-4" /> 3. Thợ ({adminResidentServices.length})
               </button>
               <button
                 onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-teal-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Briefcase className="w-4 h-4" /> 3. Tuyển Dụng
+                <Briefcase className="w-4 h-4" /> 4. Tuyển Dụng
               </button>
               <button
                 onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-amber-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Store className="w-4 h-4" /> 4. Chợ ({adminStores.length})
+                <Store className="w-4 h-4" /> 5. Chợ ({adminStores.length})
               </button>
               <button
                 onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('users'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-blue-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <UserCheck className="w-4 h-4" /> 5. Thành Viên
+                <UserCheck className="w-4 h-4" /> 6. Thành Viên
               </button>
               <button
                 onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
                 className="p-2 bg-slate-900 text-rose-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Sparkles className="w-4 h-4" /> 6. Quảng Cáo
+                <Sparkles className="w-4 h-4" /> 7. Quảng Cáo
               </button>
               <button
                 onClick={() => { handleSelectMainTab('tools'); setActiveTab('analytics'); setIsSubNavDropdownOpen(false); }}
                 className="col-span-2 p-2 bg-slate-900 text-indigo-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Settings className="w-4 h-4" /> 7. Công Cụ & Bot Hệ Thống
+                <Settings className="w-4 h-4" /> 8. Công Cụ & Bot Hệ Thống
               </button>
             </div>
           )}
+
+      {/* ==================== TAB BẢNG HÀNG CĐT (MẶT BẰNG & BẢNG HÀNG CHỦ ĐẦU TƯ) ==================== */}
+      {activeTab === 'developer_units' && (
+        <DeveloperUnitsAdmin subTab={devSubTab} setSubTab={setDevSubTab} />
+      )}
 
       {/* ==================== TAB THỢ DỊCH VỤ & KỸ THUẬT CƯ DÂN ==================== */}
       {activeTab === 'resident_services_mgmt' && (
