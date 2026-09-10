@@ -108,7 +108,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/40" />
         </div>
 
-        <div className="relative max-w-[1400px] mx-auto space-y-4 sm:space-y-8 text-center sm:text-left">
+        <div className="relative min-w-0 max-w-[1400px] mx-auto space-y-4 sm:space-y-8 text-center sm:text-left lg:pr-[min(30vw,416px)]">
           
           {/* Top Badge */}
           <div className="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-extrabold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md">
@@ -502,7 +502,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             {/* Đóng wrapper search box */}
 
             {/* Bảng tin real-time — trong banner tối, bên phải, kéo dài từ ngang badge xuống đáy search box */}
-            <div className="hidden lg:block absolute top-0 bottom-0 right-0 w-[416px]">
+            <div className="hidden lg:block absolute top-0 bottom-0 right-0 w-[min(30vw,416px)] max-w-full">
               <RealTimeNewsBoard
                 properties={properties}
                 news={news}
