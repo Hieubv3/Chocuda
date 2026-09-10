@@ -890,7 +890,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
         <div className="lg:col-span-8 space-y-6">
 
           {/* Categories Grid — mobile: nốt vuông gọn kiểu Chợ Tốt (icon to, tên 2 dòng) · desktop: nút ngang */}
-          <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 gap-1">
+          <div className="flex gap-2 overflow-x-auto pb-1 snap-x snap-mandatory scrollbar-none lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
             <button
               onClick={() => {
                 if (window.innerWidth < 1024) {
@@ -901,7 +901,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   navigate('/dich-vu-cu-dan');
                 }
               }}
-              className={`rounded-lg border transition cursor-pointer flex flex-col items-center justify-center text-center py-1 px-0.5 min-h-[38px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-start lg:gap-1 lg:p-1 lg:text-left ${
+              className={`w-[104px] shrink-0 snap-start rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2 px-1.5 min-h-[78px] lg:w-auto lg:shrink lg:min-h-0 lg:flex-row lg:items-center lg:justify-start lg:gap-1 lg:p-1 lg:text-left ${
                 selectedCategory === 'all'
                   ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
                   : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
@@ -911,8 +911,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                 <Wrench className="w-3 h-3 lg:w-2.5 lg:h-2.5" />
               </div>
               <div className="min-w-0 w-full lg:w-auto mt-0.5 lg:mt-0">
-                <div className="text-[8px] lg:text-[9px] font-bold leading-tight line-clamp-2 lg:truncate">Tất Cả Dịch Vụ</div>
-                <div className="text-[7px] opacity-70 truncate">Tổng {services.length} bài</div>
+                <div className="text-[10px] lg:text-[9px] font-bold leading-tight line-clamp-2 lg:truncate">Tất Cả Dịch Vụ</div>
+                <div className="text-[9px] lg:text-[7px] opacity-70 truncate">{services.length} bài</div>
               </div>
             </button>
 
@@ -934,7 +934,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       navigate(getServiceCategoryUrl(cat.id));
                     }
                   }}
-                  className={`rounded-lg border transition cursor-pointer flex flex-col items-center justify-center text-center py-1 px-0.5 min-h-[38px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-between lg:gap-0.5 lg:p-1 lg:text-left ${
+                  className={`w-[104px] shrink-0 snap-start rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2 px-1.5 min-h-[78px] lg:w-auto lg:shrink lg:min-h-0 lg:flex-row lg:items-center lg:justify-between lg:gap-0.5 lg:p-1 lg:text-left ${
                     isActive
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
                       : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
@@ -945,8 +945,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       {renderCategoryIcon(cat.iconName, "w-3 h-3 lg:w-2.5 lg:h-2.5")}
                     </div>
                     <div className="min-w-0 w-full lg:w-auto mt-0.5 lg:mt-0">
-                      <div className="text-[8px] lg:text-[9px] font-bold leading-tight line-clamp-2 lg:truncate">{cat.name}</div>
-                      <div className="text-[7px] opacity-75 truncate">{count} {countLabel}</div>
+                      <div className="text-[10px] lg:text-[9px] font-bold leading-tight line-clamp-2 lg:truncate">{cat.name}</div>
+                      <div className="text-[9px] lg:text-[7px] opacity-75 truncate">{count} {countLabel}</div>
                     </div>
                   </div>
                   {industryRule?.isStrictMandatory && (

@@ -16,10 +16,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Mobile-first controls: preserve vertical space while keeping horizontal
+   category and navigation strips easy to swipe. */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 /* Mobile smooth hardware acceleration */
 @media (max-width: 768px) {
   * {
     scroll-behavior: smooth;
+  }
+
+  body {
+    padding-bottom: 4.75rem;
   }
 }
 
