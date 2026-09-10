@@ -167,6 +167,18 @@ export const App: React.FC = () => {
     return Array.isArray(saved) && saved.length > 0 ? saved : INITIAL_ADS;
   });
 
+  useEffect(() => {
+    fetch('/api/ads')
+      .then(res => res.ok ? res.json() : [])
+      .then((data: AdBanner[]) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setAds(data);
+          safeLocalStorageSet('hb_ads', data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Favorites & Compare IDs
   const [savedIds, setSavedIds] = useState<string[]>(() => {
     return safeLocalStorageGet<string[]>('hb_saved_properties', []);
@@ -783,7 +795,7 @@ export const App: React.FC = () => {
       <ScrollToTop />
 
       {/* Top Banner (If active) */}
-      <AdBannerWidget ads={INITIAL_ADS} position="header_top" />
+      <AdBannerWidget ads={ads} position="header_top" />
 
       {/* Navigation Header */}
       <Header
@@ -805,6 +817,18 @@ export const App: React.FC = () => {
         onOpenAndroidModal={() => setAndroidModalOpen(true)}
         onNavigateWithFilter={handleNavigateWithFilter}
       />
+
+      {/* Managed advertising slots shared by secondary pages. HomePage owns its
+          dedicated middle banner so it does not render this slot twice. */}
+      {location.pathname !== '/' && (
+        <AdBannerWidget
+          ads={ads}
+          position="home_middle"
+          className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8"
+        />
+      )}
+      <AdBannerWidget ads={ads} position="float_left_pc" />
+      <AdBannerWidget ads={ads} position="float_right_pc" />
 
       {/* Main Page Render via React Router */}
       <main className="flex-1 w-full overflow-x-hidden">
