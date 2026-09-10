@@ -338,6 +338,45 @@ export const RESIDENT_SERVICE_CATEGORIES: ResidentServiceCategory[] = [
       'Thời trang, Giày dép & Phụ kiện',
       'Đồ dùng Mẹ & Bé'
     ]
+  },
+  {
+    id: 'cho-thue-can-ho-chung-cu',
+    name: 'Cho Thuê Căn Hộ Chung Cư',
+    iconName: 'Building2',
+    badge: 'Cho Thuê',
+    description: 'Cho thuê căn hộ chung cư Vinhomes đầy đủ nội thất, tiện ích cao cấp, hợp đồng linh hoạt.',
+    subCategories: [
+      'Cho Thuê Căn Hộ Chung Cư Đầy Đủ Nội Thất',
+      'Cho Thuê Căn Hộ Cao Cấp & VIP',
+      'Hợp Đồng Thuê Linh Hoạt (Theo Tháng/Theo Năm)',
+      'Phòng Khách, Studio & Căn Tủ'
+    ]
+  },
+  {
+    id: 'can-thap-tang',
+    name: 'Căn Thấp Tầng',
+    iconName: 'Home',
+    badge: 'Thuê Bán',
+    description: 'Cho thuê căn thấp tầng, shophouse, nhà phố Vinhomes — phù hợp kinh doanh & ở.',
+    subCategories: [
+      'Shophouse & Nhà Phố Thấp Tầng',
+      'Căn Tầng 1 & Tầng Trệt',
+      'Căn Góc & Căn Mặt Tiền',
+      'Cho Thuê Bán & Cho Thuê Dài Hạn'
+    ]
+  },
+  {
+    id: 'phong-tro',
+    name: 'Phòng Trọ',
+    iconName: 'BedSingle',
+    badge: 'Giá Tốt',
+    description: 'Cho thuê phòng trọ giá rẻ, phòng trọ sinh viên, phòng trọ cặp đôi — full nội thất.',
+    subCategories: [
+      'Phòng Trọ Giá Rẻ Full Nội Thất',
+      'Phòng Trọ Sinh Viên & Cộng Đồng',
+      'Phòng Trọ Cặp Đôi & Người Độc Thân',
+      'Phòng Trọ Tạm Thời & Theo Giờ'
+    ]
   }
 ];
 

@@ -1,12 +1,12 @@
 ﻿import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { 
-  Wrench, ShieldCheck, Phone, MessageSquare, MapPin, Search, PlusCircle, 
-  Sparkles, Star, CheckCircle2, CheckCircle, ChevronRight, ChevronDown, AlertTriangle, ArrowUpRight, 
-  Building2, ExternalLink, X, Info, Car, Utensils, Cpu, HeartHandshake, 
+import {
+  Wrench, ShieldCheck, Phone, MessageSquare, MapPin, Search, PlusCircle,
+  Sparkles, Star, CheckCircle2, CheckCircle, ChevronRight, ChevronDown, AlertTriangle, ArrowUpRight,
+  Building2, ExternalLink, X, Info, Car, Utensils, Cpu, HeartHandshake,
   GraduationCap, Hotel, Dog, ShoppingBag, ArrowUpRightSquare, Home, FileText, User,
   Award, ShieldAlert, Clock, FileCheck, Upload, Grid2x2, Grid3x3, List, LayoutGrid,
-  Compass, Navigation, Hammer, Wallet, Lock
+  Compass, Navigation, Hammer, Wallet, Lock, BedSingle
 } from 'lucide-react';
 import { ProjectCategory, User as UserType, UserStorefront } from '../types';
 import { 
