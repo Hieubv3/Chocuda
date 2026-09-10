@@ -372,21 +372,29 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
         <span className="text-[10px] font-mono text-slate-400">{tierLabel(currentTier)} · {currentUnits.length} căn</span>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+      {/* Stats — gọn, click → nhảy tới Danh sách căn với bộ lọc tương ứng */}
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
         {[
-          { label: 'Tổng căn', value: units.length, color: 'text-white', bg: 'bg-slate-800' },
-          { label: 'Còn hàng', value: st.conhang, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30' },
-          { label: 'Đã booking', value: st.dabooking, color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/30' },
-          { label: 'Đã cọc', value: st.dacoc, color: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-500/30' },
-          { label: 'Đã bán', value: st.daban, color: 'text-slate-400', bg: 'bg-slate-500/10 border-slate-500/30' },
-          { label: 'Thu hồi', value: st.thuhoi, color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/30' }
-        ].map(s => (
-          <div key={s.label} className={`${s.bg} border rounded-2xl p-3 text-center`}>
-            <div className={`text-xl font-black ${s.color}`}>{s.value}</div>
-            <div className="text-[10px] text-slate-400 font-bold mt-0.5">{s.label}</div>
-          </div>
-        ))}
+          { key: 'all', label: 'Tổng căn', value: units.length, color: 'text-white', bg: 'bg-slate-800' },
+          { key: 'conhang', label: 'Còn hàng', value: st.conhang, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30' },
+          { key: 'dabooking', label: 'Đã booking', value: st.dabooking, color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/30' },
+          { key: 'dacoc', label: 'Đã cọc', value: st.dacoc, color: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-500/30' },
+          { key: 'daban', label: 'Đã bán', value: st.daban, color: 'text-slate-400', bg: 'bg-slate-500/10 border-slate-500/30' },
+          { key: 'thuhoi', label: 'Thu hồi', value: st.thuhoi, color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/30' }
+        ].map(s => {
+          const active = subTab === 'danhsach' && propStatusFilter === s.key;
+          return (
+            <button
+              key={s.key}
+              onClick={() => { setSubTab('danhsach'); setPropStatusFilter(s.key); }}
+              title={`Xem danh sách căn "${s.label}"`}
+              className={`${s.bg} border rounded-xl px-2 py-1.5 text-center transition cursor-pointer hover:scale-[1.04] ${active ? 'ring-2 ring-emerald-400' : ''}`}
+            >
+              <div className={`text-sm font-black leading-tight ${s.color}`}>{s.value}</div>
+              <div className="text-[9px] text-slate-400 font-bold mt-0.5 truncate">{s.label}</div>
+            </button>
+          );
+        })}
       </div>
 
       {/* CĐT / F1 tabs */}
@@ -542,18 +550,26 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
         <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">DASHBOARD</span>
         <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2"><LayoutDashboard className="w-5 h-5" /> TỔNG QUAN BẢNG HÀNG CHỦ ĐẦU TƯ</h2>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[
-          { label: 'Tổng quỹ căn', value: units.length, icon: '🏗️', color: 'text-white' },
-          { label: 'Còn hàng', value: st.conhang, icon: '🟢', color: 'text-emerald-400' },
-          { label: 'Đã bán', value: st.daban, icon: '⚪', color: 'text-slate-400' },
-          { label: 'Căn F1 chờ duyệt', value: f1Units.filter(u => u.note !== 'approved').length, icon: '🤝', color: 'text-sky-400' }
+          { key: 'all', label: 'Tổng quỹ căn', value: units.length, icon: '🏗️', color: 'text-white' },
+          { key: 'conhang', label: 'Còn hàng', value: st.conhang, icon: '🟢', color: 'text-emerald-400' },
+          { key: 'daban', label: 'Đã bán', value: st.daban, icon: '⚪', color: 'text-slate-400' },
+          { key: 'f1', label: 'Căn F1 chờ duyệt', value: f1Units.filter(u => u.note !== 'approved').length, icon: '🤝', color: 'text-sky-400' }
         ].map(s => (
-          <div key={s.label} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow p-4">
-            <div className="text-2xl">{s.icon}</div>
-            <div className={`text-2xl font-black mt-1 ${s.color}`}>{s.value}</div>
-            <div className="text-[10px] text-slate-400 font-bold mt-0.5">{s.label}</div>
-          </div>
+          <button
+            key={s.label}
+            onClick={() => {
+              if (s.key === 'f1') { setSubTab('matbang'); setTabCdtF1('f1'); }
+              else { setSubTab('danhsach'); setPropStatusFilter(s.key); }
+            }}
+            title={`Xem "${s.label}"`}
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow p-3 text-left transition hover:border-emerald-500/60 hover:shadow-md cursor-pointer"
+          >
+            <div className="text-lg">{s.icon}</div>
+            <div className={`text-xl font-black mt-0.5 ${s.color}`}>{s.value}</div>
+            <div className="text-[9px] text-slate-400 font-bold mt-0.5">{s.label}</div>
+          </button>
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

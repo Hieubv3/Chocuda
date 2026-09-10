@@ -951,7 +951,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   // Sidebar collapsible state
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [expandedSidebarItem, setExpandedSidebarItem] = useState<string | null>(null);
   const toggleSidebarItem = (item: string) => {
     setExpandedSidebarItem(prev => prev === item ? null : item);
@@ -2397,13 +2397,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       <div className="flex flex-col lg:flex-row items-start gap-4">
         
          {/* === CỘT TAB QUẢN TRỊ BÊN TRÁI (PERSISTENT LEFT SIDEBAR FOR DESKTOP) === */}
-         <aside className={`${sidebarCollapsed ? 'w-14' : 'w-full lg:w-64 xl:w-72'} shrink-0 lg:sticky lg:top-3 bg-slate-900 text-white border border-slate-800 rounded-2xl shadow-xl lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin transition-all duration-200`}>
+         <aside className={`${sidebarCollapsed ? 'w-full lg:w-14' : 'w-full lg:w-64 xl:w-72'} shrink-0 lg:sticky lg:top-3 bg-slate-900 text-white border border-slate-800 rounded-2xl shadow-xl lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin transition-all duration-200`}>
            <div className="flex items-center justify-between px-2 py-1 border-b border-slate-800/80 pb-2">
              {!sidebarCollapsed && (
                <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
-                 <Layers className="w-3.5 h-3.5 text-emerald-400" />
-                 MENU QUẢN TRỊ (7)
-               </span>
+<Layers className="w-3.5 h-3.5 text-emerald-400" />
+                  MENU QUẢN TRỊ (8)
+                </span>
              )}
              <div className="flex items-center gap-1">
                {!sidebarCollapsed && (
@@ -2422,7 +2422,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
              </div>
            </div>
 
-           <nav className="space-y-1 text-xs" aria-label="Admin Navigation">
+           <nav className={`text-xs ${sidebarCollapsed ? 'flex flex-row lg:flex-col gap-1 overflow-x-auto px-1 py-1' : 'space-y-1'}`} aria-label="Admin Navigation">
             {/* 1. Bất Động Sản */}
             <div className="space-y-0.5">
               <button
@@ -2431,23 +2431,28 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   handleSelectMainTab('bds');
                   setActiveTab('properties');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                title={sidebarCollapsed ? '1. Bất Động Sản' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
                   effectiveMainTab === 'bds'
                     ? 'bg-emerald-600 text-white shadow-md ring-1 ring-emerald-400'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Building2 className={`w-4 h-4 ${effectiveMainTab === 'bds' ? 'text-white' : 'text-emerald-400'}`} />
-                  <span className="text-[12px] font-extrabold">1. Bất Động Sản</span>
+                  <Building2 className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'bds' ? 'text-white' : 'text-emerald-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">1. Bất Động Sản</span>}
                 </div>
-                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
-                  {properties.length}
-                </span>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                    {properties.length}
+                  </span>
+                )}
               </button>
 
               {/* Sub-items if BDS active */}
-              {effectiveMainTab === 'bds' && (
+              {!sidebarCollapsed && effectiveMainTab === 'bds' && (
                 <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-emerald-500/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => { setActiveTab('properties'); setPropertySubFilter('all'); }}
@@ -2645,22 +2650,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   handleSelectMainTab('developer_units');
                   setDevSubTab('matbang');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                title={sidebarCollapsed ? '2. Bảng Hàng CĐT' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
                   effectiveMainTab === 'developer_units'
                     ? 'bg-violet-600 text-white shadow-md ring-1 ring-violet-400'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <MapPin className={`w-4 h-4 ${effectiveMainTab === 'developer_units' ? 'text-white' : 'text-violet-400'}`} />
-                  <span className="text-[12px] font-extrabold">2. Bảng Hàng CĐT</span>
+                  <MapPin className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'developer_units' ? 'text-white' : 'text-violet-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">2. Bảng Hàng CĐT</span>}
                 </div>
-                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
-                  9
-                </span>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                    9
+                  </span>
+                )}
               </button>
 
-              {effectiveMainTab === 'developer_units' && (
+              {!sidebarCollapsed && effectiveMainTab === 'developer_units' && (
                 <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-violet-500/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('matbang'); }}
@@ -2765,19 +2775,24 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   handleSelectMainTab('technicians');
                   setActiveTab('resident_services_mgmt');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                title={sidebarCollapsed ? '3. Thợ & Dịch Vụ' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
                   effectiveMainTab === 'technicians'
                     ? 'bg-orange-500 text-slate-950 font-black shadow-md ring-1 ring-orange-400'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Wrench className={`w-4 h-4 ${effectiveMainTab === 'technicians' ? 'text-slate-950' : 'text-orange-400'}`} />
-                  <span className="text-[12px] font-extrabold">3. Thợ & Dịch Vụ</span>
+                  <Wrench className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'technicians' ? 'text-slate-950' : 'text-orange-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">3. Thợ & Dịch Vụ</span>}
                 </div>
-                <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
-                  {adminResidentServices.length}
-                </span>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
+                    {adminResidentServices.length}
+                  </span>
+                )}
               </button>
             </div>
 
@@ -2789,19 +2804,24 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   handleSelectMainTab('recruitment');
                   setActiveTab('recruitment_mgmt');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                title={sidebarCollapsed ? '4. Tuyển Dụng & CV' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
                   effectiveMainTab === 'recruitment'
                     ? 'bg-teal-500 text-slate-950 font-black shadow-md ring-1 ring-teal-400'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Briefcase className={`w-4 h-4 ${effectiveMainTab === 'recruitment' ? 'text-slate-950' : 'text-teal-400'}`} />
-                  <span className="text-[12px] font-extrabold">4. Tuyển Dụng & CV</span>
+                  <Briefcase className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'recruitment' ? 'text-slate-950' : 'text-teal-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">4. Tuyển Dụng & CV</span>}
                 </div>
-                <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-bold">
-                  Việc làm
-                </span>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-bold">
+                    Việc làm
+                  </span>
+                )}
               </button>
             </div>
 
@@ -2813,22 +2833,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   handleSelectMainTab('resident_market');
                   setActiveTab('stores_mgmt');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                title={sidebarCollapsed ? '5. Chợ Cư Dân' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
                   effectiveMainTab === 'resident_market'
                     ? 'bg-amber-500 text-slate-950 font-black shadow-md ring-1 ring-amber-400'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Store className={`w-4 h-4 ${effectiveMainTab === 'resident_market' ? 'text-slate-950' : 'text-amber-400'}`} />
-                  <span className="text-[12px] font-extrabold">5. Chợ Cư Dân</span>
+                  <Store className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'resident_market' ? 'text-slate-950' : 'text-amber-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">5. Chợ Cư Dân</span>}
                 </div>
-                <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
-                  {adminStores.length}
-                </span>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
+                    {adminStores.length}
+                  </span>
+                )}
               </button>
 
-              {effectiveMainTab === 'resident_market' && (
+              {!sidebarCollapsed && effectiveMainTab === 'resident_market' && (
                 <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-amber-500/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => setActiveTab('stores_mgmt')}
@@ -2896,22 +2921,25 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   handleSelectMainTab('users_leads');
                   setActiveTab('users');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                title={sidebarCollapsed ? '6. Thành Viên & Khách' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
                   effectiveMainTab === 'users_leads'
                     ? 'bg-blue-600 text-white shadow-md ring-1 ring-blue-400'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <UserCheck className={`w-4 h-4 ${effectiveMainTab === 'users_leads' ? 'text-white' : 'text-blue-400'}`} />
-                  <span className="text-[12px] font-extrabold">6. Thành Viên & Khách</span>
+                  <UserCheck className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'users_leads' ? 'text-white' : 'text-blue-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">6. Thành Viên & Khách</span>}
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
                   {registeredUsers.length}
                 </span>
               </button>
 
-              {effectiveMainTab === 'users_leads' && (
+              {!sidebarCollapsed && effectiveMainTab === 'users_leads' && (
                 <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-blue-500/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => setActiveTab('users')}
@@ -2957,15 +2985,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   handleSelectMainTab('ads');
                   setActiveTab('ads');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                title={sidebarCollapsed ? '7. Quảng Cáo Banner' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
                   effectiveMainTab === 'ads'
                     ? 'bg-rose-600 text-white shadow-md ring-1 ring-rose-400'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Sparkles className={`w-4 h-4 ${effectiveMainTab === 'ads' ? 'text-white' : 'text-rose-400'}`} />
-                  <span className="text-[12px] font-extrabold">7. Quảng Cáo Banner</span>
+                  <Sparkles className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'ads' ? 'text-white' : 'text-rose-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">7. Quảng Cáo Banner</span>}
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
                   {adsList.length}
@@ -2981,22 +3012,25 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   handleSelectMainTab('tools');
                   setActiveTab('analytics');
                 }}
-                className={`w-full p-2.5 rounded-xl font-bold flex items-center justify-between transition cursor-pointer ${
+                title={sidebarCollapsed ? '8. Công Cụ & Bot' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
                   effectiveMainTab === 'tools'
                     ? 'bg-indigo-600 text-white shadow-md ring-1 ring-indigo-400'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Settings className={`w-4 h-4 ${effectiveMainTab === 'tools' ? 'text-white' : 'text-indigo-400'}`} />
-                  <span className="text-[12px] font-extrabold">8. Công Cụ &amp; Bot</span>
+                  <Settings className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'tools' ? 'text-white' : 'text-indigo-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">8. Công Cụ &amp; Bot</span>}
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-bold">
                   SEO
                 </span>
               </button>
 
-              {effectiveMainTab === 'tools' && (
+              {!sidebarCollapsed && effectiveMainTab === 'tools' && (
                 <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-indigo-500/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => setActiveTab('analytics')}
@@ -3072,12 +3106,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
               <Layers className="w-3.5 h-3.5" />
               {effectiveMainTab === 'bds' && '1. Bất Động Sản'}
-              {effectiveMainTab === 'technicians' && '2. Thợ & Dịch Vụ'}
-              {effectiveMainTab === 'recruitment' && '3. Tuyển Dụng'}
-              {effectiveMainTab === 'resident_market' && '4. Chợ Cư Dân'}
-              {effectiveMainTab === 'users_leads' && '5. Thành Viên'}
-              {effectiveMainTab === 'ads' && '6. Banner QC'}
-              {effectiveMainTab === 'tools' && '7. Công Cụ'}
+              {effectiveMainTab === 'developer_units' && '2. Bảng Hàng CĐT'}
+              {effectiveMainTab === 'technicians' && '3. Thợ & Dịch Vụ'}
+              {effectiveMainTab === 'recruitment' && '4. Tuyển Dụng'}
+              {effectiveMainTab === 'resident_market' && '5. Chợ Cư Dân'}
+              {effectiveMainTab === 'users_leads' && '6. Thành Viên'}
+              {effectiveMainTab === 'ads' && '7. Banner QC'}
+              {effectiveMainTab === 'tools' && '8. Công Cụ'}
             </span>
             <button
               type="button"

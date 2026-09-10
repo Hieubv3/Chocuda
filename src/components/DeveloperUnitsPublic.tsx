@@ -57,6 +57,7 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
   const [tier, setTier] = useState<DeveloperUnitTier>('thap');
   const [subId, setSubId] = useState<string>('');
   const [srcFilter, setSrcFilter] = useState<'all' | DeveloperUnitSource>('all');
+  const [statusGroupFilter, setStatusGroupFilter] = useState<'all' | 'avail' | 'hold' | 'sold'>('all');
   const [selected, setSelected] = useState<DeveloperUnit | null>(null);
 
   useEffect(() => {
@@ -102,9 +103,9 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
 
   const currentUnits = useMemo(() => {
     return projectUnits
-      .filter(u => u.subdivisionId === subId && u.tier === tier && (srcFilter === 'all' || u.source === srcFilter))
+      .filter(u => u.subdivisionId === subId && u.tier === tier && (srcFilter === 'all' || u.source === srcFilter) && (statusGroupFilter === 'all' || STATUS_GROUP[u.status] === statusGroupFilter))
       .sort((a, b) => a.code.localeCompare(b.code));
-  }, [projectUnits, subId, tier, srcFilter]);
+  }, [projectUnits, subId, tier, srcFilter, statusGroupFilter]);
 
   const subAllUnits = useMemo(() => projectUnits.filter(u => u.subdivisionId === subId && u.tier === tier), [projectUnits, subId, tier]);
 
@@ -234,20 +235,31 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
               ))}
             </div>
 
-            {/* Stats chips */}
-            <div className="flex gap-2 flex-wrap ml-auto">
-              <span className="text-[11px] font-extrabold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                Tổng: {subAllUnits.length}
-              </span>
-              <span className="text-[11px] font-extrabold px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
-                Còn hàng: {subAllUnits.filter(u => STATUS_GROUP[u.status] === 'avail').length}
-              </span>
-              <span className="text-[11px] font-extrabold px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300">
-                Giữ chỗ: {subAllUnits.filter(u => STATUS_GROUP[u.status] === 'hold').length}
-              </span>
-              <span className="text-[11px] font-extrabold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
-                Đã bán: {subAllUnits.filter(u => STATUS_GROUP[u.status] === 'sold').length}
-              </span>
+            {/* Stats chips — click để lọc nhanh theo trạng thái */}
+            <div className="flex gap-1.5 flex-wrap ml-auto">
+              {([
+                { key: 'all', label: `Tổng: ${subAllUnits.length}` },
+                { key: 'avail', label: `Còn hàng: ${subAllUnits.filter(u => STATUS_GROUP[u.status] === 'avail').length}` },
+                { key: 'hold', label: `Giữ chỗ: ${subAllUnits.filter(u => STATUS_GROUP[u.status] === 'hold').length}` },
+                { key: 'sold', label: `Đã bán: ${subAllUnits.filter(u => STATUS_GROUP[u.status] === 'sold').length}` }
+              ] as const).map(c => (
+                <button
+                  key={c.key}
+                  onClick={() => setStatusGroupFilter(c.key)}
+                  title={c.key === 'all' ? 'Hiện tất cả căn' : `Chỉ hiện căn ${c.label.split(':')[0]}`}
+                  className={`text-[11px] font-extrabold px-2.5 py-1 rounded-full border transition cursor-pointer ${
+                    statusGroupFilter === c.key
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
+                      : c.key === 'avail'
+                        ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:border-emerald-500'
+                        : c.key === 'hold'
+                          ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 hover:border-amber-500'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400'
+                  }`}
+                >
+                  {c.label}
+                </button>
+              ))}
             </div>
           </div>
 

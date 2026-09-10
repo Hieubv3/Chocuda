@@ -48,6 +48,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   );
   const [selectedCategory, setSelectedCategory] = useState<string>(categorySlug || 'all');
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>(subCategorySlug || 'all');
+  // Mobile: danh mục đang mở rộng trong khung chung (nốt vuông → accordion)
+  const [expandedCatId, setExpandedCatId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState<boolean>(false);
   const [projectSearchTerm, setProjectSearchTerm] = useState<string>('');
@@ -887,26 +889,30 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
         {/* ==================== LEFT COLUMN: CATEGORIES & RESIDENT SERVICES / STOREFRONTS (HIỂN THỊ BÊN TRÁI - 8 CỘT) ==================== */}
         <div className="lg:col-span-8 space-y-6">
 
-          {/* Categories Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {/* Categories Grid — mobile: nốt vuông gọn kiểu Chợ Tốt (icon to, tên 2 dòng) · desktop: nút ngang */}
+          <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 gap-2">
             <button
               onClick={() => {
-                setSelectedCategory('all');
-                setSelectedSubCategory('all');
-                navigate('/dich-vu-cu-dan');
+                if (window.innerWidth < 1024) {
+                  setExpandedCatId(prev => prev === 'all' ? null : 'all');
+                } else {
+                  setSelectedCategory('all');
+                  setSelectedSubCategory('all');
+                  navigate('/dich-vu-cu-dan');
+                }
               }}
-              className={`p-2.5 rounded-2xl border text-left transition flex items-center gap-2.5 cursor-pointer ${
+              className={`rounded-2xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2.5 px-1 min-h-[96px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-start lg:gap-2.5 lg:p-2.5 lg:text-left ${
                 selectedCategory === 'all'
                   ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
                   : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
-              }`}
+              } ${expandedCatId === 'all' ? 'ring-2 ring-emerald-400' : ''}`}
             >
-              <div className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-500 shrink-0">
-                <Wrench className="w-4 h-4" />
+              <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500 shrink-0">
+                <Wrench className="w-5 h-5 lg:w-4 lg:h-4" />
               </div>
-              <div className="min-w-0">
-                <div className="text-xs font-bold truncate">Tất Cả Dịch Vụ</div>
-                <div className="text-[9px] opacity-70">Tổng {services.length} bài</div>
+              <div className="min-w-0 w-full lg:w-auto mt-1 lg:mt-0">
+                <div className="text-[10px] lg:text-xs font-bold leading-tight line-clamp-2 lg:truncate">Tất Cả Dịch Vụ</div>
+                <div className="text-[9px] opacity-70 truncate">Tổng {services.length} bài</div>
               </div>
             </button>
 
@@ -918,32 +924,105 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                 <button
                   key={cat.id}
                   onClick={() => {
-                    setSelectedCategory(cat.id);
-                    setSelectedSubCategory('all');
-                    navigate(getServiceCategoryUrl(cat.id));
+                    if (window.innerWidth < 1024) {
+                      setExpandedCatId(prev => prev === cat.id ? null : cat.id);
+                    } else {
+                      setSelectedCategory(cat.id);
+                      setSelectedSubCategory('all');
+                      navigate(getServiceCategoryUrl(cat.id));
+                    }
                   }}
-                  className={`p-2.5 rounded-2xl border text-left transition flex items-center justify-between gap-1.5 cursor-pointer ${
+                  className={`rounded-2xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2.5 px-1 min-h-[96px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-between lg:gap-1.5 lg:p-2.5 lg:text-left ${
                     isActive
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
                       : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
-                  }`}
+                  } ${expandedCatId === cat.id ? 'ring-2 ring-emerald-400' : ''}`}
                 >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className={`p-1.5 rounded-xl shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'}`}>
-                      {renderCategoryIcon(cat.iconName, "w-3.5 h-3.5")}
+                  <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 min-w-0">
+                    <div className={`p-2 rounded-xl shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'}`}>
+                      {renderCategoryIcon(cat.iconName, "w-5 h-5 lg:w-4 lg:h-4")}
                     </div>
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold truncate">{cat.name}</div>
+                    <div className="min-w-0 w-full lg:w-auto mt-1 lg:mt-0">
+                      <div className="text-[10px] lg:text-xs font-bold leading-tight line-clamp-2 lg:truncate">{cat.name}</div>
                       <div className="text-[9px] opacity-75 truncate">{count} thợ</div>
                     </div>
                   </div>
                   {industryRule?.isStrictMandatory && (
-                    <span className={`w-2 h-2 rounded-full shrink-0 ${isActive ? 'bg-amber-300' : 'bg-emerald-500'}`} title="Yêu cầu giấy phép ngành nghề" />
+                    <span className={`hidden lg:inline-block w-2 h-2 rounded-full shrink-0 ${isActive ? 'bg-amber-300' : 'bg-emerald-500'}`} title="Yêu cầu giấy phép ngành nghề" />
                   )}
                 </button>
               );
             })}
           </div>
+
+          {/* Khung chung mở rộng trên mobile — hiển thị vắn tắt dịch vụ của danh mục được chọn */}
+          {expandedCatId && (
+            <div className="lg:hidden bg-white dark:bg-slate-900 border border-emerald-500/40 rounded-2xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="px-3 py-2.5 bg-emerald-600/10 border-b border-emerald-500/30 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="p-1.5 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shrink-0">
+                    {expandedCatId === 'all'
+                      ? <Wrench className="w-4 h-4" />
+                      : renderCategoryIcon(RESIDENT_SERVICE_CATEGORIES.find(c => c.id === expandedCatId)?.iconName || 'wrench', "w-4 h-4")}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-xs font-black text-slate-900 dark:text-white truncate">
+                      {expandedCatId === 'all' ? 'Tất Cả Dịch Vụ' : RESIDENT_SERVICE_CATEGORIES.find(c => c.id === expandedCatId)?.name}
+                    </div>
+                    <div className="text-[9px] text-slate-500 dark:text-slate-400">
+                      {expandedCatId === 'all' ? services.length : services.filter(s => s.categoryId === expandedCatId).length} dịch vụ
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setExpandedCatId(null)}
+                  className="p-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer shrink-0"
+                  title="Đóng khung"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="p-3 space-y-2 max-h-[50vh] overflow-y-auto">
+                {(expandedCatId === 'all' ? services : services.filter(s => s.categoryId === expandedCatId)).slice(0, 6).map(s => (
+                  <button
+                    key={s.id}
+                    onClick={() => navigate(getServiceDetailUrl(s))}
+                    className="w-full text-left bg-slate-50 dark:bg-slate-800/60 rounded-xl px-3 py-2 flex items-center justify-between gap-2 hover:bg-emerald-500/10 transition cursor-pointer"
+                  >
+                    <div className="min-w-0">
+                      <div className="text-[11px] font-bold text-slate-800 dark:text-white truncate">{s.title}</div>
+                      <div className="text-[9px] text-slate-500 dark:text-slate-400 truncate">{s.subCategory} · {s.providerName}</div>
+                    </div>
+                    <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 shrink-0">💰 {s.priceDisplay}</span>
+                  </button>
+                ))}
+                {(expandedCatId === 'all' ? services : services.filter(s => s.categoryId === expandedCatId)).length === 0 && (
+                  <div className="text-center py-6 space-y-2">
+                    <div className="text-2xl">📭</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">Chưa có dịch vụ nào trong danh mục này</div>
+                    <button
+                      onClick={() => setIsPostingModalOpen(true)}
+                      className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[10px] rounded-xl cursor-pointer"
+                    >
+                      + Đăng Bài Dịch Vụ
+                    </button>
+                  </div>
+                )}
+                {(expandedCatId === 'all' ? services : services.filter(s => s.categoryId === expandedCatId)).length > 6 && (
+                  <button
+                    onClick={() => {
+                      if (expandedCatId === 'all') { setSelectedCategory('all'); setSelectedSubCategory('all'); navigate('/dich-vu-cu-dan'); }
+                      else { setSelectedCategory(expandedCatId); setSelectedSubCategory('all'); navigate(getServiceCategoryUrl(expandedCatId)); }
+                    }}
+                    className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] rounded-xl cursor-pointer"
+                  >
+                    Xem tất cả →
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Subcategory Pills Bar */}
           {selectedCategoryObj && (
