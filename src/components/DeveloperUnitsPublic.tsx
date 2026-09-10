@@ -13,6 +13,7 @@ import {
 interface DeveloperUnitsPublicProps {
   projectId: string;
   projectName: string;
+  subdivisionId?: string;
 }
 
 const SUB_NAMES: Record<string, string> = {
@@ -48,7 +49,7 @@ const MARKER_COLORS: Record<string, string> = {
   'f1-sold': '#94a3b8'
 };
 
-export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ projectId, projectName }) => {
+export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ projectId, projectName, subdivisionId }) => {
   const [units, setUnits] = useState<DeveloperUnit[]>([]);
   const [agents, setAgents] = useState<F1Agent[]>([]);
   const [floorplans, setFloorplans] = useState<DeveloperFloorplan[]>([]);
@@ -72,7 +73,7 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
         const u: DeveloperUnit[] = Array.isArray(unitsRes) ? unitsRes : unitsRes.units || [];
         const a: F1Agent[] = Array.isArray(agentsRes) ? agentsRes : agentsRes.agents || [];
         const f: DeveloperFloorplan[] = Array.isArray(fpRes) ? fpRes : fpRes.floorplans || [];
-        setUnits(u.filter(x => x.projectId === projectId));
+        setUnits(u.filter(x => x.projectId === projectId && (!subdivisionId || x.subdivisionId === subdivisionId)));
         setAgents(a);
         setFloorplans(f);
         setLoading(false);
@@ -81,7 +82,7 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [projectId]);
+  }, [projectId, subdivisionId]);
 
   const projectUnits = units;
 
@@ -260,6 +261,9 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                   {c.label}
                 </button>
               ))}
+              <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">
+                F1: {subAllUnits.filter(u => u.source === 'f1').length}
+              </span>
             </div>
           </div>
 
@@ -294,7 +298,8 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                       top: u.y + '%',
                       background: color,
                       borderStyle: isF1 ? 'dashed' : 'solid',
-                      transform: 'translate(-50%,-50%)'
+                      transform: `translate(-50%,-50%)${selected?.id === u.id ? ' scale(1.3)' : ''}`,
+                      boxShadow: selected?.id === u.id ? '0 0 0 4px rgba(245, 158, 11, 0.85)' : undefined
                     }}
                   >
                     {u.code.replace(/^[A-Z]+-/, '')}
@@ -328,6 +333,8 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                         key={u.id}
                         onClick={() => setSelected(u)}
                         className={`flex justify-between items-center px-3 py-2 text-xs cursor-pointer border-b border-slate-100 dark:border-slate-800 transition hover:bg-emerald-50 dark:hover:bg-emerald-950/40 ${
+                          selected?.id === u.id ? 'bg-amber-50 dark:bg-amber-950/40 ring-1 ring-inset ring-amber-400' : ''
+                        } ${
                           sold ? 'opacity-60' : ''
                         }`}
                       >

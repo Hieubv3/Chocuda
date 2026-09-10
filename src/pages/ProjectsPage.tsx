@@ -4,6 +4,7 @@ import { MapPin, Building2, CheckCircle2, ChevronRight, Layers, Award, Sparkles,
 import { Project, ProjectCategory, Language, Property, isAdminProperty } from '../types';
 import { PropertyCard } from '../components/PropertyCard';
 import { getProjectSlug, getSubdivisionUrl, getAmenityUrl, getPropertyDetailUrl } from '../lib/slugs';
+import { DeveloperUnitsPublic } from '../components/DeveloperUnitsPublic';
 
 interface ProjectsPageProps {
   projects: Project[];
@@ -313,6 +314,9 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
               </button>
             </div>
           </div>
+
+          {/* Mặt bằng quỹ căn CĐT & Đại lý F1 ngay dưới sơ đồ quy hoạch */}
+          <DeveloperUnitsPublic projectId={currentProject.id} projectName={currentProject.name} />
 
           {/* Admin & Admin Tổng Properties Section */}
           <div className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">

@@ -13,6 +13,7 @@ import { ProjectFaqHub } from '../components/ProjectFaqHub';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { SUBDIVISION_SEO_DATA, SubdivisionSEOInfo } from '../data/subdivisionData';
 import { getProjectIdFromSlug, getProjectSlug, getPropertyDetailUrl } from '../lib/slugs';
+import { DeveloperUnitsPublic } from '../components/DeveloperUnitsPublic';
 
 interface SubdivisionDetailPageProps {
   projects: Project[];
@@ -409,6 +410,15 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
           </div>
 
         </div>
+
+        {/* Quỹ căn CĐT & Đại lý F1 của đúng phân khu */}
+        {project && (
+          <DeveloperUnitsPublic
+            projectId={project.id}
+            projectName={subdivision.projectName}
+            subdivisionId={subdivision.id}
+          />
+        )}
 
         {/* Realtime Property Inventory in this Subdivision */}
         <div className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">

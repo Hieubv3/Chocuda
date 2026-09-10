@@ -10,6 +10,7 @@ import { ProjectFaqHub } from '../components/ProjectFaqHub';
 import { VinhomesProjectSelectModal } from '../components/VinhomesProjectSelectModal';
 import { PopularVinhomesLinksSection } from '../components/PopularVinhomesLinksSection';
 import { RealTimeNewsBoard } from '../components/RealTimeNewsBoard';
+import { DeveloperUnitsPublic } from '../components/DeveloperUnitsPublic';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
 import { HIEU_BUI_PROFILE, INITIAL_ADS } from '../data/initialData';
 import { loadHeroCards } from '../data/heroCardsData';
@@ -90,6 +91,10 @@ export const HomePage: React.FC<HomePageProps> = ({
   };
 
   const featuredProperties = properties.slice(0, 6);
+  const [inventoryProjectId, setInventoryProjectId] = React.useState<ProjectCategory>(
+    (projects.find(p => p.id === 'ocean-park-2')?.id || projects[0]?.id || 'ocean-park-2') as ProjectCategory
+  );
+  const inventoryProject = projects.find(p => p.id === inventoryProjectId) || projects[0];
 
   return (
     <div className="space-y-16 pb-16">
@@ -640,19 +645,38 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredProperties.map((property) => (
-            <PropertyCard
-              key={property.id}
-              property={property}
-              language={language}
-              onSelect={onSelectProperty}
-              isSaved={savedIds.includes(property.id)}
-              onToggleSave={onToggleSave}
-              isCompared={compareIds.includes(property.id)}
-              onToggleCompare={onToggleCompare}
-            />
-          ))}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-6 items-start">
+          <div className="min-w-0 grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {featuredProperties.map((property) => (
+              <PropertyCard
+                key={property.id}
+                property={property}
+                language={language}
+                onSelect={onSelectProperty}
+                isSaved={savedIds.includes(property.id)}
+                onToggleSave={onToggleSave}
+                isCompared={compareIds.includes(property.id)}
+                onToggleCompare={onToggleCompare}
+              />
+            ))}
+          </div>
+          {inventoryProject && (
+            <aside className="lg:sticky lg:top-20 min-w-0 self-start">
+              <div className="mb-3">
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-200 mb-1.5">
+                  Quỹ Căn CĐT & Đại Lý F1 theo dự án
+                </label>
+                <select
+                  value={inventoryProject.id}
+                  onChange={e => setInventoryProjectId(e.target.value as ProjectCategory)}
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-800 dark:text-slate-200"
+                >
+                  {projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}
+                </select>
+              </div>
+              <DeveloperUnitsPublic projectId={inventoryProject.id} projectName={inventoryProject.name} />
+            </aside>
+          )}
         </div>
       </section>
 

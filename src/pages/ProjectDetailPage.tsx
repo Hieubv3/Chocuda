@@ -367,6 +367,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
           <p className="text-[11px] text-slate-400 text-center">
             Bấm vào ảnh để mở sơ đồ quy hoạch kích thước đầy đủ trong tab mới
           </p>
+          <DeveloperUnitsPublic projectId={project.id} projectName={projectName} />
         </div>
       )}
 

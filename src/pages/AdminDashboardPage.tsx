@@ -24,7 +24,7 @@ interface ReputationPost {
 }
 import { AiUrlTrackerModal } from '../components/AiUrlTrackerModal';
 import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
-import { uploadBase64DataUrl, isBase64DataUrl, uploadFiles } from '../lib/uploadService';
+import { uploadBase64DataUrl, isBase64DataUrl, uploadFiles, uploadSingleFile } from '../lib/uploadService';
 import { compressImageFile } from '../lib/imageUtils';
 import { HeroCardConfig, loadHeroCards, saveHeroCards } from '../data/heroCardsData';
 import { EditPropertyModal, EditProjectModal, EditNewsModal, EditFaqModal } from '../components/AdminAssetManagerModals';
@@ -1233,9 +1233,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     setCategoryImageBusy(key);
     try {
       // Nén nhẹ ảnh trước khi upload (giữ dung lượng nhỏ)
-      const compressed = await addWatermarkToImage(file, { skipWatermark: true, maxDim: 800 });
+      let compressed = '';
+      try {
+        compressed = await addWatermarkToImage(file, { skipWatermark: true, maxDim: 800 });
+      } catch (compressionError) {
+        console.warn('Không thể nén ảnh nhóm ngành, dùng file gốc:', compressionError);
+      }
       // Upload lên server lấy URL public /uploads/... thay vì lưu base64 thô vào data store
-      const url = await uploadBase64DataUrl(compressed, 'category-images');
+      let url = '';
+      if (compressed) {
+        try {
+          url = await uploadBase64DataUrl(compressed, 'category-images');
+        } catch (uploadError) {
+          console.warn('Upload base64 thất bại, dùng file gốc:', uploadError);
+        }
+      }
+      if (!url) url = await uploadSingleFile(file);
       if (!url) {
         alert('❌ Upload ảnh thất bại. Vui lòng thử lại!');
         return;
@@ -1250,7 +1263,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         if (Array.isArray(data.categories)) setCategoryImages(data.categories);
         alert('✅ Đã cập nhật ảnh nhóm ngành!');
       } else {
-        alert('❌ Lỗi khi lưu ảnh. Vui lòng thử lại.');
+        const data = await res.json().catch(() => ({}));
+        alert(`❌ Lỗi khi lưu ảnh: ${data.error || `HTTP ${res.status}`}`);
       }
     } catch (e) {
       console.error('Upload category image failed:', e);
