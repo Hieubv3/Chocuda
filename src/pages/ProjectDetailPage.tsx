@@ -484,13 +484,12 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
 
       {/* ============ TAB: TỔNG QUAN (mặc định) ============ */}
       {activeSection === 'overview' && (
-      <>
-      {/* Mặt Bằng Quỹ Căn — CĐT & Đại lý F1 (sơ đồ trái + danh sách phải) */}
-      <DeveloperUnitsPublic projectId={project.id} projectName={projectName} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-6 items-start">
+      <div className="min-w-0 space-y-2">
 
       {/* Subdivisions List */}
       {normalizedSubdivisions.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
+        <div className="px-0 py-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -554,7 +553,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
 
       {/* Amenities Section with Dedicated Links */}
       {normalizedAmenities.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
+        <div className="px-0 py-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -590,7 +589,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       )}
 
       {/* Property Inventory Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="px-0 py-4 space-y-6">
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
@@ -659,13 +658,19 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       </div>
 
       {/* FAQ Hub for this project */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="px-0 py-4">
         <ProjectFaqHub 
           projectId={project.id}
           onOpenPostModal={() => navigate('/dang-tin')}
         />
       </div>
-      </>
+      </div>
+
+      {/* Bảng hàng chủ đầu tư — luôn bám bên phải khi cuộn trên desktop */}
+      <aside className="lg:sticky lg:top-20 min-w-0 self-start">
+        <DeveloperUnitsPublic projectId={project.id} projectName={projectName} />
+      </aside>
+      </div>
       )}
 
       {/* Share Modal */}
