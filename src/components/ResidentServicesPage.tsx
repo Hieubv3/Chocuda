@@ -890,7 +890,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
         <div className="lg:col-span-8 space-y-6">
 
           {/* Categories Grid — mobile: nốt vuông gọn kiểu Chợ Tốt (icon to, tên 2 dòng) · desktop: nút ngang */}
-          <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 gap-1">
             <button
               onClick={() => {
                 if (window.innerWidth < 1024) {
@@ -901,18 +901,18 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   navigate('/dich-vu-cu-dan');
                 }
               }}
-              className={`rounded-2xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2.5 px-1 min-h-[96px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-start lg:gap-2.5 lg:p-2.5 lg:text-left ${
+              className={`rounded-lg border transition cursor-pointer flex flex-col items-center justify-center text-center py-1 px-0.5 min-h-[38px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-start lg:gap-1 lg:p-1 lg:text-left ${
                 selectedCategory === 'all'
                   ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
                   : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
               } ${expandedCatId === 'all' ? 'ring-2 ring-emerald-400' : ''}`}
             >
-              <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500 shrink-0">
-                <Wrench className="w-5 h-5 lg:w-4 lg:h-4" />
+              <div className="p-1 rounded-lg bg-emerald-500/10 text-emerald-500 shrink-0">
+                <Wrench className="w-3 h-3 lg:w-2.5 lg:h-2.5" />
               </div>
-              <div className="min-w-0 w-full lg:w-auto mt-1 lg:mt-0">
-                <div className="text-[10px] lg:text-xs font-bold leading-tight line-clamp-2 lg:truncate">Tất Cả Dịch Vụ</div>
-                <div className="text-[9px] opacity-70 truncate">Tổng {services.length} bài</div>
+              <div className="min-w-0 w-full lg:w-auto mt-0.5 lg:mt-0">
+                <div className="text-[8px] lg:text-[9px] font-bold leading-tight line-clamp-2 lg:truncate">Tất Cả Dịch Vụ</div>
+                <div className="text-[7px] opacity-70 truncate">Tổng {services.length} bài</div>
               </div>
             </button>
 
@@ -932,23 +932,23 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       navigate(getServiceCategoryUrl(cat.id));
                     }
                   }}
-                  className={`rounded-2xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2.5 px-1 min-h-[96px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-between lg:gap-1.5 lg:p-2.5 lg:text-left ${
+                  className={`rounded-lg border transition cursor-pointer flex flex-col items-center justify-center text-center py-1 px-0.5 min-h-[38px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-between lg:gap-0.5 lg:p-1 lg:text-left ${
                     isActive
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
                       : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
                   } ${expandedCatId === cat.id ? 'ring-2 ring-emerald-400' : ''}`}
                 >
-                  <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 min-w-0">
-                    <div className={`p-2 rounded-xl shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'}`}>
-                      {renderCategoryIcon(cat.iconName, "w-5 h-5 lg:w-4 lg:h-4")}
+                  <div className="flex flex-col lg:flex-row items-center gap-0.5 lg:gap-1 min-w-0">
+                    <div className={`p-1 rounded-lg shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'}`}>
+                      {renderCategoryIcon(cat.iconName, "w-3 h-3 lg:w-2.5 lg:h-2.5")}
                     </div>
-                    <div className="min-w-0 w-full lg:w-auto mt-1 lg:mt-0">
-                      <div className="text-[10px] lg:text-xs font-bold leading-tight line-clamp-2 lg:truncate">{cat.name}</div>
-                      <div className="text-[9px] opacity-75 truncate">{count} thợ</div>
+                    <div className="min-w-0 w-full lg:w-auto mt-0.5 lg:mt-0">
+                      <div className="text-[8px] lg:text-[9px] font-bold leading-tight line-clamp-2 lg:truncate">{cat.name}</div>
+                      <div className="text-[7px] opacity-75 truncate">{count} thợ</div>
                     </div>
                   </div>
                   {industryRule?.isStrictMandatory && (
-                    <span className={`hidden lg:inline-block w-2 h-2 rounded-full shrink-0 ${isActive ? 'bg-amber-300' : 'bg-emerald-500'}`} title="Yêu cầu giấy phép ngành nghề" />
+                    <span className={`hidden lg:inline-block w-1.5 h-1.5 rounded-full shrink-0 ${isActive ? 'bg-amber-300' : 'bg-emerald-500'}`} title="Yêu cầu giấy phép ngành nghề" />
                   )}
                 </button>
               );
