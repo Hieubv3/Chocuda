@@ -35,7 +35,7 @@ import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
-import { GoogleWorkspaceCenter } from '../components/GoogleWorkspaceCenter';
+// GoogleWorkspaceCenter removed — feature not applied to chocudan24h.com
 
 interface AdminDashboardPageProps {
   properties: Property[];
@@ -84,7 +84,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // 7 Mảng Quản Trị Chuyên Biệt Tách Rời (1. BĐS, 2. Thợ Dịch Vụ, 3. Tuyển Dụng, 4. Dịch Vụ Cư Dân, 5. Người Dùng, 6. Quảng Cáo, 7. Công Cụ)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
-    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'workspace_sync' | 'faq'
+    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'faq'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
     | 'developer_units'
   >('properties');
@@ -131,7 +131,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     } else if (tab === 'ads') {
       setActiveTab('ads');
     } else if (tab === 'tools') {
-      if (!['analytics', 'seo', 'marketing', 'zalo', 'workspace_sync', 'n8n', 'reputation'].includes(activeTab)) {
+      if (!['analytics', 'seo', 'marketing', 'zalo', 'n8n', 'reputation'].includes(activeTab)) {
         setActiveTab('analytics');
       }
     }
@@ -3072,16 +3072,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   >
                     • Cộng Đồng Zalo
                   </button>
-                  <button
-                    onClick={() => setActiveTab('workspace_sync')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
-                      activeTab === 'workspace_sync'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
-                    }`}
-                  >
-                    • Google Workspace
-                  </button>
+                  {/* Google Workspace tab removed — feature not applied to chocudan24h.com */}
                   <button
                     onClick={() => setActiveTab('n8n')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
@@ -7857,13 +7848,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         />
       )}
 
-      {/* Tab Google Drive & Sheets Workspace Sync */}
-      {activeTab === 'workspace_sync' && (
-        <GoogleWorkspaceCenter
-          properties={properties}
-          residentServices={adminResidentServices}
-        />
-      )}
+      {/* Google Workspace tab removed — feature not applied to chocudan24h.com */}
 
       {/* Tab 4: n8n */}
       {activeTab === 'n8n' && (

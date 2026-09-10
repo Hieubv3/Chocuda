@@ -3087,32 +3087,7 @@ app.post("/api/properties/:id/renew", (req, res) => {
 });
 
 // Property POST (Submit new listing)
-let workspaceConfigStore = {
-  spreadsheetId: '',
-  spreadsheetUrl: '',
-  folderId: '',
-  folderUrl: '',
-  autoSync: true,
-  lastSyncedAt: ''
-};
-
-app.get("/api/workspace/config", (req, res) => {
-  res.json(workspaceConfigStore);
-});
-
-app.post("/api/workspace/config", (req, res) => {
-  workspaceConfigStore = { ...workspaceConfigStore, ...req.body };
-  saveDataStore();
-  res.json({ success: true, config: workspaceConfigStore });
-});
-
-app.post("/api/workspace/sync-all", (req, res) => {
-  const { spreadsheetId, propertiesCount, residentServicesCount } = req.body;
-  workspaceConfigStore.lastSyncedAt = new Date().toLocaleString('vi-VN');
-  if (spreadsheetId) workspaceConfigStore.spreadsheetId = spreadsheetId;
-  saveDataStore();
-  res.json({ success: true, message: `Đã đồng bộ ${propertiesCount || propertiesStore.length} bài đăng lên Google Sheets!` });
-});
+// Google Workspace endpoints removed — feature not applied to chocudan24h.com
 
 app.post("/api/properties", (req, res) => {
   const data = req.body;
@@ -3340,7 +3315,6 @@ app.get("/api/admin/export-data-store", authenticateToken, requireAdmin, (req, r
     walletTransactions: walletTransactionsStore,
     taxConfig: taxConfigStore,
     taxLedger: taxLedgerStore,
-    workspaceConfig: workspaceConfigStore,
     exportedAt: new Date().toISOString()
   }, null, 2));
 });
@@ -3366,7 +3340,6 @@ app.post("/api/admin/import-data-store", authenticateToken, requireAdmin, (req, 
     if (Array.isArray(data.walletTransactions)) walletTransactionsStore = data.walletTransactions;
     if (data.taxConfig) taxConfigStore = data.taxConfig;
     if (Array.isArray(data.taxLedger)) taxLedgerStore = data.taxLedger;
-    if (data.workspaceConfig) workspaceConfigStore = data.workspaceConfig;
 
     saveDataStore();
     res.json({

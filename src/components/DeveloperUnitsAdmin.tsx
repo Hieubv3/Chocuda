@@ -28,17 +28,74 @@ const STATUS_DOT: Record<DeveloperUnitStatus, string> = {
 };
 
 const SUB_CONFIG: Record<string, { name: string; prefix: string; tier: 'cao' | 'thap' }> = {
+  // Ocean Park 2
   'op2-cha-la': { name: 'Phân khu Chà Là', prefix: 'CL', tier: 'thap' },
   'op2-co-xanh': { name: 'Phân khu Cọ Xanh', prefix: 'CX', tier: 'thap' },
-  'op2-hai-tang': { name: 'Phân khu Hải Tăng', prefix: 'HA', tier: 'cao' },
+  'op2-hai-tang': { name: 'Phân khu Hải Tăng', prefix: 'HT', tier: 'cao' },
   'op2-san-ho': { name: 'Phân khu San Hô', prefix: 'SH', tier: 'thap' },
+  'op2-sao-bien': { name: 'Phân khu Sao Biển', prefix: 'SB', tier: 'thap' },
+  'op2-dao-ngoc': { name: 'Phân khu Đảo Ngọc', prefix: 'DN', tier: 'thap' },
+  'op2-cho-dem': { name: 'Phân khu Chợ Đêm Grand World', prefix: 'CD', tier: 'thap' },
+  // Ocean Park 1
   'op1-san-ho': { name: 'Phân khu San Hô', prefix: 'SH', tier: 'thap' },
-  'op1-ngoc-trai': { name: 'Phân khu Ngọc Trai', prefix: 'NT', tier: 'thap' }
+  'op1-ngoc-trai': { name: 'Phân khu Ngọc Trai', prefix: 'NT', tier: 'thap' },
+  'op1-sapphire': { name: 'Phân khu Sapphire', prefix: 'SP', tier: 'cao' },
+  'op1-zen-park': { name: 'Phân khu Zen Park', prefix: 'ZP', tier: 'thap' },
+  'op1-masteri': { name: 'Phân khu Masteri Waterfront', prefix: 'MW', tier: 'cao' },
+  'op1-hai-tang': { name: 'Phân khu Hải Tăng', prefix: 'HT', tier: 'cao' },
+  'op1-sao-bien': { name: 'Phân khu Sao Biển', prefix: 'SB', tier: 'thap' },
+  // Ocean Park 3
+  'op3-pho-bien': { name: 'Phân khu Phố Biển', prefix: 'PB', tier: 'thap' },
+  'op3-vinh-thien-duong': { name: 'Phân khu Vịnh Thiên Đường', prefix: 'VT', tier: 'thap' },
+  'op3-anh-duong': { name: 'Phân khu Ánh Dương', prefix: 'AD', tier: 'thap' },
+  'op3-thoi-dai': { name: 'Phân khu Thời Đại', prefix: 'TD', tier: 'thap' },
+  'op3-vinh-tay': { name: 'Phân khu Vịnh Tây', prefix: 'VW', tier: 'thap' },
+  'op3-vinh-hai-tang': { name: 'Phân khu Vịnh Hải Tăng', prefix: 'VH', tier: 'cao' },
+  // Hạ Long Xanh
+  'hlx-hoang-tan': { name: 'Phân khu Hoàng Tân', prefix: 'HT', tier: 'thap' },
+  'hlx-ha-an': { name: 'Phân khu Hà An', prefix: 'HA', tier: 'thap' },
+  'hlx-ben-du-thuyen': { name: 'Phân khu Bến du thuyền', prefix: 'BD', tier: 'thap' },
+  'hlx-san-golf': { name: 'Phân khu Sân Golf', prefix: 'SG', tier: 'thap' },
+  'hlx-can-ho': { name: 'Phân khu Căn hộ cao tầng', prefix: 'CH', tier: 'cao' },
+  // Green Paradise Cần Giờ
+  'gp-a': { name: 'Phân khu A Sinh thái', prefix: 'GA', tier: 'thap' },
+  'gp-b': { name: 'Phân khu B Thương mại', prefix: 'GB', tier: 'thap' },
+  'gp-c': { name: 'Phân khu C Trung tâm', prefix: 'GC', tier: 'cao' },
+  'gp-d': { name: 'Phân khu D Du lịch', prefix: 'GD', tier: 'thap' },
+  'gp-e': { name: 'Phân khu E Đô thị Biển', prefix: 'GE', tier: 'cao' },
+  // Tân Mỹ Hậu Nghĩa
+  'tm-biet-thu': { name: 'Phân khu Biệt thự', prefix: 'TB', tier: 'thap' },
+  'tm-shophouse': { name: 'Phân khu Shophouse', prefix: 'TS', tier: 'thap' },
+  'tm-can-ho': { name: 'Phân khu Căn hộ', prefix: 'TC', tier: 'cao' },
+  'tm-cong-vien': { name: 'Phân khu Công viên', prefix: 'TP', tier: 'thap' },
+  // Green City Hóc Môn
+  'gc-sinh-thai': { name: 'Phân khu Sinh thái', prefix: 'GS', tier: 'thap' },
+  'gc-dai-hoc': { name: 'Phân khu Làng Đại học', prefix: 'GU', tier: 'cao' },
+  'gc-tai-chinh': { name: 'Phân khu Tài chính', prefix: 'GF', tier: 'cao' },
+  'gc-biet-thu': { name: 'Phân khu Biệt thự', prefix: 'GB', tier: 'thap' },
+  // Làng Vân Đà Nẵng
+  'lv-biet-thu-bien': { name: 'Phân khu Biệt thự biển', prefix: 'LB', tier: 'thap' },
+  'lv-condotel': { name: 'Phân khu Condotel', prefix: 'LC', tier: 'cao' },
+  'lv-resort': { name: 'Phân khu Resort', prefix: 'LR', tier: 'thap' },
+  'lv-giai-tri': { name: 'Phân khu Giải trí', prefix: 'LG', tier: 'thap' },
+  // Smart City
+  'sc-sapphire': { name: 'Phân khu Sapphire Parkville', prefix: 'SS', tier: 'thap' },
+  'sc-tonkin': { name: 'Phân khu Tonkin', prefix: 'ST', tier: 'thap' },
+  'sc-masteri': { name: 'Phân khu Masteri West Heights', prefix: 'SM', tier: 'cao' },
+  'sc-imperia': { name: 'Phân khu Imperia Smart City', prefix: 'SI', tier: 'thap' },
+  'sc-canopy': { name: 'Phân khu The Canopy', prefix: 'SC', tier: 'thap' }
 };
 
 const PROJECTS: Record<string, { name: string; subs: string[] }> = {
-  'ocean-park-2': { name: 'Vinhomes Ocean Park 2 - The Empire', subs: ['op2-cha-la', 'op2-co-xanh', 'op2-hai-tang', 'op2-san-ho'] },
-  'ocean-park-1': { name: 'Vinhomes Ocean Park 1 - Gia Lâm', subs: ['op1-san-ho', 'op1-ngoc-trai'] }
+  'ocean-park-2': { name: 'Vinhomes Ocean Park 2 - The Empire', subs: ['op2-cha-la', 'op2-co-xanh', 'op2-hai-tang', 'op2-san-ho', 'op2-sao-bien', 'op2-dao-ngoc', 'op2-cho-dem'] },
+  'ocean-park-1': { name: 'Vinhomes Ocean Park 1 - Gia Lâm', subs: ['op1-san-ho', 'op1-ngoc-trai', 'op1-sapphire', 'op1-zen-park', 'op1-masteri', 'op1-hai-tang', 'op1-sao-bien'] },
+  'ocean-park-3': { name: 'Vinhomes Ocean Park 3 - Grand Park', subs: ['op3-pho-bien', 'op3-vinh-thien-duong', 'op3-anh-duong', 'op3-thoi-dai', 'op3-vinh-tay', 'op3-vinh-hai-tang'] },
+  'ha-long-xanh': { name: 'Vinhomes Hạ Long Xanh', subs: ['hlx-hoang-tan', 'hlx-ha-an', 'hlx-ben-du-thuyen', 'hlx-san-golf', 'hlx-can-ho'] },
+  'green-paradise-can-gio': { name: 'Vinhomes Green Paradise Cần Giờ', subs: ['gp-a', 'gp-b', 'gp-c', 'gp-d', 'gp-e'] },
+  'tan-my-hau-nghia': { name: 'Vinhomes Tân Mỹ - Hậu Nghĩa', subs: ['tm-biet-thu', 'tm-shophouse', 'tm-can-ho', 'tm-cong-vien'] },
+  'green-city-hoc-mon': { name: 'Vinhomes Green City Hóc Môn', subs: ['gc-sinh-thai', 'gc-dai-hoc', 'gc-tai-chinh', 'gc-biet-thu'] },
+  'lang-van-da-nang': { name: 'Vinhomes Làng Vân Đà Nẵng', subs: ['lv-biet-thu-bien', 'lv-condotel', 'lv-resort', 'lv-giai-tri'] },
+  'smart-city': { name: 'Vinhomes Smart City - Tây Mỗ', subs: ['sc-sapphire', 'sc-tonkin', 'sc-masteri', 'sc-imperia', 'sc-canopy'] }
 };
 
 const tierLabel = (t: string) => t === 'cao' ? '🏢 Cao tầng' : '🏘️ Thấp tầng';
@@ -96,10 +153,6 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
       setInstallments(Array.isArray(i) ? i : []);
       setBanks(Array.isArray(b) ? b : []);
       setFloorplans(Array.isArray(f) ? f : []);
-      const pol = (Array.isArray(p) ? p : []).find((x: DeveloperPolicy) => x.projectId === 'ocean-park-2');
-      if (pol) {
-        try { setPolicyForm(JSON.parse(pol.content)); } catch { setPolicyForm({}); }
-      }
     } catch (e) {
       console.error('Failed to load developer units', e);
     }
@@ -115,6 +168,16 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
       setCurrentSub(subs[0]);
     }
   }, [currentProject, currentTier, currentSub]);
+
+  // Khi đổi project → load chính sách của project đó
+  useEffect(() => {
+    const pol = policies.find((x: DeveloperPolicy) => x.projectId === currentProject);
+    if (pol) {
+      try { setPolicyForm(JSON.parse(pol.content)); } catch { setPolicyForm({}); }
+    } else {
+      setPolicyForm({});
+    }
+  }, [currentProject, policies]);
 
   const currentUnits = units.filter(u => u.subdivisionId === currentSub);
   const cdtUnits = units.filter(u => u.source === 'cdt');
@@ -177,11 +240,11 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   };
 
   const savePolicy = async () => {
-    const pol = policies.find(x => x.projectId === 'ocean-park-2');
+    const pol = policies.find(x => x.projectId === currentProject);
     if (pol) {
       await api(`/api/developer-policies/${pol.id}`, 'PUT', { content: JSON.stringify(policyForm) });
     } else {
-      await api('/api/developer-policies', 'POST', { projectId: 'ocean-park-2', title: 'Chính sách bán hàng CĐT', content: JSON.stringify(policyForm) });
+      await api('/api/developer-policies', 'POST', { projectId: currentProject, title: 'Chính sách bán hàng CĐT', content: JSON.stringify(policyForm) });
     }
     showToast('✅ Đã lưu chính sách!');
   };
@@ -190,7 +253,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
     const name = prompt('Tên đợt:');
     if (!name) return;
     const pct = prompt('Tỷ lệ %:');
-    await api('/api/developer-installments', 'POST', { projectId: 'ocean-park-2', name, percent: Number(pct) || 0, dueDate: 'D+24 tháng' });
+    await api('/api/developer-installments', 'POST', { projectId: currentProject, name, percent: Number(pct) || 0, dueDate: 'D+24 tháng' });
     await fetchAll();
     showToast('✅ Đã thêm đợt ' + name);
   };
@@ -206,7 +269,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
     const name = prompt('Tên ngân hàng:');
     if (!name) return;
     const rate = prompt('Lãi suất ưu đãi:') || '?';
-    await api('/api/developer-banks', 'POST', { projectId: 'ocean-park-2', name, rate, maxLoan: '70%', term: '25 năm', support: 'Hỗ trợ 70% giá trị' });
+    await api('/api/developer-banks', 'POST', { projectId: currentProject, name, rate, maxLoan: '70%', term: '25 năm', support: 'Hỗ trợ 70% giá trị' });
     await fetchAll();
     showToast('✅ Đã thêm ' + name);
   };
