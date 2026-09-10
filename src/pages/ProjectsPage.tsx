@@ -74,7 +74,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
     : [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
       
       {/* Title */}
       <div className="text-center max-w-2xl mx-auto space-y-2">
@@ -178,13 +178,13 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
         <div className="space-y-8 animate-in fade-in duration-300">
           
           {/* Main Visual Banner */}
-          <div className="relative rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl aspect-[21/9] max-h-[420px]">
+          <div className="relative rounded-2xl overflow-hidden border border-emerald-100 dark:border-emerald-900/50 shadow-lg aspect-[21/9] max-h-[360px] bg-emerald-950">
             <img loading="lazy"
               src={currentProject.image}
               alt={currentProject.name}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/30 to-transparent" />
             
             <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
               <span className="bg-amber-500 text-slate-950 text-xs font-extrabold px-3 py-1 rounded-lg">
@@ -285,11 +285,11 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
           </div>
 
           {/* Masterplan Map Section */}
-          <div className="p-8 bg-slate-900 text-white rounded-3xl border border-slate-800 shadow-2xl space-y-4 text-center">
-            <h3 className="text-xl font-black text-amber-400">
+          <div className="p-5 sm:p-7 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl border border-emerald-100 dark:border-emerald-900/50 shadow-lg space-y-4 text-center">
+            <h3 className="text-xl font-black text-emerald-700 dark:text-emerald-400">
               SƠ ĐỒ MẶT BẰNG QUY HOẠCH TỔNG THỂ {currentProject.name.toUpperCase()}
             </h3>
-            <div className="rounded-2xl overflow-hidden border border-slate-700 max-h-96">
+            <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-96">
               <img loading="lazy"
                 src={currentProject.masterplanUrl}
                 alt="Masterplan"
