@@ -920,6 +920,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               const isActive = selectedCategory === cat.id;
               const count = services.filter(s => s.categoryId === cat.id).length;
               const industryRule = DEFAULT_INDUSTRY_KYC_RULES.find(r => r.categoryId === cat.id);
+              const isPropertyCategory = ['cho-thue-can-ho', 'can-thap-tang', 'phong-tro'].includes(cat.id);
+              const countLabel = isPropertyCategory ? 'căn' : 'dịch vụ';
               return (
                 <button
                   key={cat.id}
@@ -944,7 +946,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     </div>
                     <div className="min-w-0 w-full lg:w-auto mt-0.5 lg:mt-0">
                       <div className="text-[8px] lg:text-[9px] font-bold leading-tight line-clamp-2 lg:truncate">{cat.name}</div>
-                      <div className="text-[7px] opacity-75 truncate">{count} thợ</div>
+                      <div className="text-[7px] opacity-75 truncate">{count} {countLabel}</div>
                     </div>
                   </div>
                   {industryRule?.isStrictMandatory && (
