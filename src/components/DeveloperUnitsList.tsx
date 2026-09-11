@@ -1,20 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, MapPin, Building2, Phone, MessageCircle } from 'lucide-react';
+import { X, MapPin, Building2, Phone, MessageCircle, Layers } from 'lucide-react';
 import {
   DeveloperUnit,
   DeveloperUnitStatus,
   DeveloperUnitTier,
   DeveloperUnitSource,
   DEVELOPER_UNIT_STATUS_LABELS,
-  F1Agent,
-  DeveloperFloorplan
+  F1Agent
 } from '../types';
 
-interface DeveloperUnitsPublicProps {
+interface DeveloperUnitsListProps {
   projectId: string;
   projectName: string;
   subdivisionId?: string;
-  compact?: boolean;
 }
 
 const SUB_NAMES: Record<string, string> = {
@@ -41,19 +39,9 @@ const GROUP_LABEL: Record<'avail' | 'hold' | 'sold', string> = {
   sold: 'Đã bán'
 };
 
-const MARKER_COLORS: Record<string, string> = {
-  'cdt-avail': '#10b981',
-  'cdt-hold': '#f59e0b',
-  'cdt-sold': '#94a3b8',
-  'f1-avail': '#3b82f6',
-  'f1-hold': '#8b5cf6',
-  'f1-sold': '#94a3b8'
-};
-
-export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ projectId, projectName, subdivisionId, compact }) => {
+export const DeveloperUnitsList: React.FC<DeveloperUnitsListProps> = ({ projectId, projectName, subdivisionId }) => {
   const [units, setUnits] = useState<DeveloperUnit[]>([]);
   const [agents, setAgents] = useState<F1Agent[]>([]);
-  const [floorplans, setFloorplans] = useState<DeveloperFloorplan[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [tier, setTier] = useState<DeveloperUnitTier>('thap');
@@ -66,17 +54,14 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
     let cancelled = false;
     Promise.all([
       fetch('/api/developer-units').then(r => r.json()),
-      fetch('/api/developer-f1-agents').then(r => r.json()),
-      fetch('/api/developer-floorplans').then(r => r.json())
+      fetch('/api/developer-f1-agents').then(r => r.json())
     ])
-      .then(([unitsRes, agentsRes, fpRes]) => {
+      .then(([unitsRes, agentsRes]) => {
         if (cancelled) return;
         const u: DeveloperUnit[] = Array.isArray(unitsRes) ? unitsRes : unitsRes.units || [];
         const a: F1Agent[] = Array.isArray(agentsRes) ? agentsRes : agentsRes.agents || [];
-        const f: DeveloperFloorplan[] = Array.isArray(fpRes) ? fpRes : fpRes.floorplans || [];
         setUnits(u.filter(x => x.projectId === projectId && (!subdivisionId || x.subdivisionId === subdivisionId)));
         setAgents(a);
-        setFloorplans(f);
         setLoading(false);
       })
       .catch(() => {
@@ -111,17 +96,10 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
 
   const subAllUnits = useMemo(() => projectUnits.filter(u => u.subdivisionId === subId && u.tier === tier), [projectUnits, subId, tier]);
 
-  const floorplan = useMemo(() => floorplans.find(f => f.subdivisionId === subId), [floorplans, subId]);
-
   const agentName = (u: DeveloperUnit) => {
     if (u.source !== 'f1' || !u.agentId) return '';
     const a = agents.find(x => x.id === u.agentId);
     return a ? a.name : '';
-  };
-
-  const markerClass = (u: DeveloperUnit) => {
-    const g = STATUS_GROUP[u.status];
-    return `cdt-${g}` === `cdt-${g}` ? (u.source === 'f1' ? `f1-${g}` : `cdt-${g}`) : 'cdt-avail';
   };
 
   const pricePerM2 = (u: DeveloperUnit) => {
@@ -134,7 +112,7 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-10 text-center shadow-md animate-pulse">
           <div className="w-8 h-8 mx-auto rounded-full bg-emerald-200 dark:bg-emerald-900" />
-          <p className="text-xs font-bold text-slate-400 mt-3">Đang tải mặt bằng quỹ căn…</p>
+          <p className="text-xs font-bold text-slate-400 mt-3">Đang tải quỹ căn chủ đầu tư…</p>
         </div>
       </div>
     );
@@ -148,30 +126,28 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
     : '';
 
   return (
-    <div className={compact ? 'space-y-4' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4'}>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
       {/* Section head */}
-      {!compact && (
-        <div>
-          <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-emerald-500" />
-            <span>Mặt Bằng Quỹ Căn</span>
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Sơ đồ vị trí căn đã đánh dấu từ quản trị — chấm{' '}
-            <b style={{ color: '#047857' }}>xanh lá = CĐT</b>,{' '}
-            <b style={{ color: '#1d4ed8' }}>xanh dương = Đại lý F1</b> · Phân biệt{' '}
-            <b>cao tầng / thấp tầng</b>
-          </p>
-        </div>
-      )}
+      <div>
+        <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+          <Layers className="w-5 h-5 text-emerald-500" />
+          <span>Quỹ Căn Chủ Đầu Tư</span>
+        </h2>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          Danh sách căn hộ / nhà phố còn mở bán từ Chủ đầu tư &amp; Đại lý F1 —{' '}
+          <b style={{ color: '#047857' }}>xanh lá = CĐT</b>,{' '}
+          <b style={{ color: '#1d4ed8' }}>xanh dương = Đại lý F1</b> · Phân biệt{' '}
+          <b>cao tầng / thấp tầng</b>
+        </p>
+      </div>
 
-      {/* fp-card */}
+      {/* quy-can-card */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md overflow-hidden">
         {/* Top bar */}
         <div className="bg-gradient-to-r from-emerald-900 via-emerald-700 to-emerald-800 text-white px-4 sm:px-6 py-3.5 flex items-center justify-between flex-wrap gap-2">
           <div className="font-black text-sm flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-            🗺️ Mặt bằng quỹ căn — CĐT &amp; Đại lý F1
+            🏢 Quỹ căn CĐT &amp; Đại lý F1 — {projectName}
           </div>
           <div className="text-[11px] text-emerald-200 font-bold">
             Cập nhật: {updatedDate || 'hôm nay'} · Giá CĐT + F1
@@ -270,134 +246,111 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
             </div>
           </div>
 
-          {/* Layout: sơ đồ trái (ưu tiên) + danh sách phải */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1.65fr_1fr] gap-4 items-start">
-            {/* SƠ ĐỒ */}
-            <div className="relative border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <span
-                className={`absolute top-2.5 left-2.5 z-[5] bg-slate-950/75 text-white text-[10px] font-black px-3 py-1 rounded-full tracking-wide ${
-                  tier === 'cao' ? 'text-sky-300' : 'text-emerald-300'
-                }`}
-              >
-                {tier === 'cao' ? '🏢 CAO TẦNG' : '🏘️ THẤP TẦNG'}
-              </span>
-              <img
-                src={floorplan ? floorplan.image : '/images/demo/project-tower.jpg'}
-                alt={`Mặt bằng quỹ căn ${SUB_NAMES[subId] || subId}`}
-                className="block w-full h-auto"
-              />
-              {currentUnits.map(u => {
-                const g = STATUS_GROUP[u.status];
-                const isF1 = u.source === 'f1';
-                const color = MARKER_COLORS[`${isF1 ? 'f1' : 'cdt'}-${g}`];
-                return (
-                  <button
-                    key={u.id}
-                    onClick={() => setSelected(u)}
-                    title={`${u.code} — ${DEVELOPER_UNIT_STATUS_LABELS[u.status]} — ${u.priceDisplay}${isF1 ? ' (' + agentName(u) + ')' : ' (CĐT)'}`}
-                    className="absolute w-[26px] h-[26px] rounded-full flex items-center justify-center text-[8px] font-black text-white cursor-pointer border-2 border-white shadow-lg transition-transform hover:scale-125 z-10"
-                    style={{
-                      left: u.x + '%',
-                      top: u.y + '%',
-                      background: color,
-                      borderStyle: isF1 ? 'dashed' : 'solid',
-                      transform: `translate(-50%,-50%)${selected?.id === u.id ? ' scale(1.3)' : ''}`,
-                      boxShadow: selected?.id === u.id ? '0 0 0 4px rgba(245, 158, 11, 0.85)' : undefined
-                    }}
-                  >
-                    {u.code.replace(/^[A-Z]+-/, '')}
-                  </button>
-                );
-              })}
-              <span className="absolute bottom-2.5 left-2.5 z-[5] bg-white/90 dark:bg-slate-950/80 text-slate-500 dark:text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-lg">
-                💡 Bấm chấm để xem chi tiết căn
-              </span>
+          {/* DANH SÁCH — full width, không mặt bằng */}
+          <div className="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-900">
+            <div className="px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide flex justify-between items-center">
+              <span>📋 Danh sách quỹ căn — Phân khu {SUB_NAMES[subId] || subId}</span>
+              <span className="text-emerald-600 dark:text-emerald-400">{currentUnits.length} căn</span>
             </div>
-
-            {/* DANH SÁCH */}
-            <div className="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 max-h-[560px] flex flex-col">
-              <div className="px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide flex justify-between items-center">
-                <span>📋 Danh sách quỹ căn</span>
-                <span className="text-emerald-600 dark:text-emerald-400">{currentUnits.length} căn</span>
-              </div>
-              <div className="overflow-y-auto flex-1">
-                {currentUnits.length === 0 ? (
-                  <div className="p-8 text-center space-y-2">
-                    <Building2 className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
-                    <p className="text-xs font-bold text-slate-400">Không có căn phù hợp</p>
-                  </div>
-                ) : (
-                  currentUnits.map(u => {
-                    const g = STATUS_GROUP[u.status];
-                    const isF1 = u.source === 'f1';
-                    const sold = g === 'sold';
-                    return (
-                      <div
-                        key={u.id}
-                        onClick={() => setSelected(u)}
-                        className={`flex justify-between items-center px-3 py-2 text-xs cursor-pointer border-b border-slate-100 dark:border-slate-800 transition hover:bg-emerald-50 dark:hover:bg-emerald-950/40 ${
-                          selected?.id === u.id ? 'bg-amber-50 dark:bg-amber-950/40 ring-1 ring-inset ring-amber-400' : ''
-                        } ${
-                          sold ? 'opacity-60' : ''
-                        }`}
-                      >
-                        <span className={`font-black font-mono flex items-center gap-1.5 ${sold ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
-                          {u.code}
-                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isF1 ? 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300'}`}>
-                            {isF1 ? 'F1' : 'CĐT'}
-                          </span>
-                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${u.tier === 'cao' ? 'bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300' : 'bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-300'}`}>
-                            {u.tier === 'cao' ? 'Cao' : 'Thấp'}
-                          </span>
-                        </span>
-                        <span className="flex items-center gap-2">
-                          <span className={`font-black ${sold ? 'line-through text-slate-400' : 'text-amber-700 dark:text-amber-400'}`}>
+            <div className="overflow-x-auto">
+              {currentUnits.length === 0 ? (
+                <div className="p-8 text-center space-y-2">
+                  <Building2 className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
+                  <p className="text-xs font-bold text-slate-400">Không có căn phù hợp</p>
+                </div>
+              ) : (
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="text-left text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+                      <th className="px-3.5 py-2.5 font-black">Mã căn</th>
+                      <th className="px-3.5 py-2.5 font-black">Loại hình</th>
+                      <th className="px-3.5 py-2.5 font-black">Diện tích</th>
+                      <th className="px-3.5 py-2.5 font-black">Tầng</th>
+                      <th className="px-3.5 py-2.5 font-black">Nguồn</th>
+                      <th className="px-3.5 py-2.5 font-black">Trạng thái</th>
+                      <th className="px-3.5 py-2.5 font-black text-right">Giá</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentUnits.map(u => {
+                      const g = STATUS_GROUP[u.status];
+                      const isF1 = u.source === 'f1';
+                      const sold = g === 'sold';
+                      return (
+                        <tr
+                          key={u.id}
+                          onClick={() => setSelected(u)}
+                          className={`cursor-pointer border-b border-slate-100 dark:border-slate-800 transition hover:bg-emerald-50 dark:hover:bg-emerald-950/40 ${
+                            selected?.id === u.id ? 'bg-amber-50 dark:bg-amber-950/40' : ''
+                          } ${sold ? 'opacity-60' : ''}`}
+                        >
+                          <td className="px-3.5 py-2.5">
+                            <span className={`font-black font-mono flex items-center gap-1.5 ${sold ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                              {u.code}
+                              <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isF1 ? 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300'}`}>
+                                {isF1 ? 'F1' : 'CĐT'}
+                              </span>
+                              <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${u.tier === 'cao' ? 'bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300' : 'bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-300'}`}>
+                                {u.tier === 'cao' ? 'Cao' : 'Thấp'}
+                              </span>
+                            </span>
+                          </td>
+                          <td className="px-3.5 py-2.5 font-bold text-slate-600 dark:text-slate-300">{u.type || '—'}</td>
+                          <td className="px-3.5 py-2.5 font-bold text-slate-600 dark:text-slate-300">{u.area ? u.area + ' m²' : '—'}</td>
+                          <td className="px-3.5 py-2.5 font-bold text-slate-600 dark:text-slate-300">{u.floor || '—'}</td>
+                          <td className="px-3.5 py-2.5">
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${isF1 ? 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300'}`}>
+                              {isF1 ? (agentName(u) || 'Đại lý F1') : 'Chủ đầu tư'}
+                            </span>
+                          </td>
+                          <td className="px-3.5 py-2.5">
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                              g === 'avail'
+                                ? 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300'
+                                : g === 'hold'
+                                  ? 'bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                            }`}>
+                              {GROUP_LABEL[g]}
+                            </span>
+                          </td>
+                          <td className={`px-3.5 py-2.5 text-right font-black whitespace-nowrap ${sold ? 'line-through text-slate-400' : 'text-amber-700 dark:text-amber-400'}`}>
                             {u.priceDisplay}
-                          </span>
-                          {g === 'hold' && (
-                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300">
-                              Giữ chỗ
-                            </span>
-                          )}
-                          {g === 'sold' && (
-                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
-                              Đã bán
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
 
           {/* Legend */}
           <div className="flex gap-3.5 flex-wrap px-1 pt-4 pb-1 text-[10.5px] text-slate-500 dark:text-slate-400 font-bold items-center border-t border-slate-100 dark:border-slate-800 mt-4">
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#10b981' }} />
+              <span className="w-3 h-3 rounded-full" style={{ background: '#10b981' }} />
               CĐT · Còn hàng
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#f59e0b' }} />
+              <span className="w-3 h-3 rounded-full" style={{ background: '#f59e0b' }} />
               Giữ chỗ
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#94a3b8' }} />
+              <span className="w-3 h-3 rounded-full" style={{ background: '#94a3b8' }} />
               Đã bán
             </span>
             <span className="text-slate-300 dark:text-slate-600">|</span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-dashed border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#3b82f6' }} />
+              <span className="w-3 h-3 rounded-full" style={{ background: '#3b82f6' }} />
               F1 · Còn hàng
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-dashed border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#8b5cf6' }} />
+              <span className="w-3 h-3 rounded-full" style={{ background: '#8b5cf6' }} />
               F1 · Giữ chỗ
             </span>
             <span className="ml-auto text-slate-400 dark:text-slate-500">
-              Vị trí chấm = vị trí đã đánh dấu trong quản trị
+              💡 Bấm vào căn để xem chi tiết
             </span>
           </div>
         </div>

@@ -13,6 +13,8 @@ const TAB_CONFIG: Record<string, { label: string; color: string }> = {
   'rent': { label: 'CHO THUÊ', color: 'blue' },
   'services': { label: 'DỊCH VỤ', color: 'emerald' },
   'recruitment': { label: 'TUYỂN DỤNG', color: 'teal' },
+  'projects': { label: 'DỰ ÁN', color: 'emerald' },
+  'news': { label: 'THỊ TRƯỜNG', color: 'purple' },
 };
 
 const COLOR_MAP = {
@@ -20,6 +22,7 @@ const COLOR_MAP = {
   blue: { bg: 'bg-blue-500', text: 'text-blue-950', hover: 'hover:text-blue-600', border: 'border-blue-200' },
   emerald: { bg: 'bg-emerald-500', text: 'text-emerald-950', hover: 'hover:text-emerald-600', border: 'border-emerald-200' },
   teal: { bg: 'bg-teal-500', text: 'text-teal-950', hover: 'hover:text-teal-600', border: 'border-teal-200' },
+  purple: { bg: 'bg-purple-500', text: 'text-purple-950', hover: 'hover:text-purple-600', border: 'border-purple-200' },
 };
 
 export const IndustryNewsBanner: React.FC<IndustryNewsBannerProps> = ({

@@ -825,7 +825,9 @@ export const App: React.FC = () => {
           'sale': 'mua_ban',
           'rent': 'cho_thue',
           'services': 'dich_vu',
-          'recruitment': 'tuyen_dung'
+          'recruitment': 'tuyen_dung',
+          'projects': 'du_an',
+          'news': 'thi_truong'
         };
         const currentTab = getCurrentTabName();
         const currentCategory = tabCategoryMap[currentTab] || null;

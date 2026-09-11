@@ -5,6 +5,7 @@ import { Project, ProjectCategory, Language, Property, isAdminProperty } from '.
 import { PropertyCard } from '../components/PropertyCard';
 import { getProjectSlug, getSubdivisionUrl, getAmenityUrl, getPropertyDetailUrl } from '../lib/slugs';
 import { DeveloperUnitsPublic } from '../components/DeveloperUnitsPublic';
+import { DeveloperUnitsList } from '../components/DeveloperUnitsList';
 
 interface ProjectsPageProps {
   projects: Project[];
@@ -34,6 +35,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectCategory>(selectedProjectId || 'ocean-park-2');
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set());
+  const [masterplanTab, setMasterplanTab] = useState<'du-an' | 'quy-can'>('du-an');
 
   const currentProject = projects.find(p => p.id === activeTab) || projects[0];
 
@@ -284,39 +286,71 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
 
           </div>
 
-          {/* Masterplan Map Section */}
-          <div className="p-5 sm:p-7 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl border border-emerald-100 dark:border-emerald-900/50 shadow-lg space-y-4 text-center">
-            <h3 className="text-xl font-black text-emerald-700 dark:text-emerald-400">
-              SƠ ĐỒ MẶT BẰNG QUY HOẠCH TỔNG THỂ {currentProject.name.toUpperCase()}
-            </h3>
-            <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-96">
-              <img loading="lazy"
-                src={currentProject.masterplanUrl}
-                alt="Masterplan"
-                className="w-full h-full object-cover"
-              />
+          {/* Masterplan + Mặt bằng quỹ căn — tab riêng gần nhau */}
+          <div className="p-5 sm:p-7 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl border border-emerald-100 dark:border-emerald-900/50 shadow-lg space-y-4">
+            {/* Tab switcher */}
+            <div className="flex justify-center">
+              <div className="inline-flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
+                <button
+                  onClick={() => setMasterplanTab('du-an')}
+                  className={`px-4 py-2 rounded-lg text-xs font-extrabold transition cursor-pointer ${
+                    masterplanTab === 'du-an'
+                      ? 'bg-emerald-600 text-white shadow'
+                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  🗺️ Mặt Bằng Dự Án
+                </button>
+                <button
+                  onClick={() => setMasterplanTab('quy-can')}
+                  className={`px-4 py-2 rounded-lg text-xs font-extrabold transition cursor-pointer ${
+                    masterplanTab === 'quy-can'
+                      ? 'bg-emerald-600 text-white shadow'
+                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  🏢 Mặt Bằng Quỹ Căn
+                </button>
+              </div>
             </div>
-            
-            <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to={`/du-an/${getProjectSlug(currentProject.id)}`}
-                className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
-              >
-                <span>Xem Trang Chi Tiết {currentProject.name}</span>
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-              <button
-                onClick={() => onFilterPropertiesByProject(currentProject.id)}
-                className="px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
-              >
-                <span>Xem Toàn Bộ Quỹ Căn Bán / Thuê ({adminProjectProperties.length})</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+
+            {masterplanTab === 'du-an' ? (
+              <div className="space-y-4 text-center">
+                <h3 className="text-xl font-black text-emerald-700 dark:text-emerald-400">
+                  SƠ ĐỒ MẶT BẰNG QUY HOẠCH TỔNG THỂ {currentProject.name.toUpperCase()}
+                </h3>
+                <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-96">
+                  <img loading="lazy"
+                    src={currentProject.masterplanUrl}
+                    alt="Masterplan"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                  <Link
+                    to={`/du-an/${getProjectSlug(currentProject.id)}`}
+                    className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
+                  >
+                    <span>Xem Trang Chi Tiết {currentProject.name}</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
+                  <button
+                    onClick={() => onFilterPropertiesByProject(currentProject.id)}
+                    className="px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
+                  >
+                    <span>Xem Toàn Bộ Quỹ Căn Bán / Thuê ({adminProjectProperties.length})</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <DeveloperUnitsPublic projectId={currentProject.id} projectName={currentProject.name} compact />
+            )}
           </div>
 
-          {/* Mặt bằng quỹ căn CĐT & Đại lý F1 ngay dưới sơ đồ quy hoạch */}
-          <DeveloperUnitsPublic projectId={currentProject.id} projectName={currentProject.name} />
+          {/* Khung quỹ căn CĐT — danh sách, không mặt bằng */}
+          <DeveloperUnitsList projectId={currentProject.id} projectName={currentProject.name} />
 
           {/* Admin & Admin Tổng Properties Section */}
           <div className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">
