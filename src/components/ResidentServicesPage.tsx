@@ -572,46 +572,6 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
 
           {/* Row 3: Action Buttons Bar - compact single-line chips */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 pt-1">
-            {/* Button 1: AI Quét Menu */}
-            <button
-              onClick={() => setIsAiMenuScannerOpen(true)}
-              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-amber-500/50 hover:border-amber-400 text-amber-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
-              title="AI Quét Menu & Báo Giá (1-Click Đăng Bài)"
-            >
-              <Sparkles className="w-3.5 h-3.5 shrink-0 fill-amber-400" />
-              <span className="text-[10px] font-black text-white truncate group-hover:text-amber-300">AI Quét Menu</span>
-            </button>
-
-            {/* Button 2: Bảng Giá Quảng Bá */}
-            <button
-              onClick={() => setIsPricingModalOpen(true)}
-              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
-              title="Bảng Giá Dịch Vụ & Quảng Bá Truyền Thông"
-            >
-              <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-              <span className="text-[10px] font-black text-white truncate group-hover:text-emerald-300">Bảng Giá PR</span>
-            </button>
-
-            {/* Button 3: Đặt Xe Vận Tải */}
-            <button
-              onClick={() => setIsTransportModalOpen(true)}
-              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-amber-500/40 hover:border-amber-400 text-amber-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
-              title="Đặt Xe Vận Tải Nội & Ngoại Khu 24/7"
-            >
-              <Car className="w-3.5 h-3.5 shrink-0" />
-              <span className="text-[10px] font-black text-white truncate group-hover:text-amber-300">Xe Cư Dân 24/7</span>
-            </button>
-
-            {/* Button 4: Xây Lắp & Thang Máy */}
-            <button
-              onClick={() => setIsConstructionModalOpen(true)}
-              className="px-2 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-800 border border-blue-500/40 hover:border-blue-400 text-blue-300 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 group"
-              title="Báo Giá Xây Lắp, Nội Thất & Thang Máy"
-            >
-              <Hammer className="w-3.5 h-3.5 shrink-0" />
-              <span className="text-[10px] font-black text-white truncate group-hover:text-blue-300">Xây Lắp &amp; Thang Máy</span>
-            </button>
-
             {/* Button 5: Thỏa Thuận 3 Bên */}
             <button
               onClick={() => setIsTripartiteModalOpen(true)}

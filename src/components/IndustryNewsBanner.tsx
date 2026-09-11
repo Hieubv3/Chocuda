@@ -35,9 +35,9 @@ export const IndustryNewsBanner: React.FC<IndustryNewsBannerProps> = ({
 
   return (
     <div className={`w-full ${className}`}>
-      {/* Unified 2-column block — PC & Mobile */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Column 1: Badge + Title */}
+      {/* Unified block — PC: 65/35 split, Mobile: stacked 2 rows */}
+      <div className="grid grid-cols-1 md:grid-cols-[65fr_35fr] gap-3">
+        {/* Column 1: Banner (65% on PC) */}
         <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl px-5 py-4 flex items-center gap-3 border border-slate-700/50 shadow-lg">
           <div className={`${colors.bg} text-slate-950 p-2 rounded-lg shadow-md shrink-0`}>
             <Newspaper className="w-5 h-5" />
@@ -52,7 +52,7 @@ export const IndustryNewsBanner: React.FC<IndustryNewsBannerProps> = ({
           </div>
         </div>
 
-        {/* Column 2: News list */}
+        {/* Column 2: News list (35% on PC) */}
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm">
           <div className="space-y-2">
             {displayNews.map((article) => (
