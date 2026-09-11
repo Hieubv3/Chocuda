@@ -40,6 +40,7 @@ import { AiWriterModal } from './components/AiWriterModal';
 import { OmnichannelBulkMarketingModal } from './components/OmnichannelBulkMarketingModal';
 import { AndroidApkModal } from './components/AndroidApkModal';
 import { AdBannerWidget } from './components/AdBannerWidget';
+import { IndustryNewsBanner } from './components/IndustryNewsBanner';
 import { HashtagExploreModal } from './components/HashtagExploreModal';
 import { PopularVinhomesLinksSection } from './components/PopularVinhomesLinksSection';
 import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig, AdBanner } from './types';
@@ -818,7 +819,7 @@ export const App: React.FC = () => {
         onNavigateWithFilter={handleNavigateWithFilter}
       />
 
-      {/* Category-specific banner based on current tab */}
+      {/* Category-specific banner based on current tab — replaced with Industry News */}
       {(() => {
         const tabCategoryMap: Record<string, string> = {
           'sale': 'mua_ban',
@@ -826,12 +827,13 @@ export const App: React.FC = () => {
           'services': 'dich_vu',
           'recruitment': 'tuyen_dung'
         };
-        const currentCategory = tabCategoryMap[getCurrentTabName()] || null;
+        const currentTab = getCurrentTabName();
+        const currentCategory = tabCategoryMap[currentTab] || null;
         if (currentCategory && location.pathname !== '/') {
           return (
-            <AdBannerWidget
-              ads={ads}
-              position={currentCategory as any}
+            <IndustryNewsBanner
+              news={news}
+              currentTab={currentTab}
               className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8"
             />
           );

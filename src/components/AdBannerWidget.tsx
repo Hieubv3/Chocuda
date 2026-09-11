@@ -29,7 +29,9 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
   const activeAds = storedAds.filter(ad => {
     const isActive = (ad.active ?? ad.isActive ?? true);
     const isPosition = ad.position === position;
-    const isCategoryMatch = !ad.category || ad.category === 'all' || ad.category === position;
+    const normalizedCategory = ad.category?.replace(/-/g, '_') || '';
+    const normalizedPosition = position.replace(/-/g, '_');
+    const isCategoryMatch = !ad.category || ad.category === 'all' || normalizedCategory === normalizedPosition;
     return isActive && isPosition && isCategoryMatch && !dismissedAdIds.has(ad.id);
   });
 
