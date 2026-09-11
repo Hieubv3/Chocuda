@@ -5,7 +5,7 @@ import {
   Calendar, Share2, Calculator, CheckCircle2, ChevronRight, Home, 
   Building2, Sparkles, Heart, Eye, ArrowLeft, Clock, DollarSign, UserCheck, Hash
 } from 'lucide-react';
-import { Property, Language, ProjectCategory } from '../types';
+import { Property, Language, ProjectCategory, AdBanner } from '../types';
 import { getTranslation } from '../lib/i18n';
 import { SEOHead } from '../components/SEOHead';
 import { SocialShareModal } from '../components/SocialShareModal';
@@ -14,6 +14,7 @@ import { recordZaloInteraction } from '../lib/visitorStats';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
 import { getProjectSlug, extractIdFromSlug, getPropertyDetailUrl } from '../lib/slugs';
 import { PropertyCard } from '../components/PropertyCard';
+import { AdBannerWidget } from '../components/AdBannerWidget';
 
 interface PropertyDetailPageProps {
   properties: Property[];
@@ -22,6 +23,7 @@ interface PropertyDetailPageProps {
   onToggleSave: (property: Property) => void;
   compareIds: string[];
   onToggleCompare: (property: Property) => void;
+  ads?: AdBanner[];
 }
 
 export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
@@ -30,7 +32,8 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
   savedIds,
   onToggleSave,
   compareIds,
-  onToggleCompare
+  onToggleCompare,
+  ads
 }) => {
   const { id, projectSlug } = useParams<{ id: string; projectSlug?: string }>();
   const navigate = useNavigate();
@@ -219,6 +222,9 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
           </nav>
         </div>
       </div>
+
+      {/* Property Detail Banner Ad */}
+      <AdBannerWidget ads={ads || []} position="property_detail" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
         

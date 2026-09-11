@@ -901,6 +901,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />
@@ -915,6 +916,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />
@@ -929,6 +931,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />
@@ -943,6 +946,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />
@@ -957,6 +961,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />
@@ -1063,6 +1068,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />
@@ -1076,6 +1082,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />
@@ -1089,6 +1096,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />
@@ -1102,6 +1110,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />
@@ -1115,6 +1124,7 @@ export const App: React.FC = () => {
                 onToggleSave={handleToggleSave}
                 compareIds={compareIds}
                 onToggleCompare={handleToggleCompare}
+                ads={ads}
               />
             }
           />

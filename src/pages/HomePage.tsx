@@ -675,6 +675,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </select>
               </div>
               <DeveloperUnitsPublic projectId={inventoryProject.id} projectName={inventoryProject.name} />
+              <AdBannerWidget ads={liveAds} position="home_sidebar" className="mt-4" />
             </aside>
           )}
         </div>
