@@ -26,11 +26,12 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
     return ads;
   }, [ads]);
 
-  const activeAds = storedAds.filter(ad => 
-    (ad.active ?? ad.isActive ?? true) && 
-    ad.position === position &&
-    !dismissedAdIds.has(ad.id)
-  );
+  const activeAds = storedAds.filter(ad => {
+    const isActive = (ad.active ?? ad.isActive ?? true);
+    const isPosition = ad.position === position;
+    const isCategoryMatch = !ad.category || ad.category === 'all' || ad.category === position;
+    return isActive && isPosition && isCategoryMatch && !dismissedAdIds.has(ad.id);
+  });
 
   if (activeAds.length === 0) return null;
 
@@ -324,7 +325,59 @@ export const AdBannerWidget: React.FC<AdBannerWidgetProps> = ({ ads, position, c
     );
   }
 
-  // 6. BANNER CỘT BÊN & CHI TIẾT CĂN (Home Sidebar / Property Detail)
+  // 6. BANNER NGÀNH HÀNG THEO TAB (Mua Bán, Cho Thuê, Dịch Vụ, Tuyển Dụng)
+  const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
+    'mua_ban': { label: 'MUA BÁN', color: 'amber' },
+    'cho_thue': { label: 'CHO THUÊ', color: 'blue' },
+    'dich_vu': { label: 'DỊCH VỤ', color: 'emerald' },
+    'tuyen_dung': { label: 'TUYỂN DỤNG', color: 'teal' },
+  };
+
+  if (['mua_ban', 'cho_thue', 'dich_vu', 'tuyen_dung'].includes(position)) {
+    const config = CATEGORY_CONFIG[position];
+    const colorMap = { amber: 'amber', blue: 'blue', emerald: 'emerald', teal: 'teal' };
+    const c = colorMap[config.color as keyof typeof colorMap] || 'amber';
+    return (
+      <div className={`my-6 space-y-3 ${className}`}>
+        <div className="flex items-center gap-2">
+          <span className={`bg-${c}-500 text-white font-black text-[10px] px-2 py-0.5 rounded uppercase tracking-wider`}>
+            {config.label}
+          </span>
+          <span className="text-xs font-bold text-slate-400">Quảng cáo ngành hàng</span>
+        </div>
+        {activeAds.map(ad => (
+          <a
+            key={ad.id}
+            href={ad.linkUrl}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => handleAdClick(ad)}
+            className="group block relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-xl transition-transform hover:scale-[1.01]"
+          >
+            <div className="relative h-40 sm:h-48 w-full">
+              <img loading="lazy"
+                src={ad.imageUrl}
+                alt={ad.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent flex items-end p-4 sm:p-6">
+                <div className="space-y-1">
+                  <span className={`bg-${c}-500 text-white font-black text-[10px] px-2 py-0.5 rounded uppercase inline-flex items-center gap-1`}>
+                    <Sparkles className="w-3 h-3" /> {config.label}
+                  </span>
+                  <h3 className="text-sm sm:text-lg font-black text-white group-hover:text-{c}-400 transition">
+                    {ad.title}
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    );
+  }
+
+  // 7. BANNER CỘT BÊN & CHI TIẾT CĂN (Home Sidebar / Property Detail)
   if (position === 'home_sidebar' || position === 'property_detail') {
     return (
       <div className={`space-y-3 ${className}`}>

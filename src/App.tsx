@@ -818,15 +818,35 @@ export const App: React.FC = () => {
         onNavigateWithFilter={handleNavigateWithFilter}
       />
 
-      {/* Managed advertising slots shared by secondary pages. HomePage owns its
-          dedicated middle banner so it does not render this slot twice. */}
-      {location.pathname !== '/' && (
-        <AdBannerWidget
-          ads={ads}
-          position="home_middle"
-          className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8"
-        />
-      )}
+      {/* Category-specific banner based on current tab */}
+      {(() => {
+        const tabCategoryMap: Record<string, string> = {
+          'sale': 'mua_ban',
+          'rent': 'cho_thue',
+          'services': 'dich_vu',
+          'recruitment': 'tuyen_dung'
+        };
+        const currentCategory = tabCategoryMap[getCurrentTabName()] || null;
+        if (currentCategory && location.pathname !== '/') {
+          return (
+            <AdBannerWidget
+              ads={ads}
+              position={currentCategory as any}
+              className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8"
+            />
+          );
+        }
+        if (location.pathname !== '/') {
+          return (
+            <AdBannerWidget
+              ads={ads}
+              position="home_middle"
+              className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8"
+            />
+          );
+        }
+        return null;
+      })()}
       <AdBannerWidget ads={ads} position="float_left_pc" />
       <AdBannerWidget ads={ads} position="float_right_pc" />
 

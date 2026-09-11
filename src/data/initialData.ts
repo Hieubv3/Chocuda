@@ -222,6 +222,7 @@ export const INITIAL_ADS: AdBanner[] = [
     imageUrl: '/images/demo/project-tower.jpg',
     linkUrl: '/post-property',
     position: 'header_top',
+    category: 'all',
     active: true,
     clickCount: 1420,
     createdAt: '2026-07-20'
@@ -232,6 +233,7 @@ export const INITIAL_ADS: AdBanner[] = [
     imageUrl: '/images/demo/hero-city-1.jpg',
     linkUrl: '/mortgage-calculator',
     position: 'home_sidebar',
+    category: 'all',
     active: true,
     clickCount: 890,
     createdAt: '2026-07-22'
@@ -242,6 +244,7 @@ export const INITIAL_ADS: AdBanner[] = [
     imageUrl: '/images/demo/property-interior-1.jpg',
     linkUrl: '/properties',
     position: 'home_middle',
+    category: 'all',
     active: true,
     clickCount: 2310,
     createdAt: '2026-07-24'
@@ -255,6 +258,7 @@ export const INITIAL_ADS: AdBanner[] = [
     widthSize: 'medium',
     displayStyle: 'glowing_border',
     badgeText: 'HOT BÁM ĐUỔI',
+    category: 'mua-ban',
     active: false,
     clickCount: 520,
     createdAt: '2026-07-25'
@@ -265,9 +269,54 @@ export const INITIAL_ADS: AdBanner[] = [
     imageUrl: '/images/demo/ad-service.jpg',
     linkUrl: '/resident-services',
     position: 'float_left_pc',
+    category: 'dich-vu',
     active: false,
     clickCount: 380,
     createdAt: '2026-07-26'
+  },
+  {
+    id: 'ad-06',
+    title: 'Tuyển Dụng Vị Trí Môi Giới Tại Chợ Cư Dân 24H - Lương Cạnh Tranh',
+    imageUrl: '/images/demo/ad-service.jpg',
+    linkUrl: '/tuyen-dung',
+    position: 'tuyen_dung',
+    category: 'tuyen-dung',
+    active: true,
+    clickCount: 0,
+    createdAt: '2026-09-11'
+  },
+  {
+    id: 'ad-07',
+    title: 'Dịch Vụ Nội Khu: Sửa Chữa Điện Nước - Bảo Trì 24/7 Cho Cư Dân',
+    imageUrl: '/images/demo/ad-service.jpg',
+    linkUrl: '/dich-vu-cu-dan',
+    position: 'dich_vu',
+    category: 'dich-vu',
+    active: true,
+    clickCount: 0,
+    createdAt: '2026-09-11'
+  },
+  {
+    id: 'ad-08',
+    title: 'Cho Thuê Căn Hộ Vinhomes Ocean Park 2 - Giá Tốt Nhất Thị Trường',
+    imageUrl: '/images/demo/property-interior-1.jpg',
+    linkUrl: '/cho-thue',
+    position: 'cho_thue',
+    category: 'cho-thue',
+    active: true,
+    clickCount: 0,
+    createdAt: '2026-09-11'
+  },
+  {
+    id: 'ad-09',
+    title: 'Mua Bán Căn Hộ Cao Tầng Vinhomes - Chính Chủ Giá Tốt',
+    imageUrl: '/images/demo/project-tower.jpg',
+    linkUrl: '/mua-ban',
+    position: 'mua_ban',
+    category: 'mua-ban',
+    active: true,
+    clickCount: 0,
+    createdAt: '2026-09-11'
   }
 ];
 

@@ -3423,6 +3423,7 @@ app.post("/api/ads", (req, res) => {
     imageUrl: adData.imageUrl || '',
     linkUrl: adData.linkUrl || 'https://zalo.me/0868499929',
     position: adData.position || 'home_middle',
+    category: adData.category || 'all',
     widthSize: adData.widthSize || 'medium',
     displayStyle: adData.displayStyle || 'standard',
     badgeText: adData.badgeText,
