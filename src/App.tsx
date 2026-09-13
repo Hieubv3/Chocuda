@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon } from 'lucide-react';
+import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon, Menu as MenuIcon } from 'lucide-react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
@@ -1875,26 +1875,17 @@ export const App: React.FC = () => {
           <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Chợ Cư Dân</span>
         </button>
 
-        {/* 5. Cá Nhân */}
+        {/* 5. Menu (3 gạch) — chuyển từ góc phải header xuống thanh dưới */}
         <button
-          onClick={() => {
-            if (!user) {
-              setAuthModalOpen(true);
-            } else {
-              navigate('/tai-khoan');
-            }
-          }}
-          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer relative group ${
-            location.pathname.startsWith('/tai-khoan')
-              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-          }`}
+          onClick={() => window.dispatchEvent(new Event('open-mobile-menu'))}
+          className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer relative group text-slate-500 hover:text-slate-900 dark:hover:text-white"
+          aria-label="Mở menu"
         >
           <div className="relative">
-            <UserIcon className="w-5 h-5 transition-transform" />
-            
+            <MenuIcon className="w-5 h-5 transition-transform" />
+            <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-orange-500 ring-2 ring-white" />
           </div>
-          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Cá Nhân</span>
+          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Menu</span>
         </button>
       </nav>
 

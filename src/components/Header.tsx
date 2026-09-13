@@ -45,6 +45,13 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigateWithFilter
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Mở menu mobile từ nút "Menu" ở thanh dưới
+  React.useEffect(() => {
+    const openMenu = () => setMobileMenuOpen(true);
+    window.addEventListener('open-mobile-menu', openMenu);
+    return () => window.removeEventListener('open-mobile-menu', openMenu);
+  }, []);
   const [saleHover, setSaleHover] = useState(false);
   const [rentHover, setRentHover] = useState(false);
 
@@ -550,12 +557,20 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
-            {/* Mobile Hamburger Button */}
+            {/* Mobile: Cá Nhân (thay vị trí 3 gạch cũ — 3 gạch đã chuyển xuống thanh dưới) */}
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => {
+                if (!currentUser) {
+                  onOpenAuth();
+                } else {
+                  setCurrentTab('user_dashboard');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
               className="lg:hidden p-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl shrink-0"
+              aria-label="Cá nhân"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
+              <User className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
 
