@@ -49,6 +49,7 @@ import { INITIAL_RESIDENT_SERVICES } from './data/residentServicesData';
 import { INITIAL_RECRUITMENT_JOBS } from './data/recruitmentData';
 import { safeLocalStorageGet, safeLocalStorageSet } from './lib/imageUtils';
 import { getProjectSlug } from './lib/slugs';
+import { AreaSelectModal, getStoredArea, AREA_STORAGE_KEY, AreaOption } from './components/AreaSelectModal';
 import { clearToken } from './lib/api';
 
 export const App: React.FC = () => {
@@ -58,6 +59,15 @@ export const App: React.FC = () => {
   // Theme & Language
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [language, setLanguage] = useState<Language>('vi');
+
+  // Khu vực người dùng (chọn lần đầu tham gia)
+  const [userArea, setUserArea] = useState<AreaOption | null>(() =>
+    typeof window !== 'undefined' ? getStoredArea() : null
+  );
+  const [areaModalOpen, setAreaModalOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return !localStorage.getItem(AREA_STORAGE_KEY);
+  });
 
   // Navigation compatibility state
   const [selectedProjectId, setSelectedProjectId] = useState<ProjectCategory>('ocean-park-2');
@@ -1900,6 +1910,21 @@ export const App: React.FC = () => {
         services={INITIAL_RESIDENT_SERVICES}
         newsArticles={news}
         jobs={INITIAL_RECRUITMENT_JOBS}
+      />
+
+      {/* Chọn khu vực lần đầu tham gia */}
+      <AreaSelectModal
+        isOpen={areaModalOpen}
+        onSelect={(area) => {
+          setUserArea(area);
+          try {
+            localStorage.setItem(AREA_STORAGE_KEY, JSON.stringify(area));
+          } catch {
+            /* ignore */
+          }
+          setAreaModalOpen(false);
+        }}
+        onClose={() => setAreaModalOpen(false)}
       />
 
     </div>

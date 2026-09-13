@@ -24,6 +24,7 @@ import { TechnicalServiceEscrowModal } from '../components/TechnicalServiceEscro
 import { playMessageRingtone } from '../lib/audioRingtone';
 import { RECRUITMENT_PACKAGES } from '../data/recruitmentData';
 import { getPropertyDetailUrl, getProjectSlug } from '../lib/slugs';
+import { ResidentUtilities } from '../components/ResidentUtilities';
 
 interface UserDashboardPageProps {
   user?: User;
@@ -76,7 +77,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const handleSelectProp = onSelectProperty || ((p: Property) => navigate(getPropertyDetailUrl(p)));
   const handleDeleteProp = onDeleteProperty || (() => {});
 
-  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_services' | 'my_store' | 'wallet_tokens' | 'my_cv' | 'recruiter_packages' | 'affiliate' | 'account_profile' | 'transactions'>('my_properties');
+  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_services' | 'my_store' | 'wallet_tokens' | 'my_cv' | 'recruiter_packages' | 'affiliate' | 'account_profile' | 'transactions' | 'resident_utilities'>('my_properties');
   const [propertyFilter, setPropertyFilter] = useState<'all' | 'approved' | 'pending' | 'expired'>('all');
   const [selectedPropertyForUpTin, setSelectedPropertyForUpTin] = useState<Property | null>(null);
   const [localTransactions, setLocalTransactions] = useState<UpTinTransaction[]>([]);
@@ -744,6 +745,18 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('resident_utilities')}
+          className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'resident_utilities'
+              ? 'bg-amber-500 text-slate-950 shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Tiện Ích Cư Dân</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('my_services')}
           className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
             activeTab === 'my_services'
@@ -843,6 +856,18 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
       {/* ========================================================================= */}
       {/* TAB 1: MY PROPERTIES (TIN ĐĂNG BẤT ĐỘNG SẢN) */}
       {/* ========================================================================= */}
+      {activeTab === 'resident_utilities' && (
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+          <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+            <h2 className="text-base font-black text-slate-900 dark:text-white uppercase">Tiện Ích Cư Dân</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Công cụ dành riêng cho tài khoản cư dân đã đăng nhập.
+            </p>
+          </div>
+          <ResidentUtilities currentUser={userState} />
+        </div>
+      )}
+
       {activeTab === 'my_properties' && (
         <div className="space-y-3">
           {/* Header & Filter Controls & Density Toggle */}
