@@ -597,12 +597,12 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         </p>
       </div>
 
-      {/* 3 UNIFIED POST MODE SELECTOR TABS */}
-      <div className="flex p-1.5 bg-slate-200 dark:bg-slate-800 rounded-2xl max-w-2xl mx-auto shadow-inner border border-slate-300 dark:border-slate-700">
+      {/* POST MODE SELECTOR — ô vuông icon trên di động */}
+      <div className="grid grid-cols-3 gap-2 sm:flex sm:p-1.5 sm:bg-slate-200 dark:sm:bg-slate-800 sm:rounded-2xl max-w-2xl mx-auto sm:shadow-inner sm:border border-slate-300 dark:border-slate-700">
         <button
           type="button"
           onClick={() => setPostMode('real_estate')}
-          className={`flex-1 py-3 px-2.5 rounded-xl font-black text-[11px] sm:text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 py-2.5 sm:py-3 px-2 rounded-xl font-black text-[11px] sm:text-xs transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border sm:border-0 border-slate-300 dark:border-slate-700 ${
             postMode === 'real_estate'
               ? 'bg-amber-500 text-slate-950 shadow-md scale-[1.02]'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -615,7 +615,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         <button
           type="button"
           onClick={() => setPostMode('service')}
-          className={`flex-1 py-3 px-2.5 rounded-xl font-black text-[11px] sm:text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 py-2.5 sm:py-3 px-2 rounded-xl font-black text-[11px] sm:text-xs transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border sm:border-0 border-slate-300 dark:border-slate-700 ${
             postMode === 'service'
               ? 'bg-amber-500 text-slate-950 shadow-md scale-[1.02]'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -628,7 +628,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         <button
           type="button"
           onClick={() => setPostMode('kiotviet')}
-          className={`flex-1 py-3 px-2.5 rounded-xl font-black text-[11px] sm:text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 py-2.5 sm:py-3 px-2 rounded-xl font-black text-[11px] sm:text-xs transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border sm:border-0 border-slate-300 dark:border-slate-700 ${
             postMode === 'kiotviet'
               ? 'bg-amber-500 text-slate-950 shadow-md scale-[1.02]'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
