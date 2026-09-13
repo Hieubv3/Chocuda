@@ -1821,7 +1821,7 @@ export const App: React.FC = () => {
       >
         {/* 1. Trang Chủ */}
         <button
-          onClick={() => navigate('/')}
+          onClick={() => { window.dispatchEvent(new Event('close-mobile-menu')); navigate('/'); }}
           className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
             location.pathname === '/'
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
@@ -1834,7 +1834,7 @@ export const App: React.FC = () => {
 
         {/* 2. Bất Động Sản */}
         <button
-          onClick={() => navigate('/bat-dong-san')}
+          onClick={() => { window.dispatchEvent(new Event('close-mobile-menu')); navigate('/bat-dong-san'); }}
           className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
             location.pathname.startsWith('/bat-dong-san') || location.pathname.startsWith('/mua-ban') || location.pathname.startsWith('/cho-thue')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
@@ -1848,6 +1848,7 @@ export const App: React.FC = () => {
         {/* 3. Đăng Tin (Gọn gàng, bằng kích thước hàng menu, có hiệu ứng zoom khi chạm) */}
         <button
           onClick={() => {
+            window.dispatchEvent(new Event('close-mobile-menu'));
             if (!user) {
               setAuthModalOpen(true);
             } else {
@@ -1864,7 +1865,7 @@ export const App: React.FC = () => {
 
         {/* 4. Chợ Cư Dân */}
         <button
-          onClick={() => navigate('/dich-vu-cu-dan')}
+          onClick={() => { window.dispatchEvent(new Event('close-mobile-menu')); navigate('/dich-vu-cu-dan'); }}
           className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
             location.pathname.startsWith('/dich-vu-cu-dan')
               ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
@@ -1877,7 +1878,7 @@ export const App: React.FC = () => {
 
         {/* 5. Menu (3 gạch) — chuyển từ góc phải header xuống thanh dưới */}
         <button
-          onClick={() => window.dispatchEvent(new Event('open-mobile-menu'))}
+          onClick={() => window.dispatchEvent(new Event('toggle-mobile-menu'))}
           className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer relative group text-slate-500 hover:text-slate-900 dark:hover:text-white"
           aria-label="Mở menu"
         >

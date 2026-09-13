@@ -46,11 +46,19 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Mở menu mobile từ nút "Menu" ở thanh dưới
+  // Mở / tắt / đóng menu mobile từ nút "Menu" ở thanh dưới
   React.useEffect(() => {
     const openMenu = () => setMobileMenuOpen(true);
+    const toggleMenu = () => setMobileMenuOpen((v) => !v);
+    const closeMenu = () => setMobileMenuOpen(false);
     window.addEventListener('open-mobile-menu', openMenu);
-    return () => window.removeEventListener('open-mobile-menu', openMenu);
+    window.addEventListener('toggle-mobile-menu', toggleMenu);
+    window.addEventListener('close-mobile-menu', closeMenu);
+    return () => {
+      window.removeEventListener('open-mobile-menu', openMenu);
+      window.removeEventListener('toggle-mobile-menu', toggleMenu);
+      window.removeEventListener('close-mobile-menu', closeMenu);
+    };
   }, []);
   const [saleHover, setSaleHover] = useState(false);
   const [rentHover, setRentHover] = useState(false);
