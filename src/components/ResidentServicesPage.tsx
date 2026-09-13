@@ -849,8 +849,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
         {/* ==================== LEFT COLUMN: CATEGORIES & RESIDENT SERVICES / STOREFRONTS (HIỂN THỊ BÊN TRÁI - 8 CỘT) ==================== */}
         <div className="lg:col-span-8 space-y-6">
 
-          {/* Categories Grid — mobile: nốt vuông gọn kiểu Chợ Tốt (icon to, tên 2 dòng) · desktop: nút ngang */}
-          <div className="flex gap-2 overflow-x-auto pb-1 snap-x snap-mandatory scrollbar-none lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
+          {/* Categories Grid — lưới ô vuông 4 cột (không cuộn ngang) */}
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
             <button
               onClick={() => {
                 if (window.innerWidth < 1024) {
@@ -861,7 +861,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   navigate('/dich-vu-cu-dan');
                 }
               }}
-              className={`w-[104px] shrink-0 snap-start rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2 px-1.5 min-h-[78px] lg:w-auto lg:shrink lg:min-h-0 lg:flex-row lg:items-center lg:justify-start lg:gap-1 lg:p-1 lg:text-left ${
+              className={`w-full rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2 px-1.5 min-h-[78px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-start lg:gap-1 lg:p-1 lg:text-left ${
                 selectedCategory === 'all'
                   ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
                   : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
@@ -894,7 +894,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       navigate(getServiceCategoryUrl(cat.id));
                     }
                   }}
-                  className={`w-[104px] shrink-0 snap-start rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2 px-1.5 min-h-[78px] lg:w-auto lg:shrink lg:min-h-0 lg:flex-row lg:items-center lg:justify-between lg:gap-0.5 lg:p-1 lg:text-left ${
+                  className={`w-full rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2 px-1.5 min-h-[78px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-between lg:gap-0.5 lg:p-1 lg:text-left ${
                     isActive
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
                       : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
