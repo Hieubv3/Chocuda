@@ -858,11 +858,11 @@ export const HomePage: React.FC<HomePageProps> = ({
         <RealestateVideoChannelSection />
       </section>
 
-      {/* 7. Real Estate Market News Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* 7. Tin Tức & 4 Nhóm Ngành — 1 lớp hiển thị */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
-            <span className="text-xs font-black uppercase text-amber-500 tracking-wider">TIN TỨC & PHÂN TÍCH</span>
+            <span className="text-xs font-black uppercase text-amber-500 tracking-wider">TIN TỨC & NHÓM NGÀNH</span>
             <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
               {t.sections.newsTitle}
             </h2>
@@ -878,65 +878,10 @@ export const HomePage: React.FC<HomePageProps> = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {news.slice(0, 3).map((item) => (
-            <div
-              key={item.id}
-              onClick={() => setCurrentTab('news')}
-              className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl transition duration-300 cursor-pointer flex flex-col justify-between"
-            >
-              <div className="relative aspect-[16/10] overflow-hidden">
-                <img loading="lazy" src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                {item.source === 'n8n' && (
-                  <span className="absolute top-3 left-3 bg-blue-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow">
-                    n8n Sync
-                  </span>
-                )}
-                {item.source === 'ai' && (
-                  <span className="absolute top-3 left-3 bg-purple-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow">
-                    Gemini AI
-                  </span>
-                )}
-              </div>
-
-              <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center text-[11px] text-slate-400 space-x-2 mb-1">
-                    <Clock className="w-3 h-3 text-amber-500" />
-                    <span>{item.publishedAt}</span>
-                    <span>•</span>
-                    <span>{item.author}</span>
-                  </div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 hover:text-amber-500">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
-                    {item.summary}
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center">
-                  <span>Đọc tiếp</span>
-                  <ChevronRight className="w-3.5 h-3.5 ml-1" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 4 Nhóm Ngành Chính — Ảnh đại diện (admin quản lý) */}
-      {categoryImages.length > 0 && (
-        <section className="px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-amber-500" />
-                <span>4 NHÓM NGÀNH CHÍNH</span>
-              </h2>
-              <span className="text-[11px] font-bold text-slate-400">Chợ Cư Dân 24H</span>
-            </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] gap-6 items-start">
+          {/* 4 Nhóm Ngành — lưới 2x2 */}
+          {categoryImages.length > 0 && (
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {categoryImages.map(cat => (
                 <a
                   key={cat.key}
@@ -951,10 +896,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                     loading="lazy"
                     src={cat.image}
                     alt={cat.label}
-                    className="w-full h-32 sm:h-44 object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-28 sm:h-36 lg:h-44 object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                  <div className="absolute bottom-0 left-0 right-0 p-3">
                     <span className="text-white font-black text-xs sm:text-sm drop-shadow-md">{cat.label}</span>
                     <div className="flex items-center text-amber-400 text-[10px] sm:text-[11px] font-bold mt-1">
                       <span>Khám phá ngay</span>
@@ -964,9 +909,51 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </a>
               ))}
             </div>
+          )}
+
+          {/* Bản tin — 3 dòng gọn */}
+          <div className="space-y-3">
+            {news.slice(0, 3).map((item) => (
+              <div
+                key={item.id}
+                onClick={() => setCurrentTab('news')}
+                className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-lg hover:border-amber-400/60 transition duration-300 cursor-pointer flex items-stretch overflow-hidden"
+              >
+                <div className="relative w-28 sm:w-36 shrink-0">
+                  <img loading="lazy" src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                  {item.source === 'n8n' && (
+                    <span className="absolute top-2 left-2 bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow">
+                      n8n
+                    </span>
+                  )}
+                  {item.source === 'ai' && (
+                    <span className="absolute top-2 left-2 bg-purple-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow">
+                      AI
+                    </span>
+                  )}
+                </div>
+                <div className="p-3 sm:p-4 flex-1 min-w-0 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center text-[10px] text-slate-400 space-x-2 mb-1">
+                      <Clock className="w-3 h-3 text-amber-500" />
+                      <span>{item.publishedAt}</span>
+                      <span>•</span>
+                      <span className="truncate">{item.author}</span>
+                    </div>
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-2 hover:text-amber-500">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <div className="pt-2 text-[11px] font-bold text-amber-600 dark:text-amber-400 flex items-center">
+                    <span>Đọc tiếp</span>
+                    <ChevronRight className="w-3 h-3 ml-1" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* SEO Popular Links Section at Bottom of HomePage */}
       <PopularVinhomesLinksSection
