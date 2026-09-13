@@ -131,7 +131,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     <div className="space-y-16 pb-16">
       
       {/* 1. Hero Banner Section */}
-      <section className="relative bg-slate-950 text-white pt-12 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden rounded-b-[2.5rem] shadow-2xl">
+      <section className="relative bg-slate-950 text-white pt-5 pb-6 sm:pt-12 sm:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden rounded-b-[2.5rem] shadow-2xl">
         <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]" />
         
         {/* Background Image Overlay */}
@@ -144,16 +144,16 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/40" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto space-y-4 sm:space-y-8 text-center sm:text-left">
+        <div className="relative max-w-7xl mx-auto space-y-2 sm:space-y-8 text-center sm:text-left">
           
           {/* Top Badge */}
-          <div className="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-extrabold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md">
+          <div className="hidden sm:inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-extrabold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md">
             <Sparkles className="w-3.5 h-3.5" />
             <span>CHỢ CƯ DÂN 24H — CHOCUDAN24H.COM</span>
           </div>
 
           {/* Hero Titles */}
-          <div className="space-y-2 max-w-3xl">
+          <div className="space-y-1 sm:space-y-2 max-w-3xl">
             <h1 className="tracking-tight text-white leading-tight">
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 font-black text-lg sm:text-2xl md:text-3xl lg:text-4xl tracking-tight drop-shadow-md">
                 KẾT NỐI CƯ DÂN VINHOMES
@@ -162,7 +162,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <p className="text-[11px] sm:text-sm text-slate-200 font-medium leading-snug">
               Mua bán, cho thuê BĐS và dịch vụ nội khu Vinhomes — hỗ trợ 24/7.
             </p>
-            <p className="text-[10px] sm:text-[11px] text-amber-300 font-semibold flex items-center gap-1.5">
+            <p className="hidden sm:flex text-[10px] sm:text-[11px] text-amber-300 font-semibold items-center gap-1.5">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
               <span>Hotline/Zalo 0868.499.929</span>
             </p>
@@ -344,7 +344,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         {/* Bản tin nằm trong banner (mép phải ~12%) */}
-        <BannerNewsRail title="BẢN TIN 4 NGÀNH" />
+        <BannerNewsRail title="TIN NỔI BẬT" />
       </section>
 
       {/* 2. Key Values Bar - compact */}

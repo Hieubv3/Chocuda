@@ -489,9 +489,6 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
                 <Briefcase className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-400 shrink-0" />
                 <span>Tuyển Dụng & Tìm Việc Làm Nội Khu</span>
               </h1>
-              <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl">
-                Kết nối trực tiếp Nhà tuyển dụng và Ứng viên là Cư dân sinh sống tại các Đại đô thị. Đăng tin tuyển dụng nhanh, tạo CV chuyên nghiệp & mở khóa liên hệ an toàn.
-              </p>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">

@@ -538,9 +538,6 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               <h1 className="text-lg sm:text-xl font-black tracking-tight text-white leading-snug">
                 CHỢ DỊCH VỤ & THỢ CƯ DÂN <span className="text-emerald-400">VINHOMES</span>
               </h1>
-              <p className="text-slate-300 text-xs mt-0.5 max-w-2xl">
-                Lắp thang máy, sửa điện máy tính, taxi 24/7, ẩm thực ATVSTP, y tế gia đình & spa — Cửa hàng đã xác minh chính chủ!
-              </p>
             </div>
 
             <button

@@ -74,7 +74,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
       </div>
 
       {/* Bản tin nằm trong banner (mép phải ~12%) */}
-      {newsIndustry && <BannerNewsRail industry={newsIndustry} title="BẢN TIN" />}
+      {newsIndustry && <BannerNewsRail industry={newsIndustry} title="TIN NỔI BẬT" />}
     </section>
   );
 };

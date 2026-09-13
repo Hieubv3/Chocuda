@@ -58,7 +58,7 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
             BẢN TIN THỊ TRƯỜNG VINHOMES 24/7
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Đồng bộ bài viết tự động từ webhook n8n & Phân tích chuyên sâu từ Gemini AI
+            Cập nhật tin tức thị trường BĐS Vinhomes mới nhất
           </p>
         </div>
 
