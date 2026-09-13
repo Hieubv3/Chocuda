@@ -16,9 +16,11 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
   const t = getTranslation(language);
   const { views, zaloInteractions, onlineCount } = useVisitorStats();
   const [isBannerDismissed, setIsBannerDismissed] = useState(false);
+  // Thu gọn liên kết trên di động
+  const [showMoreLinks, setShowMoreLinks] = useState(false);
 
   return (
-    <footer className="bg-slate-950 text-slate-300 pt-16 pb-12 border-t border-slate-800">
+    <footer className="bg-slate-950 text-slate-300 pt-8 pb-8 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           
@@ -77,7 +79,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
           </div>
 
           {/* Col 2: Key Projects & Resident Groups */}
-          <div className="space-y-4">
+          <div className={showMoreLinks ? 'space-y-4' : 'space-y-4 hidden md:block'}>
             <h3 className="text-sm font-bold text-white uppercase tracking-wider text-amber-400 border-b border-slate-800 pb-2">
               GROUP CƯ DÂN & DỰ ÁN
             </h3>
@@ -131,7 +133,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
           </div>
 
           {/* Col 3: Quick Navigation & Topics */}
-          <div className="space-y-4">
+          <div className={showMoreLinks ? 'space-y-4' : 'space-y-4 hidden md:block'}>
             <h3 className="text-sm font-bold text-white uppercase tracking-wider text-amber-400 border-b border-slate-800 pb-2">
               CHỦ ĐỀ & LIÊN KẾT NHANH
             </h3>
@@ -203,6 +205,15 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
           </div>
 
         </div>
+
+        {/* Di động: nút mở/thu liên kết để footer gọn hơn */}
+        <button
+          type="button"
+          onClick={() => setShowMoreLinks((v) => !v)}
+          className="md:hidden mt-4 w-full py-2 rounded-xl border border-slate-800 text-xs font-bold text-amber-400 hover:bg-slate-900 transition"
+        >
+          {showMoreLinks ? 'Thu gọn liên kết ▲' : 'Xem thêm liên kết ▼'}
+        </button>
 
         {/* Combined Unified Box: Android App Download + Real-Time Website Traffic Counter */}
         <div className="mt-8 p-4 bg-slate-900 border border-slate-800 hover:border-emerald-500/30 rounded-2xl shadow-xl transition-all space-y-3.5 divide-y divide-slate-800/80">
