@@ -13,6 +13,8 @@ import { RealTimeNewsBoard } from '../components/RealTimeNewsBoard';
 import { DeveloperUnitsPublic } from '../components/DeveloperUnitsPublic';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
 import { HIEU_BUI_PROFILE, INITIAL_ADS } from '../data/initialData';
+import { IndustryFeed } from '../components/IndustryFeed';
+import { INITIAL_RESIDENT_SERVICES } from '../data/residentServicesData';
 import { loadHeroCards } from '../data/heroCardsData';
 import { getTranslation } from '../lib/i18n';
 
@@ -890,6 +892,59 @@ export const HomePage: React.FC<HomePageProps> = ({
       )}
 
       {/* SEO Popular Links Section at Bottom of HomePage */}
+      {/* Tổng hợp 3 ngành: Dịch vụ · Cho thuê · Chuyển nhượng */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="border-b border-slate-200 dark:border-slate-800 pb-4 mb-5">
+          <span className="text-xs font-black uppercase text-amber-500 tracking-wider">TIN ĐĂNG CƯ DÂN</span>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">DỊCH VỤ · CHO THUÊ · CHUYỂN NHƯỢNG</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tổng hợp tin mới nhất của cư dân</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <IndustryFeed
+            title="DỊCH VỤ CƯ DÂN"
+            accent="bg-emerald-600"
+            items={(INITIAL_RESIDENT_SERVICES as any[]).slice(0, 5).map((s: any) => ({
+              id: String(s.id),
+              title: s.title || s.name || '',
+              subtitle: s.priceDisplay || s.price || s.category || '',
+              image: (Array.isArray(s.images) ? s.images[0] : s.image) || '',
+              date: s.createdAt ? String(s.createdAt).slice(0, 10) : '',
+            }))}
+            emptyText="Chưa có dịch vụ"
+            onViewAll={() => setCurrentTab('services')}
+            onItemClick={() => setCurrentTab('services')}
+          />
+          <IndustryFeed
+            title="CHO THUÊ CĂN HỘ"
+            accent="bg-sky-500"
+            items={properties.filter((p) => p.type === 'rent').slice(0, 5).map((p) => ({
+              id: p.id,
+              title: p.title,
+              subtitle: p.priceDisplay,
+              image: p.images?.[0],
+              date: p.createdAt ? String(p.createdAt).slice(0, 10) : '',
+            }))}
+            emptyText="Chưa có tin cho thuê"
+            onViewAll={() => setCurrentTab('rent')}
+            onItemClick={() => setCurrentTab('rent')}
+          />
+          <IndustryFeed
+            title="CHUYỂN NHƯỢNG / MUA BÁN"
+            accent="bg-amber-500"
+            items={properties.filter((p) => p.type === 'sale').slice(0, 5).map((p) => ({
+              id: p.id,
+              title: p.title,
+              subtitle: p.priceDisplay,
+              image: p.images?.[0],
+              date: p.createdAt ? String(p.createdAt).slice(0, 10) : '',
+            }))}
+            emptyText="Chưa có tin mua bán"
+            onViewAll={() => setCurrentTab('sale')}
+            onItemClick={() => setCurrentTab('sale')}
+          />
+        </div>
+      </section>
+
       <PopularVinhomesLinksSection
         setCurrentTab={setCurrentTab}
         onSelectProject={onSelectProject}
