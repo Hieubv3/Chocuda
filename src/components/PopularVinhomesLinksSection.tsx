@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Building2, Home, KeyRound, MapPin, Sparkles, ChevronRight, ShoppingBag, Users } from 'lucide-react';
 import { ProjectCategory } from '../types';
 
@@ -11,6 +11,9 @@ export const PopularVinhomesLinksSection: React.FC<PopularVinhomesLinksSectionPr
   setCurrentTab,
   onSelectProject
 }) => {
+  // Thu gọn 3 cột liên kết trên di động
+  const [showAll, setShowAll] = useState(false);
+
   const handleLinkClick = (tab: string, project?: ProjectCategory) => {
     if (project && onSelectProject) {
       onSelectProject(project);
@@ -47,7 +50,7 @@ export const PopularVinhomesLinksSection: React.FC<PopularVinhomesLinksSectionPr
               <ShoppingBag className="w-4 h-4 text-amber-500" />
               <span>Chủ đề & Dịch vụ cư dân</span>
             </h3>
-            <ul className="space-y-2 text-slate-400">
+            <ul className={showAll ? 'space-y-2 text-slate-400' : 'space-y-2 text-slate-400 hidden md:block'}>
               {[
                 { label: '🍲 Quán ăn & Thực phẩm F&B Cư Dân', tab: 'services' },
                 { label: '🛒 Chợ Cư Dân - Hải Sản & Đồ Tươi Sạch', tab: 'services' },
@@ -78,7 +81,7 @@ export const PopularVinhomesLinksSection: React.FC<PopularVinhomesLinksSectionPr
               <Users className="w-4 h-4 text-emerald-500" />
               <span>Cộng đồng & Group cư dân</span>
             </h3>
-            <ul className="space-y-2 text-slate-400">
+            <ul className={showAll ? 'space-y-2 text-slate-400' : 'space-y-2 text-slate-400 hidden md:block'}>
               {[
                 { label: '🌊 Group Cư Dân Ocean Park 2 (The Empire)', tab: 'projects', project: 'ocean-park-2' },
                 { label: '🌴 Group Cư Dân Ocean Park 3 (Grand Park)', tab: 'projects', project: 'ocean-park-3' },
@@ -108,7 +111,7 @@ export const PopularVinhomesLinksSection: React.FC<PopularVinhomesLinksSectionPr
               <KeyRound className="w-4 h-4 text-sky-500" />
               <span>BĐS Cư dân chuyển nhượng & Thuê</span>
             </h3>
-            <ul className="space-y-2 text-slate-400">
+            <ul className={showAll ? 'space-y-2 text-slate-400' : 'space-y-2 text-slate-400 hidden md:block'}>
               {[
                 { label: '🔑 Cho thuê căn hộ chung cư chính chủ', tab: 'rent', project: 'smart-city' },
                 { label: '🏘️ Cho thuê biệt thự & shophouse kinh doanh', tab: 'rent', project: 'ocean-park-2' },
@@ -133,6 +136,15 @@ export const PopularVinhomesLinksSection: React.FC<PopularVinhomesLinksSectionPr
           </div>
 
         </div>
+
+        {/* Di động: nút mở/thu liên kết */}
+        <button
+          type="button"
+          onClick={() => setShowAll((v) => !v)}
+          className="md:hidden w-full py-2 rounded-xl border border-slate-800 text-xs font-bold text-amber-400 hover:bg-slate-900 transition"
+        >
+          {showAll ? 'Thu gọn liên kết ▲' : 'Xem thêm liên kết ▼'}
+        </button>
 
       </div>
     </section>
