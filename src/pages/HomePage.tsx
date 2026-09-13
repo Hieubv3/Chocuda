@@ -892,56 +892,98 @@ export const HomePage: React.FC<HomePageProps> = ({
       )}
 
       {/* SEO Popular Links Section at Bottom of HomePage */}
-      {/* Tổng hợp 3 ngành: Dịch vụ · Cho thuê · Chuyển nhượng */}
+      {/* Tổng hợp 3 ngành: Dịch vụ · Cho thuê · Chuyển nhượng (dạng gian hàng, thẻ ảnh lớn) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="border-b border-slate-200 dark:border-slate-800 pb-4 mb-5">
-          <span className="text-xs font-black uppercase text-amber-500 tracking-wider">TIN ĐĂNG CƯ DÂN</span>
+          <span className="text-xs font-black uppercase text-amber-500 tracking-wider">GIAN HÀNG TỔNG HỢP CƯ DÂN</span>
           <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">DỊCH VỤ · CHO THUÊ · CHUYỂN NHƯỢNG</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tổng hợp tin mới nhất của cư dân</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <IndustryFeed
-            title="DỊCH VỤ CƯ DÂN"
-            accent="bg-emerald-600"
-            items={(INITIAL_RESIDENT_SERVICES as any[]).slice(0, 5).map((s: any) => ({
-              id: String(s.id),
-              title: s.title || s.name || '',
-              subtitle: s.priceDisplay || s.price || s.category || '',
-              image: (Array.isArray(s.images) ? s.images[0] : s.image) || '',
-              date: s.createdAt ? String(s.createdAt).slice(0, 10) : '',
-            }))}
-            emptyText="Chưa có dịch vụ"
-            onViewAll={() => setCurrentTab('services')}
-            onItemClick={() => setCurrentTab('services')}
-          />
-          <IndustryFeed
-            title="CHO THUÊ CĂN HỘ"
-            accent="bg-sky-500"
-            items={properties.filter((p) => p.type === 'rent').slice(0, 5).map((p) => ({
-              id: p.id,
-              title: p.title,
-              subtitle: p.priceDisplay,
-              image: p.images?.[0],
-              date: p.createdAt ? String(p.createdAt).slice(0, 10) : '',
-            }))}
-            emptyText="Chưa có tin cho thuê"
-            onViewAll={() => setCurrentTab('rent')}
-            onItemClick={() => setCurrentTab('rent')}
-          />
-          <IndustryFeed
-            title="CHUYỂN NHƯỢNG / MUA BÁN"
-            accent="bg-amber-500"
-            items={properties.filter((p) => p.type === 'sale').slice(0, 5).map((p) => ({
-              id: p.id,
-              title: p.title,
-              subtitle: p.priceDisplay,
-              image: p.images?.[0],
-              date: p.createdAt ? String(p.createdAt).slice(0, 10) : '',
-            }))}
-            emptyText="Chưa có tin mua bán"
-            onViewAll={() => setCurrentTab('sale')}
-            onItemClick={() => setCurrentTab('sale')}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {[
+            {
+              title: 'DỊCH VỤ CƯ DÂN',
+              accent: 'bg-emerald-600',
+              tab: 'services',
+              items: (INITIAL_RESIDENT_SERVICES as any[]).slice(0, 4).map((s: any) => ({
+                id: String(s.id),
+                title: s.title || s.name || '',
+                price: s.priceDisplay || s.price || s.category || '',
+                image: (Array.isArray(s.images) ? s.images[0] : s.image) || '',
+              })),
+            },
+            {
+              title: 'CHO THUÊ CĂN HỘ',
+              accent: 'bg-sky-500',
+              tab: 'rent',
+              items: properties.filter((p) => p.type === 'rent').slice(0, 4).map((p) => ({
+                id: p.id,
+                title: p.title,
+                price: p.priceDisplay,
+                image: p.images?.[0],
+              })),
+            },
+            {
+              title: 'CHUYỂN NHƯỢNG / MUA BÁN',
+              accent: 'bg-amber-500',
+              tab: 'sale',
+              items: properties.filter((p) => p.type === 'sale').slice(0, 4).map((p) => ({
+                id: p.id,
+                title: p.title,
+                price: p.priceDisplay,
+                image: p.images?.[0],
+              })),
+            },
+          ].map((col) => (
+            <div
+              key={col.title}
+              className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
+            >
+              <div className={`px-4 py-2.5 flex items-center justify-between ${col.accent}`}>
+                <span className="font-black text-xs uppercase tracking-wider text-white">{col.title}</span>
+                <button
+                  onClick={() => setCurrentTab(col.tab)}
+                  className="text-[10px] font-bold bg-black/20 hover:bg-black/30 text-white px-2 py-0.5 rounded transition cursor-pointer"
+                >
+                  Xem tất cả
+                </button>
+              </div>
+              <div className="p-3 grid grid-cols-2 gap-2.5">
+                {col.items.length === 0 ? (
+                  <p className="col-span-2 text-xs italic text-slate-400 py-4 text-center">Chưa có tin</p>
+                ) : (
+                  col.items.map((it) => (
+                    <button
+                      key={it.id}
+                      onClick={() => setCurrentTab(col.tab)}
+                      className="text-left rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-emerald-400 transition group cursor-pointer"
+                    >
+                      <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-800">
+                        {it.image ? (
+                          <img
+                            loading="lazy"
+                            src={it.image}
+                            alt={it.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">Chưa có ảnh</div>
+                        )}
+                      </div>
+                      <div className="p-2">
+                        <p className="text-[11px] font-bold text-slate-800 dark:text-slate-100 line-clamp-2 leading-snug">
+                          {it.title}
+                        </p>
+                        {it.price && (
+                          <p className="text-[10px] font-black text-amber-600 dark:text-amber-400 mt-1">{it.price}</p>
+                        )}
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
