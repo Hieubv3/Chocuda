@@ -562,8 +562,8 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* 4 Sub-Tabs Bar - 4 ô chữ nhật gọn gàng: Mua bán, Cho thuê BĐS, Dịch vụ cư dân, Tuyển Dụng */}
-      <div className="bg-slate-100/90 dark:bg-slate-950/90 border-t border-slate-200/80 dark:border-slate-800/80 py-1.5 px-2 sm:px-3">
+      {/* 4 Sub-Tabs Bar — chỉ hiện trên PC (mobile đã có menu 3 gạch + thanh dưới) */}
+      <div className="hidden lg:block bg-slate-100/90 dark:bg-slate-950/90 border-t border-slate-200/80 dark:border-slate-800/80 py-1.5 px-2 sm:px-3">
         <div className="max-w-4xl mx-auto grid grid-cols-4 gap-1 sm:gap-2.5">
           <button
             onClick={() => handleNavFilter('sale', 'all')}
