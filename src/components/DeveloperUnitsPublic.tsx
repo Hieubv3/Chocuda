@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Pagination } from './Pagination';
+import { usePagination } from '../lib/usePagination';
 import { X, MapPin, Building2, Phone, MessageCircle } from 'lucide-react';
 import {
   DeveloperUnit,
@@ -110,6 +112,9 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
   }, [projectUnits, subId, tier, srcFilter, statusGroupFilter]);
 
   const subAllUnits = useMemo(() => projectUnits.filter(u => u.subdivisionId === subId && u.tier === tier), [projectUnits, subId, tier]);
+
+  // Phân trang danh sách quỹ căn: 20 / 100 / 200
+  const unitsPager = usePagination(currentUnits, 'hb_units_page_size');
 
   const floorplan = useMemo(() => floorplans.find(f => f.subdivisionId === subId), [floorplans, subId]);
 
@@ -327,7 +332,7 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                     <p className="text-xs font-bold text-slate-400">Không có căn phù hợp</p>
                   </div>
                 ) : (
-                  currentUnits.map(u => {
+                  unitsPager.pageItems.map(u => {
                     const g = STATUS_GROUP[u.status];
                     const isF1 = u.source === 'f1';
                     const sold = g === 'sold';
@@ -484,6 +489,15 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
           </div>
         </div>
       )}
+
+      <Pagination
+        total={unitsPager.total}
+        page={unitsPager.page}
+        pageSize={unitsPager.pageSize}
+        onPageChange={unitsPager.setPage}
+        onPageSizeChange={unitsPager.changePageSize}
+        label="căn"
+      />
     </div>
   );
 };
