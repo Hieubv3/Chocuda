@@ -556,22 +556,6 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="hidden xs:inline sm:inline">Đăng Nhập</span>
               </button>
             )}
-
-            {/* Mobile: Cá Nhân (thay vị trí 3 gạch cũ — 3 gạch đã chuyển xuống thanh dưới) */}
-            <button
-              onClick={() => {
-                if (!currentUser) {
-                  onOpenAuth();
-                } else {
-                  setCurrentTab('user_dashboard');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-              }}
-              className="lg:hidden p-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl shrink-0"
-              aria-label="Cá nhân"
-            >
-              <User className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
           </div>
 
         </div>
