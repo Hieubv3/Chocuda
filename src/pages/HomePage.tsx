@@ -673,7 +673,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
           {projects.map((proj) => (
             <div
               key={proj.id}
@@ -683,7 +683,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               }}
               className="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
             >
-              <div className="relative aspect-[16/10] overflow-hidden">
+              <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden">
                 <img loading="lazy"
                   src={proj.image}
                   alt={proj.name}
@@ -695,19 +695,19 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </span>
               </div>
 
-              <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+              <div className="p-3 sm:p-5 space-y-2 sm:space-y-3 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
+                  <h3 className="text-xs sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors line-clamp-2">
                     {proj.name}
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                  <p className="hidden sm:block text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
                     {proj.description}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs flex justify-between items-center">
-                  <span className="text-slate-400">Khoảng giá</span>
-                  <span className="font-extrabold text-amber-600 dark:text-amber-400">{proj.priceRange}</span>
+                <div className="pt-2 sm:pt-3 border-t border-slate-100 dark:border-slate-700 text-[10px] sm:text-xs flex justify-between items-center gap-1">
+                  <span className="text-slate-400 hidden sm:inline">Khoảng giá</span>
+                  <span className="font-extrabold text-amber-600 dark:text-amber-400 truncate">{proj.priceRange}</span>
                 </div>
               </div>
             </div>
