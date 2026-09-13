@@ -11,6 +11,8 @@ import {
 import { ProjectCategory, User as UserType, UserStorefront } from '../types';
 import { PageBanner } from './PageBanner';
 import { getStoredAreaKey, prioritizeByArea } from '../lib/areaPriority';
+import { Pagination } from './Pagination';
+import { usePagination } from '../lib/usePagination';
 import { 
   RESIDENT_SERVICE_CATEGORIES, 
   VIN_MAJOR_PROJECTS, 
@@ -324,6 +326,10 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     });
     return prioritizeByArea(list, getStoredAreaKey(), (st: any) => st.project);
   }, [stores, selectedProject, searchQuery, storeVerificationTab]);
+
+  // Phân trang: 20 / 100 / 200 bài mỗi trang
+  const storesPager = usePagination(displayStoresByTab, 'hb_stores_page_size');
+  const servicesPager = usePagination(displayServicesByTab, 'hb_services_page_size');
 
   // Tab Counts
   const verifiedServicesCount = useMemo(() => filteredServices.filter(s => s.verified || s.kycStatus === 'verified').length, [filteredServices]);
@@ -780,14 +786,10 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
 
           {/* Lưới gộp: 6 nút tiện ích nhanh + danh mục ngành (đã bỏ 2 mục trùng) */}
           <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
-            {/* 6 nút tiện ích nhanh */}
+            {/* 2 nút tiện ích công khai (các tiện ích khác đã chuyển vào trang Tài khoản) */}
             {[
-              { label: 'AI Quét Menu', icon: Sparkles, color: 'text-amber-500', bg: 'bg-amber-500/10', onClick: () => setIsAiMenuScannerOpen(true) },
-              { label: 'Bảng Giá PR', icon: ShoppingBag, color: 'text-emerald-500', bg: 'bg-emerald-500/10', onClick: () => setIsPricingModalOpen(true) },
               { label: 'Xe Cư Dân 24/7', icon: Car, color: 'text-amber-500', bg: 'bg-amber-500/10', onClick: () => setIsTransportModalOpen(true) },
               { label: 'Xây Lắp & Thang Máy', icon: Hammer, color: 'text-blue-500', bg: 'bg-blue-500/10', onClick: () => setIsConstructionModalOpen(true) },
-              { label: 'Thỏa Thuận 3 Bên', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-500/10', onClick: () => setIsTripartiteModalOpen(true) },
-              { label: 'Bản Đồ Định Vị', icon: Compass, color: 'text-slate-500', bg: 'bg-slate-500/10', onClick: () => setIsMapModalOpen(true) },
             ].map((item) => {
               const ItemIcon = item.icon;
               return (
@@ -1034,7 +1036,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {displayStoresByTab.map((st) => (
+                  {storesPager.pageItems.map((st) => (
                     <div 
                       key={st.id} 
                       className="bg-slate-950 text-white rounded-2xl border border-slate-800 p-3.5 space-y-3 hover:border-amber-500 transition group flex flex-col justify-between"
@@ -1074,6 +1076,18 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               </div>
             )}
 
+            {/* Phân trang gian hàng */}
+            {displayStoresByTab.length > 0 && (
+              <Pagination
+                total={storesPager.total}
+                page={storesPager.page}
+                pageSize={storesPager.pageSize}
+                onPageChange={storesPager.setPage}
+                onPageSizeChange={storesPager.changePageSize}
+                label="gian hàng"
+              />
+            )}
+
             {/* SECTION 2: SERVICES & CRAFTSMEN / THỢ DỊCH VỤ CƯ DÂN */}
             <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between">
@@ -1100,7 +1114,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               ) : viewMode === 'list-row' ? (
                 /* HÀNG NGANG LIST ROW LAYOUT */
                 <div className="space-y-3">
-                  {displayServicesByTab.map(service => {
+                  {servicesPager.pageItems.map(service => {
                     const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
                     const isVerified = service.verified || service.kycStatus === 'verified';
 
@@ -1189,7 +1203,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               ) : viewMode === 'grid-2col' ? (
                 /* 2 CỘT Ô VUÔNG DỰ DỰA TRÊN THIẾT BỊ DI ĐỘNG */
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
-                  {displayServicesByTab.map(service => {
+                  {servicesPager.pageItems.map(service => {
                     const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
                     const isVerified = service.verified || service.kycStatus === 'verified';
 
@@ -1278,7 +1292,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
                     : "grid grid-cols-1 md:grid-cols-2 gap-6"
                 }>
-                  {displayServicesByTab.map(service => {
+                  {servicesPager.pageItems.map(service => {
                     const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
                     const isGold = service.kycBadgeType === 'gold_certified';
                     const isVerified = service.verified || service.kycStatus === 'verified';
@@ -1399,6 +1413,18 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     );
                   })}
                 </div>
+              )}
+
+              {/* Phân trang thợ & dịch vụ */}
+              {displayServicesByTab.length > 0 && (
+                <Pagination
+                  total={servicesPager.total}
+                  page={servicesPager.page}
+                  pageSize={servicesPager.pageSize}
+                  onPageChange={servicesPager.setPage}
+                  onPageSizeChange={servicesPager.changePageSize}
+                  label="dịch vụ"
+                />
               )}
             </div>
           </div>

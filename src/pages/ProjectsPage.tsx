@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { MapPin, Building2, CheckCircle2, ChevronRight, Layers, Award, Sparkles, ExternalLink, ShieldCheck } from 'lucide-react';
 import { Project, ProjectCategory, Language, Property, isAdminProperty } from '../types';
 import { PropertyCard } from '../components/PropertyCard';
+import { Pagination } from '../components/Pagination';
+import { usePagination } from '../lib/usePagination';
 import { getProjectSlug, getSubdivisionUrl, getAmenityUrl, getPropertyDetailUrl } from '../lib/slugs';
 
 interface ProjectsPageProps {
@@ -58,6 +60,9 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
       isAdminProperty(p)
     );
   }, [properties, currentProject.id]);
+
+  // Phân trang danh sách căn của dự án (20 / 100 / 200)
+  const projectsPager = usePagination(adminProjectProperties, 'hb_project_units_page_size');
 
   const handleSubdivisionClick = (subName: string) => {
     navigate(getSubdivisionUrl(currentProject.id, subName));
@@ -330,8 +335,9 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
             </div>
 
             {adminProjectProperties.length > 0 ? (
+              <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {adminProjectProperties.map(property => (
+                {projectsPager.pageItems.map(property => (
                   <PropertyCard
                     key={property.id}
                     property={property}
@@ -343,6 +349,16 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                     onToggleCompare={onToggleCompare || (() => {})}
                   />
                 ))}
+              </div>
+
+              <Pagination
+                total={projectsPager.total}
+                page={projectsPager.page}
+                pageSize={projectsPager.pageSize}
+                onPageChange={projectsPager.setPage}
+                onPageSizeChange={projectsPager.changePageSize}
+                label="căn"
+              />
               </div>
             ) : (
               <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 text-center space-y-3 border border-slate-200 dark:border-slate-700">

@@ -4,6 +4,8 @@ import { PropertyCard } from '../components/PropertyCard';
 import { PropertyFilter } from '../components/PropertyFilter';
 import { PageBanner } from '../components/PageBanner';
 import { getStoredAreaKey, prioritizeByArea } from '../lib/areaPriority';
+import { Pagination } from '../components/Pagination';
+import { usePagination } from '../lib/usePagination';
 import { LayoutGrid, List, SearchX, Grid2x2, ShieldCheck } from 'lucide-react';
 import { getTranslation } from '../lib/i18n';
 
@@ -156,6 +158,12 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
     return prioritizeByArea(list, getStoredAreaKey(), (p: Property) => p.project);
   }, [properties, selectedType, selectedProject, selectedHeightCategory, selectedCategory, furniture, bedrooms, minPrice, maxPrice, searchQuery, sortBy]);
 
+  // Phân trang: 20 / 100 / 200 bài mỗi trang (mới nhất ở trang 1)
+  const { page, pageSize, total, pageItems, setPage, changePageSize } = usePagination(
+    filteredProperties,
+    'hb_properties_page_size'
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-3">
       
@@ -303,7 +311,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
             ? 'grid grid-cols-1 md:grid-cols-2 gap-6'
             : 'space-y-4'
         }>
-          {filteredProperties.map((property) => (
+          {pageItems.map((property) => (
             <PropertyCard
               key={property.id}
               property={property}
@@ -318,6 +326,15 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
           ))}
         </div>
       )}
+
+      <Pagination
+        total={total}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={changePageSize}
+        label="căn"
+      />
 
     </div>
   );
