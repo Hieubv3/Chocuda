@@ -655,33 +655,48 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Nav items - horizontal grid, compact */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setCurrentTab(item.id);
-                  setMobileMenuOpen(false);
-                }}
-                className={`px-1.5 py-2 rounded-lg text-xs font-bold text-center transition ${
-                  currentTab === item.id
-                    ? 'bg-emerald-600 text-white font-extrabold'
-                    : 'bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+          {/* Nav items - lưới ô vuông icon chọn nhanh */}
+          <div className="grid grid-cols-4 gap-2">
+            {navItems.map((item) => {
+              const iconMap: Record<string, any> = {
+                home: Home,
+                profile: User,
+                projects: Building2,
+                services: Wrench,
+                recruitment: Briefcase,
+                news: Sparkles,
+                market: Store,
+              };
+              const Icon = iconMap[item.id] || Sparkles;
+              const active = currentTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setCurrentTab(item.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex flex-col items-center justify-center gap-1 p-2 rounded-2xl border transition text-center cursor-pointer ${
+                    active
+                      ? 'bg-emerald-600 text-white border-emerald-600 font-black'
+                      : 'bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${active ? 'text-white' : 'text-emerald-500'}`} />
+                  <span className="text-[10px] font-bold leading-tight line-clamp-2">{item.label}</span>
+                </button>
+              );
+            })}
             {currentUser && (
               <button
                 onClick={() => {
                   setCurrentTab('user_dashboard');
                   setMobileMenuOpen(false);
                 }}
-                className="px-1.5 py-2 rounded-lg text-xs font-bold text-center bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center gap-1"
+                className="flex flex-col items-center justify-center gap-1 p-2 rounded-2xl border bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 cursor-pointer"
               >
-                <Zap className="w-3.5 h-3.5 shrink-0" /> Quản Lý
+                <Zap className="w-5 h-5 shrink-0" />
+                <span className="text-[10px] font-bold leading-tight">Quản Lý</span>
               </button>
             )}
             <button
@@ -692,10 +707,10 @@ export const Header: React.FC<HeaderProps> = ({
                 setCurrentTab('post');
                 setMobileMenuOpen(false);
               }}
-              className="px-1.5 py-2 rounded-lg text-xs font-bold text-center bg-emerald-600 text-white flex items-center justify-center gap-1"
+              className="flex flex-col items-center justify-center gap-1 p-2 rounded-2xl border bg-emerald-600 text-white border-emerald-600 cursor-pointer"
             >
-              <PlusCircle className="w-3.5 h-3.5 shrink-0" />
-              {t.nav.postProperty}
+              <PlusCircle className="w-5 h-5 shrink-0" />
+              <span className="text-[10px] font-bold leading-tight">{t.nav.postProperty}</span>
             </button>
           </div>
         </div>
