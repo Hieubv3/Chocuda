@@ -1,4 +1,6 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
+import { Pagination } from './Pagination';
+import { usePagination } from '../lib/usePagination';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   Briefcase, Search, Filter, MapPin, DollarSign, Clock, Users, Building2, 
@@ -221,6 +223,9 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
 
   // Filtered lists for UI counters
   const totalActiveJobs = useMemo(() => jobs.filter(j => j.status === 'active' || !j.status).length, [jobs]);
+
+  // Phân trang tin tuyển dụng: 20 / 100 / 200
+  const jobsPager = usePagination(jobs, 'hb_jobs_page_size');
   const totalActiveCandidates = useMemo(() => candidates.filter(c => c.isLookingForJob !== false).length, [candidates]);
 
   // Handle Apply for Job
@@ -740,7 +745,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {jobs.map(job => (
+                {jobsPager.pageItems.map(job => (
                   <div
                     key={job.id}
                     className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition shadow-xs hover:shadow-md flex flex-col justify-between group"
@@ -831,6 +836,15 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
             )}
           </div>
         )}
+
+              <Pagination
+                total={jobsPager.total}
+                page={jobsPager.page}
+                pageSize={jobsPager.pageSize}
+                onPageChange={jobsPager.setPage}
+                onPageSizeChange={jobsPager.changePageSize}
+                label="tin"
+              />
 
         {/* TAB 2: KHO HỒ SƠ ỨNG VIÊN (CANDIDATE CVs FOR EMPLOYERS) */}
         {activeTab === 'candidates' && (

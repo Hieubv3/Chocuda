@@ -1,5 +1,7 @@
 ﻿import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { Pagination } from './Pagination';
+import { usePagination } from '../lib/usePagination';
 import {
   Wrench, ShieldCheck, Phone, MessageSquare, MapPin, Search, PlusCircle,
   Sparkles, Star, CheckCircle2, CheckCircle, ChevronRight, ChevronDown, AlertTriangle, ArrowUpRight,
@@ -326,6 +328,9 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
       return st.verified;
     });
   }, [stores, selectedProject, searchQuery, storeVerificationTab]);
+
+  // Phân trang: 20 / 100 / 200 dịch vụ mỗi trang
+  const servicesPager = usePagination(displayServicesByTab, 'hb_services_page_size');
 
   // Tab Counts
   const verifiedServicesCount = useMemo(() => filteredServices.filter(s => s.verified || s.kycStatus === 'verified').length, [filteredServices]);
@@ -1226,7 +1231,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               ) : viewMode === 'list-row' ? (
                 /* HÀNG NGANG LIST ROW LAYOUT */
                 <div className="space-y-3">
-                  {displayServicesByTab.map(service => {
+                  {servicesPager.pageItems.map(service => {
                     const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
                     const isVerified = service.verified || service.kycStatus === 'verified';
 
@@ -1315,7 +1320,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               ) : viewMode === 'grid-2col' ? (
                 /* 2 CỘT Ô VUÔNG DỰ DỰA TRÊN THIẾT BỊ DI ĐỘNG */
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
-                  {displayServicesByTab.map(service => {
+                  {servicesPager.pageItems.map(service => {
                     const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
                     const isVerified = service.verified || service.kycStatus === 'verified';
 
@@ -1404,7 +1409,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
                     : "grid grid-cols-1 md:grid-cols-2 gap-6"
                 }>
-                  {displayServicesByTab.map(service => {
+                  {servicesPager.pageItems.map(service => {
                     const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
                     const isGold = service.kycBadgeType === 'gold_certified';
                     const isVerified = service.verified || service.kycStatus === 'verified';
@@ -1527,6 +1532,18 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                 </div>
               )}
             </div>
+
+            {/* Phân trang dịch vụ */}
+            {displayServicesByTab.length > 0 && (
+              <Pagination
+                total={servicesPager.total}
+                page={servicesPager.page}
+                pageSize={servicesPager.pageSize}
+                onPageChange={servicesPager.setPage}
+                onPageSizeChange={servicesPager.changePageSize}
+                label="dịch vụ"
+              />
+            )}
           </div>
         </div>
 
