@@ -1,4 +1,4 @@
-import { Property, Project, NewsArticle, AdBanner, MarketVideo } from '../types';
+import { Property, Project, NewsArticle, AdBanner, MarketVideo, WidgetGroup, WidgetItem } from '../types';
 
 export const INITIAL_PROJECTS: Project[] = [
   {
@@ -671,3 +671,113 @@ export const HIEU_BUI_PROFILE = {
     'Hotline 0868.499.929 hỗ trợ kỹ thuật, đăng tin & vận hành chuyên trách'
   ]
 };
+
+// ==========================================
+// WIDGET GROUPS - DỊCH VỤ MỚI ở đầu tiên, dùng dữ liệu thật
+// ==========================================
+
+// Map INITIAL_PROPERTIES to WidgetItem[] for BĐS MỚI
+const mapPropertiesToWidgetItems = (properties: Property[]): WidgetItem[] => {
+  return properties
+    .filter(p => p.approved || p.status === 'approved')
+    .slice(0, 6)
+    .map(p => ({
+      id: p.id,
+      title: p.title,
+      date: p.createdAt || 'Mới',
+      category: p.type === 'sale' ? 'Mua bán BĐS' : 'Cho thuê BĐS',
+      price: p.priceDisplay,
+      area: `${p.area}m²`,
+      author: p.sellerName,
+      phone: p.sellerPhone,
+      content: p.description
+    }));
+};
+
+// Map INITIAL_NEWS to WidgetItem[] for TIN TỨC MỚI
+const mapNewsToWidgetItems = (news: NewsArticle[]): WidgetItem[] => {
+  return news
+    .filter(n => n.status === 'published')
+    .slice(0, 6)
+    .map(n => ({
+      id: n.id,
+      title: n.title,
+      date: n.publishedAt || 'Mới',
+      category: n.category === 'vinhomes' ? 'Tin tức' : n.category === 'thi-truong' ? 'Thị trường' : n.category === 'nhan-dinh' ? 'Nhận định' : 'Tin tức',
+      author: n.author,
+      content: n.summary
+    }));
+};
+
+export const WIDGET_GROUPS: WidgetGroup[] = [
+  {
+    id: 'services',
+    title: 'DỊCH VỤ MỚI',
+    color: 'teal',
+    count: 4,
+    items: [
+      {
+        id: 'sv-1',
+        title: 'Sửa điện nước tận căn - Bảo hành 6 tháng',
+        date: 'Hôm nay',
+        category: 'Sửa chữa',
+        price: 'Liên hệ',
+        author: 'Thợ điện Vinhomes',
+        phone: '0968.xxx.111',
+        content: 'Sửa chữa điện nước, điều hòa, máy giặt, tủ lạnh tại căn hộ. Báo giá trước khi sửa, bảo hành tận tâm.'
+      },
+      {
+        id: 'sv-2',
+        title: 'Dọn dẹp nhà cửa theo giờ - Giúp việc vệ sinh',
+        date: 'Hôm nay',
+        category: 'Vệ sinh',
+        price: '50k/giờ',
+        author: 'Dịch Vụ Xanh Sạch',
+        phone: '0968.xxx.222',
+        content: 'Nhận dọn dẹp căn hộ theo giờ linh hoạt, có hóa đơn VAT. Đặt lịch online nhanh gọn trong ngày.'
+      },
+      {
+        id: 'sv-3',
+        title: 'Vận chuyển đồ đạc chuyển căn hộ',
+        date: 'Hôm nay',
+        category: 'Vận chuyển',
+        price: '300k/chuyến',
+        author: 'Dịch Vụ Chuyển Nhà 24h',
+        phone: '0968.xxx.333',
+        content: 'Xe tải nhỏ gọn vào tận hầm chung cư. Đóng gói đồ đạc cẩn thận, bảo hiểm đồ đạc.'
+      },
+      {
+        id: 'sv-4',
+        title: 'Giặt thảm - giặt nệm - giặt sofa tại nhà',
+        date: 'Hôm nay',
+        category: 'Giặt ủi',
+        price: '20k/m²',
+        author: 'Giặt Sấy Vinhomes',
+        phone: '0968.xxx.444',
+        content: 'Giặt hơi nước khử khuẩn, khô nhanh trong 2-3 tiếng. Nhận giao hàng tận cửa.'
+      }
+    ]
+  },
+  {
+    id: 'bds',
+    title: 'BĐS MỚI',
+    color: 'orange',
+    count: INITIAL_PROPERTIES.filter(p => p.approved || p.status === 'approved').length,
+    items: mapPropertiesToWidgetItems(INITIAL_PROPERTIES)
+  },
+  {
+    id: 'news',
+    title: 'TIN TỨC MỚI',
+    color: 'purple',
+    count: INITIAL_NEWS.filter(n => n.status === 'published').length,
+    items: mapNewsToWidgetItems(INITIAL_NEWS)
+  },
+  {
+    id: 'jobs',
+    title: 'TUYỂN DỤNG MỚI',
+    color: 'blue',
+    count: 0,
+    items: [],
+    emptyText: 'Chưa có việc làm'
+  }
+];

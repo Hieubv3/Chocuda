@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, RotateCcw, SlidersHorizontal, Building2, Home, Store, Sparkles, Layers, ChevronDown, MapPin } from 'lucide-react';
+import { Search, RotateCcw, SlidersHorizontal, Building2, Home, Store, Sparkles, Layers, ChevronDown, MapPin, KeyRound } from 'lucide-react';
 import { PropertyType, ProjectCategory, PropertyCategory, HeightCategory, Language } from '../types';
 import { getTranslation } from '../lib/i18n';
 import { VinhomesProjectSelectModal } from './VinhomesProjectSelectModal';
@@ -88,38 +88,30 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
       {/* Top Main Controls Bar: Type Switcher + Search + Filter Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
         
-        {/* Type Switcher Pills */}
-        <div className="flex bg-slate-100 dark:bg-slate-900 p-0.5 rounded-lg shrink-0 border border-slate-200 dark:border-slate-800 text-xs">
-          <button
-            onClick={() => setSelectedType('all')}
-            className={`px-2.5 py-1.5 rounded-md font-bold transition whitespace-nowrap ${
-              selectedType === 'all'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            Tất Cả
-          </button>
-          <button
-            onClick={() => setSelectedType('sale')}
-            className={`px-2.5 py-1.5 rounded-md font-bold transition whitespace-nowrap ${
-              selectedType === 'sale'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            Mua Bán
-          </button>
-          <button
-            onClick={() => setSelectedType('rent')}
-            className={`px-2.5 py-1.5 rounded-md font-bold transition whitespace-nowrap ${
-              selectedType === 'rent'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            Cho Thuê
-          </button>
+        {/* Type Switcher — ô vuông icon trên di động */}
+        <div className="grid grid-cols-3 gap-1.5 sm:flex sm:gap-0 sm:bg-slate-100 dark:sm:bg-slate-900 sm:p-0.5 sm:rounded-lg shrink-0 sm:border border-slate-200 dark:border-slate-800 text-xs">
+          {[
+            { key: 'all', label: 'Tất Cả', icon: Layers, color: 'text-emerald-500' },
+            { key: 'sale', label: 'Mua Bán', icon: Building2, color: 'text-sky-500' },
+            { key: 'rent', label: 'Cho Thuê', icon: KeyRound, color: 'text-amber-500' },
+          ].map((item) => {
+            const ItemIcon = item.icon;
+            const active = selectedType === item.key;
+            return (
+              <button
+                key={item.key}
+                onClick={() => setSelectedType(item.key as any)}
+                className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 py-1.5 sm:px-2.5 rounded-xl sm:rounded-md font-bold transition cursor-pointer border sm:border-0 ${
+                  active
+                    ? 'bg-emerald-600 text-white shadow-xs border-emerald-500'
+                    : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800'
+                }`}
+              >
+                <ItemIcon className={`w-4 h-4 sm:w-3.5 sm:h-3.5 ${active ? 'text-white' : item.color}`} />
+                <span className="text-[10px] sm:text-xs">{item.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Search Bar Input */}
@@ -184,72 +176,37 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
         </div>
       </div>
 
-      {/* COMPACT CATEGORY QUICK PILLS (Horizontal Scrollable Strip) */}
-      <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5 text-[11px] border-t border-slate-100 dark:border-slate-700/60 pt-2">
-        <span className="text-[10px] font-bold text-slate-400 uppercase shrink-0 mr-1 flex items-center gap-1">
+      {/* Quick filters — ô vuông icon trên di động */}
+      <div className="border-t border-slate-100 dark:border-slate-700/60 pt-2 space-y-1.5">
+        <span className="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
           <Sparkles className="w-3 h-3 text-amber-500" />
           Nhanh:
         </span>
-
-        <button
-          onClick={() => handleFloatingQuickSelect('all', 'all')}
-          className={`px-2.5 py-1 rounded-md font-bold whitespace-nowrap transition flex items-center gap-1 shrink-0 ${
-            selectedType === 'all' && selectedHeightCategory === 'all'
-              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-          }`}
-        >
-          <Layers className="w-3 h-3 text-emerald-500" />
-          <span>Tất Cả</span>
-        </button>
-
-        <button
-          onClick={() => handleFloatingQuickSelect('sale', 'cao-tang')}
-          className={`px-2.5 py-1 rounded-md font-bold whitespace-nowrap transition flex items-center gap-1 shrink-0 ${
-            selectedType === 'sale' && selectedHeightCategory === 'cao-tang'
-              ? 'bg-sky-600 text-white shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-          }`}
-        >
-          <Building2 className="w-3 h-3 text-sky-500" />
-          <span>Bán Căn Hộ</span>
-        </button>
-
-        <button
-          onClick={() => handleFloatingQuickSelect('sale', 'thap-tang')}
-          className={`px-2.5 py-1 rounded-md font-bold whitespace-nowrap transition flex items-center gap-1 shrink-0 ${
-            selectedType === 'sale' && selectedHeightCategory === 'thap-tang'
-              ? 'bg-amber-600 text-white shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-          }`}
-        >
-          <Home className="w-3 h-3 text-amber-500" />
-          <span>Bán Thấp Tầng</span>
-        </button>
-
-        <button
-          onClick={() => handleFloatingQuickSelect('rent', 'cao-tang')}
-          className={`px-2.5 py-1 rounded-md font-bold whitespace-nowrap transition flex items-center gap-1 shrink-0 ${
-            selectedType === 'rent' && selectedHeightCategory === 'cao-tang'
-              ? 'bg-teal-600 text-white shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-          }`}
-        >
-          <Building2 className="w-3 h-3 text-teal-500" />
-          <span>Thuê Căn Hộ</span>
-        </button>
-
-        <button
-          onClick={() => handleFloatingQuickSelect('rent', 'thap-tang')}
-          className={`px-2.5 py-1 rounded-md font-bold whitespace-nowrap transition flex items-center gap-1 shrink-0 ${
-            selectedType === 'rent' && (selectedHeightCategory === 'thap-tang' || selectedHeightCategory === 'thue-tang')
-              ? 'bg-purple-600 text-white shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-          }`}
-        >
-          <Store className="w-3 h-3 text-purple-500" />
-          <span>Thuê Thấp Tầng</span>
-        </button>
+        <div className="grid grid-cols-3 sm:flex sm:items-center sm:gap-1 gap-1.5">
+          {[
+            { label: 'Tất Cả', icon: Layers, iconCls: 'text-emerald-500', type: 'all', height: 'all', activeCls: 'bg-slate-900 dark:bg-white text-white dark:text-slate-900', active: selectedType === 'all' && selectedHeightCategory === 'all' },
+            { label: 'Bán Căn Hộ', icon: Building2, iconCls: 'text-sky-500', type: 'sale', height: 'cao-tang', activeCls: 'bg-sky-600 text-white', active: selectedType === 'sale' && selectedHeightCategory === 'cao-tang' },
+            { label: 'Bán Thấp Tầng', icon: Home, iconCls: 'text-amber-500', type: 'sale', height: 'thap-tang', activeCls: 'bg-amber-600 text-white', active: selectedType === 'sale' && selectedHeightCategory === 'thap-tang' },
+            { label: 'Thuê Căn Hộ', icon: Building2, iconCls: 'text-teal-500', type: 'rent', height: 'cao-tang', activeCls: 'bg-teal-600 text-white', active: selectedType === 'rent' && selectedHeightCategory === 'cao-tang' },
+            { label: 'Thuê Thấp Tầng', icon: Store, iconCls: 'text-purple-500', type: 'rent', height: 'thap-tang', activeCls: 'bg-purple-600 text-white', active: selectedType === 'rent' && (selectedHeightCategory === 'thap-tang' || selectedHeightCategory === 'thue-tang') },
+          ].map((item) => {
+            const ItemIcon = item.icon;
+            return (
+              <button
+                key={item.label}
+                onClick={() => handleFloatingQuickSelect(item.type as any, item.height as any)}
+                className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold transition cursor-pointer border sm:border-0 ${
+                  item.active
+                    ? `${item.activeCls} border-transparent shadow-xs`
+                    : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                <ItemIcon className={`w-4 h-4 sm:w-3 sm:h-3 ${item.active ? 'text-white' : item.iconCls}`} />
+                <span className="text-[9px] sm:text-[11px] leading-tight text-center">{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* COLLAPSIBLE DETAILED FILTERS PANEL */}

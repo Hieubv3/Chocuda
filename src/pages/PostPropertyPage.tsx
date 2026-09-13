@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield, ShoppingBag, Store, Zap, Loader2 } from 'lucide-react';
+import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield, ShoppingBag, Store, Zap, Loader2, Briefcase } from 'lucide-react';
 import { 
   PropertyType, 
   ProjectCategory, 
@@ -595,8 +595,47 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         </p>
       </div>
 
-      {/* 3 UNIFIED POST MODE SELECTOR TABS */}
-      <div className="flex p-1.5 bg-slate-200 dark:bg-slate-800 rounded-2xl max-w-2xl mx-auto shadow-inner border border-slate-300 dark:border-slate-700">
+      {/* POST MODE SELECTOR — ô vuông biểu tượng trên di động */}
+      <div className="grid grid-cols-4 gap-2 max-w-2xl mx-auto sm:hidden">
+        {[
+          { key: 'real_estate', label: 'Bất Động Sản', icon: Building2, bg: 'bg-amber-500/15', color: 'text-amber-500' },
+          { key: 'service', label: 'Dịch Vụ Cư Dân', icon: ShoppingBag, bg: 'bg-emerald-500/15', color: 'text-emerald-500' },
+          { key: 'kiotviet', label: 'KiotViet', icon: Store, bg: 'bg-sky-500/15', color: 'text-sky-500' },
+        ].map((item) => {
+          const ItemIcon = item.icon;
+          const active = postMode === item.key;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setPostMode(item.key as any)}
+              className={`flex flex-col items-center gap-1 p-1.5 rounded-2xl border transition cursor-pointer text-center ${
+                active
+                  ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-md'
+                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300'
+              }`}
+            >
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${active ? 'bg-white/25 text-slate-950' : `${item.bg} ${item.color}`}`}>
+                <ItemIcon className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-bold leading-tight line-clamp-2">{item.label}</span>
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => { window.location.href = '/tuyen-dung'; }}
+          className="flex flex-col items-center gap-1 p-1.5 rounded-2xl border transition cursor-pointer text-center bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300"
+        >
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-indigo-500/15 text-indigo-500">
+            <Briefcase className="w-5 h-5" />
+          </div>
+          <span className="text-[10px] font-bold leading-tight line-clamp-2">Việc Làm</span>
+        </button>
+      </div>
+
+      {/* Desktop: 3 UNIFIED POST MODE SELECTOR TABS */}
+      <div className="hidden sm:flex p-1.5 bg-slate-200 dark:bg-slate-800 rounded-2xl max-w-2xl mx-auto shadow-inner border border-slate-300 dark:border-slate-700">
         <button
           type="button"
           onClick={() => setPostMode('real_estate')}

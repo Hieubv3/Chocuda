@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon } from 'lucide-react';
+import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon, X, KeyRound, Wrench, Newspaper, Briefcase } from 'lucide-react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
@@ -43,12 +43,16 @@ import { AdBannerWidget } from './components/AdBannerWidget';
 import { DraggableSidebarAds } from './components/DraggableSidebarAds';
 import { HashtagExploreModal } from './components/HashtagExploreModal';
 import { PopularVinhomesLinksSection } from './components/PopularVinhomesLinksSection';
-import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig, AdBanner } from './types';
-import { INITIAL_PROPERTIES, INITIAL_PROJECTS, INITIAL_NEWS, INITIAL_ADS } from './data/initialData';
+import { Property, Project, NewsArticle, LeadContact, User, Language, ProjectCategory, PropertyCategory, HeightCategory, UpTinPricingConfig, AdBanner, WidgetGroup } from './types';
+import { INITIAL_PROPERTIES, INITIAL_PROJECTS, INITIAL_NEWS, INITIAL_ADS, WIDGET_GROUPS } from './data/initialData';
 import { INITIAL_RESIDENT_SERVICES } from './data/residentServicesData';
 import { INITIAL_RECRUITMENT_JOBS } from './data/recruitmentData';
 import { safeLocalStorageGet, safeLocalStorageSet } from './lib/imageUtils';
 import { getProjectSlug } from './lib/slugs';
+import { MobileBottomNav } from './components/MobileBottomNav';
+import { MobileHeader } from './components/MobileHeader';
+import { DashboardContent } from './components/DashboardContent';
+import { AreaSelectModal, getStoredArea, AREA_STORAGE_KEY, AreaOption } from './components/AreaSelectModal';
 
 export const App: React.FC = () => {
   const navigate = useNavigate();
@@ -60,6 +64,19 @@ export const App: React.FC = () => {
 
   // Navigation compatibility state
   const [selectedProjectId, setSelectedProjectId] = useState<ProjectCategory>('ocean-park-2');
+
+  // Mobile bottom nav tab state
+  const [activeMobileTab, setActiveMobileTab] = useState('home');
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  // Khu vực người dùng (chọn lần đầu tham gia)
+  const [userArea, setUserArea] = useState<AreaOption | null>(() =>
+    typeof window !== 'undefined' ? getStoredArea() : null
+  );
+  const [areaModalOpen, setAreaModalOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return !localStorage.getItem(AREA_STORAGE_KEY);
+  });
 
   // Check if current hostname is the dedicated admin portal
   const isAdminDomain = typeof window !== 'undefined' && (
@@ -745,7 +762,7 @@ export const App: React.FC = () => {
 
   // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
+    <div style={{ backgroundColor: '#0f172a' }} className="min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
       <ScrollToTop />
 
       {/* Top Banner (If active) */}
@@ -775,6 +792,74 @@ export const App: React.FC = () => {
         onOpenAndroidModal={() => setAndroidModalOpen(true)}
         onNavigateWithFilter={handleNavigateWithFilter}
       />
+
+      {/* Menu tiện ích (inline, cùng lớp với trang — không phải popup) */}
+      {mobileDrawerOpen && (
+        <div className="lg:hidden w-full bg-white dark:bg-slate-900 border-t-2 border-emerald-500 shadow-lg">
+          <div className="max-w-7xl mx-auto px-3 py-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white font-black flex items-center justify-center text-sm">24</div>
+                <span className="font-extrabold text-slate-900 dark:text-white text-sm">Tiện ích nhanh — Chợ Cư Dân 24h</span>
+              </div>
+              <button
+                onClick={() => setMobileDrawerOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center"
+                aria-label="Đóng menu"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { label: 'Trang Chủ', path: '/', icon: Home, bg: 'bg-sky-500/15', color: 'text-sky-500' },
+                { label: 'Mua Bán BĐS', path: '/mua-ban', icon: Building2, bg: 'bg-orange-500/15', color: 'text-orange-500' },
+                { label: 'Cho Thuê', path: '/cho-thue', icon: KeyRound, bg: 'bg-emerald-500/15', color: 'text-emerald-500' },
+                { label: 'Dịch Vụ Cư Dân', path: '/dich-vu-cu-dan', icon: Wrench, bg: 'bg-teal-500/15', color: 'text-teal-500' },
+                { label: 'Tin Tức', path: '/tin-tuc', icon: Newspaper, bg: 'bg-purple-500/15', color: 'text-purple-500' },
+                { label: 'Tuyển Dụng', path: '/tuyen-dung', icon: Briefcase, bg: 'bg-indigo-500/15', color: 'text-indigo-500' },
+                { label: 'Đăng Tin', path: '/dang-tin', icon: PlusCircle, bg: 'bg-rose-500/15', color: 'text-rose-500' },
+                { label: 'Tài Khoản', path: '/tai-khoan', icon: UserIcon, bg: 'bg-amber-500/15', color: 'text-amber-500' },
+              ].map((item) => {
+                const ItemIcon = item.icon;
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => {
+                      setMobileDrawerOpen(false);
+                      navigate(item.path);
+                    }}
+                    className="flex flex-col items-center justify-start gap-1 p-1.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 active:scale-95 transition"
+                  >
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.bg} ${item.color}`}>
+                      <ItemIcon className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-bold text-center leading-tight text-slate-700 dark:text-slate-200">
+                      {item.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="pt-3">
+              <button
+                onClick={() => {
+                  setMobileDrawerOpen(false);
+                  if (!user) {
+                    setAuthModalOpen(true);
+                  } else {
+                    navigate('/tai-khoan');
+                  }
+                }}
+                className="w-full py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-black flex items-center justify-center gap-1.5"
+              >
+                <UserIcon className="w-4 h-4" />
+                {user ? 'Tài Khoản Của Tôi' : 'Đăng Nhập / Đăng Ký'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Page Render via React Router */}
       <main className="flex-1 w-full overflow-x-hidden">
@@ -1723,10 +1808,10 @@ export const App: React.FC = () => {
         onClose={() => setAndroidModalOpen(false)}
       />
 
-      {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom */}
+      {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom (hidden, replaced by MobileBottomNav) */}
       <nav
         ref={bottomNavRef}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-1 flex items-center justify-around shadow-2xl pb-[max(0.25rem,env(safe-area-inset-bottom))]"
+        className="hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-1 flex items-center justify-around shadow-2xl pb-[max(0.25rem,env(safe-area-inset-bottom))]"
       >
         {/* 1. Trang Chủ */}
         <button
@@ -1813,6 +1898,21 @@ export const App: React.FC = () => {
       {/* Floating Draggable Sidebar Ads on Right Edge */}
       <DraggableSidebarAds ads={ads} />
 
+      {/* Chọn khu vực lần đầu tham gia */}
+      <AreaSelectModal
+        isOpen={areaModalOpen}
+        onSelect={(area) => {
+          setUserArea(area);
+          try {
+            localStorage.setItem(AREA_STORAGE_KEY, JSON.stringify(area));
+          } catch {
+            /* ignore */
+          }
+          setAreaModalOpen(false);
+        }}
+        onClose={() => setAreaModalOpen(false)}
+      />
+
       {/* Global Hashtag Explore Modal */}
       <HashtagExploreModal
         isOpen={hashtagModalOpen}
@@ -1822,6 +1922,51 @@ export const App: React.FC = () => {
         services={INITIAL_RESIDENT_SERVICES}
         newsArticles={news}
         jobs={INITIAL_RECRUITMENT_JOBS}
+      />
+
+      {/* Mobile Bottom Navigation Bar */}
+      <MobileBottomNav
+        activeTab={activeMobileTab}
+        onTabChange={(tab) => {
+          setActiveMobileTab(tab);
+          switch (tab) {
+            case 'home':
+              navigate('/');
+              break;
+            case 'bds':
+              navigate('/bat-dong-san');
+              break;
+            case 'market':
+              navigate('/dich-vu-cu-dan');
+              break;
+          }
+        }}
+        onPostClick={() => {
+          if (!user) {
+            setAuthModalOpen(true);
+          } else {
+            navigate('/dang-tin');
+          }
+        }}
+        onOpenMenu={() => {
+          setMobileDrawerOpen(true);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onSelectCategory={(catTitle) => {
+          const map: Record<string, string> = {
+            'Mua Bán BĐS': '/mua-ban',
+            'Cho Thuê BĐS': '/cho-thue',
+            'Dịch Vụ Cư Dân': '/dich-vu-cu-dan',
+            'Tin tức': '/tin-tuc',
+            'Việc Làm': '/tuyen-dung'
+          };
+          const path = map[catTitle];
+          if (path) navigate(path);
+        }}
+        onGoHome={() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          navigate('/');
+        }}
       />
 
     </div>

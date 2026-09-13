@@ -1019,6 +1019,21 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({
             </div>
 
             <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Ngành (Bản tin):</label>
+              <select
+                value={(formData as any).industry || 'chung'}
+                onChange={(e) => setFormData({ ...formData, industry: e.target.value } as any)}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+              >
+                <option value="chung">Tin chung (hiện mọi trang)</option>
+                <option value="mua-ban">Mua Bán BĐS</option>
+                <option value="cho-thue">Cho Thuê BĐS</option>
+                <option value="dich-vu">Dịch Vụ Cư Dân</option>
+                <option value="tuyen-dung">Tuyển Dụng</option>
+              </select>
+            </div>
+
+            <div>
               <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Tác Giả:</label>
               <input
                 type="text"

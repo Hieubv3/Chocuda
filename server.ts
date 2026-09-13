@@ -527,6 +527,17 @@ let homepageCategoryImagesStore: { key: string; label: string; image: string; li
   { key: 'tuyen-dung', label: 'Tuyển Dụng', image: '/images/demo/ad-service.jpg', link: '/tuyen-dung' }
 ];
 
+// Ảnh banner (hero) đầu trang cho từng trang chính — admin có thể đổi trong Admin Dashboard
+let pageBannersStore: { key: string; label: string; title: string; subtitle: string; image: string }[] = [
+  { key: 'home', label: 'Trang chủ', title: 'KẾT NỐI CƯ DÂN VINHOMES', subtitle: 'Mua bán, cho thuê BĐS và dịch vụ nội khu Vinhomes — hỗ trợ 24/7', image: '/images/demo/hero-city-1.jpg' },
+  { key: 'mua-ban', label: 'Mua Bán BĐS', title: 'MUA BÁN BẤT ĐỘNG SẢN', subtitle: 'Căn hộ, shophouse, biệt thự Vinhomes chính chủ', image: '/images/demo/property-house.jpg' },
+  { key: 'cho-thue', label: 'Cho Thuê BĐS', title: 'CHO THUÊ BẤT ĐỘNG SẢN', subtitle: 'Căn hộ full đồ, thuê tầng, mặt bằng kinh doanh', image: '/images/demo/property-interior-1.jpg' },
+  { key: 'dich-vu', label: 'Dịch Vụ Cư Dân', title: 'DỊCH VỤ CƯ DÂN NỘI KHU', subtitle: 'Sửa chữa, giặt là, giao đồ ăn và tiện ích 24/7', image: '/images/demo/ad-service.jpg' },
+  { key: 'tuyen-dung', label: 'Tuyển Dụng', title: 'TUYỂN DỤNG & VIỆC LÀM', subtitle: 'Việc làm nội khu, ứng tuyển nhanh cho cư dân', image: '/images/demo/hero-city-2.jpg' },
+  { key: 'tin-tuc', label: 'Tin Tức', title: 'TIN TỨC & PHÂN TÍCH', subtitle: 'Thị trường BĐS Vinhomes cập nhật 24/7', image: '/images/demo/hero-skyline.jpg' },
+  { key: 'du-an', label: 'Dự Án', title: 'DỰ ÁN VINHOMES', subtitle: 'Tổng quan dự án, phân khu và tiện ích', image: '/images/demo/project-tower.jpg' }
+];
+
 let reputationPostsStore: any[] = [
   {
     id: 'rep-1',
@@ -1101,6 +1112,17 @@ function loadDataStore() {
           .filter((c: any) => defaultKeys.includes(c.key)) as any;
       }
 
+      // 6c. Page Banners (banner đầu trang)
+      if (Array.isArray(data.pageBanners) && data.pageBanners.length > 0) {
+        const defaultKeys = pageBannersStore.map(d => d.key);
+        const bannerMap = new Map(data.pageBanners.map((b: any) => [b.key, b]));
+        pageBannersStore.forEach(def => {
+          if (!bannerMap.has(def.key)) bannerMap.set(def.key, def);
+        });
+        pageBannersStore = Array.from(bannerMap.values())
+          .filter((b: any) => defaultKeys.includes(b.key)) as any;
+      }
+
       // 7. Users
       if (Array.isArray(data.users) && data.users.length > 0) {
         const userMap = new Map(data.users.map((u: any) => [u.id, u]));
@@ -1207,6 +1229,7 @@ function saveDataStore() {
       packageOrders: packageOrdersStore,
 ads: adsStore,
       homepageCategoryImages: homepageCategoryImagesStore,
+      pageBanners: pageBannersStore,
       techOrders: techOrdersStore,
       walletTransactions: walletTransactionsStore,
       withdrawalRequests: withdrawalRequestsStore,
@@ -2720,6 +2743,10 @@ app.delete("/api/projects/:id", (req, res) => {
 
 // News GET
 app.get("/api/news", (req, res) => {
+  const { industry } = req.query;
+  if (industry && typeof industry === 'string' && industry !== 'all') {
+    return res.json(newsStore.filter(n => n.industry === industry));
+  }
   res.json(newsStore);
 });
 
@@ -2885,7 +2912,7 @@ app.get("/api/ads", (req, res) => {
   res.json(adsStore);
 });
 
-app.post("/api/ads", (req, res) => {
+app.post("/api/ads", authenticateToken, requireAdmin, (req, res) => {
   const adData = req.body;
   if (!adData || !adData.title) {
     return res.status(400).json({ error: "Tiêu đề banner quảng cáo không hợp lệ." });
@@ -2916,7 +2943,7 @@ app.post("/api/ads", (req, res) => {
   res.status(201).json({ success: true, message: "Đã lưu banner quảng cáo thành công!", ad: newAd, ads: adsStore });
 });
 
-app.put("/api/ads/:id", (req, res) => {
+app.put("/api/ads/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const idx = adsStore.findIndex(a => a.id === id);
   if (idx === -1) {
@@ -2928,7 +2955,7 @@ app.put("/api/ads/:id", (req, res) => {
   res.json({ success: true, message: "Cập nhật banner quảng cáo thành công!", ad: adsStore[idx], ads: adsStore });
 });
 
-app.delete("/api/ads/:id", (req, res) => {
+app.delete("/api/ads/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   adsStore = adsStore.filter(a => a.id !== id);
   if (!deletedIds.ads.includes(id)) deletedIds.ads.push(id);
@@ -2965,6 +2992,28 @@ app.put("/api/homepage-category-images/:key", authenticateToken, requireAdmin, (
   if (label) homepageCategoryImagesStore[idx].label = label;
   saveDataStore();
   res.json({ success: true, categories: homepageCategoryImagesStore });
+});
+
+// ==================== PAGE BANNERS (Banner ảnh đầu trang) ====================
+// GET: công khai — trả danh sách banner theo trang
+app.get("/api/page-banners", (req, res) => {
+  res.json(pageBannersStore);
+});
+
+// PUT: admin — cập nhật ảnh/tiêu đề của 1 trang
+app.put("/api/page-banners/:key", authenticateToken, requireAdmin, (req, res) => {
+  const { key } = req.params;
+  const idx = pageBannersStore.findIndex(b => b.key === key);
+  if (idx === -1) {
+    return res.status(404).json({ error: "Không tìm thấy trang này." });
+  }
+  const { image, title, subtitle, label } = req.body || {};
+  if (image !== undefined) pageBannersStore[idx].image = image;
+  if (title !== undefined) pageBannersStore[idx].title = title;
+  if (subtitle !== undefined) pageBannersStore[idx].subtitle = subtitle;
+  if (label !== undefined) pageBannersStore[idx].label = label;
+  saveDataStore();
+  res.json({ success: true, banners: pageBannersStore });
 });
 
 // Resident Services Endpoints (Dịch Vụ Cư Dân)

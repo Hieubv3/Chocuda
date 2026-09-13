@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { PageBanner } from './PageBanner';
 import { 
   Briefcase, Search, Filter, MapPin, DollarSign, Clock, Users, Building2, 
   ShieldCheck, Phone, MessageSquare, PlusCircle, Sparkles, CheckCircle2, 
@@ -466,6 +467,15 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pb-24">
       
+      {/* Banner ảnh đầu trang (admin quản trị) */}
+      <PageBanner
+        pageKey="tuyen-dung"
+        fallbackTitle="TUYỂN DỤNG & VIỆC LÀM"
+        fallbackSubtitle="Việc làm nội khu, ứng tuyển nhanh cho cư dân"
+        fallbackImage="/images/demo/hero-city-2.jpg"
+        newsIndustry="tuyen-dung"
+      />
+
       {/* Top Hero Banner */}
       <div className="bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white border-b border-emerald-700/50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">

@@ -171,6 +171,8 @@ export interface NewsArticle {
   summary: string;
   content: string;
   category: 'vinhomes' | 'quy-hoach' | 'thi-truong' | 'nhan-dinh' | 'kinh-nghiem';
+  /** Ngành áp dụng cho bản tin: mua-ban | cho-thue | dich-vu | tuyen-dung | chung */
+  industry?: 'mua-ban' | 'cho-thue' | 'dich-vu' | 'tuyen-dung' | 'chung' | string;
   author: string;
   image: string;
   publishedAt: string;
@@ -1008,5 +1010,39 @@ export interface AdminTaskDelegation {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// ==========================================
+// WIDGET GROUPS FOR DASHBOARD (Từ zip design)
+// ==========================================
+export type WidgetColor = 'orange' | 'purple' | 'teal' | 'blue';
+
+export interface CategoryItem {
+  id: number;
+  title: string;
+  image: string;
+  count?: number;
+  description?: string;
+}
+
+export interface WidgetItem {
+  id: string;
+  title: string;
+  date: string;
+  category: string;
+  price?: string;
+  area?: string;
+  author?: string;
+  phone?: string;
+  content?: string;
+}
+
+export interface WidgetGroup {
+  id: string;
+  title: string;
+  color: WidgetColor;
+  count: number;
+  items: WidgetItem[];
+  emptyText?: string;
 }
 

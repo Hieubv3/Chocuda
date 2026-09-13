@@ -1065,6 +1065,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     }
   }, [adsList]);
 
+  // Nạp danh sách banner từ server (nguồn chuẩn) khi mở Admin
+  React.useEffect(() => {
+    fetch('/api/ads')
+      .then(r => r.ok ? r.json() : [])
+      .then((data: any[]) => {
+        if (Array.isArray(data) && data.length > 0) setAdsList(data);
+      })
+      .catch(() => {});
+  }, []);
+
   // ===== Ảnh 4 nhóm ngành trên trang chủ (Homepage Category Images) =====
   const [categoryImages, setCategoryImages] = useState<{ key: string; label: string; image: string; link: string }[]>([]);
   const [categoryImageBusy, setCategoryImageBusy] = useState<string | null>(null);
@@ -1117,6 +1127,49 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       alert('❌ Lỗi khi upload ảnh.');
     } finally {
       setCategoryImageBusy(null);
+    }
+  };
+
+  // ===== Banner ảnh đầu trang (Page Banners) =====
+  const [pageBanners, setPageBanners] = useState<{ key: string; label: string; title: string; subtitle: string; image: string }[]>([]);
+  const [pageBannerBusy, setPageBannerBusy] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    fetch('/api/page-banners')
+      .then(r => r.ok ? r.json() : [])
+      .then((data: any[]) => {
+        if (Array.isArray(data) && data.length > 0) setPageBanners(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handlePageBannerUpload = async (key: string, file: File) => {
+    if (!file) return;
+    setPageBannerBusy(key);
+    try {
+      const compressed = await addWatermarkToImage(file, { skipWatermark: true, maxDim: 1600 });
+      const url = await uploadBase64DataUrl(compressed, 'page-banners');
+      if (!url) {
+        alert('❌ Upload ảnh thất bại. Vui lòng thử lại!');
+        return;
+      }
+      const res = await fetch(`/api/page-banners/${key}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: url })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.banners)) setPageBanners(data.banners);
+        alert('✅ Đã cập nhật banner trang!');
+      } else {
+        alert('❌ Lỗi khi lưu ảnh. Vui lòng thử lại.');
+      }
+    } catch (e) {
+      console.error('Upload page banner failed:', e);
+      alert('❌ Lỗi khi upload ảnh.');
+    } finally {
+      setPageBannerBusy(null);
     }
   };
 
@@ -1201,7 +1254,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (editingAd) {
       // Update existing
       const isAct = editingAd.active ?? editingAd.isActive ?? true;
-      const updated = adsList.map(a => a.id === editingAd.id ? {
+      const updatedAd = {
         ...editingAd,
         title: newAdTitle,
         imageUrl: newAdImage,
@@ -1214,8 +1267,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         parentId: newAdParentId || undefined,
         active: isAct,
         isActive: isAct
-      } : a);
+      };
+      const updated = adsList.map(a => a.id === editingAd.id ? updatedAd : a);
       setAdsList(updated);
+      fetch('/api/ads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatedAd) }).catch(() => {});
       handleCancelEditAd();
       alert('Cập nhật Banner Quảng Cáo thành công!');
     } else {
@@ -1238,6 +1293,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         createdAt: new Date().toISOString().split('T')[0]
       };
       setAdsList([newBanner, ...adsList]);
+      fetch('/api/ads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newBanner) }).catch(() => {});
       handleCancelEditAd();
       alert('Thêm Banner Quảng Cáo mới thành công!');
     }
@@ -1246,12 +1302,17 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const handleToggleAdActive = (id: string) => {
     const updated = adsList.map(a => a.id === id ? { ...a, active: !(a.active ?? a.isActive ?? true), isActive: !(a.active ?? a.isActive ?? true) } : a);
     setAdsList(updated);
+    const changed = updated.find(a => a.id === id);
+    if (changed) {
+      fetch(`/api/ads/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ active: changed.active, isActive: changed.isActive }) }).catch(() => {});
+    }
   };
 
   const handleDeleteAd = (id: string) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa Banner quảng cáo này?')) {
       const updated = adsList.filter(a => a.id !== id);
       setAdsList(updated);
+      fetch(`/api/ads/${id}`, { method: 'DELETE' }).catch(() => {});
       if (editingAd && editingAd.id === id) {
         handleCancelEditAd();
       }
@@ -4068,6 +4129,50 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         onChange={e => {
                           const f = e.target.files?.[0];
                           if (f) handleCategoryImageUpload(cat.key, f);
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ===== BANNER ẢNH ĐẦU TRANG (theo từng trang) ===== */}
+          {pageBanners.length > 0 && (
+            <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-black text-base text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-emerald-500" />
+                  <span>BANNER ẢNH ĐẦU TRANG</span>
+                </h3>
+                <span className="text-[10px] text-slate-400 font-bold">Ảnh hero đầu mỗi trang</span>
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {pageBanners.map(pb => (
+                  <div key={pb.key} className="space-y-2">
+                    <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 aspect-[16/10]">
+                      <img src={pb.image} alt={pb.label} className="w-full h-full object-cover" />
+                      <span className="absolute top-2 left-2 bg-slate-950/80 text-white text-[10px] font-black px-2 py-1 rounded-lg">
+                        {pb.label}
+                      </span>
+                    </div>
+                    <label className="flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-[11px] cursor-pointer transition">
+                      {pageBannerBusy === pb.key ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Upload className="w-3.5 h-3.5" />
+                      )}
+                      <span>{pageBannerBusy === pb.key ? 'ĐANG LƯU...' : 'ĐỔI ẢNH'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={pageBannerBusy === pb.key}
+                        onChange={e => {
+                          const f = e.target.files?.[0];
+                          if (f) handlePageBannerUpload(pb.key, f);
                           e.target.value = '';
                         }}
                       />

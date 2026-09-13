@@ -2,6 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Property, PropertyType, ProjectCategory, PropertyCategory, HeightCategory, Language, HIGH_RISE_CATEGORIES, LOW_RISE_CATEGORIES, FLOOR_RENTAL_CATEGORIES, isAdminProperty } from '../types';
 import { PropertyCard } from '../components/PropertyCard';
 import { PropertyFilter } from '../components/PropertyFilter';
+import { PageBanner } from '../components/PageBanner';
+import { getStoredAreaKey, prioritizeByArea } from '../lib/areaPriority';
 import { LayoutGrid, List, SearchX, Grid2x2, ShieldCheck } from 'lucide-react';
 import { getTranslation } from '../lib/i18n';
 
@@ -151,12 +153,21 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
       list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
 
-    return list;
+    return prioritizeByArea(list, getStoredAreaKey(), (p: Property) => p.project);
   }, [properties, selectedType, selectedProject, selectedHeightCategory, selectedCategory, furniture, bedrooms, minPrice, maxPrice, searchQuery, sortBy]);
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-3">
       
+      {/* Banner ảnh đầu trang (admin quản trị) */}
+      <PageBanner
+        pageKey={initialType === 'rent' ? 'cho-thue' : 'mua-ban'}
+        fallbackTitle={initialType === 'rent' ? 'CHO THUÊ BẤT ĐỘNG SẢN' : 'MUA BÁN BẤT ĐỘNG SẢN'}
+        fallbackSubtitle="Căn hộ, shophouse, biệt thự Vinhomes chính chủ"
+        fallbackImage="/images/demo/property-house.jpg"
+        newsIndustry={initialType === 'rent' ? 'cho-thue' : 'mua-ban'}
+      />
+
       {/* Header Title & View Toggle */}
       <div className="flex flex-row items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5">
         <div>
@@ -169,58 +180,58 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
         </div>
 
         {/* Grid / List View Toggle */}
-        <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg shrink-0 gap-0.5 border border-slate-200 dark:border-slate-700">
+        <div className="grid grid-cols-4 gap-1 sm:flex sm:bg-slate-100 dark:sm:bg-slate-800 sm:p-0.5 sm:rounded-lg shrink-0 sm:gap-0.5 sm:border border-slate-200 dark:border-slate-700">
           <button
             onClick={() => {
               setViewMode('grid-3col');
               localStorage.setItem('hb_properties_view_mode', 'grid-3col');
             }}
-            className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
+            className={`px-1 sm:px-2 py-1.5 rounded-xl sm:rounded-md text-xs font-bold transition flex flex-col sm:flex-row items-center gap-0.5 sm:gap-1 border sm:border-0 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 sm:bg-transparent ${
               viewMode === 'grid-3col' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
             title="Hiển thị Lưới 3 Cột"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">3 Cột</span>
+            <span className="text-[9px] sm:text-xs leading-tight">3 Cột</span>
           </button>
           <button
             onClick={() => {
               setViewMode('grid-2col');
               localStorage.setItem('hb_properties_view_mode', 'grid-2col');
             }}
-            className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
+            className={`px-1 sm:px-2 py-1.5 rounded-xl sm:rounded-md text-xs font-bold transition flex flex-col sm:flex-row items-center gap-0.5 sm:gap-1 border sm:border-0 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 sm:bg-transparent ${
               viewMode === 'grid-2col' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
             title="Hiển thị 2 cột ô vuông"
           >
             <Grid2x2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">2 Cột</span>
+            <span className="text-[9px] sm:text-xs leading-tight">2 Cột</span>
           </button>
           <button
             onClick={() => {
               setViewMode('grid');
               localStorage.setItem('hb_properties_view_mode', 'grid');
             }}
-            className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
+            className={`px-1 sm:px-2 py-1.5 rounded-xl sm:rounded-md text-xs font-bold transition flex flex-col sm:flex-row items-center gap-0.5 sm:gap-1 border sm:border-0 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 sm:bg-transparent ${
               viewMode === 'grid' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
             title="Hiển thị 1 cột thẻ lớn"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">1 Cột</span>
+            <span className="text-[9px] sm:text-xs leading-tight">1 Cột</span>
           </button>
           <button
             onClick={() => {
               setViewMode('list');
               localStorage.setItem('hb_properties_view_mode', 'list');
             }}
-            className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
+            className={`px-1 sm:px-2 py-1.5 rounded-xl sm:rounded-md text-xs font-bold transition flex flex-col sm:flex-row items-center gap-0.5 sm:gap-1 border sm:border-0 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 sm:bg-transparent ${
               viewMode === 'list' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
             title="Hiển thị dạng danh sách hàng ngang"
           >
             <List className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Danh sách</span>
+            <span className="text-[9px] sm:text-xs leading-tight">Danh sách</span>
           </button>
         </div>
       </div>

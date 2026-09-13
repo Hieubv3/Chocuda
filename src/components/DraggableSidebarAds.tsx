@@ -36,8 +36,10 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
     posY: 160
   });
 
-  // Filter right sidebar ads or active ads
-  const rightAds = ads.filter(a => a.active || a.isActive !== false);
+  // Chỉ lấy banner đúng vị trí cột phải PC (tránh hiện lặp banner header/popup/home)
+  const rightAds = ads.filter(a =>
+    (a.active ?? a.isActive ?? true) && a.position === 'float_right_pc'
+  );
 
   // Auto rotate ad every 6 seconds if multiple ads exist
   useEffect(() => {
@@ -124,7 +126,7 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
       fetch('/api/ads/click', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adId: ad.id })
+        body: JSON.stringify({ id: ad.id })
       });
     } catch (e) {}
 

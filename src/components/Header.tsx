@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Phone, Heart, Scale, User, ShieldCheck, Globe, Menu, X, PlusCircle, Sparkles, Sun, Moon, Zap, KeyRound, Share2, ChevronDown, Home, Store, Wrench, Smartphone, Download, Briefcase } from 'lucide-react';
+import { Building2, Phone, Heart, Scale, User, ShieldCheck, Globe, PlusCircle, Sparkles, Sun, Moon, Zap, KeyRound, Share2, ChevronDown, Home, Store, Wrench, Smartphone, Download, Briefcase } from 'lucide-react';
 import { Language, User as UserType, HeightCategory, PropertyCategory } from '../types';
 import { getTranslation } from '../lib/i18n';
 import { Logo } from './Logo';
@@ -549,14 +549,6 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="hidden xs:inline sm:inline">Đăng Nhập</span>
               </button>
             )}
-
-            {/* Mobile Hamburger Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl shrink-0"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
-            </button>
           </div>
 
         </div>
@@ -567,7 +559,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="max-w-4xl mx-auto grid grid-cols-4 gap-1 sm:gap-2.5">
           <button
             onClick={() => handleNavFilter('sale', 'all')}
-            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
+            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
               currentTab === 'sale'
                 ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-xs'
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:text-amber-600'
@@ -579,7 +571,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => handleNavFilter('rent', 'all')}
-            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
+            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
               currentTab === 'rent'
                 ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-xs'
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:text-amber-600'
@@ -591,7 +583,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setCurrentTab('services')}
-            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
+            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
               currentTab === 'services'
                 ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-xs'
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:text-amber-600'
@@ -603,7 +595,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setCurrentTab('recruitment')}
-            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
+            className={`py-1.5 px-1 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border shadow-2xs ${
               currentTab === 'recruitment'
                 ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-xs'
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:text-amber-600'

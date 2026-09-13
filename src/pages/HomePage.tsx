@@ -10,9 +10,15 @@ import { ProjectFaqHub } from '../components/ProjectFaqHub';
 import { VinhomesProjectSelectModal } from '../components/VinhomesProjectSelectModal';
 import { PopularVinhomesLinksSection } from '../components/PopularVinhomesLinksSection';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
-import { HIEU_BUI_PROFILE, INITIAL_ADS } from '../data/initialData';
+import { HIEU_BUI_PROFILE, INITIAL_ADS, WIDGET_GROUPS } from '../data/initialData';
 import { loadHeroCards } from '../data/heroCardsData';
 import { getTranslation } from '../lib/i18n';
+import { DashboardContent } from '../components/DashboardContent';
+import { BannerNewsRail } from '../components/BannerNewsRail';
+import { IndustryFeed, IndustryFeedItem } from '../components/IndustryFeed';
+import { INITIAL_RESIDENT_SERVICES } from '../data/residentServicesData';
+import { getStoredAreaKey, prioritizeByArea } from '../lib/areaPriority';
+import { WidgetItem } from '../types';
 
 interface HomePageProps {
   language: Language;
@@ -88,7 +94,38 @@ export const HomePage: React.FC<HomePageProps> = ({
     setCurrentTab(searchType);
   };
 
-  const featuredProperties = properties.slice(0, 6);
+  const areaKey = typeof window !== 'undefined' ? getStoredAreaKey() : null;
+  const prioritizedProperties = prioritizeByArea(properties, areaKey, (p: Property) => p.project);
+  const featuredProperties = prioritizedProperties.slice(0, 6);
+
+  // ===== Ưu tiên: Dịch vụ · Cho thuê căn hộ · Chuyển nhượng =====
+  const toPropFeed = (list: Property[]): IndustryFeedItem[] =>
+    list.slice(0, 5).map((p) => ({
+      id: p.id,
+      title: p.title,
+      subtitle: p.priceDisplay,
+      image: p.images?.[0],
+      date: p.createdAt ? String(p.createdAt).slice(0, 10) : '',
+    }));
+  const rentFeedItems: IndustryFeedItem[] = toPropFeed(prioritizedProperties.filter((p) => p.type === 'rent'));
+  const saleFeedItems: IndustryFeedItem[] = toPropFeed(prioritizedProperties.filter((p) => p.type === 'sale'));
+  const serviceFeedItems: IndustryFeedItem[] = (INITIAL_RESIDENT_SERVICES as any[]).slice(0, 5).map((s: any) => ({
+    id: String(s.id),
+    title: s.title || s.name || '',
+    subtitle: s.priceDisplay || s.price || s.category || '',
+    image: (Array.isArray(s.images) ? s.images[0] : s.image) || '',
+    date: s.createdAt ? String(s.createdAt).slice(0, 10) : '',
+  }));
+
+  // ===== Bản tin 4 ngành (bài viết tin tức) =====
+  const [newsIndustryFilter, setNewsIndustryFilter] = React.useState('all');
+  const homeNews = React.useMemo(() => {
+    const base = (news || []).filter(n => n.status !== 'draft');
+    const list = newsIndustryFilter === 'all'
+      ? base
+      : base.filter(n => n.industry === newsIndustryFilter);
+    return list.slice(0, 6);
+  }, [news, newsIndustryFilter]);
 
   return (
     <div className="space-y-16 pb-16">
@@ -116,317 +153,125 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           {/* Hero Titles */}
-          <div className="space-y-2 sm:space-y-3 max-w-4xl">
+          <div className="space-y-2 max-w-3xl">
             <h1 className="tracking-tight text-white leading-tight">
-              <span className="block text-slate-200 font-bold text-[11px] sm:text-sm md:text-base tracking-wide uppercase mb-0.5 opacity-90">
-                NỀN TẢNG TRAO ĐỔI THÔNG TIN CHUYỂN NHƯỢNG, CHO THUÊ & DỊCH VỤ NỘI KHU
-              </span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 font-black text-lg sm:text-2xl md:text-3xl lg:text-4xl tracking-tight drop-shadow-md">
                 KẾT NỐI CƯ DÂN VINHOMES
               </span>
             </h1>
-            <div className="bg-slate-900/80 backdrop-blur-md border border-amber-500/30 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl max-w-3xl space-y-1 text-left">
-              <p className="text-[11px] sm:text-sm text-slate-200 font-medium leading-snug sm:leading-relaxed">
-                Nền tảng trực tiếp dành cho cư dân Vinhomes trao đổi thông tin mua bán, cho thuê BĐS và đăng tin dịch vụ tiện ích nội khu — Tối ưu kết nối minh bạch, hỗ trợ cư dân 24/7.
-              </p>
-              <p className="text-[10px] sm:text-[11px] text-amber-300 font-semibold flex items-center gap-1.5 pt-0.5">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
-                <span>Hotline/Zalo 0868.499.929: Chuyên trách hỗ trợ cư dân đăng tin & hỗ trợ vận hành.</span>
-              </p>
-            </div>
+            <p className="text-[11px] sm:text-sm text-slate-200 font-medium leading-snug">
+              Mua bán, cho thuê BĐS và dịch vụ nội khu Vinhomes — hỗ trợ 24/7.
+            </p>
+            <p className="text-[10px] sm:text-[11px] text-amber-300 font-semibold flex items-center gap-1.5">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+              <span>Hotline/Zalo 0868.499.929</span>
+            </p>
           </div>
 
           {/* Search Box Widget */}
           <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-3 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white max-w-4xl">
             
-            {/* Desktop 4 Services Cards (Horizontal Grid) */}
-            <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-3 border-b border-slate-200 dark:border-slate-800 pb-5 mb-5">
-              {/* Card 1: Mua Bán BĐS */}
-              <button
-                onClick={() => {
-                  setSearchType('sale');
-                  setCurrentTab('sale');
-                }}
-                className={`group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between cursor-pointer ${
-                  searchType === 'sale'
-                    ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500 shadow-md ring-2 ring-amber-500/50'
-                    : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-amber-400 hover:shadow-md'
-                }`}
-              >
-                {/* Image Simulation Preview */}
-                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-                  <img loading="lazy"
-            src={heroCardImage('sale', '/images/demo/project-tower.jpg')}
-                    alt="Mua Bán BĐS"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
-                  
-                  {/* Badge & Icon on Image */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1">
-                    <div className="p-1 bg-amber-500 text-slate-950 rounded-md shadow-xs">
-                      <Building2 className="w-3.5 h-3.5" />
+            {/* 4 nhóm ngành - 4 ô vuông có ảnh (thu nhỏ 30% trên di động) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
+              {[
+                {
+                  key: 'sale',
+                  title: '1. Mua Bán BĐS',
+                  cta: 'Xem giá căn →',
+                  badge: 'Chính Chủ',
+                  icon: Building2,
+                  img: heroCardImage('sale', '/images/demo/project-tower.jpg'),
+                  iconCls: 'bg-amber-500 text-slate-950',
+                  badgeCls: 'bg-amber-500/90 text-slate-950',
+                  ctaCls: 'text-amber-300',
+                  activeCls: 'border-amber-500 ring-2 ring-amber-500/50 shadow-md',
+                  active: searchType === 'sale',
+                  onClick: () => { setSearchType('sale'); setCurrentTab('sale'); },
+                },
+                {
+                  key: 'rent',
+                  title: '2. Cho Thuê BĐS',
+                  cta: 'Xem cho thuê →',
+                  badge: 'Ở Ngay',
+                  icon: KeyRound,
+                  img: heroCardImage('rent', '/images/demo/project-apartment.jpg'),
+                  iconCls: 'bg-sky-500 text-white',
+                  badgeCls: 'bg-sky-500/90 text-white',
+                  ctaCls: 'text-sky-300',
+                  activeCls: 'border-sky-500 ring-2 ring-sky-500/50 shadow-md',
+                  active: searchType === 'rent',
+                  onClick: () => { setSearchType('rent'); setCurrentTab('rent'); },
+                },
+                {
+                  key: 'services',
+                  title: '3. Dịch Vụ Cư Dân',
+                  cta: 'Khám phá chợ →',
+                  badge: 'Tiện Ích',
+                  icon: Wrench,
+                  img: heroCardImage('services', '/images/demo/ad-service.jpg'),
+                  iconCls: 'bg-emerald-600 text-white',
+                  badgeCls: 'bg-emerald-600/90 text-white',
+                  ctaCls: 'text-emerald-300',
+                  activeCls: 'border-emerald-500 ring-2 ring-emerald-500/50 shadow-md',
+                  active: false,
+                  onClick: () => setCurrentTab('services'),
+                },
+                {
+                  key: 'recruitment',
+                  title: '4. Tuyển Dụng',
+                  cta: 'Tìm việc làm →',
+                  badge: 'Việc Làm',
+                  icon: Briefcase,
+                  img: heroCardImage('recruitment', '/images/demo/hero-city-2.jpg'),
+                  iconCls: 'bg-teal-600 text-white',
+                  badgeCls: 'bg-teal-600/90 text-white',
+                  ctaCls: 'text-teal-300',
+                  activeCls: 'border-teal-500 ring-2 ring-teal-500/50 shadow-md',
+                  active: false,
+                  onClick: () => setCurrentTab('recruitment'),
+                },
+              ].map((card) => {
+                const CardIcon = card.icon;
+                return (
+                  <button
+                    key={card.key}
+                    onClick={card.onClick}
+                    className={`group relative aspect-square rounded-2xl overflow-hidden border text-left transition-all duration-200 hover:-translate-y-0.5 ${
+                      card.active
+                        ? card.activeCls
+                        : 'border-slate-200 dark:border-slate-700 hover:shadow-lg'
+                    }`}
+                  >
+                    <img loading="lazy"
+                      src={card.img}
+                      alt={card.title}
+                      referrerPolicy="no-referrer"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/92 via-slate-950/35 to-transparent" />
+
+                    {/* Icon + Badge */}
+                    <div className="absolute top-2 left-2 flex items-center gap-1">
+                      <div className={`p-1.5 rounded-lg shadow-xs ${card.iconCls}`}>
+                        <CardIcon className="w-4 h-4" />
+                      </div>
+                      <span className={`px-1.5 py-0.5 text-[9px] font-black rounded uppercase tracking-wider ${card.badgeCls}`}>
+                        {card.badge}
+                      </span>
                     </div>
-                    <span className="px-1.5 py-0.2 bg-amber-500/90 text-slate-950 text-[9px] font-black rounded uppercase tracking-wider">
-                      Chính Chủ
-                    </span>
-                  </div>
 
-                  <div className="absolute bottom-1.5 left-2 right-2">
-                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
-                      1. Mua Bán BĐS
-                    </span>
-                  </div>
-                </div>
-
-                {/* Brief Info */}
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Căn hộ, Shophouse & Biệt thự Vinhomes bán chính chủ.
-                  </p>
-                  <div className="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 font-bold pt-0.5">
-                    <span>Xem bảng giá →</span>
-                  </div>
-                </div>
-              </button>
-
-              {/* Card 2: Cho Thuê BĐS */}
-              <button
-                onClick={() => {
-                  setSearchType('rent');
-                  setCurrentTab('rent');
-                }}
-                className={`group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between cursor-pointer ${
-                  searchType === 'rent'
-                    ? 'bg-sky-500/10 dark:bg-sky-500/20 border-sky-500 shadow-md ring-2 ring-sky-500/50'
-                    : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-sky-400 hover:shadow-md'
-                }`}
-              >
-                {/* Image Simulation Preview */}
-                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-                  <img loading="lazy"
-            src={heroCardImage('rent', '/images/demo/project-apartment.jpg')}
-                    alt="Cho Thuê BĐS"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
-                  
-                  {/* Badge & Icon on Image */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1">
-                    <div className="p-1 bg-sky-500 text-white rounded-md shadow-xs">
-                      <KeyRound className="w-3.5 h-3.5" />
+                    {/* Title + CTA */}
+                    <div className="absolute bottom-0 left-0 right-0 p-2.5">
+                      <span className="block text-white font-black text-[11px] sm:text-sm uppercase tracking-tight drop-shadow-sm">
+                        {card.title}
+                      </span>
+                      <span className={`block text-[10px] font-bold pt-0.5 ${card.ctaCls}`}>
+                        {card.cta}
+                      </span>
                     </div>
-                    <span className="px-1.5 py-0.2 bg-sky-500/90 text-white text-[9px] font-black rounded uppercase tracking-wider">
-                      Ở Ngay
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-1.5 left-2 right-2">
-                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
-                      2. Cho Thuê BĐS
-                    </span>
-                  </div>
-                </div>
-
-                {/* Brief Info */}
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Căn hộ full đồ, Thuê theo tầng, VP & Mặt bằng KD.
-                  </p>
-                  <div className="flex items-center gap-1 text-[10px] text-sky-600 dark:text-sky-400 font-bold pt-0.5">
-                    <span>Xem danh sách →</span>
-                  </div>
-                </div>
-              </button>
-
-              {/* Card 3: Dịch Vụ Cư Dân */}
-              <button
-                onClick={() => setCurrentTab('services')}
-                className="group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-emerald-400 hover:shadow-md cursor-pointer"
-              >
-                {/* Image Simulation Preview */}
-                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-                  <img loading="lazy"
-            src={heroCardImage('services', '/images/demo/ad-service.jpg')}
-                    alt="Dịch Vụ Cư Dân"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
-                  
-                  {/* Badge & Icon on Image */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1">
-                    <div className="p-1 bg-emerald-600 text-white rounded-md shadow-xs">
-                      <Wrench className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="px-1.5 py-0.2 bg-emerald-600/90 text-white text-[9px] font-black rounded uppercase tracking-wider">
-                      Tiện Ích
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-1.5 left-2 right-2">
-                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
-                      3. Dịch Vụ Cư Dân
-                    </span>
-                  </div>
-                </div>
-
-                {/* Brief Info */}
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Sửa chữa, Giặt là, Taxi, Spa, Đặt cơm & Gian hàng.
-                  </p>
-                  <div className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-bold pt-0.5">
-                    <span>Khám phá chợ →</span>
-                  </div>
-                </div>
-              </button>
-
-              {/* Card 4: Việc Làm & Tuyển Dụng */}
-              <button
-                onClick={() => setCurrentTab('recruitment')}
-                className="group text-left rounded-2xl border transition overflow-hidden flex flex-col justify-between bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-teal-400 hover:shadow-md cursor-pointer"
-              >
-                {/* Image Simulation Preview */}
-                <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-slate-200 dark:bg-slate-700">
-                  <img loading="lazy"
-            src={heroCardImage('recruitment', '/images/demo/hero-city-2.jpg')}
-                    alt="Tuyển Dụng Việc Làm"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
-                  
-                  {/* Badge & Icon on Image */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1">
-                    <div className="p-1 bg-teal-600 text-white rounded-md shadow-xs">
-                      <Briefcase className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="px-1.5 py-0.2 bg-teal-600/90 text-white text-[9px] font-black rounded uppercase tracking-wider">
-                      Việc Làm
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-1.5 left-2 right-2">
-                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-sm uppercase tracking-tight block truncate">
-                      4. Việc Làm & Tuyển Dụng
-                    </span>
-                  </div>
-                </div>
-
-                {/* Brief Info */}
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium line-clamp-2">
-                    Tìm việc làm nội khu, ứng tuyển thợ, nhân sự DN.
-                  </p>
-                  <div className="flex items-center gap-1 text-[10px] text-teal-600 dark:text-teal-400 font-bold pt-0.5">
-                    <span>Tìm việc ngay →</span>
-                  </div>
-                </div>
-              </button>
-            </div>
-
-            {/* Mobile Compact 2x2 Clean Services Grid (Ultra Neat Chợ Tốt Style) */}
-            <div className="grid sm:hidden grid-cols-2 gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 mb-3">
-              {/* Mobile Card 1: Mua Bán */}
-              <button
-                onClick={() => {
-                  setSearchType('sale');
-                  setCurrentTab('sale');
-                }}
-                className={`text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 cursor-pointer ${
-                  searchType === 'sale'
-                    ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500/80 shadow-xs ring-1 ring-amber-500/40'
-                    : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80'
-                }`}
-              >
-                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
-                  <img loading="lazy"
-            src={heroCardImage('sale', '/images/demo/property-house.jpg')}
-                    alt="Mua Bán BĐS"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="font-extrabold text-[11px] text-slate-900 dark:text-white uppercase truncate block">
-                    1. Mua Bán BĐS
-                  </span>
-                  <span className="text-[9px] font-bold text-amber-500 block truncate">Xem giá căn →</span>
-                </div>
-              </button>
-
-              {/* Mobile Card 2: Cho Thuê */}
-              <button
-                onClick={() => {
-                  setSearchType('rent');
-                  setCurrentTab('rent');
-                }}
-                className={`text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 cursor-pointer ${
-                  searchType === 'rent'
-                    ? 'bg-sky-500/10 dark:bg-sky-500/20 border-sky-500/80 shadow-xs ring-1 ring-sky-500/40'
-                    : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80'
-                }`}
-              >
-                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
-                  <img loading="lazy"
-            src={heroCardImage('rent', '/images/demo/property-interior-2.jpg')}
-                    alt="Cho Thuê BĐS"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="font-extrabold text-[11px] text-slate-900 dark:text-white uppercase truncate block">
-                    2. Cho Thuê BĐS
-                  </span>
-                  <span className="text-[9px] font-bold text-sky-400 block truncate">Xem cho thuê →</span>
-                </div>
-              </button>
-
-              {/* Mobile Card 3: Dịch Vụ Cư Dân */}
-              <button
-                onClick={() => setCurrentTab('services')}
-                className="text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
-              >
-                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
-                  <img loading="lazy"
-            src={heroCardImage('services', '/images/demo/amenity-pool.jpg')}
-                    alt="Dịch Vụ Cư Dân"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="font-extrabold text-[11px] text-slate-900 dark:text-white uppercase truncate block">
-                    3. Dịch Vụ Cư Dân
-                  </span>
-                  <span className="text-[9px] font-bold text-emerald-400 block truncate">Khám phá chợ →</span>
-                </div>
-              </button>
-
-              {/* Mobile Card 4: Việc Làm & Tuyển Dụng */}
-              <button
-                onClick={() => setCurrentTab('recruitment')}
-                className="text-left p-2 rounded-xl border transition-all duration-200 hover:scale-102 active:scale-95 flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 cursor-pointer"
-              >
-                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
-                  <img loading="lazy"
-            src={heroCardImage('recruitment', '/images/demo/hero-skyline.jpg')}
-                    alt="Việc Làm"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="font-extrabold text-[11px] text-slate-900 dark:text-white uppercase truncate block">
-                    4. Tuyển Dụng
-                  </span>
-                  <span className="text-[9px] font-bold text-teal-400 block truncate">Tìm việc làm →</span>
-                </div>
-              </button>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Form Fields */}
@@ -497,6 +342,9 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
         </div>
+
+        {/* Bản tin nằm trong banner (mép phải ~12%) */}
+        <BannerNewsRail title="BẢN TIN 4 NGÀNH" />
       </section>
 
       {/* 2. Key Values Bar - compact */}
@@ -533,6 +381,43 @@ export const HomePage: React.FC<HomePageProps> = ({
               <p className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 truncate">{t.stats.support}</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 2.5 ƯU TIÊN: Dịch vụ · Cho thuê căn hộ · Chuyển nhượng (trước Dự án trọng điểm) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4 mb-5">
+          <div>
+            <span className="text-xs font-black uppercase text-amber-500 tracking-wider">TIN ĐĂNG CƯ DÂN</span>
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">DỊCH VỤ · CHO THUÊ · CHUYỂN NHƯỢNG</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Ưu tiên hiển thị tin mới nhất của cư dân</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <IndustryFeed
+            title="DỊCH VỤ CƯ DÂN"
+            accent="bg-emerald-600"
+            items={serviceFeedItems}
+            emptyText="Chưa có dịch vụ"
+            onViewAll={() => setCurrentTab('services')}
+            onItemClick={() => setCurrentTab('services')}
+          />
+          <IndustryFeed
+            title="CHO THUÊ CĂN HỘ"
+            accent="bg-sky-500"
+            items={rentFeedItems}
+            emptyText="Chưa có tin cho thuê"
+            onViewAll={() => setCurrentTab('rent')}
+            onItemClick={() => setCurrentTab('rent')}
+          />
+          <IndustryFeed
+            title="CHUYỂN NHƯỢNG / MUA BÁN"
+            accent="bg-amber-500"
+            items={saleFeedItems}
+            emptyText="Chưa có tin mua bán"
+            onViewAll={() => setCurrentTab('sale')}
+            onItemClick={() => setCurrentTab('sale')}
+          />
         </div>
       </section>
 
@@ -806,53 +691,18 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* 4 Nhóm Ngành Chính — Ảnh đại diện (admin quản lý) */}
-      {categoryImages.length > 0 && (
-        <section className="px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-amber-500" />
-                <span>4 NHÓM NGÀNH CHÍNH</span>
-              </h2>
-              <span className="text-[11px] font-bold text-slate-400">Chợ Cư Dân 24H</span>
-            </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              {categoryImages.map(cat => (
-                <a
-                  key={cat.key}
-                  href={cat.link}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentTab(cat.key === 'mua-ban' ? 'sale' : cat.key === 'cho-thue' ? 'rent' : cat.key === 'tuyen-dung' ? 'recruitment' : 'services');
-                  }}
-                  className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 block"
-                >
-                  <img
-                    loading="lazy"
-                    src={cat.image}
-                    alt={cat.label}
-                    className="w-full h-32 sm:h-44 object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                    <span className="text-white font-black text-xs sm:text-sm drop-shadow-md">{cat.label}</span>
-                    <div className="flex items-center text-amber-400 text-[10px] sm:text-[11px] font-bold mt-1">
-                      <span>Khám phá ngay</span>
-                      <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* SEO Popular Links Section at Bottom of HomePage */}
       <PopularVinhomesLinksSection
         setCurrentTab={setCurrentTab}
         onSelectProject={onSelectProject}
+      />
+
+      {/* Widget Groups Dashboard - DỊCH VỤ MỚI ở đầu tiên */}
+      <DashboardContent
+        categories={[]}
+        widgetGroups={WIDGET_GROUPS}
+        onSelectCategory={(cat) => {}}
+        onSelectWidgetItem={(item) => {}}
       />
 
       {/* Modal Selection */}
