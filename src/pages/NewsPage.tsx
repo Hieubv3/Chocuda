@@ -6,6 +6,8 @@ import { ProjectFaqHub } from '../components/ProjectFaqHub';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { getTranslation } from '../lib/i18n';
 import { getNewsDetailUrl } from '../lib/slugs';
+import { Pagination } from '../components/Pagination';
+import { usePagination } from '../lib/usePagination';
 
 interface NewsPageProps {
   news: NewsArticle[];
@@ -23,6 +25,12 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
   const filteredNews = selectedCat === 'all'
     ? news
     : news.filter(n => n.category === selectedCat);
+
+  // Phân trang: 20 / 100 / 200 bài viết mỗi trang
+  const { page, pageSize, total, pageItems, setPage, changePageSize } = usePagination(
+    filteredNews,
+    'hb_news_page_size'
+  );
 
   const handleCardClick = (article: NewsArticle) => {
     if (onSelectArticle) {
@@ -123,7 +131,7 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
 
       {/* News Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {filteredNews.map((article) => (
+        {pageItems.map((article) => (
           <div
             key={article.id}
             onClick={() => handleCardClick(article)}
@@ -189,6 +197,15 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
           </div>
         ))}
       </div>
+
+      <Pagination
+        total={total}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={changePageSize}
+        label="bài viết"
+      />
 
       {showShareModalFor && (
         <SocialShareModal
