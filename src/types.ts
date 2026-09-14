@@ -243,6 +243,7 @@ export interface User {
   departmentPermissions?: SubBranchPermission[]; // Quyền phân tầng đầu nhánh
   subBranchTitle?: string; // Chức danh chuyên trách (Ví dụ: Trưởng Ban BĐS, Trưởng Ban Dịch Vụ Thợ...)
   avatar?: string;
+  apartment?: string; // Số căn hộ cư dân (VD: "S2.08 - OCP1"), hiển thị trong menu tài khoản
   provider?: 'local' | 'google' | 'facebook' | 'zalo';
   balance?: number; // Số dư tài khoản / Xu Tiêu Dùng Token (VNĐ) - Dùng thanh toán dịch vụ/đăng tin/mở khóa CV (KHÔNG THỂ RÚT)
   tokenBalance?: number; // Số dư Token cư dân (1 Token = 1 VNĐ - Non-withdrawable)
