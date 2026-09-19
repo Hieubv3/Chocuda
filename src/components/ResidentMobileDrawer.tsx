@@ -123,7 +123,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
       />
 
       {/* Thân Drawer kéo từ bên trái sang */}
-      <div className="relative w-[325px] sm:w-[370px] max-w-[90vw] h-full max-h-[100dvh] bg-[#0c1322] text-white flex flex-col shadow-2xl z-10 overflow-y-auto overscroll-contain animate-in slide-in-from-left duration-200 border-r border-slate-800/90 select-none">
+      <div className="relative w-full h-full max-h-[100dvh] bg-[#0c1322] text-white flex flex-col shadow-2xl z-10 overflow-y-auto overscroll-contain animate-in fade-in duration-200 select-none">
         
         {/* Header Drawer: Thông tin tài khoản cư dân */}
         <div className="p-4 border-b border-slate-800/80 flex items-start justify-between gap-3 bg-[#10192d] sticky top-0 z-20">
