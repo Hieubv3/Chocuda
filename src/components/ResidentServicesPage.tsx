@@ -866,18 +866,18 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   navigate('/dich-vu-cu-dan');
                 }
               }}
-              className={`w-full rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2 px-1.5 min-h-[78px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-start lg:gap-1 lg:p-1 lg:text-left ${
+              className={`group w-full rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 py-2.5 px-1.5 min-h-[92px] ${
                 selectedCategory === 'all'
                   ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
+                  : 'bg-[#1c2945] text-white border-slate-700/60 hover:bg-[#25375d] hover:border-amber-400/60'
               } ${expandedCatId === 'all' ? 'ring-2 ring-emerald-400' : ''}`}
             >
-              <div className="p-1 rounded-lg bg-emerald-500/10 text-emerald-500 shrink-0">
-                <Wrench className="w-3 h-3 lg:w-2.5 lg:h-2.5" />
+              <div className="w-10 h-10 rounded-xl border border-emerald-500/40 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Wrench className="w-5 h-5" />
               </div>
               <div className="min-w-0 w-full lg:w-auto mt-0.5 lg:mt-0">
-                <div className="text-[10px] lg:text-[9px] font-bold leading-tight line-clamp-2 lg:truncate">Tất Cả Dịch Vụ</div>
-                <div className="text-[9px] lg:text-[7px] opacity-70 truncate">{services.length} bài</div>
+                <div className="text-[11px] font-bold leading-tight line-clamp-2">Tất Cả Dịch Vụ</div>
+                <div className="text-[9px] text-slate-400 truncate">{services.length} bài</div>
               </div>
             </button>
 
@@ -899,19 +899,19 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       navigate(getServiceCategoryUrl(cat.id));
                     }
                   }}
-                  className={`w-full rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center py-2 px-1.5 min-h-[78px] lg:min-h-0 lg:flex-row lg:items-center lg:justify-between lg:gap-0.5 lg:p-1 lg:text-left ${
+                  className={`group w-full rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 py-2.5 px-1.5 min-h-[92px] ${
                     isActive
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black'
-                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400'
+                      : 'bg-[#1c2945] text-white border-slate-700/60 hover:bg-[#25375d] hover:border-amber-400/60'
                   } ${expandedCatId === cat.id ? 'ring-2 ring-emerald-400' : ''}`}
                 >
                   <div className="flex flex-col lg:flex-row items-center gap-0.5 lg:gap-1 min-w-0">
-                    <div className={`p-1 rounded-lg shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'}`}>
-                      {renderCategoryIcon(cat.iconName, "w-3 h-3 lg:w-2.5 lg:h-2.5")}
+                    <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'bg-white/20 border-white/30 text-white' : 'border-emerald-500/40 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-400'}`}>
+                      {renderCategoryIcon(cat.iconName, "w-5 h-5")}
                     </div>
                     <div className="min-w-0 w-full lg:w-auto mt-0.5 lg:mt-0">
-                      <div className="text-[10px] lg:text-[9px] font-bold leading-tight line-clamp-2 lg:truncate">{cat.name}</div>
-                      <div className="text-[9px] lg:text-[7px] opacity-75 truncate">{count} {countLabel}</div>
+                      <div className="text-[11px] font-bold leading-tight line-clamp-2">{cat.name}</div>
+                      <div className="text-[9px] text-slate-400 truncate">{count} {countLabel}</div>
                     </div>
                   </div>
                   {industryRule?.isStrictMandatory && (
