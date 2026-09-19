@@ -520,7 +520,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
       
       {/* 1. HERO BANNER & HEADER SECTION */}
-      <section className="bg-slate-900 text-white relative py-4 px-3 sm:px-6 lg:px-8 border-b border-slate-800 z-20">
+      <section className="bg-[#16284e] text-white relative py-4 px-3 sm:px-6 lg:px-8 border-b border-slate-700/60 z-20">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none overflow-hidden"></div>
         
         <div className="max-w-7xl mx-auto relative z-20 space-y-3.5">

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { PageHero } from '../components/PageHero';
 import { Property, PropertyType, ProjectCategory, PropertyCategory, HeightCategory, Language, HIGH_RISE_CATEGORIES, LOW_RISE_CATEGORIES, FLOOR_RENTAL_CATEGORIES, isAdminProperty } from '../types';
 import { PropertyCard } from '../components/PropertyCard';
 import { PropertyFilter } from '../components/PropertyFilter';
@@ -164,6 +165,8 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-3">
+
+      <PageHero title="Bất Động Sản" subtitle="Mua bán & cho thuê BĐS Vinhomes toàn quốc - chính chủ" badge="CHỢ CƯ DÂN 24H" />
       
       {/* Header Title & View Toggle */}
       <div className="flex flex-row items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5">
