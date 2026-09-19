@@ -3089,7 +3089,7 @@ app.post("/api/properties/:id/renew", (req, res) => {
 // Property POST (Submit new listing)
 // Google Workspace endpoints removed — feature not applied to chocudan24h.com
 
-app.post("/api/properties", (req, res) => {
+app.post("/api/properties", authenticateToken, (req, res) => {
   const data = req.body;
   // Never trust client-sent approved/isAdmin/status flags — verify the poster is
   // actually an admin against our own user records instead.
@@ -3135,7 +3135,7 @@ app.post("/api/properties", (req, res) => {
 });
 
 // Property PUT (Approve / Edit with Upsert fallback)
-app.put("/api/properties/:id", (req, res) => {
+app.put("/api/properties/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const index = propertiesStore.findIndex(p => p.id === id);
   if (index === -1) {
@@ -3168,7 +3168,7 @@ app.put("/api/properties/:id/approve", (req, res) => {
 });
 
 // Property DELETE
-app.delete("/api/properties/:id", (req, res) => {
+app.delete("/api/properties/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   propertiesStore = propertiesStore.filter(p => p.id !== id);
   if (!deletedIds.properties.includes(id)) deletedIds.properties.push(id);
@@ -3181,7 +3181,7 @@ app.get("/api/projects", (req, res) => {
   res.json(projectsStore);
 });
 
-app.post("/api/projects", (req, res) => {
+app.post("/api/projects", authenticateToken, (req, res) => {
   const data = req.body;
   const newProject: Project = {
     id: data.id || `proj-${Date.now()}`,
@@ -3209,7 +3209,7 @@ app.post("/api/projects", (req, res) => {
   res.status(201).json({ message: "Thêm dự án thành công", project: newProject, projects: projectsStore });
 });
 
-app.put("/api/projects/:id", (req, res) => {
+app.put("/api/projects/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const index = projectsStore.findIndex(p => p.id === id);
   if (index === -1) {
@@ -3238,7 +3238,7 @@ app.put("/api/projects/:id", (req, res) => {
   res.json({ message: "Đã cập nhật thông tin dự án", project: projectsStore[index], projects: projectsStore });
 });
 
-app.delete("/api/projects/:id", (req, res) => {
+app.delete("/api/projects/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   projectsStore = projectsStore.filter(p => p.id !== id);
   if (!deletedIds.projects.includes(id)) deletedIds.projects.push(id);
@@ -3252,7 +3252,7 @@ app.get("/api/news", (req, res) => {
 });
 
 // News POST (Manual or Admin)
-app.post("/api/news", (req, res) => {
+app.post("/api/news", authenticateToken, (req, res) => {
   const data = req.body;
   const newArticle: NewsArticle = {
     id: data.id || `news-${Date.now()}`,
@@ -3274,7 +3274,7 @@ app.post("/api/news", (req, res) => {
 });
 
 // News PUT (Edit news article)
-app.put("/api/news/:id", (req, res) => {
+app.put("/api/news/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const index = newsStore.findIndex(n => n.id === id);
   if (index === -1) return res.status(404).json({ error: "Không tìm thấy bài viết" });
@@ -3284,7 +3284,7 @@ app.put("/api/news/:id", (req, res) => {
 });
 
 // News DELETE
-app.delete("/api/news/:id", (req, res) => {
+app.delete("/api/news/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   newsStore = newsStore.filter(n => n.id !== id);
   if (!deletedIds.news.includes(id)) deletedIds.news.push(id);
@@ -3411,7 +3411,7 @@ app.get("/api/ads", (req, res) => {
   res.json(adsStore);
 });
 
-app.post("/api/ads", (req, res) => {
+app.post("/api/ads", authenticateToken, (req, res) => {
   const adData = req.body;
   if (!adData || !adData.title) {
     return res.status(400).json({ error: "Tiêu đề banner quảng cáo không hợp lệ." });
@@ -3443,7 +3443,7 @@ app.post("/api/ads", (req, res) => {
   res.status(201).json({ success: true, message: "Đã lưu banner quảng cáo thành công!", ad: newAd, ads: adsStore });
 });
 
-app.put("/api/ads/:id", (req, res) => {
+app.put("/api/ads/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const idx = adsStore.findIndex(a => a.id === id);
   if (idx === -1) {
@@ -3455,7 +3455,7 @@ app.put("/api/ads/:id", (req, res) => {
   res.json({ success: true, message: "Cập nhật banner quảng cáo thành công!", ad: adsStore[idx], ads: adsStore });
 });
 
-app.delete("/api/ads/:id", (req, res) => {
+app.delete("/api/ads/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   adsStore = adsStore.filter(a => a.id !== id);
   if (!deletedIds.ads.includes(id)) deletedIds.ads.push(id);
@@ -3543,7 +3543,7 @@ app.post("/api/resident-services/:id/renew", (req, res) => {
   });
 });
 
-app.post("/api/resident-services", (req, res) => {
+app.post("/api/resident-services", authenticateToken, (req, res) => {
   const item = req.body;
   if (!item || !item.title) {
     return res.status(400).json({ error: "Dữ liệu không hợp lệ." });
@@ -3567,7 +3567,7 @@ app.post("/api/resident-services", (req, res) => {
   });
 });
 
-app.put("/api/resident-services/:id", (req, res) => {
+app.put("/api/resident-services/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const idx = residentServicesStore.findIndex(s => s.id === id);
   if (idx === -1) {
@@ -3598,7 +3598,7 @@ app.put("/api/resident-services/:id/approve", (req, res) => {
   res.json({ success: true, message: "🎉 Đã duyệt và cho phép hiển thị dịch vụ trên website!", service: residentServicesStore[idx] });
 });
 
-app.delete("/api/resident-services/:id", (req, res) => {
+app.delete("/api/resident-services/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   residentServicesStore = residentServicesStore.filter(s => s.id !== id);
   if (!deletedIds.residentServices.includes(id)) deletedIds.residentServices.push(id);
@@ -3611,7 +3611,7 @@ app.get("/api/reputation-posts", (req, res) => {
   res.json(reputationPostsStore);
 });
 
-app.post("/api/reputation-posts", (req, res) => {
+app.post("/api/reputation-posts", authenticateToken, (req, res) => {
   const post = req.body;
   if (!post || !post.title) {
     return res.status(400).json({ error: "Thông tin bài viết không hợp lệ." });
@@ -3628,7 +3628,7 @@ app.post("/api/reputation-posts", (req, res) => {
   res.status(201).json({ message: "Đăng bài viết cư dân thành công!", item: newPost });
 });
 
-app.put("/api/reputation-posts/:id", (req, res) => {
+app.put("/api/reputation-posts/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const index = reputationPostsStore.findIndex(p => p.id === id);
   if (index === -1) {
@@ -3639,7 +3639,7 @@ app.put("/api/reputation-posts/:id", (req, res) => {
   res.json({ message: "Cập nhật bài viết thành công!", item: reputationPostsStore[index] });
 });
 
-app.delete("/api/reputation-posts/:id", (req, res) => {
+app.delete("/api/reputation-posts/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   reputationPostsStore = reputationPostsStore.filter(p => p.id !== id);
   saveDataStore();
@@ -3661,7 +3661,7 @@ app.get("/api/stores/:id", (req, res) => {
 });
 
 // Create or update store config
-app.post("/api/stores", (req, res) => {
+app.post("/api/stores", authenticateToken, (req, res) => {
   const storeData: UserStorefront = req.body;
   if (!storeData.storeName || !storeData.userId) {
     return res.status(400).json({ error: "Thiếu tên gian hàng hoặc thông tin người sở hữu." });
@@ -3777,7 +3777,7 @@ app.get("/api/store-orders", authenticateToken, requireAdmin, (req, res) => {
 });
 
 // Delete store
-app.delete("/api/stores/:id", (req, res) => {
+app.delete("/api/stores/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   storesStore = storesStore.filter(s => s.id !== id && s.userId !== id);
   if (!deletedIds.stores.includes(id)) deletedIds.stores.push(id);
@@ -5367,7 +5367,7 @@ app.post("/api/broadcast-notifications", (req, res) => {
 });
 
 // ADMIN STORE & PRODUCT OVERRIDE ENDPOINTS (Delete store, edit store, manage store products)
-app.put("/api/stores/:id", (req, res) => {
+app.put("/api/stores/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const storeIdx = storesStore.findIndex(s => s.id === id || s.userId === id);
   if (storeIdx === -1) {
@@ -5381,7 +5381,7 @@ app.put("/api/stores/:id", (req, res) => {
   res.json({ success: true, message: "Đã cập nhật thông tin gian hàng thành công!", store: storesStore[storeIdx] });
 });
 
-app.delete("/api/stores/:id", (req, res) => {
+app.delete("/api/stores/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const initLen = storesStore.length;
   storesStore = storesStore.filter(s => s.id !== id && s.userId !== id);
@@ -5394,7 +5394,7 @@ app.delete("/api/stores/:id", (req, res) => {
 });
 
 // Admin Add or Edit product in ANY store
-app.post("/api/stores/:storeId/products", (req, res) => {
+app.post("/api/stores/:storeId/products", authenticateToken, (req, res) => {
   const { storeId } = req.params;
   const productData = req.body;
 
@@ -5434,7 +5434,7 @@ app.post("/api/stores/:storeId/products", (req, res) => {
 });
 
 // Admin Update single product in ANY store
-app.put("/api/stores/:storeId/products/:productId", (req, res) => {
+app.put("/api/stores/:storeId/products/:productId", authenticateToken, (req, res) => {
   const { storeId, productId } = req.params;
   const storeIdx = storesStore.findIndex(s => s.id === storeId || s.userId === storeId);
   if (storeIdx === -1) {
@@ -5452,7 +5452,7 @@ app.put("/api/stores/:storeId/products/:productId", (req, res) => {
 });
 
 // Admin Delete product from ANY store
-app.delete("/api/stores/:storeId/products/:productId", (req, res) => {
+app.delete("/api/stores/:storeId/products/:productId", authenticateToken, (req, res) => {
   const { storeId, productId } = req.params;
   const storeIdx = storesStore.findIndex(s => s.id === storeId || s.userId === storeId);
   if (storeIdx === -1) {
@@ -6290,7 +6290,7 @@ app.post("/api/admin/pump-tokens", authenticateToken, requireAdmin, (req, res) =
 });
 
 // 3. POST Create New Recruitment Job (Cư dân đăng tin cần chi phí Token, Admin miễn phí)
-app.post("/api/recruitment/jobs", (req, res) => {
+app.post("/api/recruitment/jobs", authenticateToken, (req, res) => {
   const data = req.body;
 
   if (!data.title || !data.companyName || !data.contactPhone || !data.contactName) {
@@ -6390,7 +6390,7 @@ app.post("/api/recruitment/jobs", (req, res) => {
 });
 
 // 4. PUT Update Recruitment Job
-app.put("/api/recruitment/jobs/:id", (req, res) => {
+app.put("/api/recruitment/jobs/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const index = recruitmentJobsStore.findIndex(j => j.id === id);
 
@@ -6414,7 +6414,7 @@ app.put("/api/recruitment/jobs/:id", (req, res) => {
 });
 
 // 5. DELETE Recruitment Job
-app.delete("/api/recruitment/jobs/:id", (req, res) => {
+app.delete("/api/recruitment/jobs/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const index = recruitmentJobsStore.findIndex(j => j.id === id);
 
@@ -6874,7 +6874,7 @@ app.get("/api/recruitment/unlock-logs", (req, res) => {
 });
 
 // 15. DELETE Candidate Profile (Admin)
-app.delete("/api/recruitment/candidates/:id", (req, res) => {
+app.delete("/api/recruitment/candidates/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const index = candidateProfilesStore.findIndex(c => c.id === id);
   if (index === -1) {
@@ -6891,7 +6891,7 @@ app.delete("/api/recruitment/candidates/:id", (req, res) => {
 });
 
 // 16. DELETE Job Application (Admin)
-app.delete("/api/recruitment/applications/:id", (req, res) => {
+app.delete("/api/recruitment/applications/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const index = jobApplicationsStore.findIndex(a => a.id === id);
   if (index === -1) {
@@ -7034,7 +7034,7 @@ app.post("/api/recruitment/employers", (req, res) => {
 });
 
 // 20. DELETE Employer Profile (Admin)
-app.delete("/api/recruitment/employers/:id", (req, res) => {
+app.delete("/api/recruitment/employers/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const index = employersStore.findIndex(e => e.id === id);
   if (index === -1) {
@@ -7623,7 +7623,13 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
+    const SPA_PREFIXES = new Set(['du-an','mua-ban','ban','cho-thue','thue','bat-dong-san','dich-vu-cu-dan','tuyen-dung','tin-tuc','dang-tin','ve-chung-toi','gioi-thieu','cong-dong','tinh-lai-vay','tai-khoan','chinh-sach-bao-mat','privacy','privacy-policy','dieu-khoan-su-dung','terms','terms-of-service','phan-khu','tien-ich','gian-hang','san-pham','hang-hoa','nha-tuyen-dung','cho-cu-dan','sitemap','so-do-website','admin','quantri','quantri24h','admin-login','auth','bui-van-hieu','bui-trung-hieu','chuyen-gia']);
     app.get('*', (req, res) => {
+      const segs = req.path.split('/').filter(Boolean);
+      if (segs.length === 0) return res.sendFile(path.join(distPath, 'index.html'));
+      const first = String(segs[0]).toLowerCase();
+      const isKnown = SPA_PREFIXES.has(first) || projectsStore.some((p) => String(p.id) === first || slugify(String(p.name || p.title || '')) === first);
+      if (!isKnown) return res.status(404).sendFile(path.join(distPath, 'index.html'));
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
