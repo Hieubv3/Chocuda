@@ -1,39 +1,39 @@
-import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon, Menu as MenuIcon } from 'lucide-react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
 import { ScrollToTop } from './components/ScrollToTop';
-const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
-const PropertiesPage = lazy(() => import('./pages/PropertiesPage').then(m => ({ default: m.PropertiesPage })));
-const PropertyDetailPage = lazy(() => import('./pages/PropertyDetailPage').then(m => ({ default: m.PropertyDetailPage })));
-const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then(m => ({ default: m.ProjectsPage })));
-const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage').then(m => ({ default: m.ProjectDetailPage })));
-const SubdivisionDetailPage = lazy(() => import('./pages/SubdivisionDetailPage').then(m => ({ default: m.SubdivisionDetailPage })));
-const AmenityDetailPage = lazy(() => import('./pages/AmenityDetailPage').then(m => ({ default: m.AmenityDetailPage })));
-const NewsPage = lazy(() => import('./pages/NewsPage').then(m => ({ default: m.NewsPage })));
-const NewsArticleDetailPage = lazy(() => import('./pages/NewsArticleDetailPage').then(m => ({ default: m.NewsArticleDetailPage })));
-const PostPropertyPage = lazy(() => import('./pages/PostPropertyPage').then(m => ({ default: m.PostPropertyPage })));
-const HieuBuiProfilePage = lazy(() => import('./pages/HieuBuiProfilePage').then(m => ({ default: m.HieuBuiProfilePage })));
-const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
-const UserDashboardPage = lazy(() => import('./pages/UserDashboardPage').then(m => ({ default: m.UserDashboardPage })));
-const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage').then(m => ({ default: m.AdminLoginPage })));
-const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
-const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage').then(m => ({ default: m.TermsOfServicePage })));
+import { HomePage } from './pages/HomePage';
+import { PropertiesPage } from './pages/PropertiesPage';
+import { PropertyDetailPage } from './pages/PropertyDetailPage';
+import { ProjectsPage } from './pages/ProjectsPage';
+import { ProjectDetailPage } from './pages/ProjectDetailPage';
+import { SubdivisionDetailPage } from './pages/SubdivisionDetailPage';
+import { AmenityDetailPage } from './pages/AmenityDetailPage';
+import { NewsPage } from './pages/NewsPage';
+import { NewsArticleDetailPage } from './pages/NewsArticleDetailPage';
+import { PostPropertyPage } from './pages/PostPropertyPage';
+import { HieuBuiProfilePage } from './pages/HieuBuiProfilePage';
+import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { UserDashboardPage } from './pages/UserDashboardPage';
+import { AdminLoginPage } from './pages/AdminLoginPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
 import { ResidentServicesPage } from './components/ResidentServicesPage';
-const ResidentServiceDetailPage = lazy(() => import('./pages/ResidentServiceDetailPage').then(m => ({ default: m.ResidentServiceDetailPage })));
-const ResidentStoreDetailPage = lazy(() => import('./pages/ResidentStoreDetailPage').then(m => ({ default: m.ResidentStoreDetailPage })));
-const ResidentProductDetailPage = lazy(() => import('./pages/ResidentProductDetailPage').then(m => ({ default: m.ResidentProductDetailPage })));
-const SitemapDirectoryPage = lazy(() => import('./pages/SitemapDirectoryPage').then(m => ({ default: m.SitemapDirectoryPage })));
-const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage').then(m => ({ default: m.AuthCallbackPage })));
+import { ResidentServiceDetailPage } from './pages/ResidentServiceDetailPage';
+import { ResidentStoreDetailPage } from './pages/ResidentStoreDetailPage';
+import { ResidentProductDetailPage } from './pages/ResidentProductDetailPage';
+import { SitemapDirectoryPage } from './pages/SitemapDirectoryPage';
+import { AuthCallbackPage } from './pages/AuthCallbackPage';
 import { getNewsDetailUrl, getPropertyDetailUrl } from './lib/slugs';
-const CommunityGroupsPage = lazy(() => import('./pages/CommunityGroupsPage').then(m => ({ default: m.CommunityGroupsPage })));
-const MortgageCalculatorPage = lazy(() => import('./pages/MortgageCalculatorPage').then(m => ({ default: m.MortgageCalculatorPage })));
+import { CommunityGroupsPage } from './pages/CommunityGroupsPage';
+import { MortgageCalculatorPage } from './pages/MortgageCalculatorPage';
 import { RecruitmentCenterPage } from './components/RecruitmentCenterPage';
-const RecruitmentJobDetailPage = lazy(() => import('./pages/RecruitmentJobDetailPage').then(m => ({ default: m.RecruitmentJobDetailPage })));
-const CandidateCvDetailPage = lazy(() => import('./pages/CandidateCvDetailPage').then(m => ({ default: m.CandidateCvDetailPage })));
-const EmployerProfilePage = lazy(() => import('./pages/EmployerProfilePage').then(m => ({ default: m.EmployerProfilePage })));
+import { RecruitmentJobDetailPage } from './pages/RecruitmentJobDetailPage';
+import { CandidateCvDetailPage } from './pages/CandidateCvDetailPage';
+import { EmployerProfilePage } from './pages/EmployerProfilePage';
 import { CompareModal } from './components/CompareModal';
 import { AuthModal } from './components/AuthModal';
 import { AiWriterModal } from './components/AiWriterModal';
@@ -866,7 +866,6 @@ export const App: React.FC = () => {
 
       {/* Main Page Render via React Router */}
       <main className="flex-1 w-full overflow-x-hidden">
-        <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-slate-400">Đang tải...</div>}>
         <Routes>
           {/* OAuth Redirect / Popup Callback Route */}
           <Route
@@ -1737,7 +1736,6 @@ export const App: React.FC = () => {
           {/* Catch-all Wildcard Route -> Redirect Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        </Suspense>
       </main>
 
       {/* Popular Links Section at Bottom of Site (When not on Home page which already includes it) */}
