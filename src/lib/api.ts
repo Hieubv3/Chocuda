@@ -8,12 +8,23 @@
 
 const TOKEN_KEY = 'chocudan24h_token';
 
+const COOKIE_NAME = 'chocudan24h_token';
+const COOKIE_DOMAIN = (typeof location !== 'undefined' && /(^|\.)chocudan24h\.com$/.test(location.hostname)) ? '; domain=.chocudan24h.com' : '';
+
 export function getToken(): string | null {
   try {
-    return localStorage.getItem(TOKEN_KEY);
+    const ls = localStorage.getItem(TOKEN_KEY);
+    if (ls) return ls;
   } catch {
-    return null;
+    // ignore
   }
+  try {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + COOKIE_NAME + '=([^;]+)'));
+    if (m) return decodeURIComponent(m[1]);
+  } catch {
+    // ignore
+  }
+  return null;
 }
 
 export function setToken(token: string): void {
@@ -22,11 +33,21 @@ export function setToken(token: string): void {
   } catch {
     // ignore storage errors (private mode, etc.)
   }
+  try {
+    document.cookie = COOKIE_NAME + '=' + encodeURIComponent(token) + COOKIE_DOMAIN + '; path=/; max-age=' + (60 * 60 * 24 * 30) + '; SameSite=Lax';
+  } catch {
+    // ignore
+  }
 }
 
 export function clearToken(): void {
   try {
     localStorage.removeItem(TOKEN_KEY);
+  } catch {
+    // ignore
+  }
+  try {
+    document.cookie = COOKIE_NAME + '=;' + COOKIE_DOMAIN + '; path=/; max-age=0';
   } catch {
     // ignore
   }

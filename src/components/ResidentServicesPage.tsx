@@ -881,6 +881,24 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               </div>
             </button>
 
+            <button
+                key="gian-hang-cu-dan"
+                onClick={() => {
+                  if (window.innerWidth < 1024) { setExpandedCatId(null); }
+                  const el = document.getElementById('gian-hang-cu-dan');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="group w-full rounded-xl border border-slate-700/60 bg-[#1c2945] text-white hover:bg-[#25375d] hover:border-amber-400/60 transition cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 py-2.5 px-1.5 min-h-[92px] shadow-sm"
+              >
+                <div className="w-10 h-10 rounded-xl border border-amber-500/40 bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <ShoppingBag className="w-5 h-5" />
+                </div>
+                <div className="min-w-0 w-full">
+                  <div className="text-[11px] font-bold leading-tight line-clamp-2 text-white">Gian Hàng Cư Dân</div>
+                  <div className="text-[9px] text-slate-400 truncate">{stores.length} gian hàng</div>
+                </div>
+              </button>
+
             {RESIDENT_SERVICE_CATEGORIES.map(cat => {
               const isActive = selectedCategory === cat.id;
               const count = services.filter(s => s.categoryId === cat.id).length;
@@ -1032,7 +1050,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
           )}
 
           {/* ==================== UNIFIED CONTAINER FOR STORES, MERCHANTS & CRAFTSMEN WITH 2 VERIFICATION TABS ==================== */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-xl space-y-4">
+          <div id="gian-hang-cu-dan" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-xl space-y-4 scroll-mt-20">
             
             {/* Consolidated Title & Header Action Controls */}
             <div className="space-y-2.5 border-b border-slate-100 dark:border-slate-800 pb-3">
