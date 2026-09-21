@@ -471,6 +471,23 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
                   Tính Lãi Vay
                 </span>
               </button>
+
+              {/* 9. Việc Làm Nội Khu */}
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  navigate('/tuyen-dung');
+                }}
+                className="flex flex-col items-center text-center group cursor-pointer"
+              >
+                <div className="relative w-13 h-13 rounded-2xl bg-[#0b2545] border border-[#1e3a5f] group-hover:border-indigo-400 transition-all flex items-center justify-center shadow-md group-hover:scale-105">
+                  <Briefcase className="w-5 h-5 text-[#6366f1]" />
+                </div>
+                <span className="text-[10.5px] font-bold text-slate-200 mt-1.5 leading-tight group-hover:text-indigo-400">
+                  Việc Làm Nội Khu
+                </span>
+              </button>
             </div>
           </div>
 
