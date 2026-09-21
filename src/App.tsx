@@ -330,8 +330,7 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  // FIX: khi dang nhap bang tai khoan ADMIN -> tai lai danh sach BDS o che do admin
-  // (bao gom bai dang cua cac user chua duyet) de hien thi trong trang quan tri.
+  // FIX: dang nhap admin -> tai lai danh sach BDS o che do admin (gom bai chua duyet)
   useEffect(() => {
     if (user?.role === 'admin') {
       refreshServerData();
@@ -862,8 +861,7 @@ export const App: React.FC = () => {
         onNavigateWithFilter={handleNavigateWithFilter}
       />
 
-      {/* FIX: 4 nhom nganh (Mua ban / Cho thue / Dich vu / Viec lam) hien o MOI TRANG,
-          tru Trang chu (da co 4 the lon o hero) */}
+      {/* 4 nhom nganh: hien o MOI TRANG (tru trang chu) tren desktop */}
       {location.pathname !== '/' && (
         <IndustryQuickNav
           currentTab={getCurrentTabName()}
@@ -871,7 +869,7 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* FIX: Menu 4 nganh dang NOI cho DI DONG - tu hien khi vao trang, tu an khi khong dung */}
+      {/* Menu 4 nganh dang NOI cho DI DONG - chi hien khi bam */}
       <MobileIndustryMenu
         currentTab={getCurrentTabName()}
         setCurrentTab={handleTabSwitch}
