@@ -498,6 +498,11 @@ export const App: React.FC = () => {
       case 'dang-tin':
         navigate('/dang-tin');
         break;
+      case 'market':
+      case 'cho-cu-dan':
+      case 'gian-hang':
+        navigate('/cho-cu-dan');
+        break;
       case 'profile':
       case 've-chung-toi':
         navigate('/ve-chung-toi');
