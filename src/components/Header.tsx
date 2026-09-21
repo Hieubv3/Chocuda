@@ -722,6 +722,39 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-[10px] font-bold leading-tight">{t.nav.postProperty}</span>
             </button>
           </div>
+
+          {/* Menu NGANG 4 ngành — để user thoát ra / chuyển nhanh khi cần */}
+          <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <p className="text-[10px] font-black text-amber-500 uppercase tracking-wider mb-1.5">
+              Chuyển nhanh 4 ngành
+            </p>
+            <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-0.5">
+              <button
+                onClick={() => { setCurrentTab('sale'); closeMenu(); }}
+                className="px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap border bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700"
+              >
+                Mua Bán BĐS
+              </button>
+              <button
+                onClick={() => { setCurrentTab('rent'); closeMenu(); }}
+                className="px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap border bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700"
+              >
+                Cho Thuê BĐS
+              </button>
+              <button
+                onClick={() => { setCurrentTab('services'); closeMenu(); }}
+                className="px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap border bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700"
+              >
+                Dịch Vụ Cư Dân
+              </button>
+              <button
+                onClick={() => { setCurrentTab('recruitment'); closeMenu(); }}
+                className="px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap border bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700"
+              >
+                Việc Làm Nội Khu
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </header>
