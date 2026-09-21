@@ -269,6 +269,20 @@ app.get("/api/system/storage-status", (req, res) => {
    ============================================================ */
 applyFile('src/pages/AdminDashboardPage.tsx', [
   [
+`import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';`,
+`import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
+import { AdminOverviewStats } from '../components/AdminOverviewStats';`,
+    'A0) import AdminOverviewStats'
+  ],
+  [
+`          <div className="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-2.5 shadow-md flex items-center justify-between gap-2">`,
+`          {/* THONG KE TOAN HE THONG - dem tat ca hang muc hien thi tren web */}
+          <AdminOverviewStats />
+
+          <div className="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-2.5 shadow-md flex items-center justify-between gap-2">`,
+    'A0b) render AdminOverviewStats'
+  ],
+  [
 `  const [isAddingProject, setIsAddingProject] = useState(false);`,
 `  const [isAddingProperty, setIsAddingProperty] = useState(false);
   const [isAddingProject, setIsAddingProject] = useState(false);`,
