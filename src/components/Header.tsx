@@ -86,6 +86,9 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'rent', label: t.nav.forRent },
     { id: 'news', label: t.nav.news },
     { id: 'recruitment', label: 'Việc Làm Nội Khu' },
+    { id: 'market', label: 'Chợ Cư Dân' },
+    { id: 'community', label: 'Cộng Đồng' },
+    { id: 'mortgage', label: 'Tính Lãi Vay' },
   ];
 
   return (
@@ -675,6 +678,8 @@ export const Header: React.FC<HeaderProps> = ({
                 recruitment: Briefcase,
                 news: Sparkles,
                 market: Store,
+                community: Globe,
+                mortgage: Scale,
               };
               const Icon = iconMap[item.id] || Sparkles;
               const active = currentTab === item.id;
