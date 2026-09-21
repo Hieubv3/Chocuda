@@ -57,7 +57,7 @@ export const IndustryQuickNav: React.FC<IndustryQuickNavProps> = ({ currentTab, 
   return (
     <nav
       aria-label="Điều hướng 4 nhóm ngành"
-      className={`w-full bg-slate-100/90 dark:bg-slate-900/70 border-b border-slate-200 dark:border-slate-800 ${className}`}
+      className={`hidden lg:block w-full bg-slate-100/90 dark:bg-slate-900/70 border-b border-slate-200 dark:border-slate-800 ${className}`}
     >
       <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-2">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
