@@ -32,20 +32,20 @@ export const HieuBuiProfilePage: React.FC<{ language: Language }> = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       
       {/* Profile Header */}
-      <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-12 border border-slate-800 shadow-2xl relative overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
           
-          <div className="lg:col-span-4 text-center space-y-4">
+          <div className="lg:col-span-4 text-center space-y-3">
             <div className="relative inline-block">
-              <div className="w-52 h-52 rounded-3xl bg-white p-3 border-4 border-amber-500/50 shadow-2xl mx-auto flex items-center justify-center overflow-hidden">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white p-1.5 border-2 border-amber-500/50 shadow-lg mx-auto flex items-center justify-center overflow-hidden">
                 <img loading="lazy"
                   src={logoImg}
                   alt="Logo Chợ Cư Dân 24H Vinhomes"
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span className="absolute bottom-2 right-2 bg-emerald-500 text-white p-2.5 rounded-2xl shadow-lg">
-                <ShieldCheck className="w-6 h-6" />
+              <span className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1 rounded-lg shadow-md">
+                <ShieldCheck className="w-3.5 h-3.5" />
               </span>
             </div>
 
