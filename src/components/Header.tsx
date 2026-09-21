@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Phone, Heart, Scale, User, ShieldCheck, Globe, Menu, X, PlusCircle, Sparkles, Sun, Moon, Zap, KeyRound, ChevronDown, Home, Store, Wrench, Smartphone, Briefcase } from 'lucide-react';
+import { Building2, Phone, Heart, Scale, User, ShieldCheck, Globe, Menu, X, PlusCircle, Sparkles, Sun, Moon, Zap, KeyRound, Share2, ChevronDown, Home, Store, Wrench, Smartphone, Download, Briefcase } from 'lucide-react';
 import { Language, User as UserType, HeightCategory, PropertyCategory } from '../types';
 import { getTranslation } from '../lib/i18n';
 import { Logo } from './Logo';
-import { ResidentMobileDrawer } from './ResidentMobileDrawer';
 import { useVisitorStats } from '../lib/visitorStats';
 
 interface HeaderProps {
@@ -86,6 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'sale', label: t.nav.forSale },
     { id: 'rent', label: t.nav.forRent },
     { id: 'news', label: t.nav.news },
+    { id: 'recruitment', label: 'Việc Làm Nội Khu' },
   ];
 
   return (
@@ -624,22 +624,106 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Mobile Drawer Navigation - compact horizontal grid */}
-      <ResidentMobileDrawer
-        isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
-        currentUser={currentUser}
-        onOpenAuth={onOpenAuth}
-        onLogout={onLogout || (() => {})}
-        savedCount={savedCount}
-        compareCount={compareCount}
-        onOpenSaved={onOpenSaved}
-        onOpenCompare={onOpenCompare}
-        onOpenAndroidModal={onOpenAndroidModal}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        language={language}
-        setLanguage={setLanguage}
-      />
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 pt-2 pb-3 shadow-lg">
+          
+          {/* Mobile Login / User Profile CTA - compact */}
+          {currentUser ? (
+            <div className="mb-1.5 p-2 bg-emerald-50 dark:bg-emerald-950/80 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center justify-between">
+              <div className="flex items-center space-x-2 min-w-0">
+                <div className="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-[11px] shrink-0">
+                  {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : currentUser?.email ? currentUser.email.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-extrabold text-slate-900 dark:text-white truncate">{currentUser?.name || currentUser?.email || 'Cư Dân'}</p>
+                  <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                    {currentUser?.role === 'admin' ? '👑 Admin' : currentUser?.role === 'sale' ? '💼 Môi Giới' : '🏠 Chủ Nhà'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setCurrentTab(currentUser?.role === 'admin' ? 'admin' : 'user_dashboard');
+                  setMobileMenuOpen(false);
+                }}
+                className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-[11px] font-bold shrink-0"
+              >
+                Quản Lý
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenAuth();
+              }}
+              className="w-full mb-1.5 p-2 bg-amber-500 text-slate-950 font-black text-[11px] rounded-xl flex items-center justify-center gap-1.5 shadow-md uppercase tracking-wider"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>ĐĂNG NHẬP / ĐĂNG KÝ</span>
+            </button>
+          )}
+
+          {/* Nav items - lưới ô vuông icon chọn nhanh */}
+          <div className="grid grid-cols-4 gap-2">
+            {navItems.map((item) => {
+              const iconMap: Record<string, any> = {
+                home: Home,
+                profile: User,
+                projects: Building2,
+                services: Wrench,
+                recruitment: Briefcase,
+                news: Sparkles,
+                market: Store,
+              };
+              const Icon = iconMap[item.id] || Sparkles;
+              const active = currentTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setCurrentTab(item.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex flex-col items-center justify-center gap-1 p-2 rounded-2xl border transition text-center cursor-pointer ${
+                    active
+                      ? 'bg-emerald-600 text-white border-emerald-600 font-black'
+                      : 'bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${active ? 'text-white' : 'text-emerald-500'}`} />
+                  <span className="text-[10px] font-bold leading-tight line-clamp-2">{item.label}</span>
+                </button>
+              );
+            })}
+            {currentUser && (
+              <button
+                onClick={() => {
+                  setCurrentTab('user_dashboard');
+                  setMobileMenuOpen(false);
+                }}
+                className="flex flex-col items-center justify-center gap-1 p-2 rounded-2xl border bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 cursor-pointer"
+              >
+                <Zap className="w-5 h-5 shrink-0" />
+                <span className="text-[10px] font-bold leading-tight">Quản Lý</span>
+              </button>
+            )}
+            <button
+              onClick={() => {
+                if (!currentUser) {
+                  onOpenAuth();
+                }
+                setCurrentTab('post');
+                setMobileMenuOpen(false);
+              }}
+              className="flex flex-col items-center justify-center gap-1 p-2 rounded-2xl border bg-emerald-600 text-white border-emerald-600 cursor-pointer"
+            >
+              <PlusCircle className="w-5 h-5 shrink-0" />
+              <span className="text-[10px] font-bold leading-tight">{t.nav.postProperty}</span>
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
