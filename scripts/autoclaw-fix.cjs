@@ -29,6 +29,7 @@ function applyFile(file, patches) {
    1) server.ts
    ============================================================ */
 applyFile('server.ts', [
+  /* ---- 1) DATA_DIR ben vung ---- */
   [
 `const DATA_STORE_PATH = path.join(process.cwd(), "app_data_store.json");
 const DATA_STORE_BACKUP_PATH = path.join(process.cwd(), "app_data_store.backup.json");`,
@@ -58,6 +59,91 @@ try {
 let workspaceConfigStore: any = {};`,
     '1) DATA_DIR ben vung'
   ],
+
+  /* ---- 2) Supabase: chen helper truoc loadDataStore ---- */
+  [
+`function loadDataStore() {`,
+`// ===== SUPABASE: luu tru BEN VUNG cho du lieu quan trong (bai dang, khach hang, user) =====
+// Cau hinh bang env tren Render:
+//   SUPABASE_URL=https://xxxx.supabase.co
+//   SUPABASE_SERVICE_ROLE_KEY=eyJ...   (service role key)
+//   SUPABASE_TABLE=app_state            (tuy chon, mac dinh: app_state)
+const SUPABASE_URL = String(process.env.SUPABASE_URL || "").trim().replace(/\\/+$/, "");
+const SUPABASE_KEY = String(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || "").trim();
+const SUPABASE_TABLE = String(process.env.SUPABASE_TABLE || "app_state").trim();
+const SUPABASE_ENABLED = Boolean(SUPABASE_URL && SUPABASE_KEY);
+const SUPABASE_ROW_ID = "main";
+
+function supabaseHeaders(extra: any) {
+  const h: any = {
+    apikey: SUPABASE_KEY,
+    Authorization: "Bearer " + SUPABASE_KEY,
+    "Content-Type": "application/json"
+  };
+  if (extra) {
+    Object.keys(extra).forEach(function (k) { h[k] = extra[k]; });
+  }
+  return h;
+}
+
+async function loadFromSupabase() {
+  if (!SUPABASE_ENABLED) {
+    console.log("[Supabase] Chua cau hinh (thieu SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY) -> dung file local.");
+    return;
+  }
+  try {
+    const url = SUPABASE_URL + "/rest/v1/" + SUPABASE_TABLE + "?id=eq." + SUPABASE_ROW_ID + "&select=data,updated_at";
+    const res = await fetch(url, { headers: supabaseHeaders(null) });
+    if (!res.ok) {
+      console.warn("[Supabase] Load that bai:", res.status, String(await res.text()).slice(0, 200));
+      return;
+    }
+    const rows: any = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0 || !rows[0] || !rows[0].data) {
+      console.warn("[Supabase] Chua co du lieu tren Supabase -> se day trang thai hien tai len (lan luu ke tiep).");
+      try { saveDataStore(); } catch (e) { /* ignore */ }
+      return;
+    }
+    fs.writeFileSync(DATA_STORE_PATH, JSON.stringify(rows[0].data, null, 2), "utf-8");
+    loadDataStore();
+    console.log("[Supabase] Da nap du lieu tu Supabase (updated_at: " + (rows[0].updated_at || "?") + ")");
+  } catch (err) {
+    console.warn("[Supabase] Load loi:", err);
+  }
+}
+
+let supabaseSaveTimer: any = null;
+let supabasePending = "";
+function scheduleSupabaseSave(jsonStr: string) {
+  if (!SUPABASE_ENABLED) return;
+  supabasePending = jsonStr;
+  if (supabaseSaveTimer) return;
+  supabaseSaveTimer = setTimeout(async function () {
+    supabaseSaveTimer = null;
+    const payload = supabasePending;
+    supabasePending = "";
+    if (!payload) return;
+    try {
+      const url = SUPABASE_URL + "/rest/v1/" + SUPABASE_TABLE;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: supabaseHeaders({ Prefer: "resolution=merge-duplicates,return=minimal" }),
+        body: JSON.stringify([{ id: SUPABASE_ROW_ID, data: JSON.parse(payload), updated_at: new Date().toISOString() }])
+      });
+      if (!res.ok) {
+        console.warn("[Supabase] Save that bai:", res.status, String(await res.text()).slice(0, 200));
+      }
+    } catch (err) {
+      console.warn("[Supabase] Save loi:", err);
+    }
+  }, 1500);
+}
+
+function loadDataStore() {`,
+    '1b) Supabase helpers'
+  ],
+
+  /* ---- 3) tombstone prune ---- */
   [
 `      propertiesStore = propertiesStore.filter(p => !deletedIds.properties.includes(p.id));`,
 `      // FIX: id nao da ton tai lai trong du lieu da luu thi bo khoi danh sach da xoa
@@ -85,6 +171,8 @@ let workspaceConfigStore: any = {};`,
       propertiesStore = propertiesStore.filter(p => !deletedIds.properties.includes(p.id));`,
     '2) tombstone prune'
   ],
+
+  /* ---- 4) saveDataStore: workspace + day len Supabase ---- */
   [
 `      deletedIds,
       savedAt: new Date().toISOString()`,
@@ -94,10 +182,33 @@ let workspaceConfigStore: any = {};`,
     '3) saveDataStore workspaceConfig'
   ],
   [
+`    fs.writeFileSync(DATA_STORE_BACKUP_PATH, jsonStr, "utf-8");`,
+`    fs.writeFileSync(DATA_STORE_BACKUP_PATH, jsonStr, "utf-8");
+    // FIX: day du lieu len SUPABASE (luu tru ben vung)
+    scheduleSupabaseSave(jsonStr);`,
+    '4) saveDataStore -> Supabase'
+  ],
+
+  /* ---- 5) goi load Supabase khi khoi dong ---- */
+  [
+`// Initial load on server start
+loadDataStore();`,
+`// Initial load on server start
+loadDataStore();
+
+// FIX: sau khi load file, thu nap them du lieu BEN VUNG tu Supabase (neu da cau hinh)
+loadFromSupabase();`,
+    '5) loadFromSupabase khi start'
+  ],
+
+  /* ---- 6) recruitment apply alias ---- */
+  [
 `app.post(["/api/recruitment/applications", "/api/recruitment/applicants/apply"], (req, res) => {`,
 `app.post(["/api/recruitment/applications", "/api/recruitment/applicants/apply", "/api/recruitment/apply"], (req, res) => {`,
-    '4) recruitment/apply alias'
+    '6) recruitment/apply alias'
   ],
+
+  /* ---- 7) cac API con thieu ---- */
   [
 `// Property POST (Submit new listing)`,
 `// ===== FIX: bo sung cac endpoint ma frontend dang goi nhung server con thieu =====
@@ -138,8 +249,18 @@ app.post("/api/workspace/sync-all", (req, res) => {
   res.json({ success: true, synced: 0, message: "Workspace sync endpoint ready." });
 });
 
+// 4) Trang thai luu tru (kiem tra Supabase)
+app.get("/api/system/storage-status", (req, res) => {
+  res.json({
+    supabaseEnabled: SUPABASE_ENABLED,
+    supabaseTable: SUPABASE_TABLE,
+    dataFile: DATA_STORE_PATH,
+    hasSupabaseUrl: Boolean(SUPABASE_URL)
+  });
+});
+
 // Property POST (Submit new listing)`,
-    '5) missing APIs'
+    '7) missing APIs + storage-status'
   ],
 ]);
 
