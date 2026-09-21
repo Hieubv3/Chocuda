@@ -5,6 +5,8 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
 import { ScrollToTop } from './components/ScrollToTop';
+import { IndustryQuickNav } from './components/IndustryQuickNav';
+import { MobileIndustryMenu } from './components/MobileIndustryMenu';
 import { HomePage } from './pages/HomePage';
 import { PropertiesPage } from './pages/PropertiesPage';
 import { PropertyDetailPage } from './pages/PropertyDetailPage';
@@ -231,7 +233,9 @@ export const App: React.FC = () => {
 
   // Fetch initial data from server APIs & update localStorage with double-safety merge
   const refreshServerData = () => {
-    fetch('/api/properties?status=all')
+    // FIX: admin can xem ca bai cua user CHUA DUYET trong trang quan tri
+    const isAdminViewer = user?.role === 'admin';
+    fetch(`/api/properties?status=all${isAdminViewer ? '&isAdmin=true' : ''}`)
       .then(res => res.json())
       .then((data: Property[]) => {
         if (Array.isArray(data)) {
@@ -325,6 +329,15 @@ export const App: React.FC = () => {
       window.removeEventListener('chocudan_explore_hashtag', handleExploreHashtag);
     };
   }, []);
+
+  // FIX: khi dang nhap bang tai khoan ADMIN -> tai lai danh sach BDS o che do admin
+  // (bao gom bai dang cua cac user chua duyet) de hien thi trong trang quan tri.
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      refreshServerData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.role]);
 
   // Listen for login events from OAuth popups or other tabs
   useEffect(() => {
@@ -648,16 +661,21 @@ export const App: React.FC = () => {
 
   const handleDeleteProject = async (id: string) => {
     if (!confirm('Bạn có chắc chắn muốn xóa dự án này?')) return;
+    try {
+      const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        alert(`Xóa dự án thất bại (mã lỗi ${res.status}). Vui lòng thử lại.`);
+        return;
+      }
+    } catch (e) {
+      alert('Không kết nối được máy chủ. Dự án chưa được xóa.');
+      return;
+    }
     setProjects(prev => {
       const updated = prev.filter(p => p.id !== id);
       safeLocalStorageSet('hb_projects', updated);
       return updated;
     });
-    try {
-      await fetch(`/api/projects/${id}`, { method: 'DELETE' });
-    } catch (e) {
-      console.warn('Deleted project locally:', id);
-    }
   };
 
   // News Update handler
@@ -699,31 +717,41 @@ export const App: React.FC = () => {
   // News Delete handler
   const handleDeleteNews = async (id: string) => {
     if (!confirm('Bạn có chắc chắn muốn xóa bài viết này?')) return;
+    try {
+      const res = await fetch(`/api/news/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        alert(`Xóa bài viết thất bại (mã lỗi ${res.status}). Vui lòng thử lại.`);
+        return;
+      }
+    } catch (e) {
+      alert('Không kết nối được máy chủ. Bài viết chưa được xóa.');
+      return;
+    }
     setNews(prev => {
       const updated = prev.filter(n => n.id !== id);
       safeLocalStorageSet('hb_news', updated);
       return updated;
     });
-    try {
-      await fetch(`/api/news/${id}`, { method: 'DELETE' });
-    } catch (e) {
-      console.warn('Deleted news article locally:', id);
-    }
   };
 
   // Delete Property handler
   const handleDeleteProperty = async (id: string) => {
     if (!confirm('Bạn có chắc chắn muốn xóa tin đăng BĐS này?')) return;
+    try {
+      const res = await fetch(`/api/properties/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        alert(`Xóa bài thất bại (mã lỗi ${res.status}). Vui lòng thử lại.`);
+        return;
+      }
+    } catch (e) {
+      alert('Không kết nối được máy chủ. Bài chưa được xóa.');
+      return;
+    }
     setProperties(prev => {
       const updated = prev.filter(p => p.id !== id);
       safeLocalStorageSet('hb_properties', updated);
       return updated;
     });
-    try {
-      await fetch(`/api/properties/${id}`, { method: 'DELETE' });
-    } catch (e) {
-      console.warn('Deleted property locally:', id);
-    }
   };
 
   const handleSavePricingConfig = async (newConfig: UpTinPricingConfig) => {
@@ -827,6 +855,21 @@ export const App: React.FC = () => {
         onOpenMarketingModal={() => setMarketingModalOpen(true)}
         onOpenAndroidModal={() => setAndroidModalOpen(true)}
         onNavigateWithFilter={handleNavigateWithFilter}
+      />
+
+      {/* FIX: 4 nhom nganh (Mua ban / Cho thue / Dich vu / Viec lam) hien o MOI TRANG,
+          tru Trang chu (da co 4 the lon o hero) */}
+      {location.pathname !== '/' && (
+        <IndustryQuickNav
+          currentTab={getCurrentTabName()}
+          setCurrentTab={handleTabSwitch}
+        />
+      )}
+
+      {/* FIX: Menu 4 nganh dang NOI cho DI DONG - tu hien khi vao trang, tu an khi khong dung */}
+      <MobileIndustryMenu
+        currentTab={getCurrentTabName()}
+        setCurrentTab={handleTabSwitch}
       />
 
       {/* Category-specific banner based on current tab — replaced with Industry News */}

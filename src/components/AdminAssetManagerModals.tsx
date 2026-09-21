@@ -12,12 +12,14 @@ interface EditPropertyModalProps {
   property: Property;
   onClose: () => void;
   onSave: (updated: Property) => void;
+  isCreate?: boolean;
 }
 
 export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
   property,
   onClose,
-  onSave
+  onSave,
+  isCreate = false
 }) => {
   const [formData, setFormData] = useState<Property>({ ...property });
   const [newImageUrl, setNewImageUrl] = useState('');
@@ -120,7 +122,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <Building2 className="w-5 h-5" />
             </span>
             <div>
-              <h2 className="text-base font-black text-emerald-400">QUẢN LÝ & CHỈNH SỬA BẤT ĐỘNG SẢN #{formData.id}</h2>
+              <h2 className="text-base font-black text-emerald-400">{isCreate ? 'THÊM BẤT ĐỘNG SẢN MỚI (CĂN BÁN / CĂN THUÊ)' : 'QUẢN LÝ & CHỈNH SỬA BẤT ĐỘNG SẢN #' + formData.id}</h2>
               <p className="text-[11px] text-slate-300">Thay đổi thông tin, đăng/xóa/sửa tất cả hình ảnh demo thực tế</p>
             </div>
           </div>
