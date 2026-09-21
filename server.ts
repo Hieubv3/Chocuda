@@ -1183,275 +1183,336 @@ seedDeveloperUnits();
 seedF1Agents();
 seedDeveloperExtras();
 
-// Data Store File Persistence (Local JSON Database)
-const DATA_STORE_PATH = path.join(process.cwd(), "app_data_store.json");
-const DATA_STORE_BACKUP_PATH = path.join(process.cwd(), "app_data_store.backup.json");
+// ===========================================================================
+// Data Store Persistence - luu tru ben vung
+//   - Ghi kieu atomic (tmp -> fsync -> rename): crash giua chung khong hong file
+//   - Tu dong tao app_data_store.backup.json + xoay vong snapshot trong backups/
+//   - Tu phuc hoi khi file chinh bi mat hoac hong
+//   - Ghi them len Supabase (nguon ben vung that su) khi co SUPABASE_URL
+//   - Giu nguyen ten loadDataStore()/saveDataStore() nen cac cho goi cu khong doi
+// ===========================================================================
+import { createPersistence, supabaseFromEnv } from "./persistence-store";
 
+// Thu muc luu du lieu ben vung:
+//   - Uu tien DATA_DIR (neu ban cau hinh tren Render)
+//   - Neu khong, dung UPLOADS_DIR (= /app/uploads tren Render neu co gan Disk)
+//   - Tren Render FREE khong co Disk -> hay bat Supabase (xem README-APPLY.md)
+const DATA_DIR = process.env.DATA_DIR || UPLOADS_DIR;
+
+const dataStore = createPersistence({
+  dataDir: DATA_DIR,
+  supabase: supabaseFromEnv(),
+  log: (m: string) => console.log(m),
+});
+
+/**
+ * Ap du lieu da persist vao cac store trong bo nho.
+ * (Nguyen van logic merge cu, tach ra de dung lai duoc cho ca file lan DB.)
+ */
+function applyPersistedPayload(data: any) {
+  // 1. Properties - dung du lieu da persist, KHONG merge INITIAL_PROPERTIES
+  if (Array.isArray(data.properties) && data.properties.length > 0) {
+    propertiesStore = data.properties as Property[];
+  } else {
+    propertiesStore = [...INITIAL_PROPERTIES];
+  }
+
+  // 2. Projects - dung du lieu da persist, chi upgrade truong moi cho project da co
+  if (Array.isArray(data.projects) && data.projects.length > 0) {
+    const projMap = new Map(data.projects.map((p: any) => [p.id, p]));
+    INITIAL_PROJECTS.forEach((ip) => {
+      const existing = projMap.get(ip.id) as any;
+      if (existing) {
+        let upgradedSubdivisions = existing.subdivisions;
+        if (Array.isArray(existing.subdivisions) && existing.subdivisions.length > 0 && typeof existing.subdivisions[0] === "string") {
+          upgradedSubdivisions = (existing.subdivisions as string[]).map((name: string, i: number) => ({
+            id: `${ip.id}-sub-${i}`,
+            name,
+            streets: [],
+          }));
+        }
+        let upgradedAmenities = existing.amenities;
+        if (Array.isArray(existing.amenities) && existing.amenities.length > 0 && typeof existing.amenities[0] === "string") {
+          upgradedAmenities = (existing.amenities as string[]).map((name: string, i: number) => ({
+            id: `${ip.id}-amenity-${i}`,
+            name,
+          }));
+        }
+        projMap.set(ip.id, {
+          ...existing,
+          images: existing.images || ip.images || [],
+          youtubeUrl: existing.youtubeUrl || ip.youtubeUrl || "",
+          legalInfo: existing.legalInfo || ip.legalInfo || "",
+          currentStatus: existing.currentStatus || ip.currentStatus || "",
+          parentId: existing.parentId || ip.parentId || undefined,
+          subdivisions: upgradedSubdivisions || ip.subdivisions || [],
+          amenities: upgradedAmenities || ip.amenities || [],
+        });
+      }
+    });
+    projectsStore = Array.from(projMap.values()) as Project[];
+  } else {
+    projectsStore = [...INITIAL_PROJECTS];
+  }
+
+  // 3. News - KHONG merge INITIAL_NEWS
+  if (Array.isArray(data.news) && data.news.length > 0) {
+    newsStore = data.news as NewsArticle[];
+  } else {
+    newsStore = [...INITIAL_NEWS];
+  }
+
+  // 4. Resident Services
+  if (Array.isArray(data.residentServices) && data.residentServices.length > 0) {
+    residentServicesStore = data.residentServices as any;
+  } else {
+    residentServicesStore = [...INITIAL_RESIDENT_SERVICES];
+  }
+
+  // 5. Stores
+  if (Array.isArray(data.stores) && data.stores.length > 0) {
+    storesStore = data.stores as any;
+  } else {
+    storesStore = [...INITIAL_USER_STOREFRONTS];
+  }
+
+  // 6. Ads / Banners
+  if (Array.isArray(data.ads) && data.ads.length > 0) {
+    adsStore = data.ads as any;
+  } else {
+    adsStore = [...INITIAL_ADS];
+  }
+
+  // 7. Deleted IDs - va loi "bia mo xoa": id nao dang ton tai lai thi bo khoi danh sach da xoa
+  if (data.deletedIds && typeof data.deletedIds === "object") {
+    const pick = (k: string) => (Array.isArray(data.deletedIds[k]) ? data.deletedIds[k] : []);
+    deletedIds = {
+      properties: pick("properties"),
+      projects: pick("projects"),
+      news: pick("news"),
+      residentServices: pick("residentServices"),
+      stores: pick("stores"),
+      ads: pick("ads"),
+    };
+    deletedIds.properties = deletedIds.properties.filter((id: string) => !propertiesStore.some((p) => p.id === id));
+    deletedIds.projects = deletedIds.projects.filter((id: string) => !projectsStore.some((p) => p.id === id));
+    deletedIds.news = deletedIds.news.filter((id: string) => !newsStore.some((n) => n.id === id));
+    deletedIds.residentServices = deletedIds.residentServices.filter((id: string) => !residentServicesStore.some((s: any) => s.id === id));
+    deletedIds.stores = deletedIds.stores.filter((id: string) => !storesStore.some((s: any) => s.id === id));
+    deletedIds.ads = deletedIds.ads.filter((id: string) => !adsStore.some((a: any) => a.id === id));
+  }
+
+  propertiesStore = propertiesStore.filter((p) => !deletedIds.properties.includes(p.id));
+  projectsStore = projectsStore.filter((p) => !deletedIds.projects.includes(p.id));
+  newsStore = newsStore.filter((n) => !deletedIds.news.includes(n.id));
+  residentServicesStore = residentServicesStore.filter((s: any) => !deletedIds.residentServices.includes(s.id));
+  storesStore = storesStore.filter((st: any) => !deletedIds.stores.includes(st.id));
+  adsStore = adsStore.filter((a) => !deletedIds.ads.includes(a.id));
+
+  // 6b. Homepage Category Images
+  if (Array.isArray(data.homepageCategoryImages) && data.homepageCategoryImages.length > 0) {
+    const defaultKeys = homepageCategoryImagesStore.map((d) => d.key);
+    const catMap = new Map(data.homepageCategoryImages.map((c: any) => [c.key, c]));
+    homepageCategoryImagesStore.forEach((def) => {
+      if (!catMap.has(def.key)) catMap.set(def.key, def);
+    });
+    homepageCategoryImagesStore = Array.from(catMap.values()).filter((c: any) =>
+      defaultKeys.includes(c.key)
+    ) as any;
+  }
+
+  // 7. Users
+  if (Array.isArray(data.users) && data.users.length > 0) {
+    const userMap = new Map(data.users.map((u: any) => [u.id, u]));
+    usersStore.forEach((u) => {
+      if (!userMap.has(u.id)) userMap.set(u.id, u);
+    });
+    usersStore = Array.from(userMap.values()) as StoredUser[];
+  }
+
+  if (Array.isArray(data.contacts) && data.contacts.length > 0) contactsStore = data.contacts;
+  if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
+  if (data.affiliateConfig) affiliateConfigStore = { ...affiliateConfigStore, ...data.affiliateConfig };
+  if (Array.isArray(data.storeOrders) && data.storeOrders.length > 0) storeOrdersStore = data.storeOrders;
+  if (Array.isArray(data.reputationPosts) && data.reputationPosts.length > 0) reputationPostsStore = data.reputationPosts;
+  if (Array.isArray(data.storePackages) && data.storePackages.length > 0) storePackagesStore = data.storePackages;
+  if (Array.isArray(data.packageOrders) && data.packageOrders.length > 0) packageOrdersStore = data.packageOrders;
+  if (Array.isArray(data.techOrders) && data.techOrders.length > 0) techOrdersStore = data.techOrders;
+  if (Array.isArray(data.walletTransactions) && data.walletTransactions.length > 0) walletTransactionsStore = data.walletTransactions;
+  if (Array.isArray(data.withdrawalRequests)) withdrawalRequestsStore = data.withdrawalRequests;
+  if (Array.isArray(data.upTinOrders) && data.upTinOrders.length > 0) upTinOrdersStore = data.upTinOrders;
+  if (Array.isArray(data.paymentOrders) && data.paymentOrders.length > 0) paymentOrdersStore = data.paymentOrders;
+  if (Array.isArray(data.faq) && data.faq.length > 0) faqStore = data.faq;
+  if (data.taxConfig) taxConfigStore = data.taxConfig;
+  if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
+
+  // Developer Units / F1
+  if (Array.isArray(data.developerUnits) && data.developerUnits.length > 0) developerUnitsStore = data.developerUnits;
+  if (Array.isArray(data.f1Agents) && data.f1Agents.length > 0) f1AgentsStore = data.f1Agents;
+  if (Array.isArray(data.developerPolicies) && data.developerPolicies.length > 0) developerPoliciesStore = data.developerPolicies;
+  if (Array.isArray(data.developerInstallments) && data.developerInstallments.length > 0) developerInstallmentsStore = data.developerInstallments;
+  if (Array.isArray(data.developerBanks) && data.developerBanks.length > 0) developerBanksStore = data.developerBanks;
+  if (Array.isArray(data.developerFloorplans) && data.developerFloorplans.length > 0) developerFloorplansStore = data.developerFloorplans;
+
+  // 8. Recruitment Jobs
+  if (Array.isArray(data.recruitmentJobs) && data.recruitmentJobs.length > 0) {
+    const jobMap = new Map(data.recruitmentJobs.map((j: any) => [j.id, j]));
+    INITIAL_RECRUITMENT_JOBS.forEach((ijob) => {
+      if (!jobMap.has(ijob.id)) jobMap.set(ijob.id, ijob);
+    });
+    recruitmentJobsStore = Array.from(jobMap.values()) as RecruitmentJob[];
+  }
+
+  // 9. Candidate Profiles
+  if (Array.isArray(data.candidateProfiles) && data.candidateProfiles.length > 0) {
+    const candMap = new Map(data.candidateProfiles.map((c: any) => [c.id, c]));
+    INITIAL_CANDIDATE_PROFILES.forEach((icand) => {
+      if (!candMap.has(icand.id)) candMap.set(icand.id, icand);
+    });
+    candidateProfilesStore = Array.from(candMap.values()) as CandidateProfile[];
+  }
+
+  // 10. Employers
+  if (Array.isArray(data.employers) && data.employers.length > 0) {
+    const empMap = new Map(data.employers.map((e: any) => [e.id, e]));
+    INITIAL_EMPLOYERS.forEach((iemp) => {
+      if (!empMap.has(iemp.id)) empMap.set(iemp.id, iemp);
+    });
+    employersStore = Array.from(empMap.values()) as EmployerProfile[];
+  }
+
+  if (Array.isArray(data.jobApplications) && data.jobApplications.length > 0) jobApplicationsStore = data.jobApplications;
+  if (Array.isArray(data.cvUnlocks) && data.cvUnlocks.length > 0) cvUnlocksStore = data.cvUnlocks;
+}
+
+/** Du lieu da persist co "that" khong (co it nhat 1 collection khac rong)? */
+function payloadHasData(data: any): boolean {
+  if (!data || typeof data !== "object") return false;
+  const keys = ["properties", "projects", "news", "users", "residentServices", "stores", "ads", "storeOrders"];
+  return keys.some((k) => Array.isArray(data[k]) && data[k].length > 0);
+}
+
+/** Nap dong bo tu file luc khoi dong (nhanh), roi dong bo DB o buoc async ben duoi. */
 function loadDataStore() {
   try {
-    let targetPath = DATA_STORE_PATH;
-    if (!fs.existsSync(DATA_STORE_PATH) && fs.existsSync(DATA_STORE_BACKUP_PATH)) {
-      targetPath = DATA_STORE_BACKUP_PATH;
-    }
-
-    if (fs.existsSync(targetPath)) {
-      const raw = fs.readFileSync(targetPath, "utf-8");
-      const data = JSON.parse(raw);
-      
-      // 1. Properties — dùng dữ liệu đã persist, KHÔNG merge INITIAL_PROPERTIES
-      if (Array.isArray(data.properties) && data.properties.length > 0) {
-        propertiesStore = data.properties as Property[];
-      } else {
-        propertiesStore = [...INITIAL_PROPERTIES];
-      }
-
-      // 2. Projects — dùng dữ liệu đã persist, chỉ upgrade trường mới cho project đã có
-      if (Array.isArray(data.projects) && data.projects.length > 0) {
-        const projMap = new Map(data.projects.map((p: any) => [p.id, p]));
-        INITIAL_PROJECTS.forEach(ip => {
-          const existing = projMap.get(ip.id) as any;
-          if (existing) {
-            // Nâng cấp các trường mới (images, youtubeUrl, legalInfo, currentStatus) nếu bản persist cũ thiếu
-            let upgradedSubdivisions = existing.subdivisions;
-            if (Array.isArray(existing.subdivisions) && existing.subdivisions.length > 0 && typeof existing.subdivisions[0] === 'string') {
-              upgradedSubdivisions = (existing.subdivisions as string[]).map((name: string, i: number) => ({
-                id: `${ip.id}-sub-${i}`,
-                name,
-                streets: []
-              }));
-            }
-            // Nâng cấp amenities từ string[] cũ sang AmenityArticle[] ({id, name, description?, images?, youtubeUrl?})
-            let upgradedAmenities = existing.amenities;
-            if (Array.isArray(existing.amenities) && existing.amenities.length > 0 && typeof existing.amenities[0] === 'string') {
-              upgradedAmenities = (existing.amenities as string[]).map((name: string, i: number) => ({
-                id: `${ip.id}-amenity-${i}`,
-                name
-              }));
-            }
-            projMap.set(ip.id, {
-              ...existing,
-              images: existing.images || ip.images || [],
-              youtubeUrl: existing.youtubeUrl || ip.youtubeUrl || '',
-              legalInfo: existing.legalInfo || ip.legalInfo || '',
-              currentStatus: existing.currentStatus || ip.currentStatus || '',
-              parentId: existing.parentId || ip.parentId || undefined,
-              subdivisions: upgradedSubdivisions || ip.subdivisions || [],
-              amenities: upgradedAmenities || ip.amenities || []
-            });
-          }
-        });
-        projectsStore = Array.from(projMap.values()) as Project[];
-      } else {
-        projectsStore = [...INITIAL_PROJECTS];
-      }
-
-      // 3. News — dùng dữ liệu đã persist, KHÔNG merge INITIAL_NEWS
-      if (Array.isArray(data.news) && data.news.length > 0) {
-        newsStore = data.news as NewsArticle[];
-      } else {
-        newsStore = [...INITIAL_NEWS];
-      }
-
-      // 4. Resident Services — dùng dữ liệu đã persist, KHÔNG merge
-      if (Array.isArray(data.residentServices) && data.residentServices.length > 0) {
-        residentServicesStore = data.residentServices as any;
-      } else {
-        residentServicesStore = [...INITIAL_RESIDENT_SERVICES];
-      }
-
-      // 5. Stores — dùng dữ liệu đã persist, KHÔNG merge
-      if (Array.isArray(data.stores) && data.stores.length > 0) {
-        storesStore = data.stores as any;
-      } else {
-        storesStore = [...INITIAL_USER_STOREFRONTS];
-      }
-
-      // 6. Ads / Banners — dùng dữ liệu đã persist, KHÔNG merge
-      if (Array.isArray(data.ads) && data.ads.length > 0) {
-        adsStore = data.ads as any;
-      } else {
-        adsStore = [...INITIAL_ADS];
-      }
-
-      // 7. Deleted IDs — đọc danh sách id đã xóa để không merge lại bài đã xóa
-      if (data.deletedIds && typeof data.deletedIds === 'object') {
-        deletedIds = {
-          properties: Array.isArray(data.deletedIds.properties) ? data.deletedIds.properties : [],
-          projects: Array.isArray(data.deletedIds.projects) ? data.deletedIds.projects : [],
-          news: Array.isArray(data.deletedIds.news) ? data.deletedIds.news : [],
-          residentServices: Array.isArray(data.deletedIds.residentServices) ? data.deletedIds.residentServices : [],
-          stores: Array.isArray(data.deletedIds.stores) ? data.deletedIds.stores : [],
-          ads: Array.isArray(data.deletedIds.ads) ? data.deletedIds.ads : []
-        };
-      }
-
-      // Áp dụng deletedIds: loại bỏ bài đã xóa khỏi các store
-      propertiesStore = propertiesStore.filter(p => !deletedIds.properties.includes(p.id));
-      projectsStore = projectsStore.filter(p => !deletedIds.projects.includes(p.id));
-      newsStore = newsStore.filter(n => !deletedIds.news.includes(n.id));
-      residentServicesStore = residentServicesStore.filter((s: any) => !deletedIds.residentServices.includes(s.id));
-      storesStore = storesStore.filter((st: any) => !deletedIds.stores.includes(st.id));
-      adsStore = adsStore.filter(a => !deletedIds.ads.includes(a.id));
-
-      // 6b. Homepage Category Images (ảnh 4 nhóm ngành)
-      if (Array.isArray(data.homepageCategoryImages) && data.homepageCategoryImages.length > 0) {
-        const defaultKeys = homepageCategoryImagesStore.map(d => d.key);
-        const catMap = new Map(data.homepageCategoryImages.map((c: any) => [c.key, c]));
-        homepageCategoryImagesStore.forEach(def => {
-          if (!catMap.has(def.key)) catMap.set(def.key, def);
-        });
-        // Chỉ giữ các key nằm trong danh sách mặc định (loại bỏ key cũ đã bỏ như hang-hoa)
-        homepageCategoryImagesStore = Array.from(catMap.values())
-          .filter((c: any) => defaultKeys.includes(c.key)) as any;
-      }
-
-      // 7. Users
-      if (Array.isArray(data.users) && data.users.length > 0) {
-        const userMap = new Map(data.users.map((u: any) => [u.id, u]));
-        usersStore.forEach(u => {
-          if (!userMap.has(u.id)) userMap.set(u.id, u);
-        });
-        usersStore = Array.from(userMap.values()) as StoredUser[];
-      }
-
-      if (Array.isArray(data.contacts) && data.contacts.length > 0) contactsStore = data.contacts;
-      if (data.pricingConfig) pricingConfigStore = data.pricingConfig;
-      if (data.affiliateConfig) affiliateConfigStore = { ...affiliateConfigStore, ...data.affiliateConfig };
-      if (Array.isArray(data.storeOrders) && data.storeOrders.length > 0) storeOrdersStore = data.storeOrders;
-      if (Array.isArray(data.reputationPosts) && data.reputationPosts.length > 0) reputationPostsStore = data.reputationPosts;
-      if (Array.isArray(data.storePackages) && data.storePackages.length > 0) storePackagesStore = data.storePackages;
-      if (Array.isArray(data.packageOrders) && data.packageOrders.length > 0) packageOrdersStore = data.packageOrders;
-      if (Array.isArray(data.techOrders) && data.techOrders.length > 0) techOrdersStore = data.techOrders;
-      if (Array.isArray(data.walletTransactions) && data.walletTransactions.length > 0) walletTransactionsStore = data.walletTransactions;
-      if (Array.isArray(data.withdrawalRequests)) withdrawalRequestsStore = data.withdrawalRequests;
-      if (Array.isArray(data.upTinOrders) && data.upTinOrders.length > 0) upTinOrdersStore = data.upTinOrders;
-      if (Array.isArray(data.paymentOrders) && data.paymentOrders.length > 0) paymentOrdersStore = data.paymentOrders;
-      if (Array.isArray(data.faq) && data.faq.length > 0) faqStore = data.faq;
-      if (data.taxConfig) taxConfigStore = data.taxConfig;
-      if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
-
-      // Developer Units / F1 (Mặt Bằng & Bảng Hàng CĐT)
-      if (Array.isArray(data.developerUnits) && data.developerUnits.length > 0) developerUnitsStore = data.developerUnits;
-      if (Array.isArray(data.f1Agents) && data.f1Agents.length > 0) f1AgentsStore = data.f1Agents;
-      if (Array.isArray(data.developerPolicies) && data.developerPolicies.length > 0) developerPoliciesStore = data.developerPolicies;
-      if (Array.isArray(data.developerInstallments) && data.developerInstallments.length > 0) developerInstallmentsStore = data.developerInstallments;
-      if (Array.isArray(data.developerBanks) && data.developerBanks.length > 0) developerBanksStore = data.developerBanks;
-      if (Array.isArray(data.developerFloorplans) && data.developerFloorplans.length > 0) developerFloorplansStore = data.developerFloorplans;
-
-      // 8. Recruitment Jobs
-      if (Array.isArray(data.recruitmentJobs) && data.recruitmentJobs.length > 0) {
-        const jobMap = new Map(data.recruitmentJobs.map((j: any) => [j.id, j]));
-        INITIAL_RECRUITMENT_JOBS.forEach(ijob => {
-          if (!jobMap.has(ijob.id)) jobMap.set(ijob.id, ijob);
-        });
-        recruitmentJobsStore = Array.from(jobMap.values()) as RecruitmentJob[];
-      }
-
-      // 9. Candidate Profiles
-      if (Array.isArray(data.candidateProfiles) && data.candidateProfiles.length > 0) {
-        const candMap = new Map(data.candidateProfiles.map((c: any) => [c.id, c]));
-        INITIAL_CANDIDATE_PROFILES.forEach(icand => {
-          if (!candMap.has(icand.id)) candMap.set(icand.id, icand);
-        });
-        candidateProfilesStore = Array.from(candMap.values()) as CandidateProfile[];
-      }
-
-      // 10. Employers
-      if (Array.isArray(data.employers) && data.employers.length > 0) {
-        const empMap = new Map(data.employers.map((e: any) => [e.id, e]));
-        INITIAL_EMPLOYERS.forEach(iemp => {
-          if (!empMap.has(iemp.id)) empMap.set(iemp.id, iemp);
-        });
-        employersStore = Array.from(empMap.values()) as EmployerProfile[];
-      }
-
-      if (Array.isArray(data.jobApplications) && data.jobApplications.length > 0) jobApplicationsStore = data.jobApplications;
-      if (Array.isArray(data.cvUnlocks) && data.cvUnlocks.length > 0) cvUnlocksStore = data.cvUnlocks;
-
-      console.log(`[DataStore] Loaded & merged persistent data: ${propertiesStore.length} properties, ${residentServicesStore.length} services, ${recruitmentJobsStore.length} jobs, ${candidateProfilesStore.length} candidates, ${storesStore.length} stores.`);
+    const res = dataStore.loadFromFile();
+    if (res.payload) {
+      applyPersistedPayload(res.payload);
+      console.log(
+        `[DataStore] Loaded from ${res.source} (${res.savedAt ?? "?"}): ` +
+          `${propertiesStore.length} properties, ${residentServicesStore.length} services, ` +
+          `${recruitmentJobsStore.length} jobs, ${candidateProfilesStore.length} candidates, ${storesStore.length} stores.`
+      );
     } else {
+      console.log("[DataStore] Khong tim thay du lieu da luu -> dung du lieu khoi tao va ghi lai.");
       saveDataStore();
-      console.log(`[DataStore] Initialized app_data_store.json file.`);
     }
   } catch (err) {
-    console.warn("Could not read app_data_store.json, attempting backup...", err);
-    if (fs.existsSync(DATA_STORE_BACKUP_PATH)) {
-      try {
-        const raw = fs.readFileSync(DATA_STORE_BACKUP_PATH, "utf-8");
-        const data = JSON.parse(raw);
-        if (Array.isArray(data.properties)) propertiesStore = data.properties;
-        if (Array.isArray(data.news)) newsStore = data.news;
-        if (Array.isArray(data.projects)) projectsStore = data.projects;
-        if (Array.isArray(data.users)) usersStore = data.users;
-        if (Array.isArray(data.residentServices)) residentServicesStore = data.residentServices;
-        if (Array.isArray(data.stores)) storesStore = data.stores;
-        if (Array.isArray(data.ads)) adsStore = data.ads;
-        if (Array.isArray(data.homepageCategoryImages) && data.homepageCategoryImages.length > 0) {
-          const defaultKeys = homepageCategoryImagesStore.map(d => d.key);
-          homepageCategoryImagesStore = data.homepageCategoryImages.filter((c: any) => defaultKeys.includes(c.key));
-        }
-        if (Array.isArray(data.storeOrders)) storeOrdersStore = data.storeOrders;
-        if (Array.isArray(data.storePackages)) storePackagesStore = data.storePackages;
-        if (Array.isArray(data.packageOrders)) packageOrdersStore = data.packageOrders;
-        console.log(`[DataStore] Successfully recovered data from backup store.`);
-      } catch (backupErr) {
-        console.error("Failed to load backup data store:", backupErr);
-      }
-    }
+    console.warn("[DataStore] Khong doc duoc du lieu da luu:", err);
   }
 }
 
+/**
+ * Sau khi server khoi dong: doi chieu voi DB (nguon ben vung that su).
+ * Neu DB moi hon file (vd: container vua bi reset) thi nap lai tu DB.
+ */
+async function hydrateDataStoreFromDb() {
+  if (!dataStore.health().dbConfigured) return;
+  try {
+    const res = await dataStore.load();
+    if (res.payload && payloadHasData(res.payload)) {
+      applyPersistedPayload(res.payload);
+      console.log(
+        `[DataStore] Hydrated from durable source (${res.savedAt ?? "?"}): ` +
+          `${propertiesStore.length} properties, ${storesStore.length} stores.`
+      );
+    }
+  } catch (e) {
+    console.warn("[DataStore] Hydrate tu DB that bai:", e);
+  }
+}
+
+function buildPayload() {
+  return {
+    properties: propertiesStore,
+    projects: projectsStore,
+    news: newsStore,
+    users: usersStore,
+    contacts: contactsStore,
+    pricingConfig: pricingConfigStore,
+    affiliateConfig: affiliateConfigStore,
+    residentServices: residentServicesStore,
+    stores: storesStore,
+    storeOrders: storeOrdersStore,
+    reputationPosts: reputationPostsStore,
+    storePackages: storePackagesStore,
+    packageOrders: packageOrdersStore,
+    ads: adsStore,
+    homepageCategoryImages: homepageCategoryImagesStore,
+    techOrders: techOrdersStore,
+    walletTransactions: walletTransactionsStore,
+    withdrawalRequests: withdrawalRequestsStore,
+    upTinOrders: upTinOrdersStore,
+    paymentOrders: paymentOrdersStore,
+    faq: faqStore,
+    taxConfig: taxConfigStore,
+    taxLedger: taxLedgerStore,
+    developerUnits: developerUnitsStore,
+    f1Agents: f1AgentsStore,
+    developerPolicies: developerPoliciesStore,
+    developerInstallments: developerInstallmentsStore,
+    developerBanks: developerBanksStore,
+    developerFloorplans: developerFloorplansStore,
+    recruitmentJobs: recruitmentJobsStore,
+    candidateProfiles: candidateProfilesStore,
+    employers: employersStore,
+    jobApplications: jobApplicationsStore,
+    cvUnlocks: cvUnlocksStore,
+    deletedIds,
+  };
+}
+
+/** Giu nguyen chu ky cu (void, goi tu 50+ cho). Ghi duoc gop + co hang doi. */
 function saveDataStore() {
   try {
-    const payload = {
-      properties: propertiesStore,
-      projects: projectsStore,
-      news: newsStore,
-      users: usersStore,
-      contacts: contactsStore,
-      pricingConfig: pricingConfigStore,
-      affiliateConfig: affiliateConfigStore,
-      residentServices: residentServicesStore,
-      stores: storesStore,
-      storeOrders: storeOrdersStore,
-      reputationPosts: reputationPostsStore,
-      storePackages: storePackagesStore,
-      packageOrders: packageOrdersStore,
-ads: adsStore,
-      homepageCategoryImages: homepageCategoryImagesStore,
-      techOrders: techOrdersStore,
-      walletTransactions: walletTransactionsStore,
-      withdrawalRequests: withdrawalRequestsStore,
-      upTinOrders: upTinOrdersStore,
-      paymentOrders: paymentOrdersStore,
-      faq: faqStore,
-      taxConfig: taxConfigStore,
-      taxLedger: taxLedgerStore,
-      developerUnits: developerUnitsStore,
-      f1Agents: f1AgentsStore,
-      developerPolicies: developerPoliciesStore,
-      developerInstallments: developerInstallmentsStore,
-      developerBanks: developerBanksStore,
-      developerFloorplans: developerFloorplansStore,
-      recruitmentJobs: recruitmentJobsStore,
-      candidateProfiles: candidateProfilesStore,
-      employers: employersStore,
-      jobApplications: jobApplicationsStore,
-      cvUnlocks: cvUnlocksStore,
-      deletedIds,
-      savedAt: new Date().toISOString()
-    };
-    const jsonStr = JSON.stringify(payload, null, 2);
-    fs.writeFileSync(DATA_STORE_PATH, jsonStr, "utf-8");
-    // Also update backup file synchronously
-    fs.writeFileSync(DATA_STORE_BACKUP_PATH, jsonStr, "utf-8");
+    dataStore.save(buildPayload());
   } catch (err) {
-    console.warn("Could not write app_data_store.json", err);
+    console.warn("[DataStore] Xep hang ghi that bai:", err);
   }
 }
 
 // Initial load on server start
 loadDataStore();
+void hydrateDataStoreFromDb();
+
+// Endpoint chan doan: GET /api/_data-health
+app.get("/api/_data-health", async (_req, res) => {
+  const h = dataStore.health();
+  res.json({
+    ...h,
+    lastSavedAt: dataStore.lastSavedAt(),
+    counts: {
+      properties: propertiesStore.length,
+      projects: projectsStore.length,
+      news: newsStore.length,
+      users: usersStore.length,
+      residentServices: residentServicesStore.length,
+      stores: storesStore.length,
+      ads: adsStore.length,
+    },
+  });
+});
+
+/** Ghi het du lieu dang cho. Dung cho cac handler SIGTERM/SIGINT co san o cuoi server.ts. */
+async function flushDataStore(): Promise<void> {
+  try {
+    await dataStore.saveNow(buildPayload());
+    console.log("[DataStore] Da ghi het du lieu dang cho.");
+  } catch (e) {
+    console.warn("[DataStore] Ghi du lieu that bai:", e);
+  }
+}
+
 
 // SECURITY: ADMIN_SEED_PASSWORD env luôn ghi đè mật khẩu admin.
 // Chạy SAU ensureDefaultAdmin() (async) để tránh bị reset ngược lại.
@@ -1493,19 +1554,17 @@ setInterval(() => {
 
 // Process exit signal handlers to ensure data is saved during server restarts / code edits
 process.on('SIGTERM', () => {
-  console.log('[Server] SIGTERM received. Saving data store before exit...');
-  saveDataStore();
-  process.exit(0);
+  console.log('[Server] SIGTERM received. Flushing data store before exit...');
+  void flushDataStore().finally(() => process.exit(0));
 });
 
 process.on('SIGINT', () => {
-  console.log('[Server] SIGINT received. Saving data store before exit...');
-  saveDataStore();
-  process.exit(0);
+  console.log('[Server] SIGINT received. Flushing data store before exit...');
+  void flushDataStore().finally(() => process.exit(0));
 });
 
 process.on('beforeExit', () => {
-  saveDataStore();
+  void flushDataStore();
 });
 
 // Helper to clean phone numbers for comparison

@@ -5,12 +5,23 @@ services:
     plan: free
     buildCommand: npm install && npm run build
     startCommand: npm run start
-    disk:
-      name: uploads
-      mountPath: /app/uploads
-      sizeGB: 1
+    # LUU Y QUAN TRONG: Render FREE khong ho tro persistent disk.
+    # Khai bao disk duoi day vo hieu tren goi free. Neu nang len goi tra phi,
+    # bo comment de anh upload khong bi mat khi redeploy.
+    # disk:
+    #   name: uploads
+    #   mountPath: /app/uploads
+    #   sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
       - key: APP_URL
         value: https://chocudan24h.com
+      # --- Du lieu ben vung (khuyen nghi bat) ---
+      # Xem huong dan: DELIVERY/chocuda-persistence-fix/README-APPLY.md
+      # - key: DATA_DIR
+      #   value: /app/uploads/data
+      # - key: SUPABASE_URL
+      #   value: https://xxxxxxxx.supabase.co
+      # - key: SUPABASE_SERVICE_ROLE_KEY
+      #   sync: false
