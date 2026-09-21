@@ -233,7 +233,9 @@ export const App: React.FC = () => {
 
   // Fetch initial data from server APIs & update localStorage with double-safety merge
   const refreshServerData = () => {
-    fetch('/api/properties?status=all')
+    // FIX: admin can xem ca bai cua user CHUA DUYET trong trang quan tri
+    const isAdminViewer = user?.role === 'admin';
+    fetch(`/api/properties?status=all${isAdminViewer ? '&isAdmin=true' : ''}`)
       .then(res => res.json())
       .then((data: Property[]) => {
         if (Array.isArray(data)) {
@@ -327,6 +329,15 @@ export const App: React.FC = () => {
       window.removeEventListener('chocudan_explore_hashtag', handleExploreHashtag);
     };
   }, []);
+
+  // FIX: khi dang nhap bang tai khoan ADMIN -> tai lai danh sach BDS o che do admin
+  // (bao gom bai dang cua cac user chua duyet) de hien thi trong trang quan tri.
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      refreshServerData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.role]);
 
   // Listen for login events from OAuth popups or other tabs
   useEffect(() => {
