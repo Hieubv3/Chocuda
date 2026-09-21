@@ -60,10 +60,10 @@ export const MobileIndustryMenu: React.FC<MobileIndustryMenuProps> = ({ currentT
   if (location.pathname === '/') return null;
 
   return (
-    <div className="lg:hidden fixed right-3 bottom-20 z-40 flex flex-col items-end gap-2">
+    <div className="lg:hidden fixed left-3 bottom-20 z-40 flex flex-col items-start gap-2">
       {/* Danh sách 4 ngành */}
       <div
-        className={`flex flex-col items-end gap-2 transition-all duration-300 ${
+        className={`flex flex-col items-start gap-2 transition-all duration-300 ${
           open ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-3 pointer-events-none'
         }`}
         onMouseEnter={clearTimer}
@@ -81,7 +81,7 @@ export const MobileIndustryMenu: React.FC<MobileIndustryMenuProps> = ({ currentT
                 setCurrentTab(item.tab);
                 scheduleHide();
               }}
-              className={`flex items-center gap-2 rounded-full border pl-1.5 pr-3 py-1.5 shadow-lg backdrop-blur bg-white/95 dark:bg-slate-900/95 transition ${
+              className={`flex items-center gap-2 rounded-full border pl-3 pr-1.5 py-1.5 shadow-lg backdrop-blur bg-white/95 dark:bg-slate-900/95 transition ${
                 isActive ? 'border-amber-400 ring-2 ring-amber-400/40' : 'border-slate-200 dark:border-slate-700'
               }`}
             >
