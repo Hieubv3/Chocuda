@@ -6,6 +6,7 @@ import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
 import { ScrollToTop } from './components/ScrollToTop';
 import { IndustryQuickNav } from './components/IndustryQuickNav';
+import { MobileIndustryMenu } from './components/MobileIndustryMenu';
 import { HomePage } from './pages/HomePage';
 import { PropertiesPage } from './pages/PropertiesPage';
 import { PropertyDetailPage } from './pages/PropertyDetailPage';
@@ -853,6 +854,12 @@ export const App: React.FC = () => {
           setCurrentTab={handleTabSwitch}
         />
       )}
+
+      {/* FIX: Menu 4 nganh dang NOI cho DI DONG - tu hien khi vao trang, tu an khi khong dung */}
+      <MobileIndustryMenu
+        currentTab={getCurrentTabName()}
+        setCurrentTab={handleTabSwitch}
+      />
 
       {/* Category-specific banner based on current tab — replaced with Industry News */}
       {(() => {
