@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useRef, useState } from 'react';
 import { Building2, KeyRound, Wrench, Briefcase, LayoutGrid, X } from 'lucide-react';
 
 interface MobileIndustryMenuProps {
@@ -8,10 +7,9 @@ interface MobileIndustryMenuProps {
 }
 
 /**
- * Menu 4 NGÀNH dạng NỔI cho DI ĐỘNG (chỉ hiện < lg):
- *  - Tự động MỞ khi vào bất kỳ trang nào
- *  - Tự động THU GỌN (ẩn) sau vài giây nếu người dùng không tương tác
- *  - Bấm nút tròn để mở lại
+ * Menu 4 NGÀNH dạng NỔI cho DI ĐỘNG:
+ *  - 4 nút vuông CHỈ HIỆN khi người dùng BẤM nút tròn (không tự mở)
+ *  - Tự thu gọn sau vài giây nếu không tương tác
  */
 const ITEMS = [
   { tab: 'sale', label: 'Mua Bán BĐS', Icon: Building2, box: 'bg-amber-500 text-slate-950' },
@@ -20,10 +18,9 @@ const ITEMS = [
   { tab: 'recruitment', label: 'Việc Làm Nội Khu', Icon: Briefcase, box: 'bg-teal-600 text-white' },
 ];
 
-const AUTO_HIDE_MS = 5000;
+const AUTO_HIDE_MS = 6000;
 
 export const MobileIndustryMenu: React.FC<MobileIndustryMenuProps> = ({ currentTab, setCurrentTab }) => {
-  const location = useLocation();
   const [open, setOpen] = useState(false);
   const timerRef = useRef<number | null>(null);
 
@@ -39,29 +36,9 @@ export const MobileIndustryMenu: React.FC<MobileIndustryMenuProps> = ({ currentT
     timerRef.current = window.setTimeout(() => setOpen(false), AUTO_HIDE_MS);
   };
 
-  const reveal = () => {
-    setOpen(true);
-    scheduleHide();
-  };
-
-  // Tự mở khi vào trang mới (trừ trang chủ)
-  useEffect(() => {
-    if (location.pathname === '/') {
-      clearTimer();
-      setOpen(false);
-      return;
-    }
-    setOpen(true);
-    scheduleHide();
-    return clearTimer;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
-
-  if (location.pathname === '/') return null;
-
   return (
     <div className="lg:hidden fixed left-3 bottom-20 z-40 flex flex-col items-start gap-2">
-      {/* Danh sách 4 ngành */}
+      {/* 4 nút vuông — chỉ hiển thị khi open */}
       <div
         className={`flex flex-col items-start gap-2 transition-all duration-300 ${
           open ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-3 pointer-events-none'
@@ -105,7 +82,8 @@ export const MobileIndustryMenu: React.FC<MobileIndustryMenuProps> = ({ currentT
             clearTimer();
             setOpen(false);
           } else {
-            reveal();
+            setOpen(true);
+            scheduleHide();
           }
         }}
         className="w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-2xl flex items-center justify-center transition"
