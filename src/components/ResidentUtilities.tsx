@@ -35,10 +35,10 @@ export const ResidentUtilities: React.FC<ResidentUtilitiesProps> = ({
   }, []);
 
   const items = [
-    { key: 'ai' as const, label: 'AI Quét Menu', icon: Sparkles, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-    { key: 'pricing' as const, label: 'Bảng Giá PR', icon: ShoppingBag, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { key: 'ai' as const, label: 'AI Quét Menu', icon: Sparkles, color: 'text-brand-500', bg: 'bg-brand-500/10' },
+    { key: 'pricing' as const, label: 'Bảng Giá PR', icon: ShoppingBag, color: 'text-brand-500', bg: 'bg-brand-500/10' },
     { key: 'tripartite' as const, label: 'Thỏa Thuận 3 Bên', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-    { key: 'map' as const, label: 'Bản Đồ Định Vị', icon: Compass, color: 'text-slate-500', bg: 'bg-slate-500/10' },
+    { key: 'map' as const, label: 'Bản Đồ Định Vị', icon: Compass, color: 'text-ink-500', bg: 'bg-ink-500/10' },
   ];
 
   return (
@@ -51,12 +51,12 @@ export const ResidentUtilities: React.FC<ResidentUtilitiesProps> = ({
               key={it.key}
               type="button"
               onClick={() => setOpen(it.key)}
-              className="flex flex-col items-center gap-1 p-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-emerald-400 active:scale-95 transition cursor-pointer"
+              className="flex flex-col items-center gap-1 p-2 rounded-2xl border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-900 hover:border-brand-400 active:scale-95 transition cursor-pointer"
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${it.bg} ${it.color}`}>
                 <Icon className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-bold text-center leading-tight text-slate-700 dark:text-slate-200">
+              <span className="text-[10px] font-bold text-center leading-tight text-ink-700 dark:text-ink-200">
                 {it.label}
               </span>
             </button>

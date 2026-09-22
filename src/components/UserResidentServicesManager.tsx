@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Wrench, Plus, Edit2, Trash2, CheckCircle2, AlertCircle, Phone, 
   MapPin, Image as ImageIcon, ExternalLink, Sparkles, X, Check, Eye, Clock, ShieldCheck,
@@ -224,7 +224,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
       setServices(prev => prev.filter(s => s.id !== idToDelete));
       if (onRefresh) onRefresh();
-      alert('🗑️ Đã xóa bài dịch vụ thành công!');
+      alert(' Đã xóa bài dịch vụ thành công!');
     } catch (e) {
       console.error('Error deleting service:', e);
       alert('Không thể xóa bài dịch vụ lúc này.');
@@ -319,7 +319,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
       setIsEditingModalOpen(false);
       if (onRefresh) onRefresh();
-      alert('🎉 Đã gửi bài đăng Dịch Vụ Cư Dân thành công! Bài viết đang chờ quản trị viên duyệt.');
+      alert(' Đã gửi bài đăng Dịch Vụ Cư Dân thành công! Bài viết đang chờ quản trị viên duyệt.');
     } catch (e) {
       console.error('Error saving resident service:', e);
       alert('Có lỗi xảy ra khi lưu bài dịch vụ.');
@@ -345,11 +345,11 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
   return (
     <div className="space-y-4">
       {/* Top Banner & Density Controls & Add Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-teal-950 via-slate-900 to-emerald-950 p-3.5 sm:p-4 rounded-2xl border border-teal-500/30 text-white shadow-md">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-teal-950 via-ink-900 to-brand-950 p-3.5 sm:p-4 rounded-2xl border border-teal-500/30 text-white shadow-md">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 bg-teal-500 text-slate-950 font-black text-[9px] rounded uppercase">
-              ⚡ THỢ, ĐẶT XE & DỊCH VỤ CƯ DÂN
+            <span className="px-2 py-0.5 bg-teal-500 text-ink-950 font-black text-[9px] rounded uppercase">
+               THỢ, ĐẶT XE & DỊCH VỤ CƯ DÂN
             </span>
             <span className="text-xs text-teal-300 font-bold hidden sm:inline">
               Hiển thị tức thì trên Danh Bạ & Chợ Cư Dân Vinhomes
@@ -358,42 +358,42 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
           <h2 className="text-sm sm:text-base font-black text-white">
             Quản Lý Bài Đăng Dịch Vụ, Đặt Xe & Thợ Kỹ Thuật
           </h2>
-          <p className="text-[11px] text-slate-300">
+          <p className="text-[11px] text-ink-300">
             Tự do thêm mới bài đăng, tải ảnh từ điện thoại/máy tính, sửa giá và SĐT Zalo của bạn bất kỳ lúc nào.
           </p>
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-center">
           {/* Density Switcher */}
-          <div className="bg-slate-800/90 p-0.5 rounded-xl flex items-center gap-0.5 text-[11px] font-bold border border-slate-700">
+          <div className="bg-ink-800/90 p-0.5 rounded-xl flex items-center gap-0.5 text-[11px] font-bold border border-ink-700">
             <button
               onClick={() => setServiceViewMode('icon_compact')}
               className={`px-2 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
                 serviceViewMode === 'icon_compact'
                   ? 'bg-teal-600 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-ink-400 hover:text-white'
               }`}
               title="Chế độ biểu tượng thu gọn"
             >
-              <span>⚡ Thu Gọn</span>
+              <span> Thu Gọn</span>
             </button>
             <button
               onClick={() => setServiceViewMode('detailed')}
               className={`px-2 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
                 serviceViewMode === 'detailed'
                   ? 'bg-teal-600 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-ink-400 hover:text-white'
               }`}
               title="Chế độ chi tiết đầy đủ"
             >
-              <span>📋 Chi Tiết</span>
+              <span> Chi Tiết</span>
             </button>
           </div>
 
           {services.length > 0 && (
             <button
               onClick={toggleExpandAllSvc}
-              className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-[11px] rounded-xl border border-slate-700 transition cursor-pointer"
+              className="px-2.5 py-1.5 bg-ink-800 hover:bg-ink-700 text-ink-200 font-bold text-[11px] rounded-xl border border-ink-700 transition cursor-pointer"
               title="Mở rộng hoặc thu gọn tất cả"
             >
               {services.every(s => expandedSvcIds[s.id]) ? 'Thu gọn ▴' : 'Mở rộng ▾'}
@@ -403,17 +403,17 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
           {onOpenEscrowModal && (
             <button
               onClick={onOpenEscrowModal}
-              className="px-3 py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer border border-emerald-400/40"
+              className="px-3 py-2 bg-gradient-to-r from-brand-600 to-teal-700 hover:from-brand-500 hover:to-teal-600 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer border border-brand-400/40"
               title="Mở ví tạm giữ nghiệm thu & quản lý đơn kỹ thuật"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+              <ShieldCheck className="w-3.5 h-3.5 text-brand-300" />
               <span>Ví Escrow Ký Quỹ</span>
             </button>
           )}
 
           <button
             onClick={handleOpenAddModal}
-            className="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer"
+            className="px-3.5 py-2 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>+ Đăng Dịch Vụ Mới</span>
@@ -423,24 +423,24 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
       {/* Services List */}
       {isLoading ? (
-        <div className="text-center py-10 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-2">
+        <div className="text-center py-10 bg-white dark:bg-ink-900 rounded-2xl border border-ink-200 dark:border-ink-800 p-6 space-y-2">
           <RefreshCw className="w-6 h-6 animate-spin text-teal-500 mx-auto" />
-          <p className="text-xs text-slate-500">Đang tải danh sách bài đăng dịch vụ...</p>
+          <p className="text-xs text-ink-500">Đang tải danh sách bài đăng dịch vụ...</p>
         </div>
       ) : services.length === 0 ? (
-        <div className="text-center py-10 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-3">
+        <div className="text-center py-10 bg-white dark:bg-ink-900 rounded-2xl border border-ink-200 dark:border-ink-800 p-6 space-y-3">
           <div className="w-12 h-12 bg-teal-100 dark:bg-teal-950/60 text-teal-600 rounded-full flex items-center justify-center mx-auto">
             <Wrench className="w-6 h-6" />
           </div>
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+          <h3 className="text-sm font-bold text-ink-900 dark:text-white">
             Bạn chưa có bài đăng dịch vụ hoặc đặt xe nào
           </h3>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
+          <p className="text-xs text-ink-500 max-w-md mx-auto">
             Đăng ký dịch vụ đặt xe, sửa chữa điện nước, đồ ăn, dọn nhà, thang máy... để tiếp cận hàng vạn cư dân Vinhomes.
           </p>
           <button
             onClick={handleOpenAddModal}
-            className="px-4 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-500 transition cursor-pointer"
+            className="px-4 py-2 bg-brand-600 text-white font-bold text-xs rounded-xl hover:bg-brand-500 transition cursor-pointer"
           >
             + Đăng Dịch Vụ Ngay
           </button>
@@ -454,10 +454,10 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
             return (
               <div
                 key={svc.id}
-                className={`bg-white dark:bg-slate-900 rounded-2xl border transition shadow-xs overflow-hidden ${
+                className={`bg-white dark:bg-ink-900 rounded-2xl border transition shadow-xs overflow-hidden ${
                   isExpanded
                     ? 'border-teal-500/60 ring-1 ring-teal-500/20'
-                    : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                    : 'border-ink-200 dark:border-ink-800 hover:border-ink-300 dark:hover:border-ink-700'
                 }`}
               >
                 {/* Compact Primary Row */}
@@ -470,32 +470,32 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                       <img loading="lazy"
                         src={svc.images?.[0] || ''}
                         alt={svc.title}
-                        className="w-14 h-12 sm:w-16 sm:h-14 rounded-xl object-cover border border-slate-200 dark:border-slate-800 group-hover:opacity-90 transition"
+                        className="w-14 h-12 sm:w-16 sm:h-14 rounded-xl object-cover border border-ink-200 dark:border-ink-800 group-hover:opacity-90 transition"
                       />
-                      <span className="absolute bottom-0.5 right-0.5 px-1 py-0.2 bg-slate-950/80 text-white text-[8px] font-bold rounded">
-                        {svc.images?.length || 1} 📷
+                      <span className="absolute bottom-0.5 right-0.5 px-1 py-0.2 bg-ink-950/80 text-white text-[8px] font-bold rounded">
+                        {svc.images?.length || 1} 
                       </span>
                     </div>
 
                     <div className="space-y-1 min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md border border-emerald-500/20">
-                          ✓ Đang Hoạt Động
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-md border border-brand-500/20">
+                           Đang Hoạt Động
                         </span>
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-md">
-                          🏷️ {svc.subCategory || 'Dịch vụ'}
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 rounded-md">
+                           {svc.subCategory || 'Dịch vụ'}
                         </span>
-                        <span className="text-xs font-black text-amber-500 font-mono">
-                          💰 {svc.priceDisplay}
+                        <span className="text-xs font-black text-brand-500 font-mono">
+                           {svc.priceDisplay}
                         </span>
-                        <span className="text-[10px] text-slate-500 font-medium hidden sm:inline truncate">
-                          📍 {svc.address || svc.subdivision || 'Vinhomes'}
+                        <span className="text-[10px] text-ink-500 font-medium hidden sm:inline truncate">
+                           {svc.address || svc.subdivision || 'Vinhomes'}
                         </span>
                       </div>
 
                       <button
                         onClick={() => toggleExpandSvc(svc.id)}
-                        className="text-xs font-bold text-slate-900 dark:text-white hover:text-teal-600 dark:hover:text-teal-400 text-left line-clamp-1 block cursor-pointer"
+                        className="text-xs font-bold text-ink-900 dark:text-white hover:text-teal-600 dark:hover:text-teal-400 text-left line-clamp-1 block cursor-pointer"
                       >
                         {svc.title}
                       </button>
@@ -506,10 +506,10 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                   <div className="flex items-center gap-1 shrink-0 self-end sm:self-center">
                     <Link
                       to={detailUrl}
-                      className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition flex items-center gap-1 text-[11px] font-bold"
+                      className="p-1.5 bg-ink-100 hover:bg-ink-200 dark:bg-ink-800 dark:hover:bg-ink-700 text-ink-700 dark:text-ink-300 rounded-xl transition flex items-center gap-1 text-[11px] font-bold"
                       title="Xem dịch vụ công khai"
                     >
-                      <Eye className="w-3.5 h-3.5 text-slate-500" />
+                      <Eye className="w-3.5 h-3.5 text-ink-500" />
                       <span className="hidden md:inline">Xem</span>
                     </Link>
 
@@ -532,10 +532,10 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
                     <button
                       onClick={() => toggleExpandSvc(svc.id)}
-                      className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition flex items-center gap-0.5 text-[11px] font-bold cursor-pointer"
+                      className="p-1.5 bg-ink-100 hover:bg-ink-200 dark:bg-ink-800 dark:hover:bg-ink-700 text-ink-700 dark:text-ink-300 rounded-xl transition flex items-center gap-0.5 text-[11px] font-bold cursor-pointer"
                       title={isExpanded ? 'Thu gọn' : 'Mở rộng chi tiết'}
                     >
-                      <span className="text-[10px] text-slate-500 hidden lg:inline">{isExpanded ? 'Gọn' : 'Chi tiết'}</span>
+                      <span className="text-[10px] text-ink-500 hidden lg:inline">{isExpanded ? 'Gọn' : 'Chi tiết'}</span>
                       {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                     </button>
                   </div>
@@ -543,12 +543,12 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
                 {/* Expanded Accordion */}
                 {isExpanded && (
-                  <div className="p-3 sm:p-4 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-800 space-y-3 animate-in fade-in duration-200 text-xs">
+                  <div className="p-3 sm:p-4 bg-ink-50/80 dark:bg-ink-800/40 border-t border-ink-200 dark:border-ink-800 space-y-3 animate-in fade-in duration-200 text-xs">
                     {/* Image Carousel */}
                     {svc.images && svc.images.length > 0 && (
                       <div>
-                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1.5">
-                          📷 Album Ảnh Dịch Vụ ({svc.images.length} ảnh):
+                        <span className="text-[10px] text-ink-500 font-bold uppercase tracking-wider block mb-1.5">
+                           Album Ảnh Dịch Vụ ({svc.images.length} ảnh):
                         </span>
                         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                           {svc.images.map((img, i) => (
@@ -556,7 +556,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                               key={i}
                               src={img}
                               alt={`${svc.title} - ${i + 1}`}
-                              className="w-24 h-16 sm:w-28 sm:h-20 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs"
+                              className="w-24 h-16 sm:w-28 sm:h-20 rounded-xl object-cover border border-ink-200 dark:border-ink-700 shrink-0 shadow-xs"
                             />
                           ))}
                         </div>
@@ -565,44 +565,44 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
                     {/* Specs / Contact Info */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
-                      <div className="bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <span className="text-slate-400 block text-[10px]">Người Đăng / Chủ Dịch Vụ:</span>
-                        <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
-                          👤 {svc.providerName || 'Thợ Cư Dân'}
+                      <div className="bg-white dark:bg-ink-900 p-2 rounded-xl border border-ink-200 dark:border-ink-800">
+                        <span className="text-ink-400 block text-[10px]">Người Đăng / Chủ Dịch Vụ:</span>
+                        <span className="font-bold text-ink-800 dark:text-ink-200 block truncate">
+                           {svc.providerName || 'Thợ Cư Dân'}
                         </span>
                       </div>
 
-                      <div className="bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <span className="text-slate-400 block text-[10px]">Số Điện Thoại / Zalo:</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400 block truncate">
-                          📞 {svc.providerPhone} {svc.providerZalo ? `(Zalo: ${svc.providerZalo})` : ''}
+                      <div className="bg-white dark:bg-ink-900 p-2 rounded-xl border border-ink-200 dark:border-ink-800">
+                        <span className="text-ink-400 block text-[10px]">Số Điện Thoại / Zalo:</span>
+                        <span className="font-bold text-brand-600 dark:text-brand-400 block truncate">
+                           {svc.providerPhone} {svc.providerZalo ? `(Zalo: ${svc.providerZalo})` : ''}
                         </span>
                       </div>
 
-                      <div className="bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800 col-span-2 sm:col-span-1">
-                        <span className="text-slate-400 block text-[10px]">Khu Vực Phục Vụ:</span>
-                        <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
-                          📍 {svc.project} • {svc.subdivision || 'Toàn dự án'}
+                      <div className="bg-white dark:bg-ink-900 p-2 rounded-xl border border-ink-200 dark:border-ink-800 col-span-2 sm:col-span-1">
+                        <span className="text-ink-400 block text-[10px]">Khu Vực Phục Vụ:</span>
+                        <span className="font-bold text-ink-800 dark:text-ink-200 block truncate">
+                           {svc.project} • {svc.subdivision || 'Toàn dự án'}
                         </span>
                       </div>
                     </div>
 
                     {/* Description */}
                     {svc.description && (
-                      <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
-                          📝 Mô Tả Dịch Vụ:
+                      <div className="bg-white dark:bg-ink-900 p-2.5 rounded-xl border border-ink-200 dark:border-ink-800">
+                        <span className="text-[10px] text-ink-400 font-bold uppercase tracking-wider block mb-1">
+                           Mô Tả Dịch Vụ:
                         </span>
-                        <p className="text-slate-700 dark:text-slate-300 text-xs whitespace-pre-line leading-relaxed">
+                        <p className="text-ink-700 dark:text-ink-300 text-xs whitespace-pre-line leading-relaxed">
                           {svc.description}
                         </p>
                       </div>
                     )}
 
                     {/* Bottom Action strip */}
-                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-700/60 text-[11px]">
-                      <span className="text-slate-500">
-                        ⭐ Đánh giá: <strong>5.0/5</strong> • Trạng thái: <strong className="text-emerald-600">Đang hiển thị công khai</strong>
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-ink-200 dark:border-ink-700/60 text-[11px]">
+                      <span className="text-ink-500">
+                         Đánh giá: <strong>5.0/5</strong> • Trạng thái: <strong className="text-brand-600">Đang hiển thị công khai</strong>
                       </span>
                       <div className="flex items-center gap-2">
                         <Link
@@ -615,9 +615,9 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(`${window.location.origin}${detailUrl}`);
-                            alert('📋 Đã sao chép liên kết bài đăng dịch vụ cư dân!');
+                            alert(' Đã sao chép liên kết bài đăng dịch vụ cư dân!');
                           }}
-                          className="px-2.5 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl flex items-center gap-1 transition cursor-pointer"
+                          className="px-2.5 py-1.5 bg-ink-200 dark:bg-ink-700 hover:bg-ink-300 text-ink-700 dark:text-ink-200 font-bold rounded-xl flex items-center gap-1 transition cursor-pointer"
                         >
                           <Copy className="w-3.5 h-3.5" />
                           <span>Copy Link</span>
@@ -634,26 +634,26 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
 
       {/* Edit / Add Service Modal */}
       {isEditingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto overscroll-contain">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl max-h-[94vh] overflow-y-auto shadow-2xl flex flex-col my-auto relative">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-2 sm:p-4 bg-ink-950/80 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto overscroll-contain">
+          <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl w-full max-w-2xl max-h-[94vh] overflow-y-auto shadow-2xl flex flex-col my-auto relative">
             
-            <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-20">
+            <div className="p-4 sm:p-5 border-b border-ink-100 dark:border-ink-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-ink-900/95 backdrop-blur-md z-20">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 bg-teal-500/10 text-teal-600 dark:text-teal-400 rounded-xl">
                   <Wrench className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
+                  <h3 className="text-sm sm:text-base font-black text-ink-900 dark:text-white">
                     {editingService ? 'Chỉnh Sửa Dịch Vụ Cư Dân' : 'Đăng Dịch Vụ, Đặt Xe & Thợ Kỹ Thuật'}
                   </h3>
-                  <p className="text-[11px] text-slate-500 line-clamp-1">
+                  <p className="text-[11px] text-ink-500 line-clamp-1">
                     Hiển thị trực tiếp trên Danh Bạ & Chợ Tiện Ích Cư Dân Vinhomes
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsEditingModalOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                className="p-2 text-ink-400 hover:text-ink-600 dark:hover:text-ink-200 rounded-xl hover:bg-ink-100 dark:hover:bg-ink-800 transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -662,7 +662,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
             <form onSubmit={handleSaveService} className="p-4 sm:p-6 space-y-4 text-xs pb-28 sm:pb-6">
               
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                   Tiêu Đề Bài Đăng Dịch Vụ <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -670,14 +670,14 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="VD: Dịch Vụ Đặt Xe Buggy & Taxi Sân Bay 24/7 / Sửa Điện Lạnh 15 Phút Có Mặt"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Nhóm Ngành Dịch Vụ (*)
                   </label>
                   <select
@@ -692,25 +692,25 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                       else if (newCat === 've-sinh-giup-viec') setSubCategory('Dọn dẹp & Giúp việc theo giờ');
                       else if (newCat === 'sua-chua-khoa') setSubCategory('Mở khóa & Sửa đồ gia dụng');
                     }}
-                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden"
+                    className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden"
                   >
-                    <option value="van-tai-xe-dien">⚡ Vận Tải - Đặt Xe Buggy & Taxi 24/7</option>
-                    <option value="an-uong-nha-hang">🍲 Ăn Uống, Cafe & Đồ Ăn Giao Tận Căn</option>
-                    <option value="dien-nuoc-lanh">❄️ Điện Nước & Điện Lạnh Cư Dân</option>
-                    <option value="thang-may-sua-nha">🛗 Thang Máy, Cải Tạo & Sửa Nhà</option>
-                    <option value="ve-sinh-giup-viec">🧹 Vệ Sinh, Giúp Việc & Giặt Là</option>
-                    <option value="sua-chua-khoa">🔑 Sửa Chữa Gia Dụng & Thợ Khóa</option>
-                    <option value="cham-soc-thu-cung">🐕 Chăm Sóc Thú Cưng & Spa Chó Mèo</option>
-                    <option value="lam-dep-suc-khoe">💆 Làm Đẹp, Nail & Spa Thư Giãn</option>
-                    <option value="giao-duc-gia-su">🎓 Gia Sư & Luyện Thi Nội Khu</option>
-                    <option value="khach-san-homestay">🏨 Khách Sạn & Homestay Vinhomes</option>
-                    <option value="di-cho-thuc-pham">🛒 Đi Chợ & Thực Phẩm Sạch Cư Dân</option>
-                    <option value="moi-gioi-bds-uy-tin">🏡 Môi Giới BĐS Uy Tín</option>
+                    <option value="van-tai-xe-dien"> Vận Tải - Đặt Xe Buggy & Taxi 24/7</option>
+                    <option value="an-uong-nha-hang"> Ăn Uống, Cafe & Đồ Ăn Giao Tận Căn</option>
+                    <option value="dien-nuoc-lanh"> Điện Nước & Điện Lạnh Cư Dân</option>
+                    <option value="thang-may-sua-nha"> Thang Máy, Cải Tạo & Sửa Nhà</option>
+                    <option value="ve-sinh-giup-viec"> Vệ Sinh, Giúp Việc & Giặt Là</option>
+                    <option value="sua-chua-khoa"> Sửa Chữa Gia Dụng & Thợ Khóa</option>
+                    <option value="cham-soc-thu-cung"> Chăm Sóc Thú Cưng & Spa Chó Mèo</option>
+                    <option value="lam-dep-suc-khoe"> Làm Đẹp, Nail & Spa Thư Giãn</option>
+                    <option value="giao-duc-gia-su"> Gia Sư & Luyện Thi Nội Khu</option>
+                    <option value="khach-san-homestay"> Khách Sạn & Homestay Vinhomes</option>
+                    <option value="di-cho-thuc-pham"> Đi Chợ & Thực Phẩm Sạch Cư Dân</option>
+                    <option value="moi-gioi-bds-uy-tin"> Môi Giới BĐS Uy Tín</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Chuyên Môn / Hạng Mục Cụ Thể
                   </label>
                   <input
@@ -718,20 +718,20 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     value={subCategory}
                     onChange={e => setSubCategory(e.target.value)}
                     placeholder="VD: Taxi sân bay Nội Bài / Nạp gas điều hòa / Cơm trưa..."
-                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
+                    className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Khu Đô Thị
                   </label>
                   <select
                     value={project}
                     onChange={e => setProject(e.target.value as ProjectCategory)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden"
+                    className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden"
                   >
                     <option value="ocean-park-2">Vinhomes Ocean Park 2</option>
                     <option value="ocean-park-3">Vinhomes Ocean Park 3</option>
@@ -743,7 +743,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Báo Giá / Mức Phí Hiển Thị
                   </label>
                   <input
@@ -751,14 +751,14 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     value={priceDisplay}
                     onChange={e => setPriceDisplay(e.target.value)}
                     placeholder="VD: Từ 30.000đ - 150.000đ / Khảo sát miễn phí"
-                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-amber-600 focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
+                    className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold text-brand-600 focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Tên Đơn Vị / Người Đăng
                   </label>
                   <input
@@ -766,12 +766,12 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     value={providerName}
                     onChange={e => setProviderName(e.target.value)}
                     placeholder="VD: Nhà Xe Minh Hoàng / Bếp Cư Dân..."
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
+                    className="w-full px-3 py-2 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Số Điện Thoại <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -779,13 +779,13 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     value={providerPhone}
                     onChange={e => setProviderPhone(e.target.value)}
                     placeholder="VD: 0988889999"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
+                    className="w-full px-3 py-2 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Số Zalo Nhận Đơn
                   </label>
                   <input
@@ -793,13 +793,13 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                     value={providerZalo}
                     onChange={e => setProviderZalo(e.target.value)}
                     placeholder="VD: 0988889999"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
+                    className="w-full px-3 py-2 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                   Địa Chỉ / Phân Khu Hoạt Động
                 </label>
                 <input
@@ -807,12 +807,12 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                   value={address}
                   onChange={e => setAddress(e.target.value)}
                   placeholder="VD: Sảnh S2.05 Ocean Park 1 & Phục vụ toàn bộ Ocean Park 1, 2, 3"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                   Mô Tả Dịch Vụ, Thực Đơn Hoặc Cam Kết Chất Lượng
                 </label>
                 <textarea
@@ -820,18 +820,18 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   placeholder="Mô tả kỹ năng, danh mục món ăn/loại xe, cam kết thời gian có mặt, bảo hành uy tín..."
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
+                  className="w-full px-3 py-2 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-teal-500 outline-hidden scroll-mt-24"
                 />
               </div>
 
               {/* Photos manager with Multi-Device Upload */}
-              <div className="space-y-3 bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <div className="space-y-3 bg-ink-50 dark:bg-ink-800/60 p-3.5 rounded-2xl border border-ink-200 dark:border-ink-700">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <label className="font-bold text-slate-800 dark:text-slate-200 text-xs block">
-                      📷 Hình Ảnh Dịch Vụ & Xe / Cửa Hàng ({images.length} ảnh)
+                    <label className="font-bold text-ink-800 dark:text-ink-200 text-xs block">
+                       Hình Ảnh Dịch Vụ & Xe / Cửa Hàng ({images.length} ảnh)
                     </label>
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-[10px] text-ink-500">
                       Hỗ trợ chụp trực tiếp từ camera điện thoại hoặc tải ảnh từ máy tính.
                     </span>
                   </div>
@@ -839,7 +839,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                   <div className="flex items-center gap-2">
                     <label className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-black text-xs rounded-xl cursor-pointer inline-flex items-center gap-1.5 shadow-xs transition">
                       <Upload className="w-3.5 h-3.5" />
-                      <span>{isUploadingImage ? 'Đang Tải...' : '📁 Tải Ảnh Từ Máy'}</span>
+                      <span>{isUploadingImage ? 'Đang Tải...' : ' Tải Ảnh Từ Máy'}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -854,7 +854,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                 {/* Grid of uploaded images */}
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
                   {images.map((img, idx) => (
-                    <div key={idx} className="relative rounded-xl overflow-hidden aspect-4/3 bg-slate-900 border border-slate-300 dark:border-slate-700 group">
+                    <div key={idx} className="relative rounded-xl overflow-hidden aspect-4/3 bg-ink-900 border border-ink-300 dark:border-ink-700 group">
                       <img loading="lazy" src={img} alt="Preview" className="w-full h-full object-cover" />
                       <button
                         type="button"
@@ -874,11 +874,11 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md py-3 -mx-4 sm:-mx-6 px-4 sm:px-6 z-20">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-ink-100 dark:border-ink-800 sticky bottom-0 bg-white/95 dark:bg-ink-900/95 backdrop-blur-md py-3 -mx-4 sm:-mx-6 px-4 sm:px-6 z-20">
                 <button
                   type="button"
                   onClick={() => setIsEditingModalOpen(false)}
-                  className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl cursor-pointer"
+                  className="px-4 py-2.5 bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 font-bold rounded-xl cursor-pointer"
                 >
                   Hủy Bỏ
                 </button>
@@ -893,7 +893,7 @@ export const UserResidentServicesManager: React.FC<UserResidentServicesManagerPr
                       <span>Đang Lưu...</span>
                     </>
                   ) : (
-                    <span>🚀 LƯU & XUẤT BẢN DỊCH VỤ</span>
+                    <span> LƯU & XUẤT BẢN DỊCH VỤ</span>
                   )}
                 </button>
               </div>

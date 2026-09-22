@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   Briefcase, Building2, MapPin, DollarSign, Clock, Users, 
@@ -68,9 +68,9 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
   if (!job) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white">Không tìm thấy tin tuyển dụng</h1>
-        <p className="text-xs text-slate-500">Tin tuyển dụng có thể đã hết hạn nhận hồ sơ hoặc đã được gỡ bỏ.</p>
-        <Link to="/tuyen-dung" className="inline-block px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs shadow-md">
+        <h1 className="text-2xl font-black text-ink-900 dark:text-white">Không tìm thấy tin tuyển dụng</h1>
+        <p className="text-xs text-ink-500">Tin tuyển dụng có thể đã hết hạn nhận hồ sơ hoặc đã được gỡ bỏ.</p>
+        <Link to="/tuyen-dung" className="inline-block px-6 py-2.5 bg-brand-600 text-white font-bold rounded-xl text-xs shadow-md">
           Xem Tất Cả Việc Làm Cư Dân
         </Link>
       </div>
@@ -132,7 +132,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={`${job.title} - ${job.companyName} | Tuyển Dụng Vinhomes`}
         description={`${job.title} tại ${job.companyName}. Mức lương: ${job.salaryDisplay}. Địa điểm: ${job.location}. Hotline: ${job.contactPhone}. Hạn nộp: ${job.deadline}.`}
@@ -142,27 +142,27 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
       />
 
       {/* Breadcrumbs Navigation */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
-            <Link to="/" className="hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
+            <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to="/tuyen-dung" className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to="/tuyen-dung" className="hover:text-brand-600 dark:hover:text-brand-400">
               Tuyển Dụng & Việc Làm
             </Link>
             {industry && (
               <>
-                <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-                <Link to={getRecruitmentIndustryUrl(industry.id)} className="hover:text-emerald-600 dark:hover:text-emerald-400">
+                <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+                <Link to={getRecruitmentIndustryUrl(industry.id)} className="hover:text-brand-600 dark:hover:text-brand-400">
                   {industry.name}
                 </Link>
               </>
             )}
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold truncate max-w-[240px]">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <span className="text-brand-600 dark:text-brand-400 font-bold truncate max-w-[240px]">
               {job.title}
             </span>
           </nav>
@@ -170,7 +170,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
       </div>
 
       {/* Hero Header */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-8">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             
@@ -178,7 +178,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
               <div className="flex flex-wrap items-center gap-2">
                 <Link
                   to="/tuyen-dung"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-emerald-600 mr-2"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-ink-500 hover:text-brand-600 mr-2"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Quay lại danh sách</span>
@@ -186,38 +186,38 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
 
                 {job.isUrgent && (
                   <span className="px-2.5 py-0.5 bg-rose-500 text-white text-[11px] font-black rounded-full uppercase tracking-wider animate-pulse">
-                    🔥 Tuyển Gấp
+                     Tuyển Gấp
                   </span>
                 )}
                 {job.isVip && (
-                  <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 text-[11px] font-black rounded-full uppercase tracking-wider">
-                    ⭐ Việc Làm VIP
+                  <span className="px-2.5 py-0.5 bg-brand-500 text-ink-950 text-[11px] font-black rounded-full uppercase tracking-wider">
+                     Việc Làm VIP
                   </span>
                 )}
-                <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold rounded-full border border-emerald-500/20">
+                <span className="px-2.5 py-0.5 bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[11px] font-bold rounded-full border border-brand-500/20">
                   {project?.name || job.project}
                 </span>
                 {industry && (
-                  <span className="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-semibold rounded-full">
+                  <span className="px-2.5 py-0.5 bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 text-[11px] font-semibold rounded-full">
                     {industry.name}
                   </span>
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white leading-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-ink-900 dark:text-white leading-tight">
                 {job.title}
               </h1>
 
-              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-bold text-sm">
-                <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
+              <div className="flex items-center gap-2 text-ink-600 dark:text-ink-300 font-bold text-sm">
+                <Building2 className="w-4 h-4 text-ink-400 shrink-0" />
                 <Link
                   to={getEmployerProfileUrl({ id: job.employerUserId, companyName: job.companyName })}
-                  className="hover:text-emerald-600 dark:hover:text-emerald-400 underline decoration-dotted"
+                  className="hover:text-brand-600 dark:hover:text-brand-400 underline decoration-dotted"
                   title="Xem hồ sơ chi tiết nhà tuyển dụng"
                 >
                   {job.companyName}
                 </Link>
-                <span className="inline-flex items-center text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded">
+                <span className="inline-flex items-center text-[11px] font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50 px-2 py-0.5 rounded">
                   <ShieldCheck className="w-3.5 h-3.5 mr-1" />
                   Đã xác minh KYC cư dân
                 </span>
@@ -228,7 +228,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
             <div className="flex flex-wrap items-center gap-3">
               <a
                 href="#apply-section"
-                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition flex items-center gap-2"
+                className="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition flex items-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 <span>Ứng Tuyển Ngay</span>
@@ -248,7 +248,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
 
               <button
                 onClick={() => setShowShareModal(true)}
-                className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-2xl transition cursor-pointer"
+                className="p-3 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 dark:hover:bg-ink-700 text-ink-700 dark:text-ink-300 rounded-2xl transition cursor-pointer"
                 title="Chia sẻ tin tuyển dụng"
               >
                 <Share2 className="w-4 h-4" />
@@ -267,79 +267,79 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
           <div className="lg:col-span-2 space-y-6">
             
             {/* Key Specs Card */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-sm text-xs">
               <div className="space-y-1">
-                <span className="text-slate-400 flex items-center gap-1 font-medium">
-                  <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
+                <span className="text-ink-400 flex items-center gap-1 font-medium">
+                  <DollarSign className="w-3.5 h-3.5 text-brand-500" />
                   Mức thu nhập
                 </span>
-                <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 block">
+                <span className="text-sm font-black text-brand-600 dark:text-brand-400 block">
                   {job.salaryDisplay}
                 </span>
               </div>
 
               <div className="space-y-1">
-                <span className="text-slate-400 flex items-center gap-1 font-medium">
-                  <Clock className="w-3.5 h-3.5 text-amber-500" />
+                <span className="text-ink-400 flex items-center gap-1 font-medium">
+                  <Clock className="w-3.5 h-3.5 text-brand-500" />
                   Kinh nghiệm
                 </span>
-                <span className="text-sm font-bold text-slate-800 dark:text-slate-200 block">
+                <span className="text-sm font-bold text-ink-800 dark:text-ink-200 block">
                   {job.experienceDisplay || 'Không yêu cầu'}
                 </span>
               </div>
 
               <div className="space-y-1">
-                <span className="text-slate-400 flex items-center gap-1 font-medium">
+                <span className="text-ink-400 flex items-center gap-1 font-medium">
                   <Briefcase className="w-3.5 h-3.5 text-blue-500" />
                   Hình thức làm
                 </span>
-                <span className="text-sm font-bold text-slate-800 dark:text-slate-200 block capitalize">
+                <span className="text-sm font-bold text-ink-800 dark:text-ink-200 block capitalize">
                   {job.jobType === 'full-time' ? 'Toàn thời gian' : job.jobType === 'part-time' ? 'Bán thời gian' : job.jobType === 'shift' ? 'Theo ca linh hoạt' : 'Freelance'}
                 </span>
               </div>
 
               <div className="space-y-1">
-                <span className="text-slate-400 flex items-center gap-1 font-medium">
+                <span className="text-ink-400 flex items-center gap-1 font-medium">
                   <Calendar className="w-3.5 h-3.5 text-rose-500" />
                   Hạn nộp hồ sơ
                 </span>
-                <span className="text-sm font-bold text-slate-800 dark:text-slate-200 block">
+                <span className="text-sm font-bold text-ink-800 dark:text-ink-200 block">
                   {job.deadline}
                 </span>
               </div>
             </div>
 
             {/* Job Description Card */}
-            <div className="p-6 sm:p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+            <div className="p-6 sm:p-8 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-sm space-y-6">
               
               {/* Working Location */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-start gap-3">
+              <div className="p-4 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700 flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
                 <div className="text-xs">
-                  <span className="font-bold text-slate-900 dark:text-white block">Địa điểm làm việc:</span>
-                  <span className="text-slate-600 dark:text-slate-300">{job.location} ({project?.name})</span>
+                  <span className="font-bold text-ink-900 dark:text-white block">Địa điểm làm việc:</span>
+                  <span className="text-ink-600 dark:text-ink-300">{job.location} ({project?.name})</span>
                 </div>
               </div>
 
               {/* Description */}
               <div className="space-y-3">
-                <h3 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                <h3 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wider text-brand-600 dark:text-brand-400 flex items-center gap-2">
                   <FileText className="w-4 h-4" />
                   <span>Mô Tả Công Việc Chi Tiết</span>
                 </h3>
-                <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line">
                   {job.description}
                 </div>
               </div>
 
               {/* Requirements */}
               {job.requirements && (
-                <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <h3 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wider text-amber-500 flex items-center gap-2">
+                <div className="space-y-3 pt-4 border-t border-ink-100 dark:border-ink-800">
+                  <h3 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wider text-brand-500 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Yêu Cầu Ứng Viên</span>
                   </h3>
-                  <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                  <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line">
                     {job.requirements}
                   </div>
                 </div>
@@ -347,12 +347,12 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
 
               {/* Benefits */}
               {job.benefits && (
-                <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <h3 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wider text-sky-500 flex items-center gap-2">
+                <div className="space-y-3 pt-4 border-t border-ink-100 dark:border-ink-800">
+                  <h3 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wider text-sky-500 flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
                     <span>Quyền Lợi & Chế Độ Đãi Ngộ</span>
                   </h3>
-                  <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                  <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line">
                     {job.benefits}
                   </div>
                 </div>
@@ -361,29 +361,29 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
             </div>
 
             {/* Interactive Application Form */}
-            <div id="apply-section" className="p-6 sm:p-8 bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900 rounded-3xl border border-emerald-500/30 shadow-xl space-y-6">
+            <div id="apply-section" className="p-6 sm:p-8 bg-gradient-to-br from-brand-950/40 via-ink-900 to-ink-900 rounded-3xl border border-brand-500/30 shadow-xl space-y-6">
               <div className="space-y-2">
-                <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                <span className="px-2.5 py-0.5 bg-brand-500 text-ink-950 font-black text-[10px] rounded-full uppercase tracking-wider">
                   Ứng Tuyển Nhanh
                 </span>
                 <h3 className="text-xl sm:text-2xl font-black text-white">
                   Nộp Hồ Sơ Trực Tiếp Cho Nhà Tuyển Dụng
                 </h3>
-                <p className="text-xs text-slate-300">
+                <p className="text-xs text-ink-300">
                   Thông tin hồ sơ của bạn sẽ được gửi thẳng đến số điện thoại và Zalo của người phụ trách tuyển dụng: <b>{job.contactName || job.companyName}</b>.
                 </p>
               </div>
 
               {applySuccess ? (
-                <div className="p-6 bg-emerald-500/20 border border-emerald-500/40 rounded-2xl text-center space-y-3">
-                  <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
+                <div className="p-6 bg-brand-500/20 border border-brand-500/40 rounded-2xl text-center space-y-3">
+                  <CheckCircle2 className="w-12 h-12 text-brand-400 mx-auto" />
                   <h4 className="text-base font-black text-white">ỨNG TUYỂN THÀNH CÔNG!</h4>
-                  <p className="text-xs text-emerald-200">
+                  <p className="text-xs text-brand-200">
                     Hồ sơ của bạn đã được chuyển đến nhà tuyển dụng. Bạn cũng có thể liên hệ trực tiếp qua Zalo <b>{job.contactPhone || job.contactZalo}</b> để phỏng vấn sớm nhất.
                   </p>
                   <button
                     onClick={() => setApplySuccess(false)}
-                    className="px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs mt-2"
+                    className="px-4 py-2 bg-brand-600 text-white font-bold rounded-xl text-xs mt-2"
                   >
                     Gửi Lại Thông Tin Khác
                   </button>
@@ -392,7 +392,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                 <form onSubmit={handleApplySubmit} className="space-y-4 text-xs">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-slate-300 font-bold mb-1">
+                      <label className="block text-ink-300 font-bold mb-1">
                         Họ và tên ứng viên <span className="text-rose-400">*</span>
                       </label>
                       <input
@@ -401,12 +401,12 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                         value={applicantName}
                         onChange={e => setApplicantName(e.target.value)}
                         placeholder="VD: Nguyễn Văn A"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-ink-800 border border-ink-700 text-white focus:outline-none focus:border-brand-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-slate-300 font-bold mb-1">
+                      <label className="block text-ink-300 font-bold mb-1">
                         Số điện thoại / Zalo nhận liên hệ <span className="text-rose-400">*</span>
                       </label>
                       <input
@@ -415,14 +415,14 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                         value={applicantPhone}
                         onChange={e => setApplicantPhone(e.target.value)}
                         placeholder="VD: 0988xxxxxx"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-ink-800 border border-ink-700 text-white focus:outline-none focus:border-brand-500"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-slate-300 font-bold mb-1">
+                      <label className="block text-ink-300 font-bold mb-1">
                         Email liên hệ
                       </label>
                       <input
@@ -430,12 +430,12 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                         value={applicantEmail}
                         onChange={e => setApplicantEmail(e.target.value)}
                         placeholder="VD: email@gmail.com"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-ink-800 border border-ink-700 text-white focus:outline-none focus:border-brand-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-slate-300 font-bold mb-1">
+                      <label className="block text-ink-300 font-bold mb-1">
                         Mức lương mong muốn
                       </label>
                       <input
@@ -443,13 +443,13 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                         value={applicantSalary}
                         onChange={e => setApplicantSalary(e.target.value)}
                         placeholder="VD: 15 - 20 triệu / tháng"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-ink-800 border border-ink-700 text-white focus:outline-none focus:border-brand-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 font-bold mb-1">
+                    <label className="block text-ink-300 font-bold mb-1">
                       Giới thiệu ngắn gọn kinh nghiệm & lời nhắn
                     </label>
                     <textarea
@@ -457,14 +457,14 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                       value={applicantMessage}
                       onChange={e => setApplicantMessage(e.target.value)}
                       placeholder="Mô tả kỹ năng, số năm kinh nghiệm, căn hộ đang sinh sống tại Vinhomes..."
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-ink-800 border border-ink-700 text-white focus:outline-none focus:border-brand-500"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     <Send className="w-4 h-4" />
                     <span>{isSubmitting ? 'ĐANG GỬI HỒ SƠ...' : 'GỬI HỒ SƠ ỨNG TUYỂN NGAY'}</span>
@@ -479,16 +479,16 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
           <div className="space-y-6">
             
             {/* Employer Info Card */}
-            <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-              <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-md">
+            <div className="p-6 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-sm space-y-4">
+              <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 rounded-md">
                 Thông Tin Nhà Tuyển Dụng
               </span>
 
               <div className="space-y-1">
-                <h4 className="text-base font-black text-slate-900 dark:text-white">
+                <h4 className="text-base font-black text-ink-900 dark:text-white">
                   {job.companyName}
                 </h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-ink-500 dark:text-ink-400">
                   Người phụ trách: <b>{job.contactName || 'Phòng Nhân Sự'}</b>
                 </p>
                 <Link
@@ -500,11 +500,11 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                 </Link>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+              <div className="space-y-2 pt-2 border-t border-ink-100 dark:border-ink-800 text-xs">
                 {job.contactPhone && (
                   <a
                     href={`tel:${job.contactPhone.replace(/\D/g, '')}`}
-                    className="w-full py-2.5 px-3 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-bold rounded-xl flex items-center justify-center gap-2 transition"
+                    className="w-full py-2.5 px-3 bg-brand-50 dark:bg-brand-950/40 hover:bg-brand-100 dark:hover:bg-brand-950 text-brand-700 dark:text-brand-400 font-bold rounded-xl flex items-center justify-center gap-2 transition"
                   >
                     <Phone className="w-4 h-4" />
                     <span>Gọi Hotline: {job.contactPhone}</span>
@@ -526,7 +526,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
             </div>
 
             {/* Resident CV CTA */}
-            <div className="p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 rounded-3xl shadow-lg space-y-3">
+            <div className="p-6 bg-gradient-to-br from-brand-500 to-brand-600 text-ink-950 rounded-3xl shadow-lg space-y-3">
               <h4 className="font-black text-base">
                 Bạn Đang Tìm Việc Tại Vinhomes?
               </h4>
@@ -535,7 +535,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
               </p>
               <Link
                 to="/tuyen-dung"
-                className="block w-full text-center py-2.5 bg-slate-950 hover:bg-slate-900 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow transition"
+                className="block w-full text-center py-2.5 bg-ink-950 hover:bg-ink-900 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow transition"
               >
                 TẠO CV CƯ DÂN MIỄN PHÍ
               </Link>
@@ -543,10 +543,10 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
 
             {/* Related Jobs */}
             {relatedJobs.length > 0 && (
-              <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-                <h4 className="font-black text-sm text-slate-900 dark:text-white uppercase tracking-wider flex items-center justify-between">
+              <div className="p-6 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-sm space-y-4">
+                <h4 className="font-black text-sm text-ink-900 dark:text-white uppercase tracking-wider flex items-center justify-between">
                   <span>Việc Làm Cùng Ngành</span>
-                  <Link to="/tuyen-dung" className="text-[11px] text-emerald-600 lowercase font-bold">
+                  <Link to="/tuyen-dung" className="text-[11px] text-brand-600 lowercase font-bold">
                     xem tất cả &rarr;
                   </Link>
                 </h4>
@@ -556,14 +556,14 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                     <Link
                       key={rj.id}
                       to={getJobDetailUrl(rj)}
-                      className="block p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 border border-slate-100 dark:border-slate-700 transition space-y-1"
+                      className="block p-3 rounded-2xl bg-ink-50 dark:bg-ink-800/70 hover:bg-brand-50/50 dark:hover:bg-brand-950/30 border border-ink-100 dark:border-ink-700 transition space-y-1"
                     >
-                      <h5 className="font-bold text-xs text-slate-900 dark:text-white line-clamp-1">
+                      <h5 className="font-bold text-xs text-ink-900 dark:text-white line-clamp-1">
                         {rj.title}
                       </h5>
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-slate-500 dark:text-slate-400 truncate max-w-[120px]">{rj.companyName}</span>
-                        <span className="font-black text-emerald-600 dark:text-emerald-400">{rj.salaryDisplay}</span>
+                        <span className="text-ink-500 dark:text-ink-400 truncate max-w-[120px]">{rj.companyName}</span>
+                        <span className="font-black text-brand-600 dark:text-brand-400">{rj.salaryDisplay}</span>
                       </div>
                     </Link>
                   ))}

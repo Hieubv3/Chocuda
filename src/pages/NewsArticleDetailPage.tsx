@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   Home, ChevronRight, Calendar, User, Eye, Share2, 
@@ -32,15 +32,15 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
   if (!article) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center space-y-4">
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-black text-ink-900 dark:text-white">
           Không tìm thấy bài viết
         </h1>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-ink-500">
           Bài viết có thể đã được gỡ xuống hoặc chuyển sang chuyên mục khác.
         </p>
         <Link
           to="/tin-tuc"
-          className="inline-block px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs shadow-md"
+          className="inline-block px-6 py-2.5 bg-brand-600 text-white font-bold rounded-xl text-xs shadow-md"
         >
           Xem Chuyên Mục Tin Tức & Cẩm Nang
         </Link>
@@ -61,7 +61,7 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
   const shareUrl = window.location.href;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={article.title}
         description={article.summary || article.content.substring(0, 160)}
@@ -72,19 +72,19 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
       />
 
       {/* Breadcrumbs */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
-            <Link to="/" className="hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
+            <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to="/tin-tuc" className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to="/tin-tuc" className="hover:text-brand-600 dark:hover:text-brand-400">
               Tin Tức & Cẩm Nang
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to={`/tin-tuc/${article.category || 'chung'}`} className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to={`/tin-tuc/${article.category || 'chung'}`} className="hover:text-brand-600 dark:hover:text-brand-400">
               {categoryName}
             </Link>
           </nav>
@@ -97,35 +97,35 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
         {/* Article Header */}
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 text-xs font-black rounded-full uppercase tracking-wider">
+            <span className="px-3 py-1 bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-400 text-xs font-black rounded-full uppercase tracking-wider">
               {categoryName}
             </span>
             {article.source === 'ai' && (
-              <span className="px-2.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-[11px] font-bold rounded-full flex items-center gap-1">
+              <span className="px-2.5 py-0.5 bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 text-[11px] font-bold rounded-full flex items-center gap-1">
                 <Sparkles className="w-3 h-3" />
                 <span>AI Tổng Hợp</span>
               </span>
             )}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white leading-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-ink-900 dark:text-white leading-tight">
             {article.title}
           </h1>
 
           {/* Author & Meta Row */}
-          <div className="flex flex-wrap items-center justify-between gap-4 py-3 border-y border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex flex-wrap items-center justify-between gap-4 py-3 border-y border-ink-200 dark:border-ink-800 text-xs text-ink-500 dark:text-ink-400">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
-                <User className="w-3.5 h-3.5 text-emerald-500" />
+              <div className="flex items-center gap-1.5 font-bold text-ink-700 dark:text-ink-300">
+                <User className="w-3.5 h-3.5 text-brand-500" />
                 <span>{article.author || 'Ban Biên Tập Chợ Cư Dân 24H'}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                <Calendar className="w-3.5 h-3.5 text-ink-400" />
                 <span>{article.publishedAt || 'Hôm nay'}</span>
               </div>
               {article.views && (
                 <div className="flex items-center gap-1">
-                  <Eye className="w-3.5 h-3.5 text-slate-400" />
+                  <Eye className="w-3.5 h-3.5 text-ink-400" />
                   <span>{article.views} lượt xem</span>
                 </div>
               )}
@@ -133,7 +133,7 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
 
             <button
               onClick={() => setShowShareModal(true)}
-              className="px-3.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-400 font-bold rounded-xl border border-emerald-500/30 flex items-center gap-1.5 transition cursor-pointer"
+              className="px-3.5 py-1.5 bg-brand-50 dark:bg-brand-950/60 hover:bg-brand-100 text-brand-700 dark:text-brand-400 font-bold rounded-xl border border-brand-500/30 flex items-center gap-1.5 transition cursor-pointer"
             >
               <Share2 className="w-3.5 h-3.5" />
               <span>Chia sẻ bài viết</span>
@@ -143,14 +143,14 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
 
         {/* Lead / Summary Callout */}
         {article.summary && (
-          <div className="p-5 bg-slate-100 dark:bg-slate-900 border-l-4 border-emerald-500 rounded-r-2xl text-slate-700 dark:text-slate-300 font-medium text-sm leading-relaxed">
+          <div className="p-5 bg-ink-100 dark:bg-ink-900 border-l-4 border-brand-500 rounded-r-2xl text-ink-700 dark:text-ink-300 font-medium text-sm leading-relaxed">
             {article.summary}
           </div>
         )}
 
         {/* Featured Image */}
         {article.image && (
-          <div className="aspect-[16/9] rounded-3xl overflow-hidden shadow-xl bg-slate-950">
+          <div className="aspect-[16/9] rounded-3xl overflow-hidden shadow-xl bg-ink-950">
             <img loading="lazy"
               src={article.image}
               alt={article.title}
@@ -160,17 +160,17 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
         )}
 
         {/* Article Body Content */}
-        <div className="prose prose-slate dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 text-sm sm:text-base leading-relaxed space-y-4 whitespace-pre-line">
+        <div className="prose prose-slate dark:prose-invert max-w-none text-ink-800 dark:text-ink-200 text-sm sm:text-base leading-relaxed space-y-4 whitespace-pre-line">
           {article.content}
         </div>
 
         {/* Share & Source Banner */}
-        <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-6 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="space-y-1 text-center sm:text-left">
-            <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wide">
+            <span className="text-xs font-black text-ink-900 dark:text-white uppercase tracking-wide">
               Thấy bài viết hữu ích? Chia sẻ ngay!
             </span>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-ink-500">
               Gửi thông tin này cho cư dân, bạn bè hoặc khách hàng quan tâm BĐS Vinhomes.
             </p>
           </div>
@@ -178,7 +178,7 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowShareModal(true)}
-              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 cursor-pointer"
+              className="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 cursor-pointer"
             >
               <Share2 className="w-4 h-4" />
               <span>Chia Sẻ Link Zalo / Facebook</span>
@@ -188,8 +188,8 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
 
         {/* Related Articles */}
         {relatedArticles.length > 0 && (
-          <div className="space-y-4 pt-8 border-t border-slate-200 dark:border-slate-800">
-            <h2 className="text-xl font-black text-slate-900 dark:text-white">
+          <div className="space-y-4 pt-8 border-t border-ink-200 dark:border-ink-800">
+            <h2 className="text-xl font-black text-ink-900 dark:text-white">
               Bài Viết Cùng Chuyên Mục
             </h2>
 
@@ -198,19 +198,19 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
                 <Link
                   key={rel.id}
                   to={getNewsDetailUrl(rel)}
-                  className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 shadow-sm hover:shadow-lg transition space-y-2 p-3"
+                  className="group bg-white dark:bg-ink-900 rounded-2xl overflow-hidden border border-ink-200 dark:border-ink-800 hover:border-brand-500/60 shadow-sm hover:shadow-lg transition space-y-2 p-3"
                 >
-                  <div className="aspect-[16/10] rounded-xl overflow-hidden bg-slate-950">
+                  <div className="aspect-[16/10] rounded-xl overflow-hidden bg-ink-950">
                     <img loading="lazy"
                       src={rel.image}
                       alt={rel.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     />
                   </div>
-                  <h3 className="font-bold text-xs text-slate-900 dark:text-white line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                  <h3 className="font-bold text-xs text-ink-900 dark:text-white line-clamp-2 group-hover:text-brand-600 dark:group-hover:text-brand-400">
                     {rel.title}
                   </h3>
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1">
+                  <div className="text-[10px] text-ink-400 flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     <span>{rel.publishedAt || 'Gần đây'}</span>
                   </div>

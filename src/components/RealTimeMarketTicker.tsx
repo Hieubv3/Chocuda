@@ -75,19 +75,19 @@ export const RealTimeMarketTicker: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-slate-950 text-slate-200 border-b border-slate-800 text-[11px] select-none overflow-hidden py-1.5 px-3">
+    <div className="bg-ink-950 text-ink-200 border-b border-ink-800 text-[11px] select-none overflow-hidden py-1.5 px-3">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
         
         {/* Realtime Clock & Title */}
         <div className="flex items-center space-x-3 shrink-0">
-          <span className="flex items-center gap-1.5 bg-emerald-500/20 text-emerald-400 font-extrabold px-2 py-0.5 rounded border border-emerald-500/40 animate-pulse">
+          <span className="flex items-center gap-1.5 bg-brand-500/20 text-brand-400 font-extrabold px-2 py-0.5 rounded border border-brand-500/40 animate-pulse">
             <Clock className="w-3.5 h-3.5" />
             <span>{timeString || '00:00:00'}</span>
-            <span className="text-[10px] text-slate-400 font-normal border-l border-emerald-500/30 pl-1.5 hidden sm:inline">{dateString}</span>
+            <span className="text-[10px] text-ink-400 font-normal border-l border-brand-500/30 pl-1.5 hidden sm:inline">{dateString}</span>
           </span>
 
-          <span className="text-slate-400 font-bold hidden lg:flex items-center gap-1">
-            <Coins className="w-3.5 h-3.5 text-amber-400" />
+          <span className="text-ink-400 font-bold hidden lg:flex items-center gap-1">
+            <Coins className="w-3.5 h-3.5 text-brand-400" />
             <span>Tỷ Giá Realtime (Chứng Khoán • Coin • Vàng SJC • BĐS Vinhomes):</span>
           </span>
         </div>
@@ -97,14 +97,14 @@ export const RealTimeMarketTicker: React.FC = () => {
           {marketData.map((item) => (
             <div
               key={item.symbol}
-              className="flex items-center space-x-1.5 shrink-0 bg-slate-900/90 border border-slate-800 hover:border-slate-700 px-2.5 py-1 rounded-lg transition"
+              className="flex items-center space-x-1.5 shrink-0 bg-ink-900/90 border border-ink-800 hover:border-ink-700 px-2.5 py-1 rounded-lg transition"
             >
-              <span className="font-extrabold text-slate-300">{item.symbol}:</span>
+              <span className="font-extrabold text-ink-300">{item.symbol}:</span>
               <span className="font-mono font-bold text-white">{item.value}</span>
-              <span className="text-[10px] text-slate-400">{item.unit}</span>
+              <span className="text-[10px] text-ink-400">{item.unit}</span>
               <span
                 className={`flex items-center font-mono font-bold text-[10px] px-1 rounded ${
-                  item.isUp ? 'text-emerald-400 bg-emerald-950/60' : 'text-rose-400 bg-rose-950/60'
+                  item.isUp ? 'text-brand-400 bg-brand-950/60' : 'text-rose-400 bg-rose-950/60'
                 }`}
               >
                 {item.isUp ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}

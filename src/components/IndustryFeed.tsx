@@ -24,46 +24,46 @@ interface IndustryFeedProps {
  */
 export const IndustryFeed: React.FC<IndustryFeedProps> = ({
   title,
-  accent = 'bg-amber-500',
+  accent = 'bg-brand-500',
   items,
   emptyText = 'Chưa có dữ liệu',
   onViewAll,
   onItemClick,
 }) => {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
+    <div className="bg-white dark:bg-ink-800 rounded-2xl border border-ink-200 dark:border-ink-700 shadow-sm overflow-hidden flex flex-col">
       <div className={`px-3.5 py-2 flex items-center justify-between ${accent}`}>
         <span className="font-black text-[11px] uppercase tracking-wider text-white">{title}</span>
         <span className="text-[10px] font-bold bg-black/20 text-white px-1.5 py-0.5 rounded">{items.length}</span>
       </div>
-      <ul className="flex-1 divide-y divide-slate-100 dark:divide-slate-700/60">
+      <ul className="flex-1 divide-y divide-ink-100 dark:divide-ink-700/60">
         {items.length === 0 && (
-          <li className="px-3.5 py-3 text-xs italic text-slate-400">{emptyText}</li>
+          <li className="px-3.5 py-3 text-xs italic text-ink-400">{emptyText}</li>
         )}
         {items.map((item) => (
           <li
             key={item.id}
             onClick={() => onItemClick?.(item)}
-            className="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors"
+            className="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-ink-50 dark:hover:bg-ink-700/40 transition-colors"
           >
             {item.image && (
               <img
                 loading="lazy"
                 src={item.image}
                 alt={item.title}
-                className="w-11 h-11 rounded-lg object-cover shrink-0 bg-slate-100 dark:bg-slate-700"
+                className="w-11 h-11 rounded-lg object-cover shrink-0 bg-ink-100 dark:bg-ink-700"
               />
             )}
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-bold text-slate-800 dark:text-slate-100 line-clamp-2 leading-snug">
+              <p className="text-[11px] font-bold text-ink-800 dark:text-ink-100 line-clamp-2 leading-snug">
                 {item.title}
               </p>
               {item.subtitle && (
-                <p className="text-[10px] text-slate-400 mt-0.5 truncate">{item.subtitle}</p>
+                <p className="text-[10px] text-ink-400 mt-0.5 truncate">{item.subtitle}</p>
               )}
             </div>
             {item.date && (
-              <span className="text-[10px] text-slate-400 shrink-0">{item.date}</span>
+              <span className="text-[10px] text-ink-400 shrink-0">{item.date}</span>
             )}
           </li>
         ))}
@@ -71,7 +71,7 @@ export const IndustryFeed: React.FC<IndustryFeedProps> = ({
       {onViewAll && (
         <button
           onClick={onViewAll}
-          className="w-full py-2 text-[11px] font-bold text-amber-600 dark:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-700/40 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-center gap-1 transition-colors"
+          className="w-full py-2 text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:bg-ink-50 dark:hover:bg-ink-700/40 border-t border-ink-100 dark:border-ink-700/60 flex items-center justify-center gap-1 transition-colors"
         >
           Xem tất cả <ChevronRight className="w-3.5 h-3.5" />
         </button>

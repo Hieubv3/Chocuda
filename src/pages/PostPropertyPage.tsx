@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Upload, CheckCircle2, ShieldCheck, Home, Phone, User, Building2, AlertTriangle, Share2, Globe, MessageSquare, Send, Copy, Check, Lock, Sparkles, Image as ImageIcon, Shield, ShoppingBag, Store, Zap, Loader2 } from 'lucide-react';
 import { 
   PropertyType, 
@@ -276,7 +276,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           setImagesList(prev => [aiImageBase64, ...prev.filter(i => i !== aiImageBase64)]);
         }
 
-        setAiSuccessMessage('🎉 Gemini AI đã đọc ảnh & tự động soạn thảo bài đăng hoàn chỉnh bên dưới! Quý khách có thể kiểm tra và bấm "ĐĂNG TIN MỚI".');
+        setAiSuccessMessage(' Gemini AI đã đọc ảnh & tự động soạn thảo bài đăng hoàn chỉnh bên dưới! Quý khách có thể kiểm tra và bấm "ĐĂNG TIN MỚI".');
       } else {
         throw new Error(result.error || 'Lỗi khi Gemini AI tạo bài viết');
       }
@@ -316,20 +316,20 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
     // Rule Check 0: Must be logged in to post listing
     if (!effectiveUser) {
-      alert('🔒 QUY ĐỊNH HỆ THỐNG: Quý khách không được phép đăng tin khi chưa đăng nhập. Vui lòng đăng nhập hoặc đăng ký tài khoản mới!');
+      alert(' QUY ĐỊNH HỆ THỐNG: Quý khách không được phép đăng tin khi chưa đăng nhập. Vui lòng đăng nhập hoặc đăng ký tài khoản mới!');
       if (onOpenAuth) onOpenAuth();
       return;
     }
 
     // Rule Check 1: Sale must upload AT LEAST 3 images
     if (sellerRole === 'sale' && imagesList.length < 3) {
-      alert('⚠️ QUY ĐỊNH CHO MÔI GIỚI / SALE: Bắt buộc tải lên ít nhất 3 hình ảnh thực tế của bất động sản!');
+      alert(' QUY ĐỊNH CHO MÔI GIỚI / SALE: Bắt buộc tải lên ít nhất 3 hình ảnh thực tế của bất động sản!');
       return;
     }
 
     // Rule Check 2: Owner must upload Sổ Đỏ
     if (sellerRole === 'owner' && !soDoImage) {
-      alert('⚠️ QUY ĐỊNH CHỦ NHÀ: Vui lòng tải lên ảnh Sổ Đỏ / Giấy chứng nhận quyền sử dụng đất!');
+      alert(' QUY ĐỊNH CHỦ NHÀ: Vui lòng tải lên ảnh Sổ Đỏ / Giấy chứng nhận quyền sử dụng đất!');
       return;
     }
 
@@ -501,7 +501,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   const handleServiceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      alert('🔒 QUY ĐỊNH HỆ THỐNG: Quý khách cần đăng nhập để đăng bài sản phẩm / dịch vụ!');
+      alert(' QUY ĐỊNH HỆ THỐNG: Quý khách cần đăng nhập để đăng bài sản phẩm / dịch vụ!');
       if (onOpenAuth) onOpenAuth();
       return;
     }
@@ -584,75 +584,75 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       <div className="text-center space-y-2">
-        <span className="text-xs font-black uppercase text-amber-500 tracking-wider">KÊNH KẾT NỐI CHÍNH CHỦ CƯ DÂN VINHOMES</span>
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+        <span className="text-xs font-black uppercase text-brand-500 tracking-wider">KÊNH KẾT NỐI CHÍNH CHỦ CƯ DÂN VINHOMES</span>
+        <h1 className="text-2xl sm:text-3xl font-black text-ink-900 dark:text-white">
           {postMode === 'real_estate' 
             ? 'ĐĂNG TIN BÁN / CHO THUÊ BẤT ĐỘNG SẢN' 
             : postMode === 'service' 
             ? 'ĐĂNG SẢN PHẨM & DỊCH VỤ CƯ DÂN' 
             : 'CẬP NHẬT & ĐỒNG BỘ HÀNG HÓA TỪ KIOTVIET'}
         </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-xs text-ink-500 dark:text-ink-400 max-w-2xl mx-auto leading-relaxed">
           Nền tảng trao đổi BĐS chính chủ, đăng quảng bá dịch vụ cư dân và tự động đồng bộ kho hàng hóa từ KiotViet lên Chợ Cư Dân 24H. Người dùng tự do nhập số điện thoại liên hệ chính chủ của mình.
         </p>
       </div>
 
       {/* POST MODE SELECTOR — ô vuông icon trên di động */}
-      <div className="grid grid-cols-3 gap-2 sm:flex sm:p-1.5 sm:bg-slate-200 dark:sm:bg-slate-800 sm:rounded-2xl max-w-2xl mx-auto sm:shadow-inner sm:border border-slate-300 dark:border-slate-700">
+      <div className="grid grid-cols-3 gap-2 sm:flex sm:p-1.5 sm:bg-ink-200 dark:sm:bg-ink-800 sm:rounded-2xl max-w-2xl mx-auto sm:shadow-inner sm:border border-ink-300 dark:border-ink-700">
         <button
           type="button"
           onClick={() => setPostMode('real_estate')}
-          className={`flex-1 py-2.5 sm:py-3 px-2 rounded-xl font-black text-[11px] sm:text-xs transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border sm:border-0 border-slate-300 dark:border-slate-700 ${
+          className={`flex-1 py-2.5 sm:py-3 px-2 rounded-xl font-black text-[11px] sm:text-xs transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border sm:border-0 border-ink-300 dark:border-ink-700 ${
             postMode === 'real_estate'
-              ? 'bg-amber-500 text-slate-950 shadow-md scale-[1.02]'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-brand-500 text-ink-950 shadow-md scale-[1.02]'
+              : 'text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-white'
           }`}
         >
           <Building2 className="w-4 h-4 shrink-0" />
-          <span>🏢 Đăng BĐS</span>
+          <span> Đăng BĐS</span>
         </button>
 
         <button
           type="button"
           onClick={() => setPostMode('service')}
-          className={`flex-1 py-2.5 sm:py-3 px-2 rounded-xl font-black text-[11px] sm:text-xs transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border sm:border-0 border-slate-300 dark:border-slate-700 ${
+          className={`flex-1 py-2.5 sm:py-3 px-2 rounded-xl font-black text-[11px] sm:text-xs transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border sm:border-0 border-ink-300 dark:border-ink-700 ${
             postMode === 'service'
-              ? 'bg-amber-500 text-slate-950 shadow-md scale-[1.02]'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-brand-500 text-ink-950 shadow-md scale-[1.02]'
+              : 'text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-white'
           }`}
         >
           <ShoppingBag className="w-4 h-4 shrink-0" />
-          <span>🛍️ Đăng Dịch Vụ</span>
+          <span> Đăng Dịch Vụ</span>
         </button>
 
         <button
           type="button"
           onClick={() => setPostMode('kiotviet')}
-          className={`flex-1 py-2.5 sm:py-3 px-2 rounded-xl font-black text-[11px] sm:text-xs transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border sm:border-0 border-slate-300 dark:border-slate-700 ${
+          className={`flex-1 py-2.5 sm:py-3 px-2 rounded-xl font-black text-[11px] sm:text-xs transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border sm:border-0 border-ink-300 dark:border-ink-700 ${
             postMode === 'kiotviet'
-              ? 'bg-amber-500 text-slate-950 shadow-md scale-[1.02]'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-brand-500 text-ink-950 shadow-md scale-[1.02]'
+              : 'text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-white'
           }`}
         >
-          <Store className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-          <span>📦 Đồng Bộ KiotViet</span>
+          <Store className="w-4 h-4 shrink-0 text-brand-600 dark:text-brand-400" />
+          <span> Đồng Bộ KiotViet</span>
         </button>
       </div>
 
       {/* LOGIN PROTECTION GATE: REQUIRE LOGGED-IN RESIDENT ACCOUNT TO VIEW AND OPERATE FORMS */}
       {!effectiveUser ? (
-        <div className="p-8 sm:p-12 bg-slate-900 border-2 border-amber-500 rounded-3xl text-center space-y-6 shadow-2xl text-white">
-          <div className="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center font-black text-3xl mx-auto border border-amber-500/30">
-            🔒
+        <div className="p-8 sm:p-12 bg-ink-900 border-2 border-brand-500 rounded-3xl text-center space-y-6 shadow-2xl text-white">
+          <div className="w-16 h-16 bg-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center font-black text-3xl mx-auto border border-brand-500/30">
+            
           </div>
           <div className="space-y-2 max-w-xl mx-auto">
-            <span className="px-3.5 py-1 bg-amber-500/20 text-amber-400 font-extrabold text-[11px] rounded-full uppercase tracking-wider border border-amber-500/30">
+            <span className="px-3.5 py-1 bg-brand-500/20 text-brand-400 font-extrabold text-[11px] rounded-full uppercase tracking-wider border border-brand-500/30">
               YÊU CẦU ĐĂNG NHẬP CƯ DÂN VINHOMES
             </span>
             <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
               BẠN CẦN ĐĂNG NHẬP ĐỂ SỬ DỤNG TÍNH NĂNG NÀY
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-ink-300 leading-relaxed font-normal">
               Quy định Chợ Cư Dân 24H: Để đảm bảo an toàn & minh bạch, quý khách bắt buộc phải đăng nhập tài khoản cư dân mới có quyền xem và thực hiện các thao tác <b>Đăng Bán / Cho Thuê BĐS</b>, <b>Đăng Sản Phẩm & Dịch Vụ Cư Dân</b> và <b>Tự Động Đồng Bộ Kho Hàng KiotViet</b>.
             </p>
           </div>
@@ -660,27 +660,27 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
             <button
               type="button"
               onClick={onOpenAuth}
-              className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:-translate-y-0.5 uppercase tracking-wider cursor-pointer"
+              className="px-8 py-4 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:-translate-y-0.5 uppercase tracking-wider cursor-pointer"
             >
-              🔑 ĐĂNG NHẬP / ĐĂNG KÝ XÁC THỰC NGAY
+               ĐĂNG NHẬP / ĐĂNG KÝ XÁC THỰC NGAY
             </button>
           </div>
         </div>
       ) : submitted ? (
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-slate-700 text-center space-y-6 shadow-xl">
-          <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
+        <div className="bg-white dark:bg-ink-800 rounded-3xl p-8 sm:p-12 border border-ink-200 dark:border-ink-700 text-center space-y-6 shadow-xl">
+          <div className="w-16 h-16 bg-brand-100 dark:bg-brand-950 text-brand-500 rounded-full flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white">ĐĂNG TIN THÀNH CÔNG!</h2>
-            <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
+            <h2 className="text-2xl font-black text-ink-900 dark:text-white">ĐĂNG TIN THÀNH CÔNG!</h2>
+            <p className="text-xs text-ink-600 dark:text-ink-300 max-w-md mx-auto leading-relaxed">
               Hệ thống đã ghi nhận bất động sản của bạn. Ban quản trị Chợ Cư Dân 24H sẽ xác minh thông tin chính chủ và duyệt hiển thị.
             </p>
           </div>
 
           {/* Social Share Box */}
-          <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-lg mx-auto space-y-3">
-            <div className="flex items-center justify-center space-x-2 text-amber-500 font-bold text-xs">
+          <div className="p-6 bg-ink-50 dark:bg-ink-900 rounded-2xl border border-ink-200 dark:border-ink-700 max-w-lg mx-auto space-y-3">
+            <div className="flex items-center justify-center space-x-2 text-brand-500 font-bold text-xs">
               <Share2 className="w-4 h-4" />
               <span>CHIA SẺ NGAY LÊN MẠNG XÃ HỘI ĐỂ TIẾP CẬN KHÁCH HÀNG</span>
             </div>
@@ -712,9 +712,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               </a>
               <button
                 onClick={handleCopyShareLink}
-                className="py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-xl font-bold text-[11px] flex items-center justify-center gap-1.5 transition"
+                className="py-2.5 px-3 bg-ink-800 hover:bg-ink-700 text-brand-400 rounded-xl font-bold text-[11px] flex items-center justify-center gap-1.5 transition"
               >
-                {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                {copiedLink ? <Check className="w-3.5 h-3.5 text-brand-400" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedLink ? 'Đã Chép' : 'Copy Link'}
               </button>
             </div>
@@ -726,7 +726,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               setTitle('');
               setDescription('');
             }}
-            className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl transition shadow"
+            className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black text-xs rounded-xl transition shadow"
           >
             Đăng Thêm Căn Khác
           </button>
@@ -734,16 +734,16 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
       ) : postMode === 'service' ? (
         /* PRODUCT & SERVICE POST FORM */
         serviceSubmitted ? (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-slate-700 text-center space-y-6 shadow-xl">
-            <div className="w-16 h-16 bg-amber-100 dark:bg-amber-950 text-amber-500 rounded-full flex items-center justify-center mx-auto ring-8 ring-amber-500/10">
+          <div className="bg-white dark:bg-ink-800 rounded-3xl p-8 sm:p-12 border border-ink-200 dark:border-ink-700 text-center space-y-6 shadow-xl">
+            <div className="w-16 h-16 bg-brand-100 dark:bg-brand-950 text-brand-500 rounded-full flex items-center justify-center mx-auto ring-8 ring-brand-500/10">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div className="space-y-2.5">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-xs font-black">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-full text-xs font-black">
                 <span>⏳ ĐANG CHỜ ADMIN PHÊ DUYỆT</span>
               </div>
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white">ĐÃ GỬI BÀI THÀNH CÔNG!</h2>
-              <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
+              <h2 className="text-2xl font-black text-ink-900 dark:text-white">ĐÃ GỬI BÀI THÀNH CÔNG!</h2>
+              <p className="text-xs text-ink-600 dark:text-ink-300 max-w-md mx-auto leading-relaxed">
                 Bài đăng sản phẩm / dịch vụ cư dân của bạn đã được lưu vào Gian Hàng của bạn. Bài viết sẽ chính thức xuất hiện công khai trên toàn bộ hệ thống Chợ Cư Dân 24H ngay sau khi Ban Quản Trị duyệt nội dung.
               </p>
             </div>
@@ -753,25 +753,25 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 setServiceTitle('');
                 setServiceDesc('');
               }}
-              className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl transition shadow cursor-pointer"
+              className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black text-xs rounded-xl transition shadow cursor-pointer"
             >
               Đăng Thêm Bài Khác
             </button>
           </div>
         ) : (
-          <form onSubmit={handleServiceSubmit} className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-xl space-y-6 text-xs font-bold text-slate-700 dark:text-slate-300">
-            <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-              <h3 className="text-sm sm:text-base font-black text-amber-500 uppercase tracking-wide flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-amber-500" />
+          <form onSubmit={handleServiceSubmit} className="bg-white dark:bg-ink-800 rounded-3xl p-6 sm:p-8 border border-ink-200 dark:border-ink-700 shadow-xl space-y-6 text-xs font-bold text-ink-700 dark:text-ink-300">
+            <div className="border-b border-ink-200 dark:border-ink-700 pb-4">
+              <h3 className="text-sm sm:text-base font-black text-brand-500 uppercase tracking-wide flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-brand-500" />
                 ĐĂNG BÀI SẢN PHẨM & DỊCH VỤ CƯ DÂN
               </h3>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
+              <p className="text-[11px] text-ink-500 dark:text-ink-400 font-medium mt-1">
                 Quảng bá gian hàng, món ăn, dịch vụ sửa chữa, vận tải, thang máy hoặc lớp học nội khu.
               </p>
             </div>
 
             {/* Auto-fill interactive checkbox banner */}
-            <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-2">
+            <div className="p-4 bg-brand-500/10 border border-brand-500/30 rounded-2xl space-y-2">
               <label className="flex items-start gap-3 cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -784,13 +784,13 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                       if (user.phone) setServicePhoneInput(user.phone);
                     }
                   }}
-                  className="w-5 h-5 rounded border-amber-500 text-amber-500 focus:ring-amber-500 mt-0.5 shrink-0"
+                  className="w-5 h-5 rounded border-brand-500 text-brand-500 focus:ring-brand-500 mt-0.5 shrink-0"
                 />
                 <div>
-                  <span className="font-extrabold text-xs text-amber-600 dark:text-amber-400 block uppercase">
-                    ☑ Tự động lấy thông tin cá nhân từ tài khoản (Họ tên, SĐT, Căn hộ)
+                  <span className="font-extrabold text-xs text-brand-600 dark:text-brand-400 block uppercase">
+                     Tự động lấy thông tin cá nhân từ tài khoản (Họ tên, SĐT, Căn hộ)
                   </span>
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium mt-0.5">
+                  <p className="text-[11px] text-ink-600 dark:text-ink-300 font-medium mt-0.5">
                     {autoUseProfileInfo 
                       ? `Đã tích chọn (Đồng ý): Hệ thống tự động điền Tên "${serviceContactName || user?.name || 'Cư dân'}" & SĐT "${servicePhoneInput || user?.phone || 'Chưa cập nhật'}" từ hồ sơ tài khoản.` 
                       : 'Bỏ tích chọn (Không đồng ý): Bạn có thể tự nhập Họ tên chủ cửa hàng & SĐT liên hệ mới hiển thị bên dưới.'}
@@ -801,7 +801,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                   Tên Sản Phẩm / Dịch Vụ (*)
                 </label>
                 <input
@@ -810,40 +810,40 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   value={serviceTitle}
                   onChange={(e) => setServiceTitle(e.target.value)}
                   placeholder="VD: Bún Chả Hà Nội / Lắp Thang Máy HomeLift / Taxi Điện Nội Khu..."
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                   Danh Mục Dịch Vụ (*)
                 </label>
                 <select
                   value={serviceCategory}
                   onChange={(e) => setServiceCategory(e.target.value)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
                 >
-                  <option value="Quán Ăn & Nhà Hàng Cư Dân">🍲 Quán Ăn & Nhà Hàng Cư Dân</option>
-                  <option value="Chợ Cư Dân / Thực Phẩm & Hải Sản">🛒 Chợ Cư Dân / Thực Phẩm & Hải Sản</option>
-                  <option value="Sửa Chữa, Thi Công & Nội Thất">🛠️ Sửa Chữa, Thi Công & Nội Thất</option>
-                  <option value="Lắp Đặt & Bảo Trì Thang Máy">🛗 Lắp Đặt & Bảo Trì Thang Máy</option>
-                  <option value="Vận Tải Nội Khu & Xe Điện 24/7">🚗 Vận Tải Nội Khu & Xe Điện 24/7</option>
-                  <option value="Spa, Hair & Làm Đẹp">💇 Spa, Hair & Làm Đẹp Cư Dân</option>
-                  <option value="Chăm Sóc Thú Cưng">🐶 Chăm Sóc Thú Cưng</option>
-                  <option value="Gia Sư & Lớp Học Năng Khiếu">🎓 Gia Sư & Lớp Học Năng Khiếu</option>
+                  <option value="Quán Ăn & Nhà Hàng Cư Dân"> Quán Ăn & Nhà Hàng Cư Dân</option>
+                  <option value="Chợ Cư Dân / Thực Phẩm & Hải Sản"> Chợ Cư Dân / Thực Phẩm & Hải Sản</option>
+                  <option value="Sửa Chữa, Thi Công & Nội Thất"> Sửa Chữa, Thi Công & Nội Thất</option>
+                  <option value="Lắp Đặt & Bảo Trì Thang Máy"> Lắp Đặt & Bảo Trì Thang Máy</option>
+                  <option value="Vận Tải Nội Khu & Xe Điện 24/7"> Vận Tải Nội Khu & Xe Điện 24/7</option>
+                  <option value="Spa, Hair & Làm Đẹp"> Spa, Hair & Làm Đẹp Cư Dân</option>
+                  <option value="Chăm Sóc Thú Cưng"> Chăm Sóc Thú Cưng</option>
+                  <option value="Gia Sư & Lớp Học Năng Khiếu"> Gia Sư & Lớp Học Năng Khiếu</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                   Dự Án Khu Đô Thị Phục Vụ (*)
                 </label>
                 <select
                   value={serviceProject}
                   onChange={(e) => setServiceProject(e.target.value)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
                 >
                   <option value="vinhomes-ocean-park-2">Vinhomes Ocean Park 2</option>
                   <option value="vinhomes-ocean-park-3">Vinhomes Ocean Park 3</option>
@@ -857,7 +857,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               </div>
 
               <div>
-                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                   Giá Bán / Phí Dịch Vụ Tham Khảo (*)
                 </label>
                 <input
@@ -866,14 +866,14 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   value={servicePrice}
                   onChange={(e) => setServicePrice(e.target.value)}
                   placeholder="VD: 35.000đ / 200.000đ/lần / Thỏa thuận..."
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                   Họ Tên Chủ Cửa Hàng / Chủ Dịch Vụ (*):
                 </label>
                 <input
@@ -881,12 +881,12 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   required
                   value={serviceContactName}
                   onChange={(e) => setServiceContactName(e.target.value)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                   Số Điện Thoại / Zalo Liên Hệ (*):
                 </label>
                 <input
@@ -895,13 +895,13 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   value={servicePhoneInput}
                   onChange={(e) => setServicePhoneInput(e.target.value)}
                   placeholder="Nhập SĐT/Zalo của bạn (VD: 0912345678)"
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+              <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                 Mô Tả Chi Tiết Sản Phẩm & Dịch Vụ (*)
               </label>
               <textarea
@@ -910,18 +910,18 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 value={serviceDesc}
                 onChange={(e) => setServiceDesc(e.target.value)}
                 placeholder="Mô tả ưu đãi, thực đơn, giờ phục vụ, thông số kỹ thuật hoặc quy trình thi công..."
-                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
               />
             </div>
 
             <div>
-              <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+              <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                 Ảnh Sản Phẩm / Bảng Giá / Cửa Hàng (Tải từ Album/Camera)
               </label>
               <div className="flex flex-col sm:flex-row gap-2">
-                <label className="px-4 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition shrink-0">
+                <label className="px-4 py-3 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition shrink-0">
                   <Upload className="w-4 h-4 stroke-[2.5]" />
-                  <span>📸 CHỌN / CHỤP ẢNH TỪ THIẾT BỊ</span>
+                  <span> CHỌN / CHỤP ẢNH TỪ THIẾT BỊ</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -956,7 +956,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 </label>
               </div>
               {serviceImg && (
-                <div className="relative w-32 h-24 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 mt-2 group">
+                <div className="relative w-32 h-24 rounded-xl overflow-hidden border border-ink-300 dark:border-ink-700 mt-2 group">
                   <img loading="lazy" src={serviceImg} alt="Preview" className="w-full h-full object-cover" />
                   <button
                     type="button"
@@ -964,7 +964,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     className="absolute top-1 right-1 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer"
                     title="Xóa ảnh"
                   >
-                    ✕
+                    
                   </button>
                 </div>
               )}
@@ -974,7 +974,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
             <button
               type="submit"
               disabled={serviceLoading}
-              className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-400 text-slate-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer"
+              className="w-full py-4 bg-brand-500 hover:bg-brand-600 disabled:bg-ink-400 text-ink-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer"
             >
               {serviceLoading ? 'Đang gửi...' : 'Đăng bài'}
             </button>
@@ -982,13 +982,13 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
         )
       ) : postMode === 'kiotviet' ? (
         /* KIOTVIET IMPORT & GOODS SYNC PANEL */
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-xl space-y-6 text-xs font-bold text-slate-700 dark:text-slate-300">
-          <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-            <h3 className="text-sm sm:text-base font-black text-amber-500 uppercase tracking-wide flex items-center gap-2">
-              <Store className="w-5 h-5 text-amber-500" />
+        <div className="bg-white dark:bg-ink-800 rounded-3xl p-6 sm:p-8 border border-ink-200 dark:border-ink-700 shadow-xl space-y-6 text-xs font-bold text-ink-700 dark:text-ink-300">
+          <div className="border-b border-ink-200 dark:border-ink-700 pb-4">
+            <h3 className="text-sm sm:text-base font-black text-brand-500 uppercase tracking-wide flex items-center gap-2">
+              <Store className="w-5 h-5 text-brand-500" />
               CẬP NHẬT & ĐỒNG BỘ HÀNG HÓA TỪ KIOTVIET
             </h3>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
+            <p className="text-[11px] text-ink-500 dark:text-ink-400 font-medium mt-1">
               Nhập nhanh danh mục sản phẩm, tồn kho và giá bán từ file xuất KiotViet (.xlsx / .csv) hoặc kết nối qua API Store KiotViet.
             </p>
           </div>
@@ -1000,16 +1000,16 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               onClick={() => setKvSyncMethod('file')}
               className={`p-4 rounded-2xl border text-left transition flex items-center justify-between cursor-pointer ${
                 kvSyncMethod === 'file'
-                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-300 font-black'
-                  : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
+                  ? 'border-brand-500 bg-brand-500/10 text-brand-950 dark:text-brand-300 font-black'
+                  : 'border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-900 text-ink-600 dark:text-ink-400'
               }`}
             >
               <div>
-                <span className="block text-xs font-black uppercase">📁 1. Tải File Excel Xuất Từ KiotViet</span>
-                <span className="block text-[10px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">Tự động đọc danh mục sản phẩm từ file Excel/CSV</span>
+                <span className="block text-xs font-black uppercase"> 1. Tải File Excel Xuất Từ KiotViet</span>
+                <span className="block text-[10px] text-ink-500 dark:text-ink-400 font-normal mt-0.5">Tự động đọc danh mục sản phẩm từ file Excel/CSV</span>
               </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${kvSyncMethod === 'file' ? 'border-emerald-500 bg-emerald-500 text-slate-950 font-black text-[10px]' : 'border-slate-400'}`}>
-                {kvSyncMethod === 'file' ? '✓' : ''}
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${kvSyncMethod === 'file' ? 'border-brand-500 bg-brand-500 text-ink-950 font-black text-[10px]' : 'border-ink-400'}`}>
+                {kvSyncMethod === 'file' ? '' : ''}
               </div>
             </button>
 
@@ -1018,30 +1018,30 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               onClick={() => setKvSyncMethod('api')}
               className={`p-4 rounded-2xl border text-left transition flex items-center justify-between cursor-pointer ${
                 kvSyncMethod === 'api'
-                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-300 font-black'
-                  : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
+                  ? 'border-brand-500 bg-brand-500/10 text-brand-950 dark:text-brand-300 font-black'
+                  : 'border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-900 text-ink-600 dark:text-ink-400'
               }`}
             >
               <div>
-                <span className="block text-xs font-black uppercase">🔌 2. Kết Nối Mã Cửa Hàng KiotViet API</span>
-                <span className="block text-[10px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">Đồng bộ trực tiếp qua Client ID & Secret Token KiotViet</span>
+                <span className="block text-xs font-black uppercase"> 2. Kết Nối Mã Cửa Hàng KiotViet API</span>
+                <span className="block text-[10px] text-ink-500 dark:text-ink-400 font-normal mt-0.5">Đồng bộ trực tiếp qua Client ID & Secret Token KiotViet</span>
               </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${kvSyncMethod === 'api' ? 'border-emerald-500 bg-emerald-500 text-slate-950 font-black text-[10px]' : 'border-slate-400'}`}>
-                {kvSyncMethod === 'api' ? '✓' : ''}
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${kvSyncMethod === 'api' ? 'border-brand-500 bg-brand-500 text-ink-950 font-black text-[10px]' : 'border-ink-400'}`}>
+                {kvSyncMethod === 'api' ? '' : ''}
               </div>
             </button>
           </div>
 
           {/* INPUT FORM DEPENDING ON METHOD */}
           {kvSyncMethod === 'file' ? (
-            <div className="p-6 border-2 border-dashed border-emerald-500/40 rounded-2xl bg-emerald-500/5 text-center space-y-3">
-              <Upload className="w-8 h-8 text-emerald-500 mx-auto" />
+            <div className="p-6 border-2 border-dashed border-brand-500/40 rounded-2xl bg-brand-500/5 text-center space-y-3">
+              <Upload className="w-8 h-8 text-brand-500 mx-auto" />
               <div>
-                <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase">Tải File Danh Mục Hàng Hóa KiotViet (.xlsx, .csv)</h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">Kéo thả file xuất KiotViet vào đây hoặc nhấn nút để chọn từ máy tính / điện thoại</p>
+                <h4 className="text-xs font-black text-ink-900 dark:text-white uppercase">Tải File Danh Mục Hàng Hóa KiotViet (.xlsx, .csv)</h4>
+                <p className="text-[11px] text-ink-500 dark:text-ink-400 font-normal mt-0.5">Kéo thả file xuất KiotViet vào đây hoặc nhấn nút để chọn từ máy tính / điện thoại</p>
               </div>
-              <label className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow cursor-pointer transition">
-                <span>📁 CHỌN FILE KIOTVIET</span>
+              <label className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-black text-xs rounded-xl shadow cursor-pointer transition">
+                <span> CHỌN FILE KIOTVIET</span>
                 <input
                   type="file"
                   accept=".xlsx,.csv,.xls"
@@ -1062,26 +1062,26 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               </label>
             </div>
           ) : (
-            <div className="space-y-3 p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div className="space-y-3 p-4 bg-ink-50 dark:bg-ink-900/60 rounded-2xl border border-ink-200 dark:border-ink-700">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">Tên Miền Cửa Hàng KiotViet (*):</label>
+                  <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">Tên Miền Cửa Hàng KiotViet (*):</label>
                   <input
                     type="text"
                     value={kvDomain}
                     onChange={(e) => setKvDomain(e.target.value)}
                     placeholder="cuahangvinhomes.kiotviet.vn"
-                    className="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl font-mono text-xs"
+                    className="w-full p-2.5 bg-white dark:bg-ink-800 border border-ink-300 dark:border-ink-600 rounded-xl font-mono text-xs"
                   />
                 </div>
                 <div>
-                  <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">Client ID / API Key KiotViet:</label>
+                  <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">Client ID / API Key KiotViet:</label>
                   <input
                     type="password"
                     value={kvClientId}
                     onChange={(e) => setKvClientId(e.target.value)}
                     placeholder="Nhập Client ID KiotViet..."
-                    className="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl font-mono text-xs"
+                    className="w-full p-2.5 bg-white dark:bg-ink-800 border border-ink-300 dark:border-ink-600 rounded-xl font-mono text-xs"
                   />
                 </div>
               </div>
@@ -1099,9 +1099,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   setKvProducts(extractedFromApi);
                   alert('Đã kết nối thành công API KiotViet! Đã tải 2 sản phẩm thực tế từ cửa hàng của bạn.');
                 }}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition cursor-pointer"
+                className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow transition cursor-pointer"
               >
-                📥 TẢI DANH MỤC HÀNG HÓA VIA KIOTVIET API
+                 TẢI DANH MỤC HÀNG HÓA VIA KIOTVIET API
               </button>
             </div>
           )}
@@ -1109,15 +1109,15 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           {/* EXTRACTED PRODUCTS PREVIEW TABLE */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <h4 className="text-xs font-black text-ink-900 dark:text-white uppercase flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-brand-500" />
                 <span>DANH SÁCH {kvProducts.length} SẢN PHẨM SẴN SÀNG ĐỒNG BỘ LÊN CHỢ CƯ DÂN</span>
               </h4>
               {kvProducts.length > 0 && (
                 <button
                   type="button"
                   onClick={() => setKvProducts(prev => prev.map(p => ({ ...p, selected: !prev.every(x => x.selected) })))}
-                  className="text-[11px] text-amber-500 font-bold hover:underline cursor-pointer"
+                  className="text-[11px] text-brand-500 font-bold hover:underline cursor-pointer"
                 >
                   {kvProducts.every(x => x.selected) ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
                 </button>
@@ -1125,19 +1125,19 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
             </div>
 
             {kvProducts.length === 0 ? (
-              <div className="p-8 text-center bg-slate-50 dark:bg-slate-900/50 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 space-y-2">
-                <Store className="w-10 h-10 text-slate-400 mx-auto" />
-                <h4 className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">
+              <div className="p-8 text-center bg-ink-50 dark:bg-ink-900/50 rounded-2xl border-2 border-dashed border-ink-300 dark:border-ink-700 space-y-2">
+                <Store className="w-10 h-10 text-ink-400 mx-auto" />
+                <h4 className="text-xs font-black text-ink-700 dark:text-ink-300 uppercase">
                   Chưa Có Sản Phẩm KiotViet Để Đồng Bộ
                 </h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                <p className="text-[11px] text-ink-500 dark:text-ink-400 max-w-md mx-auto">
                   Vui lòng chọn file Excel KiotViet (.xlsx, .csv) ở trên hoặc kết nối API KiotViet để hệ thống tự động tải danh mục hàng hóa thực tế của quý khách.
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-2xl">
+              <div className="overflow-x-auto border border-ink-200 dark:border-ink-700 rounded-2xl">
                 <table className="w-full text-left text-[11px]">
-                  <thead className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 uppercase font-black border-b border-slate-200 dark:border-slate-700">
+                  <thead className="bg-ink-100 dark:bg-ink-900 text-ink-600 dark:text-ink-400 uppercase font-black border-b border-ink-200 dark:border-ink-700">
                     <tr>
                       <th className="p-3 w-10 text-center">Chọn</th>
                       <th className="p-3">Mã SP</th>
@@ -1147,22 +1147,22 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                       <th className="p-3 text-center">Tồn Kho</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200 dark:divide-slate-700/60">
+                  <tbody className="divide-y divide-ink-200 dark:divide-ink-700/60">
                     {kvProducts.map((p, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition">
+                      <tr key={idx} className="hover:bg-ink-50 dark:hover:bg-ink-700/40 transition">
                         <td className="p-3 text-center">
                           <input
                             type="checkbox"
                             checked={p.selected}
                             onChange={() => setKvProducts(prev => prev.map((item, i) => i === idx ? { ...item, selected: !item.selected } : item))}
-                            className="w-4 h-4 accent-amber-500 cursor-pointer"
+                            className="w-4 h-4 accent-brand-500 cursor-pointer"
                           />
                         </td>
-                        <td className="p-3 font-mono font-bold text-slate-500">{p.code}</td>
-                        <td className="p-3 font-bold text-slate-900 dark:text-white">{p.name}</td>
-                        <td className="p-3 text-amber-500 font-bold">{p.category}</td>
-                        <td className="p-3 font-black text-emerald-600 dark:text-emerald-400">{p.price}</td>
-                        <td className="p-3 text-center font-bold text-slate-400">{p.stock}</td>
+                        <td className="p-3 font-mono font-bold text-ink-500">{p.code}</td>
+                        <td className="p-3 font-bold text-ink-900 dark:text-white">{p.name}</td>
+                        <td className="p-3 text-brand-500 font-bold">{p.category}</td>
+                        <td className="p-3 font-black text-brand-600 dark:text-brand-400">{p.price}</td>
+                        <td className="p-3 text-center font-bold text-ink-400">{p.stock}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1173,11 +1173,11 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
           {/* SYNC SUCCESS NOTIFICATION */}
           {kvSyncedSuccess && (
-            <div className="p-4 bg-emerald-500/15 border-2 border-emerald-500/50 rounded-2xl flex items-center justify-between text-emerald-950 dark:text-emerald-300 space-x-2 shadow-md">
+            <div className="p-4 bg-brand-500/15 border-2 border-brand-500/50 rounded-2xl flex items-center justify-between text-brand-950 dark:text-brand-300 space-x-2 shadow-md">
               <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-brand-500 shrink-0" />
                 <span className="font-extrabold text-xs">
-                  🎉 CHÚC MỪNG! ĐÃ ĐỒNG BỘ THÀNH CÔNG {kvProducts.filter(p => p.selected).length} SẢN PHẨM TỪ KIOTVIET LÊN GIAN HÀNG CƯ DÂN 24H!
+                   CHÚC MỪNG! ĐÃ ĐỒNG BỘ THÀNH CÔNG {kvProducts.filter(p => p.selected).length} SẢN PHẨM TỪ KIOTVIET LÊN GIAN HÀNG CƯ DÂN 24H!
                 </span>
               </div>
             </div>
@@ -1195,34 +1195,34 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 if (onPropertySubmitted) onPropertySubmitted();
               }, 1200);
             }}
-            className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-400 disabled:cursor-not-allowed text-slate-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer flex items-center justify-center gap-2"
+            className="w-full py-4 bg-brand-500 hover:bg-brand-400 disabled:bg-ink-400 disabled:cursor-not-allowed text-ink-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer flex items-center justify-center gap-2"
           >
             {kvSyncing ? (
               <span>⏳ ĐANG ĐỒNG BỘ DỮ LIỆU KIOTVIET...</span>
             ) : (
               <>
                 <Store className="w-5 h-5" />
-                <span>🚀 ĐỒNG BỘ {kvProducts.filter(p => p.selected).length} SẢN PHẨM KIOTVIET LÊN CHỢ CƯ DÂN 24H</span>
+                <span> ĐỒNG BỘ {kvProducts.filter(p => p.selected).length} SẢN PHẨM KIOTVIET LÊN CHỢ CƯ DÂN 24H</span>
               </>
             )}
           </button>
         </div>
       ) : (
         <div className="space-y-6">
-          <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-xl space-y-6 text-xs font-bold text-slate-700 dark:text-slate-300">
+          <form onSubmit={handleSubmit} className="bg-white dark:bg-ink-800 rounded-3xl p-6 sm:p-8 border border-ink-200 dark:border-ink-700 shadow-xl space-y-6 text-xs font-bold text-ink-700 dark:text-ink-300">
           
           {/* AI ASSISTANT CARD: VIẾT BÀI TỪ ẢNH & TỰ ĐỘNG ĐIỀN FORM */}
-          <div className="p-5 bg-gradient-to-r from-emerald-950 via-teal-900 to-slate-900 border-2 border-emerald-500/50 rounded-2xl text-white space-y-3 shadow-lg">
+          <div className="p-5 bg-gradient-to-r from-brand-950 via-teal-900 to-ink-900 border-2 border-brand-500/50 rounded-2xl text-white space-y-3 shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className="p-2 bg-amber-400 text-slate-950 rounded-xl font-black">
+                <div className="p-2 bg-brand-400 text-ink-950 rounded-xl font-black">
                   <Sparkles className="w-5 h-5 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="font-black text-sm uppercase tracking-wide text-amber-300 flex items-center gap-1.5">
-                    ✨ HỖ TRỢ VIẾT BÀI TỪ ẢNH BẤT ĐỘNG SẢN BẰNG GEMINI AI
+                  <h3 className="font-black text-sm uppercase tracking-wide text-brand-300 flex items-center gap-1.5">
+                     HỖ TRỢ VIẾT BÀI TỪ ẢNH BẤT ĐỘNG SẢN BẰNG GEMINI AI
                   </h3>
-                  <p className="text-[11px] text-emerald-200 font-normal">
+                  <p className="text-[11px] text-brand-200 font-normal">
                     Tải 1 ảnh nhà/sổ đỏ & nhập câu lệnh ngắn, AI sẽ tự phân tích để soạn bài đăng & tự điền thông số vào form bên dưới.
                   </p>
                 </div>
@@ -1240,10 +1240,10 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               <button
                 type="button"
                 onClick={() => aiFileInputRef.current?.click()}
-                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/40 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition shrink-0"
+                className="px-4 py-2.5 bg-ink-800 hover:bg-ink-700 text-brand-300 border border-brand-500/40 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition shrink-0"
               >
-                <ImageIcon className="w-4 h-4 text-amber-400" />
-                <span>{aiImageBase64 ? '✓ Đã Tải Ảnh (Đổi ảnh khác)' : '📷 Tải Ảnh BĐS Để AI Đọc'}</span>
+                <ImageIcon className="w-4 h-4 text-brand-400" />
+                <span>{aiImageBase64 ? ' Đã Tải Ảnh (Đổi ảnh khác)' : ' Tải Ảnh BĐS Để AI Đọc'}</span>
               </button>
 
               <input
@@ -1251,32 +1251,32 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 value={aiPromptInput}
                 onChange={(e) => setAiPromptInput(e.target.value)}
                 placeholder="Ví dụ: Bán căn Chà Là 80m2 8.5 tỷ 4PN, nội thất cao cấp..."
-                className="flex-1 px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-400 font-medium"
+                className="flex-1 px-3.5 py-2.5 bg-ink-800/90 border border-ink-700 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium"
               />
 
               <button
                 type="button"
                 onClick={handleRunAiPostWriter}
                 disabled={isAiAnalyzing}
-                className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 disabled:opacity-50 text-slate-950 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition shrink-0"
+                className="px-5 py-2.5 bg-gradient-to-r from-brand-500 to-brand-400 hover:from-brand-400 hover:to-brand-300 disabled:opacity-50 text-ink-950 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition shrink-0"
               >
                 <Sparkles className={`w-4 h-4 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
-                <span>{isAiAnalyzing ? 'AI Đang Viết Bài...' : '✨ AI Đọc Ảnh & Điền Form'}</span>
+                <span>{isAiAnalyzing ? 'AI Đang Viết Bài...' : ' AI Đọc Ảnh & Điền Form'}</span>
               </button>
             </div>
 
             {aiImagePreviewUrl && (
-              <div className="flex items-center gap-3 pt-2 border-t border-emerald-800/60">
-                <img loading="lazy" src={aiImagePreviewUrl} alt="Preview BĐS" className="w-14 h-14 object-cover rounded-xl border border-amber-400" />
-                <span className="text-[11px] text-amber-200 font-normal">
-                  📷 Đã đính kèm ảnh BĐS. Bấm <strong className="text-white">"AI Đọc Ảnh & Điền Form"</strong> để tạo nội dung bài đăng hoàn chỉnh.
+              <div className="flex items-center gap-3 pt-2 border-t border-brand-800/60">
+                <img loading="lazy" src={aiImagePreviewUrl} alt="Preview BĐS" className="w-14 h-14 object-cover rounded-xl border border-brand-400" />
+                <span className="text-[11px] text-brand-200 font-normal">
+                   Đã đính kèm ảnh BĐS. Bấm <strong className="text-white">"AI Đọc Ảnh & Điền Form"</strong> để tạo nội dung bài đăng hoàn chỉnh.
                 </span>
               </div>
             )}
 
             {aiSuccessMessage && (
-              <div className="p-3 bg-emerald-500/20 border border-emerald-400/50 rounded-xl text-emerald-200 text-xs font-bold flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="p-3 bg-brand-500/20 border border-brand-400/50 rounded-xl text-brand-200 text-xs font-bold flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0" />
                 <span>{aiSuccessMessage}</span>
               </div>
             )}
@@ -1293,8 +1293,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           )}
 
           {/* Section 1: Basic Classification */}
-          <div className="space-y-4 border-b border-slate-100 dark:border-slate-700 pb-6">
-            <h3 className="text-sm font-extrabold text-amber-500 uppercase tracking-wider flex items-center">
+          <div className="space-y-4 border-b border-ink-100 dark:border-ink-700 pb-6">
+            <h3 className="text-sm font-extrabold text-brand-500 uppercase tracking-wider flex items-center">
               <Home className="w-4 h-4 mr-2" />
               1. PHÂN LOẠI BẤT ĐỘNG SẢN (Khách hàng & Sale chỉ đăng tin Bán/Cho thuê)
             </h3>
@@ -1305,7 +1305,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value as any)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-amber-600"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-brand-600"
                 >
                   <option value="sale">Cần Bán Nhà</option>
                   <option value="rent">Cho Thuê Nhà</option>
@@ -1317,7 +1317,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 <select
                   value={project}
                   onChange={(e) => setProject(e.target.value as any)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                 >
                   <option value="ocean-park-2">Vinhomes Ocean Park 2 (The Empire)</option>
                   <option value="ocean-park-3">Vinhomes Ocean Park 3 (Grand Park)</option>
@@ -1335,7 +1335,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as any)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                 >
                   <option value="shophouse">Shophouse Thương Mại</option>
                   <option value="biet-thu-song-lap">Biệt Thự Song Lập</option>
@@ -1349,8 +1349,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           </div>
 
           {/* Section 2: Details & Pricing */}
-          <div className="space-y-4 border-b border-slate-100 dark:border-slate-700 pb-6">
-            <h3 className="text-sm font-extrabold text-amber-500 uppercase tracking-wider flex items-center">
+          <div className="space-y-4 border-b border-ink-100 dark:border-ink-700 pb-6">
+            <h3 className="text-sm font-extrabold text-brand-500 uppercase tracking-wider flex items-center">
               <Building2 className="w-4 h-4 mr-2" />
               2. CHI TIẾT & MỨC GIÁ
             </h3>
@@ -1363,7 +1363,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Ví dụ: Bán cắt lỗ Shophouse Chà Là 75m2 hoàn thiện full 4 tầng sầm uất"
-                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
               />
             </div>
 
@@ -1376,7 +1376,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   required
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-amber-500"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-black text-brand-500"
                 />
               </div>
 
@@ -1387,7 +1387,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   required
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl"
                 />
               </div>
 
@@ -1397,7 +1397,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   type="number"
                   value={bedrooms}
                   onChange={(e) => setBedrooms(e.target.value)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl"
                 />
               </div>
 
@@ -1406,7 +1406,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 <select
                   value={direction}
                   onChange={(e) => setDirection(e.target.value)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl"
                 >
                   <option value="Đông Nam">Đông Nam</option>
                   <option value="Đông Bắc">Đông Bắc</option>
@@ -1420,8 +1420,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
             {/* Tình trạng hoàn thiện & đồ đạc linh hoạt (Phân biệt Thấp Tầng & Cao Tầng) */}
             {LOW_RISE_CATEGORIES.includes(category) ? (
-              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-3">
-                <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-black text-xs uppercase">
+              <div className="p-4 bg-brand-500/10 border border-brand-500/30 rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-brand-600 dark:text-brand-400 font-black text-xs uppercase">
                   <Home className="w-4 h-4" />
                   <span>TÌNH TRẠNG BẤT ĐỘNG SẢN THẤP TẦNG (BIỆT THỰ / LIỀN KỀ / SHOPHOUSE)</span>
                 </div>
@@ -1436,7 +1436,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         if (e.target.value.includes('thô')) setFurniture('raw');
                         else setFurniture('full');
                       }}
-                      className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white"
+                      className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-semibold text-ink-900 dark:text-white"
                     >
                       {LOW_RISE_COMPLETION_OPTIONS.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -1449,7 +1449,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     <select
                       value={furnitureDetail}
                       onChange={(e) => setFurnitureDetail(e.target.value)}
-                      className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white"
+                      className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-semibold text-ink-900 dark:text-white"
                     >
                       {LOW_RISE_FURNITURE_OPTIONS.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -1459,7 +1459,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block mb-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                  <label className="block mb-1 text-xs font-semibold text-ink-600 dark:text-ink-300">
                     Ghi chú chi tiết hoàn thiện / Đồ đạc (Tự nhập nếu có yêu cầu khác)
                   </label>
                   <input
@@ -1467,7 +1467,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     value={completionDetail}
                     onChange={(e) => setCompletionDetail(e.target.value)}
                     placeholder="VD: Hoàn thiện Tầng 1-2 kinh doanh, Tầng 3-4 thô; Có thang máy; Full điều hòa Daikin..."
-                    className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                    className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs"
                   />
                 </div>
               </div>
@@ -1489,7 +1489,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         else if (e.target.value.includes('cơ bản')) setFurniture('basic');
                         else setFurniture('full');
                       }}
-                      className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white"
+                      className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-semibold text-ink-900 dark:text-white"
                     >
                       {HIGH_RISE_COMPLETION_FURNITURE_OPTIONS.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -1502,7 +1502,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     <select
                       value={legal}
                       onChange={(e) => setLegal(e.target.value as any)}
-                      className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white"
+                      className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-semibold text-ink-900 dark:text-white"
                     >
                       <option value="red-book">Sổ đỏ chính chủ sẵn sàng</option>
                       <option value="contract">Hợp đồng mua bán (HĐMB)</option>
@@ -1512,7 +1512,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block mb-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                  <label className="block mb-1 text-xs font-semibold text-ink-600 dark:text-ink-300">
                     Ghi chú chi tiết nội thất / Bàn giao (Tự nhập nếu có yêu cầu khác)
                   </label>
                   <input
@@ -1520,7 +1520,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     value={completionDetail}
                     onChange={(e) => setCompletionDetail(e.target.value)}
                     placeholder="VD: CĐT bàn giao nguyên bản + Đã lắp sẵn 3 điều hòa & tủ bếp gỗ công nghiệp..."
-                    className="w-full p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                    className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs"
                   />
                 </div>
               </div>
@@ -1533,7 +1533,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 <select
                   value={legal}
                   onChange={(e) => setLegal(e.target.value as any)}
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold"
+                  className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-semibold"
                 >
                   <option value="red-book">Sổ đỏ chính chủ sẵn sàng</option>
                   <option value="contract">Hợp đồng mua bán (HĐMB)</option>
@@ -1549,20 +1549,20 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Ghi rõ vị trí phân khu, view đường rộng bao nhiêu mét, tiềm năng kinh doanh hay ở..."
-                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-normal"
+                className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-normal"
               />
             </div>
           </div>
 
           {/* Section 3: Contact Info */}
           <div className="space-y-4">
-            <h3 className="text-sm font-extrabold text-amber-500 uppercase tracking-wider flex items-center">
+            <h3 className="text-sm font-extrabold text-brand-500 uppercase tracking-wider flex items-center">
               <User className="w-4 h-4 mr-2" />
               3. THÔNG TIN NGƯỜI ĐĂNG TIN
             </h3>
 
             {/* Auto-fill interactive checkbox banner */}
-            <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-2">
+            <div className="p-4 bg-brand-500/10 border border-brand-500/30 rounded-2xl space-y-2">
               <label className="flex items-start gap-3 cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -1575,13 +1575,13 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                       if (user.phone) setSellerPhone(user.phone);
                     }
                   }}
-                  className="w-5 h-5 rounded border-amber-500 text-amber-500 focus:ring-amber-500 mt-0.5 shrink-0"
+                  className="w-5 h-5 rounded border-brand-500 text-brand-500 focus:ring-brand-500 mt-0.5 shrink-0"
                 />
                 <div>
-                  <span className="font-extrabold text-xs text-amber-600 dark:text-amber-400 block uppercase">
-                    ☑ Tự động lấy thông tin cá nhân từ tài khoản (Họ tên, SĐT, Căn hộ)
+                  <span className="font-extrabold text-xs text-brand-600 dark:text-brand-400 block uppercase">
+                     Tự động lấy thông tin cá nhân từ tài khoản (Họ tên, SĐT, Căn hộ)
                   </span>
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium mt-0.5">
+                  <p className="text-[11px] text-ink-600 dark:text-ink-300 font-medium mt-0.5">
                     {autoUseProfileInfo 
                       ? `Đã tích chọn (Đồng ý): Hệ thống tự động dùng Họ tên "${sellerName || user?.name || 'Cư dân'}" & SĐT "${sellerPhone || user?.phone || 'Chưa cập nhật'}" từ tài khoản.` 
                       : 'Bỏ tích chọn (Không đồng ý): Bạn có thể tự do nhập Tên và Số điện thoại liên hệ hiển thị mới bên dưới.'}
@@ -1592,7 +1592,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
 
             {/* Mobile-Friendly Selector Buttons for Seller Role */}
             <div className="space-y-2">
-              <label className="block font-bold text-xs text-slate-800 dark:text-slate-200">
+              <label className="block font-bold text-xs text-ink-800 dark:text-ink-200">
                 Bạn là chính chủ hay người đăng bán hộ? (*)
               </label>
               
@@ -1602,28 +1602,28 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   onClick={() => setSellerRole('owner')}
                   className={`p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-start justify-between cursor-pointer ${
                     sellerRole === 'owner'
-                      ? 'bg-amber-500/10 border-amber-500 ring-2 ring-amber-500/20 shadow-md'
-                      : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                      ? 'bg-brand-500/10 border-brand-500 ring-2 ring-brand-500/20 shadow-md'
+                      : 'bg-ink-50 dark:bg-ink-900 border-ink-200 dark:border-ink-700 hover:border-ink-300 dark:hover:border-ink-600'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 ${
-                      sellerRole === 'owner' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      sellerRole === 'owner' ? 'bg-brand-500 text-ink-950 font-black' : 'bg-ink-200 dark:bg-ink-800 text-ink-600 dark:text-ink-300'
                     }`}>
-                      🏠
+                      
                     </div>
                     <div>
-                      <div className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-1.5">
+                      <div className="font-black text-xs text-ink-900 dark:text-white uppercase tracking-tight flex items-center gap-1.5">
                         <span>CHỦ NHÀ CHÍNH CHỦ</span>
-                        {sellerRole === 'owner' && <span className="text-[10px] bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded font-bold">Đang chọn</span>}
+                        {sellerRole === 'owner' && <span className="text-[10px] bg-brand-500 text-ink-950 px-1.5 py-0.2 rounded font-bold">Đang chọn</span>}
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium leading-tight">
+                      <p className="text-[11px] text-ink-500 dark:text-ink-400 mt-1 font-medium leading-tight">
                         Đăng chính chủ (Yêu cầu gửi ảnh Sổ Đỏ gốc / HĐMB cho Admin xác minh)
                       </p>
                     </div>
                   </div>
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
-                    sellerRole === 'owner' ? 'border-amber-500 bg-amber-500 text-slate-950' : 'border-slate-300 dark:border-slate-600'
+                    sellerRole === 'owner' ? 'border-brand-500 bg-brand-500 text-ink-950' : 'border-ink-300 dark:border-ink-600'
                   }`}>
                     {sellerRole === 'owner' && <Check className="w-3 h-3 stroke-[3]" />}
                   </div>
@@ -1635,27 +1635,27 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   className={`p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-start justify-between cursor-pointer ${
                     sellerRole === 'sale'
                       ? 'bg-teal-500/10 border-teal-500 ring-2 ring-teal-500/20 shadow-md'
-                      : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                      : 'bg-ink-50 dark:bg-ink-900 border-ink-200 dark:border-ink-700 hover:border-ink-300 dark:hover:border-ink-600'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 ${
-                      sellerRole === 'sale' ? 'bg-teal-500 text-white font-black' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      sellerRole === 'sale' ? 'bg-teal-500 text-white font-black' : 'bg-ink-200 dark:bg-ink-800 text-ink-600 dark:text-ink-300'
                     }`}>
-                      💼
+                      
                     </div>
                     <div>
-                      <div className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-1.5">
+                      <div className="font-black text-xs text-ink-900 dark:text-white uppercase tracking-tight flex items-center gap-1.5">
                         <span>MÔI GIỚI / ĐĂNG BÁN HỘ</span>
                         {sellerRole === 'sale' && <span className="text-[10px] bg-teal-500 text-white px-1.5 py-0.2 rounded font-bold">Đang chọn</span>}
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium leading-tight">
+                      <p className="text-[11px] text-ink-500 dark:text-ink-400 mt-1 font-medium leading-tight">
                         Sale bán hộ (Được dùng công cụ che mờ Sổ đỏ / vị trí nhạy cảm)
                       </p>
                     </div>
                   </div>
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
-                    sellerRole === 'sale' ? 'border-teal-500 bg-teal-500 text-white' : 'border-slate-300 dark:border-slate-600'
+                    sellerRole === 'sale' ? 'border-teal-500 bg-teal-500 text-white' : 'border-ink-300 dark:border-ink-600'
                   }`}>
                     {sellerRole === 'sale' && <Check className="w-3 h-3 stroke-[3]" />}
                   </div>
@@ -1666,7 +1666,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
             {/* Seller Contact Inputs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <div>
-                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                   Họ tên chính chủ / Sale (*):
                 </label>
                 <div className="relative">
@@ -1676,18 +1676,18 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     value={sellerName}
                     onChange={(e) => setSellerName(e.target.value)}
                     placeholder="Nguyễn Văn A"
-                    className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
                   />
                   {user?.name && sellerName === user.name && (
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full">
-                      ✓ Từ tài khoản
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-brand-100 dark:bg-brand-950 text-brand-600 dark:text-brand-400 font-bold px-2 py-0.5 rounded-full">
+                       Từ tài khoản
                     </span>
                   )}
                 </div>
               </div>
 
               <div>
-                <label className="block mb-1 font-bold text-slate-800 dark:text-slate-200">
+                <label className="block mb-1 font-bold text-ink-800 dark:text-ink-200">
                   Số điện thoại / Zalo (*):
                 </label>
                 <div className="relative">
@@ -1697,11 +1697,11 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     value={sellerPhone}
                     onChange={(e) => setSellerPhone(e.target.value)}
                     placeholder="Nhập SĐT/Zalo của bạn (VD: 0912345678)"
-                    className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+                    className="w-full p-3 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold text-ink-900 dark:text-white"
                   />
                   {user?.phone && sellerPhone === user.phone && (
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full">
-                      ✓ Từ tài khoản
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-brand-100 dark:bg-brand-950 text-brand-600 dark:text-brand-400 font-bold px-2 py-0.5 rounded-full">
+                       Từ tài khoản
                     </span>
                   )}
                 </div>
@@ -1710,48 +1710,48 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           </div>
 
           {/* Section 4: Hình Ảnh Thực Tế & Sổ Đỏ Pháp Lý */}
-          <div className="space-y-4 border-t border-slate-100 dark:border-slate-700 pt-6">
+          <div className="space-y-4 border-t border-ink-100 dark:border-ink-700 pt-6">
             <div className="flex items-center justify-between flex-wrap gap-2">
-              <h3 className="text-sm font-extrabold text-amber-500 uppercase tracking-wider flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-amber-500" />
+              <h3 className="text-sm font-extrabold text-brand-500 uppercase tracking-wider flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-brand-500" />
                 <span>4. HÌNH ẢNH THỰC TẾ & SỔ ĐỎ PHÁP LÝ</span>
               </h3>
               {sellerRole === 'sale' ? (
                 <span className="text-[10px] bg-rose-500 text-white font-black px-2.5 py-1 rounded-lg uppercase shadow-sm">
-                  ★ Sale Yêu Cầu Tối Thiểu 3 Ảnh (*)
+                   Sale Yêu Cầu Tối Thiểu 3 Ảnh (*)
                 </span>
               ) : (
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold px-2.5 py-1 rounded-lg">
-                  ✓ Khuyên dùng từ 3 - 6 ảnh nét
+                <span className="text-[10px] bg-brand-500/20 text-brand-600 dark:text-brand-400 font-bold px-2.5 py-1 rounded-lg">
+                   Khuyên dùng từ 3 - 6 ảnh nét
                 </span>
               )}
             </div>
 
             {/* Gallery Images Upload Area */}
-            <div className="p-4 sm:p-5 bg-slate-50 dark:bg-slate-900 border-2 border-dashed border-amber-500/30 dark:border-amber-500/20 rounded-3xl space-y-4">
+            <div className="p-4 sm:p-5 bg-ink-50 dark:bg-ink-900 border-2 border-dashed border-brand-500/30 dark:border-brand-500/20 rounded-3xl space-y-4">
               
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                 <div className="space-y-0.5">
-                  <span className="font-black text-xs text-slate-900 dark:text-white block">
+                  <span className="font-black text-xs text-ink-900 dark:text-white block">
                     Tải Ảnh Căn Hộ / Biệt Thự Thực Tế
                   </span>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  <p className="text-[11px] text-ink-500 dark:text-ink-400">
                     Chọn trực tiếp từ Thư viện Album hoặc Chụp từ Camera điện thoại
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
                   {/* Native File / Camera Upload Button */}
-                  <label className="px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-2xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-500/20 transition active:scale-95">
+                  <label className="px-4 py-3 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-ink-950 font-black rounded-2xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand-500/20 transition active:scale-95">
                     {isUploadingImages ? (
-                      <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+                      <Loader2 className="w-4 h-4 animate-spin text-ink-950" />
                     ) : (
                       <Upload className="w-4 h-4 stroke-[2.5]" />
                     )}
                     <span>
                       {uploadProgress 
-                        ? `⚡ ĐANG NÉN NHẸ & ĐÓNG DẤU (${uploadProgress.completed}/${uploadProgress.total})...`
-                        : '📸 CHỌN / CHỤP ẢNH TỪ THIẾT BỊ'}
+                        ? ` ĐANG NÉN NHẸ & ĐÓNG DẤU (${uploadProgress.completed}/${uploadProgress.total})...`
+                        : ' CHỌN / CHỤP ẢNH TỪ THIẾT BỊ'}
                     </span>
                     <input
                       type="file"
@@ -1765,27 +1765,27 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
               </div>
 
               {/* Watermark security feature notification */}
-              <div className="flex items-center justify-between flex-wrap gap-2 text-[10px] text-amber-600 dark:text-amber-400 font-bold bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
+              <div className="flex items-center justify-between flex-wrap gap-2 text-[10px] text-brand-600 dark:text-brand-400 font-bold bg-brand-500/10 px-3 py-1.5 rounded-xl border border-brand-500/20">
                 <div className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 shrink-0" />
                   <span>Ảnh tải trực tiếp từ máy, tự động nén tối ưu & đóng dấu bản quyền <b>"Chợ Cư Dân 24H"</b>.</span>
                 </div>
-                <span className="text-[9px] bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded-md font-extrabold">
-                  ⚡ Hỗ trợ ảnh dưới 10MB
+                <span className="text-[9px] bg-brand-500/20 text-brand-500 px-2 py-0.5 rounded-md font-extrabold">
+                   Hỗ trợ ảnh dưới 10MB
                 </span>
               </div>
 
               {/* Thumbnails list */}
               {imagesList.length > 0 ? (
                 <div className="space-y-2 pt-1">
-                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-ink-500">
                     <span>Đã chọn ({imagesList.length} ảnh):</span>
-                    <span className="text-amber-500">Ảnh đầu tiên làm ảnh đại diện</span>
+                    <span className="text-brand-500">Ảnh đầu tiên làm ảnh đại diện</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {imagesList.map((img, idx) => (
-                      <div key={idx} className="relative group rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 aspect-video bg-black shadow-sm">
+                      <div key={idx} className="relative group rounded-2xl overflow-hidden border-2 border-ink-200 dark:border-ink-700 aspect-video bg-black shadow-sm">
                         <img loading="lazy" src={img} alt={`Img ${idx}`} className="w-full h-full object-cover" />
                         <button
                           type="button"
@@ -1793,14 +1793,14 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                           className="absolute top-1.5 right-1.5 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 hover:bg-rose-700 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer z-10"
                           title="Xóa ảnh này"
                         >
-                          ✕
+                          
                         </button>
                         {idx === 0 ? (
-                          <span className="absolute bottom-1.5 left-1.5 text-[9px] font-black bg-amber-500 text-slate-950 px-2 py-0.5 rounded-md shadow">
-                            ★ Ảnh bìa
+                          <span className="absolute bottom-1.5 left-1.5 text-[9px] font-black bg-brand-500 text-ink-950 px-2 py-0.5 rounded-md shadow">
+                             Ảnh bìa
                           </span>
                         ) : (
-                          <span className="absolute bottom-1.5 left-1.5 text-[9px] font-bold bg-slate-950/80 text-slate-300 px-1.5 py-0.5 rounded-md">
+                          <span className="absolute bottom-1.5 left-1.5 text-[9px] font-bold bg-ink-950/80 text-ink-300 px-1.5 py-0.5 rounded-md">
                             #{idx + 1}
                           </span>
                         )}
@@ -1809,38 +1809,38 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-6 text-slate-400 text-xs font-medium">
-                  Chưa có hình ảnh nào. Hãy nhấn <b className="text-amber-500">📸 CHỌN / CHỤP ẢNH TỪ THIẾT BỊ</b> để tải ảnh.
+                <div className="text-center py-6 text-ink-400 text-xs font-medium">
+                  Chưa có hình ảnh nào. Hãy nhấn <b className="text-brand-500"> CHỌN / CHỤP ẢNH TỪ THIẾT BỊ</b> để tải ảnh.
                 </div>
               )}
             </div>
 
             {/* Role Rules: Owner vs Sale Censor Permissions */}
             {sellerRole === 'owner' ? (
-              <div className="p-5 bg-amber-500/10 border-2 border-amber-500/40 rounded-3xl space-y-3 text-xs">
+              <div className="p-5 bg-brand-500/10 border-2 border-brand-500/40 rounded-3xl space-y-3 text-xs">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-amber-500 text-slate-950 font-black rounded-xl shrink-0">
+                  <div className="p-2 bg-brand-500 text-ink-950 font-black rounded-xl shrink-0">
                     <Shield className="w-5 h-5" />
                   </div>
                   <div className="space-y-1">
-                    <h4 className="font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wider text-xs">
+                    <h4 className="font-extrabold text-brand-600 dark:text-brand-400 uppercase tracking-wider text-xs">
                       TẢI SỔ ĐỎ / HỢP ĐỒNG MUA BÁN (HĐMB) NGUYÊN BẢN CHÍNH CHỦ
                     </h4>
-                    <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+                    <p className="text-ink-600 dark:text-ink-300 text-[11px] leading-relaxed">
                       Chủ nhà tải trực tiếp <strong>ảnh Sổ Đỏ / Hợp đồng mua bán từ Album hoặc Chụp từ máy</strong>. Ban Quản Trị bảo mật tuyệt đối, chỉ dùng đối chiếu chính chủ và sẽ chủ động che mờ số sổ & tên trước khi hiển thị.
                     </p>
                   </div>
                 </div>
 
                 {/* Owner Sổ Đỏ Upload Input */}
-                <div className="pt-2 border-t border-amber-500/20 space-y-2">
-                  <label className="block font-bold text-slate-800 dark:text-slate-200 text-[11px]">
+                <div className="pt-2 border-t border-brand-500/20 space-y-2">
+                  <label className="block font-bold text-ink-800 dark:text-ink-200 text-[11px]">
                     Tải Ảnh Sổ Đỏ / HĐMB (Chế độ tải ảnh riêng từ Album/Camera):
                   </label>
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <label className="px-4 py-3 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
+                    <label className="px-4 py-3 bg-brand-600 hover:bg-brand-500 text-ink-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
                       <Upload className="w-4 h-4 stroke-[2.5]" />
-                      <span>📸 CHỤP / CHỌN SỔ ĐỎ & HĐMB TỪ MÁY</span>
+                      <span> CHỤP / CHỌN SỔ ĐỎ & HĐMB TỪ MÁY</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1874,7 +1874,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     </label>
                   </div>
                   {soDoImage && (
-                    <div className="relative w-40 h-28 rounded-xl overflow-hidden border border-amber-500/40 shadow-sm mt-2 group">
+                    <div className="relative w-40 h-28 rounded-xl overflow-hidden border border-brand-500/40 shadow-sm mt-2 group">
                       <img loading="lazy" src={soDoImage} alt="Sổ đỏ gốc" className="w-full h-full object-cover" />
                       <button
                         type="button"
@@ -1885,7 +1885,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         className="absolute top-1.5 right-1.5 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer z-10"
                         title="Xóa ảnh sổ đỏ"
                       >
-                        ✕
+                        
                       </button>
                     </div>
                   )}
@@ -1899,13 +1899,13 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                     <ShieldCheck className="w-4 h-4 text-teal-600" />
                     XÁC MINH MÔI GIỚI: CHỨNG CHỈ HÀNH NGHỀ / GIẤY ỦY QUYỀN BÁN HỘ
                   </h4>
-                  <p className="text-slate-600 dark:text-slate-300 text-[11px]">
+                  <p className="text-ink-600 dark:text-ink-300 text-[11px]">
                     Tải trực tiếp từ máy <strong>Chứng chỉ hành nghề BĐS</strong> hoặc <strong>Giấy ủy quyền / Hợp đồng môi giới</strong> từ Chủ nhà.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <label className="px-4 py-3 bg-teal-600 hover:bg-teal-500 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition shrink-0">
                       <Upload className="w-4 h-4 stroke-[2.5]" />
-                      <span>📸 CHỤP / CHỌN GIẤY TỜ TỪ THIẾT BỊ</span>
+                      <span> CHỤP / CHỌN GIẤY TỜ TỪ THIẾT BỊ</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1942,7 +1942,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                         className="absolute top-1.5 right-1.5 w-7 h-7 sm:w-6 sm:h-6 bg-rose-600 text-white rounded-full text-xs font-black flex items-center justify-center shadow-md active:scale-90 transition cursor-pointer z-10"
                         title="Xóa ảnh giấy tờ"
                       >
-                        ✕
+                        
                       </button>
                     </div>
                   )}
@@ -1957,7 +1957,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                       <h4 className="font-extrabold text-teal-700 dark:text-teal-300 uppercase tracking-wider text-xs">
                         QUYỀN CHO SALE / MÔI GIỚI: CÔNG CỤ CHE MỜ VỊ TRÍ & SỔ ĐỎ
                       </h4>
-                      <p className="text-slate-600 dark:text-slate-300 text-[11px] mt-0.5">
+                      <p className="text-ink-600 dark:text-ink-300 text-[11px] mt-0.5">
                         Môi giới có quyền trực tiếp bôi đen hoặc làm mờ vị trí căn, số nhà, thông tin cá nhân trên ảnh / Sổ đỏ trước khi gửi duyệt.
                       </p>
                     </div>
@@ -1976,8 +1976,8 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                 {/* Sổ Đỏ / Image Preview for Sale */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <div className="space-y-1">
-                    <span className="text-[10px] text-slate-400 font-bold block">Ảnh Gốc Chưa Che:</span>
-                    <img loading="lazy" src={soDoImage} alt="Gốc" className="w-full h-24 object-cover rounded-xl border border-slate-300 dark:border-slate-700" />
+                    <span className="text-[10px] text-ink-400 font-bold block">Ảnh Gốc Chưa Che:</span>
+                    <img loading="lazy" src={soDoImage} alt="Gốc" className="w-full h-24 object-cover rounded-xl border border-ink-300 dark:border-ink-700" />
                   </div>
                   <div className="space-y-1">
                     <span className="text-[10px] text-teal-600 dark:text-teal-400 font-extrabold block">Ảnh Đã Che Mờ (Công khai):</span>
@@ -2005,7 +2005,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
           <button
             type="submit"
             disabled={loading || isUploadingImages}
-            className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-400 text-slate-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer"
+            className="w-full py-4 bg-brand-500 hover:bg-brand-600 disabled:bg-ink-400 text-ink-950 font-black rounded-2xl text-sm uppercase tracking-wider transition shadow-xl cursor-pointer"
           >
             {isUploadingImages ? '⏳ Đang nén ảnh...' : loading ? 'Đang gửi...' : 'Đăng bài'}
           </button>

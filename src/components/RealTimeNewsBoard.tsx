@@ -61,7 +61,7 @@ const NewsColumn: React.FC<{
       {/* Danh sách — chạy dài, không khung */}
       <div className="flex-1 min-h-0 overflow-y-auto">
         {items.length === 0 && (
-          <div className="px-2 py-1.5 text-[10px] text-slate-400 italic">{emptyText}</div>
+          <div className="px-2 py-1.5 text-[10px] text-ink-400 italic">{emptyText}</div>
         )}
         {items.map((item) => {
           const isNewItem = isNew(item.createdAt);
@@ -70,7 +70,7 @@ const NewsColumn: React.FC<{
             <button
               key={item.id}
               onClick={() => onItemClick && onItemClick(item)}
-              className="w-full text-left px-2 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 group"
+              className="w-full text-left px-2 py-1.5 hover:bg-ink-50 dark:hover:bg-ink-800/60 transition flex items-center gap-1.5 border-b border-ink-100 dark:border-ink-800 group"
             >
               <div className="flex-1 min-w-0 flex items-center gap-1">
                 {isNewItem && (
@@ -79,21 +79,21 @@ const NewsColumn: React.FC<{
                   </span>
                 )}
                 {isVip && (
-                  <span className="px-1 py-0.5 bg-amber-500 text-slate-950 text-[7px] font-black rounded uppercase tracking-wider shrink-0 flex items-center gap-0.5">
+                  <span className="px-1 py-0.5 bg-brand-500 text-ink-950 text-[7px] font-black rounded uppercase tracking-wider shrink-0 flex items-center gap-0.5">
                     <Crown className="w-2 h-2" /> VIP
                   </span>
                 )}
                 {/* Tiêu đề 1 dòng, không xuống dòng — nổi bật nếu mới đăng trong 12h */}
                 <span className={`text-[10px] font-bold truncate transition ${
                   isNewItem
-                    ? 'text-amber-600 dark:text-amber-400 font-black'
-                    : 'text-slate-800 dark:text-slate-200 group-hover:text-amber-600 dark:group-hover:text-amber-400'
+                    ? 'text-brand-600 dark:text-brand-400 font-black'
+                    : 'text-ink-800 dark:text-ink-200 group-hover:text-brand-600 dark:group-hover:text-brand-400'
                 }`}>
                   {item.title}
                 </span>
               </div>
               {item.createdAt && (
-                <span className="text-[8px] text-slate-400 shrink-0 flex items-center gap-0.5">
+                <span className="text-[8px] text-ink-400 shrink-0 flex items-center gap-0.5">
                   <Clock className="w-2 h-2" />
                   {new Date(item.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
                 </span>
@@ -214,12 +214,12 @@ export const RealTimeNewsBoard: React.FC<RealTimeNewsBoardProps> = ({
     }));
 
   return (
-    <div className="flex flex-col h-full bg-white/85 dark:bg-slate-900/85 backdrop-blur-md shadow-2xl overflow-hidden divide-y divide-slate-200/70 dark:divide-slate-700/70">
+    <div className="flex flex-col h-full bg-white/85 dark:bg-ink-900/85 backdrop-blur-md shadow-2xl overflow-hidden divide-y divide-ink-200/70 dark:divide-ink-700/70">
       {/* Ô BĐS */}
       <NewsColumn
         title="BĐS Mới"
         icon={<Building2 className="w-3 h-3" />}
-        accent="bg-gradient-to-r from-amber-500 to-orange-600"
+        accent="bg-gradient-to-r from-brand-500 to-orange-600"
         items={propertyItems}
         emptyText="Chưa có bài BĐS"
         onItemClick={(item) => {
@@ -242,7 +242,7 @@ export const RealTimeNewsBoard: React.FC<RealTimeNewsBoardProps> = ({
       <NewsColumn
         title="Dịch Vụ Mới"
         icon={<Wrench className="w-3 h-3" />}
-        accent="bg-gradient-to-r from-emerald-600 to-teal-700"
+        accent="bg-gradient-to-r from-brand-600 to-teal-700"
         items={serviceItems}
         emptyText="Chưa có dịch vụ"
         onItemClick={() => setCurrentTab && setCurrentTab('services')}

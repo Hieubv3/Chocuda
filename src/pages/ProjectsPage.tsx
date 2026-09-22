@@ -80,29 +80,29 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
       
       {/* Title */}
       <div className="text-center max-w-2xl mx-auto space-y-2">
-        <span className="text-xs font-black uppercase text-amber-500 tracking-wider">
+        <span className="text-xs font-black uppercase text-brand-500 tracking-wider">
           GIỚI THIỆU DỰ ÁN TRỌNG ĐIỂM
         </span>
-        <h1 className="text-3xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-3xl font-black text-ink-900 dark:text-white">
           VINHOMES OCEAN PARK 2, 3 & HẠ LONG XANH
         </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-ink-500 dark:text-ink-400">
           Hệ thống Siêu đại đô thị biển đẳng cấp hàng đầu Việt Nam do Tập đoàn Vingroup làm Chủ đầu tư.
         </p>
       </div>
 
       {/* Project Selector Tree View — ngang, tràn 2 dòng tối đa */}
       <div className="w-full space-y-2">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 px-1">
-          <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300 font-black">
-            🏛️ DANH SÁCH DỰ ÁN ({projects.length}):
+        <div className="flex items-center justify-between text-xs font-bold text-ink-500 dark:text-ink-400 px-1">
+          <span className="flex items-center gap-1 text-ink-700 dark:text-ink-300 font-black">
+             DANH SÁCH DỰ ÁN ({projects.length}):
           </span>
-          <span className="text-[11px] text-amber-500 font-extrabold hidden sm:inline">
+          <span className="text-[11px] text-brand-500 font-extrabold hidden sm:inline">
             Click chọn xem chi tiết & sơ đồ từng dự án
           </span>
         </div>
 
-        <div className="p-2.5 bg-slate-100 dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner">
+        <div className="p-2.5 bg-ink-100 dark:bg-ink-800/90 rounded-2xl border border-ink-200 dark:border-ink-700 shadow-inner">
           <div className="flex flex-wrap items-center gap-2">
             {parentProjects.map((p) => {
               const isSelected = activeTab === p.id;
@@ -117,7 +117,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                     {children.length > 0 && (
                       <button
                         onClick={() => toggleExpand(p.id)}
-                        className="p-0.5 text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition"
+                        className="p-0.5 text-ink-600 dark:text-ink-400 hover:text-brand-600 dark:hover:text-brand-400 transition"
                         title={isExpanded ? 'Thu gọn' : 'Mở rộng'}
                       >
                         <ChevronRight className={`w-3.5 h-3.5 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
@@ -130,13 +130,13 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                       }}
                       className={`py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center text-center border min-h-[40px] relative group cursor-pointer ${
                         isSelected
-                          ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg ring-2 ring-amber-400/50 scale-[1.02] z-10'
-                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-400 hover:shadow-md'
+                          ? 'bg-brand-500 text-ink-950 border-brand-400 shadow-lg ring-2 ring-brand-400/50 scale-[1.02] z-10'
+                          : 'bg-white dark:bg-ink-800 text-ink-700 dark:text-ink-200 border-ink-200 dark:border-ink-700 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 hover:shadow-md'
                       }`}
                     >
                       <span className="line-clamp-1 leading-tight">{displayName}</span>
                       {isSelected && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-950 mt-1 animate-ping" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-ink-950 mt-1 animate-ping" />
                       )}
                     </button>
                   </div>
@@ -157,11 +157,11 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                             }}
                             className={`py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border min-h-[36px] cursor-pointer ${
                               childSelected
-                                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
-                                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-400'
+                                ? 'bg-brand-500 text-ink-950 border-brand-400 shadow-md'
+                                : 'bg-white dark:bg-ink-800 text-ink-600 dark:text-ink-300 border-ink-200 dark:border-ink-700 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400'
                             }`}
                           >
-                            <span className="w-1 h-1 rounded-full bg-slate-400 shrink-0" />
+                            <span className="w-1 h-1 rounded-full bg-ink-400 shrink-0" />
                             <span className="line-clamp-1">{childName}</span>
                           </button>
                         );
@@ -180,43 +180,43 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
         <div className="space-y-8 animate-in fade-in duration-300">
           
           {/* Main Visual Banner */}
-          <div className="relative rounded-2xl overflow-hidden border border-emerald-100 dark:border-emerald-900/50 shadow-lg aspect-[21/9] max-h-[360px] bg-emerald-950">
+          <div className="relative rounded-2xl overflow-hidden border border-brand-100 dark:border-brand-900/50 shadow-lg aspect-[21/9] max-h-[360px] bg-brand-950">
             <img loading="lazy"
               src={currentProject.image}
               alt={currentProject.name}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-950/90 via-brand-950/30 to-transparent" />
             
             <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
-              <span className="bg-amber-500 text-slate-950 text-xs font-extrabold px-3 py-1 rounded-lg">
+              <span className="bg-brand-500 text-ink-950 text-xs font-extrabold px-3 py-1 rounded-lg">
                 {currentProject.status}
               </span>
               <h2 className="text-2xl sm:text-4xl font-black">{currentProject.name}</h2>
-              <p className="text-xs sm:text-sm text-slate-200 flex items-center">
-                <MapPin className="w-4 h-4 mr-1 text-amber-400 shrink-0" />
+              <p className="text-xs sm:text-sm text-ink-200 flex items-center">
+                <MapPin className="w-4 h-4 mr-1 text-brand-400 shrink-0" />
                 {currentProject.location}
               </p>
             </div>
           </div>
 
           {/* Key Quick Facts Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-lg text-xs">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-white dark:bg-ink-800 rounded-3xl border border-ink-200 dark:border-ink-700 shadow-lg text-xs">
             <div>
-              <span className="text-slate-400 block font-medium">Quy mô tổng thể</span>
-              <span className="text-lg font-black text-slate-900 dark:text-white">{currentProject.areaSize}</span>
+              <span className="text-ink-400 block font-medium">Quy mô tổng thể</span>
+              <span className="text-lg font-black text-ink-900 dark:text-white">{currentProject.areaSize}</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Số lượng sản phẩm</span>
-              <span className="text-lg font-black text-slate-900 dark:text-white">{currentProject.totalUnits}</span>
+              <span className="text-ink-400 block font-medium">Số lượng sản phẩm</span>
+              <span className="text-lg font-black text-ink-900 dark:text-white">{currentProject.totalUnits}</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Khoảng giá giao dịch</span>
-              <span className="text-lg font-black text-amber-600 dark:text-amber-400">{currentProject.priceRange}</span>
+              <span className="text-ink-400 block font-medium">Khoảng giá giao dịch</span>
+              <span className="text-lg font-black text-brand-600 dark:text-brand-400">{currentProject.priceRange}</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Trạng thái hạ tầng</span>
-              <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{currentProject.status}</span>
+              <span className="text-ink-400 block font-medium">Trạng thái hạ tầng</span>
+              <span className="text-lg font-black text-brand-600 dark:text-brand-400">{currentProject.status}</span>
             </div>
           </div>
 
@@ -224,17 +224,17 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
             {/* Subdivisions Box */}
-            <div className="p-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-lg space-y-4">
+            <div className="p-6 bg-white dark:bg-ink-800 rounded-3xl border border-ink-200 dark:border-ink-700 shadow-lg space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-amber-500 flex items-center">
+                <h3 className="text-base font-extrabold text-ink-900 dark:text-white uppercase tracking-wider text-brand-500 flex items-center">
                   <Layers className="w-5 h-5 mr-2" />
                   DANH SÁCH PHÂN KHU (CLICK ĐỌC CHI TIẾT SEO)
                 </h3>
-                <span className="text-[10px] bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold px-2 py-0.5 rounded">
+                <span className="text-[10px] bg-brand-500/20 text-brand-600 dark:text-brand-400 font-extrabold px-2 py-0.5 rounded">
                   Chỉ Cần Click Căn
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              <p className="text-[11px] text-ink-500 dark:text-ink-400">
                 Nhấp vào từng phân khu bên dưới để xem bài viết chi tiết chuẩn SEO về quy mô, diện tích trung bình các căn và khu chung cư cao tầng:
               </p>
               <div className="flex flex-wrap gap-2 text-xs font-bold">
@@ -242,27 +242,27 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                   <button
                     key={sub.id || idx}
                     onClick={() => handleSubdivisionClick(sub.name)}
-                    className="px-3.5 py-2 bg-gradient-to-r from-amber-500/10 via-amber-500/20 to-amber-500/10 hover:from-amber-500 hover:to-amber-600 text-slate-900 dark:text-amber-300 hover:text-slate-950 rounded-xl border border-amber-500/30 hover:border-amber-500 transition shadow-sm flex items-center gap-1.5 group"
+                    className="px-3.5 py-2 bg-gradient-to-r from-brand-500/10 via-brand-500/20 to-brand-500/10 hover:from-brand-500 hover:to-brand-600 text-ink-900 dark:text-brand-300 hover:text-ink-950 rounded-xl border border-brand-500/30 hover:border-brand-500 transition shadow-sm flex items-center gap-1.5 group"
                   >
                     <span>Phân khu {sub.name}</span>
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500 group-hover:text-slate-950 transition" />
+                    <Sparkles className="w-3.5 h-3.5 text-brand-500 group-hover:text-ink-950 transition" />
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Amenities Box */}
-            <div className="p-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-lg space-y-4">
+            <div className="p-6 bg-white dark:bg-ink-800 rounded-3xl border border-ink-200 dark:border-ink-700 shadow-lg space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-amber-500 flex items-center">
+                <h3 className="text-base font-extrabold text-ink-900 dark:text-white uppercase tracking-wider text-brand-500 flex items-center">
                   <Award className="w-5 h-5 mr-2" />
                   TIỆN ÍCH ĐẲNG CẤP (CLICK XEM BÀI VIẾT)
                 </h3>
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold px-2 py-0.5 rounded">
+                <span className="text-[10px] bg-brand-500/20 text-brand-600 dark:text-brand-400 font-extrabold px-2 py-0.5 rounded">
                   Bài Viết Đầy Đủ
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              <p className="text-[11px] text-ink-500 dark:text-ink-400">
                 Nhấp vào tiện ích bên dưới để đọc bài viết đánh giá chi tiết quy mô & đặc quyền cư dân:
               </p>
               <div className="space-y-2 text-xs">
@@ -270,15 +270,15 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                   <button
                     key={idx}
                     onClick={() => handleAmenityClick(amenity)}
-                    className="w-full text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/90 hover:bg-amber-500/10 border border-slate-200 dark:border-slate-700 hover:border-amber-500/50 transition flex items-center justify-between group"
+                    className="w-full text-left p-2.5 rounded-xl bg-ink-50 dark:bg-ink-800/90 hover:bg-brand-500/10 border border-ink-200 dark:border-ink-700 hover:border-brand-500/50 transition flex items-center justify-between group"
                   >
                     <div className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-amber-500 transition">
+                      <CheckCircle2 className="w-4 h-4 text-brand-500 shrink-0" />
+                      <span className="font-bold text-ink-800 dark:text-ink-200 group-hover:text-brand-500 transition">
                         {amenity}
                       </span>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-amber-500 shrink-0 transition" />
+                    <ChevronRight className="w-4 h-4 text-ink-400 group-hover:text-brand-500 shrink-0 transition" />
                   </button>
                 ))}
               </div>
@@ -287,39 +287,39 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
           </div>
 
           {/* Masterplan + Mặt bằng quỹ căn — tab riêng gần nhau */}
-          <div className="p-5 sm:p-7 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl border border-emerald-100 dark:border-emerald-900/50 shadow-lg space-y-4">
+          <div className="p-5 sm:p-7 bg-white dark:bg-ink-900 text-ink-900 dark:text-white rounded-2xl border border-brand-100 dark:border-brand-900/50 shadow-lg space-y-4">
             {/* Tab switcher */}
             <div className="flex justify-center">
-              <div className="inline-flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
+              <div className="inline-flex gap-1 bg-ink-100 dark:bg-ink-800 rounded-xl p-1">
                 <button
                   onClick={() => setMasterplanTab('du-an')}
                   className={`px-4 py-2 rounded-lg text-xs font-extrabold transition cursor-pointer ${
                     masterplanTab === 'du-an'
-                      ? 'bg-emerald-600 text-white shadow'
-                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      ? 'bg-brand-600 text-white shadow'
+                      : 'text-ink-500 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-700'
                   }`}
                 >
-                  🗺️ Mặt Bằng Dự Án
+                   Mặt Bằng Dự Án
                 </button>
                 <button
                   onClick={() => setMasterplanTab('quy-can')}
                   className={`px-4 py-2 rounded-lg text-xs font-extrabold transition cursor-pointer ${
                     masterplanTab === 'quy-can'
-                      ? 'bg-emerald-600 text-white shadow'
-                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      ? 'bg-brand-600 text-white shadow'
+                      : 'text-ink-500 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-700'
                   }`}
                 >
-                  🏢 Mặt Bằng Quỹ Căn
+                   Mặt Bằng Quỹ Căn
                 </button>
               </div>
             </div>
 
             {masterplanTab === 'du-an' ? (
               <div className="space-y-4 text-center">
-                <h3 className="text-xl font-black text-emerald-700 dark:text-emerald-400">
+                <h3 className="text-xl font-black text-brand-700 dark:text-brand-400">
                   SƠ ĐỒ MẶT BẰNG QUY HOẠCH TỔNG THỂ {currentProject.name.toUpperCase()}
                 </h3>
-                <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-96">
+                <div className="rounded-xl overflow-hidden border border-ink-200 dark:border-ink-700 max-h-96">
                   <img loading="lazy"
                     src={currentProject.masterplanUrl}
                     alt="Masterplan"
@@ -330,14 +330,14 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     to={`/du-an/${getProjectSlug(currentProject.id)}`}
-                    className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
+                    className="px-6 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
                   >
                     <span>Xem Trang Chi Tiết {currentProject.name}</span>
                     <ChevronRight className="w-4 h-4" />
                   </Link>
                   <button
                     onClick={() => onFilterPropertiesByProject(currentProject.id)}
-                    className="px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
+                    className="px-6 py-3.5 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black rounded-2xl text-xs uppercase tracking-wider transition shadow-xl inline-flex items-center space-x-2"
                   >
                     <span>Xem Toàn Bộ Quỹ Căn Bán / Thuê ({adminProjectProperties.length})</span>
                     <ChevronRight className="w-4 h-4" />
@@ -353,20 +353,20 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
           <DeveloperUnitsList projectId={currentProject.id} projectName={currentProject.name} />
 
           {/* Admin & Admin Tổng Properties Section */}
-          <div className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-purple-500/10 p-5 rounded-3xl border border-amber-500/30">
+          <div className="space-y-6 pt-6 border-t border-ink-200 dark:border-ink-800">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-brand-500/10 via-brand-500/5 to-purple-500/10 p-5 rounded-3xl border border-brand-500/30">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0" />
-                  <h3 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wide">
+                  <ShieldCheck className="w-5 h-5 text-brand-500 shrink-0" />
+                  <h3 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wide">
                     QUỸ CĂN BÁN & CHO THUÊ CHÍNH CHỦ ADMIN / ADMIN TỔNG — {currentProject.name.toUpperCase()}
                   </h3>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
+                <p className="text-xs text-ink-600 dark:text-ink-300">
                   Chỉ hiển thị thông tin căn bán và cho thuê do Admin và Admin Tổng đăng trực tiếp. (Thông tin từ các đối tác khác không hiển thị tại mục Dự án).
                 </p>
               </div>
-              <span className="shrink-0 text-xs font-black bg-amber-500 text-slate-950 px-3.5 py-1.5 rounded-xl shadow flex items-center gap-1.5">
+              <span className="shrink-0 text-xs font-black bg-brand-500 text-ink-950 px-3.5 py-1.5 rounded-xl shadow flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 {adminProjectProperties.length} Căn Đang Mở Bán/Thuê
               </span>
@@ -388,12 +388,12 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 text-center space-y-3 border border-slate-200 dark:border-slate-700">
-                <Building2 className="w-10 h-10 text-slate-400 mx-auto" />
-                <p className="text-xs font-bold text-slate-600 dark:text-slate-300">
+              <div className="bg-white dark:bg-ink-800 rounded-3xl p-8 text-center space-y-3 border border-ink-200 dark:border-ink-700">
+                <Building2 className="w-10 h-10 text-ink-400 mx-auto" />
+                <p className="text-xs font-bold text-ink-600 dark:text-ink-300">
                   Chưa có căn bán hoặc cho thuê nào do Admin / Admin Tổng đăng trực tiếp tại dự án này.
                 </p>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-ink-400">
                   (Mục dự án quy định chỉ hiển thị tin chính chủ Admin & Admin Tổng đăng, tự động ẩn các tin từ đối tác khác)
                 </p>
               </div>

@@ -18,9 +18,9 @@ const TAB_CONFIG: Record<string, { label: string; color: string }> = {
 };
 
 const COLOR_MAP = {
-  amber: { bg: 'bg-amber-500', text: 'text-amber-950', hover: 'hover:text-amber-600', border: 'border-amber-200' },
+  amber: { bg: 'bg-brand-500', text: 'text-brand-950', hover: 'hover:text-brand-600', border: 'border-brand-200' },
   blue: { bg: 'bg-blue-500', text: 'text-blue-950', hover: 'hover:text-blue-600', border: 'border-blue-200' },
-  emerald: { bg: 'bg-emerald-500', text: 'text-emerald-950', hover: 'hover:text-emerald-600', border: 'border-emerald-200' },
+  emerald: { bg: 'bg-brand-500', text: 'text-brand-950', hover: 'hover:text-brand-600', border: 'border-brand-200' },
   teal: { bg: 'bg-teal-500', text: 'text-teal-950', hover: 'hover:text-teal-600', border: 'border-teal-200' },
   purple: { bg: 'bg-purple-500', text: 'text-purple-950', hover: 'hover:text-purple-600', border: 'border-purple-200' },
 };
@@ -41,12 +41,12 @@ export const IndustryNewsBanner: React.FC<IndustryNewsBannerProps> = ({
       {/* Unified block — PC: 65/35 split, Mobile: stacked 2 rows */}
       <div className="grid grid-cols-1 md:grid-cols-[65fr_35fr] gap-3">
         {/* Column 1: Banner (65% on PC) */}
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl px-5 py-4 flex items-center gap-3 border border-slate-700/50 shadow-lg">
-          <div className={`${colors.bg} text-slate-950 p-2 rounded-lg shadow-md shrink-0`}>
+        <div className="bg-gradient-to-r from-ink-900 to-ink-800 rounded-xl px-5 py-4 flex items-center gap-3 border border-ink-700/50 shadow-lg">
+          <div className={`${colors.bg} text-ink-950 p-2 rounded-lg shadow-md shrink-0`}>
             <Newspaper className="w-5 h-5" />
           </div>
           <div className="min-w-0">
-            <span className={`${colors.bg} text-slate-950 font-black text-[10px] px-2 py-0.5 rounded uppercase tracking-wider`}>
+            <span className={`${colors.bg} text-ink-950 font-black text-[10px] px-2 py-0.5 rounded uppercase tracking-wider`}>
               {config.label}
             </span>
             <h3 className={`text-white font-black text-base ml-1 truncate ${colors.hover}`}>
@@ -56,13 +56,13 @@ export const IndustryNewsBanner: React.FC<IndustryNewsBannerProps> = ({
         </div>
 
         {/* Column 2: News list (35% on PC) */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm">
+        <div className="bg-white dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 p-3 shadow-sm">
           <div className="space-y-2">
             {displayNews.map((article) => (
               <a
                 key={article.id}
                 href={`/tin-tuc/${article.id}`}
-                className={`block text-[11px] font-bold text-slate-700 dark:text-slate-300 hover:text-${config.color}-600 dark:hover:text-${config.color}-400 transition leading-tight line-clamp-2`}
+                className={`block text-[11px] font-bold text-ink-700 dark:text-ink-300 hover:text-${config.color}-600 dark:hover:text-${config.color}-400 transition leading-tight line-clamp-2`}
               >
                 {article.title}
               </a>

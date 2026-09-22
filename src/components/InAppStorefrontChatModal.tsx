@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, Send, Bell, BellOff, Volume2, VolumeX, MessageSquare, Phone, 
   Store, ShoppingBag, CheckCheck, Sparkles, Image as ImageIcon, ShieldCheck, MapPin
@@ -82,9 +82,9 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
 
     if (nextSound) {
       playSoundToggleTestChime();
-      setSoundToast('🔊 ĐÃ BẬT CHUÔNG BÁO TIN NHẮN IB');
+      setSoundToast(' ĐÃ BẬT CHUÔNG BÁO TIN NHẮN IB');
     } else {
-      setSoundToast('🔇 ĐÃ TẮT CHUÔNG BÁO TIN NHẮN IB');
+      setSoundToast(' ĐÃ TẮT CHUÔNG BÁO TIN NHẮN IB');
     }
 
     setTimeout(() => {
@@ -142,7 +142,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
       setMessages(prev => [...prev, sellerReply]);
       setIsReplying(false);
 
-      // 🔔 PLAY SOUND RINGTONE WHEN INCOMING MESSAGE ARRIVES!
+      //  PLAY SOUND RINGTONE WHEN INCOMING MESSAGE ARRIVES!
       if (soundEnabled) {
         playMessageRingtone();
       }
@@ -150,69 +150,69 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
   };
 
   return (
-    <div className="fixed inset-0 z-[80] overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
+    <div className="fixed inset-0 z-[80] overflow-y-auto bg-ink-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
       {/* Modal Container */}
-      <div className="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col h-[85vh] sm:h-[680px] my-auto">
+      <div className="relative w-full max-w-xl bg-white dark:bg-ink-900 rounded-3xl shadow-2xl overflow-hidden border border-ink-200 dark:border-ink-800 flex flex-col h-[85vh] sm:h-[680px] my-auto">
         
         {/* Sound Toast Overlay */}
         {soundToast && (
-          <div className="absolute top-16 left-1/2 -translate-x-1/2 z-[90] px-4 py-2 bg-slate-950 text-amber-300 border border-amber-500/50 rounded-full font-black text-xs shadow-2xl animate-bounce flex items-center gap-2">
+          <div className="absolute top-16 left-1/2 -translate-x-1/2 z-[90] px-4 py-2 bg-ink-950 text-brand-300 border border-brand-500/50 rounded-full font-black text-xs shadow-2xl animate-bounce flex items-center gap-2">
             <span>{soundToast}</span>
           </div>
         )}
 
         {/* Header Bar */}
-        <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-indigo-950 text-white p-4 flex items-center justify-between border-b border-slate-800 shrink-0">
+        <div className="bg-gradient-to-r from-ink-900 via-ink-950 to-indigo-950 text-white p-4 flex items-center justify-between border-b border-ink-800 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <div className="relative shrink-0">
               <img loading="lazy" 
                 src={store.logoUrl || ''} 
                 alt={store.storeName}
-                className="w-11 h-11 rounded-2xl border border-amber-400 object-cover shadow-md"
+                className="w-11 h-11 rounded-2xl border border-brand-400 object-cover shadow-md"
               />
-              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-950 rounded-full" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-brand-500 border-2 border-ink-950 rounded-full" />
             </div>
 
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <h3 className="font-extrabold text-sm text-amber-300 truncate">
+                <h3 className="font-extrabold text-sm text-brand-300 truncate">
                   {store.storeName}
                 </h3>
                 {store.verified && (
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" title="Đã xác thực chính chủ" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-brand-400 shrink-0" title="Đã xác thực chính chủ" />
                 )}
               </div>
-              <p className="text-[11px] text-slate-300 flex items-center gap-1.5 truncate">
+              <p className="text-[11px] text-ink-300 flex items-center gap-1.5 truncate">
                 <span>Chủ shop: {store.ownerName}</span>
                 <span>•</span>
-                <span className="text-emerald-400 font-bold">🟢 Online Phản Hồi Ngay</span>
+                <span className="text-brand-400 font-bold"> Online Phản Hồi Ngay</span>
               </p>
             </div>
           </div>
 
           {/* Action Header Controls */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* 🔔 Ringtone Sound Toggle Switch */}
+            {/*  Ringtone Sound Toggle Switch */}
             <button
               onClick={handleToggleSound}
               className={`px-3 py-1.5 rounded-xl font-black text-[11px] transition flex items-center gap-1.5 border shadow-sm cursor-pointer ${
                 soundEnabled
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 hover:bg-amber-500/30'
-                  : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
+                  ? 'bg-brand-500/20 text-brand-300 border-brand-500/50 hover:bg-brand-500/30'
+                  : 'bg-ink-800 text-ink-400 border-ink-700 hover:bg-ink-700'
               }`}
               title={soundEnabled ? 'Chuông báo tin nhắn đang BẬT. Bấm để TẮT' : 'Chuông báo tin nhắn đang TẮT. Bấm để BẬT'}
             >
               {soundEnabled ? (
                 <>
-                  <Bell className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                  <Bell className="w-3.5 h-3.5 text-brand-400 animate-pulse" />
                   <span className="hidden sm:inline">Chuông: BẬT</span>
-                  <span className="sm:hidden">🔔</span>
+                  <span className="sm:hidden"></span>
                 </>
               ) : (
                 <>
-                  <BellOff className="w-3.5 h-3.5 text-slate-400" />
+                  <BellOff className="w-3.5 h-3.5 text-ink-400" />
                   <span className="hidden sm:inline">Chuông: TẮT</span>
-                  <span className="sm:hidden">🔕</span>
+                  <span className="sm:hidden"></span>
                 </>
               )}
             </button>
@@ -220,7 +220,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
             {/* Direct Call Link */}
             <a
               href={`tel:${store.ownerPhone}`}
-              className="p-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition shadow"
+              className="p-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl transition shadow"
               title="Gọi điện trực tiếp chủ shop"
             >
               <Phone className="w-4 h-4" />
@@ -229,7 +229,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
             {/* Close Modal */}
             <button
               onClick={onClose}
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition"
+              className="p-2 bg-ink-800 hover:bg-ink-700 text-ink-300 hover:text-white rounded-xl transition"
               title="Đóng Chat IB"
             >
               <X className="w-4 h-4" />
@@ -239,21 +239,21 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
 
         {/* Attached Product Context Bar (if chatting about a specific product) */}
         {selectedProduct && (
-          <div className="bg-amber-500/10 dark:bg-amber-500/15 border-b border-amber-500/30 p-2.5 px-4 flex items-center justify-between gap-3 text-xs shrink-0">
+          <div className="bg-brand-500/10 dark:bg-brand-500/15 border-b border-brand-500/30 p-2.5 px-4 flex items-center justify-between gap-3 text-xs shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
               <img loading="lazy" 
                 src={selectedProduct.images[0] || ''} 
                 alt={selectedProduct.name}
-                className="w-10 h-10 rounded-lg object-cover shrink-0 border border-amber-500/40"
+                className="w-10 h-10 rounded-lg object-cover shrink-0 border border-brand-500/40"
               />
               <div className="min-w-0">
-                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold block uppercase tracking-wider">
+                <span className="text-[10px] text-brand-600 dark:text-brand-400 font-bold block uppercase tracking-wider">
                   MÓN ĐANG ĐƯỢC ĐỀ CẬP:
                 </span>
-                <span className="font-bold text-slate-900 dark:text-white truncate block">
+                <span className="font-bold text-ink-900 dark:text-white truncate block">
                   {selectedProduct.name}
                 </span>
-                <span className="font-black text-amber-600 dark:text-amber-400">
+                <span className="font-black text-brand-600 dark:text-brand-400">
                   {selectedProduct.price.toLocaleString('vi-VN')}đ {selectedProduct.unit ? `/ ${selectedProduct.unit}` : ''}
                 </span>
               </div>
@@ -261,7 +261,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
 
             <button
               onClick={() => setSelectedProduct(null)}
-              className="p-1 text-slate-400 hover:text-rose-500 transition"
+              className="p-1 text-ink-400 hover:text-rose-500 transition"
               title="Bỏ đính kèm món này"
             >
               <X className="w-4 h-4" />
@@ -270,7 +270,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
         )}
 
         {/* Messages Body */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 dark:bg-slate-950/60">
+        <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-ink-50 dark:bg-ink-950/60">
           {messages.map((msg) => {
             const isUser = msg.sender === 'user';
             return (
@@ -278,7 +278,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
                 key={msg.id}
                 className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} space-y-1`}
               >
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-semibold px-1">
+                <div className="flex items-center gap-1.5 text-[10px] text-ink-400 font-semibold px-1">
                   <span>{msg.senderName}</span>
                   <span>•</span>
                   <span>{msg.timestamp}</span>
@@ -287,13 +287,13 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
                 <div
                   className={`max-w-[85%] sm:max-w-[75%] p-3.5 rounded-2xl text-xs leading-relaxed shadow-xs ${
                     isUser
-                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-medium rounded-tr-none'
-                      : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700/80 rounded-tl-none'
+                      ? 'bg-gradient-to-r from-brand-500 to-brand-600 text-ink-950 font-medium rounded-tr-none'
+                      : 'bg-white dark:bg-ink-800 text-ink-900 dark:text-ink-100 border border-ink-200 dark:border-ink-700/80 rounded-tl-none'
                   }`}
                 >
                   {/* Attached Product inside Message */}
                   {msg.product && (
-                    <div className="mb-2 p-2 bg-slate-900/10 dark:bg-slate-950/40 rounded-xl border border-slate-900/20 dark:border-slate-700 flex items-center gap-2 text-[11px]">
+                    <div className="mb-2 p-2 bg-ink-900/10 dark:bg-ink-950/40 rounded-xl border border-ink-900/20 dark:border-ink-700 flex items-center gap-2 text-[11px]">
                       <img loading="lazy" 
                         src={msg.product.images[0]} 
                         alt={msg.product.name}
@@ -301,7 +301,7 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
                       />
                       <div className="min-w-0">
                         <span className="font-bold truncate block">{msg.product.name}</span>
-                        <span className="font-black text-amber-700 dark:text-amber-400">
+                        <span className="font-black text-brand-700 dark:text-brand-400">
                           {msg.product.price.toLocaleString('vi-VN')}đ
                         </span>
                       </div>
@@ -316,8 +316,8 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
 
           {/* Typing indicator */}
           {isReplying && (
-            <div className="flex items-center gap-2 text-xs text-slate-400 font-bold italic py-1 animate-pulse">
-              <span className="w-2 h-2 bg-amber-500 rounded-full animate-ping"></span>
+            <div className="flex items-center gap-2 text-xs text-ink-400 font-bold italic py-1 animate-pulse">
+              <span className="w-2 h-2 bg-brand-500 rounded-full animate-ping"></span>
               <span>{store.storeName} đang soạn tin nhắn phản hồi...</span>
             </div>
           )}
@@ -326,13 +326,13 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
         </div>
 
         {/* Quick Suggestion Chips */}
-        <div className="p-2 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 overflow-x-auto flex items-center gap-2 scrollbar-none shrink-0">
-          <span className="text-[10px] font-bold text-slate-400 shrink-0 pl-2">Gợi ý tin nhắn:</span>
+        <div className="p-2 bg-white dark:bg-ink-900 border-t border-ink-200 dark:border-ink-800 overflow-x-auto flex items-center gap-2 scrollbar-none shrink-0">
+          <span className="text-[10px] font-bold text-ink-400 shrink-0 pl-2">Gợi ý tin nhắn:</span>
           {quickSuggestions.map((chip, idx) => (
             <button
               key={idx}
               onClick={() => handleSendMessage(chip)}
-              className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-700 dark:text-slate-300 font-bold text-[11px] rounded-xl transition whitespace-nowrap shrink-0 border border-slate-200 dark:border-slate-700"
+              className="px-2.5 py-1 bg-ink-100 dark:bg-ink-800 hover:bg-brand-500 hover:text-ink-950 text-ink-700 dark:text-ink-300 font-bold text-[11px] rounded-xl transition whitespace-nowrap shrink-0 border border-ink-200 dark:border-ink-700"
             >
               {chip}
             </button>
@@ -345,20 +345,20 @@ export const InAppStorefrontChatModal: React.FC<InAppStorefrontChatModalProps> =
             e.preventDefault();
             handleSendMessage();
           }}
-          className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 shrink-0"
+          className="p-3 bg-white dark:bg-ink-900 border-t border-ink-200 dark:border-ink-800 flex items-center gap-2 shrink-0"
         >
           <input
             type="text"
             value={inputMsg}
             onChange={(e) => setInputMsg(e.target.value)}
             placeholder={`Nhắn tin IB với ${store.ownerName || store.storeName}...`}
-            className="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-amber-500"
+            className="flex-1 px-4 py-2.5 bg-ink-100 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-2xl text-xs font-medium text-ink-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500"
           />
 
           <button
             type="submit"
             disabled={!inputMsg.trim() && !selectedProduct}
-            className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-black rounded-2xl text-xs transition flex items-center gap-1 shadow-md"
+            className="px-4 py-2.5 bg-brand-500 hover:bg-brand-400 disabled:opacity-50 text-ink-950 font-black rounded-2xl text-xs transition flex items-center gap-1 shadow-md"
           >
             <span>GỬI IB</span>
             <Send className="w-3.5 h-3.5" />

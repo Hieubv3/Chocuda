@@ -49,7 +49,7 @@ interface AiMenuScannerModalProps {
 // Sample quick test templates for fast user discovery
 const SAMPLE_TEMPLATES = [
   {
-    name: '🍵 Menu Trà Sữa & Đồ Ăn Vặt',
+    name: ' Menu Trà Sữa & Đồ Ăn Vặt',
     category: 'am-thuc-com-cu-dan',
     image: '',
     text: `MENU TIỆM TRÀ CHỢ CƯ DÂN S2.05 VINHOMES:
@@ -61,7 +61,7 @@ const SAMPLE_TEMPLATES = [
 Hotline Zalo: 0868.499.929. Ship tận phòng Ocean Park 1, 2, 3 trong 15p!`
   },
   {
-    name: '⚡ Báo Giá Sửa Điện Nước & Thang Máy',
+    name: ' Báo Giá Sửa Điện Nước & Thang Máy',
     category: 'thang-may-sua-nha',
     image: '',
     text: `BẢNG BÁO GIÁ DỊCH VỤ KỸ THUẬT CƯ DÂN CHÀ LÀ 6:
@@ -73,7 +73,7 @@ Hotline Zalo: 0868.499.929. Ship tận phòng Ocean Park 1, 2, 3 trong 15p!`
 Thợ cư dân Chà Là 6 - Có mặt 15 phút, bảo hành 12 tháng.`
   },
   {
-    name: '✨ Báo Giá Giặt Là & Dọn Dẹp Nhà',
+    name: ' Báo Giá Giặt Là & Dọn Dẹp Nhà',
     category: 'dich-vu-gia-dinh-giat-la',
     image: '',
     text: `BẢNG GIÁ TIỆM GIẶT SẤY & DỌN NHÀ ECO VINHOMES:
@@ -85,7 +85,7 @@ Thợ cư dân Chà Là 6 - Có mặt 15 phút, bảo hành 12 tháng.`
 Giao nhận tận sảnh căn hộ miễn phí. Zalo: 0868.499.929`
   },
   {
-    name: '✈️ Báo Giá Taxi Tiện Chuyến & Sân Bay',
+    name: ' Báo Giá Taxi Tiện Chuyến & Sân Bay',
     category: 'van-chuyen-taxi',
     image: '',
     text: `BẢNG GIÁ XE TIỆN CHUYẾN CƯ DÂN VINHOMES 24/7:
@@ -288,30 +288,30 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-slate-100">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-ink-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+      <div className="bg-ink-900 border border-ink-700/80 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-ink-100">
         
         {/* Modal Header */}
-        <div className="px-5 py-4 border-b border-slate-800 bg-gradient-to-r from-slate-900 via-slate-850 to-amber-950/30 flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-ink-800 bg-gradient-to-r from-ink-900 via-ink-850 to-brand-950/30 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-inner">
+            <div className="w-10 h-10 rounded-xl bg-brand-500/20 border border-brand-500/40 flex items-center justify-center text-brand-400 shadow-inner">
               <Sparkles className="w-5 h-5 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-bold text-white tracking-tight">AI Quét Menu & Báo Giá Tự Động</h3>
-                <span className="px-2 py-0.5 text-xs font-semibold bg-amber-500 text-slate-950 rounded-full">
+                <span className="px-2 py-0.5 text-xs font-semibold bg-brand-500 text-ink-950 rounded-full">
                   Gemini 3.7 OCR
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-ink-400">
                 Chụp ảnh menu, báo giá thợ hoặc dán bảng hàng — AI tự bóc tách dữ liệu & viết sẵn bài đăng bán dịch vụ
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 text-ink-400 hover:text-white hover:bg-ink-800 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -331,14 +331,14 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
             /* STEP 1: SCANNER INPUTS */
             <div className="space-y-5">
               {/* Method Switcher Tabs */}
-              <div className="grid grid-cols-3 gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800 text-sm">
+              <div className="grid grid-cols-3 gap-2 p-1 bg-ink-950 rounded-xl border border-ink-800 text-sm">
                 <button
                   type="button"
                   onClick={() => setActiveTab('upload')}
                   className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-medium transition-all ${
                     activeTab === 'upload'
-                      ? 'bg-amber-500 text-slate-950 shadow-md font-semibold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                      ? 'bg-brand-500 text-ink-950 shadow-md font-semibold'
+                      : 'text-ink-400 hover:text-ink-200 hover:bg-ink-900'
                   }`}
                 >
                   <Camera className="w-4 h-4" />
@@ -349,8 +349,8 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                   onClick={() => setActiveTab('text')}
                   className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-medium transition-all ${
                     activeTab === 'text'
-                      ? 'bg-amber-500 text-slate-950 shadow-md font-semibold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                      ? 'bg-brand-500 text-ink-950 shadow-md font-semibold'
+                      : 'text-ink-400 hover:text-ink-200 hover:bg-ink-900'
                   }`}
                 >
                   <FileText className="w-4 h-4" />
@@ -361,11 +361,11 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                   onClick={() => setActiveTab('sample')}
                   className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-medium transition-all ${
                     activeTab === 'sample'
-                      ? 'bg-amber-500 text-slate-950 shadow-md font-semibold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                      ? 'bg-brand-500 text-ink-950 shadow-md font-semibold'
+                      : 'text-ink-400 hover:text-ink-200 hover:bg-ink-900'
                   }`}
                 >
-                  <Zap className="w-4 h-4 text-amber-300" />
+                  <Zap className="w-4 h-4 text-brand-300" />
                   <span>Mẫu Thử Nhanh</span>
                 </button>
               </div>
@@ -377,8 +377,8 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                     onClick={() => fileInputRef.current?.click()}
                     className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 ${
                       imagePreviewUrl
-                        ? 'border-amber-500/50 bg-amber-500/5'
-                        : 'border-slate-700 hover:border-amber-400 hover:bg-slate-800/40 bg-slate-950/40'
+                        ? 'border-brand-500/50 bg-brand-500/5'
+                        : 'border-ink-700 hover:border-brand-400 hover:bg-ink-800/40 bg-ink-950/40'
                     }`}
                   >
                     <input
@@ -395,7 +395,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                         <img loading="lazy"
                           src={imagePreviewUrl}
                           alt="Menu Preview"
-                          className="max-h-60 max-w-full rounded-xl object-contain shadow-lg border border-slate-700 mx-auto"
+                          className="max-h-60 max-w-full rounded-xl object-contain shadow-lg border border-ink-700 mx-auto"
                         />
                         <button
                           type="button"
@@ -407,22 +407,22 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                         >
                           <X className="w-4 h-4" />
                         </button>
-                        <p className="mt-2 text-xs text-amber-400 font-medium">Nhấp vào ảnh để chọn ảnh khác</p>
+                        <p className="mt-2 text-xs text-brand-400 font-medium">Nhấp vào ảnh để chọn ảnh khác</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mx-auto shadow-inner">
+                        <div className="w-14 h-14 rounded-2xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400 mx-auto shadow-inner">
                           <Upload className="w-7 h-7" />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-slate-200">
+                          <p className="text-sm font-semibold text-ink-200">
                             Nhấp để tải lên hoặc chụp ảnh trực tiếp
                           </p>
-                          <p className="text-xs text-slate-400 mt-1">
+                          <p className="text-xs text-ink-400 mt-1">
                             Hỗ trợ Menu quán ăn, Bảng giá sửa chữa điện nước, Tờ rơi dịch vụ, Báo giá giặt là, Bảng hàng...
                           </p>
                         </div>
-                        <span className="inline-block px-3 py-1 bg-slate-800 text-slate-300 text-xs font-mono rounded-full">
+                        <span className="inline-block px-3 py-1 bg-ink-800 text-ink-300 text-xs font-mono rounded-full">
                           JPG, PNG, WEBP (Tối đa 15MB)
                         </span>
                       </div>
@@ -434,7 +434,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
               {/* TAB 2: PASTE TEXT */}
               {activeTab === 'text' && (
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium text-slate-300">
+                  <label className="block text-xs font-medium text-ink-300">
                     Dán nội dung danh sách món / bảng giá dịch vụ từ Zalo hoặc tin nhắn:
                   </label>
                   <textarea
@@ -442,7 +442,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                     onChange={(e) => setRawText(e.target.value)}
                     rows={6}
                     placeholder={`Ví dụ:\n1. Sửa điều hòa không lạnh: 150.000đ\n2. Bơm gas điều hòa R32: 250.000đ\n3. Vệ sinh bảo dưỡng máy lạnh: 100.000đ\nHotline: 0868.499.929`}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 font-mono leading-relaxed"
+                    className="w-full bg-ink-950 border border-ink-700 rounded-xl p-3.5 text-sm text-ink-100 placeholder-ink-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 font-mono leading-relaxed"
                   />
                 </div>
               )}
@@ -450,27 +450,27 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
               {/* TAB 3: SAMPLE TEMPLATES */}
               {activeTab === 'sample' && (
                 <div className="space-y-3">
-                  <p className="text-xs text-slate-400">Chọn 1 mẫu thử dưới đây để trải nghiệm tốc độ quét của AI:</p>
+                  <p className="text-xs text-ink-400">Chọn 1 mẫu thử dưới đây để trải nghiệm tốc độ quét của AI:</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {SAMPLE_TEMPLATES.map((sample, idx) => (
                       <div
                         key={idx}
                         onClick={() => handleSelectSample(sample)}
-                        className="p-3.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 rounded-xl cursor-pointer transition-all flex items-start gap-3 group"
+                        className="p-3.5 bg-ink-950 hover:bg-ink-800 border border-ink-800 hover:border-brand-500/50 rounded-xl cursor-pointer transition-all flex items-start gap-3 group"
                       >
                         <img loading="lazy"
                           src={sample.image}
                           alt={sample.name}
-                          className="w-14 h-14 rounded-lg object-cover border border-slate-700 shrink-0"
+                          className="w-14 h-14 rounded-lg object-cover border border-ink-700 shrink-0"
                         />
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-semibold text-slate-200 group-hover:text-amber-400 transition-colors truncate">
+                          <h4 className="text-sm font-semibold text-ink-200 group-hover:text-brand-400 transition-colors truncate">
                             {sample.name}
                           </h4>
-                          <p className="text-xs text-slate-400 line-clamp-2 mt-0.5">
+                          <p className="text-xs text-ink-400 line-clamp-2 mt-0.5">
                             {sample.text}
                           </p>
-                          <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 mt-1 font-medium">
+                          <span className="inline-flex items-center gap-1 text-[11px] text-brand-400 mt-1 font-medium">
                             Chọn mẫu này <ArrowRight className="w-3 h-3" />
                           </span>
                         </div>
@@ -481,35 +481,35 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
               )}
 
               {/* CONFIGURATION ROW: CATEGORY & VINHOMES PROJECT */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-950/70 border border-slate-800 rounded-xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-ink-950/70 border border-ink-800 rounded-xl">
                 
                 {/* Industry Classification Option */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-amber-400" />
+                  <label className="block text-xs font-semibold text-ink-300 mb-1.5 flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-brand-400" />
                     <span>Cơ Chế Phân Loại Ngành Hàng:</span>
                   </label>
                   
                   <div className="flex items-center gap-4 mb-2">
-                    <label className="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer">
+                    <label className="flex items-center gap-1.5 text-xs text-ink-300 cursor-pointer">
                       <input
                         type="radio"
                         name="catMode"
                         checked={categoryMode === 'auto'}
                         onChange={() => setCategoryMode('auto')}
-                        className="text-amber-500 focus:ring-amber-500 bg-slate-900 border-slate-700"
+                        className="text-brand-500 focus:ring-brand-500 bg-ink-900 border-ink-700"
                       />
-                      <span className="font-semibold text-amber-400">🤖 Tự động bằng AI</span>
+                      <span className="font-semibold text-brand-400"> Tự động bằng AI</span>
                     </label>
-                    <label className="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer">
+                    <label className="flex items-center gap-1.5 text-xs text-ink-300 cursor-pointer">
                       <input
                         type="radio"
                         name="catMode"
                         checked={categoryMode === 'manual'}
                         onChange={() => setCategoryMode('manual')}
-                        className="text-amber-500 focus:ring-amber-500 bg-slate-900 border-slate-700"
+                        className="text-brand-500 focus:ring-brand-500 bg-ink-900 border-ink-700"
                       />
-                      <span>🛠️ Chọn thủ công</span>
+                      <span> Chọn thủ công</span>
                     </label>
                   </div>
 
@@ -517,7 +517,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                     <select
                       value={manualCategoryId}
                       onChange={(e) => setManualCategoryId(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                      className="w-full bg-ink-900 border border-ink-700 rounded-lg px-3 py-2 text-xs text-ink-200 focus:outline-none focus:border-brand-500"
                     >
                       {RESIDENT_SERVICE_CATEGORIES.map(cat => (
                         <option key={cat.id} value={cat.id}>
@@ -526,7 +526,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                       ))}
                     </select>
                   ) : (
-                    <p className="text-[11px] text-slate-400 italic">
+                    <p className="text-[11px] text-ink-400 italic">
                       AI sẽ tự động đọc món ăn/dịch vụ trong bảng giá để phân loại chính xác vào Cây Danh Mục Chợ Cư Dân.
                     </p>
                   )}
@@ -534,14 +534,14 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
 
                 {/* Target Project Area */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                  <label className="block text-xs font-semibold text-ink-300 mb-1.5 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-brand-400" />
                     <span>Khu Đô Thị Vinhomes Phục Vụ:</span>
                   </label>
                   <select
                     value={selectedProject}
                     onChange={(e) => setSelectedProject(e.target.value as ProjectCategory)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-ink-900 border border-ink-700 rounded-lg px-3 py-2 text-xs text-ink-200 focus:outline-none focus:border-brand-500"
                   >
                     {VIN_MAJOR_PROJECTS.map(proj => (
                       <option key={proj.id} value={proj.id}>
@@ -555,7 +555,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
 
               {/* Extra User Notes */}
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
+                <label className="block text-xs font-medium text-ink-400 mb-1">
                   Ghi chú bổ sung cho AI (Tùy chọn):
                 </label>
                 <input
@@ -563,7 +563,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                   value={userNotes}
                   onChange={(e) => setUserNotes(e.target.value)}
                   placeholder="Ví dụ: Tôi ở phân khu San Hô OCP2, miễn phí ship từ 2 món, nhận sửa chữa 24/7..."
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-ink-950 border border-ink-700 rounded-xl px-3.5 py-2.5 text-xs text-ink-200 placeholder-ink-500 focus:outline-none focus:border-brand-500"
                 />
               </div>
 
@@ -575,8 +575,8 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                   disabled={isScanning || (!imageBase64 && !rawText.trim())}
                   className={`w-full py-3.5 px-5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg ${
                     isScanning || (!imageBase64 && !rawText.trim())
-                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
-                      : 'bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 text-slate-950 hover:brightness-110 hover:shadow-amber-500/20 active:scale-[0.99]'
+                      ? 'bg-ink-800 text-ink-500 cursor-not-allowed border border-ink-700'
+                      : 'bg-gradient-to-r from-brand-500 via-brand-400 to-yellow-500 text-ink-950 hover:brightness-110 hover:shadow-brand-500/20 active:scale-[0.99]'
                   }`}
                 >
                   {isScanning ? (
@@ -587,7 +587,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                   ) : (
                     <>
                       <Sparkles className="w-5 h-5" />
-                      <span>🚀 AI Quét Menu & Biên Soạn Bài Đăng (1 Click)</span>
+                      <span> AI Quét Menu & Biên Soạn Bài Đăng (1 Click)</span>
                     </>
                   )}
                 </button>
@@ -599,14 +599,14 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
             <div className="space-y-6">
               
               {/* Success Banner */}
-              <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-2.5 text-emerald-400">
+              <div className="p-4 bg-brand-500/10 border border-brand-500/30 rounded-xl flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-2.5 text-brand-400">
                   <CheckCircle2 className="w-5 h-5 shrink-0" />
                   <div>
-                    <h4 className="text-sm font-bold text-emerald-300">
-                      🎉 AI Đã Quét & Bóc Tách Thành Công {scanResult.menuItems?.length || 0} Hạng Mục!
+                    <h4 className="text-sm font-bold text-brand-300">
+                       AI Đã Quét & Bóc Tách Thành Công {scanResult.menuItems?.length || 0} Hạng Mục!
                     </h4>
-                    <p className="text-xs text-emerald-400/80">
+                    <p className="text-xs text-brand-400/80">
                       Ngành hàng: <b>{scanResult.categoryName}</b> • Độ chuẩn xác: <b>{scanResult.confidenceScore || 98}%</b>
                     </p>
                   </div>
@@ -615,15 +615,15 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsEditingResult(!isEditingResult)}
-                    className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors border border-slate-700"
+                    className="px-3 py-1.5 bg-ink-800 hover:bg-ink-700 text-ink-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors border border-ink-700"
                   >
-                    <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                    <Edit3 className="w-3.5 h-3.5 text-brand-400" />
                     <span>{isEditingResult ? 'Khóa chỉnh sửa' : 'Chỉnh sửa nhanh'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setScanResult(null)}
-                    className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 text-xs rounded-lg transition-colors"
+                    className="px-3 py-1.5 bg-ink-900 hover:bg-ink-800 text-ink-400 text-xs rounded-lg transition-colors"
                   >
                     Quét lại
                   </button>
@@ -631,11 +631,11 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
               </div>
 
               {/* Key Service Metadata Card */}
-              <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
+              <div className="p-4 bg-ink-950 border border-ink-800 rounded-xl space-y-3">
                 
                 {/* Title */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                  <label className="block text-xs font-semibold text-ink-400 mb-1">
                     Tiêu Đề Bài Đăng Dịch Vụ:
                   </label>
                   {isEditingResult ? (
@@ -643,7 +643,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                       type="text"
                       value={scanResult.title}
                       onChange={(e) => setScanResult({ ...scanResult, title: e.target.value })}
-                      className="w-full bg-slate-900 border border-amber-500/50 rounded-lg p-2 text-sm font-bold text-white focus:outline-none"
+                      className="w-full bg-ink-900 border border-brand-500/50 rounded-lg p-2 text-sm font-bold text-white focus:outline-none"
                     />
                   ) : (
                     <p className="text-base font-bold text-white tracking-tight">
@@ -653,9 +653,9 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                 </div>
 
                 {/* Category & Price Summary */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-800/80">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-ink-800/80">
                   <div>
-                    <span className="text-[11px] text-slate-400 block">Ngành hàng (Danh mục):</span>
+                    <span className="text-[11px] text-ink-400 block">Ngành hàng (Danh mục):</span>
                     {isEditingResult ? (
                       <select
                         value={scanResult.categoryId}
@@ -669,14 +669,14 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                             subCategory: found?.subCategories[0] || scanResult.subCategory
                           });
                         }}
-                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-amber-400 mt-1"
+                        className="w-full bg-ink-900 border border-ink-700 rounded-lg px-2 py-1 text-xs text-brand-400 mt-1"
                       >
                         {RESIDENT_SERVICE_CATEGORIES.map(c => (
                           <option key={c.id} value={c.id}>{c.name}</option>
                         ))}
                       </select>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 mt-0.5">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-400 mt-0.5">
                         <Tag className="w-3.5 h-3.5" />
                         {scanResult.categoryName}
                       </span>
@@ -684,23 +684,23 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                   </div>
 
                   <div>
-                    <span className="text-[11px] text-slate-400 block">Phân loại chi tiết:</span>
-                    <span className="text-xs font-medium text-slate-200 mt-0.5 block truncate">
+                    <span className="text-[11px] text-ink-400 block">Phân loại chi tiết:</span>
+                    <span className="text-xs font-medium text-ink-200 mt-0.5 block truncate">
                       {scanResult.subCategory}
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-[11px] text-slate-400 block">Mức giá hiển thị:</span>
+                    <span className="text-[11px] text-ink-400 block">Mức giá hiển thị:</span>
                     {isEditingResult ? (
                       <input
                         type="text"
                         value={scanResult.priceDisplay}
                         onChange={(e) => setScanResult({ ...scanResult, priceDisplay: e.target.value })}
-                        className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-emerald-400 mt-1"
+                        className="w-full bg-ink-900 border border-ink-700 rounded px-2 py-1 text-xs font-bold text-brand-400 mt-1"
                       />
                     ) : (
-                      <span className="text-xs font-bold text-emerald-400 mt-0.5 block">
+                      <span className="text-xs font-bold text-brand-400 mt-0.5 block">
                         {scanResult.priceDisplay}
                       </span>
                     )}
@@ -708,13 +708,13 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                 </div>
 
                 {/* Contact & Location Info */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/80 text-xs text-slate-300">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-ink-800/80 text-xs text-ink-300">
                   <div className="flex items-center gap-2">
-                    <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <Phone className="w-3.5 h-3.5 text-brand-400 shrink-0" />
                     <span>Hotline/Zalo: <b>{scanResult.providerPhone || scanResult.providerZalo || '0868.499.929'}</b></span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <MapPin className="w-3.5 h-3.5 text-brand-400 shrink-0" />
                     <span className="truncate">Khu vực: <b>{scanResult.address || 'Đại đô thị Vinhomes Ocean Park'}</b></span>
                   </div>
                 </div>
@@ -724,15 +724,15 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
               {/* Scanned Menu / Price List Table */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                    <Utensils className="w-4 h-4 text-amber-400" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-ink-300 flex items-center gap-1.5">
+                    <Utensils className="w-4 h-4 text-brand-400" />
                     <span>Bảng Thực Đơn / Báo Giá Chi Tiết ({scanResult.menuItems?.length || 0} món):</span>
                   </h4>
                   {isEditingResult && (
                     <button
                       type="button"
                       onClick={handleAddMenuItem}
-                      className="px-2.5 py-1 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 rounded-lg text-xs font-semibold flex items-center gap-1"
+                      className="px-2.5 py-1 bg-brand-500/20 text-brand-300 hover:bg-brand-500/30 border border-brand-500/40 rounded-lg text-xs font-semibold flex items-center gap-1"
                     >
                       <Plus className="w-3 h-3" />
                       <span>Thêm món/dịch vụ</span>
@@ -740,10 +740,10 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                   )}
                 </div>
 
-                <div className="border border-slate-800 rounded-xl overflow-hidden bg-slate-950">
+                <div className="border border-ink-800 rounded-xl overflow-hidden bg-ink-950">
                   <div className="overflow-x-auto max-h-60 custom-scrollbar">
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-slate-900 text-slate-400 border-b border-slate-800 font-semibold sticky top-0">
+                      <thead className="bg-ink-900 text-ink-400 border-b border-ink-800 font-semibold sticky top-0">
                         <tr>
                           <th className="py-2.5 px-3">#</th>
                           <th className="py-2.5 px-3">Tên món / Hạng mục dịch vụ</th>
@@ -753,53 +753,53 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                           {isEditingResult && <th className="py-2.5 px-3 text-center">Xóa</th>}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-850">
+                      <tbody className="divide-y divide-ink-850">
                         {scanResult.menuItems?.map((item, idx) => (
-                          <tr key={item.id || idx} className="hover:bg-slate-900/60 transition-colors">
-                            <td className="py-2 px-3 text-slate-500 font-mono">{idx + 1}</td>
-                            <td className="py-2 px-3 font-semibold text-slate-200">
+                          <tr key={item.id || idx} className="hover:bg-ink-900/60 transition-colors">
+                            <td className="py-2 px-3 text-ink-500 font-mono">{idx + 1}</td>
+                            <td className="py-2 px-3 font-semibold text-ink-200">
                               {isEditingResult ? (
                                 <input
                                   type="text"
                                   value={item.name}
                                   onChange={(e) => handleUpdateMenuItem(item.id, 'name', e.target.value)}
-                                  className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+                                  className="w-full bg-ink-900 border border-ink-700 rounded px-2 py-1 text-xs text-white"
                                 />
                               ) : (
                                 item.name
                               )}
                             </td>
-                            <td className="py-2 px-3 text-slate-400">
+                            <td className="py-2 px-3 text-ink-400">
                               {isEditingResult ? (
                                 <input
                                   type="text"
                                   value={item.unit}
                                   onChange={(e) => handleUpdateMenuItem(item.id, 'unit', e.target.value)}
-                                  className="w-16 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+                                  className="w-16 bg-ink-900 border border-ink-700 rounded px-2 py-1 text-xs text-white"
                                 />
                               ) : (
                                 item.unit
                               )}
                             </td>
-                            <td className="py-2 px-3 font-bold text-emerald-400">
+                            <td className="py-2 px-3 font-bold text-brand-400">
                               {isEditingResult ? (
                                 <input
                                   type="number"
                                   value={item.price}
                                   onChange={(e) => handleUpdateMenuItem(item.id, 'price', e.target.value)}
-                                  className="w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-emerald-400 font-bold"
+                                  className="w-24 bg-ink-900 border border-ink-700 rounded px-2 py-1 text-xs text-brand-400 font-bold"
                                 />
                               ) : (
                                 item.priceDisplay
                               )}
                             </td>
-                            <td className="py-2 px-3 text-slate-400">
+                            <td className="py-2 px-3 text-ink-400">
                               {isEditingResult ? (
                                 <input
                                   type="text"
                                   value={item.description || ''}
                                   onChange={(e) => handleUpdateMenuItem(item.id, 'description', e.target.value)}
-                                  className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300"
+                                  className="w-full bg-ink-900 border border-ink-700 rounded px-2 py-1 text-xs text-ink-300"
                                 />
                               ) : (
                                 item.description || '—'
@@ -810,7 +810,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                                 <button
                                   type="button"
                                   onClick={() => handleRemoveMenuItem(item.id)}
-                                  className="p-1 text-slate-500 hover:text-rose-400 transition-colors"
+                                  className="p-1 text-ink-500 hover:text-rose-400 transition-colors"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -827,11 +827,11 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
               {/* AI Auto-Generated Marketing Post (Suggested Description) */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
+                  <label className="text-xs font-bold uppercase tracking-wider text-ink-300 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-brand-400" />
                     <span>Bài Viết Mô Tả Gợi Ý Độc Quyền (AI Copywriting):</span>
                   </label>
-                  <span className="text-[11px] text-slate-400">Đã tự động định dạng bảng giá & cam kết</span>
+                  <span className="text-[11px] text-ink-400">Đã tự động định dạng bảng giá & cam kết</span>
                 </div>
 
                 <div className="relative">
@@ -839,7 +839,7 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                     value={scanResult.suggestedDescription}
                     onChange={(e) => setScanResult({ ...scanResult, suggestedDescription: e.target.value })}
                     rows={8}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed font-sans focus:outline-none focus:border-amber-500"
+                    className="w-full bg-ink-950 border border-ink-800 rounded-xl p-3.5 text-xs text-ink-200 leading-relaxed font-sans focus:outline-none focus:border-brand-500"
                   />
                 </div>
               </div>
@@ -849,20 +849,20 @@ export const AiMenuScannerModal: React.FC<AiMenuScannerModalProps> = ({
                 <button
                   type="button"
                   onClick={handleApplyToServiceForm}
-                  className="flex-1 py-3.5 px-5 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 text-slate-950 hover:brightness-110 font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 active:scale-[0.99] transition-all"
+                  className="flex-1 py-3.5 px-5 bg-gradient-to-r from-brand-500 via-brand-400 to-yellow-500 text-ink-950 hover:brightness-110 font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-brand-500/20 active:scale-[0.99] transition-all"
                 >
-                  <CheckCircle2 className="w-5 h-5 text-slate-950" />
-                  <span>✨ Áp Dụng Vào Form Đăng Bài Dịch Vụ (Điền Tự Động 100%)</span>
+                  <CheckCircle2 className="w-5 h-5 text-ink-950" />
+                  <span> Áp Dụng Vào Form Đăng Bài Dịch Vụ (Điền Tự Động 100%)</span>
                 </button>
 
                 {onApplyToStoreProducts && (
                   <button
                     type="button"
                     onClick={handleApplyToStore}
-                    className="py-3.5 px-5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors"
+                    className="py-3.5 px-5 bg-ink-800 hover:bg-ink-700 border border-ink-700 text-ink-200 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors"
                   >
-                    <Store className="w-4 h-4 text-amber-400" />
-                    <span>🛍️ Thêm Vào Gian Hàng Quán</span>
+                    <Store className="w-4 h-4 text-brand-400" />
+                    <span> Thêm Vào Gian Hàng Quán</span>
                   </button>
                 )}
               </div>

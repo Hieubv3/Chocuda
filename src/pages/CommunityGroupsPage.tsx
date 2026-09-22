@@ -87,7 +87,7 @@ export const CommunityGroupsPage: React.FC = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={selectedGroup ? `${selectedGroup.name} | Cộng Đồng Cư Dân` : 'Cộng Đồng & Group Zalo Cư Dân Vinhomes 24H'}
         description="Tổng hợp các group Zalo, Facebook cộng đồng cư dân Vinhomes Ocean Park 1, 2, 3, Chợ cư dân, mua bán shophouse và hội xe tiện chuyến."
@@ -95,21 +95,21 @@ export const CommunityGroupsPage: React.FC = () => {
       />
 
       {/* Breadcrumbs */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
-            <Link to="/" className="hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
+            <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to="/cong-dong" className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to="/cong-dong" className="hover:text-brand-600 dark:hover:text-brand-400">
               Group Cư Dân & Cộng Đồng
             </Link>
             {selectedGroup && (
               <>
-                <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-                <span className="text-slate-900 dark:text-white font-bold truncate">
+                <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+                <span className="text-ink-900 dark:text-white font-bold truncate">
                   {selectedGroup.name}
                 </span>
               </>
@@ -126,10 +126,10 @@ export const CommunityGroupsPage: React.FC = () => {
             <Users className="w-4 h-4" />
             <span>MẠNG LƯỚI GROUP CƯ DÂN CHÍNH THỨC</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-ink-900 dark:text-white">
             Kết Nối Cộng Đồng Cư Dân Vinhomes
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs sm:text-sm text-ink-500 dark:text-ink-400 leading-relaxed">
             Tham gia các nhóm Zalo & Facebook theo từng phân khu, dự án để cập nhật thông tin nội khu, giao thương buôn bán và nhận hỗ trợ 24/7.
           </p>
         </div>
@@ -142,10 +142,10 @@ export const CommunityGroupsPage: React.FC = () => {
             return (
               <div
                 key={group.id}
-                className={`bg-white dark:bg-slate-900 rounded-3xl p-6 border transition shadow-lg space-y-5 flex flex-col justify-between ${
+                className={`bg-white dark:bg-ink-900 rounded-3xl p-6 border transition shadow-lg space-y-5 flex flex-col justify-between ${
                   isHighlight 
                     ? 'border-blue-500 ring-2 ring-blue-400 shadow-blue-500/10' 
-                    : 'border-slate-200 dark:border-slate-800 hover:border-blue-500/50'
+                    : 'border-ink-200 dark:border-ink-800 hover:border-blue-500/50'
                 }`}
               >
                 <div className="space-y-3">
@@ -153,21 +153,21 @@ export const CommunityGroupsPage: React.FC = () => {
                     <span className="px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-[10px] font-black rounded-full uppercase">
                       {group.badge}
                     </span>
-                    <span className="text-xs font-bold text-slate-400">
-                      👥 {group.memberCount}
+                    <span className="text-xs font-bold text-ink-400">
+                       {group.memberCount}
                     </span>
                   </div>
 
-                  <h3 className="font-black text-slate-900 dark:text-white text-base leading-snug">
+                  <h3 className="font-black text-ink-900 dark:text-white text-base leading-snug">
                     {group.name}
                   </h3>
 
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-xs text-ink-500 dark:text-ink-400 leading-relaxed">
                     {group.description}
                   </p>
                 </div>
 
-                <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <div className="space-y-2 pt-4 border-t border-ink-100 dark:border-ink-800">
                   <a
                     href={group.zaloLink}
                     target="_blank"
@@ -184,7 +184,7 @@ export const CommunityGroupsPage: React.FC = () => {
                       href={group.facebookLink}
                       target="_blank"
                       rel="noreferrer"
-                      className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition"
+                      className="w-full py-2.5 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 text-ink-700 dark:text-ink-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       <span>Xem Group Facebook</span>
@@ -197,12 +197,12 @@ export const CommunityGroupsPage: React.FC = () => {
         </div>
 
         {/* Community Guidelines Box */}
-        <div className="p-6 bg-slate-900 text-white rounded-3xl border border-slate-800 space-y-3">
-          <div className="flex items-center gap-2 text-amber-400 font-black text-sm">
+        <div className="p-6 bg-ink-900 text-white rounded-3xl border border-ink-800 space-y-3">
+          <div className="flex items-center gap-2 text-brand-400 font-black text-sm">
             <ShieldCheck className="w-5 h-5" />
             <span>NỘI QUY HOẠT ĐỘNG CỘNG ĐỒNG CƯ DÂN</span>
           </div>
-          <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+          <ul className="text-xs text-ink-300 space-y-1.5 list-disc list-inside">
             <li>Tôn trọng các thành viên trong khu đô thị, văn minh, lịch sự trong giao tiếp.</li>
             <li>Không spam quảng cáo sai chuyên mục, không đăng tin bài lừa đảo hoặc thông tin chưa kiểm chứng.</li>
             <li>Ban quản trị hỗ trợ xác thực thông tin tài khoản chính chủ và hỗ trợ kết nối 24/7.</li>

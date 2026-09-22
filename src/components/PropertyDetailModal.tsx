@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { X, MapPin, Bed, Bath, Compass, ShieldCheck, Phone, MessageCircle, Calendar, Share2, Calculator, CheckCircle2 } from 'lucide-react';
 import { Property, Language } from '../types';
 import { getTranslation } from '../lib/i18n';
@@ -81,19 +81,19 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white my-auto animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-50 bg-ink-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-ink-900 rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative border border-ink-200 dark:border-ink-800 text-ink-900 dark:text-white my-auto animate-in fade-in zoom-in duration-200">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-9 h-9 bg-slate-900/70 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition shadow-lg"
+          className="absolute top-4 right-4 z-20 w-9 h-9 bg-ink-900/70 hover:bg-ink-900 text-white rounded-full flex items-center justify-center transition shadow-lg"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Gallery Header Section */}
-        <div className="relative bg-slate-950">
+        <div className="relative bg-ink-950">
           <div className="aspect-[16/9] w-full max-h-[420px] overflow-hidden relative">
             <img loading="lazy"
               src={property.images[selectedImgIndex] || property.images[0]}
@@ -109,21 +109,21 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             </div>
 
             {/* Watermark Official Badge Tag */}
-            <div className="absolute bottom-3 right-3 bg-slate-900/85 backdrop-blur-md text-amber-400 border border-amber-500/40 px-3 py-1 rounded-xl text-[10px] sm:text-xs font-black uppercase flex items-center gap-1.5 shadow-lg pointer-events-none">
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span>🛡️ CHỢ CƯ DÂN 24H • CHOCUDAN24H.COM</span>
+            <div className="absolute bottom-3 right-3 bg-ink-900/85 backdrop-blur-md text-brand-400 border border-brand-500/40 px-3 py-1 rounded-xl text-[10px] sm:text-xs font-black uppercase flex items-center gap-1.5 shadow-lg pointer-events-none">
+              <span className="w-2 h-2 bg-brand-400 rounded-full animate-pulse" />
+              <span> CHỢ CƯ DÂN 24H • CHOCUDAN24H.COM</span>
             </div>
           </div>
 
           {/* Thumbnails Bar */}
           {property.images.length > 1 && (
-            <div className="flex space-x-2 p-3 bg-slate-950/90 overflow-x-auto border-t border-slate-800">
+            <div className="flex space-x-2 p-3 bg-ink-950/90 overflow-x-auto border-t border-ink-800">
               {property.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImgIndex(idx)}
                   className={`w-16 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition ${
-                    selectedImgIndex === idx ? 'border-amber-500 scale-105' : 'border-transparent opacity-60 hover:opacity-100'
+                    selectedImgIndex === idx ? 'border-brand-500 scale-105' : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
                   <img loading="lazy" src={img} alt="thumb" className="w-full h-full object-cover" />
@@ -137,31 +137,31 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
         <div className="p-6 sm:p-8 space-y-8">
           
           {/* Header Specs & Price Box */}
-          <div className="flex flex-col md:flex-row justify-between items-start gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-4 border-b border-ink-200 dark:border-ink-800 pb-6">
             <div className="space-y-2 flex-1">
               <div className="flex items-center space-x-2">
                 <span className={`text-xs font-black uppercase px-2.5 py-1 rounded-lg ${
-                  property.type === 'sale' ? 'bg-amber-500 text-slate-950' : 'bg-emerald-600 text-white'
+                  property.type === 'sale' ? 'bg-brand-500 text-ink-950' : 'bg-brand-600 text-white'
                 }`}>
                   {property.type === 'sale' ? 'MUA BÁN' : 'CHO THUÊ'}
                 </span>
-                <span className="text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-amber-800">
+                <span className="text-xs font-bold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/40 px-2.5 py-1 rounded-lg border border-brand-200 dark:border-brand-800">
                   Dự án: {property.project.toUpperCase()}
                 </span>
               </div>
 
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-snug">
+              <h1 className="text-xl sm:text-2xl font-black text-ink-900 dark:text-white leading-snug">
                 {property.title}
               </h1>
 
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center">
-                <MapPin className="w-4 h-4 mr-1 text-amber-500 shrink-0" />
+              <p className="text-xs sm:text-sm text-ink-500 dark:text-ink-400 flex items-center">
+                <MapPin className="w-4 h-4 mr-1 text-brand-500 shrink-0" />
                 {property.address}
               </p>
             </div>
 
             {/* Price Box */}
-            <div className="bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 p-4 rounded-2xl shadow-lg shrink-0 w-full md:w-auto text-center md:text-right">
+            <div className="bg-gradient-to-br from-brand-500 to-brand-600 text-ink-950 p-4 rounded-2xl shadow-lg shrink-0 w-full md:w-auto text-center md:text-right">
               <span className="text-xs font-bold block opacity-80 uppercase tracking-wide">Mức Giá Niêm Yết</span>
               <span className="text-2xl sm:text-3xl font-black tracking-tight">{property.priceDisplay}</span>
               <p className="text-[11px] font-semibold mt-1">~ {(property.price / (property.area || 1)).toFixed(2)} tỷ / m²</p>
@@ -169,28 +169,28 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
           </div>
 
           {/* Quick Specs Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700 text-xs">
             <div>
-              <span className="text-slate-400 block font-medium">Diện Tích</span>
-              <span className="text-base font-black text-slate-900 dark:text-white">{property.area} m²</span>
+              <span className="text-ink-400 block font-medium">Diện Tích</span>
+              <span className="text-base font-black text-ink-900 dark:text-white">{property.area} m²</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Phòng Ngủ</span>
-              <span className="text-base font-black text-slate-900 dark:text-white flex items-center">
-                <Bed className="w-4 h-4 mr-1 text-amber-500" />
+              <span className="text-ink-400 block font-medium">Phòng Ngủ</span>
+              <span className="text-base font-black text-ink-900 dark:text-white flex items-center">
+                <Bed className="w-4 h-4 mr-1 text-brand-500" />
                 {property.bedrooms} Phòng
               </span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Hướng Nhà</span>
-              <span className="text-base font-black text-slate-900 dark:text-white flex items-center">
-                <Compass className="w-4 h-4 mr-1 text-amber-500" />
+              <span className="text-ink-400 block font-medium">Hướng Nhà</span>
+              <span className="text-base font-black text-ink-900 dark:text-white flex items-center">
+                <Compass className="w-4 h-4 mr-1 text-brand-500" />
                 {property.direction}
               </span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Pháp Lý</span>
-              <span className="text-base font-black text-emerald-600 dark:text-emerald-400 flex items-center">
+              <span className="text-ink-400 block font-medium">Pháp Lý</span>
+              <span className="text-base font-black text-brand-600 dark:text-brand-400 flex items-center">
                 <ShieldCheck className="w-4 h-4 mr-1" />
                 {t.legal[property.legal] || property.legal}
               </span>
@@ -198,64 +198,64 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
           </div>
 
           {/* Tình Trạng Hoàn Thiện & Nội Thất Chi Tiết */}
-          <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-2 text-xs">
-            <span className="text-amber-600 dark:text-amber-400 font-extrabold uppercase tracking-wider block text-[11px]">
-              🏛️ TÌNH TRẠNG HOÀN THIỆN & ĐỒ ĐẠC
+          <div className="p-4 bg-brand-500/10 border border-brand-500/30 rounded-2xl space-y-2 text-xs">
+            <span className="text-brand-600 dark:text-brand-400 font-extrabold uppercase tracking-wider block text-[11px]">
+               TÌNH TRẠNG HOÀN THIỆN & ĐỒ ĐẠC
             </span>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1 bg-amber-500 text-slate-950 font-black rounded-lg uppercase">
+              <span className="px-3 py-1 bg-brand-500 text-ink-950 font-black rounded-lg uppercase">
                 {property.completionStatus || (property.furniture === 'raw' ? 'Bàn giao thô' : property.furniture === 'basic' ? 'Nội thất cơ bản CĐT' : 'Full nội thất cao cấp')}
               </span>
               {property.furnitureDetail && (
-                <span className="px-3 py-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-lg">
+                <span className="px-3 py-1 bg-ink-900 dark:bg-white text-white dark:text-ink-900 font-bold rounded-lg">
                   Đồ đạc: {property.furnitureDetail}
                 </span>
               )}
             </div>
             {property.completionDetail && (
-              <p className="text-slate-700 dark:text-slate-300 font-medium bg-white/60 dark:bg-slate-900/60 p-2.5 rounded-xl border border-amber-500/20 text-xs mt-1">
-                📌 <strong>Ghi chú chi tiết:</strong> {property.completionDetail}
+              <p className="text-ink-700 dark:text-ink-300 font-medium bg-white/60 dark:bg-ink-900/60 p-2.5 rounded-xl border border-brand-500/20 text-xs mt-1">
+                 <strong>Ghi chú chi tiết:</strong> {property.completionDetail}
               </p>
             )}
           </div>
 
           {/* Full Description & Amenities */}
           <div className="space-y-3">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white uppercase tracking-wider text-amber-500">
+            <h3 className="text-base font-bold text-ink-900 dark:text-white uppercase tracking-wider text-brand-500">
               MÔ TẢ CHI TIẾT
             </h3>
-            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-100 dark:border-slate-800">
+            <div className="text-xs sm:text-sm text-ink-600 dark:text-ink-300 leading-relaxed whitespace-pre-line bg-ink-50 dark:bg-ink-800/40 p-5 rounded-2xl border border-ink-100 dark:border-ink-800">
               {property.description}
             </div>
           </div>
 
           {/* Location Map Preview Simulation */}
           <div className="space-y-3">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white uppercase tracking-wider text-amber-500">
+            <h3 className="text-base font-bold text-ink-900 dark:text-white uppercase tracking-wider text-brand-500">
               VỊ TRÍ & TIỆN ÍCH XUNG QUANH
             </h3>
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-48 bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-center p-4">
+            <div className="relative rounded-2xl overflow-hidden border border-ink-200 dark:border-ink-700 h-48 bg-ink-200 dark:bg-ink-800 flex items-center justify-center text-center p-4">
               <img loading="lazy"
                 src="/images/demo/hero-city-2.jpg"
                 alt="Bản đồ vị trí"
                 className="absolute inset-0 w-full h-full object-cover opacity-40"
               />
-              <div className="relative z-10 bg-slate-900/90 text-white p-4 rounded-xl max-w-md shadow-xl border border-slate-700">
-                <MapPin className="w-6 h-6 text-amber-500 mx-auto mb-1 animate-bounce" />
+              <div className="relative z-10 bg-ink-900/90 text-white p-4 rounded-xl max-w-md shadow-xl border border-ink-700">
+                <MapPin className="w-6 h-6 text-brand-500 mx-auto mb-1 animate-bounce" />
                 <p className="text-xs font-bold">{property.address}</p>
-                <p className="text-[11px] text-slate-300 mt-1">Kết nối nhanh: Royal Wave Park (300m) • Vincom Mega Mall (500m) • Bệnh viện Vinmec (800m)</p>
+                <p className="text-[11px] text-ink-300 mt-1">Kết nối nhanh: Royal Wave Park (300m) • Vincom Mega Mall (500m) • Bệnh viện Vinmec (800m)</p>
               </div>
             </div>
           </div>
 
           {/* Loan Estimator Trigger Bar */}
-          <div className="p-4 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="p-4 bg-brand-50 dark:bg-brand-950/40 rounded-2xl border border-brand-200 dark:border-brand-800 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div>
-              <span className="text-xs font-bold text-amber-800 dark:text-amber-300 flex items-center">
-                <Calculator className="w-4 h-4 mr-1 text-amber-600" />
+              <span className="text-xs font-bold text-brand-800 dark:text-brand-300 flex items-center">
+                <Calculator className="w-4 h-4 mr-1 text-brand-600" />
                 Tính dự toán vay ngân hàng cho căn nhà này
               </span>
-              <p className="text-[11px] text-slate-600 dark:text-slate-400">
+              <p className="text-[11px] text-ink-600 dark:text-ink-400">
                 Chỉ cần trả trước 30% (tương đương ~{(property.price * 0.3).toFixed(2)} tỷ), hỗ trợ lãi suất 0%.
               </p>
             </div>
@@ -264,28 +264,28 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                 onClose();
                 onOpenMortgageWithPrice(property.price);
               }}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl shadow transition shrink-0"
+              className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-ink-950 text-xs font-bold rounded-xl shadow transition shrink-0"
             >
               Mở Công Cụ Tính Lãi Vay
             </button>
           </div>
 
           {/* Seller Direct Contact Box */}
-          <div className="p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white rounded-3xl border border-amber-500/40 shadow-xl space-y-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-700/80 pb-3">
+          <div className="p-5 bg-gradient-to-r from-ink-900 via-ink-800 to-ink-900 text-white rounded-3xl border border-brand-500/40 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-ink-700/80 pb-3">
               <div>
                 <span className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-lg inline-block mb-1 ${
-                  property.sellerRole === 'owner' ? 'bg-emerald-500 text-slate-950' :
+                  property.sellerRole === 'owner' ? 'bg-brand-500 text-ink-950' :
                   property.sellerRole === 'sale' ? 'bg-blue-500 text-white' :
-                  'bg-amber-500 text-slate-950'
+                  'bg-brand-500 text-ink-950'
                 }`}>
-                  {property.sellerRole === 'owner' ? '🏡 CHỦ NHÀ CHÍNH CHỦ' : property.sellerRole === 'sale' ? '👨‍💼 MÔI GIỚI CHUYÊN VIÊN' : '👑 BAN QUẢN TRỊ SÀN'}
+                  {property.sellerRole === 'owner' ? ' CHỦ NHÀ CHÍNH CHỦ' : property.sellerRole === 'sale' ? ' MÔI GIỚI CHUYÊN VIÊN' : ' BAN QUẢN TRỊ SÀN'}
                 </span>
                 <h3 className="text-base font-extrabold text-white flex items-center gap-2">
                   <span>{property.sellerName || 'Chủ tin đăng'}</span>
                 </h3>
-                <p className="text-xs text-slate-300 mt-0.5">
-                  Số điện thoại / Zalo trực tiếp: <b className="text-amber-400 font-mono text-sm">{property.sellerPhone || 'Chưa cập nhật SĐT'}</b>
+                <p className="text-xs text-ink-300 mt-0.5">
+                  Số điện thoại / Zalo trực tiếp: <b className="text-brand-400 font-mono text-sm">{property.sellerPhone || 'Chưa cập nhật SĐT'}</b>
                 </p>
               </div>
 
@@ -293,7 +293,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                 {property.sellerPhone && (
                   <a
                     href={`tel:${property.sellerPhone.replace(/\D/g, '')}`}
-                    className="flex-1 sm:flex-initial px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5"
+                    className="flex-1 sm:flex-initial px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5"
                   >
                     <Phone className="w-4 h-4" />
                     <span>Gọi Điện</span>
@@ -316,7 +316,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowShareModal(true)}
-                  className="flex-1 sm:flex-initial px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5"
+                  className="flex-1 sm:flex-initial px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5"
                 >
                   <Share2 className="w-4 h-4" />
                   <span>Chia Sẻ Group FB & Zalo</span>
@@ -324,78 +324,78 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-300 leading-relaxed">
-              💡 <b>Minh bạch thông tin:</b> Khách xem tin liên hệ trực tiếp với <b>{property.sellerName}</b> {property.sellerPhone ? `(${property.sellerPhone})` : ''} để thương lượng giá chuẩn, xem sổ đỏ và nhận tư vấn chính chủ.
+            <p className="text-[11px] text-ink-300 leading-relaxed">
+               <b>Minh bạch thông tin:</b> Khách xem tin liên hệ trực tiếp với <b>{property.sellerName}</b> {property.sellerPhone ? `(${property.sellerPhone})` : ''} để thương lượng giá chuẩn, xem sổ đỏ và nhận tư vấn chính chủ.
             </p>
           </div>
 
           {/* Disclaimer Note */}
-          <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start space-x-2 text-[11px] text-slate-600 dark:text-slate-300">
-            <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          <div className="p-3 bg-brand-500/10 border border-brand-500/30 rounded-2xl flex items-start space-x-2 text-[11px] text-ink-600 dark:text-ink-300">
+            <ShieldCheck className="w-4 h-4 text-brand-500 shrink-0 mt-0.5" />
             <p>
               <strong>Lưu ý miễn trừ trách nhiệm:</strong> Thông tin, giá niêm yết và thông số căn nhà được tổng hợp từ chủ sở hữu. Quý khách vui lòng kiểm tra trực tiếp sổ đỏ/hợp đồng và tình trạng thực tế trước khi đặt cọc.
             </p>
           </div>
 
           {/* Schedule Viewing / Contact Form */}
-          <div className="p-6 bg-slate-900 text-white rounded-3xl space-y-4 border border-slate-800 shadow-xl">
-            <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
-              <Calendar className="w-5 h-5 text-amber-400" />
+          <div className="p-6 bg-ink-900 text-white rounded-3xl space-y-4 border border-ink-800 shadow-xl">
+            <div className="flex items-center space-x-2 border-b border-ink-800 pb-3">
+              <Calendar className="w-5 h-5 text-brand-400" />
               <div>
-                <h3 className="text-sm font-extrabold text-amber-400">ĐẶT LỊCH XEM NHÀ — GỬI YÊU CẦU CHO NGƯỜI ĐĂNG TIN</h3>
-                <p className="text-xs text-slate-300">
-                  📩 Yêu cầu của bạn được gửi trực tiếp tới: <b className="text-amber-300">{property.sellerName} {property.sellerPhone ? `(${property.sellerPhone})` : ''}</b> & Hệ thống Quản trị.
+                <h3 className="text-sm font-extrabold text-brand-400">ĐẶT LỊCH XEM NHÀ — GỬI YÊU CẦU CHO NGƯỜI ĐĂNG TIN</h3>
+                <p className="text-xs text-ink-300">
+                   Yêu cầu của bạn được gửi trực tiếp tới: <b className="text-brand-300">{property.sellerName} {property.sellerPhone ? `(${property.sellerPhone})` : ''}</b> & Hệ thống Quản trị.
                 </p>
               </div>
             </div>
 
             {formSubmitted ? (
-              <div className="p-4 bg-emerald-950/80 border border-emerald-500/60 text-emerald-300 rounded-2xl space-y-2">
+              <div className="p-4 bg-brand-950/80 border border-brand-500/60 text-brand-300 rounded-2xl space-y-2">
                 <div className="flex items-center space-x-3">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-6 h-6 text-brand-400 shrink-0" />
                   <div>
                     <p className="text-xs font-black uppercase text-white">Đặt Lịch Xem Căn Bất Động Sản Thành Công!</p>
-                    <p className="text-[11px] text-emerald-200">
+                    <p className="text-[11px] text-brand-200">
                       Thông tin đã được chuyển trực tiếp tới Người Đăng Tin: <b>{property.sellerName} {property.sellerPhone ? `(${property.sellerPhone})` : ''}</b>.
                     </p>
                   </div>
                 </div>
-                <p className="text-[10px] text-slate-300 pt-2 border-t border-emerald-500/30">
+                <p className="text-[10px] text-ink-300 pt-2 border-t border-brand-500/30">
                   Người đăng tin sẽ chủ động liên hệ lại qua Zalo/SĐT <b>{phone}</b> trong thời gian sớm nhất.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleBooking} className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">Họ và tên (*)</label>
+                  <label className="block text-ink-300 font-bold mb-1">Họ và tên (*)</label>
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Nguyễn Văn A"
-                    className="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-amber-500"
+                    className="w-full p-2.5 bg-ink-800 border border-ink-700 rounded-xl text-white focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">Số điện thoại Zalo (*)</label>
+                  <label className="block text-ink-300 font-bold mb-1">Số điện thoại Zalo (*)</label>
                   <input
                     type="tel"
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="0868.xxx.xxx"
-                    className="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-amber-500"
+                    className="w-full p-2.5 bg-ink-800 border border-ink-700 rounded-xl text-white focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">Thời gian muốn xem nhà</label>
+                  <label className="block text-ink-300 font-bold mb-1">Thời gian muốn xem nhà</label>
                   <select
                     value={preferredTime}
                     onChange={(e) => setPreferredTime(e.target.value)}
-                    className="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white"
+                    className="w-full p-2.5 bg-ink-800 border border-ink-700 rounded-xl text-white"
                   >
                     <option value="Hôm nay">Hôm nay</option>
                     <option value="Ngày mai">Ngày mai</option>
@@ -405,20 +405,20 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">Ghi chú thêm</label>
+                  <label className="block text-ink-300 font-bold mb-1">Ghi chú thêm</label>
                   <input
                     type="text"
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     placeholder="Yêu cầu về nội thất, pháp lý..."
-                    className="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white"
+                    className="w-full p-2.5 bg-ink-800 border border-ink-700 rounded-xl text-white"
                   />
                 </div>
 
                 <div className="sm:col-span-2 pt-2 flex flex-col sm:flex-row gap-3">
                   <button
                     type="submit"
-                    className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl text-xs uppercase tracking-wide transition shadow-lg"
+                    className="flex-1 py-3 bg-brand-500 hover:bg-brand-600 text-ink-950 font-extrabold rounded-xl text-xs uppercase tracking-wide transition shadow-lg"
                   >
                     Gửi Đặt Lịch Xem Căn Này
                   </button>

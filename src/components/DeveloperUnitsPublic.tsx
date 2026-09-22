@@ -137,9 +137,9 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-10 text-center shadow-md animate-pulse">
-          <div className="w-8 h-8 mx-auto rounded-full bg-emerald-200 dark:bg-emerald-900" />
-          <p className="text-xs font-bold text-slate-400 mt-3">Đang tải mặt bằng quỹ căn…</p>
+        <div className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-10 text-center shadow-md animate-pulse">
+          <div className="w-8 h-8 mx-auto rounded-full bg-brand-200 dark:bg-brand-900" />
+          <p className="text-xs font-bold text-ink-400 mt-3">Đang tải mặt bằng quỹ căn…</p>
         </div>
       </div>
     );
@@ -157,11 +157,11 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
       {/* Section head */}
       {!compact && (
         <div>
-          <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-emerald-500" />
+          <h2 className="text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
+            <MapPin className="w-5 h-5 text-brand-500" />
             <span>Mặt Bằng Quỹ Căn</span>
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
             Sơ đồ vị trí căn đã đánh dấu từ quản trị — chấm{' '}
             <b style={{ color: '#047857' }}>xanh lá = CĐT</b>,{' '}
             <b style={{ color: '#1d4ed8' }}>xanh dương = Đại lý F1</b> · Phân biệt{' '}
@@ -171,14 +171,14 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
       )}
 
       {/* fp-card */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md overflow-hidden">
+      <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl shadow-md overflow-hidden">
         {/* Top bar */}
-        <div className="bg-gradient-to-r from-emerald-900 via-emerald-700 to-emerald-800 text-white px-4 sm:px-6 py-3.5 flex items-center justify-between flex-wrap gap-2">
+        <div className="bg-gradient-to-r from-brand-900 via-brand-700 to-brand-800 text-white px-4 sm:px-6 py-3.5 flex items-center justify-between flex-wrap gap-2">
           <div className="font-black text-sm flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-            🗺️ Mặt bằng quỹ căn — CĐT &amp; Đại lý F1
+            <span className="w-2 h-2 rounded-full bg-brand-400 animate-pulse" />
+             Mặt bằng quỹ căn — CĐT &amp; Đại lý F1
           </div>
-          <div className="text-[11px] text-emerald-200 font-bold">
+          <div className="text-[11px] text-brand-200 font-bold">
             Cập nhật: {updatedDate || 'hôm nay'} · Giá CĐT + F1
           </div>
         </div>
@@ -187,26 +187,26 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
           {/* Controls */}
           <div className="flex items-center gap-2.5 flex-wrap mb-4">
             {/* Tier toggle */}
-            <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
+            <div className="flex gap-1 bg-ink-100 dark:bg-ink-800 rounded-xl p-1">
               <button
                 onClick={() => setTier('thap')}
                 className={`px-3.5 py-1.5 rounded-lg text-[11.5px] font-extrabold transition cursor-pointer ${
                   tier === 'thap'
-                    ? 'bg-emerald-600 text-white shadow'
-                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-brand-600 text-white shadow'
+                    : 'text-ink-500 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-700'
                 }`}
               >
-                🏘️ Thấp tầng
+                 Thấp tầng
               </button>
               <button
                 onClick={() => setTier('cao')}
                 className={`px-3.5 py-1.5 rounded-lg text-[11.5px] font-extrabold transition cursor-pointer ${
                   tier === 'cao'
-                    ? 'bg-emerald-600 text-white shadow'
-                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-brand-600 text-white shadow'
+                    : 'text-ink-500 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-700'
                 }`}
               >
-                🏢 Cao tầng
+                 Cao tầng
               </button>
             </div>
 
@@ -214,7 +214,7 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
             <select
               value={subId}
               onChange={e => setSubId(e.target.value)}
-              className="px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-800 cursor-pointer min-w-[190px]"
+              className="px-3 py-2 border border-ink-200 dark:border-ink-700 rounded-xl text-xs font-bold text-ink-800 dark:text-ink-200 bg-ink-50 dark:bg-ink-800 cursor-pointer min-w-[190px]"
             >
               {tierSubs.map(s => (
                 <option key={s} value={s}>
@@ -235,8 +235,8 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                   onClick={() => setSrcFilter(f.key)}
                   className={`px-3 py-1.5 rounded-full border text-[11px] font-extrabold transition cursor-pointer ${
                     srcFilter === f.key
-                      ? 'bg-emerald-600 text-white border-emerald-600'
-                      : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:text-emerald-600'
+                      ? 'bg-brand-600 text-white border-brand-600'
+                      : 'bg-white dark:bg-ink-800 text-ink-500 dark:text-ink-400 border-ink-200 dark:border-ink-700 hover:border-brand-500 hover:text-brand-600'
                   }`}
                 >
                   {f.label}
@@ -258,12 +258,12 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                   title={c.key === 'all' ? 'Hiện tất cả căn' : `Chỉ hiện căn ${c.label.split(':')[0]}`}
                   className={`text-[11px] font-extrabold px-2.5 py-1 rounded-full border transition cursor-pointer ${
                     statusGroupFilter === c.key
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
+                      ? 'bg-brand-600 text-white border-brand-600 shadow'
                       : c.key === 'avail'
-                        ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:border-emerald-500'
+                        ? 'bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 border-brand-200 dark:border-brand-800 hover:border-brand-500'
                         : c.key === 'hold'
-                          ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 hover:border-amber-500'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400'
+                          ? 'bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 border-brand-200 dark:border-brand-800 hover:border-brand-500'
+                          : 'bg-ink-100 dark:bg-ink-800 text-ink-500 dark:text-ink-400 border-ink-200 dark:border-ink-700 hover:border-ink-400'
                   }`}
                 >
                   {c.label}
@@ -278,13 +278,13 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
           {/* Layout: sơ đồ trái (ưu tiên) + danh sách phải */}
           <div className="grid grid-cols-1 lg:grid-cols-[1.65fr_1fr] gap-4 items-start">
             {/* SƠ ĐỒ */}
-            <div className="relative border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
+            <div className="relative border border-ink-200 dark:border-ink-700 rounded-2xl overflow-hidden bg-ink-100 dark:bg-ink-800">
               <span
-                className={`absolute top-2.5 left-2.5 z-[5] bg-slate-950/75 text-white text-[10px] font-black px-3 py-1 rounded-full tracking-wide ${
-                  tier === 'cao' ? 'text-sky-300' : 'text-emerald-300'
+                className={`absolute top-2.5 left-2.5 z-[5] bg-ink-950/75 text-white text-[10px] font-black px-3 py-1 rounded-full tracking-wide ${
+                  tier === 'cao' ? 'text-sky-300' : 'text-brand-300'
                 }`}
               >
-                {tier === 'cao' ? '🏢 CAO TẦNG' : '🏘️ THẤP TẦNG'}
+                {tier === 'cao' ? ' CAO TẦNG' : ' THẤP TẦNG'}
               </span>
               <img
                 src={floorplan ? floorplan.image : '/images/demo/project-tower.jpg'}
@@ -314,22 +314,22 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                   </button>
                 );
               })}
-              <span className="absolute bottom-2.5 left-2.5 z-[5] bg-white/90 dark:bg-slate-950/80 text-slate-500 dark:text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-lg">
-                💡 Bấm chấm để xem chi tiết căn
+              <span className="absolute bottom-2.5 left-2.5 z-[5] bg-white/90 dark:bg-ink-950/80 text-ink-500 dark:text-ink-400 text-[10px] font-bold px-2.5 py-1 rounded-lg">
+                 Bấm chấm để xem chi tiết căn
               </span>
             </div>
 
             {/* DANH SÁCH */}
-            <div className="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 max-h-[560px] flex flex-col">
-              <div className="px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide flex justify-between items-center">
-                <span>📋 Danh sách quỹ căn</span>
-                <span className="text-emerald-600 dark:text-emerald-400">{currentUnits.length} căn</span>
+            <div className="border border-ink-200 dark:border-ink-700 rounded-2xl overflow-hidden bg-white dark:bg-ink-900 max-h-[560px] flex flex-col">
+              <div className="px-3.5 py-2.5 bg-ink-50 dark:bg-ink-800 border-b border-ink-200 dark:border-ink-700 text-[11px] font-black text-ink-500 dark:text-ink-400 uppercase tracking-wide flex justify-between items-center">
+                <span> Danh sách quỹ căn</span>
+                <span className="text-brand-600 dark:text-brand-400">{currentUnits.length} căn</span>
               </div>
               <div className="overflow-y-auto flex-1">
                 {currentUnits.length === 0 ? (
                   <div className="p-8 text-center space-y-2">
-                    <Building2 className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
-                    <p className="text-xs font-bold text-slate-400">Không có căn phù hợp</p>
+                    <Building2 className="w-8 h-8 text-ink-300 dark:text-ink-600 mx-auto" />
+                    <p className="text-xs font-bold text-ink-400">Không có căn phù hợp</p>
                   </div>
                 ) : (
                   unitsPager.pageItems.map(u => {
@@ -340,15 +340,15 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                       <div
                         key={u.id}
                         onClick={() => setSelected(u)}
-                        className={`flex justify-between items-center px-3 py-2 text-xs cursor-pointer border-b border-slate-100 dark:border-slate-800 transition hover:bg-emerald-50 dark:hover:bg-emerald-950/40 ${
-                          selected?.id === u.id ? 'bg-amber-50 dark:bg-amber-950/40 ring-1 ring-inset ring-amber-400' : ''
+                        className={`flex justify-between items-center px-3 py-2 text-xs cursor-pointer border-b border-ink-100 dark:border-ink-800 transition hover:bg-brand-50 dark:hover:bg-brand-950/40 ${
+                          selected?.id === u.id ? 'bg-brand-50 dark:bg-brand-950/40 ring-1 ring-inset ring-brand-400' : ''
                         } ${
                           sold ? 'opacity-60' : ''
                         }`}
                       >
-                        <span className={`font-black font-mono flex items-center gap-1.5 ${sold ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <span className={`font-black font-mono flex items-center gap-1.5 ${sold ? 'line-through text-ink-400' : 'text-ink-800 dark:text-ink-200'}`}>
                           {u.code}
-                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isF1 ? 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300'}`}>
+                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isF1 ? 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300' : 'bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300'}`}>
                             {isF1 ? 'F1' : 'CĐT'}
                           </span>
                           <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${u.tier === 'cao' ? 'bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300' : 'bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-300'}`}>
@@ -356,16 +356,16 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                           </span>
                         </span>
                         <span className="flex items-center gap-2">
-                          <span className={`font-black ${sold ? 'line-through text-slate-400' : 'text-amber-700 dark:text-amber-400'}`}>
+                          <span className={`font-black ${sold ? 'line-through text-ink-400' : 'text-brand-700 dark:text-brand-400'}`}>
                             {u.priceDisplay}
                           </span>
                           {g === 'hold' && (
-                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300">
+                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300">
                               Giữ chỗ
                             </span>
                           )}
                           {g === 'sold' && (
-                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
+                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-ink-100 dark:bg-ink-800 text-ink-400">
                               Đã bán
                             </span>
                           )}
@@ -379,29 +379,29 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
           </div>
 
           {/* Legend */}
-          <div className="flex gap-3.5 flex-wrap px-1 pt-4 pb-1 text-[10.5px] text-slate-500 dark:text-slate-400 font-bold items-center border-t border-slate-100 dark:border-slate-800 mt-4">
+          <div className="flex gap-3.5 flex-wrap px-1 pt-4 pb-1 text-[10.5px] text-ink-500 dark:text-ink-400 font-bold items-center border-t border-ink-100 dark:border-ink-800 mt-4">
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#10b981' }} />
+              <span className="w-3 h-3 rounded-full border-2 border-white shadow ring-1 ring-ink-200 dark:ring-ink-700" style={{ background: '#10b981' }} />
               CĐT · Còn hàng
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#f59e0b' }} />
+              <span className="w-3 h-3 rounded-full border-2 border-white shadow ring-1 ring-ink-200 dark:ring-ink-700" style={{ background: '#f59e0b' }} />
               Giữ chỗ
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#94a3b8' }} />
+              <span className="w-3 h-3 rounded-full border-2 border-white shadow ring-1 ring-ink-200 dark:ring-ink-700" style={{ background: '#94a3b8' }} />
               Đã bán
             </span>
-            <span className="text-slate-300 dark:text-slate-600">|</span>
+            <span className="text-ink-300 dark:text-ink-600">|</span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-dashed border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#3b82f6' }} />
+              <span className="w-3 h-3 rounded-full border-2 border-dashed border-white shadow ring-1 ring-ink-200 dark:ring-ink-700" style={{ background: '#3b82f6' }} />
               F1 · Còn hàng
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full border-2 border-dashed border-white shadow ring-1 ring-slate-200 dark:ring-slate-700" style={{ background: '#8b5cf6' }} />
+              <span className="w-3 h-3 rounded-full border-2 border-dashed border-white shadow ring-1 ring-ink-200 dark:ring-ink-700" style={{ background: '#8b5cf6' }} />
               F1 · Giữ chỗ
             </span>
-            <span className="ml-auto text-slate-400 dark:text-slate-500">
+            <span className="ml-auto text-ink-400 dark:text-ink-500">
               Vị trí chấm = vị trí đã đánh dấu trong quản trị
             </span>
           </div>
@@ -411,21 +411,21 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
       {/* Detail modal */}
       {selected && (
         <div
-          className="fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] bg-ink-950/60 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setSelected(null)}
         >
           <div
-            className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl w-full max-w-md overflow-hidden"
+            className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-700 shadow-2xl w-full max-w-md overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
-            <div className="bg-gradient-to-r from-slate-900 to-emerald-950 text-white px-5 py-4 flex items-start justify-between gap-3">
+            <div className="bg-gradient-to-r from-ink-900 to-brand-950 text-white px-5 py-4 flex items-start justify-between gap-3">
               <div>
                 <div className="font-black font-mono text-2xl">{selected.code}</div>
-                <div className="text-[11px] text-emerald-300 font-bold mt-0.5">
+                <div className="text-[11px] text-brand-300 font-bold mt-0.5">
                   Phân khu {SUB_NAMES[selected.subdivisionId] || selected.subdivisionId} — {projectName}
                   {selected.source === 'f1'
-                    ? ` · 🤝 ${agentName(selected) || 'Đại lý F1'}`
-                    : ' · 🏢 Chủ đầu tư'}
+                    ? ` ·  ${agentName(selected) || 'Đại lý F1'}`
+                    : ' ·  Chủ đầu tư'}
                 </div>
               </div>
               <button
@@ -438,10 +438,10 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
 
             <div className="px-5 py-4">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-black text-2xl text-amber-600 dark:text-amber-400">
+                <span className="font-black text-2xl text-brand-600 dark:text-brand-400">
                   {selected.priceDisplay}
                 </span>
-                <span className="text-[11px] font-bold text-slate-400">
+                <span className="text-[11px] font-bold text-ink-400">
                   {pricePerM2(selected)}
                 </span>
               </div>
@@ -458,11 +458,11 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                     value: DEVELOPER_UNIT_STATUS_LABELS[selected.status]
                   }
                 ].map(item => (
-                  <div key={item.label} className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5">
-                    <div className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wide">
+                  <div key={item.label} className="bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl px-3.5 py-2.5">
+                    <div className="text-[10px] text-ink-400 dark:text-ink-500 font-bold uppercase tracking-wide">
                       {item.label}
                     </div>
-                    <div className="text-sm font-black text-slate-800 dark:text-slate-100 mt-0.5">
+                    <div className="text-sm font-black text-ink-800 dark:text-ink-100 mt-0.5">
                       {item.value}
                     </div>
                   </div>
@@ -472,7 +472,7 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
               <div className="flex gap-2.5 mt-4">
                 <a
                   href={`tel:0868499929`}
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-3 rounded-xl transition"
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white font-black text-xs py-3 rounded-xl transition"
                 >
                   <Phone className="w-3.5 h-3.5" /> Gọi tư vấn
                 </a>

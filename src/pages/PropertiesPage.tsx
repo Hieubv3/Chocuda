@@ -169,25 +169,25 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
       <PageHero title="Bất Động Sản" subtitle="Mua bán & cho thuê BĐS Vinhomes toàn quốc - chính chủ" badge="CHỢ CƯ DÂN 24H" />
       
       {/* Header Title & View Toggle */}
-      <div className="flex flex-row items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5">
+      <div className="flex flex-row items-center justify-between gap-2 border-b border-ink-200 dark:border-ink-800 pb-2.5">
         <div>
-          <h1 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+          <h1 className="text-base sm:text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
             Quỹ Căn Mua Bán & Cho Thuê
-            <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-full">
+            <span className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 px-2 py-0.5 rounded-full">
               {filteredProperties.length} căn
             </span>
           </h1>
         </div>
 
         {/* Grid / List View Toggle */}
-        <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg shrink-0 gap-0.5 border border-slate-200 dark:border-slate-700">
+        <div className="flex bg-ink-100 dark:bg-ink-800 p-0.5 rounded-lg shrink-0 gap-0.5 border border-ink-200 dark:border-ink-700">
           <button
             onClick={() => {
               setViewMode('grid-3col');
               localStorage.setItem('hb_properties_view_mode', 'grid-3col');
             }}
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
-              viewMode === 'grid-3col' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              viewMode === 'grid-3col' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
             }`}
             title="Hiển thị Lưới 3 Cột"
           >
@@ -200,7 +200,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
               localStorage.setItem('hb_properties_view_mode', 'grid-2col');
             }}
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
-              viewMode === 'grid-2col' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              viewMode === 'grid-2col' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
             }`}
             title="Hiển thị 2 cột ô vuông"
           >
@@ -213,7 +213,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
               localStorage.setItem('hb_properties_view_mode', 'grid');
             }}
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
-              viewMode === 'grid' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              viewMode === 'grid' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
             }`}
             title="Hiển thị 1 cột thẻ lớn"
           >
@@ -226,7 +226,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
               localStorage.setItem('hb_properties_view_mode', 'list');
             }}
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
-              viewMode === 'list' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              viewMode === 'list' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
             }`}
             title="Hiển thị dạng danh sách hàng ngang"
           >
@@ -238,16 +238,16 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
 
       {/* Project Filter Admin Only Notice */}
       {selectedProject !== 'all' && (
-        <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-purple-500/10 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-200">
-            <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0" />
+        <div className="bg-gradient-to-r from-brand-500/10 via-brand-500/5 to-purple-500/10 border border-brand-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 font-bold text-ink-800 dark:text-ink-200">
+            <ShieldCheck className="w-5 h-5 text-brand-500 shrink-0" />
             <span>
               Đang xem Quỹ căn dự án: Hệ thống chỉ hiển thị thông tin căn bán và cho thuê của Admin & Admin Tổng đăng. (Tin từ các đối tác khác tự động bị ẩn tại mục dự án).
             </span>
           </div>
           <button
             onClick={() => setSelectedProject('all')}
-            className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-[11px] shrink-0 transition shadow cursor-pointer"
+            className="bg-brand-500 hover:bg-brand-600 text-ink-950 font-black px-3.5 py-1.5 rounded-xl text-[11px] shrink-0 transition shadow cursor-pointer"
           >
             Xem Tất Cả Dự Án
           </button>
@@ -282,13 +282,13 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
 
       {/* Property Cards Results */}
       {filteredProperties.length === 0 ? (
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-12 text-center border border-slate-200 dark:border-slate-700 space-y-3">
-          <SearchX className="w-12 h-12 text-slate-400 mx-auto" />
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">Không tìm thấy bất động sản phù hợp</h3>
-          <p className="text-xs text-slate-500">Vui lòng thử điều chỉnh lại bộ lọc giá, số phòng ngủ hoặc từ khóa tìm kiếm.</p>
+        <div className="bg-white dark:bg-ink-800 rounded-3xl p-12 text-center border border-ink-200 dark:border-ink-700 space-y-3">
+          <SearchX className="w-12 h-12 text-ink-400 mx-auto" />
+          <h3 className="text-base font-bold text-ink-900 dark:text-white">Không tìm thấy bất động sản phù hợp</h3>
+          <p className="text-xs text-ink-500">Vui lòng thử điều chỉnh lại bộ lọc giá, số phòng ngủ hoặc từ khóa tìm kiếm.</p>
           <button
             onClick={handleResetFilters}
-            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs transition"
+            className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-ink-950 font-bold rounded-xl text-xs transition"
           >
             Xóa Toàn Bộ Bộ Lọc
           </button>

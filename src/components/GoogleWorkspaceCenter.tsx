@@ -139,7 +139,7 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
       await saveWorkspaceConfig(newCfg);
       await performFullSync(newCfg);
       setLoading(false);
-      setStatusMsg('🎉 Đã kết nối và tạo thành công File Google Sheets & Thư mục Google Drive!');
+      setStatusMsg(' Đã kết nối và tạo thành công File Google Sheets & Thư mục Google Drive!');
     }, 1500);
   };
 
@@ -209,7 +209,7 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
       await performFullSync(newCfg, accessToken);
 
       setLoading(false);
-      setStatusMsg('🎉 ĐÃ KHỞI TẠO VÀ ĐỒNG BỘ THÀNH CÔNG LÊN GOOGLE DRIVE & GOOGLE SHEETS!');
+      setStatusMsg(' ĐÃ KHỞI TẠO VÀ ĐỒNG BỘ THÀNH CÔNG LÊN GOOGLE DRIVE & GOOGLE SHEETS!');
     } catch (err: any) {
       console.error('Error initializing Drive & Sheets:', err);
       // Fallback
@@ -276,7 +276,7 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
       };
       await saveWorkspaceConfig(updated);
       setSyncCount(properties.length + residentServices.length);
-      setStatusMsg(`✅ Đã đồng bộ thành công ${properties.length} BĐS & ${residentServices.length} Dịch vụ cư dân!`);
+      setStatusMsg(` Đã đồng bộ thành công ${properties.length} BĐS & ${residentServices.length} Dịch vụ cư dân!`);
     } catch (e) {
       console.error('Error performing full sync:', e);
     } finally {
@@ -287,38 +287,38 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl border-2 border-emerald-500/40 p-6 sm:p-8 space-y-6 shadow-2xl relative text-slate-900 dark:text-white">
+    <div className="bg-white dark:bg-ink-900 rounded-3xl border-2 border-brand-500/40 p-6 sm:p-8 space-y-6 shadow-2xl relative text-ink-900 dark:text-white">
       {/* Header */}
-      <div className="flex items-start justify-between border-b border-slate-200 dark:border-slate-800 pb-5">
+      <div className="flex items-start justify-between border-b border-ink-200 dark:border-ink-800 pb-5">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-emerald-500/20 text-emerald-500 rounded-2xl flex items-center justify-center font-black text-2xl border border-emerald-500/30">
-            📊
+          <div className="w-12 h-12 bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-black text-2xl border border-brand-500/30">
+            
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 font-extrabold text-[10px] rounded-full uppercase tracking-wider border border-emerald-500/30">
+              <span className="px-2.5 py-0.5 bg-brand-500/20 text-brand-400 font-extrabold text-[10px] rounded-full uppercase tracking-wider border border-brand-500/30">
                 GOOGLE WORKSPACE OFFICIAL INTEGRATION
               </span>
-              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-500">
+              <span className="flex items-center gap-1 text-[11px] font-bold text-brand-500">
                 <CheckCircle2 className="w-3.5 h-3.5" /> Đã xác thực OAuth 2.0
               </span>
             </div>
-            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white mt-1">
+            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-ink-900 dark:text-white mt-1">
               QUẢN LÝ DỮ LIỆU TỰ ĐỘNG BẰNG GOOGLE DRIVE & GOOGLE SHEETS
             </h3>
           </div>
         </div>
         {onClose && (
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-xl">
-            ✕
+          <button onClick={onClose} className="p-2 text-ink-400 hover:text-ink-600 dark:hover:text-white rounded-xl">
+            
           </button>
         )}
       </div>
 
       {/* Description */}
-      <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-2 leading-relaxed">
-        <p className="font-bold text-slate-900 dark:text-amber-300">
-          🎯 TÍNH NĂNG TỰ ĐỘNG HÓA TẬP TRUNG (1-CLICK SYNC):
+      <div className="p-4 bg-ink-50 dark:bg-ink-800/80 rounded-2xl border border-ink-200 dark:border-ink-700 text-xs text-ink-600 dark:text-ink-300 space-y-2 leading-relaxed">
+        <p className="font-bold text-ink-900 dark:text-brand-300">
+           TÍNH NĂNG TỰ ĐỘNG HÓA TẬP TRUNG (1-CLICK SYNC):
         </p>
         <ul className="list-disc list-inside space-y-1 text-[11px]">
           <li>Mọi bài đăng <b>Bất Động Sản</b>, <b>Dịch Vụ Cư Dân</b> và <b>Sản Phẩm Cửa Hàng</b> khi đưa lên web sẽ tự động ghi dữ liệu thành từng dòng trên <b>Google Sheets</b>.</li>
@@ -333,21 +333,21 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
           {/* Active Config Display */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Google Sheets Link Box */}
-            <div className="p-5 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border-2 border-emerald-500/40 space-y-3 shadow-md">
+            <div className="p-5 bg-brand-50 dark:bg-brand-950/40 rounded-2xl border-2 border-brand-500/40 space-y-3 shadow-md">
               <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-xs font-black text-emerald-700 dark:text-emerald-400 uppercase">
-                  <FileSpreadsheet className="w-5 h-5 text-emerald-500" />
+                <span className="flex items-center gap-2 text-xs font-black text-brand-700 dark:text-brand-400 uppercase">
+                  <FileSpreadsheet className="w-5 h-5 text-brand-500" />
                   FILE GOOGLE SHEETS DỮ LIỆU
                 </span>
-                <span className="px-2 py-0.5 bg-emerald-500 text-white font-bold text-[10px] rounded-full uppercase">
+                <span className="px-2 py-0.5 bg-brand-500 text-white font-bold text-[10px] rounded-full uppercase">
                   ĐANG HOẠT ĐỘNG
                 </span>
               </div>
               <div>
-                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white truncate">
+                <h4 className="font-extrabold text-sm text-ink-900 dark:text-white truncate">
                   CHỢ CƯ DÂN 24H - QUẢN LÝ BÀI ĐĂNG
                 </h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate mt-0.5">
+                <p className="text-[11px] text-ink-500 dark:text-ink-400 font-mono truncate mt-0.5">
                   ID: {config.spreadsheetId}
                 </p>
               </div>
@@ -356,7 +356,7 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
                   href={config.spreadsheetUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2"
                 >
                   <ExternalLink className="w-4 h-4" />
                   MỞ TRANG TÍNH GOOGLE SHEETS
@@ -376,10 +376,10 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
                 </span>
               </div>
               <div>
-                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white truncate">
+                <h4 className="font-extrabold text-sm text-ink-900 dark:text-white truncate">
                   CHỢ CƯ DÂN 24H - DATA & BÀI ĐĂNG
                 </h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate mt-0.5">
+                <p className="text-[11px] text-ink-500 dark:text-ink-400 font-mono truncate mt-0.5">
                   ID: {config.folderId}
                 </p>
               </div>
@@ -398,14 +398,14 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
           </div>
 
           {/* Sync Information Bar */}
-          <div className="p-4 bg-slate-900 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs border border-slate-800">
+          <div className="p-4 bg-ink-900 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs border border-ink-800">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping" />
-                <span className="text-emerald-400 font-bold">TRẠNG THÁI: ĐỒNG BỘ NGHĨA VỤ REAL-TIME</span>
+                <span className="w-2.5 h-2.5 bg-brand-400 rounded-full animate-ping" />
+                <span className="text-brand-400 font-bold">TRẠNG THÁI: ĐỒNG BỘ NGHĨA VỤ REAL-TIME</span>
               </div>
-              <p className="text-slate-400 text-[11px]">
-                Lần đồng bộ gần nhất: <b className="text-amber-400">{config.lastSyncedAt || 'Vừa xong'}</b>
+              <p className="text-ink-400 text-[11px]">
+                Lần đồng bộ gần nhất: <b className="text-brand-400">{config.lastSyncedAt || 'Vừa xong'}</b>
               </p>
             </div>
 
@@ -413,24 +413,24 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
               type="button"
               disabled={syncing}
               onClick={() => performFullSync(config)}
-              className="px-6 py-3 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 text-slate-950 font-black text-xs rounded-xl shadow-xl transition flex items-center gap-2 cursor-pointer uppercase tracking-wider shrink-0"
+              className="px-6 py-3 bg-brand-500 hover:bg-brand-400 disabled:bg-ink-700 text-ink-950 font-black text-xs rounded-xl shadow-xl transition flex items-center gap-2 cursor-pointer uppercase tracking-wider shrink-0"
             >
               <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-              {syncing ? 'ĐANG ĐỒNG BỘ...' : '🔄 ĐỒNG BỘ TẤT CẢ DỮ LIỆU NGAY'}
+              {syncing ? 'ĐANG ĐỒNG BỘ...' : ' ĐỒNG BỘ TẤT CẢ DỮ LIỆU NGAY'}
             </button>
           </div>
         </div>
       ) : (
         /* Action Button: Create and Activate Workspace Setup */
-        <div className="p-8 bg-slate-900 text-white rounded-3xl border-2 border-emerald-500/50 text-center space-y-6 shadow-2xl">
-          <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center font-black text-3xl mx-auto border border-emerald-500/30">
-            ⚡
+        <div className="p-8 bg-ink-900 text-white rounded-3xl border-2 border-brand-500/50 text-center space-y-6 shadow-2xl">
+          <div className="w-16 h-16 bg-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center font-black text-3xl mx-auto border border-brand-500/30">
+            
           </div>
           <div className="space-y-2 max-w-xl mx-auto">
             <h4 className="text-lg sm:text-xl font-black text-white uppercase">
               BẮT ĐẦU TỰ ĐỘNG ĐỒNG BỘ DỮ LIỆU SANG GOOGLE SHEETS & DRIVE
             </h4>
-            <p className="text-xs text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs text-ink-300 leading-relaxed font-normal">
               Bấm nút bên dưới để hệ thống tự động khởi tạo File Google Sheets và Thư Mực Google Drive trên tài khoản của bạn. Mọi bài đăng hiện tại và tương lai sẽ tự động chảy thẳng về trang tính!
             </p>
           </div>
@@ -440,10 +440,10 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
               type="button"
               disabled={loading}
               onClick={handleConnectGoogleWorkspace}
-              className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:-translate-y-0.5 uppercase tracking-wider cursor-pointer flex items-center gap-2 mx-auto"
+              className="px-8 py-4 bg-brand-500 hover:bg-brand-400 disabled:bg-ink-700 text-ink-950 font-black text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:-translate-y-0.5 uppercase tracking-wider cursor-pointer flex items-center gap-2 mx-auto"
             >
-              <Zap className="w-5 h-5 text-slate-950 fill-current" />
-              {loading ? 'ĐANG KHỞI TẠO GOOGLE DRIVE & SHEETS...' : '🔑 KÍCH HOẠT KHỞI TẠO & ĐỒNG BỘ TỰ ĐỘNG NGAY'}
+              <Zap className="w-5 h-5 text-ink-950 fill-current" />
+              {loading ? 'ĐANG KHỞI TẠO GOOGLE DRIVE & SHEETS...' : ' KÍCH HOẠT KHỞI TẠO & ĐỒNG BỘ TỰ ĐỘNG NGAY'}
             </button>
           </div>
         </div>
@@ -451,8 +451,8 @@ export const GoogleWorkspaceCenter: React.FC<GoogleWorkspaceCenterProps> = ({
 
       {/* Messages */}
       {statusMsg && (
-        <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 rounded-2xl text-xs font-bold flex items-center gap-2 animate-fade-in">
-          <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
+        <div className="p-4 bg-brand-500/10 border border-brand-500/30 text-brand-700 dark:text-brand-300 rounded-2xl text-xs font-bold flex items-center gap-2 animate-fade-in">
+          <Sparkles className="w-4 h-4 text-brand-500 shrink-0" />
           <span>{statusMsg}</span>
         </div>
       )}

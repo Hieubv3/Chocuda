@@ -57,13 +57,13 @@ export const ArticleAuditCenter: React.FC<ArticleAuditCenterProps> = ({
       fullExhaustiveContent: `
 # ${n.title.toUpperCase()} (ĐẠT 100/100 ĐIỂM TỐI ĐA NỘI DUNG CHUẨN SEO & THỰC TẾ)
 
-## 📌 I. QUY MÔ & TỌA ĐỘ VỊ TRÍ CHI TIẾT
+##  I. QUY MÔ & TỌA ĐỘ VỊ TRÍ CHI TIẾT
 - **Tên thương mại chính thức:** ${n.title}
 - **Đơn vị phát triển:** Tập đoàn Vingroup & Công ty CP Vinhomes (Đơn vị uy tín số 1 Việt Nam).
 - **Vị trí hành chính:** Nằm tại tâm điểm kết nối giao thông huyết mạch, liền kề các tuyến cao tốc & Vành Đai.
 - **Tọa độ kết nối:** Di chuyển đến trung tâm thành phố chỉ 15 - 30 phút qua hệ thống hạ tầng đồng bộ.
 
-## 📐 II. THÔNG SỐ KỸ THUẬT & QUY HOẠCH SẢN PHẨM
+##  II. THÔNG SỐ KỸ THUẬT & QUY HOẠCH SẢN PHẨM
 1. **Nhà liền kề & Shophouse:**
    - Diện tích đất: 48m² - 120m² (Mặt tiền rộng từ 4.5m - 8m).
    - Thiết kế: 4 tầng + 1 tum, móng riêng tường riêng, hoàn thiện mặt ngoài bàn giao thô bên trong.
@@ -73,19 +73,19 @@ export const ArticleAuditCenter: React.FC<ArticleAuditCenterProps> = ({
 3. **Tháp căn hộ chung cư cao tầng:**
    - Chiều cao: 25 - 38 tầng (Studio 28m², 1PN+1 45m², 2PN 68m², 3PN 90m²).
 
-## 💰 III. BẢNG GIÁ MUA BÁN, CHO THUÊ & CHI PHÍ VẬN HÀNH (CẬP NHẬT 2026)
+##  III. BẢNG GIÁ MUA BÁN, CHO THUÊ & CHI PHÍ VẬN HÀNH (CẬP NHẬT 2026)
 - **Giá bán Chuyển nhượng/Bán mới:** Từ 5.8 tỷ - 45 tỷ VNĐ/căn tùy diện tích & vị trí.
 - **Giá cho thuê kinh doanh:** 
   - Shophouse hoàn thiện: 15 triệu - 45 triệu VNĐ/tháng.
   - Căn hộ chung cư: 6.5 triệu - 18 triệu VNĐ/tháng.
 - **Phí dịch vụ quản lý Vinhomes:** 12.000 - 18.000 VNĐ/m²/tháng (Phí xe máy: 45.000đ/tháng, Ô tô: 1.200.000đ/tháng).
 
-## 🌴 IV. HỆ THỐNG TIỆN ÍCH ĐẶC QUYỀN CƯ DÂN
+##  IV. HỆ THỐNG TIỆN ÍCH ĐẶC QUYỀN CƯ DÂN
 - **Giáo dục & Y tế:** Hệ thống trường học liên cấp Vinschool chuẩn CIS, Bệnh viện đa khoa quốc tế Vinmec Health Resort 5 sao.
 - **Mua sắm & Giải trí:** TTTM Vincom Mega Mall, Công viên biển tạo sóng, Quảng trường lễ hội, Bể bơi 4 mùa.
 - **Giao thông xanh:** Tuyến buýt điện VinBus vận hành 24/7 nội khu hoàn toàn miễn phí.
 
-## ⚖️ V. PHÁP LÝ SỔ ĐỎ & ĐÁNH GIÁ TIỀM NĂNG ĐẦU TƯ
+##  V. PHÁP LÝ SỔ ĐỎ & ĐÁNH GIÁ TIỀM NĂNG ĐẦU TƯ
 - **Pháp lý:** Sổ đỏ sở hữu lâu dài chính chủ. Hỗ trợ quy trình thủ tục sang tên trọn gói trong 7 ngày.
 - **Hiệu suất dòng tiền:** Tỷ suất lợi nhuận cho thuê đạt 8% - 12%/năm, dư địa tăng giá BĐS từ 25% - 40% khi toàn bộ hạ tầng giao thông kết nối hoàn thiện.
       `,
@@ -109,7 +109,7 @@ export const ArticleAuditCenter: React.FC<ArticleAuditCenterProps> = ({
       fullExhaustiveContent: `
 # ${sub.name.toUpperCase()} — ${sub.projectName.toUpperCase()} (ĐẠT 100/100 ĐIỂM TỐI ĐA)
 
-## 📌 I. QUY MÔ & PHONG CÁCH KIẾN TRÚC
+##  I. QUY MÔ & PHONG CÁCH KIẾN TRÚC
 - **Tên phân khu:** ${sub.name}
 - **Dự án:** ${sub.projectName}
 - **Quy mô diện tích:** ${sub.scaleArea}
@@ -117,22 +117,22 @@ export const ArticleAuditCenter: React.FC<ArticleAuditCenterProps> = ({
 - **Phong cách thiết kế:** ${sub.style}
 - **Loại hình phát triển:** ${sub.productTypes.join(', ')}
 
-## 📐 II. THÔNG SỐ KỸ THUẬT & CHI TIẾT DIỆN TÍCH
+##  II. THÔNG SỐ KỸ THUẬT & CHI TIẾT DIỆN TÍCH
 - **Nhà Liền kề:** ${sub.avgUnitSizes.lienKe || '48m² - 120m² (Mặt tiền 4.5m - 6m, đường 13m)'}
 - **Shophouse thương mại:** ${sub.avgUnitSizes.shophouse || '75m² - 140m² (Mặt tiền 6m - 10m, đường 20m - 51m)'}
 - **Biệt thự Song lập:** ${sub.avgUnitSizes.songLap || '120m² - 180m² (Mặt tiền 8m - 10m, xây 4 tầng + 1 tum)'}
 - **Biệt thự Đơn lập:** ${sub.avgUnitSizes.donLap || '190m² - 350m² (Góc công viên & biển hồ)'}
 - **Cụm cao tầng chung cư:** ${sub.highRiseCondosInfo}
 
-## 💰 III. MỨC GIÁ MUA BÁN, CHO THUÊ & VẬN HÀNH 2026
+##  III. MỨC GIÁ MUA BÁN, CHO THUÊ & VẬN HÀNH 2026
 - **Khoảng giá chào bán:** ${sub.priceRange}
 - **Giá thuê shophouse hoàn thiện:** 18 triệu - 50 triệu VNĐ/tháng (Mặt bằng tầng 1+2 kinh doanh cafe, nhà thuốc, spa, văn phòng).
 - **Mật độ cư dân về ở:** Tỷ lệ lấp đầy đạt 75% - 85%, hệ thống chiếu sáng, an ninh 24/7 và cảnh quan xanh mát.
 
-## 🌺 IV. ĐẶC QUYỀN TIỆN ÍCH NỘI KHU
+##  IV. ĐẶC QUYỀN TIỆN ÍCH NỘI KHU
 ${sub.highlights.map(h => `- ${h}`).join('\n')}
 
-## ⚖️ V. PHÁP LÝ & ĐÁNH GIÁ TIỀM NĂNG ĐẦU TƯ
+##  V. PHÁP LÝ & ĐÁNH GIÁ TIỀM NĂNG ĐẦU TƯ
 - **Tình trạng sổ đỏ:** 100% các căn đã sẵn sàng sổ đỏ lâu dài, không vướng mắc thế chấp.
 - **Đánh giá dòng tiền:** Thích hợp kinh doanh homestay du lịch, cho thuê làm trụ sở công ty hoặc tích sản lâu dài với biên độ tăng giá vượt trội.
       `,
@@ -159,20 +159,20 @@ ${sub.highlights.map(h => `- ${h}`).join('\n')}
       fullExhaustiveContent: `
 # ${am.name.toUpperCase()} (ĐẠT 100/100 ĐIỂM TỐI ĐA CÔNG TRÌNH TIỆN ÍCH)
 
-## 📌 I. TỔNG QUAN & QUY MÔ KỶ LỤC
+##  I. TỔNG QUAN & QUY MÔ KỶ LỤC
 - **Tên tiện ích:** ${am.name}
 - **Thuộc dự án:** ${am.projectId || 'Siêu đô thị Vinhomes'}
 - **Quy mô diện tích:** ${am.scale}
 - **Phân loại:** ${am.category}
 - **Tình trạng vận hành:** ${am.status}
 
-## 🌟 II. NỘI DUNG MÔ TẢ CHI TIẾT & HẠNG MỤC NỔI BẬT
+##  II. NỘI DUNG MÔ TẢ CHI TIẾT & HẠNG MỤC NỔI BẬT
 ${am.contentSEO}
 
-## 🎯 III. CÁC ĐIỂM NHẤN ĐẮT GIÁ CỦA CÔNG TRÌNH
-${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
+##  III. CÁC ĐIỂM NHẤN ĐẮT GIÁ CỦA CÔNG TRÌNH
+${am.highlights.map(h => `-  ${h}`).join('\n')}
 
-## 🚌 IV. HƯỚNG DẪN DI CHUYỂN & ĐẶC QUYỀN CƯ DÂN
+##  IV. HƯỚNG DẪN DI CHUYỂN & ĐẶC QUYỀN CƯ DÂN
 - **Cư dân Vinhomes:** Sử dụng thẻ cư dân Vin3S hoặc ứng dụng VinHome để vào cổng ưu đãi/miễn phí.
 - **Du khách tham quan:** Di chuyển bằng tuyến buýt điện xanh VinBus (Tuyến OCP01, OCP02, E01, E02, E03) đến trực tiếp sảnh công viên.
 - **Bãi đỗ xe:** Bãi đỗ xe thông minh sức chứa trên 3.000 ô tô có sạc điện VinFast.
@@ -211,27 +211,27 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
 
   return (
     <div 
-      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fadeIn"
+      className="fixed inset-0 z-50 overflow-y-auto bg-ink-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fadeIn"
       onClick={(e) => {
         if (e.target === e.currentTarget && onClose) {
           onClose();
         }
       }}
     >
-      <div className="bg-slate-900 border border-amber-500/40 rounded-3xl w-full max-w-7xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-slate-100 relative">
+      <div className="bg-ink-900 border border-brand-500/40 rounded-3xl w-full max-w-7xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-ink-100 relative">
         
         {/* Modal Header Bar */}
-        <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-5 sm:p-6 bg-gradient-to-r from-ink-900 via-ink-800 to-ink-900 border-b border-ink-700/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-amber-500/20 text-amber-400 rounded-2xl border border-amber-500/30 shrink-0">
+            <div className="p-3 bg-brand-500/20 text-brand-400 rounded-2xl border border-brand-500/30 shrink-0">
               <Award className="w-7 h-7" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="bg-emerald-500/20 text-emerald-400 text-[11px] font-black uppercase px-2.5 py-0.5 rounded-md border border-emerald-500/40">
+                <span className="bg-brand-500/20 text-brand-400 text-[11px] font-black uppercase px-2.5 py-0.5 rounded-md border border-brand-500/40">
                   Thang Điểm Tối Đa 100/100
                 </span>
-                <span className="text-xs text-slate-400 font-bold">Audit Dữ Liệu Toàn Diện 2026</span>
+                <span className="text-xs text-ink-400 font-bold">Audit Dữ Liệu Toàn Diện 2026</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight mt-0.5">
                 BẢNG BÀI VIẾT & TIỆN ÍCH ĐÃ BỔ SUNG ĐẦY ĐỦ 100% NỘI DUNG
@@ -241,8 +241,8 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
 
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <p className="text-xs text-slate-400">Tổng hạng mục đã audit:</p>
-              <p className="text-lg font-black text-amber-400">{ALL_AUDITED_ITEMS.length} Bài viết & Tiện ích</p>
+              <p className="text-xs text-ink-400">Tổng hạng mục đã audit:</p>
+              <p className="text-lg font-black text-brand-400">{ALL_AUDITED_ITEMS.length} Bài viết & Tiện ích</p>
             </div>
             {onClose && (
               <button
@@ -257,18 +257,18 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
         </div>
 
         {/* Audit Scoring Standards Header */}
-        <div className="p-4 bg-slate-950/60 border-b border-slate-800/80 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="p-4 bg-ink-950/60 border-b border-ink-800/80 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {SCORING_CRITERIA.map(c => (
-            <div key={c.key} className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+            <div key={c.key} className="p-2.5 rounded-xl bg-ink-900/90 border border-ink-800 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-300 truncate">{c.name}</span>
-                  <span className="text-xs font-black text-amber-400">{c.maxPoints}đ</span>
+                  <span className="text-[11px] font-bold text-ink-300 truncate">{c.name}</span>
+                  <span className="text-xs font-black text-brand-400">{c.maxPoints}đ</span>
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1 line-clamp-2 leading-tight">{c.desc}</p>
+                <p className="text-[10px] text-ink-400 mt-1 line-clamp-2 leading-tight">{c.desc}</p>
               </div>
-              <div className="mt-2 text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+              <div className="mt-2 text-[10px] text-brand-400 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-brand-400" />
                 <span>Đã đạt điểm tối đa</span>
               </div>
             </div>
@@ -279,18 +279,18 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
         <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
           
           {/* Left Sidebar: Filter & List of Items */}
-          <div className="lg:col-span-5 xl:col-span-4 border-r border-slate-800 flex flex-col bg-slate-900/50 overflow-hidden">
+          <div className="lg:col-span-5 xl:col-span-4 border-r border-ink-800 flex flex-col bg-ink-900/50 overflow-hidden">
             
             {/* Search & Tabs */}
-            <div className="p-4 border-b border-slate-800 space-y-3">
+            <div className="p-4 border-b border-ink-800 space-y-3">
               <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <Search className="w-4 h-4 text-ink-400 absolute left-3 top-3" />
                 <input
                   type="text"
                   placeholder="Tìm kiếm bài viết, phân khu, tiện ích..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                  className="w-full pl-9 pr-3 py-2 bg-ink-950 border border-ink-800 rounded-xl text-xs text-white placeholder-ink-500 focus:outline-none focus:border-brand-500"
                 />
               </div>
 
@@ -300,8 +300,8 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
                   onClick={() => setActiveCategory('all')}
                   className={`px-3 py-1.5 rounded-lg font-bold shrink-0 transition ${
                     activeCategory === 'all' 
-                      ? 'bg-amber-500 text-slate-950' 
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-brand-500 text-ink-950' 
+                      : 'bg-ink-800 text-ink-400 hover:text-white'
                   }`}
                 >
                   Tất Cả ({ALL_AUDITED_ITEMS.length})
@@ -310,8 +310,8 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
                   onClick={() => setActiveCategory('news')}
                   className={`px-3 py-1.5 rounded-lg font-bold shrink-0 transition ${
                     activeCategory === 'news' 
-                      ? 'bg-amber-500 text-slate-950' 
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-brand-500 text-ink-950' 
+                      : 'bg-ink-800 text-ink-400 hover:text-white'
                   }`}
                 >
                   Tin Tức
@@ -320,8 +320,8 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
                   onClick={() => setActiveCategory('subdivisions')}
                   className={`px-3 py-1.5 rounded-lg font-bold shrink-0 transition ${
                     activeCategory === 'subdivisions' 
-                      ? 'bg-amber-500 text-slate-950' 
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-brand-500 text-ink-950' 
+                      : 'bg-ink-800 text-ink-400 hover:text-white'
                   }`}
                 >
                   Phân Khu
@@ -330,8 +330,8 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
                   onClick={() => setActiveCategory('amenities')}
                   className={`px-3 py-1.5 rounded-lg font-bold shrink-0 transition ${
                     activeCategory === 'amenities' 
-                      ? 'bg-amber-500 text-slate-950' 
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-brand-500 text-ink-950' 
+                      : 'bg-ink-800 text-ink-400 hover:text-white'
                   }`}
                 >
                   Tiện Ích
@@ -349,27 +349,27 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
                     onClick={() => setSelectedItemId(item.id)}
                     className={`p-3.5 rounded-2xl border transition cursor-pointer flex flex-col justify-between gap-2 ${
                       isSelected 
-                        ? 'bg-gradient-to-r from-amber-500/10 via-slate-800 to-slate-800 border-amber-500/80 shadow-md' 
-                        : 'bg-slate-950/40 border-slate-800 hover:border-slate-700 hover:bg-slate-800/40'
+                        ? 'bg-gradient-to-r from-brand-500/10 via-ink-800 to-ink-800 border-brand-500/80 shadow-md' 
+                        : 'bg-ink-950/40 border-ink-800 hover:border-ink-700 hover:bg-ink-800/40'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block mb-0.5">
+                        <span className="text-[10px] font-bold text-brand-400 uppercase tracking-wider block mb-0.5">
                           {item.categoryName}
                         </span>
                         <h4 className="text-xs font-bold text-white line-clamp-2 leading-snug">
                           {item.title}
                         </h4>
                       </div>
-                      <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 font-black text-[10px] rounded-md border border-emerald-500/30 shrink-0">
+                      <span className="px-2 py-0.5 bg-brand-500/20 text-brand-400 font-black text-[10px] rounded-md border border-brand-500/30 shrink-0">
                         {item.score}/100đ
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-800/60 pt-2">
+                    <div className="flex items-center justify-between text-[11px] text-ink-400 border-t border-ink-800/60 pt-2">
                       <span className="truncate max-w-[160px]">{item.projectName}</span>
-                      <span className="text-emerald-400 font-bold flex items-center gap-1">
+                      <span className="text-brand-400 font-bold flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" /> Đầy đủ 100%
                       </span>
                     </div>
@@ -380,20 +380,20 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
           </div>
 
           {/* Right Workspace: Detailed Audit Report & Exhaustive Article Content */}
-          <div className="lg:col-span-7 xl:col-span-8 flex flex-col overflow-hidden bg-slate-950/80">
+          <div className="lg:col-span-7 xl:col-span-8 flex flex-col overflow-hidden bg-ink-950/80">
             {selectedItem ? (
               <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
                 
                 {/* Item Summary Header */}
-                <div className="p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl border border-amber-500/30 space-y-3">
+                <div className="p-5 bg-gradient-to-r from-ink-900 via-ink-800 to-ink-900 rounded-3xl border border-brand-500/30 space-y-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-black uppercase rounded-xl">
+                    <span className="px-3 py-1 bg-brand-500/20 text-brand-300 border border-brand-500/30 text-xs font-black uppercase rounded-xl">
                       {selectedItem.categoryName}
                     </span>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-slate-400 font-bold">Chấm điểm chất lượng:</span>
-                      <span className="px-3 py-1 bg-emerald-500 text-slate-950 font-black text-sm rounded-xl shadow">
-                        🏆 100/100 ĐIỂM TỐI ĐA
+                      <span className="text-xs text-ink-400 font-bold">Chấm điểm chất lượng:</span>
+                      <span className="px-3 py-1 bg-brand-500 text-ink-950 font-black text-sm rounded-xl shadow">
+                         100/100 ĐIỂM TỐI ĐA
                       </span>
                     </div>
                   </div>
@@ -402,24 +402,24 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
                     {selectedItem.title}
                   </h3>
 
-                  <p className="text-xs text-slate-300">
-                    Thuộc dự án: <b className="text-amber-400">{selectedItem.projectName}</b>
+                  <p className="text-xs text-ink-300">
+                    Thuộc dự án: <b className="text-brand-400">{selectedItem.projectName}</b>
                   </p>
                 </div>
 
                 {/* Gap Analysis Box (Những gì đã thiếu & được bổ sung đầy đủ) */}
-                <div className="p-5 bg-slate-900/90 rounded-3xl border border-slate-800 space-y-3">
-                  <div className="flex items-center gap-2 text-amber-400 font-black text-xs uppercase tracking-wider">
-                    <AlertCircle className="w-4 h-4 text-amber-400" />
+                <div className="p-5 bg-ink-900/90 rounded-3xl border border-ink-800 space-y-3">
+                  <div className="flex items-center gap-2 text-brand-400 font-black text-xs uppercase tracking-wider">
+                    <AlertCircle className="w-4 h-4 text-brand-400" />
                     <span>CÁC TIÊU CHÍ ĐÃ ĐƯỢC BỔ SUNG ĐẦY ĐỦ THÔNG TIN (GAP ANALYSIS AUDIT):</span>
                   </div>
 
-                  <ul className="space-y-2 text-xs text-slate-300">
+                  <ul className="space-y-2 text-xs text-ink-300">
                     {selectedItem.previousMissing.map((missing, idx) => (
-                      <li key={idx} className="flex items-start gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <li key={idx} className="flex items-start gap-2 bg-ink-950/60 p-2.5 rounded-xl border border-ink-800/80">
+                        <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
                         <div>
-                          <strong className="text-emerald-400">Đã bổ sung đầy đủ 100%:</strong> {missing}
+                          <strong className="text-brand-400">Đã bổ sung đầy đủ 100%:</strong> {missing}
                         </div>
                       </li>
                     ))}
@@ -427,21 +427,21 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
                 </div>
 
                 {/* Exhaustive Content Block (Ko tiết kiệm dữ liệu) */}
-                <div className="p-5 bg-slate-900 rounded-3xl border border-slate-800 space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                <div className="p-5 bg-ink-900 rounded-3xl border border-ink-800 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-ink-800 pb-3">
                     <div>
                       <h4 className="text-sm font-extrabold text-white flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-amber-400" />
+                        <FileText className="w-4 h-4 text-brand-400" />
                         <span>NỘI DUNG VIẾT ĐẦY ĐỦ THÔNG TIN CHI TIẾT (100/100 ĐIỂM TỐI ĐA)</span>
                       </h4>
-                      <p className="text-[11px] text-slate-400 mt-0.5">
+                      <p className="text-[11px] text-ink-400 mt-0.5">
                         Cam kết không tiết kiệm dữ liệu — Bao gồm đầy đủ quy mô, giá bán, chi phí vận hành, tiện ích & pháp lý.
                       </p>
                     </div>
 
                     <button
                       onClick={() => handleCopyContent(selectedItem.fullExhaustiveContent, selectedItem.id)}
-                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0"
+                      className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-black text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0"
                     >
                       {copiedId === selectedItem.id ? (
                         <>
@@ -458,15 +458,15 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
                   </div>
 
                   {/* Render formatted Markdown / Text */}
-                  <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800/80 font-sans text-xs leading-relaxed text-slate-200 whitespace-pre-line max-h-[450px] overflow-y-auto">
+                  <div className="p-4 bg-ink-950 rounded-2xl border border-ink-800/80 font-sans text-xs leading-relaxed text-ink-200 whitespace-pre-line max-h-[450px] overflow-y-auto">
                     {selectedItem.fullExhaustiveContent}
                   </div>
                 </div>
 
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500">
-                <Layers className="w-12 h-12 text-slate-600 mb-3" />
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-ink-500">
+                <Layers className="w-12 h-12 text-ink-600 mb-3" />
                 <p>Vui lòng chọn một bài viết hoặc tiện ích ở cột bên trái để xem audit chi tiết.</p>
               </div>
             )}
@@ -475,12 +475,12 @@ ${am.highlights.map(h => `- ✅ ${h}`).join('\n')}
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 bg-slate-950 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+        <div className="p-4 bg-ink-950 border-t border-ink-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-ink-400">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-brand-400" />
             <span>Tất cả bài viết & tiện ích đã vượt qua kiểm duyệt SEO Content 100/100 Điểm Tối Đa.</span>
           </div>
-          <div className="font-mono text-amber-400 font-bold">
+          <div className="font-mono text-brand-400 font-bold">
             Data Quality Index: 100% Perfect Coverage
           </div>
         </div>

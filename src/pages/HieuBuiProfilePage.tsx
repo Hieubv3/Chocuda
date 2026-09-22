@@ -32,33 +32,33 @@ export const HieuBuiProfilePage: React.FC<{ language: Language }> = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       
       {/* Profile Header */}
-      <div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
+      <div className="bg-ink-900 text-white rounded-3xl p-5 sm:p-8 border border-ink-800 shadow-2xl relative overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
           
           <div className="lg:col-span-4 text-center space-y-3">
             <div className="relative inline-block">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white p-1.5 border-2 border-amber-500/50 shadow-lg mx-auto flex items-center justify-center overflow-hidden">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white p-1.5 border-2 border-brand-500/50 shadow-lg mx-auto flex items-center justify-center overflow-hidden">
                 <img loading="lazy"
                   src={logoImg}
                   alt="Logo Chợ Cư Dân 24H Vinhomes"
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1 rounded-lg shadow-md">
+              <span className="absolute -bottom-1 -right-1 bg-brand-500 text-white p-1 rounded-lg shadow-md">
                 <ShieldCheck className="w-3.5 h-3.5" />
               </span>
             </div>
 
             <div>
-              <h1 className="text-3xl font-black text-amber-400">{HIEU_BUI_PROFILE.name}</h1>
-              <p className="text-xs font-bold text-slate-300 mt-1">{HIEU_BUI_PROFILE.title}</p>
-              <p className="text-xs text-amber-300/80 font-bold mt-0.5">{HIEU_BUI_PROFILE.domain}</p>
+              <h1 className="text-3xl font-black text-brand-400">{HIEU_BUI_PROFILE.name}</h1>
+              <p className="text-xs font-bold text-ink-300 mt-1">{HIEU_BUI_PROFILE.title}</p>
+              <p className="text-xs text-brand-300/80 font-bold mt-0.5">{HIEU_BUI_PROFILE.domain}</p>
             </div>
           </div>
 
           <div className="lg:col-span-8 space-y-5">
             <div>
-              <span className="text-xs font-black uppercase text-amber-400 tracking-widest">
+              <span className="text-xs font-black uppercase text-brand-400 tracking-widest">
                 TẬN TÂM - MINH BẠCH - CHUYÊN NGHIỆP
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-white mt-1">
@@ -66,22 +66,22 @@ export const HieuBuiProfilePage: React.FC<{ language: Language }> = () => {
               </h2>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+            <p className="text-xs sm:text-sm text-ink-300 leading-relaxed whitespace-pre-line">
               {HIEU_BUI_PROFILE.bio}
             </p>
 
             <div className="grid grid-cols-3 gap-3 pt-2 text-center">
-              <div className="p-3 bg-slate-800 rounded-2xl border border-slate-700">
-                <span className="text-base font-black text-amber-400">Chuyên Sâu</span>
-                <span className="text-[11px] text-slate-400 block font-semibold">Kinh nghiệm BĐS</span>
+              <div className="p-3 bg-ink-800 rounded-2xl border border-ink-700">
+                <span className="text-base font-black text-brand-400">Chuyên Sâu</span>
+                <span className="text-[11px] text-ink-400 block font-semibold">Kinh nghiệm BĐS</span>
               </div>
-              <div className="p-3 bg-slate-800 rounded-2xl border border-slate-700">
-                <span className="text-base font-black text-amber-400">Chính Chủ</span>
-                <span className="text-[11px] text-slate-400 block font-semibold">Căn nhà chuyển nhượng</span>
+              <div className="p-3 bg-ink-800 rounded-2xl border border-ink-700">
+                <span className="text-base font-black text-brand-400">Chính Chủ</span>
+                <span className="text-[11px] text-ink-400 block font-semibold">Căn nhà chuyển nhượng</span>
               </div>
-              <div className="p-3 bg-slate-800 rounded-2xl border border-slate-700">
-                <span className="text-base font-black text-amber-400">Tận Tâm</span>
-                <span className="text-[11px] text-slate-400 block font-semibold">Hài lòng từ khách hàng</span>
+              <div className="p-3 bg-ink-800 rounded-2xl border border-ink-700">
+                <span className="text-base font-black text-brand-400">Tận Tâm</span>
+                <span className="text-[11px] text-ink-400 block font-semibold">Hài lòng từ khách hàng</span>
               </div>
             </div>
           </div>
@@ -91,17 +91,17 @@ export const HieuBuiProfilePage: React.FC<{ language: Language }> = () => {
 
       {/* Achievements & Milestones */}
       <div className="space-y-6">
-        <h2 className="text-xl font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-amber-500">
+        <h2 className="text-xl font-extrabold text-ink-900 dark:text-white uppercase tracking-wider text-brand-500">
           THÀNH TÍCH & DANH HIỆU NỔI BẬT
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {HIEU_BUI_PROFILE.achievements.map((ach, idx) => (
-            <div key={idx} className="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-start space-x-3">
-              <Award className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
+            <div key={idx} className="p-5 bg-white dark:bg-ink-800 rounded-2xl border border-ink-200 dark:border-ink-700 shadow-sm flex items-start space-x-3">
+              <Award className="w-6 h-6 text-brand-500 shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-bold text-slate-900 dark:text-white text-sm">{ach}</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Cam kết hỗ trợ trọn gói thủ tục pháp lý, thẩm định giá & ký kết HĐMB an toàn tuyệt đối.</p>
+                <h4 className="font-bold text-ink-900 dark:text-white text-sm">{ach}</h4>
+                <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">Cam kết hỗ trợ trọn gói thủ tục pháp lý, thẩm định giá & ký kết HĐMB an toàn tuyệt đối.</p>
               </div>
             </div>
           ))}
@@ -112,59 +112,59 @@ export const HieuBuiProfilePage: React.FC<{ language: Language }> = () => {
       <RealestateVideoChannelSection />
 
       {/* Direct Booking Form */}
-      <div className="p-8 bg-slate-900 text-white rounded-3xl border border-slate-800 shadow-2xl space-y-6">
+      <div className="p-8 bg-ink-900 text-white rounded-3xl border border-ink-800 shadow-2xl space-y-6">
         <div className="text-center space-y-2 max-w-xl mx-auto">
-          <Calendar className="w-8 h-8 text-amber-400 mx-auto" />
-          <h2 className="text-2xl font-black text-amber-400">ĐẶT LỊCH TƯ VẤN TRỰC TIẾP 1:1 VỚI NHÀ ĐẸP VINHOMES</h2>
-          <p className="text-xs text-slate-400">
+          <Calendar className="w-8 h-8 text-brand-400 mx-auto" />
+          <h2 className="text-2xl font-black text-brand-400">ĐẶT LỊCH TƯ VẤN TRỰC TIẾP 1:1 VỚI NHÀ ĐẸP VINHOMES</h2>
+          <p className="text-xs text-ink-400">
             Dành cho khách hàng cần tư vấn chiến lược dòng tiền, mua cắt lỗ hoặc tìm căn ưng ý tại Vinhomes Ocean Park 2, 3 & Hạ Long Xanh.
           </p>
         </div>
 
         {submitted ? (
-          <div className="p-4 bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 rounded-2xl text-center font-bold text-xs">
+          <div className="p-4 bg-brand-950/80 border border-brand-500/50 text-brand-300 rounded-2xl text-center font-bold text-xs">
             Cảm ơn quý khách! Chuyên viên Nhà đẹp Vinhomes đã nhận thông tin và sẽ gọi điện tư vấn trong vòng 15 phút.
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-3 text-xs">
             <div>
-              <label className="block text-slate-300 font-bold mb-1">Họ và tên (*)</label>
+              <label className="block text-ink-300 font-bold mb-1">Họ và tên (*)</label>
               <input
                 type="text"
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Nguyễn Văn A"
-                className="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-amber-500"
+                className="w-full p-3 bg-ink-800 border border-ink-700 rounded-xl text-white focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-slate-300 font-bold mb-1">Số điện thoại / Zalo (*)</label>
+              <label className="block text-ink-300 font-bold mb-1">Số điện thoại / Zalo (*)</label>
               <input
                 type="tel"
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="0868.xxx.xxx"
-                className="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-amber-500"
+                className="w-full p-3 bg-ink-800 border border-ink-700 rounded-xl text-white focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-slate-300 font-bold mb-1">Nhu cầu cụ thể</label>
+              <label className="block text-ink-300 font-bold mb-1">Nhu cầu cụ thể</label>
               <textarea
                 rows={3}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Ví dụ: Cần tìm Shophouse Chà Là tài chính 8 tỷ, hướng Đông Nam..."
-                className="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-amber-500"
+                className="w-full p-3 bg-ink-800 border border-ink-700 rounded-xl text-white focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg"
+              className="w-full py-3.5 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg"
             >
               Gửi Yêu Cầu Đặt Lịch
             </button>

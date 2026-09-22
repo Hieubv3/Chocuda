@@ -20,7 +20,7 @@ export const Logo: React.FC<LogoProps> = ({
         className={`flex items-center gap-2 sm:gap-2.5 cursor-pointer group shrink-0 select-none ${className}`}
         title="Chợ Cư Dân 24H Vinhomes - Trang chủ"
       >
-        <div className="relative h-9 sm:h-10 w-auto flex items-center justify-center p-0.5 rounded-lg bg-white shadow-xs border border-slate-100 group-hover:scale-[1.02] transition-transform duration-200 overflow-hidden shrink-0">
+        <div className="relative h-9 sm:h-10 w-auto flex items-center justify-center p-0.5 rounded-lg bg-white shadow-xs border border-ink-100 group-hover:scale-[1.02] transition-transform duration-200 overflow-hidden shrink-0">
           <img 
             src={logoImg} 
             alt="Logo Chợ Cư Dân 24H Vinhomes" 
@@ -29,10 +29,10 @@ export const Logo: React.FC<LogoProps> = ({
           />
         </div>
         <div className="flex flex-col justify-center">
-          <span className="font-black text-slate-900 dark:text-white text-xs sm:text-sm md:text-base uppercase tracking-tight leading-none group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-            CHỢ CƯ DÂN <span className="text-emerald-600 dark:text-emerald-400">24H</span>
+          <span className="font-black text-ink-900 dark:text-white text-xs sm:text-sm md:text-base uppercase tracking-tight leading-none group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+            CHỢ CƯ DÂN <span className="text-brand-600 dark:text-brand-400">24H</span>
           </span>
-          <span className="text-[8px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 tracking-normal mt-0.5 whitespace-nowrap">
+          <span className="text-[8px] sm:text-[9.5px] font-bold text-ink-500 dark:text-ink-400 tracking-normal mt-0.5 whitespace-nowrap">
             Nền tảng kết nối cư dân Vinhomes
           </span>
         </div>
@@ -57,9 +57,9 @@ export const Logo: React.FC<LogoProps> = ({
         </div>
         <div className="flex flex-col justify-center">
           <span className="font-black text-white text-base sm:text-lg uppercase tracking-tight leading-none">
-            CHỢ CƯ DÂN <span className="text-emerald-400">24H</span>
+            CHỢ CƯ DÂN <span className="text-brand-400">24H</span>
           </span>
-          <span className="text-[10px] sm:text-xs font-semibold text-slate-400 tracking-normal mt-1">
+          <span className="text-[10px] sm:text-xs font-semibold text-ink-400 tracking-normal mt-1">
             Nền tảng kết nối cư dân Vinhomes
           </span>
         </div>
@@ -70,7 +70,7 @@ export const Logo: React.FC<LogoProps> = ({
   if (variant === 'auth') {
     return (
       <div className={`flex flex-col items-center text-center ${className}`}>
-        <div className="relative h-10 sm:h-14 md:h-16 w-auto p-1 sm:p-1.5 rounded-xl bg-white shadow-md mb-1 overflow-hidden flex items-center justify-center border border-slate-100">
+        <div className="relative h-10 sm:h-14 md:h-16 w-auto p-1 sm:p-1.5 rounded-xl bg-white shadow-md mb-1 overflow-hidden flex items-center justify-center border border-ink-100">
           <img 
             src={logoImg} 
             alt="Logo Chợ Cư Dân 24H Vinhomes" 
@@ -85,7 +85,7 @@ export const Logo: React.FC<LogoProps> = ({
   // Large variant for Hero / Welcome Banner / Seeding
   return (
     <div className={`flex items-center justify-center ${className}`}>
-      <div className="h-28 sm:h-36 md:h-40 w-auto p-2.5 bg-white rounded-2xl border border-slate-100 shadow-xl overflow-hidden flex items-center justify-center shrink-0">
+      <div className="h-28 sm:h-36 md:h-40 w-auto p-2.5 bg-white rounded-2xl border border-ink-100 shadow-xl overflow-hidden flex items-center justify-center shrink-0">
         <img 
           src={logoImg} 
           alt="Logo Chợ Cư Dân 24H Vinhomes" 

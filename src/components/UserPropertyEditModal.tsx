@@ -169,27 +169,27 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-3xl max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col my-auto overscroll-contain">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink-950/80 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto">
+      <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl w-full max-w-3xl max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col my-auto overscroll-contain">
         
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-20">
+        <div className="p-4 sm:p-5 border-b border-ink-100 dark:border-ink-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-ink-900/95 backdrop-blur-md z-20">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+            <div className="p-2 bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-xl">
               <Building2 className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-black text-slate-900 dark:text-white">
+              <h3 className="text-base font-black text-ink-900 dark:text-white">
                 Chỉnh Sửa Bài Đăng Bất Động Sản
               </h3>
-              <p className="text-xs text-slate-500">
-                Mã tin: <strong className="font-mono text-emerald-600 dark:text-emerald-400">{property.code || property.id}</strong>
+              <p className="text-xs text-ink-500">
+                Mã tin: <strong className="font-mono text-brand-600 dark:text-brand-400">{property.code || property.id}</strong>
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+            className="p-2 text-ink-400 hover:text-ink-600 dark:hover:text-ink-200 rounded-xl hover:bg-ink-100 dark:hover:bg-ink-800 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -200,7 +200,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
           
           {/* Row 1: Title */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-bold text-ink-700 dark:text-ink-300 mb-1">
               Tiêu đề bài đăng <span className="text-rose-500">*</span>
             </label>
             <input
@@ -208,7 +208,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
               value={title}
               onChange={e => setTitle(e.target.value)}
               placeholder="VD: Cắt lỗ gấp Shophouse Chà Là 15 trục đường 20m, full nội thất xịn"
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-xs focus:ring-2 focus:ring-emerald-500 outline-hidden"
+              className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold text-xs focus:ring-2 focus:ring-brand-500 outline-hidden"
               required
             />
           </div>
@@ -216,7 +216,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
           {/* Row 2: Type, Project, Category */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Nhu Cầu Giao Dịch
               </label>
               <select
@@ -230,7 +230,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                     setPriceDisplay(`${priceNum} Tỷ`);
                   }
                 }}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
               >
                 <option value="sale">Cần Bán (Chuyển nhượng)</option>
                 <option value="rent">Cho Thuê</option>
@@ -238,13 +238,13 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Dự Án Vinhomes
               </label>
               <select
                 value={project}
                 onChange={e => setProject(e.target.value as ProjectCategory)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
               >
                 <option value="ocean-park-2">Vinhomes Ocean Park 2</option>
                 <option value="ocean-park-3">Vinhomes Ocean Park 3</option>
@@ -256,13 +256,13 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Loại Hình BĐS
               </label>
               <select
                 value={category}
                 onChange={e => setCategory(e.target.value as PropertyCategory)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
               >
                 <option value="shophouse">Shophouse / Nhà phố</option>
                 <option value="townhouse">Liền kề</option>
@@ -280,7 +280,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
           {/* Row 3: Price, Area, Bedrooms, Bathrooms, Direction */}
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Mức Giá ({type === 'rent' ? 'Triệu' : 'Tỷ'}) <span className="text-rose-500">*</span>
               </label>
               <input
@@ -289,13 +289,13 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                 value={priceNum}
                 onChange={e => handlePriceChange(e.target.value)}
                 placeholder={type === 'rent' ? '15' : '8.5'}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
                 required
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Diện Tích (m²)
               </label>
               <input
@@ -303,12 +303,12 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                 value={area}
                 onChange={e => setArea(e.target.value)}
                 placeholder="75"
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Phòng Ngủ
               </label>
               <input
@@ -316,12 +316,12 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                 value={bedrooms}
                 onChange={e => setBedrooms(e.target.value)}
                 placeholder="3"
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Vệ Sinh
               </label>
               <input
@@ -329,18 +329,18 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                 value={bathrooms}
                 onChange={e => setBathrooms(e.target.value)}
                 placeholder="2"
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
               />
             </div>
 
             <div className="col-span-2 sm:col-span-1">
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Hướng Nhà
               </label>
               <select
                 value={direction}
                 onChange={e => setDirection(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
               >
                 <option value="Đông Nam">Đông Nam</option>
                 <option value="Chính Đông">Chính Đông</option>
@@ -357,7 +357,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
           {/* Row 4: Phân Khu & Địa chỉ cụ thể */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Phân Khu
               </label>
               <input
@@ -365,12 +365,12 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                 value={subdivision}
                 onChange={e => setSubdivision(e.target.value)}
                 placeholder="VD: Chà Là, Cọ Xanh, Sao Biển, Vịnh Thiên Đường..."
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Địa Chỉ / Vị Trí Cụ Thể
               </label>
               <input
@@ -378,15 +378,15 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                 value={address}
                 onChange={e => setAddress(e.target.value)}
                 placeholder="VD: Chà Là 15-28, Vinhomes Ocean Park 2"
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
               />
             </div>
           </div>
 
           {/* Row 5: Contact Info */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-emerald-50/50 dark:bg-emerald-950/20 p-3 rounded-2xl border border-emerald-500/20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-brand-50/50 dark:bg-brand-950/20 p-3 rounded-2xl border border-brand-500/20">
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Tên Người Liên Hệ
               </label>
               <input
@@ -394,12 +394,12 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                 value={sellerName}
                 onChange={e => setSellerName(e.target.value)}
                 placeholder="VD: Anh Nam (Chính Chủ)"
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                 Số Điện Thoại Liên Hệ <span className="text-rose-500">*</span>
               </label>
               <input
@@ -407,7 +407,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
                 value={sellerPhone}
                 onChange={e => setSellerPhone(e.target.value)}
                 placeholder="VD: 0988889999"
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                className="w-full px-3 py-2 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
                 required
               />
             </div>
@@ -415,7 +415,7 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
 
           {/* Row 6: Description */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-bold text-ink-700 dark:text-ink-300 mb-1">
               Mô tả chi tiết bài đăng
             </label>
             <textarea
@@ -423,17 +423,17 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
               value={description}
               onChange={e => setDescription(e.target.value)}
               placeholder="Mô tả ưu điểm, tiện ích xung quanh, chính sách ưu đãi, pháp lý sổ đỏ..."
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium text-xs focus:ring-2 focus:ring-emerald-500 outline-hidden"
+              className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium text-xs focus:ring-2 focus:ring-brand-500 outline-hidden"
             />
           </div>
 
           {/* Row 7: Images Manager */}
-          <div className="space-y-2.5 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <div className="space-y-2.5 bg-ink-50 dark:bg-ink-800/40 p-4 rounded-2xl border border-ink-200 dark:border-ink-700">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-black uppercase text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-black uppercase text-ink-700 dark:text-ink-300">
                 Hình Ảnh Bài Đăng ({images.length} ảnh)
               </label>
-              <label className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer inline-flex items-center gap-1.5 transition">
+              <label className="px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer inline-flex items-center gap-1.5 transition">
                 <Upload className="w-3.5 h-3.5" />
                 <span>Thêm Ảnh Mới</span>
                 <input
@@ -448,14 +448,14 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
             {/* Images Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
               {images.map((imgUrl, idx) => (
-                <div key={idx} className="relative group rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 aspect-4/3 bg-slate-900">
+                <div key={idx} className="relative group rounded-xl overflow-hidden border border-ink-300 dark:border-ink-700 aspect-4/3 bg-ink-900">
                   <img loading="lazy"
                     src={imgUrl}
                     alt={`Ảnh ${idx + 1}`}
                     className="w-full h-full object-cover"
                   />
                   {idx === 0 && (
-                    <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-emerald-600 text-white text-[9px] font-black rounded">
+                    <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-brand-600 text-white text-[9px] font-black rounded">
                       Ảnh Đại Diện
                     </span>
                   )}
@@ -473,18 +473,18 @@ export const UserPropertyEditModal: React.FC<UserPropertyEditModalProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-ink-100 dark:border-ink-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition cursor-pointer"
+              className="px-4 py-2.5 bg-ink-100 hover:bg-ink-200 dark:bg-ink-800 dark:hover:bg-ink-700 text-ink-700 dark:text-ink-300 font-bold text-xs rounded-xl transition cursor-pointer"
             >
               Hủy Bỏ
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="px-6 py-2.5 bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? (
                 <span>Đang lưu...</span>

@@ -99,7 +99,7 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
   const shareUrl = window.location.href;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={`${amenity.name} - ${project?.name || 'Vinhomes'} | Tiện Ích Đẳng Cấp`}
         description={`${amenity.name}. Phân loại: ${amenity.category}. Quy mô: ${amenity.scale}. ${amenity.summary.substring(0, 160)}`}
@@ -109,23 +109,23 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
       />
 
       {/* Breadcrumb Navigation */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
-            <Link to="/" className="hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
+            <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to="/du-an" className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to="/du-an" className="hover:text-brand-600 dark:hover:text-brand-400">
               Dự Án Vinhomes
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to={`/du-an/${currentProjectSlug}`} className="hover:text-emerald-600 dark:hover:text-emerald-400 truncate max-w-[180px]">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to={`/du-an/${currentProjectSlug}`} className="hover:text-brand-600 dark:hover:text-brand-400 truncate max-w-[180px]">
               {project?.name || 'Dự án'}
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold truncate">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <span className="text-brand-600 dark:text-brand-400 font-bold truncate">
               {amenity.name}
             </span>
           </nav>
@@ -133,29 +133,29 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
       </div>
 
       {/* Hero Header */}
-      <div className="relative bg-slate-950 text-white overflow-hidden">
+      <div className="relative bg-ink-950 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img loading="lazy"
             src={amenity.image || project?.image}
             alt={amenity.name}
             className="w-full h-full object-cover opacity-35 filter brightness-90"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-transparent" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-6">
           <div className="flex flex-wrap items-center gap-3">
             <Link
               to={`/du-an/${currentProjectSlug}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-slate-200 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-ink-200 transition"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Dự án {project?.name}</span>
             </Link>
-            <span className="px-3 py-1 bg-amber-500 text-slate-950 font-black text-xs rounded-full uppercase tracking-wider">
+            <span className="px-3 py-1 bg-brand-500 text-ink-950 font-black text-xs rounded-full uppercase tracking-wider">
               {amenity.category}
             </span>
-            <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full text-xs font-bold">
+            <span className="px-3 py-1 bg-brand-500/20 text-brand-300 border border-brand-500/30 rounded-full text-xs font-bold">
               {amenity.status}
             </span>
           </div>
@@ -164,14 +164,14 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
             {amenity.name}
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed font-medium">
+          <p className="text-sm sm:text-base text-ink-300 max-w-3xl leading-relaxed font-medium">
             {amenity.summary}
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <a
               href="tel:0868499929"
-              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs flex items-center gap-2 shadow-lg transition"
+              className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-extrabold rounded-xl text-xs flex items-center gap-2 shadow-lg transition"
             >
               <Phone className="w-4 h-4" />
               <span>Hotline Tư Vấn: 0868.499.929</span>
@@ -189,7 +189,7 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
 
             <button
               onClick={() => setShowShareModal(true)}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 backdrop-blur-md transition cursor-pointer border border-slate-700"
+              className="px-4 py-2.5 bg-ink-800 hover:bg-ink-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 backdrop-blur-md transition cursor-pointer border border-ink-700"
             >
               <Share2 className="w-4 h-4" />
               <span>Chia Sẻ Bài Viết</span>
@@ -202,18 +202,18 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
         
         {/* Quick Specs */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-md text-xs">
           <div>
-            <span className="text-slate-400 block font-medium">Phân loại tiện ích</span>
-            <span className="text-base font-black text-slate-900 dark:text-white line-clamp-1">{amenity.category}</span>
+            <span className="text-ink-400 block font-medium">Phân loại tiện ích</span>
+            <span className="text-base font-black text-ink-900 dark:text-white line-clamp-1">{amenity.category}</span>
           </div>
           <div>
-            <span className="text-slate-400 block font-medium">Quy mô đầu tư</span>
-            <span className="text-base font-black text-slate-900 dark:text-white">{amenity.scale}</span>
+            <span className="text-ink-400 block font-medium">Quy mô đầu tư</span>
+            <span className="text-base font-black text-ink-900 dark:text-white">{amenity.scale}</span>
           </div>
           <div>
-            <span className="text-slate-400 block font-medium">Tình trạng vận hành</span>
-            <span className="text-base font-black text-emerald-600 dark:text-emerald-400">{amenity.status}</span>
+            <span className="text-ink-400 block font-medium">Tình trạng vận hành</span>
+            <span className="text-base font-black text-brand-600 dark:text-brand-400">{amenity.status}</span>
           </div>
         </div>
 
@@ -225,26 +225,26 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
             
             {/* Image Box */}
             {amenity.image && (
-              <div className="rounded-3xl overflow-hidden aspect-[16/10] bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-lg relative">
+              <div className="rounded-3xl overflow-hidden aspect-[16/10] bg-ink-950 border border-ink-200 dark:border-ink-800 shadow-lg relative">
                 <img loading="lazy"
                   src={amenity.image}
                   alt={amenity.name}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-xs font-bold text-white">
-                  📍 {project?.name}
+                <div className="absolute bottom-4 left-4 bg-ink-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-xs font-bold text-white">
+                   {project?.name}
                 </div>
               </div>
             )}
 
             {/* Markdown Content */}
-            <div className="p-6 sm:p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md space-y-5">
-              <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-                <Award className="w-5 h-5 text-amber-500" />
+            <div className="p-6 sm:p-8 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-md space-y-5">
+              <h2 className="text-lg sm:text-xl font-black text-ink-900 dark:text-white flex items-center gap-2 border-b border-ink-100 dark:border-ink-800 pb-3">
+                <Award className="w-5 h-5 text-brand-500" />
                 <span>Chi Tiết Quy Hoạch & Trải Nghiệm Tiện Ích</span>
               </h2>
 
-              <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+              <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line">
                 {amenity.contentSEO}
               </div>
             </div>
@@ -255,16 +255,16 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
           <div className="space-y-6">
             
             {/* Highlights Card */}
-            <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
-              <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-amber-500" />
+            <div className="p-6 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-md space-y-4">
+              <h3 className="text-base font-black text-ink-900 dark:text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-brand-500" />
                 <span>Đặc Quyền Cư Dân</span>
               </h3>
               <ul className="space-y-3 text-xs">
                 {amenity.highlights.map((hl, idx) => (
                   <li key={idx} className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-brand-500 shrink-0 mt-0.5" />
+                    <span className="text-ink-700 dark:text-ink-300 leading-relaxed font-medium">
                       {hl}
                     </span>
                   </li>
@@ -273,41 +273,41 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
             </div>
 
             {/* Project Quick Link */}
-            <div className="p-6 bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-3xl border border-slate-800 shadow-xl space-y-4">
+            <div className="p-6 bg-gradient-to-br from-ink-900 to-ink-950 text-white rounded-3xl border border-ink-800 shadow-xl space-y-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-amber-500 text-slate-950 rounded-md">
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-brand-500 text-ink-950 rounded-md">
                   Về Dự Án
                 </span>
                 <h4 className="text-lg font-black leading-snug">
                   {project?.name}
                 </h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-ink-300 leading-relaxed">
                   {project?.location}
                 </p>
               </div>
 
               <Link
                 to={`/du-an/${currentProjectSlug}`}
-                className="block w-full text-center py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition"
+                className="block w-full text-center py-3 bg-brand-600 hover:bg-brand-700 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition"
               >
                 XEM TOÀN BỘ QUY HOẠCH DỰ ÁN
               </Link>
             </div>
 
             {/* Post Listing CTA */}
-            <div className="p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 rounded-3xl shadow-xl space-y-4">
+            <div className="p-6 bg-gradient-to-br from-brand-500 to-brand-600 text-ink-950 rounded-3xl shadow-xl space-y-4">
               <div className="space-y-1">
                 <h4 className="text-base font-black leading-snug">
                   Bạn Muốn Sở Hữu Căn Hộ Gần {amenity.name}?
                 </h4>
-                <p className="text-xs text-slate-900 font-medium leading-relaxed">
+                <p className="text-xs text-ink-900 font-medium leading-relaxed">
                   Liên hệ ngay Hotline 0868.499.929 để nhận danh sách quỹ căn view trực diện đẹp nhất và chính sách giá gốc CĐT.
                 </p>
               </div>
 
               <a
                 href="tel:0868499929"
-                className="block w-full text-center py-3 bg-slate-950 hover:bg-slate-900 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition"
+                className="block w-full text-center py-3 bg-ink-950 hover:bg-ink-900 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition"
               >
                 GỌI HOTLINE 0868.499.929
               </a>
@@ -319,20 +319,20 @@ Hạng mục **${formattedTitle}** được Tập đoàn Vingroup đầu tư bà
 
         {/* Realtime Property Inventory in this Project */}
         {relatedProperties.length > 0 && (
-          <div className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+          <div className="space-y-6 pt-6 border-t border-ink-200 dark:border-ink-800">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+                <h2 className="text-2xl font-black text-ink-900 dark:text-white">
                   Quỹ Căn Bán & Cho Thuê Gần {amenity.name}
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-xs text-ink-500 dark:text-ink-400 mt-1">
                   Các căn hộ, liền kề & shophouse nổi bật tại {project?.name}
                 </p>
               </div>
 
               <Link
                 to={`/du-an/${currentProjectSlug}`}
-                className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+                className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1"
               >
                 <span>Xem tất cả</span>
                 <ChevronRight className="w-4 h-4" />

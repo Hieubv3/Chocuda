@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   MapPin, Bed, Bath, Compass, ShieldCheck, Phone, MessageCircle, 
@@ -94,8 +94,8 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
   if (isFetchingServer && !property) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
-        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="text-sm font-bold text-slate-600 dark:text-slate-300">Đang tải thông tin chi tiết bài đăng...</p>
+        <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p className="text-sm font-bold text-ink-600 dark:text-ink-300">Đang tải thông tin chi tiết bài đăng...</p>
       </div>
     );
   }
@@ -104,25 +104,25 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-6">
         <SEOHead title="Không tìm thấy bất động sản | Chợ Cư Dân 24h" />
-        <div className="w-16 h-16 bg-amber-100 dark:bg-amber-950 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+        <div className="w-16 h-16 bg-brand-100 dark:bg-brand-950 text-brand-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
           !
         </div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-black text-ink-900 dark:text-white">
           Không tìm thấy bất động sản
         </h1>
-        <p className="text-sm text-slate-500 max-w-md mx-auto">
+        <p className="text-sm text-ink-500 max-w-md mx-auto">
           Mã căn hoặc tin đăng này có thể đã được giao dịch hoặc tạm ngừng hiển thị. Quý khách vui lòng xem các căn khác đang mở bán.
         </p>
         <div className="flex justify-center gap-4">
           <Link
             to="/bat-dong-san"
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm transition shadow-md"
+            className="px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-sm transition shadow-md"
           >
             Xem Quỹ Căn Đang Bán & Cho Thuê
           </Link>
           <Link
             to="/"
-            className="px-6 py-3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-sm transition"
+            className="px-6 py-3 bg-ink-200 dark:bg-ink-800 text-ink-700 dark:text-ink-200 font-bold rounded-xl text-sm transition"
           >
             Về Trang Chủ
           </Link>
@@ -190,7 +190,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                        property.project === 'smart-city' ? 'Vinhomes Smart City' : 'Vinhomes Ocean Park';
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={`${property.title} - ${property.priceDisplay}`}
         description={`${property.title}. Giá: ${property.priceDisplay}, Diện tích: ${property.area}m2, Vị trí: ${property.address}. Liên hệ chính chủ/môi giới: ${property.sellerPhone}`}
@@ -200,23 +200,23 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
       />
 
       {/* Breadcrumb Navigation */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
-            <Link to="/" className="hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
+            <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to={`/du-an/${getProjectSlug(property.project)}`} className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to={`/du-an/${getProjectSlug(property.project)}`} className="hover:text-brand-600 dark:hover:text-brand-400">
               {projectTitle}
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to={property.type === 'rent' ? '/cho-thue' : '/bat-dong-san'} className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to={property.type === 'rent' ? '/cho-thue' : '/bat-dong-san'} className="hover:text-brand-600 dark:hover:text-brand-400">
               {property.type === 'rent' ? 'Cho Thuê' : 'Mua Bán'}
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <span className="text-slate-900 dark:text-white font-bold truncate max-w-xs sm:max-w-md">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <span className="text-ink-900 dark:text-white font-bold truncate max-w-xs sm:max-w-md">
               {property.title}
             </span>
           </nav>
@@ -235,8 +235,8 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
           <div className="lg:col-span-2 space-y-6">
             
             {/* Gallery Card */}
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
-              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-950">
+            <div className="bg-white dark:bg-ink-900 rounded-3xl p-4 sm:p-6 border border-ink-200 dark:border-ink-800 shadow-xl space-y-4">
+              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-ink-950">
                 <img loading="lazy"
                   src={property.images[selectedImgIndex] || property.images[0]}
                   alt={property.title}
@@ -245,7 +245,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
 
                 {/* VIP Badge */}
                 {property.vipLevel && property.vipLevel !== 'normal' && (
-                  <div className="absolute top-4 left-4 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-brand-500 to-yellow-400 text-ink-950 text-xs font-black px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>TIN VIP {property.vipLevel.toUpperCase()}</span>
                   </div>
@@ -256,7 +256,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                   <button
                     onClick={() => onToggleSave(property)}
                     className={`p-2.5 rounded-full backdrop-blur-md transition shadow-md cursor-pointer ${
-                      isSaved ? 'bg-red-500 text-white' : 'bg-slate-900/70 text-white hover:bg-slate-900'
+                      isSaved ? 'bg-red-500 text-white' : 'bg-ink-900/70 text-white hover:bg-ink-900'
                     }`}
                     title="Lưu tin yêu thích"
                   >
@@ -265,7 +265,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
 
                   <button
                     onClick={() => setShowShareModal(true)}
-                    className="p-2.5 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white backdrop-blur-md transition shadow-md cursor-pointer"
+                    className="p-2.5 rounded-full bg-ink-900/70 hover:bg-ink-900 text-white backdrop-blur-md transition shadow-md cursor-pointer"
                     title="Chia sẻ link lên Zalo, Facebook"
                   >
                     <Share2 className="w-4 h-4" />
@@ -273,7 +273,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                 </div>
 
                 {/* Photo counter */}
-                <div className="absolute bottom-4 right-4 bg-slate-950/80 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+                <div className="absolute bottom-4 right-4 bg-ink-950/80 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
                   {selectedImgIndex + 1} / {property.images.length} hình ảnh
                 </div>
               </div>
@@ -286,7 +286,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                       key={idx}
                       onClick={() => setSelectedImgIndex(idx)}
                       className={`relative w-20 h-16 sm:w-24 sm:h-18 shrink-0 rounded-xl overflow-hidden border-2 transition cursor-pointer ${
-                        selectedImgIndex === idx ? 'border-emerald-500 scale-95 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
+                        selectedImgIndex === idx ? 'border-brand-500 scale-95 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
                       }`}
                     >
                       <img loading="lazy" src={img} alt="" className="w-full h-full object-cover" />
@@ -297,10 +297,10 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
             </div>
 
             {/* Property Key Details & Title */}
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+            <div className="bg-white dark:bg-ink-900 rounded-3xl p-6 sm:p-8 border border-ink-200 dark:border-ink-800 shadow-xl space-y-6">
               
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
                   <Building2 className="w-4 h-4" />
                   <span>{projectTitle}</span>
                   {property.subdivision && (
@@ -311,43 +311,43 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                   )}
                 </div>
 
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-ink-900 dark:text-white leading-tight">
                   {property.title}
                 </h1>
 
-                <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-ink-500 dark:text-ink-400">
                   <MapPin className="w-4 h-4 text-red-500 shrink-0" />
                   <span>{property.address}</span>
                 </div>
               </div>
 
               {/* Price & Primary Stats Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700/60">
                 <div className="space-y-0.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase">Mức Giá</span>
-                  <div className="text-lg sm:text-xl font-black text-emerald-600 dark:text-emerald-400">
+                  <span className="text-[11px] font-bold text-ink-400 uppercase">Mức Giá</span>
+                  <div className="text-lg sm:text-xl font-black text-brand-600 dark:text-brand-400">
                     {property.priceDisplay}
                   </div>
                 </div>
 
                 <div className="space-y-0.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase">Diện Tích</span>
-                  <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
+                  <span className="text-[11px] font-bold text-ink-400 uppercase">Diện Tích</span>
+                  <div className="text-lg sm:text-xl font-black text-ink-900 dark:text-white">
                     {property.area} m²
                   </div>
                 </div>
 
                 <div className="space-y-0.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase">Phòng Ngủ / WC</span>
-                  <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <span className="text-[11px] font-bold text-ink-400 uppercase">Phòng Ngủ / WC</span>
+                  <div className="text-lg sm:text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
                     <span>{property.bedrooms || 2} PN</span>
-                    <span className="text-xs text-slate-400">/ {property.bathrooms || 2} WC</span>
+                    <span className="text-xs text-ink-400">/ {property.bathrooms || 2} WC</span>
                   </div>
                 </div>
 
                 <div className="space-y-0.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase">Hướng Nhà</span>
-                  <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
+                  <span className="text-[11px] font-bold text-ink-400 uppercase">Hướng Nhà</span>
+                  <div className="text-lg sm:text-xl font-black text-ink-900 dark:text-white">
                     {property.direction || 'Đông Nam'}
                   </div>
                 </div>
@@ -355,52 +355,52 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
 
               {/* Detailed Specs List */}
               <div className="space-y-3">
-                <h2 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wide border-b border-slate-100 dark:border-slate-800 pb-2">
+                <h2 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wide border-b border-ink-100 dark:border-ink-800 pb-2">
                   Đặc Điểm Chi Tiết
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
-                    <span className="text-slate-500 dark:text-slate-400">Loại Hình:</span>
-                    <span className="font-bold text-slate-900 dark:text-white capitalize">{property.category}</span>
+                  <div className="flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
+                    <span className="text-ink-500 dark:text-ink-400">Loại Hình:</span>
+                    <span className="font-bold text-ink-900 dark:text-white capitalize">{property.category}</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
-                    <span className="text-slate-500 dark:text-slate-400">Tình Trạng Pháp Lý:</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <div className="flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
+                    <span className="text-ink-500 dark:text-ink-400">Tình Trạng Pháp Lý:</span>
+                    <span className="font-bold text-brand-600 dark:text-brand-400 flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       <span>{property.legal === 'so-do' ? 'Sổ đỏ lâu dài' : 'HĐMB chính chủ'}</span>
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
-                    <span className="text-slate-500 dark:text-slate-400">Nội Thất Bàn Giao:</span>
-                    <span className="font-bold text-slate-900 dark:text-white capitalize">
+                  <div className="flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
+                    <span className="text-ink-500 dark:text-ink-400">Nội Thất Bàn Giao:</span>
+                    <span className="font-bold text-ink-900 dark:text-white capitalize">
                       {property.furniture === 'full' ? 'Đầy đủ nội thất cao cấp' : property.furniture === 'basic' ? 'Nội thất cơ bản CĐT' : 'Thô nguyên bản'}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
-                    <span className="text-slate-500 dark:text-slate-400">Thời Gian Đăng:</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{property.createdAt || 'Hôm nay'}</span>
+                  <div className="flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
+                    <span className="text-ink-500 dark:text-ink-400">Thời Gian Đăng:</span>
+                    <span className="font-bold text-ink-900 dark:text-white">{property.createdAt || 'Hôm nay'}</span>
                   </div>
                 </div>
               </div>
 
               {/* Description Content */}
               <div className="space-y-3">
-                <h2 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wide border-b border-slate-100 dark:border-slate-800 pb-2">
+                <h2 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wide border-b border-ink-100 dark:border-ink-800 pb-2">
                   Mô Tả Chi Tiết Từ Chủ Nhà / Môi Giới
                 </h2>
 
-                <div className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line bg-slate-50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-800">
+                <div className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line bg-ink-50 dark:bg-ink-800/30 p-5 rounded-2xl border border-ink-100 dark:border-ink-800">
                   {property.description || 'Vị trí đắc địa, căn góc thoáng mát, gần công viên trung tâm và trường học. Pháp lý rõ ràng, hỗ trợ vay ngân hàng lãi suất ưu đãi.'}
                 </div>
 
                 {/* Hashtag exploration pills */}
                 <div className="pt-2 flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
-                    <Hash className="w-3.5 h-3.5 text-emerald-500" /> Chủ đề liên quan:
+                  <span className="text-xs font-bold text-ink-400 flex items-center gap-1">
+                    <Hash className="w-3.5 h-3.5 text-brand-500" /> Chủ đề liên quan:
                   </span>
                   {[
                     property.project ? property.project.replace(/-/g, '_') : 'ocean_park_2',
@@ -415,7 +415,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                       onClick={() => {
                         window.dispatchEvent(new CustomEvent('chocudan_explore_hashtag', { detail: { tag } }));
                       }}
-                      className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 hover:border-emerald-500 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-0.5"
+                      className="px-2.5 py-1 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border border-brand-500/20 hover:border-brand-500 hover:bg-brand-100 dark:hover:bg-brand-900/60 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-0.5"
                     >
                       <span>#{tag}</span>
                     </button>
@@ -424,20 +424,20 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
               </div>
 
               {/* Mortgage Calculator Action */}
-              <div className="p-5 bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 text-white rounded-2xl border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="p-5 bg-gradient-to-r from-brand-950 via-ink-900 to-teal-950 text-white rounded-2xl border border-brand-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2 font-black text-sm text-amber-400">
-                    <Calculator className="w-4 h-4 text-emerald-400" />
+                  <div className="flex items-center gap-2 font-black text-sm text-brand-400">
+                    <Calculator className="w-4 h-4 text-brand-400" />
                     <span>DỰ TÍNH LÃI SUẤT VAY MUA CĂN NÀY</span>
                   </div>
-                  <p className="text-xs text-slate-300">
+                  <p className="text-xs text-ink-300">
                     Hỗ trợ vay tới 70% giá trị căn hộ với lãi suất ưu đãi từ các ngân hàng đối tác.
                   </p>
                 </div>
 
                 <button
                   onClick={() => setShowMortgageModal(true)}
-                  className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg shrink-0 cursor-pointer"
+                  className="px-5 py-2.5 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg shrink-0 cursor-pointer"
                 >
                   Mở Bảng Tính Lãi Vay
                 </button>
@@ -451,20 +451,20 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
           <div className="space-y-6 lg:sticky lg:top-24">
             
             {/* Seller Contact Card */}
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5">
+            <div className="bg-white dark:bg-ink-900 rounded-3xl p-6 border border-ink-200 dark:border-ink-800 shadow-xl space-y-5">
               
-              <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100 dark:border-slate-800">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-700 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-md shrink-0">
+              <div className="flex items-center gap-3.5 pb-4 border-b border-ink-100 dark:border-ink-800">
+                <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-teal-700 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-md shrink-0">
                   {property.sellerName ? property.sellerName.charAt(0).toUpperCase() : 'HB'}
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-black text-slate-900 dark:text-white text-base">
+                    <span className="font-black text-ink-900 dark:text-white text-base">
                       {property.sellerName || 'Chủ Nhà / Quản Trị Viên'}
                     </span>
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                    <ShieldCheck className="w-4 h-4 text-brand-500" />
                   </div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  <span className="text-xs text-ink-500 dark:text-ink-400 font-medium">
                     {property.sellerRole === 'owner' ? 'Chủ Nhà Chính Chủ' : 'Môi Giới Chuyên Viên'}
                   </span>
                 </div>
@@ -475,7 +475,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                 <a
                   href={`tel:${property.sellerPhone}`}
                   onClick={() => recordZaloInteraction()}
-                  className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl text-sm flex items-center justify-center gap-2 shadow-lg transition transform active:scale-95"
+                  className="w-full py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-black rounded-2xl text-sm flex items-center justify-center gap-2 shadow-lg transition transform active:scale-95"
                 >
                   <Phone className="w-4 h-4 animate-bounce" />
                   <span>GỌI ĐIỆN: {property.sellerPhone}</span>
@@ -494,18 +494,18 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
               </div>
 
               {/* Fast Booking Form */}
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
-                <h3 className="font-black text-slate-900 dark:text-white text-sm uppercase tracking-wide">
+              <div className="pt-4 border-t border-ink-100 dark:border-ink-800 space-y-3">
+                <h3 className="font-black text-ink-900 dark:text-white text-sm uppercase tracking-wide">
                   Đăng Ký Đi Xem Nhà Trực Tiếp
                 </h3>
 
                 {formSubmitted ? (
-                  <div className="p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-500/40 rounded-2xl text-center space-y-2">
-                    <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
-                    <span className="font-black text-emerald-700 dark:text-emerald-400 text-sm block">
+                  <div className="p-4 bg-brand-50 dark:bg-brand-950/60 border border-brand-500/40 rounded-2xl text-center space-y-2">
+                    <CheckCircle2 className="w-8 h-8 text-brand-500 mx-auto" />
+                    <span className="font-black text-brand-700 dark:text-brand-400 text-sm block">
                       ĐÃ GỬI YÊU CẦU THÀNH CÔNG!
                     </span>
-                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                    <p className="text-xs text-ink-600 dark:text-ink-300">
                       Chuyên viên hoặc chủ nhà sẽ gọi điện cho bạn trong 10 phút để xác nhận lịch xem nhà.
                     </p>
                   </div>
@@ -518,7 +518,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                         placeholder="Họ và tên của bạn *"
                         value={fullName}
                         onChange={e => setFullName(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-xs font-semibold text-ink-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-hidden"
                       />
                     </div>
 
@@ -529,7 +529,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                         placeholder="Số điện thoại nhận liên hệ *"
                         value={phone}
                         onChange={e => setPhone(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-xs font-semibold text-ink-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-hidden"
                       />
                     </div>
 
@@ -537,7 +537,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                       <select
                         value={preferredTime}
                         onChange={e => setPreferredTime(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-xs font-semibold text-ink-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-hidden"
                       >
                         <option value="Hôm nay">Muốn xem: Ngay hôm nay</option>
                         <option value="Ngày mai">Muốn xem: Ngày mai</option>
@@ -548,9 +548,9 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
 
                     <button
                       type="submit"
-                      className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
+                      className="w-full py-3 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
                     >
-                      📅 GỬI YÊU CẦU ĐẶT LỊCH XEM
+                       GỬI YÊU CẦU ĐẶT LỊCH XEM
                     </button>
                   </form>
                 )}
@@ -564,20 +564,20 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
 
         {/* RELATED PROPERTIES SECTION */}
         {relatedProperties.length > 0 && (
-          <div className="space-y-4 pt-8 border-t border-slate-200 dark:border-slate-800">
+          <div className="space-y-4 pt-8 border-t border-ink-200 dark:border-ink-800">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-black text-slate-900 dark:text-white">
+                <h2 className="text-xl font-black text-ink-900 dark:text-white">
                   Bất Động Sản Tương Tự Cùng Dự Án
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
                   Các căn đang bán & cho thuê giá tốt nhất tại {projectTitle}
                 </p>
               </div>
 
               <Link
                 to={`/du-an/${getProjectSlug(property.project)}`}
-                className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
               >
                 <span>Xem tất cả quỹ căn</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -617,13 +617,13 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
 
       {/* Mortgage Modal */}
       {showMortgageModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative border border-slate-200 dark:border-slate-800 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-ink-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative border border-ink-200 dark:border-ink-800 shadow-2xl">
             <button
               onClick={() => setShowMortgageModal(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full"
+              className="absolute top-4 right-4 p-2 text-ink-400 hover:text-white rounded-full"
             >
-              ✕
+              
             </button>
             <MortgageCalculator initialPrice={property.price} />
           </div>

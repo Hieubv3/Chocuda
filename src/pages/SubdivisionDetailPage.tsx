@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Building2, MapPin, CheckCircle2, ChevronRight, Home, 
@@ -131,7 +131,7 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
   const shareUrl = window.location.href;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={`${subdivision.name} - ${subdivision.projectName} | Sơ Đồ & Quỹ Căn Giá Gốc`}
         description={`${subdivision.name} thuộc ${subdivision.projectName}. Quy mô: ${subdivision.scaleArea}. Số lượng: ${subdivision.totalUnits}. ${subdivision.description.substring(0, 160)}`}
@@ -141,23 +141,23 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
       />
 
       {/* Breadcrumb Navigation */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
-            <Link to="/" className="hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
+            <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to="/du-an" className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to="/du-an" className="hover:text-brand-600 dark:hover:text-brand-400">
               Dự Án Vinhomes
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to={`/du-an/${currentProjectSlug}`} className="hover:text-emerald-600 dark:hover:text-emerald-400 truncate max-w-[180px]">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to={`/du-an/${currentProjectSlug}`} className="hover:text-brand-600 dark:hover:text-brand-400 truncate max-w-[180px]">
               {subdivision.projectName}
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold truncate">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <span className="text-brand-600 dark:text-brand-400 font-bold truncate">
               {subdivision.name}
             </span>
           </nav>
@@ -165,29 +165,29 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
       </div>
 
       {/* Hero Header Section */}
-      <div className="relative bg-slate-950 text-white overflow-hidden">
+      <div className="relative bg-ink-950 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img loading="lazy"
             src={subdivision.images[0] || project?.image}
             alt={subdivision.name}
             className="w-full h-full object-cover opacity-30 filter brightness-90"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-transparent" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-6">
           <div className="flex flex-wrap items-center gap-3">
             <Link
               to={`/du-an/${currentProjectSlug}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-slate-200 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-ink-200 transition"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Dự án {subdivision.projectName}</span>
             </Link>
-            <span className="px-3 py-1 bg-amber-500 text-slate-950 font-black text-xs rounded-full uppercase tracking-wider">
+            <span className="px-3 py-1 bg-brand-500 text-ink-950 font-black text-xs rounded-full uppercase tracking-wider">
               PHÂN KHU TRỌNG ĐIỂM
             </span>
-            <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full text-xs font-bold">
+            <span className="px-3 py-1 bg-brand-500/20 text-brand-300 border border-brand-500/30 rounded-full text-xs font-bold">
               {subdivisionProperties.length} Căn Đang Giao Dịch
             </span>
           </div>
@@ -196,14 +196,14 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
             {subdivision.name}
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
+          <p className="text-sm sm:text-base text-ink-300 max-w-3xl leading-relaxed">
             {subdivision.description}
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <a
               href="tel:0868499929"
-              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs flex items-center gap-2 shadow-lg transition"
+              className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-extrabold rounded-xl text-xs flex items-center gap-2 shadow-lg transition"
             >
               <Phone className="w-4 h-4" />
               <span>Hotline Tư Vấn: 0868.499.929</span>
@@ -221,7 +221,7 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
 
             <button
               onClick={() => setShowShareModal(true)}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 backdrop-blur-md transition cursor-pointer border border-slate-700"
+              className="px-4 py-2.5 bg-ink-800 hover:bg-ink-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 backdrop-blur-md transition cursor-pointer border border-ink-700"
             >
               <Share2 className="w-4 h-4" />
               <span>Chia Sẻ Phân Khu</span>
@@ -234,22 +234,22 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
         {/* Quick Facts Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md text-xs">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-md text-xs">
           <div>
-            <span className="text-slate-400 block font-medium">Kiến trúc thiết kế</span>
-            <span className="text-base font-black text-slate-900 dark:text-white line-clamp-1">{subdivision.style}</span>
+            <span className="text-ink-400 block font-medium">Kiến trúc thiết kế</span>
+            <span className="text-base font-black text-ink-900 dark:text-white line-clamp-1">{subdivision.style}</span>
           </div>
           <div>
-            <span className="text-slate-400 block font-medium">Quy mô diện tích</span>
-            <span className="text-base font-black text-slate-900 dark:text-white">{subdivision.scaleArea}</span>
+            <span className="text-ink-400 block font-medium">Quy mô diện tích</span>
+            <span className="text-base font-black text-ink-900 dark:text-white">{subdivision.scaleArea}</span>
           </div>
           <div>
-            <span className="text-slate-400 block font-medium">Số lượng sản phẩm</span>
-            <span className="text-base font-black text-slate-900 dark:text-white">{subdivision.totalUnits}</span>
+            <span className="text-ink-400 block font-medium">Số lượng sản phẩm</span>
+            <span className="text-base font-black text-ink-900 dark:text-white">{subdivision.totalUnits}</span>
           </div>
           <div>
-            <span className="text-slate-400 block font-medium">Khoảng giá chuyển nhượng</span>
-            <span className="text-base font-black text-amber-600 dark:text-amber-400">{subdivision.priceRange}</span>
+            <span className="text-ink-400 block font-medium">Khoảng giá chuyển nhượng</span>
+            <span className="text-base font-black text-brand-600 dark:text-brand-400">{subdivision.priceRange}</span>
           </div>
         </div>
 
@@ -260,57 +260,57 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
           <div className="lg:col-span-2 space-y-6">
             
             {/* Unit Sizes Breakdown Card */}
-            <div className="p-6 sm:p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md space-y-5">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <Maximize2 className="w-5 h-5 text-emerald-500" />
+            <div className="p-6 sm:p-8 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-md space-y-5">
+              <div className="flex items-center justify-between border-b border-ink-100 dark:border-ink-800 pb-3">
+                <h3 className="text-base sm:text-lg font-black text-ink-900 dark:text-white flex items-center gap-2">
+                  <Maximize2 className="w-5 h-5 text-brand-500" />
                   <span>Cơ Cấu Diện Tích Trung Bình Các Loại Căn</span>
                 </h3>
-                <span className="text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-lg">
+                <span className="text-[11px] font-bold bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 px-2.5 py-1 rounded-lg">
                   Thông Số Chuẩn CĐT
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 {subdivision.avgUnitSizes.lienKe && (
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
-                    <span className="font-bold text-slate-500 dark:text-slate-400 block uppercase text-[10px]">
+                  <div className="p-4 bg-ink-50 dark:bg-ink-800/80 rounded-2xl border border-ink-200 dark:border-ink-700 space-y-1">
+                    <span className="font-bold text-ink-500 dark:text-ink-400 block uppercase text-[10px]">
                       Nhà Liền Kề
                     </span>
-                    <span className="font-extrabold text-slate-900 dark:text-white text-sm">
+                    <span className="font-extrabold text-ink-900 dark:text-white text-sm">
                       {subdivision.avgUnitSizes.lienKe}
                     </span>
                   </div>
                 )}
 
                 {subdivision.avgUnitSizes.shophouse && (
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
-                    <span className="font-bold text-slate-500 dark:text-slate-400 block uppercase text-[10px]">
+                  <div className="p-4 bg-ink-50 dark:bg-ink-800/80 rounded-2xl border border-ink-200 dark:border-ink-700 space-y-1">
+                    <span className="font-bold text-ink-500 dark:text-ink-400 block uppercase text-[10px]">
                       Shophouse Thương Mại
                     </span>
-                    <span className="font-extrabold text-slate-900 dark:text-white text-sm">
+                    <span className="font-extrabold text-ink-900 dark:text-white text-sm">
                       {subdivision.avgUnitSizes.shophouse}
                     </span>
                   </div>
                 )}
 
                 {subdivision.avgUnitSizes.songLap && (
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
-                    <span className="font-bold text-slate-500 dark:text-slate-400 block uppercase text-[10px]">
+                  <div className="p-4 bg-ink-50 dark:bg-ink-800/80 rounded-2xl border border-ink-200 dark:border-ink-700 space-y-1">
+                    <span className="font-bold text-ink-500 dark:text-ink-400 block uppercase text-[10px]">
                       Biệt Thự Song Lập
                     </span>
-                    <span className="font-extrabold text-slate-900 dark:text-white text-sm">
+                    <span className="font-extrabold text-ink-900 dark:text-white text-sm">
                       {subdivision.avgUnitSizes.songLap}
                     </span>
                   </div>
                 )}
 
                 {subdivision.avgUnitSizes.donLap && (
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
-                    <span className="font-bold text-slate-500 dark:text-slate-400 block uppercase text-[10px]">
+                  <div className="p-4 bg-ink-50 dark:bg-ink-800/80 rounded-2xl border border-ink-200 dark:border-ink-700 space-y-1">
+                    <span className="font-bold text-ink-500 dark:text-ink-400 block uppercase text-[10px]">
                       Biệt Thự Đơn Lập
                     </span>
-                    <span className="font-extrabold text-slate-900 dark:text-white text-sm">
+                    <span className="font-extrabold text-ink-900 dark:text-white text-sm">
                       {subdivision.avgUnitSizes.donLap}
                     </span>
                   </div>
@@ -321,11 +321,11 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
               <div className="p-5 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl space-y-2">
                 <div className="flex items-center gap-2">
                   <Building2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                  <span className="font-black text-slate-900 dark:text-white text-sm">
+                  <span className="font-black text-ink-900 dark:text-white text-sm">
                     Quy Hoạch Cụm Chung Cư Cao Tầng Tại Phân Khu
                   </span>
                 </div>
-                <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                <p className="text-xs text-ink-700 dark:text-ink-300 leading-relaxed">
                   {subdivision.highRiseCondosInfo}
                 </p>
               </div>
@@ -333,14 +333,14 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
 
             {/* Photo Gallery */}
             {subdivision.images.length > 0 && (
-              <div className="p-6 sm:p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
-                <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-amber-500" />
+              <div className="p-6 sm:p-8 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-md space-y-4">
+                <h3 className="text-base font-black text-ink-900 dark:text-white flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-brand-500" />
                   <span>Hình Ảnh Thực Tế & Thiết Kế Phân Khu</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {subdivision.images.map((imgUrl, i) => (
-                    <div key={i} className="rounded-2xl overflow-hidden aspect-[16/10] bg-slate-950 relative border border-slate-200 dark:border-slate-700">
+                    <div key={i} className="rounded-2xl overflow-hidden aspect-[16/10] bg-ink-950 relative border border-ink-200 dark:border-ink-700">
                       <img loading="lazy" src={imgUrl} alt={`${subdivision.name} ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition duration-500" />
                     </div>
                   ))}
@@ -354,16 +354,16 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
           <div className="space-y-6">
             
             {/* Highlights Card */}
-            <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
-              <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Award className="w-5 h-5 text-amber-500" />
+            <div className="p-6 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-md space-y-4">
+              <h3 className="text-base font-black text-ink-900 dark:text-white flex items-center gap-2">
+                <Award className="w-5 h-5 text-brand-500" />
                 <span>Điểm Nhấn Vượt Trội</span>
               </h3>
               <ul className="space-y-3 text-xs">
                 {subdivision.highlights.map((hl, idx) => (
                   <li key={idx} className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-brand-500 shrink-0 mt-0.5" />
+                    <span className="text-ink-700 dark:text-ink-300 leading-relaxed font-medium">
                       {hl}
                     </span>
                   </li>
@@ -372,13 +372,13 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
             </div>
 
             {/* Product Types Pill Box */}
-            <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md space-y-3">
-              <h4 className="text-xs font-black text-slate-500 uppercase tracking-wider">
+            <div className="p-6 bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 shadow-md space-y-3">
+              <h4 className="text-xs font-black text-ink-500 uppercase tracking-wider">
                 Các Loại Sản Phẩm Phát Triển
               </h4>
               <div className="flex flex-wrap gap-2">
                 {subdivision.productTypes.map((pt, idx) => (
-                  <span key={idx} className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                  <span key={idx} className="px-3 py-1.5 bg-ink-100 dark:bg-ink-800 rounded-xl text-xs font-bold text-ink-800 dark:text-ink-200 border border-ink-200 dark:border-ink-700">
                     {pt}
                   </span>
                 ))}
@@ -386,22 +386,22 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
             </div>
 
             {/* Post Listing CTA */}
-            <div className="p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 rounded-3xl shadow-xl space-y-4">
+            <div className="p-6 bg-gradient-to-br from-brand-500 to-brand-600 text-ink-950 rounded-3xl shadow-xl space-y-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-950 text-white rounded-md">
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-ink-950 text-white rounded-md">
                   Chính Chủ Đăng Tin
                 </span>
                 <h4 className="text-lg font-black leading-snug">
                   Bạn Đang Sở Hữu BĐS Tại {subdivision.name}?
                 </h4>
-                <p className="text-xs text-slate-900 font-medium leading-relaxed">
+                <p className="text-xs text-ink-900 font-medium leading-relaxed">
                   Đăng tin bán hoặc cho thuê miễn phí trên Chợ Cư Dân 24H để tiếp cận hàng ngàn khách mua & thuê thực tế!
                 </p>
               </div>
 
               <Link
                 to="/dang-tin"
-                className="block w-full text-center py-3 bg-slate-950 hover:bg-slate-900 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition"
+                className="block w-full text-center py-3 bg-ink-950 hover:bg-ink-900 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition"
               >
                 ĐĂNG TIN CĂN HỘ / NHÀ PHỐ NGAY
               </Link>
@@ -421,22 +421,22 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
         )}
 
         {/* Realtime Property Inventory in this Subdivision */}
-        <div className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+        <div className="space-y-6 pt-6 border-t border-ink-200 dark:border-ink-800">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+              <h2 className="text-2xl font-black text-ink-900 dark:text-white">
                 Quỹ Căn Đang Bán & Cho Thuê Tại {subdivision.name}
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-xs text-ink-500 dark:text-ink-400 mt-1">
                 Tìm thấy {displayedProperties.length} căn hộ, shophouse, liền kề & biệt thự giá tốt
               </p>
             </div>
 
-            <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div className="flex items-center gap-2 bg-white dark:bg-ink-900 p-1.5 rounded-2xl border border-ink-200 dark:border-ink-800 shadow-sm">
               <button
                 onClick={() => setActiveTab('all')}
                 className={`px-4 py-2 rounded-xl text-xs font-black transition cursor-pointer ${
-                  activeTab === 'all' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  activeTab === 'all' ? 'bg-brand-600 text-white shadow-sm' : 'text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'
                 }`}
               >
                 Tất Cả ({subdivisionProperties.length})
@@ -444,7 +444,7 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
               <button
                 onClick={() => setActiveTab('sale')}
                 className={`px-4 py-2 rounded-xl text-xs font-black transition cursor-pointer ${
-                  activeTab === 'sale' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  activeTab === 'sale' ? 'bg-brand-600 text-white shadow-sm' : 'text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'
                 }`}
               >
                 Cần Bán ({subdivisionProperties.filter(p => p.type === 'sale').length})
@@ -452,7 +452,7 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
               <button
                 onClick={() => setActiveTab('rent')}
                 className={`px-4 py-2 rounded-xl text-xs font-black transition cursor-pointer ${
-                  activeTab === 'rent' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  activeTab === 'rent' ? 'bg-brand-600 text-white shadow-sm' : 'text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'
                 }`}
               >
                 Cho Thuê ({subdivisionProperties.filter(p => p.type === 'rent').length})
@@ -476,18 +476,18 @@ export const SubdivisionDetailPage: React.FC<SubdivisionDetailPageProps> = ({
               ))}
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center border border-slate-200 dark:border-slate-800 space-y-3">
-              <Building2 className="w-12 h-12 text-slate-400 mx-auto" />
-              <h3 className="font-black text-base text-slate-800 dark:text-slate-200">
+            <div className="bg-white dark:bg-ink-900 rounded-3xl p-12 text-center border border-ink-200 dark:border-ink-800 space-y-3">
+              <Building2 className="w-12 h-12 text-ink-400 mx-auto" />
+              <h3 className="font-black text-base text-ink-800 dark:text-ink-200">
                 Chưa có căn phù hợp tại {subdivision.name}
               </h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
+              <p className="text-xs text-ink-500 max-w-md mx-auto">
                 Quý khách có thể xem các phân khu lân cận hoặc liên hệ Hotline 0868.499.929 để nhận bảng hàng độc quyền nội bộ.
               </p>
               <div className="pt-2">
                 <Link
                   to={`/du-an/${currentProjectSlug}`}
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs shadow"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-brand-600 text-white font-bold rounded-xl text-xs shadow"
                 >
                   <span>Xem Toàn Bộ Dự Án {subdivision.projectName}</span>
                   <ChevronRight className="w-4 h-4" />

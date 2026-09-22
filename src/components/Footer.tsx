@@ -284,7 +284,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
           <div className="flex items-center gap-4 text-xs text-ink-300">
             <div className="w-16 h-16 bg-red-950/60 rounded-2xl border border-red-600/60 flex flex-col items-center justify-center text-center p-1 shrink-0">
               <span className="text-[9px] font-bold text-red-300 uppercase leading-none">Đã thông báo</span>
-              <div className="w-6 h-6 my-0.5 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-[10px]">★</div>
+              <div className="w-6 h-6 my-0.5 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-[10px]"></div>
               <span className="text-[8px] font-bold text-ink-300 leading-none">Bộ Công Thương</span>
             </div>
             <div className="space-y-1">

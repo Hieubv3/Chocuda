@@ -179,13 +179,13 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
   const mapCenter = PROJECT_CENTERS[selectedProject] || PROJECT_CENTERS['all'];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-2 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-7xl h-[92vh] flex flex-col overflow-hidden shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/80 backdrop-blur-md p-2 sm:p-4 animate-in fade-in duration-200">
+      <div className="bg-ink-900 border border-ink-800 rounded-3xl w-full max-w-7xl h-[92vh] flex flex-col overflow-hidden shadow-2xl relative">
         
         {/* Header Bar */}
-        <div className="bg-slate-950 p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div className="bg-ink-950 p-4 border-b border-ink-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-3">
-            <span className="p-2.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-2xl">
+            <span className="p-2.5 bg-brand-500/10 text-brand-400 border border-brand-500/30 rounded-2xl">
               <Compass className="w-6 h-6 animate-pulse" />
             </span>
             <div>
@@ -193,11 +193,11 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                 <h2 className="text-base sm:text-lg font-black text-white uppercase tracking-wider">
                   BẢN ĐỒ ĐỊNH VỊ CỬA HÀNG & DỊCH VỤ CƯ DÂN
                 </h2>
-                <span className="px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold rounded-full">
+                <span className="px-2 py-0.5 bg-brand-500/20 border border-brand-500/40 text-brand-400 text-[10px] font-bold rounded-full">
                   GPS LIVE
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-ink-400">
                 Tra cứu vị trí gian hàng, thợ sửa chữa & tiệm ăn uống ngay trong phân khu cư dân
               </p>
             </div>
@@ -206,7 +206,7 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition cursor-pointer"
+              className="p-2 bg-ink-800 hover:bg-ink-700 text-ink-300 rounded-xl transition cursor-pointer"
               title="Đóng"
             >
               <X className="w-5 h-5" />
@@ -215,41 +215,41 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
         </div>
 
         {/* Filter Controls Bar */}
-        <div className="bg-slate-900 p-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0 text-xs">
+        <div className="bg-ink-900 p-3 border-b border-ink-800 flex flex-wrap items-center justify-between gap-3 shrink-0 text-xs">
           
           {/* Project Dropdown */}
           <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none">
-            <span className="text-slate-400 font-bold shrink-0 flex items-center gap-1">
-              <Building2 className="w-3.5 h-3.5 text-amber-400" /> Dự án:
+            <span className="text-ink-400 font-bold shrink-0 flex items-center gap-1">
+              <Building2 className="w-3.5 h-3.5 text-brand-400" /> Dự án:
             </span>
             <select
               value={selectedProject}
               onChange={(e) => setSelectedProject(e.target.value as any)}
-              className="bg-slate-950 text-amber-300 border border-slate-700 rounded-xl px-3 py-1.5 font-bold focus:outline-none focus:border-amber-500"
+              className="bg-ink-950 text-brand-300 border border-ink-700 rounded-xl px-3 py-1.5 font-bold focus:outline-none focus:border-brand-500"
             >
-              <option value="all">📍 Tất cả Dự Án Vinhomes</option>
+              <option value="all"> Tất cả Dự Án Vinhomes</option>
               {VIN_MAJOR_PROJECTS.map(p => (
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
 
             {/* Type Filter */}
-            <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+            <div className="flex items-center bg-ink-950 p-1 rounded-xl border border-ink-800">
               <button
                 onClick={() => setFilterType('all')}
-                className={`px-3 py-1 rounded-lg font-bold transition ${filterType === 'all' ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:text-white'}`}
+                className={`px-3 py-1 rounded-lg font-bold transition ${filterType === 'all' ? 'bg-brand-500 text-ink-950' : 'text-ink-400 hover:text-white'}`}
               >
                 Tất cả ({mapItems.length})
               </button>
               <button
                 onClick={() => setFilterType('store')}
-                className={`px-3 py-1 rounded-lg font-bold transition flex items-center gap-1 ${filterType === 'store' ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:text-white'}`}
+                className={`px-3 py-1 rounded-lg font-bold transition flex items-center gap-1 ${filterType === 'store' ? 'bg-brand-500 text-ink-950' : 'text-ink-400 hover:text-white'}`}
               >
                 <Store className="w-3 h-3" /> Gian Hàng ({stores.length})
               </button>
               <button
                 onClick={() => setFilterType('service')}
-                className={`px-3 py-1 rounded-lg font-bold transition flex items-center gap-1 ${filterType === 'service' ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:text-white'}`}
+                className={`px-3 py-1 rounded-lg font-bold transition flex items-center gap-1 ${filterType === 'service' ? 'bg-brand-500 text-ink-950' : 'text-ink-400 hover:text-white'}`}
               >
                 <Wrench className="w-3 h-3" /> Thợ Dịch Vụ ({services.length})
               </button>
@@ -260,24 +260,24 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
               onClick={() => setOnlyVerified(!onlyVerified)}
               className={`px-3 py-1.5 rounded-xl border font-bold transition flex items-center gap-1 cursor-pointer ${
                 onlyVerified 
-                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500' 
-                  : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700'
+                  ? 'bg-brand-500/20 text-brand-400 border-brand-500' 
+                  : 'bg-ink-950 text-ink-400 border-ink-800 hover:border-ink-700'
               }`}
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <ShieldCheck className="w-3.5 h-3.5 text-brand-400" />
               <span>Chỉ Nút Xanh KYC</span>
             </button>
           </div>
 
           {/* Search Box */}
           <div className="relative flex-1 min-w-[200px] max-w-md">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-ink-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Tìm phân khu, căn hộ, dịch vụ..."
-              className="w-full bg-slate-950 border border-slate-800 text-white pl-9 pr-3 py-1.5 rounded-xl text-xs focus:outline-none focus:border-amber-500"
+              className="w-full bg-ink-950 border border-ink-800 text-white pl-9 pr-3 py-1.5 rounded-xl text-xs focus:outline-none focus:border-brand-500"
             />
           </div>
         </div>
@@ -286,19 +286,19 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
         <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
           
           {/* Sidebar List (Mobile Drawer / Desktop Fixed) */}
-          <div className="w-full md:w-80 lg:w-96 bg-slate-950 border-r border-slate-800 flex flex-col h-1/3 md:h-full shrink-0 overflow-hidden">
-            <div className="p-3 bg-slate-900/60 border-b border-slate-800/80 flex items-center justify-between text-xs">
-              <span className="font-bold text-slate-300">
+          <div className="w-full md:w-80 lg:w-96 bg-ink-950 border-r border-ink-800 flex flex-col h-1/3 md:h-full shrink-0 overflow-hidden">
+            <div className="p-3 bg-ink-900/60 border-b border-ink-800/80 flex items-center justify-between text-xs">
+              <span className="font-bold text-ink-300">
                 Danh sách ({filteredMapItems.length} địa điểm)
               </span>
-              <span className="text-[10px] text-amber-400 font-medium">
+              <span className="text-[10px] text-brand-400 font-medium">
                 Bấm vào thẻ để định vị trên bản đồ
               </span>
             </div>
 
             <div className="flex-1 overflow-y-auto p-2 space-y-2 scrollbar-thin">
               {filteredMapItems.length === 0 ? (
-                <div className="p-6 text-center text-slate-500 text-xs">
+                <div className="p-6 text-center text-ink-500 text-xs">
                   Không tìm thấy cửa hàng hay thợ dịch vụ phù hợp với bộ lọc.
                 </div>
               ) : (
@@ -308,30 +308,30 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                     onClick={() => setActiveItem(item)}
                     className={`p-3 rounded-2xl border transition cursor-pointer flex gap-3 ${
                       activeItem?.id === item.id 
-                        ? 'bg-amber-500/10 border-amber-500/80 shadow-md ring-1 ring-amber-500/50' 
-                        : 'bg-slate-900/80 border-slate-800/80 hover:border-slate-700 hover:bg-slate-900'
+                        ? 'bg-brand-500/10 border-brand-500/80 shadow-md ring-1 ring-brand-500/50' 
+                        : 'bg-ink-900/80 border-ink-800/80 hover:border-ink-700 hover:bg-ink-900'
                     }`}
                   >
                     {item.imageUrl ? (
                       <img loading="lazy" 
                         src={item.imageUrl} 
                         alt={item.title} 
-                        className="w-12 h-12 rounded-xl object-cover shrink-0 border border-slate-700" 
+                        className="w-12 h-12 rounded-xl object-cover shrink-0 border border-ink-700" 
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center shrink-0 text-amber-400">
+                      <div className="w-12 h-12 rounded-xl bg-ink-800 flex items-center justify-center shrink-0 text-brand-400">
                         {item.type === 'store' ? <Store className="w-6 h-6" /> : <Wrench className="w-6 h-6" />}
                       </div>
                     )}
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-[10px] font-black text-amber-400 uppercase tracking-wide flex items-center gap-1">
-                          {item.type === 'store' ? '🛒 Cửa Hàng' : '🛠️ Thợ Dịch Vụ'}
+                        <span className="text-[10px] font-black text-brand-400 uppercase tracking-wide flex items-center gap-1">
+                          {item.type === 'store' ? ' Cửa Hàng' : ' Thợ Dịch Vụ'}
                         </span>
                         {item.verified && (
-                          <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.2 rounded">
-                            ✓ Nút Xanh
+                          <span className="text-[9px] font-bold text-brand-400 bg-brand-500/10 border border-brand-500/30 px-1.5 py-0.2 rounded">
+                             Nút Xanh
                           </span>
                         )}
                       </div>
@@ -340,17 +340,17 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                         {item.title}
                       </h4>
 
-                      <p className="text-[11px] text-slate-400 line-clamp-1 mt-0.5 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-amber-400 shrink-0" />
+                      <p className="text-[11px] text-ink-400 line-clamp-1 mt-0.5 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-brand-400 shrink-0" />
                         <span>{item.address}</span>
                       </p>
 
-                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-800/60 text-[10px]">
-                        <span className="text-amber-300 font-bold flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-ink-800/60 text-[10px]">
+                        <span className="text-brand-300 font-bold flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-brand-400 text-brand-400" />
                           {item.rating} ({item.reviewCount})
                         </span>
-                        <span className="text-slate-400 hover:text-amber-400 transition font-bold flex items-center gap-0.5">
+                        <span className="text-ink-400 hover:text-brand-400 transition font-bold flex items-center gap-0.5">
                           Xem Vị Trí <ChevronRight className="w-3 h-3" />
                         </span>
                       </div>
@@ -362,7 +362,7 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
           </div>
 
           {/* Map Section */}
-          <div className="flex-1 h-2/3 md:h-full relative bg-slate-950">
+          <div className="flex-1 h-2/3 md:h-full relative bg-ink-950">
             
             {hasValidKey ? (
               <APIProvider apiKey={API_KEY} version="weekly">
@@ -391,38 +391,38 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
               </APIProvider>
             ) : (
               /* Simulated Visual Map Component with Pins & Canvas when API Key is pending */
-              <div className="w-full h-full bg-slate-950 relative overflow-hidden flex flex-col justify-between p-4 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]">
+              <div className="w-full h-full bg-ink-950 relative overflow-hidden flex flex-col justify-between p-4 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]">
                 
                 {/* Map Floating Banner Instruction */}
-                <div className="absolute top-4 left-4 right-4 z-20 bg-slate-900/90 backdrop-blur-md border border-amber-500/40 p-3 rounded-2xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="absolute top-4 left-4 right-4 z-20 bg-ink-900/90 backdrop-blur-md border border-brand-500/40 p-3 rounded-2xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2.5">
-                    <span className="p-2 bg-amber-500/20 text-amber-400 rounded-xl">
+                    <span className="p-2 bg-brand-500/20 text-brand-400 rounded-xl">
                       <MapPin className="w-5 h-5" />
                     </span>
                     <div>
                       <span className="font-bold text-white block">
                         Đang xem Bản Đồ Định Vị Phân Khu Vinhomes ({filteredMapItems.length} địa điểm)
                       </span>
-                      <span className="text-[11px] text-slate-400">
+                      <span className="text-[11px] text-ink-400">
                         Hệ thống hiển thị tọa độ thực tế của cửa hàng & dịch vụ cư dân.
                       </span>
                     </div>
                   </div>
 
-                  <div className="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px] text-slate-300">
-                    💡 Để bật bản đồ Google Maps vệ tinh live: Thêm Secret <code className="text-amber-400 font-mono font-bold">GOOGLE_MAPS_PLATFORM_KEY</code>
+                  <div className="bg-ink-950 px-3 py-1.5 rounded-xl border border-ink-800 text-[11px] text-ink-300">
+                     Để bật bản đồ Google Maps vệ tinh live: Thêm Secret <code className="text-brand-400 font-mono font-bold">GOOGLE_MAPS_PLATFORM_KEY</code>
                   </div>
                 </div>
 
                 {/* Simulated Interactive Grid Map */}
                 <div className="w-full h-full pt-16 pb-20 relative flex items-center justify-center">
-                  <div className="w-full max-w-4xl h-full border border-slate-800/80 rounded-3xl bg-slate-900/40 relative overflow-hidden p-6">
+                  <div className="w-full max-w-4xl h-full border border-ink-800/80 rounded-3xl bg-ink-900/40 relative overflow-hidden p-6">
                     {/* Subdivision Road Grids */}
                     <div className="absolute inset-0 opacity-20 pointer-events-none flex flex-col justify-between p-10">
-                      <div className="h-12 border-y-2 border-dashed border-amber-400/50 w-full flex items-center justify-center text-[10px] text-amber-300 font-bold tracking-widest uppercase">
+                      <div className="h-12 border-y-2 border-dashed border-brand-400/50 w-full flex items-center justify-center text-[10px] text-brand-300 font-bold tracking-widest uppercase">
                         Đại Lộ San Hô & Chà Là - Vinhomes Ocean Park 2
                       </div>
-                      <div className="h-12 border-y-2 border-dashed border-emerald-400/50 w-full flex items-center justify-center text-[10px] text-emerald-300 font-bold tracking-widest uppercase">
+                      <div className="h-12 border-y-2 border-dashed border-brand-400/50 w-full flex items-center justify-center text-[10px] text-brand-300 font-bold tracking-widest uppercase">
                         Trục Đường Hải Đăng & Sao Biển - Vinhomes Ocean Park 1
                       </div>
                     </div>
@@ -435,13 +435,13 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                           onClick={() => setActiveItem(item)}
                           className={`p-3 rounded-2xl border transition cursor-pointer transform hover:scale-105 shadow-xl flex items-center gap-2 max-w-[220px] ${
                             activeItem?.id === item.id 
-                              ? 'bg-amber-500 text-slate-950 border-white ring-2 ring-amber-400 font-bold' 
+                              ? 'bg-brand-500 text-ink-950 border-white ring-2 ring-brand-400 font-bold' 
                               : item.type === 'store'
-                              ? 'bg-slate-950 border-amber-500/60 text-amber-300 hover:border-amber-400'
-                              : 'bg-slate-950 border-emerald-500/60 text-emerald-300 hover:border-emerald-400'
+                              ? 'bg-ink-950 border-brand-500/60 text-brand-300 hover:border-brand-400'
+                              : 'bg-ink-950 border-brand-500/60 text-brand-300 hover:border-brand-400'
                           }`}
                         >
-                          <span className={`p-2 rounded-xl shrink-0 ${item.type === 'store' ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                          <span className={`p-2 rounded-xl shrink-0 ${item.type === 'store' ? 'bg-brand-500/20 text-brand-400' : 'bg-brand-500/20 text-brand-400'}`}>
                             {item.type === 'store' ? <Store className="w-4 h-4" /> : <Wrench className="w-4 h-4" />}
                           </span>
                           <div className="min-w-0">
@@ -449,7 +449,7 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                               {item.title}
                             </span>
                             <span className="text-[9px] opacity-80 block truncate">
-                              📍 {item.subdivision || item.address}
+                               {item.subdivision || item.address}
                             </span>
                           </div>
                         </div>
@@ -462,10 +462,10 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
 
             {/* Active Selected Item Detail Floating Card (Popup Window) */}
             {activeItem && (
-              <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-slate-950/95 backdrop-blur-xl border-2 border-amber-500/80 rounded-3xl p-4 shadow-2xl z-30 animate-in slide-in-from-bottom-5 duration-200">
+              <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-ink-950/95 backdrop-blur-xl border-2 border-brand-500/80 rounded-3xl p-4 shadow-2xl z-30 animate-in slide-in-from-bottom-5 duration-200">
                 <button
                   onClick={() => setActiveItem(null)}
-                  className="absolute top-3 right-3 p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-full transition"
+                  className="absolute top-3 right-3 p-1.5 bg-ink-800 hover:bg-ink-700 text-ink-400 hover:text-white rounded-full transition"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -475,22 +475,22 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                     <img loading="lazy" 
                       src={activeItem.imageUrl} 
                       alt={activeItem.title} 
-                      className="w-14 h-14 rounded-2xl object-cover shrink-0 border border-slate-700 shadow"
+                      className="w-14 h-14 rounded-2xl object-cover shrink-0 border border-ink-700 shadow"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 border border-brand-500/30 flex items-center justify-center shrink-0">
                       {activeItem.type === 'store' ? <Store className="w-7 h-7" /> : <Wrench className="w-7 h-7" />}
                     </div>
                   )}
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">
-                        {activeItem.type === 'store' ? '🛒 Gian Hàng Cư Dân' : '🛠️ Thợ Dịch Vụ'}
+                      <span className="text-[10px] font-black text-brand-400 uppercase tracking-wider">
+                        {activeItem.type === 'store' ? ' Gian Hàng Cư Dân' : ' Thợ Dịch Vụ'}
                       </span>
                       {activeItem.verified && (
-                        <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.2 rounded">
-                          ✓ Nút Xanh KYC
+                        <span className="text-[9px] font-bold text-brand-400 bg-brand-500/10 border border-brand-500/30 px-1.5 py-0.2 rounded">
+                           Nút Xanh KYC
                         </span>
                       )}
                     </div>
@@ -499,21 +499,21 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                       {activeItem.title}
                     </h3>
 
-                    <p className="text-xs text-slate-300 mt-1 flex items-start gap-1 line-clamp-2">
-                      <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-ink-300 mt-1 flex items-start gap-1 line-clamp-2">
+                      <MapPin className="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5" />
                       <span>{activeItem.address}</span>
                     </p>
                   </div>
                 </div>
 
                 {/* Additional Info */}
-                <div className="mt-3 pt-3 border-t border-slate-800 grid grid-cols-2 gap-2 text-[11px] text-slate-300">
+                <div className="mt-3 pt-3 border-t border-ink-800 grid grid-cols-2 gap-2 text-[11px] text-ink-300">
                   <div className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <Clock className="w-3.5 h-3.5 text-brand-400 shrink-0" />
                     <span>{activeItem.operatingHours || '08:00 - 21:00'}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 shrink-0" />
+                    <Star className="w-3.5 h-3.5 text-brand-400 fill-brand-400 shrink-0" />
                     <span>{activeItem.rating} ({activeItem.reviewCount} đánh giá)</span>
                   </div>
                 </div>
@@ -522,7 +522,7 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                 <div className="mt-4 flex items-center gap-2">
                   <a
                     href={`tel:${activeItem.phone}`}
-                    className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow"
+                    className="flex-1 py-2 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow"
                   >
                     <Phone className="w-3.5 h-3.5" />
                     <span>Gọi {activeItem.phone}</span>
@@ -537,7 +537,7 @@ export const StoreLocatorMapModal: React.FC<StoreLocatorMapModalProps> = ({
                       }
                       onClose();
                     }}
-                    className="flex-1 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow cursor-pointer"
+                    className="flex-1 py-2 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow cursor-pointer"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     <span>{activeItem.type === 'store' ? 'Xem Gian Hàng' : 'Chi Tiết Thợ'}</span>

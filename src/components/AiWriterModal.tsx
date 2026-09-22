@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { X, Sparkles, Send, Copy, Check, FileText, Globe } from 'lucide-react';
 import { Language, NewsArticle } from '../types';
 
@@ -72,26 +72,26 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white my-auto animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-50 bg-ink-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-ink-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative border border-ink-200 dark:border-ink-800 text-ink-900 dark:text-white my-auto animate-in fade-in zoom-in duration-200">
         
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+          className="absolute top-4 right-4 text-ink-400 hover:text-ink-600 dark:hover:text-white"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Title */}
         <div className="flex items-center space-x-3 mb-6">
-          <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 rounded-xl flex items-center justify-center font-black shadow-md">
+          <div className="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-700 text-ink-950 rounded-xl flex items-center justify-center font-black shadow-md">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
             <h2 className="text-lg font-black flex items-center">
               AI WRITER STUDIO (GEMINI 3.6 FLASH)
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-ink-500 dark:text-ink-400">
               Trợ lý AI viết bài chuẩn SEO BĐS Vinhomes Ocean Park 2, 3 & Hạ Long Xanh
             </p>
           </div>
@@ -100,7 +100,7 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
         {/* Form Inputs */}
         <form onSubmit={handleGenerate} className="space-y-4 text-xs">
           <div>
-            <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
               Chủ đề bài viết / Tên bất động sản
             </label>
             <textarea
@@ -109,17 +109,17 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="Nhập chủ đề (Ví dụ: Phân tích tiềm năng cho thuê căn hộ Ocean Park 3...)"
-              className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500"
+              className="w-full p-3 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-medium focus:ring-2 focus:ring-brand-500"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Chuyên mục</label>
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">Chuyên mục</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as any)}
-                className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold"
+                className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-semibold"
               >
                 <option value="vinhomes">Tin Vinhomes</option>
                 <option value="thi-truong">Thị Trường & Báo Cáo</option>
@@ -129,15 +129,15 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Ngôn ngữ bài viết</label>
+              <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">Ngôn ngữ bài viết</label>
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as any)}
-                className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold"
+                className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-semibold"
               >
-                <option value="Tiếng Việt">🇻🇳 Tiếng Việt</option>
-                <option value="English">🇬🇧 English</option>
-                <option value="Chinese">🇨🇳 中文</option>
+                <option value="Tiếng Việt"> Tiếng Việt</option>
+                <option value="English"> English</option>
+                <option value="Chinese"> 中文</option>
               </select>
             </div>
           </div>
@@ -145,7 +145,7 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center space-x-2"
+            className="w-full py-3 bg-brand-500 hover:bg-brand-600 disabled:bg-ink-400 text-ink-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center space-x-2"
           >
             {loading ? (
               <span>Đang sinh bài viết với Gemini AI...</span>
@@ -160,9 +160,9 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
 
         {/* Output Result */}
         {result && (
-          <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 space-y-4 animate-in fade-in duration-300">
+          <div className="mt-6 pt-6 border-t border-ink-200 dark:border-ink-800 space-y-4 animate-in fade-in duration-300">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-amber-500 flex items-center">
+              <span className="text-xs font-bold text-brand-500 flex items-center">
                 <FileText className="w-4 h-4 mr-1" />
                 Kết quả sinh bởi Gemini AI
               </span>
@@ -170,26 +170,26 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
               <div className="flex space-x-2">
                 <button
                   onClick={handleCopy}
-                  className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-bold flex items-center"
+                  className="px-3 py-1.5 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 text-ink-800 dark:text-ink-200 rounded-lg text-xs font-bold flex items-center"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 mr-1 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 mr-1" />}
+                  {copied ? <Check className="w-3.5 h-3.5 mr-1 text-brand-500" /> : <Copy className="w-3.5 h-3.5 mr-1" />}
                   {copied ? 'Đã chép' : 'Sao chép'}
                 </button>
 
                 <button
                   onClick={handlePublish}
                   disabled={published}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition"
+                  className="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold transition"
                 >
                   {published ? 'Đã Xuất Bản!' : 'Đăng Lên Tin Tức Web'}
                 </button>
               </div>
             </div>
 
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs space-y-3 max-h-60 overflow-y-auto">
-              <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">{result.title}</h3>
-              <p className="font-semibold text-amber-600 dark:text-amber-400 italic">{result.summary}</p>
-              <div className="text-slate-600 dark:text-slate-300 whitespace-pre-line leading-relaxed">
+            <div className="p-4 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700 text-xs space-y-3 max-h-60 overflow-y-auto">
+              <h3 className="font-extrabold text-sm text-ink-900 dark:text-white">{result.title}</h3>
+              <p className="font-semibold text-brand-600 dark:text-brand-400 italic">{result.summary}</p>
+              <div className="text-ink-600 dark:text-ink-300 whitespace-pre-line leading-relaxed">
                 {result.content}
               </div>
             </div>

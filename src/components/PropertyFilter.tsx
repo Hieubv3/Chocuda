@@ -83,17 +83,17 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
   }, [selectedProject, selectedHeightCategory, selectedCategory, minPrice, maxPrice, bedrooms, furniture, sortBy]);
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-2.5 sm:p-3 shadow-xs border border-slate-200 dark:border-slate-700 space-y-2">
+    <div className="bg-white dark:bg-ink-800 rounded-xl p-2.5 sm:p-3 shadow-xs border border-ink-200 dark:border-ink-700 space-y-2">
       
       {/* Top Main Controls Bar: Type Switcher + Search + Filter Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
         
         {/* Type Switcher — ô vuông icon trên di động */}
-        <div className="grid grid-cols-3 gap-1.5 sm:flex sm:gap-0 sm:bg-slate-100 dark:sm:bg-slate-900 sm:p-0.5 sm:rounded-lg shrink-0 sm:border border-slate-200 dark:border-slate-800 text-xs">
+        <div className="grid grid-cols-3 gap-1.5 sm:flex sm:gap-0 sm:bg-ink-100 dark:sm:bg-ink-900 sm:p-0.5 sm:rounded-lg shrink-0 sm:border border-ink-200 dark:border-ink-800 text-xs">
           {[
-            { key: 'all', label: 'Tất Cả', icon: Layers, color: 'text-emerald-500' },
+            { key: 'all', label: 'Tất Cả', icon: Layers, color: 'text-brand-500' },
             { key: 'sale', label: 'Mua Bán', icon: Building2, color: 'text-sky-500' },
-            { key: 'rent', label: 'Cho Thuê', icon: KeyRound, color: 'text-amber-500' },
+            { key: 'rent', label: 'Cho Thuê', icon: KeyRound, color: 'text-brand-500' },
           ].map((item) => {
             const ItemIcon = item.icon;
             const active = selectedType === item.key;
@@ -103,8 +103,8 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
                 onClick={() => setSelectedType(item.key as any)}
                 className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 py-1.5 sm:px-2.5 rounded-xl sm:rounded-md font-bold transition cursor-pointer border sm:border-0 ${
                   active
-                    ? 'bg-emerald-600 text-white shadow-xs border-emerald-500'
-                    : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800'
+                    ? 'bg-brand-600 text-white shadow-xs border-brand-500'
+                    : 'bg-ink-100 dark:bg-ink-900 text-ink-600 dark:text-ink-300 border-ink-200 dark:border-ink-800'
                 }`}
               >
                 <ItemIcon className={`w-4 h-4 sm:w-3.5 sm:h-3.5 ${active ? 'text-white' : item.color}`} />
@@ -116,13 +116,13 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
 
         {/* Search Bar Input */}
         <div className="relative flex-1 min-w-0">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-ink-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm vị trí, phân khu, từ khóa (VD: Chà Là, 2PN...)"
-            className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-full pl-8 pr-3 py-1.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg text-xs text-ink-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
 
@@ -132,14 +132,14 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
           onClick={() => setIsProjectModalOpen(true)}
           className={`px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-1.5 shrink-0 transition border cursor-pointer ${
             selectedProject !== 'all'
-              ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
-              : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 shadow-xs'
+              ? 'bg-brand-500 text-ink-950 border-brand-400 shadow-sm'
+              : 'bg-brand-600 hover:bg-brand-500 text-white border-brand-500 shadow-xs'
           }`}
         >
           <Building2 className="w-3.5 h-3.5" />
           <span className="truncate max-w-[140px] sm:max-w-[180px]">
             {selectedProject === 'all'
-              ? '🏢 Chọn Dự Án Vinhomes'
+              ? ' Chọn Dự Án Vinhomes'
               : selectedProjObj?.name || selectedProject}
           </span>
           <ChevronDown className="w-3.5 h-3.5 opacity-80" />
@@ -151,14 +151,14 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
             onClick={() => setAdvancedOpen(!advancedOpen)}
             className={`px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center shrink-0 transition border ${
               advancedOpen || activeCount > 0
-                ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500 text-emerald-700 dark:text-emerald-300'
-                : 'bg-slate-100 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-200'
+                ? 'bg-brand-50 dark:bg-brand-950/60 border-brand-500 text-brand-700 dark:text-brand-300'
+                : 'bg-ink-100 dark:bg-ink-700/60 border-ink-200 dark:border-ink-600 text-ink-700 dark:text-ink-200 hover:bg-ink-200'
             }`}
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 mr-1 text-emerald-600 dark:text-emerald-400" />
+            <SlidersHorizontal className="w-3.5 h-3.5 mr-1 text-brand-600 dark:text-brand-400" />
             <span>Bộ lọc</span>
             {activeCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.2 bg-emerald-600 text-white text-[10px] rounded-full font-black">
+              <span className="ml-1 px-1.5 py-0.2 bg-brand-600 text-white text-[10px] rounded-full font-black">
                 {activeCount}
               </span>
             )}
@@ -167,7 +167,7 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
           {(searchQuery || activeCount > 0 || selectedType !== 'all') && (
             <button
               onClick={onReset}
-              className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition"
+              className="p-1.5 text-ink-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition"
               title={t.filters.reset}
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -177,30 +177,30 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
       </div>
 
       {/* Quick filters — ô vuông icon trên di động */}
-      <div className="grid grid-cols-3 sm:flex sm:items-center sm:gap-1 gap-1.5 border-t border-slate-100 dark:border-slate-700/60 pt-2">
-        <span className="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1 col-span-3 sm:col-span-1 sm:mr-1">
-          <Sparkles className="w-3 h-3 text-amber-500" />
+      <div className="grid grid-cols-3 sm:flex sm:items-center sm:gap-1 gap-1.5 border-t border-ink-100 dark:border-ink-700/60 pt-2">
+        <span className="text-[10px] font-bold text-ink-400 uppercase flex items-center gap-1 col-span-3 sm:col-span-1 sm:mr-1">
+          <Sparkles className="w-3 h-3 text-brand-500" />
           Nhanh:
         </span>
 
         <button
           onClick={() => handleFloatingQuickSelect('all', 'all')}
-          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-slate-200 dark:border-slate-700 ${
+          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-ink-200 dark:border-ink-700 ${
             selectedType === 'all' && selectedHeightCategory === 'all'
-              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+              ? 'bg-ink-900 dark:bg-white text-white dark:text-ink-900 shadow-xs'
+              : 'bg-ink-100 dark:bg-ink-700/50 text-ink-600 dark:text-ink-300 hover:bg-ink-200'
           }`}
         >
-          <Layers className="w-3 h-3 text-emerald-500" />
+          <Layers className="w-3 h-3 text-brand-500" />
           <span>Tất Cả</span>
         </button>
 
         <button
           onClick={() => handleFloatingQuickSelect('sale', 'cao-tang')}
-          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-slate-200 dark:border-slate-700 ${
+          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-ink-200 dark:border-ink-700 ${
             selectedType === 'sale' && selectedHeightCategory === 'cao-tang'
               ? 'bg-sky-600 text-white shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+              : 'bg-ink-100 dark:bg-ink-700/50 text-ink-600 dark:text-ink-300 hover:bg-ink-200'
           }`}
         >
           <Building2 className="w-3 h-3 text-sky-500" />
@@ -209,22 +209,22 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
 
         <button
           onClick={() => handleFloatingQuickSelect('sale', 'thap-tang')}
-          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-slate-200 dark:border-slate-700 ${
+          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-ink-200 dark:border-ink-700 ${
             selectedType === 'sale' && selectedHeightCategory === 'thap-tang'
-              ? 'bg-amber-600 text-white shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+              ? 'bg-brand-600 text-white shadow-xs'
+              : 'bg-ink-100 dark:bg-ink-700/50 text-ink-600 dark:text-ink-300 hover:bg-ink-200'
           }`}
         >
-          <Home className="w-3 h-3 text-amber-500" />
+          <Home className="w-3 h-3 text-brand-500" />
           <span>Bán Thấp Tầng</span>
         </button>
 
         <button
           onClick={() => handleFloatingQuickSelect('rent', 'cao-tang')}
-          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-slate-200 dark:border-slate-700 ${
+          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-ink-200 dark:border-ink-700 ${
             selectedType === 'rent' && selectedHeightCategory === 'cao-tang'
               ? 'bg-teal-600 text-white shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+              : 'bg-ink-100 dark:bg-ink-700/50 text-ink-600 dark:text-ink-300 hover:bg-ink-200'
           }`}
         >
           <Building2 className="w-3 h-3 text-teal-500" />
@@ -233,10 +233,10 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
 
         <button
           onClick={() => handleFloatingQuickSelect('rent', 'thap-tang')}
-          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-slate-200 dark:border-slate-700 ${
+          className={`px-1 sm:px-2.5 py-1.5 rounded-xl sm:rounded-md font-bold whitespace-nowrap transition flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 border sm:border-0 border-ink-200 dark:border-ink-700 ${
             selectedType === 'rent' && (selectedHeightCategory === 'thap-tang' || selectedHeightCategory === 'thue-tang')
               ? 'bg-purple-600 text-white shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+              : 'bg-ink-100 dark:bg-ink-700/50 text-ink-600 dark:text-ink-300 hover:bg-ink-200'
           }`}
         >
           <Store className="w-3 h-3 text-purple-500" />
@@ -246,15 +246,15 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
 
       {/* COLLAPSIBLE DETAILED FILTERS PANEL */}
       {advancedOpen && (
-        <div className="pt-2 border-t border-slate-100 dark:border-slate-700/80 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs animate-in fade-in duration-150">
+        <div className="pt-2 border-t border-ink-100 dark:border-ink-700/80 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs animate-in fade-in duration-150">
           
           {/* Project Selector */}
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Dự án</label>
+            <label className="block text-[10px] font-bold text-ink-500 dark:text-ink-400 mb-0.5">Dự án</label>
             <select
               value={selectedProject}
               onChange={(e) => setSelectedProject(e.target.value as any)}
-              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white font-medium text-xs focus:ring-1 focus:ring-emerald-500"
+              className="w-full p-1.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg text-ink-900 dark:text-white font-medium text-xs focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">{t.filters.allProjects}</option>
               <option value="ocean-park-2">Vinhomes Ocean Park 2</option>
@@ -276,44 +276,44 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
 
           {/* Height / Product Group Selector */}
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Phân loại tầng</label>
+            <label className="block text-[10px] font-bold text-ink-500 dark:text-ink-400 mb-0.5">Phân loại tầng</label>
             <select
               value={selectedHeightCategory}
               onChange={(e) => setSelectedHeightCategory && setSelectedHeightCategory(e.target.value as HeightCategory)}
-              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white font-medium text-xs focus:ring-1 focus:ring-emerald-500"
+              className="w-full p-1.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg text-ink-900 dark:text-white font-medium text-xs focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">Tất cả Cao & Thấp tầng</option>
-              <option value="cao-tang">🏢 Cao Tầng (Căn hộ / Studio)</option>
-              <option value="thap-tang">🏡 Thấp Tầng (Liền kề / Villa)</option>
-              <option value="thue-tang">🏬 Thuê Tầng / Mặt bằng</option>
+              <option value="cao-tang"> Cao Tầng (Căn hộ / Studio)</option>
+              <option value="thap-tang"> Thấp Tầng (Liền kề / Villa)</option>
+              <option value="thue-tang"> Thuê Tầng / Mặt bằng</option>
             </select>
           </div>
 
           {/* Category Selector */}
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Loại căn chi tiết</label>
+            <label className="block text-[10px] font-bold text-ink-500 dark:text-ink-400 mb-0.5">Loại căn chi tiết</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value as any)}
-              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white font-medium text-xs focus:ring-1 focus:ring-emerald-500"
+              className="w-full p-1.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg text-ink-900 dark:text-white font-medium text-xs focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">{t.filters.allCategories}</option>
               
-              <optgroup label="🏢 CAO TẦNG">
+              <optgroup label=" CAO TẦNG">
                 <option value="studio">Căn Hộ Studio</option>
                 <option value="1pn">Căn Hộ 1PN</option>
                 <option value="2pn">Căn Hộ 2PN</option>
                 <option value="3pn">Căn Hộ 3PN+</option>
               </optgroup>
 
-              <optgroup label="🏡 THẤP TẦNG">
+              <optgroup label=" THẤP TẦNG">
                 <option value="shophouse">Shophouse</option>
                 <option value="lien-ke">Nhà Liền Kề</option>
                 <option value="biet-thu-song-lap">Biệt Thự Song Lập</option>
                 <option value="biet-thu-don-lap">Biệt Thự Đơn Lập</option>
               </optgroup>
 
-              <optgroup label="🏬 THUÊ TẦNG">
+              <optgroup label=" THUÊ TẦNG">
                 <option value="thue-tang">Thuê Tầng Shophouse</option>
                 <option value="mat-bang">Mặt Bằng Kinh Doanh</option>
               </optgroup>
@@ -322,11 +322,11 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
 
           {/* Sort Selector */}
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">{t.filters.sortBy}</label>
+            <label className="block text-[10px] font-bold text-ink-500 dark:text-ink-400 mb-0.5">{t.filters.sortBy}</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white font-medium text-xs focus:ring-1 focus:ring-emerald-500"
+              className="w-full p-1.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg text-ink-900 dark:text-white font-medium text-xs focus:ring-1 focus:ring-brand-500"
             >
               <option value="newest">{t.filters.newest}</option>
               <option value="price-asc">{t.filters.priceLowToHigh}</option>
@@ -337,11 +337,11 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
 
           {/* Secondary filter fields */}
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Số phòng ngủ</label>
+            <label className="block text-[10px] font-bold text-ink-500 dark:text-ink-400 mb-0.5">Số phòng ngủ</label>
             <select
               value={bedrooms}
               onChange={(e) => setBedrooms(e.target.value)}
-              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs"
+              className="w-full p-1.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg text-ink-900 dark:text-white text-xs"
             >
               <option value="">Tất cả phòng</option>
               <option value="1">Từ 1 PN</option>
@@ -352,36 +352,36 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Giá tối thiểu</label>
+            <label className="block text-[10px] font-bold text-ink-500 dark:text-ink-400 mb-0.5">Giá tối thiểu</label>
             <input
               type="number"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
               placeholder="Tỷ / Tr"
-              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs"
+              className="w-full p-1.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg text-ink-900 dark:text-white text-xs"
             />
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Giá tối đa</label>
+            <label className="block text-[10px] font-bold text-ink-500 dark:text-ink-400 mb-0.5">Giá tối đa</label>
             <input
               type="number"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
               placeholder="Tỷ / Tr"
-              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs"
+              className="w-full p-1.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg text-ink-900 dark:text-white text-xs"
             />
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Hoàn thiện & Nội thất</label>
+            <label className="block text-[10px] font-bold text-ink-500 dark:text-ink-400 mb-0.5">Hoàn thiện & Nội thất</label>
             <select
               value={furniture}
               onChange={(e) => setFurniture(e.target.value)}
-              className="w-full p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs font-medium"
+              className="w-full p-1.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg text-ink-900 dark:text-white text-xs font-medium"
             >
               <option value="">Tất cả hoàn thiện & nội thất</option>
-              <optgroup label="🏡 THẤP TẦNG (SỐ TẦNG HOÀN THIỆN)">
+              <optgroup label=" THẤP TẦNG (SỐ TẦNG HOÀN THIỆN)">
                 <option value="hoàn thiện 1 tầng">Hoàn thiện 1 tầng</option>
                 <option value="hoàn thiện 2 tầng">Hoàn thiện 2 tầng</option>
                 <option value="hoàn thiện 3 tầng">Hoàn thiện 3 tầng</option>
@@ -389,7 +389,7 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
                 <option value="hoàn thiện 5 tầng">Hoàn thiện 5 tầng (Cả nhà)</option>
                 <option value="thô">Xây thô hoàn thiện mặt ngoài</option>
               </optgroup>
-              <optgroup label="🏢 CAO TẦNG & ĐỒ ĐẠC">
+              <optgroup label=" CAO TẦNG & ĐỒ ĐẠC">
                 <option value="nguyên bản cđt">Nguyên bản CĐT (Bàn giao thô/cơ bản)</option>
                 <option value="basic">Nội thất cơ bản gắn tường</option>
                 <option value="full">Full đồ nội thất (Đầy đủ đồ)</option>

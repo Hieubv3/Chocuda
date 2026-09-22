@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   ShoppingBag, Store, MapPin, Phone, MessageCircle, Star, ShieldCheck, 
@@ -188,7 +188,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
     : 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={`${product.name} — ${product.price.toLocaleString('vi-VN')}đ | ${store.storeName}`}
         description={`${product.name}. Giá chỉ ${product.price.toLocaleString('vi-VN')}đ/${product.unit}. ${product.description || 'Chất lượng đảm bảo từ cư dân Vinhomes'} - Gian hàng ${store.storeName}, địa chỉ ${store.address}. Giao nhanh tận cửa 15-30 phút!`}
@@ -210,23 +210,23 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
       />
 
       {/* Breadcrumb Header */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 sticky top-16 z-30 shadow-xs">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3 sticky top-16 z-30 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
-            <Link to="/" className="hover:text-amber-500 flex items-center gap-1">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
+            <Link to="/" className="hover:text-brand-500 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to="/dich-vu-cu-dan" className="hover:text-amber-500">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to="/dich-vu-cu-dan" className="hover:text-brand-500">
               Chợ Cư Dân & Gian Hàng
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to={getStoreDetailUrl(store)} className="hover:text-amber-500 truncate max-w-[200px]">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to={getStoreDetailUrl(store)} className="hover:text-brand-500 truncate max-w-[200px]">
               {store.storeName}
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <span className="text-amber-600 dark:text-amber-400 font-bold truncate max-w-[280px]">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <span className="text-brand-600 dark:text-brand-400 font-bold truncate max-w-[280px]">
               {product.name}
             </span>
           </nav>
@@ -240,7 +240,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
         <div className="flex items-center justify-between gap-3">
           <Link
             to={getStoreDetailUrl(store)}
-            className="inline-flex items-center gap-1.5 text-xs font-black text-slate-700 dark:text-slate-300 hover:text-amber-500 transition"
+            className="inline-flex items-center gap-1.5 text-xs font-black text-ink-700 dark:text-ink-300 hover:text-brand-500 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Xem Toàn Bộ Gian Hàng ({store.storeName})</span>
@@ -249,14 +249,14 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyLink}
-              className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-amber-500 font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition cursor-pointer"
+              className="px-3 py-1.5 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-700 dark:text-ink-300 hover:text-brand-500 font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition cursor-pointer"
             >
-              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Share2 className="w-3.5 h-3.5" />}
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-brand-500" /> : <Share2 className="w-3.5 h-3.5" />}
               <span>{copiedLink ? 'Đã sao chép link' : 'Chia sẻ'}</span>
             </button>
             <button
               onClick={() => setShowShareModal(true)}
-              className="p-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition cursor-pointer"
+              className="p-1.5 bg-brand-500 hover:bg-brand-400 text-ink-950 font-bold rounded-xl transition cursor-pointer"
               title="Chia sẻ mạng xã hội"
             >
               <Share2 className="w-4 h-4" />
@@ -265,12 +265,12 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
         </div>
 
         {/* Product Showcase Card */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl">
+        <div className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-6 sm:p-8 shadow-xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {/* Left: Gallery (5 Cols) */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-inner group">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-ink-950 border border-ink-200 dark:border-ink-800 shadow-inner group">
                 <img loading="lazy"
                   src={currentImageUrl}
                   alt={product.name}
@@ -284,11 +284,11 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                 )}
 
                 {product.isAvailable ? (
-                  <span className="absolute top-3 right-3 px-2.5 py-1 bg-emerald-500 text-slate-950 font-black text-xs rounded-xl uppercase shadow-md flex items-center gap-1">
+                  <span className="absolute top-3 right-3 px-2.5 py-1 bg-brand-500 text-ink-950 font-black text-xs rounded-xl uppercase shadow-md flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" /> Sẵn Hàng
                   </span>
                 ) : (
-                  <span className="absolute top-3 right-3 px-2.5 py-1 bg-slate-800 text-slate-300 font-bold text-xs rounded-xl uppercase shadow-md">
+                  <span className="absolute top-3 right-3 px-2.5 py-1 bg-ink-800 text-ink-300 font-bold text-xs rounded-xl uppercase shadow-md">
                     Tạm Hết Hàng
                   </span>
                 )}
@@ -302,7 +302,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                       key={idx}
                       onClick={() => setActiveImageIndex(idx)}
                       className={`w-16 h-16 rounded-xl overflow-hidden border-2 shrink-0 transition ${
-                        activeImageIndex === idx ? 'border-amber-500 scale-105 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
+                        activeImageIndex === idx ? 'border-brand-500 scale-105 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
                       }`}
                     >
                       <img loading="lazy" src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
@@ -312,16 +312,16 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
               )}
 
               {/* Fast Trust Indicators */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 space-y-2 text-xs">
-                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                  <Truck className="w-4 h-4 text-amber-500 shrink-0" />
+              <div className="p-4 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700/60 space-y-2 text-xs">
+                <div className="flex items-center gap-2 text-ink-700 dark:text-ink-300">
+                  <Truck className="w-4 h-4 text-brand-500 shrink-0" />
                   <span><b>Giao hàng siêu tốc:</b> 15 - 30 phút tận cửa căn hộ / Shophouse.</span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                  <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                <div className="flex items-center gap-2 text-ink-700 dark:text-ink-300">
+                  <ShieldCheck className="w-4 h-4 text-brand-500 shrink-0" />
                   <span><b>Cam kết chính hãng:</b> Kiểm tra hàng trực tiếp trước khi thanh toán.</span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                <div className="flex items-center gap-2 text-ink-700 dark:text-ink-300">
                   <Store className="w-4 h-4 text-blue-500 shrink-0" />
                   <span><b>Người bán cùng khu:</b> Hàng xóm cư dân uy tín nội khu Vinhomes.</span>
                 </div>
@@ -334,38 +334,38 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
               {/* Category & Badge Header */}
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-2.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-extrabold text-[11px] rounded-lg tracking-wider uppercase border border-amber-500/20">
+                  <span className="px-2.5 py-0.5 bg-brand-500/10 text-brand-600 dark:text-brand-400 font-extrabold text-[11px] rounded-lg tracking-wider uppercase border border-brand-500/20">
                     {product.category || store.category}
                   </span>
                   {product.code && (
-                    <span className="text-[11px] font-mono text-slate-400 font-bold">
+                    <span className="text-[11px] font-mono text-ink-400 font-bold">
                       SKU: {product.code}
                     </span>
                   )}
                   {product.soldCount ? (
-                    <span className="text-[11px] font-bold text-slate-500">
+                    <span className="text-[11px] font-bold text-ink-500">
                       • Đã bán {product.soldCount} lượt
                     </span>
                   ) : null}
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                <h1 className="text-2xl sm:text-3xl font-black text-ink-900 dark:text-white leading-tight">
                   {product.name}
                 </h1>
               </div>
 
               {/* Price Banner */}
-              <div className="p-4 sm:p-5 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent rounded-2xl border border-amber-500/20 flex flex-wrap items-baseline gap-4">
+              <div className="p-4 sm:p-5 bg-gradient-to-r from-brand-500/10 via-brand-500/5 to-transparent rounded-2xl border border-brand-500/20 flex flex-wrap items-baseline gap-4">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-black text-amber-600 dark:text-amber-400 tracking-tight">
+                  <span className="text-3xl sm:text-4xl font-black text-brand-600 dark:text-brand-400 tracking-tight">
                     {product.price.toLocaleString('vi-VN')}₫
                   </span>
-                  <span className="text-xs font-bold text-slate-500">/ {product.unit}</span>
+                  <span className="text-xs font-bold text-ink-500">/ {product.unit}</span>
                 </div>
 
                 {product.originalPrice && product.originalPrice > product.price && (
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-slate-400 line-through">
+                    <span className="text-sm font-semibold text-ink-400 line-through">
                       {product.originalPrice.toLocaleString('vi-VN')}₫
                     </span>
                     <span className="px-2 py-0.5 bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 font-black text-[11px] rounded-lg">
@@ -377,10 +377,10 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
 
               {/* Product Description */}
               <div className="space-y-2">
-                <h3 className="font-extrabold text-xs text-slate-400 uppercase tracking-wider">
+                <h3 className="font-extrabold text-xs text-ink-400 uppercase tracking-wider">
                   Mô Tả Chi Tiết Sản Phẩm
                 </h3>
-                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line font-medium">
+                <p className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line font-medium">
                   {product.description || 'Sản phẩm tươi ngon, chuẩn nguồn gốc được cung cấp trực tiếp bởi cư dân Vinhomes. Đảm bảo vệ sinh an toàn thực phẩm, bao đổi trả nếu không ưng ý.'}
                 </p>
               </div>
@@ -393,7 +393,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                       setOrderModalOpen(true);
                       setOrderSuccess(false);
                     }}
-                    className="py-3.5 px-6 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-2xl text-sm uppercase tracking-wide transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer"
+                    className="py-3.5 px-6 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-ink-950 font-black rounded-2xl text-sm uppercase tracking-wide transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     <span>Đặt Mua Giao Tận Nhà</span>
@@ -412,43 +412,43 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                   </a>
                 </div>
 
-                <div className="flex items-center justify-center gap-4 text-xs font-bold text-slate-500 pt-1">
-                  <a href={`tel:${store.ownerPhone}`} className="hover:text-emerald-600 flex items-center gap-1">
-                    <Phone className="w-3.5 h-3.5 text-emerald-500" />
+                <div className="flex items-center justify-center gap-4 text-xs font-bold text-ink-500 pt-1">
+                  <a href={`tel:${store.ownerPhone}`} className="hover:text-brand-600 flex items-center gap-1">
+                    <Phone className="w-3.5 h-3.5 text-brand-500" />
                     <span>Gọi trực tiếp: {store.ownerPhone}</span>
                   </a>
                   <span>•</span>
-                  <a href="tel:0868499929" className="hover:text-amber-500 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
+                  <a href="tel:0868499929" className="hover:text-brand-500 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-brand-500" />
                     <span>Hotline BQL Chợ Cư Dân: 0868.499.929</span>
                   </a>
                 </div>
               </div>
 
               {/* Verified Store Banner Box */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="p-4 bg-ink-50 dark:bg-ink-800/80 rounded-2xl border border-ink-200 dark:border-ink-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
                   <img loading="lazy"
                     src={store.logoUrl || ''}
                     alt={store.storeName}
-                    className="w-12 h-12 rounded-xl object-cover border border-amber-500 shadow-sm shrink-0"
+                    className="w-12 h-12 rounded-xl object-cover border border-brand-500 shadow-sm shrink-0"
                   />
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <Link to={getStoreDetailUrl(store)} className="font-black text-sm text-slate-900 dark:text-white hover:text-amber-500 transition truncate">
+                      <Link to={getStoreDetailUrl(store)} className="font-black text-sm text-ink-900 dark:text-white hover:text-brand-500 transition truncate">
                         {store.storeName}
                       </Link>
                       {store.verified && (
-                        <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-black px-1.5 py-0.2 rounded border border-emerald-500/30 shrink-0 flex items-center gap-0.5">
+                        <span className="bg-brand-500/20 text-brand-400 text-[10px] font-black px-1.5 py-0.2 rounded border border-brand-500/30 shrink-0 flex items-center gap-0.5">
                           <ShieldCheck className="w-2.5 h-2.5" /> KYC
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-500 truncate flex items-center gap-1">
+                    <p className="text-xs text-ink-500 truncate flex items-center gap-1">
                       <MapPin className="w-3 h-3 text-red-400 shrink-0" />
                       <span>{store.address}</span>
                     </p>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[11px] text-ink-400">
                       Chủ shop: <b>{store.ownerName}</b> • Giờ mở cửa: {store.operatingHours || '07:30 - 21:30'}
                     </p>
                   </div>
@@ -456,7 +456,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
 
                 <Link
                   to={getStoreDetailUrl(store)}
-                  className="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-amber-500 hover:text-slate-950 text-slate-800 dark:text-slate-200 font-black text-xs rounded-xl transition shrink-0"
+                  className="px-4 py-2 bg-ink-200 dark:bg-ink-700 hover:bg-brand-500 hover:text-ink-950 text-ink-800 dark:text-ink-200 font-black text-xs rounded-xl transition shrink-0"
                 >
                   Vào Gian Hàng →
                 </Link>
@@ -467,52 +467,52 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
         </div>
 
         {/* AI Search Engine Optimization & Structured Grounding Facts */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+        <section className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-6 sm:p-8 space-y-6 shadow-sm">
+          <div className="flex items-center justify-between border-b border-ink-100 dark:border-ink-800 pb-4">
             <div className="space-y-1">
               <span className="px-2.5 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-extrabold text-[10px] rounded uppercase flex items-center gap-1 w-max">
                 <Sparkles className="w-3 h-3" /> AI Search Grounding & Thông Tin Kiểm Chứng
               </span>
-              <h2 className="text-lg font-black text-slate-900 dark:text-white">
+              <h2 className="text-lg font-black text-ink-900 dark:text-white">
                 Bảng Thông Số Kỹ Thuật & Xuất Xứ Hàng Hóa
               </h2>
             </div>
-            <span className="text-xs text-slate-400 font-bold hidden sm:inline-block">
+            <span className="text-xs text-ink-400 font-bold hidden sm:inline-block">
               Chuẩn SEO Google & AI Index
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
-            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-              <span className="text-slate-400 font-bold block">Tên Mặt Hàng:</span>
-              <span className="font-extrabold text-slate-900 dark:text-white text-sm">{product.name}</span>
+            <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+              <span className="text-ink-400 font-bold block">Tên Mặt Hàng:</span>
+              <span className="font-extrabold text-ink-900 dark:text-white text-sm">{product.name}</span>
             </div>
 
-            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-              <span className="text-slate-400 font-bold block">Gian Hàng / Đơn Vị Cung Cấp:</span>
-              <span className="font-extrabold text-amber-600 dark:text-amber-400 text-sm">{store.storeName}</span>
+            <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+              <span className="text-ink-400 font-bold block">Gian Hàng / Đơn Vị Cung Cấp:</span>
+              <span className="font-extrabold text-brand-600 dark:text-brand-400 text-sm">{store.storeName}</span>
             </div>
 
-            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-              <span className="text-slate-400 font-bold block">Mức Giá Niêm Yết:</span>
-              <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">
+            <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+              <span className="text-ink-400 font-bold block">Mức Giá Niêm Yết:</span>
+              <span className="font-extrabold text-brand-600 dark:text-brand-400 text-sm">
                 {product.price.toLocaleString('vi-VN')} VNĐ / {product.unit}
               </span>
             </div>
 
-            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-              <span className="text-slate-400 font-bold block">Khu Vực Phục Vụ:</span>
-              <span className="font-bold text-slate-800 dark:text-slate-200">{store.project} ({store.subdivision || 'Nội khu'})</span>
+            <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+              <span className="text-ink-400 font-bold block">Khu Vực Phục Vụ:</span>
+              <span className="font-bold text-ink-800 dark:text-ink-200">{store.project} ({store.subdivision || 'Nội khu'})</span>
             </div>
 
-            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-              <span className="text-slate-400 font-bold block">Thời Gian Giao Hàng:</span>
-              <span className="font-bold text-slate-800 dark:text-slate-200">15 - 30 Phút (Giao tận cửa căn hộ)</span>
+            <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+              <span className="text-ink-400 font-bold block">Thời Gian Giao Hàng:</span>
+              <span className="font-bold text-ink-800 dark:text-ink-200">15 - 30 Phút (Giao tận cửa căn hộ)</span>
             </div>
 
-            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-              <span className="text-slate-400 font-bold block">Chính Sách Kiểm Tra & Đổi Trả:</span>
-              <span className="font-bold text-slate-800 dark:text-slate-200">Được đồng kiểm, 100% đổi trả nếu lỗi</span>
+            <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+              <span className="text-ink-400 font-bold block">Chính Sách Kiểm Tra & Đổi Trả:</span>
+              <span className="font-bold text-ink-800 dark:text-ink-200">Được đồng kiểm, 100% đổi trả nếu lỗi</span>
             </div>
           </div>
         </section>
@@ -521,11 +521,11 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
         {relatedProducts.length > 0 && (
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Package className="w-5 h-5 text-amber-500" />
+              <h2 className="text-lg font-black text-ink-900 dark:text-white flex items-center gap-2">
+                <Package className="w-5 h-5 text-brand-500" />
                 <span>Sản Phẩm Khác Cùng Gian Hàng ({relatedProducts.length})</span>
               </h2>
-              <Link to={getStoreDetailUrl(store)} className="text-xs font-bold text-amber-500 hover:underline">
+              <Link to={getStoreDetailUrl(store)} className="text-xs font-bold text-brand-500 hover:underline">
                 Xem tất cả →
               </Link>
             </div>
@@ -535,16 +535,16 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                 <Link
                   key={rp.id}
                   to={getProductDetailUrl(rp, store.slug || store.id)}
-                  className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-amber-500 transition shadow-sm hover:shadow-md flex flex-col justify-between"
+                  className="group bg-white dark:bg-ink-900 rounded-2xl overflow-hidden border border-ink-200 dark:border-ink-800 hover:border-brand-500 transition shadow-sm hover:shadow-md flex flex-col justify-between"
                 >
-                  <div className="aspect-[4/3] bg-slate-950 overflow-hidden relative">
+                  <div className="aspect-[4/3] bg-ink-950 overflow-hidden relative">
                     <img loading="lazy"
                       src={rp.images && rp.images[0] ? rp.images[0] : store.logoUrl}
                       alt={rp.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     />
                     {rp.soldCount && (
-                      <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-slate-950/80 text-amber-400 font-bold text-[9px] rounded backdrop-blur-xs">
+                      <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-ink-950/80 text-brand-400 font-bold text-[9px] rounded backdrop-blur-xs">
                         Đã bán {rp.soldCount}
                       </span>
                     )}
@@ -552,16 +552,16 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
 
                   <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-bold text-slate-900 dark:text-white text-xs group-hover:text-amber-500 transition line-clamp-2 leading-snug">
+                      <h3 className="font-bold text-ink-900 dark:text-white text-xs group-hover:text-brand-500 transition line-clamp-2 leading-snug">
                         {rp.name}
                       </h3>
                     </div>
 
-                    <div className="pt-2 flex items-baseline justify-between border-t border-slate-100 dark:border-slate-800">
-                      <span className="font-black text-amber-600 dark:text-amber-400 text-xs">
+                    <div className="pt-2 flex items-baseline justify-between border-t border-ink-100 dark:border-ink-800">
+                      <span className="font-black text-brand-600 dark:text-brand-400 text-xs">
                         {rp.price.toLocaleString('vi-VN')}đ
                       </span>
-                      <span className="text-[10px] text-slate-400">/{rp.unit}</span>
+                      <span className="text-[10px] text-ink-400">/{rp.unit}</span>
                     </div>
                   </div>
                 </Link>
@@ -574,32 +574,32 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
 
       {/* Order Modal */}
       {orderModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-amber-500" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl p-6 sm:p-8 max-w-md w-full border border-ink-200 dark:border-ink-800 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-ink-100 dark:border-ink-800 pb-3">
+              <h3 className="text-base font-black text-ink-900 dark:text-white flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-brand-500" />
                 <span>Đặt Mua Giao Tận Căn Hộ</span>
               </h3>
               <button
                 onClick={() => setOrderModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold p-1"
+                className="text-ink-400 hover:text-ink-600 dark:hover:text-white font-bold p-1"
               >
-                ✕
+                
               </button>
             </div>
 
             {orderSuccess ? (
               <div className="text-center py-6 space-y-4">
-                <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
+                <div className="w-16 h-16 bg-brand-500/10 text-brand-500 rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-10 h-10" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-lg font-black text-slate-900 dark:text-white">ĐẶT HÀNG THÀNH CÔNG!</h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                  <h4 className="text-lg font-black text-ink-900 dark:text-white">ĐẶT HÀNG THÀNH CÔNG!</h4>
+                  <p className="text-xs text-ink-600 dark:text-ink-300">
                     Gian hàng <b>{store.storeName}</b> đã nhận được yêu cầu đặt món <b>{product.name}</b> (x{orderQty}).
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-ink-500">
                     Chủ shop sẽ liên hệ qua SĐT <b>{customerPhone}</b> để giao hàng trong 15-30 phút!
                   </p>
                 </div>
@@ -618,7 +618,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                   </a>
                   <button
                     onClick={() => setOrderModalOpen(false)}
-                    className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs hover:bg-slate-200"
+                    className="w-full py-2.5 bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 font-bold rounded-xl text-xs hover:bg-ink-200"
                   >
                     Đóng
                   </button>
@@ -627,20 +627,20 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
             ) : (
               <form onSubmit={handleOrderSubmit} className="space-y-4 text-xs">
                 {/* Product Summary Box */}
-                <div className="p-3 bg-slate-100 dark:bg-slate-800/80 rounded-2xl flex items-center justify-between gap-3">
+                <div className="p-3 bg-ink-100 dark:bg-ink-800/80 rounded-2xl flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <img loading="lazy" src={currentImageUrl} alt={product.name} className="w-11 h-11 rounded-xl object-cover shrink-0" />
                     <div className="min-w-0">
-                      <div className="font-bold text-slate-900 dark:text-white truncate">{product.name}</div>
-                      <div className="text-amber-500 font-black">{product.price.toLocaleString('vi-VN')}₫ / {product.unit}</div>
+                      <div className="font-bold text-ink-900 dark:text-white truncate">{product.name}</div>
+                      <div className="text-brand-500 font-black">{product.price.toLocaleString('vi-VN')}₫ / {product.unit}</div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-900 px-2 py-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center gap-1.5 shrink-0 bg-white dark:bg-ink-900 px-2 py-1 rounded-xl border border-ink-200 dark:border-ink-700">
                     <button
                       type="button"
                       onClick={() => setOrderQty(Math.max(1, orderQty - 1))}
-                      className="w-6 h-6 bg-slate-100 dark:bg-slate-800 rounded font-black text-sm flex items-center justify-center"
+                      className="w-6 h-6 bg-ink-100 dark:bg-ink-800 rounded font-black text-sm flex items-center justify-center"
                     >
                       -
                     </button>
@@ -648,7 +648,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                     <button
                       type="button"
                       onClick={() => setOrderQty(orderQty + 1)}
-                      className="w-6 h-6 bg-slate-100 dark:bg-slate-800 rounded font-black text-sm flex items-center justify-center"
+                      className="w-6 h-6 bg-ink-100 dark:bg-ink-800 rounded font-black text-sm flex items-center justify-center"
                     >
                       +
                     </button>
@@ -657,59 +657,59 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
 
                 {/* Total */}
                 <div className="flex items-center justify-between px-2 font-bold">
-                  <span className="text-slate-500">Thành tiền tạm tính:</span>
-                  <span className="text-base font-black text-amber-600 dark:text-amber-400">
+                  <span className="text-ink-500">Thành tiền tạm tính:</span>
+                  <span className="text-base font-black text-brand-600 dark:text-brand-400">
                     {(product.price * orderQty).toLocaleString('vi-VN')}₫
                   </span>
                 </div>
 
                 {/* Form fields */}
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">Họ và tên người nhận (*)</label>
+                  <label className="font-bold text-ink-700 dark:text-ink-300">Họ và tên người nhận (*)</label>
                   <input
                     type="text"
                     required
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Ví dụ: Chị Mai - Cư dân San Hô 2"
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 outline-hidden"
+                    className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-300 dark:border-ink-700 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">Số điện thoại nhận hàng (*)</label>
+                  <label className="font-bold text-ink-700 dark:text-ink-300">Số điện thoại nhận hàng (*)</label>
                   <input
                     type="tel"
                     required
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     placeholder="0988.xxx.xxx"
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 outline-hidden"
+                    className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-300 dark:border-ink-700 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">Địa chỉ giao (Căn hộ / Tòa nhà / Shophouse) (*)</label>
+                  <label className="font-bold text-ink-700 dark:text-ink-300">Địa chỉ giao (Căn hộ / Tòa nhà / Shophouse) (*)</label>
                   <input
                     type="text"
                     required
                     value={customerAddress}
                     onChange={(e) => setCustomerAddress(e.target.value)}
                     placeholder="Ví dụ: Tòa S2.05 Căn 12.08, Ocean Park 1"
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 outline-hidden"
+                    className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-300 dark:border-ink-700 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">Phương thức thanh toán</label>
+                  <label className="font-bold text-ink-700 dark:text-ink-300">Phương thức thanh toán</label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('vietqr')}
                       className={`p-2.5 rounded-xl border text-left font-bold transition flex items-center gap-1.5 ${
                         paymentMethod === 'vietqr'
-                          ? 'border-amber-500 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                          : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                          ? 'border-brand-500 bg-brand-500/10 text-brand-600 dark:text-brand-400'
+                          : 'border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-ink-700 dark:text-ink-300'
                       }`}
                     >
                       <Sparkles className="w-3.5 h-3.5" />
@@ -720,8 +720,8 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                       onClick={() => setPaymentMethod('cod')}
                       className={`p-2.5 rounded-xl border text-left font-bold transition flex items-center gap-1.5 ${
                         paymentMethod === 'cod'
-                          ? 'border-amber-500 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                          : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                          ? 'border-brand-500 bg-brand-500/10 text-brand-600 dark:text-brand-400'
+                          : 'border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-ink-700 dark:text-ink-300'
                       }`}
                     >
                       <Truck className="w-3.5 h-3.5" />
@@ -731,20 +731,20 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">Ghi chú thêm cho shop</label>
+                  <label className="font-bold text-ink-700 dark:text-ink-300">Ghi chú thêm cho shop</label>
                   <input
                     type="text"
                     value={orderNote}
                     onChange={(e) => setOrderNote(e.target.value)}
                     placeholder="Giao trước 11h, gọi trước khi lên..."
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl font-medium focus:ring-2 focus:ring-amber-500 outline-hidden"
+                    className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-300 dark:border-ink-700 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-xl text-sm uppercase tracking-wide transition shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-ink-950 font-black rounded-xl text-sm uppercase tracking-wide transition shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>

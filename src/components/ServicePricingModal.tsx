@@ -34,7 +34,7 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     priceDisplay: '0đ',
     priceValue: 0,
     unit: '/ vĩnh viễn',
-    color: 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900',
+    color: 'border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-900',
     description: 'Gian hàng tiêu chuẩn cho cư dân nội khu khởi tạo kinh doanh',
     badge: 'CƯ DÂN NỘI KHU',
     features: [
@@ -54,7 +54,7 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     priceValue: 680000,
     unit: '/ năm',
     badge: 'KHIÊN XANH UY TÍN',
-    color: 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20',
+    color: 'border-brand-500 bg-brand-50/30 dark:bg-brand-950/20',
     description: 'Xác minh KYC chính chủ, tạo dựng niềm tin tuyệt đối với cư dân',
     features: [
       'Bao gồm toàn bộ quyền lợi Gói Khởi Tạo',
@@ -75,7 +75,7 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     unit: '/ năm',
     popular: true,
     badge: 'VƯƠNG MIỆN VÀNG VIP',
-    color: 'border-amber-500 bg-amber-50/30 dark:bg-amber-950/20 ring-2 ring-amber-500',
+    color: 'border-brand-500 bg-brand-50/30 dark:bg-brand-950/20 ring-2 ring-brand-500',
     description: 'Giải pháp thương hiệu toàn diện cho Gian Hàng & Doanh Nghiệp uy tín',
     features: [
       'Tích hợp toàn bộ đặc quyền Gói Xác Thực 24h',
@@ -212,7 +212,7 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
 
       const data = await res.json();
       if (res.ok) {
-        alert(data.message || `🎉 Đã gửi yêu cầu đăng ký Gói ${selectedPkg.name}! Admin sẽ liên hệ kích hoạt trong 5-15 phút.`);
+        alert(data.message || ` Đã gửi yêu cầu đăng ký Gói ${selectedPkg.name}! Admin sẽ liên hệ kích hoạt trong 5-15 phút.`);
         setShowOrderForm(false);
         if (onSelectPackage) onSelectPackage(selectedPkg.id);
         onClose();
@@ -229,73 +229,73 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 bg-ink-950/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
       {/* Fixed top-right close button */}
       <button
         onClick={onClose}
-        className="fixed top-3 right-3 sm:top-5 sm:right-5 z-[70] p-2.5 bg-slate-900/90 hover:bg-slate-800 text-white rounded-full transition cursor-pointer border border-white/20 shadow-2xl flex items-center justify-center"
+        className="fixed top-3 right-3 sm:top-5 sm:right-5 z-[70] p-2.5 bg-ink-900/90 hover:bg-ink-800 text-white rounded-full transition cursor-pointer border border-white/20 shadow-2xl flex items-center justify-center"
         title="Đóng cửa sổ"
       >
         <X className="w-5 h-5 text-white" />
       </button>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-6xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200 relative">
+      <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl max-w-6xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200 relative">
         
         {/* Header Hero Banner */}
-        <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white p-5 sm:p-8 relative overflow-hidden text-center border-b border-amber-500/40 shrink-0">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/20 via-transparent to-transparent pointer-events-none" />
+        <div className="bg-gradient-to-r from-ink-900 via-brand-950 to-ink-900 text-white p-5 sm:p-8 relative overflow-hidden text-center border-b border-brand-500/40 shrink-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-500/20 via-transparent to-transparent pointer-events-none" />
           
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 p-2 bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full transition cursor-pointer z-10 border border-slate-700"
+            className="absolute top-3 right-3 p-2 bg-ink-800/90 hover:bg-ink-700 text-ink-300 hover:text-white rounded-full transition cursor-pointer z-10 border border-ink-700"
             title="Đóng"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <span className="inline-block px-3.5 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 text-[11px] font-black uppercase tracking-wider rounded-full mb-3 shadow-lg">
-            ⭐ ĐẶC QUYỀN QUẢNG BÁ GIAN HÀNG & DỊCH VỤ CHỢ CƯ DÂN VINHOMES 24H
+          <span className="inline-block px-3.5 py-1 bg-gradient-to-r from-brand-400 to-brand-500 text-ink-950 text-[11px] font-black uppercase tracking-wider rounded-full mb-3 shadow-lg">
+             ĐẶC QUYỀN QUẢNG BÁ GIAN HÀNG & DỊCH VỤ CHỢ CƯ DÂN VINHOMES 24H
           </span>
 
-          <h2 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-emerald-300 tracking-tight uppercase leading-tight">
+          <h2 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-yellow-200 to-brand-300 tracking-tight uppercase leading-tight">
             6 GÓI DỊCH VỤ TĂNG TRƯỞNG GIAN HÀNG & THƯƠNG HIỆU CƯ DÂN
           </h2>
           
-          <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-3xl mx-auto mt-2.5 leading-relaxed">
+          <p className="text-xs sm:text-sm text-ink-300 font-medium max-w-3xl mx-auto mt-2.5 leading-relaxed">
             Mô hình kết nối trực tiếp cư dân nội khu. Tự do báo giá, không chiết khấu % sàn. Admin quản trị linh hoạt &amp; hỗ trợ duyệt gian hàng KYC 24/7.
           </p>
 
           {/* 4 Core Pillars Badges */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-4xl mx-auto mt-5 text-left text-xs">
-            <div className="p-2.5 bg-slate-800/80 rounded-xl border border-amber-500/30 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-400 shrink-0" />
+            <div className="p-2.5 bg-ink-800/80 rounded-xl border border-brand-500/30 flex items-center gap-2">
+              <Zap className="w-4 h-4 text-brand-400 shrink-0" />
               <div>
-                <div className="font-extrabold text-[11px] text-amber-300">Ghim Top Đẩy Bài 24h</div>
-                <div className="text-[10px] text-slate-400 leading-tight">Xuất hiện ngay khi gõ từ khóa</div>
+                <div className="font-extrabold text-[11px] text-brand-300">Ghim Top Đẩy Bài 24h</div>
+                <div className="text-[10px] text-ink-400 leading-tight">Xuất hiện ngay khi gõ từ khóa</div>
               </div>
             </div>
 
-            <div className="p-2.5 bg-slate-800/80 rounded-xl border border-emerald-500/30 flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div className="p-2.5 bg-ink-800/80 rounded-xl border border-brand-500/30 flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-brand-400 shrink-0" />
               <div>
-                <div className="font-extrabold text-[11px] text-emerald-300">Xác Thực KYC Khiên Xanh</div>
-                <div className="text-[10px] text-slate-400 leading-tight">Tạo niềm tin uy tín tuyệt đối</div>
+                <div className="font-extrabold text-[11px] text-brand-300">Xác Thực KYC Khiên Xanh</div>
+                <div className="text-[10px] text-ink-400 leading-tight">Tạo niềm tin uy tín tuyệt đối</div>
               </div>
             </div>
 
-            <div className="p-2.5 bg-slate-800/80 rounded-xl border border-blue-500/30 flex items-center gap-2">
+            <div className="p-2.5 bg-ink-800/80 rounded-xl border border-blue-500/30 flex items-center gap-2">
               <Award className="w-4 h-4 text-blue-400 shrink-0" />
               <div>
                 <div className="font-extrabold text-[11px] text-blue-300">Định Vị Gian Hàng 3D</div>
-                <div className="text-[10px] text-slate-400 leading-tight">Ghim vị trí căn hộ chính xác</div>
+                <div className="text-[10px] text-ink-400 leading-tight">Ghim vị trí căn hộ chính xác</div>
               </div>
             </div>
 
-            <div className="p-2.5 bg-slate-800/80 rounded-xl border border-purple-500/30 flex items-center gap-2">
+            <div className="p-2.5 bg-ink-800/80 rounded-xl border border-purple-500/30 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
               <div>
                 <div className="font-extrabold text-[11px] text-purple-300">Bài Review PR SEO Top</div>
-                <div className="text-[10px] text-slate-400 leading-tight">Bài PR nổi bật chuyên mục</div>
+                <div className="text-[10px] text-ink-400 leading-tight">Bài PR nổi bật chuyên mục</div>
               </div>
             </div>
           </div>
@@ -305,7 +305,7 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
               href="https://zalo.me/0868499929"
               target="_blank"
               rel="noreferrer"
-              className="px-5 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black rounded-xl text-xs shadow-lg hover:brightness-110 transition flex items-center gap-1.5"
+              className="px-5 py-2.5 bg-gradient-to-r from-brand-400 to-brand-500 text-ink-950 font-black rounded-xl text-xs shadow-lg hover:brightness-110 transition flex items-center gap-1.5"
             >
               <PhoneCall className="w-4 h-4" />
               <span>Hotline Zalo Admin: 0868.499.929</span>
@@ -318,17 +318,17 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
           
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
-              <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+              <span className="text-[11px] font-black text-brand-600 dark:text-brand-400 uppercase tracking-wider">
                 BẢNG BÁO GIÁ ĐỘC QUYỀN CHỢ CƯ DÂN 24H
               </span>
-              <h3 className="text-lg font-black text-slate-900 dark:text-white">
+              <h3 className="text-lg font-black text-ink-900 dark:text-white">
                 Lựa chọn gói xuất hiện tối ưu theo mục tiêu kinh doanh của bạn
               </h3>
             </div>
 
             {currentUser && (
-              <div className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold text-emerald-800 dark:text-emerald-300">
-                Tài khoản: <span className="font-black text-emerald-600 dark:text-emerald-400">{currentUser.name || currentUser.email || 'Cư Dân'} {currentUser.phone ? `(${currentUser.phone})` : ''}</span>
+              <div className="px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800 rounded-xl text-xs font-bold text-brand-800 dark:text-brand-300">
+                Tài khoản: <span className="font-black text-brand-600 dark:text-brand-400">{currentUser.name || currentUser.email || 'Cư Dân'} {currentUser.phone ? `(${currentUser.phone})` : ''}</span>
               </div>
             )}
           </div>
@@ -340,39 +340,39 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
                 className={`relative rounded-3xl p-6 border flex flex-col justify-between transition hover:shadow-xl ${pkg.color}`}
               >
                 {pkg.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-[10px] uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md">
-                    🔥 {pkg.badge || 'ĐƯỢC CHỌN NHIỀU NHẤT'}
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-500 to-orange-500 text-ink-950 font-black text-[10px] uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md">
+                     {pkg.badge || 'ĐƯỢC CHỌN NHIỀU NHẤT'}
                   </div>
                 )}
 
                 {!pkg.popular && pkg.badge && (
-                  <div className="inline-block bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full mb-2 w-fit">
+                  <div className="inline-block bg-ink-200 dark:bg-ink-800 text-ink-700 dark:text-ink-300 font-extrabold text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full mb-2 w-fit">
                     {pkg.badge}
                   </div>
                 )}
 
                 <div>
-                  <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                  <h4 className="text-sm font-black text-ink-900 dark:text-white uppercase tracking-tight">
                     {pkg.name}
                   </h4>
                   
                   <div className="my-3 flex items-baseline gap-1">
-                    <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+                    <span className="text-2xl sm:text-3xl font-black text-ink-900 dark:text-white">
                       {pkg.priceDisplay}
                     </span>
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                    <span className="text-xs font-bold text-ink-500 dark:text-ink-400">
                       {pkg.unit}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mb-4 min-h-[32px]">
+                  <p className="text-xs text-ink-600 dark:text-ink-400 font-medium mb-4 min-h-[32px]">
                     {pkg.description}
                   </p>
 
-                  <ul className="space-y-2.5 border-t border-slate-200 dark:border-slate-800/80 pt-4 mb-6">
+                  <ul className="space-y-2.5 border-t border-ink-200 dark:border-ink-800/80 pt-4 mb-6">
                     {pkg.features.map((feat, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <li key={idx} className="flex items-start gap-2 text-xs text-ink-700 dark:text-ink-300 font-medium">
+                        <CheckCircle2 className="w-4 h-4 text-brand-500 shrink-0 mt-0.5" />
                         <span>{feat}</span>
                       </li>
                     ))}
@@ -383,14 +383,14 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
                   onClick={() => handleRegisterClick(pkg)}
                   className={`w-full py-3 rounded-xl text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-md ${
                     pkg.buttonVariant === 'warning'
-                      ? 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                      ? 'bg-brand-500 hover:bg-brand-400 text-ink-950'
                       : pkg.buttonVariant === 'success'
-                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                      ? 'bg-brand-600 hover:bg-brand-500 text-white'
                       : pkg.buttonVariant === 'purple'
                       ? 'bg-purple-600 hover:bg-purple-500 text-white'
                       : pkg.buttonVariant === 'primary'
                       ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                      : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800'
+                      : 'bg-ink-900 dark:bg-ink-100 text-white dark:text-ink-900 hover:bg-ink-800'
                   }`}
                 >
                   {pkg.buttonText || 'Đăng Ký Khởi Tạo'}
@@ -400,14 +400,14 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
           </div>
 
           {/* Support Footer */}
-          <div className="p-5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+          <div className="p-5 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
             <div className="flex items-center gap-3">
-              <ShieldCheck className="w-8 h-8 text-emerald-500 shrink-0" />
+              <ShieldCheck className="w-8 h-8 text-brand-500 shrink-0" />
               <div>
-                <span className="font-black text-slate-900 dark:text-white block text-sm">
+                <span className="font-black text-ink-900 dark:text-white block text-sm">
                   Hệ Thống Duyệt Hồ Sơ KYC &amp; Hỗ Trợ 24/7
                 </span>
-                <span className="text-slate-500 dark:text-slate-400">
+                <span className="text-ink-500 dark:text-ink-400">
                   Quản trị viên hỗ trợ cập nhật thông tin, chụp ảnh sản phẩm &amp; kích hoạt gói trực tiếp qua Zalo.
                 </span>
               </div>
@@ -417,7 +417,7 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
               href="https://zalo.me/0868499929"
               target="_blank"
               rel="noreferrer"
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shrink-0 transition flex items-center gap-1.5"
+              className="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-extrabold rounded-xl shrink-0 transition flex items-center gap-1.5"
             >
               <MessageCircle className="w-4 h-4" />
               <span>Zalo Admin: 0868.499.929</span>
@@ -430,30 +430,30 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
 
       {/* Subscription Order Modal */}
       {showOrderForm && selectedPkg && (
-        <div className="fixed inset-0 bg-slate-950/90 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-4 relative shadow-2xl animate-in zoom-in-95">
+        <div className="fixed inset-0 bg-ink-950/90 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl max-w-lg w-full p-6 space-y-4 relative shadow-2xl animate-in zoom-in-95">
             <button
               onClick={() => setShowOrderForm(false)}
-              className="absolute top-4 right-4 p-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 rounded-full"
+              className="absolute top-4 right-4 p-1.5 bg-ink-100 dark:bg-ink-800 text-ink-500 hover:text-ink-900 rounded-full"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div className="text-center">
-              <span className="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase rounded-full">
+              <span className="inline-block px-3 py-1 bg-brand-500/20 text-brand-600 dark:text-brand-400 text-[10px] font-black uppercase rounded-full">
                 ĐĂNG KÝ GÓI DỊCH VỤ
               </span>
-              <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">
+              <h3 className="text-xl font-black text-ink-900 dark:text-white mt-1">
                 {selectedPkg.name}
               </h3>
-              <p className="text-xs text-amber-500 font-bold mt-0.5">
+              <p className="text-xs text-brand-500 font-bold mt-0.5">
                 Giá: {selectedPkg.priceDisplay} {selectedPkg.unit}
               </p>
             </div>
 
             <form onSubmit={handleSubmitSubscription} className="space-y-3 text-xs">
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-extrabold text-ink-700 dark:text-ink-300 mb-1">
                   Họ và tên người đăng ký <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -462,12 +462,12 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
                   value={userName}
                   onChange={e => setUserName(e.target.value)}
                   placeholder="Ví dụ: Nguyễn Văn A"
-                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="w-full p-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-ink-900 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-extrabold text-ink-700 dark:text-ink-300 mb-1">
                   Số điện thoại Hotline / Zalo <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -476,12 +476,12 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
                   value={userPhone}
                   onChange={e => setUserPhone(e.target.value)}
                   placeholder="0868xxxxxx"
-                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="w-full p-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-ink-900 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-extrabold text-ink-700 dark:text-ink-300 mb-1">
                   Tên Cửa hàng / Dịch vụ / Số Căn Hộ
                 </label>
                 <input
@@ -489,12 +489,12 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
                   value={storeName}
                   onChange={e => setStoreName(e.target.value)}
                   placeholder="Ví dụ: Bún Chả Cụ Bà - Căn S2.12"
-                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="w-full p-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-ink-900 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-extrabold text-ink-700 dark:text-ink-300 mb-1">
                   Ghi chú thêm cho Admin (Thời gian liên hệ, yêu cầu xuất HĐ...)
                 </label>
                 <textarea
@@ -502,18 +502,18 @@ export const ServicePricingModal: React.FC<ServicePricingModalProps> = ({
                   value={orderNote}
                   onChange={e => setOrderNote(e.target.value)}
                   placeholder="Nhập ghi chú yêu cầu..."
-                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="w-full p-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-ink-900 dark:text-white"
                 />
               </div>
 
-              <div className="bg-amber-50 dark:bg-amber-950/40 p-3 rounded-xl border border-amber-200 dark:border-amber-800/60 text-[11px] text-amber-900 dark:text-amber-200">
-                <strong>💡 Lưu ý:</strong> Sau khi bấm gửi đăng ký, Admin Chợ Cư Dân 24h sẽ gọi xác nhận &amp; hướng dẫn kích hoạt nhanh trong vòng 5-15 phút.
+              <div className="bg-brand-50 dark:bg-brand-950/40 p-3 rounded-xl border border-brand-200 dark:border-brand-800/60 text-[11px] text-brand-900 dark:text-brand-200">
+                <strong> Lưu ý:</strong> Sau khi bấm gửi đăng ký, Admin Chợ Cư Dân 24h sẽ gọi xác nhận &amp; hướng dẫn kích hoạt nhanh trong vòng 5-15 phút.
               </div>
 
               <button
                 type="submit"
                 disabled={submittingOrder}
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
+                className="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-black rounded-xl text-xs uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 <span>{submittingOrder ? 'ĐANG GỬI ĐĂNG KÝ...' : 'XÁC NHẬN GỬI ĐĂNG KÝ GÓI'}</span>

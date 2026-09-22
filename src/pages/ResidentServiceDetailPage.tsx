@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   Wrench, Phone, MessageCircle, Star, BadgeCheck, ShieldCheck, 
@@ -45,15 +45,15 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
   if (!service) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center space-y-4">
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-black text-ink-900 dark:text-white">
           Không tìm thấy dịch vụ
         </h1>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-ink-500">
           Dịch vụ cư dân có thể đã ngừng cung cấp hoặc đã cập nhật thông tin mới.
         </p>
         <Link
           to="/dich-vu-cu-dan"
-          className="inline-block px-6 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs shadow-md"
+          className="inline-block px-6 py-2.5 bg-brand-500 text-ink-950 font-bold rounded-xl text-xs shadow-md"
         >
           Xem Danh Mục Dịch Vụ Cư Dân
         </Link>
@@ -86,7 +86,7 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={`${service.title} - Dịch Vụ Cư Dân Vinhomes`}
         description={`${service.title}. Đơn vị: ${service.providerName}. Báo giá: ${service.priceDisplay}. Hotline: ${service.providerPhone}. ${service.description?.substring(0, 120)}`}
@@ -96,19 +96,19 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
       />
 
       {/* Breadcrumbs */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
-            <Link to="/" className="hover:text-amber-500 flex items-center gap-1">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
+            <Link to="/" className="hover:text-brand-500 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to="/dich-vu-cu-dan" className="hover:text-amber-500">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to="/dich-vu-cu-dan" className="hover:text-brand-500">
               Dịch Vụ Cư Dân
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <span className="text-slate-900 dark:text-white font-bold truncate">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <span className="text-ink-900 dark:text-white font-bold truncate">
               {service.title}
             </span>
           </nav>
@@ -123,9 +123,9 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
           {/* Main 2 Cols */}
           <div className="md:col-span-2 space-y-6">
             
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5">
+            <div className="bg-white dark:bg-ink-900 rounded-3xl p-6 border border-ink-200 dark:border-ink-800 shadow-xl space-y-5">
               
-              <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-950 relative">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-ink-950 relative">
                 <img loading="lazy"
                   src={service.images && service.images[0] ? service.images[0] : ''}
                   alt={service.title}
@@ -142,38 +142,38 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-black rounded-full uppercase">
+                  <span className="px-3 py-1 bg-brand-500/10 text-brand-600 dark:text-brand-400 text-xs font-black rounded-full uppercase">
                     {service.subCategory || 'Dịch Vụ Chuyên Nghiệp'}
                   </span>
                   
-                  <div className="flex items-center gap-1 text-amber-500 font-black text-sm">
-                    <Star className="w-4 h-4 fill-amber-400" />
+                  <div className="flex items-center gap-1 text-brand-500 font-black text-sm">
+                    <Star className="w-4 h-4 fill-brand-400" />
                     <span>{service.rating || 5.0} ({service.reviewCount || 1} đánh giá)</span>
                   </div>
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                <h1 className="text-2xl sm:text-3xl font-black text-ink-900 dark:text-white leading-tight">
                   {service.title}
                 </h1>
 
-                <div className="text-lg font-black text-emerald-600 dark:text-emerald-400">
+                <div className="text-lg font-black text-brand-600 dark:text-brand-400">
                   {service.priceDisplay || 'Liên hệ báo giá'}
                 </div>
               </div>
 
               {/* Description */}
-              <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <h2 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wide">
+              <div className="space-y-3 pt-4 border-t border-ink-100 dark:border-ink-800">
+                <h2 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wide">
                   Chi Tiết & Quy Trình Dịch Vụ
                 </h2>
-                <div className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl">
+                <div className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line bg-ink-50 dark:bg-ink-800/40 p-5 rounded-2xl">
                   {service.description || 'Dịch vụ chất lượng cao phục vụ cư dân tại khu đô thị Vinhomes. Cam kết đúng hẹn, giá cả minh bạch và bảo hành dài hạn.'}
                 </div>
 
                 {/* Hashtag exploration pills */}
                 <div className="pt-2 flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
-                    <Hash className="w-3.5 h-3.5 text-amber-500" /> Chủ đề liên quan:
+                  <span className="text-xs font-bold text-ink-400 flex items-center gap-1">
+                    <Hash className="w-3.5 h-3.5 text-brand-500" /> Chủ đề liên quan:
                   </span>
                   {[
                     service.projectScope ? service.projectScope.replace(/-/g, '_') : 'ocean_park_2',
@@ -187,7 +187,7 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
                       onClick={() => {
                         window.dispatchEvent(new CustomEvent('chocudan_explore_hashtag', { detail: { tag } }));
                       }}
-                      className="px-2.5 py-1 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-500/20 hover:border-amber-500 hover:bg-amber-100 dark:hover:bg-amber-900/60 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-0.5"
+                      className="px-2.5 py-1 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border border-brand-500/20 hover:border-brand-500 hover:bg-brand-100 dark:hover:bg-brand-900/60 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-0.5"
                     >
                       <span>#{tag}</span>
                     </button>
@@ -202,20 +202,20 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
           {/* Right Col: Provider & Direct Booking Form */}
           <div className="space-y-6 md:sticky md:top-24">
             
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5">
+            <div className="bg-white dark:bg-ink-900 rounded-3xl p-6 border border-ink-200 dark:border-ink-800 shadow-xl space-y-5">
               
-              <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100 dark:border-slate-800">
-                <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-950 font-black text-lg shadow-md shrink-0">
+              <div className="flex items-center gap-3.5 pb-4 border-b border-ink-100 dark:border-ink-800">
+                <div className="w-12 h-12 bg-brand-500 rounded-2xl flex items-center justify-center text-ink-950 font-black text-lg shadow-md shrink-0">
                   {service.providerName ? service.providerName.charAt(0).toUpperCase() : 'DV'}
                 </div>
                 <div>
                   <div className="flex items-center gap-1">
-                    <span className="font-black text-slate-900 dark:text-white text-sm">
+                    <span className="font-black text-ink-900 dark:text-white text-sm">
                       {service.providerName || 'Nhà Cung Cấp Dịch Vụ'}
                     </span>
                     {isVerified && <BadgeCheck className="w-4 h-4 text-blue-500" />}
                   </div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                  <span className="text-xs text-ink-500 dark:text-ink-400">
                     Đối tác dịch vụ nội khu
                   </span>
                 </div>
@@ -226,7 +226,7 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
                 <a
                   href={`tel:${service.providerPhone}`}
                   onClick={() => recordZaloInteraction()}
-                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition"
+                  className="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-black rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition"
                 >
                   <Phone className="w-4 h-4" />
                   <span>GỌI THỢ: {service.providerPhone}</span>
@@ -245,18 +245,18 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
               </div>
 
               {/* Fast Booking Box */}
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
-                <h3 className="font-black text-slate-900 dark:text-white text-xs uppercase tracking-wide">
+              <div className="pt-4 border-t border-ink-100 dark:border-ink-800 space-y-3">
+                <h3 className="font-black text-ink-900 dark:text-white text-xs uppercase tracking-wide">
                   Đặt Lịch Làm Dịch Vụ
                 </h3>
 
                 {bookingDone ? (
-                  <div className="p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-500/40 rounded-xl text-center space-y-1">
-                    <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
-                    <span className="font-black text-emerald-700 dark:text-emerald-400 text-xs block">
+                  <div className="p-4 bg-brand-50 dark:bg-brand-950/60 border border-brand-500/40 rounded-xl text-center space-y-1">
+                    <CheckCircle2 className="w-6 h-6 text-brand-500 mx-auto" />
+                    <span className="font-black text-brand-700 dark:text-brand-400 text-xs block">
                       ĐÃ GỬI YÊU CẦU ĐẶT LỊCH!
                     </span>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-ink-500">
                       Nhà cung cấp sẽ gọi điện cho bạn trong 5 phút.
                     </p>
                   </div>
@@ -268,7 +268,7 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
                       placeholder="Họ tên của bạn *"
                       value={clientName}
                       onChange={e => setClientName(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white outline-hidden"
+                      className="w-full px-3 py-2 rounded-xl border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-xs font-semibold text-ink-900 dark:text-white outline-hidden"
                     />
                     <input
                       type="tel"
@@ -276,25 +276,25 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
                       placeholder="Số điện thoại liên hệ *"
                       value={clientPhone}
                       onChange={e => setClientPhone(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white outline-hidden"
+                      className="w-full px-3 py-2 rounded-xl border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-xs font-semibold text-ink-900 dark:text-white outline-hidden"
                     />
                     <input
                       type="text"
                       placeholder="Số căn / Phân khu Vinhomes"
                       value={clientAddress}
                       onChange={e => setClientAddress(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white outline-hidden"
+                      className="w-full px-3 py-2 rounded-xl border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-xs font-semibold text-ink-900 dark:text-white outline-hidden"
                     />
                     <textarea
                       placeholder="Mô tả công việc cần làm..."
                       rows={2}
                       value={clientNote}
                       onChange={e => setClientNote(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white outline-hidden"
+                      className="w-full px-3 py-2 rounded-xl border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 text-xs font-semibold text-ink-900 dark:text-white outline-hidden"
                     />
                     <button
                       type="submit"
-                      className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wide transition shadow-sm cursor-pointer"
+                      className="w-full py-2.5 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black rounded-xl text-xs uppercase tracking-wide transition shadow-sm cursor-pointer"
                     >
                       GỬI YÊU CẦU DỊCH VỤ
                     </button>

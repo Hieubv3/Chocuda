@@ -120,14 +120,14 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
       {
         id: 'welcome-1',
         sender: 'bot',
-        text: `Dạ em chào Anh/Chị! Em là Trợ Lý AI Chợ Cư Dân 24H (Hotline/Zalo: 0868.499.929).\n\nEm hỗ trợ Anh/Chị:\n1. 🍲 Đặt Cơm, Cafe, Trà sữa & Đồ ăn vặt (Giao tận cửa 15-20 phút)\n2. 📦 Đặt Hàng Vật Lý, Bách hóa & Nông sản sạch từ Gian Hàng Cư Dân\n3. 🚗 Đặt Xe Buggy / Taxi Sân Bay 24/7\n4. 🛠️ Gọi Thợ Sửa Điện Nước, Máy Tính, Thang Máy\n5. 🏠 Mua bán & Cho thuê BĐS Vinhomes chính chủ\n\nAnh/Chị muốn đặt dịch vụ nào hoặc cần em hỗ trợ gì ạ?`,
+        text: `Dạ em chào Anh/Chị! Em là Trợ Lý AI Chợ Cư Dân 24H (Hotline/Zalo: 0868.499.929).\n\nEm hỗ trợ Anh/Chị:\n1.  Đặt Cơm, Cafe, Trà sữa & Đồ ăn vặt (Giao tận cửa 15-20 phút)\n2.  Đặt Hàng Vật Lý, Bách hóa & Nông sản sạch từ Gian Hàng Cư Dân\n3.  Đặt Xe Buggy / Taxi Sân Bay 24/7\n4.  Gọi Thợ Sửa Điện Nước, Máy Tính, Thang Máy\n5.  Mua bán & Cho thuê BĐS Vinhomes chính chủ\n\nAnh/Chị muốn đặt dịch vụ nào hoặc cần em hỗ trợ gì ạ?`,
         timestamp: time,
         options: [
-          '🍲 Đặt Đồ Ăn & Cafe',
-          '📦 Đặt Hàng Vật Lý',
-          '🚗 Đặt Xe Cư Dân 24/7',
-          '🛠️ Gọi Thợ Sửa Chữa',
-          '🔍 Lọc Căn Ocean Park 2'
+          ' Đặt Đồ Ăn & Cafe',
+          ' Đặt Hàng Vật Lý',
+          ' Đặt Xe Cư Dân 24/7',
+          ' Gọi Thợ Sửa Chữa',
+          ' Lọc Căn Ocean Park 2'
         ]
       }
     ];
@@ -252,10 +252,10 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
         const confirmMsg: Message = {
           id: `ord-msg-${Date.now()}`,
           sender: 'bot',
-          text: `🎉 ĐẶT HÀNG QUA CHAT THÀNH CÔNG!\n\nMã đơn: #${placedOrder.orderCode}\nDanh mục: ${placedOrder.orderCategory}\nTổng thanh toán: ${placedOrder.totalDisplay}\nĐịa chỉ nhận: ${placedOrder.customerAddress}\n\n👉 Cửa hàng & Shipper nội khu đang chuẩn bị đơn và sẽ giao tới trong 15-20 phút. Anh/Chị có thể bấm Chat Zalo bên dưới để trao đổi trực tiếp!`,
+          text: ` ĐẶT HÀNG QUA CHAT THÀNH CÔNG!\n\nMã đơn: #${placedOrder.orderCode}\nDanh mục: ${placedOrder.orderCategory}\nTổng thanh toán: ${placedOrder.totalDisplay}\nĐịa chỉ nhận: ${placedOrder.customerAddress}\n\n Cửa hàng & Shipper nội khu đang chuẩn bị đơn và sẽ giao tới trong 15-20 phút. Anh/Chị có thể bấm Chat Zalo bên dưới để trao đổi trực tiếp!`,
           timestamp: time,
           orderCard: placedOrder,
-          options: ['📋 Xem Đơn Của Tôi', '🍲 Đặt Thêm Món Khác', '📞 Hotline 0868.499.929']
+          options: [' Xem Đơn Của Tôi', ' Đặt Thêm Món Khác', ' Hotline 0868.499.929']
         };
 
         setMessages(prev => [...prev, confirmMsg]);
@@ -281,23 +281,23 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
     const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
 
     // Handle Quick Action Clicks
-    if (query === '🍲 Đặt Đồ Ăn & Cafe' || query === '🍲 Chọn món & Đặt ngay' || query === '🍲 Đặt Cơm/Cafe' || query === '🍲 Đặt Cơm & Cafe Giao Nhanh') {
+    if (query === ' Đặt Đồ Ăn & Cafe' || query === ' Chọn món & Đặt ngay' || query === ' Đặt Cơm/Cafe' || query === ' Đặt Cơm & Cafe Giao Nhanh') {
       setActiveTab('order_food');
       return;
     }
-    if (query === '📦 Đặt Hàng Vật Lý' || query === '🛒 Đặt Hàng Vật Lý') {
+    if (query === ' Đặt Hàng Vật Lý' || query === ' Đặt Hàng Vật Lý') {
       setActiveTab('order_goods');
       return;
     }
-    if (query === '🚗 Đặt Xe Cư Dân 24/7' || query === '🚗 Đặt Xe 24/7' || query === '🚗 Đặt Xe Nội / Ngoại Khu 24/7') {
+    if (query === ' Đặt Xe Cư Dân 24/7' || query === ' Đặt Xe 24/7' || query === ' Đặt Xe Nội / Ngoại Khu 24/7') {
       setActiveTab('order_transport');
       return;
     }
-    if (query === '🛠️ Gọi Thợ Sửa Chữa' || query === '🔧 Gọi Thợ Cư Dân' || query === '🔧 Gọi Thợ Sửa Chữa Khẩn Cấp') {
+    if (query === ' Gọi Thợ Sửa Chữa' || query === ' Gọi Thợ Cư Dân' || query === ' Gọi Thợ Sửa Chữa Khẩn Cấp') {
       setActiveTab('order_repair');
       return;
     }
-    if (query === '📋 Xem Đơn Của Tôi') {
+    if (query === ' Xem Đơn Của Tôi') {
       setActiveTab('my_orders');
       return;
     }
@@ -341,7 +341,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
           sender: 'bot',
           text: `Dạ em đã ghi nhận thông tin từ Anh/Chị! Anh/Chị có thể đặt món ăn, đồ uống, xe di chuyển hoặc gọi thợ ngay bằng các nút bên dưới ạ.`,
           timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-          options: ['🍲 Đặt Đồ Ăn & Cafe', '📦 Đặt Hàng Vật Lý', '🚗 Đặt Xe Cư Dân 24/7', '🛠️ Gọi Thợ Sửa Chữa']
+          options: [' Đặt Đồ Ăn & Cafe', ' Đặt Hàng Vật Lý', ' Đặt Xe Cư Dân 24/7', ' Gọi Thợ Sửa Chữa']
         };
         setMessages(prev => [...prev, botMsg]);
         setIsTyping(false);
@@ -357,16 +357,16 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 md:bottom-6 left-6 z-40 flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-4 py-2.5 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 border border-white/30 group cursor-pointer"
+          className="fixed bottom-24 md:bottom-6 left-6 z-40 flex items-center gap-2 bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-500 hover:to-teal-500 text-white px-4 py-2.5 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 border border-white/30 group cursor-pointer"
           title="Trợ lý AI BĐS & Đặt Dịch Vụ Cư Dân 24/7"
         >
           <div className="relative flex items-center justify-center">
-            <Bot className="w-4 h-4 text-emerald-100 group-hover:rotate-12 transition-transform" />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full" />
+            <Bot className="w-4 h-4 text-brand-100 group-hover:rotate-12 transition-transform" />
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-brand-400 rounded-full" />
           </div>
           <span className="font-extrabold text-xs tracking-tight">Tư Vấn &amp; Đặt Hàng AI</span>
           {myOrders.length > 0 && (
-            <span className="bg-amber-400 text-slate-950 font-black text-[10px] px-1.5 py-0.2 rounded-full">
+            <span className="bg-brand-400 text-ink-950 font-black text-[10px] px-1.5 py-0.2 rounded-full">
               {myOrders.length}
             </span>
           )}
@@ -375,21 +375,21 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
 
       {/* Chatbot Window Modal */}
       {isOpen && (
-        <div className="fixed inset-y-0 left-0 sm:top-auto sm:bottom-6 sm:left-6 sm:right-auto sm:h-[640px] w-full sm:w-[440px] z-50 bg-white dark:bg-slate-900 sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+        <div className="fixed inset-y-0 left-0 sm:top-auto sm:bottom-6 sm:left-6 sm:right-auto sm:h-[640px] w-full sm:w-[440px] z-50 bg-white dark:bg-ink-900 sm:rounded-3xl shadow-2xl border border-ink-200 dark:border-ink-800 flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
           
           {/* Header */}
-          <div className="bg-slate-900 text-white p-3.5 border-b border-slate-800 flex items-center justify-between">
+          <div className="bg-ink-900 text-white p-3.5 border-b border-ink-800 flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="relative p-2 bg-emerald-600 rounded-2xl shadow-inner">
+              <div className="relative p-2 bg-brand-600 rounded-2xl shadow-inner">
                 <Bot className="w-5 h-5 text-white" />
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-slate-900 rounded-full" />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-brand-400 border-2 border-ink-900 rounded-full" />
               </div>
               <div>
-                <h3 className="font-extrabold text-xs text-emerald-400 tracking-wide flex items-center gap-1">
+                <h3 className="font-extrabold text-xs text-brand-400 tracking-wide flex items-center gap-1">
                   CHỢ CƯ DÂN 24H AI
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-brand-400" />
                 </h3>
-                <p className="text-[10px] text-slate-300">Đặt món ăn, cafe, gọi xe &amp; thợ sửa 24/7</p>
+                <p className="text-[10px] text-ink-300">Đặt món ăn, cafe, gọi xe &amp; thợ sửa 24/7</p>
               </div>
             </div>
             
@@ -397,15 +397,15 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
               {myOrders.length > 0 && (
                 <button
                   onClick={() => setActiveTab(activeTab === 'my_orders' ? 'chat' : 'my_orders')}
-                  className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-xl text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-emerald-500/30"
+                  className="px-2.5 py-1 bg-brand-500/20 text-brand-300 border border-brand-500/40 rounded-xl text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-brand-500/30"
                 >
-                  <Package className="w-3 h-3 text-amber-300" />
+                  <Package className="w-3 h-3 text-brand-300" />
                   <span>Đơn: {myOrders.length}</span>
                 </button>
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition cursor-pointer"
+                className="p-1.5 text-ink-400 hover:text-white bg-ink-800 hover:bg-ink-700 rounded-xl transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -413,29 +413,29 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
           </div>
 
           {/* Quick Service Ordering Tabs */}
-          <div className="bg-slate-100 dark:bg-slate-950 p-1.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-1 overflow-x-auto scrollbar-none text-[10px] font-bold">
+          <div className="bg-ink-100 dark:bg-ink-950 p-1.5 border-b border-ink-200 dark:border-ink-800 flex items-center gap-1 overflow-x-auto scrollbar-none text-[10px] font-bold">
             <button
               onClick={() => setActiveTab('chat')}
               className={`px-2.5 py-1.5 rounded-xl transition whitespace-nowrap shrink-0 flex items-center gap-1 cursor-pointer ${
                 activeTab === 'chat'
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  ? 'bg-brand-600 text-white shadow-xs'
+                  : 'text-ink-600 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-800'
               }`}
             >
               <MessageSquare className="w-3 h-3" />
-              <span>💬 Chat AI</span>
+              <span> Chat AI</span>
             </button>
 
             <button
               onClick={() => setActiveTab('order_food')}
               className={`px-2.5 py-1.5 rounded-xl transition whitespace-nowrap shrink-0 flex items-center gap-1 cursor-pointer ${
                 activeTab === 'order_food'
-                  ? 'bg-amber-500 text-slate-950 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  ? 'bg-brand-500 text-ink-950 shadow-xs'
+                  : 'text-ink-600 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-800'
               }`}
             >
-              <Utensils className="w-3 h-3 text-amber-500" />
-              <span>🍲 Cơm &amp; Cafe</span>
+              <Utensils className="w-3 h-3 text-brand-500" />
+              <span> Cơm &amp; Cafe</span>
             </button>
 
             <button
@@ -443,11 +443,11 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
               className={`px-2.5 py-1.5 rounded-xl transition whitespace-nowrap shrink-0 flex items-center gap-1 cursor-pointer ${
                 activeTab === 'order_goods'
                   ? 'bg-purple-600 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  : 'text-ink-600 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-800'
               }`}
             >
               <ShoppingBag className="w-3 h-3" />
-              <span>📦 Hàng Vật Lý</span>
+              <span> Hàng Vật Lý</span>
             </button>
 
             <button
@@ -455,11 +455,11 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
               className={`px-2.5 py-1.5 rounded-xl transition whitespace-nowrap shrink-0 flex items-center gap-1 cursor-pointer ${
                 activeTab === 'order_transport'
                   ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  : 'text-ink-600 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-800'
               }`}
             >
               <Car className="w-3 h-3" />
-              <span>🚗 Đặt Xe 24/7</span>
+              <span> Đặt Xe 24/7</span>
             </button>
 
             <button
@@ -467,17 +467,17 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
               className={`px-2.5 py-1.5 rounded-xl transition whitespace-nowrap shrink-0 flex items-center gap-1 cursor-pointer ${
                 activeTab === 'order_repair'
                   ? 'bg-rose-600 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  : 'text-ink-600 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-800'
               }`}
             >
               <Wrench className="w-3 h-3" />
-              <span>🛠️ Gọi Thợ</span>
+              <span> Gọi Thợ</span>
             </button>
           </div>
 
           {/* TAB 1: REGULAR CHAT MESSAGES BODY */}
           {activeTab === 'chat' && (
-            <div className="flex-1 p-3.5 overflow-y-auto space-y-3.5 text-xs bg-slate-50/50 dark:bg-slate-900/50">
+            <div className="flex-1 p-3.5 overflow-y-auto space-y-3.5 text-xs bg-ink-50/50 dark:bg-ink-900/50">
               {messages.map((msg) => (
                 <div
                   key={msg.id}
@@ -485,41 +485,41 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                 >
                   <div className="flex items-end gap-1.5 max-w-[92%]">
                     {msg.sender === 'bot' && (
-                      <div className="p-1 bg-emerald-600 text-white rounded-lg shrink-0 mb-1">
+                      <div className="p-1 bg-brand-600 text-white rounded-lg shrink-0 mb-1">
                         <Bot className="w-3.5 h-3.5" />
                       </div>
                     )}
                     <div
                       className={`p-3 rounded-2xl leading-relaxed whitespace-pre-line shadow-xs ${
                         msg.sender === 'user'
-                          ? 'bg-emerald-600 text-white font-medium rounded-br-xs'
-                          : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700/80 rounded-bl-xs'
+                          ? 'bg-brand-600 text-white font-medium rounded-br-xs'
+                          : 'bg-white dark:bg-ink-800 text-ink-800 dark:text-ink-100 border border-ink-200 dark:border-ink-700/80 rounded-bl-xs'
                       }`}
                     >
                       {msg.text}
 
                       {/* Render Order Confirmation Receipt Card if present */}
                       {msg.orderCard && (
-                        <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700 rounded-xl space-y-2 text-slate-900 dark:text-emerald-100">
-                          <div className="flex items-center justify-between border-b border-emerald-200 dark:border-emerald-800 pb-1.5 font-bold text-[11px]">
-                            <span className="text-emerald-700 dark:text-emerald-300">🧾 ĐƠN HÀNG #{msg.orderCard.orderCode}</span>
-                            <span className="px-2 py-0.5 bg-emerald-600 text-white rounded text-[10px] font-black uppercase">
+                        <div className="mt-3 p-3 bg-brand-50 dark:bg-brand-950/60 border border-brand-300 dark:border-brand-700 rounded-xl space-y-2 text-ink-900 dark:text-brand-100">
+                          <div className="flex items-center justify-between border-b border-brand-200 dark:border-brand-800 pb-1.5 font-bold text-[11px]">
+                            <span className="text-brand-700 dark:text-brand-300"> ĐƠN HÀNG #{msg.orderCard.orderCode}</span>
+                            <span className="px-2 py-0.5 bg-brand-600 text-white rounded text-[10px] font-black uppercase">
                               {msg.orderCard.status === 'confirmed' ? 'Đã Nhận Đơn' : 'Đang Chuẩn Bị'}
                             </span>
                           </div>
 
                           <div className="space-y-1 text-[11px]">
                             {msg.orderCard.items.map((it, idx) => (
-                              <div key={idx} className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                              <div key={idx} className="flex items-center justify-between text-ink-700 dark:text-ink-300">
                                 <span>• {it.name} (x{it.quantity})</span>
                                 <span className="font-bold">{it.priceDisplay}</span>
                               </div>
                             ))}
                           </div>
 
-                          <div className="flex items-center justify-between font-black text-xs pt-1 border-t border-emerald-200 dark:border-emerald-800">
+                          <div className="flex items-center justify-between font-black text-xs pt-1 border-t border-brand-200 dark:border-brand-800">
                             <span>Tổng Tiền:</span>
-                            <span className="text-emerald-600 dark:text-emerald-400 text-sm">{msg.orderCard.totalDisplay}</span>
+                            <span className="text-brand-600 dark:text-brand-400 text-sm">{msg.orderCard.totalDisplay}</span>
                           </div>
 
                           <div className="pt-1.5 flex gap-2">
@@ -538,7 +538,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                     </div>
                   </div>
 
-                  <span className="text-[9px] text-slate-400 mt-1 px-1">{msg.timestamp}</span>
+                  <span className="text-[9px] text-ink-400 mt-1 px-1">{msg.timestamp}</span>
 
                   {/* Suggested Options Chips */}
                   {msg.options && msg.options.length > 0 && (
@@ -547,9 +547,9 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                         <button
                           key={idx}
                           onClick={() => handleSendMessage(opt)}
-                          className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-xl transition text-left flex items-center gap-1 active:scale-95 cursor-pointer"
+                          className="text-[11px] font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/60 hover:bg-brand-100 dark:hover:bg-brand-900 border border-brand-200 dark:border-brand-800 px-2.5 py-1 rounded-xl transition text-left flex items-center gap-1 active:scale-95 cursor-pointer"
                         >
-                          <ChevronRight className="w-3 h-3 shrink-0 text-emerald-500" />
+                          <ChevronRight className="w-3 h-3 shrink-0 text-brand-500" />
                           <span>{opt}</span>
                         </button>
                       ))}
@@ -559,8 +559,8 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
               ))}
 
               {isTyping && (
-                <div className="flex items-center space-x-2 text-slate-400 text-xs italic p-2 bg-white dark:bg-slate-800 rounded-xl w-32 border border-slate-200 dark:border-slate-700">
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-500" />
+                <div className="flex items-center space-x-2 text-ink-400 text-xs italic p-2 bg-white dark:bg-ink-800 rounded-xl w-32 border border-ink-200 dark:border-ink-700">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-brand-500" />
                   <span>AI đang soạn...</span>
                 </div>
               )}
@@ -570,21 +570,21 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
 
           {/* TAB 2, 3, 4, 5: IN-CHAT ORDERING CATALOGS & FORMS */}
           {activeTab !== 'chat' && activeTab !== 'my_orders' && (
-            <div className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-slate-50 dark:bg-slate-900/50 text-xs">
+            <div className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-ink-50 dark:bg-ink-900/50 text-xs">
               {/* Category Intro Header */}
-              <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+              <div className="flex items-center justify-between bg-white dark:bg-ink-800 p-2.5 rounded-2xl border border-ink-200 dark:border-ink-700 shadow-xs">
                 <div>
-                  <h4 className="font-black text-slate-900 dark:text-white flex items-center gap-1.5">
-                    {activeTab === 'order_food' && <>🍲 ĐẶT ĐỒ ĂN &amp; CAFE CƯ DÂN</>}
-                    {activeTab === 'order_goods' && <>📦 ĐẶT HÀNG VẬT LÝ &amp; BÁCH HÓA</>}
-                    {activeTab === 'order_transport' && <>🚗 ĐẶT XE CƯ DÂN 24/7</>}
-                    {activeTab === 'order_repair' && <>🛠️ GỌI THỢ KỸ THUẬT CƯ DÂN</>}
+                  <h4 className="font-black text-ink-900 dark:text-white flex items-center gap-1.5">
+                    {activeTab === 'order_food' && <> ĐẶT ĐỒ ĂN &amp; CAFE CƯ DÂN</>}
+                    {activeTab === 'order_goods' && <> ĐẶT HÀNG VẬT LÝ &amp; BÁCH HÓA</>}
+                    {activeTab === 'order_transport' && <> ĐẶT XE CƯ DÂN 24/7</>}
+                    {activeTab === 'order_repair' && <> GỌI THỢ KỸ THUẬT CƯ DÂN</>}
                   </h4>
-                  <p className="text-[10px] text-slate-500">Phục vụ nội khu trong 15-20 phút • Phí sàn 0%</p>
+                  <p className="text-[10px] text-ink-500">Phục vụ nội khu trong 15-20 phút • Phí sàn 0%</p>
                 </div>
                 <button
                   onClick={() => setActiveTab('chat')}
-                  className="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-[10px] font-bold"
+                  className="px-2 py-1 bg-ink-100 dark:bg-ink-700 text-ink-700 dark:text-ink-200 rounded-lg text-[10px] font-bold"
                 >
                   Quay lại Chat
                 </button>
@@ -592,9 +592,9 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
 
               {/* Product / Menu Catalog Cards */}
               <div className="space-y-2">
-                <div className="font-bold text-slate-700 dark:text-slate-300 text-[11px] flex items-center justify-between">
+                <div className="font-bold text-ink-700 dark:text-ink-300 text-[11px] flex items-center justify-between">
                   <span>Chọn món / dịch vụ muốn đặt:</span>
-                  <span className="text-[10px] text-emerald-600 font-extrabold">
+                  <span className="text-[10px] text-brand-600 font-extrabold">
                     Đã chọn {Object.values(selectedItems).reduce((s: number, i: { item: ChatOrderItem; quantity: number }) => s + i.quantity, 0)} món
                   </span>
                 </div>
@@ -605,7 +605,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                     activeTab === 'order_transport' ? DEFAULT_TRANSPORT_CATALOG :
                     DEFAULT_REPAIR_CATALOG
                   ).length === 0 ? (
-                    <div className="p-4 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 text-center text-[11px] text-slate-400 font-bold">
+                    <div className="p-4 rounded-2xl border border-dashed border-ink-300 dark:border-ink-700 text-center text-[11px] text-ink-400 font-bold">
                       Chưa có sản phẩm/dịch vụ nào được đăng ký. Vui lòng quay lại sau.
                     </div>
                   ) : (
@@ -621,36 +621,36 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                         key={item.id}
                         className={`p-2.5 rounded-2xl border transition flex items-center justify-between gap-2.5 ${
                           qty > 0
-                            ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-700 shadow-xs'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/80 hover:border-slate-300'
+                            ? 'bg-brand-50/80 dark:bg-brand-950/40 border-brand-400 dark:border-brand-700 shadow-xs'
+                            : 'bg-white dark:bg-ink-800 border-ink-200 dark:border-ink-700/80 hover:border-ink-300'
                         }`}
                       >
                         {item.image && (
                           <img loading="lazy" src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover shrink-0" />
                         )}
                         <div className="flex-1 min-w-0">
-                          <h5 className="font-extrabold text-slate-900 dark:text-white text-xs truncate">{item.name}</h5>
-                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-black">
-                            {item.priceDisplay} <span className="text-slate-400 font-normal">/ {item.unit}</span>
+                          <h5 className="font-extrabold text-ink-900 dark:text-white text-xs truncate">{item.name}</h5>
+                          <span className="text-[10px] text-brand-600 dark:text-brand-400 font-black">
+                            {item.priceDisplay} <span className="text-ink-400 font-normal">/ {item.unit}</span>
                           </span>
                         </div>
 
                         {/* Quantity Counter Controls */}
                         <div className="flex items-center gap-1.5 shrink-0">
                           {qty > 0 ? (
-                            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div className="flex items-center gap-1 bg-white dark:bg-ink-900 p-1 rounded-xl border border-ink-200 dark:border-ink-700">
                               <button
                                 type="button"
                                 onClick={() => removeItemFromCart(item.id)}
-                                className="w-6 h-6 bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 text-slate-700 dark:text-slate-200 hover:text-rose-600 rounded-lg flex items-center justify-center font-black cursor-pointer"
+                                className="w-6 h-6 bg-ink-100 dark:bg-ink-800 hover:bg-rose-100 text-ink-700 dark:text-ink-200 hover:text-rose-600 rounded-lg flex items-center justify-center font-black cursor-pointer"
                               >
                                 <Minus className="w-3 h-3" />
                               </button>
-                              <span className="w-5 text-center font-black text-xs text-slate-900 dark:text-white">{qty}</span>
+                              <span className="w-5 text-center font-black text-xs text-ink-900 dark:text-white">{qty}</span>
                               <button
                                 type="button"
                                 onClick={() => addItemToCart(item)}
-                                className="w-6 h-6 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg flex items-center justify-center font-black cursor-pointer"
+                                className="w-6 h-6 bg-brand-600 hover:bg-brand-500 text-white rounded-lg flex items-center justify-center font-black cursor-pointer"
                               >
                                 <Plus className="w-3 h-3" />
                               </button>
@@ -659,7 +659,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                             <button
                               type="button"
                               onClick={() => addItemToCart(item)}
-                              className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-[11px] flex items-center gap-1 transition cursor-pointer"
+                              className="px-2.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-[11px] flex items-center gap-1 transition cursor-pointer"
                             >
                               <Plus className="w-3 h-3" />
                               <span>Chọn</span>
@@ -674,8 +674,8 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
               </div>
 
               {/* Custom Item Request Text input */}
-              <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1.5">
-                <label className="block font-bold text-slate-700 dark:text-slate-300 text-[11px]">
+              <div className="bg-white dark:bg-ink-800 p-3 rounded-2xl border border-ink-200 dark:border-ink-700 space-y-1.5">
+                <label className="block font-bold text-ink-700 dark:text-ink-300 text-[11px]">
                   Hoặc tự gõ món / sản phẩm khác theo ý muốn:
                 </label>
                 <input
@@ -683,14 +683,14 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                   value={customItemText}
                   onChange={(e) => setCustomItemText(e.target.value)}
                   placeholder="VD: 2 suất bún chả + 1 lon coca lạnh..."
-                  className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                  className="w-full p-2 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs"
                 />
               </div>
 
               {/* Recipient Information Form */}
-              <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
-                <div className="font-bold text-slate-900 dark:text-white text-[11px] flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-500" />
+              <div className="bg-white dark:bg-ink-800 p-3 rounded-2xl border border-ink-200 dark:border-ink-700 space-y-2">
+                <div className="font-bold text-ink-900 dark:text-white text-[11px] flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-brand-500" />
                   <span>Thông tin nhận hàng &amp; Giao tận căn:</span>
                 </div>
 
@@ -701,7 +701,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                     value={orderCustomerName}
                     onChange={(e) => setOrderCustomerName(e.target.value)}
                     placeholder="Họ tên người nhận (*)"
-                    className="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium"
+                    className="p-2 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs font-medium"
                   />
                   <input
                     type="tel"
@@ -709,7 +709,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                     value={orderCustomerPhone}
                     onChange={(e) => setOrderCustomerPhone(e.target.value)}
                     placeholder="Số ĐT / Zalo (*)"
-                    className="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold"
+                    className="p-2 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs font-bold"
                   />
                 </div>
 
@@ -719,7 +719,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                   value={orderCustomerAddress}
                   onChange={(e) => setOrderCustomerAddress(e.target.value)}
                   placeholder="Căn hộ / Tòa nhà (VD: Tòa S2.12 - Căn 1806 Ocean Park 1)"
-                  className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold"
+                  className="w-full p-2 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs font-bold"
                 />
 
                 <input
@@ -727,15 +727,15 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                   value={orderNote}
                   onChange={(e) => setOrderNote(e.target.value)}
                   placeholder="Ghi chú giao (VD: ít cay, giao trước 12h, gọi trước khi lên...)"
-                  className="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                  className="w-full p-2 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs"
                 />
               </div>
 
               {/* Total & Submit Button */}
-              <div className="sticky bottom-0 bg-white dark:bg-slate-900 pt-2 pb-1 border-t border-slate-200 dark:border-slate-800 space-y-2">
+              <div className="sticky bottom-0 bg-white dark:bg-ink-900 pt-2 pb-1 border-t border-ink-200 dark:border-ink-800 space-y-2">
                 <div className="flex items-center justify-between font-black text-xs px-1">
-                  <span className="text-slate-600 dark:text-slate-400">Tạm tính:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 text-sm">
+                  <span className="text-ink-600 dark:text-ink-400">Tạm tính:</span>
+                  <span className="text-brand-600 dark:text-brand-400 text-sm">
                     {calculateTotal().toLocaleString()}đ
                   </span>
                 </div>
@@ -754,14 +754,14 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                       'technical_service';
                     handleConfirmOrder(catName, itemType);
                   }}
-                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-black rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2.5 bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-black rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   {isSubmittingOrder ? (
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                   ) : (
                     <>
-                      <CheckCircle2 className="w-4 h-4 text-amber-300" />
-                      <span>🚀 XÁC NHẬN ĐẶT HÀNG QUA CHAT</span>
+                      <CheckCircle2 className="w-4 h-4 text-brand-300" />
+                      <span> XÁC NHẬN ĐẶT HÀNG QUA CHAT</span>
                     </>
                   )}
                 </button>
@@ -771,30 +771,30 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
 
           {/* TAB 6: MY ACTIVE & PREVIOUS ORDERS */}
           {activeTab === 'my_orders' && (
-            <div className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-slate-50 dark:bg-slate-900/50 text-xs">
+            <div className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-ink-50 dark:bg-ink-900/50 text-xs">
               <div className="flex items-center justify-between">
-                <h4 className="font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <Package className="w-4 h-4 text-emerald-500" />
+                <h4 className="font-extrabold text-ink-900 dark:text-white flex items-center gap-1.5">
+                  <Package className="w-4 h-4 text-brand-500" />
                   <span>DANH SÁCH ĐƠN HÀNG CỦA TÔI</span>
                 </h4>
                 <button
                   onClick={() => setActiveTab('chat')}
-                  className="text-[11px] font-bold text-emerald-600 hover:underline"
+                  className="text-[11px] font-bold text-brand-600 hover:underline"
                 >
                   Quay lại Chat
                 </button>
               </div>
 
               {myOrders.length === 0 ? (
-                <div className="p-8 text-center bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 space-y-2">
-                  <ShoppingBag className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-                  <p className="font-bold text-slate-700 dark:text-slate-300">Chưa có đơn hàng nào</p>
-                  <p className="text-[11px] text-slate-400">Hãy chọn tab Đồ ăn, Hàng vật lý hoặc Đặt xe để đặt nhanh qua Chat nhé!</p>
+                <div className="p-8 text-center bg-white dark:bg-ink-800 rounded-3xl border border-ink-200 dark:border-ink-700 space-y-2">
+                  <ShoppingBag className="w-10 h-10 text-ink-300 dark:text-ink-600 mx-auto" />
+                  <p className="font-bold text-ink-700 dark:text-ink-300">Chưa có đơn hàng nào</p>
+                  <p className="text-[11px] text-ink-400">Hãy chọn tab Đồ ăn, Hàng vật lý hoặc Đặt xe để đặt nhanh qua Chat nhé!</p>
                   <button
                     onClick={() => setActiveTab('order_food')}
-                    className="mt-2 px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs"
+                    className="mt-2 px-4 py-2 bg-brand-600 text-white font-bold rounded-xl text-xs"
                   >
-                    🍲 Đặt món ngay
+                     Đặt món ngay
                   </button>
                 </div>
               ) : (
@@ -802,34 +802,34 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                   {myOrders.map((ord) => (
                     <div
                       key={ord.id}
-                      className="bg-white dark:bg-slate-800 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-2"
+                      className="bg-white dark:bg-ink-800 p-3.5 rounded-2xl border border-ink-200 dark:border-ink-700 shadow-xs space-y-2"
                     >
-                      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-2">
+                      <div className="flex items-center justify-between border-b border-ink-100 dark:border-ink-700 pb-2">
                         <div>
-                          <span className="font-black text-slate-900 dark:text-white text-xs">#{ord.orderCode}</span>
-                          <span className="text-[10px] text-slate-400 block">{ord.createdAt}</span>
+                          <span className="font-black text-ink-900 dark:text-white text-xs">#{ord.orderCode}</span>
+                          <span className="text-[10px] text-ink-400 block">{ord.createdAt}</span>
                         </div>
-                        <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30 rounded-full font-black text-[10px] uppercase">
+                        <span className="px-2 py-0.5 bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-full font-black text-[10px] uppercase">
                           {ord.status === 'confirmed' ? 'Đã Nhận Đơn' : ord.status === 'preparing' ? 'Đang Chuẩn Bị' : 'Hoàn Tất'}
                         </span>
                       </div>
 
                       <div className="space-y-1 text-[11px]">
                         {ord.items.map((it, idx) => (
-                          <div key={idx} className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                          <div key={idx} className="flex items-center justify-between text-ink-700 dark:text-ink-300">
                             <span>• {it.name} (x{it.quantity})</span>
                             <span className="font-bold">{it.priceDisplay}</span>
                           </div>
                         ))}
                       </div>
 
-                      <div className="flex items-center justify-between text-xs font-black pt-1.5 border-t border-slate-100 dark:border-slate-700">
-                        <span className="text-slate-500">Tổng thanh toán:</span>
-                        <span className="text-emerald-600 dark:text-emerald-400 text-sm">{ord.totalDisplay}</span>
+                      <div className="flex items-center justify-between text-xs font-black pt-1.5 border-t border-ink-100 dark:border-ink-700">
+                        <span className="text-ink-500">Tổng thanh toán:</span>
+                        <span className="text-brand-600 dark:text-brand-400 text-sm">{ord.totalDisplay}</span>
                       </div>
 
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-emerald-500 shrink-0" />
+                      <div className="text-[10px] text-ink-500 dark:text-ink-400 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-brand-500 shrink-0" />
                         <span className="truncate">{ord.customerAddress}</span>
                       </div>
 
@@ -852,13 +852,13 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
           )}
 
           {/* Quick Contact Hotline Bar */}
-          <div className="px-3 py-1.5 bg-slate-100 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
-            <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300">
-              <Building2 className="w-3 h-3 text-emerald-500" /> Chợ Cư Dân 24H Vinhomes
+          <div className="px-3 py-1.5 bg-ink-100 dark:bg-ink-950 border-t border-ink-200 dark:border-ink-800 flex items-center justify-between text-[10px] text-ink-500 font-semibold">
+            <span className="flex items-center gap-1 text-ink-700 dark:text-ink-300">
+              <Building2 className="w-3 h-3 text-brand-500" /> Chợ Cư Dân 24H Vinhomes
             </span>
             <a
               href="tel:0868499929"
-              className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-extrabold hover:underline"
+              className="flex items-center gap-1 text-brand-600 dark:text-brand-400 font-extrabold hover:underline"
             >
               <Phone className="w-3 h-3" /> 0868.499.929
             </a>
@@ -871,19 +871,19 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                 e.preventDefault();
                 handleSendMessage();
               }}
-              className="p-2.5 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2"
+              className="p-2.5 bg-white dark:bg-ink-900 border-t border-ink-200 dark:border-ink-800 flex items-center gap-2"
             >
               <input
                 type="text"
                 placeholder="Nhắn tin đặt đồ ăn, cafe, gọi xe hoặc hỏi BĐS..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                className="flex-1 p-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                className="flex-1 p-2 bg-ink-100 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-2xl text-xs text-ink-900 dark:text-white focus:outline-none focus:border-brand-500"
               />
               <button
                 type="submit"
                 disabled={!inputMessage.trim()}
-                className="p-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-2xl transition flex items-center justify-center shadow-md shrink-0 cursor-pointer"
+                className="p-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white rounded-2xl transition flex items-center justify-center shadow-md shrink-0 cursor-pointer"
               >
                 <Send className="w-4 h-4" />
               </button>

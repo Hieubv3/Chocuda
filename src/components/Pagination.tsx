@@ -40,18 +40,18 @@ export const Pagination: React.FC<PaginationProps> = ({
   }
 
   const navBtn =
-    'w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center transition disabled:opacity-40 disabled:cursor-not-allowed hover:border-emerald-400';
+    'w-8 h-8 rounded-lg border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-600 dark:text-ink-300 flex items-center justify-center transition disabled:opacity-40 disabled:cursor-not-allowed hover:border-brand-400';
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 mt-4 border-t border-slate-200 dark:border-slate-700">
-      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 mt-4 border-t border-ink-200 dark:border-ink-700">
+      <div className="flex items-center gap-2 text-xs text-ink-500 dark:text-ink-400">
         <span>
-          Hiển thị <strong className="text-slate-800 dark:text-slate-100">{from}–{to}</strong> / {total} {label}
+          Hiển thị <strong className="text-ink-800 dark:text-ink-100">{from}–{to}</strong> / {total} {label}
         </span>
         <select
           value={pageSize}
           onChange={(e) => onPageSizeChange(Number(e.target.value))}
-          className="px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer"
+          className="px-2 py-1 rounded-lg border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-xs font-bold text-ink-700 dark:text-ink-200 cursor-pointer"
           aria-label="Số bài mỗi trang"
         >
           {PAGE_SIZE_OPTIONS.map((s) => (
@@ -76,7 +76,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
           {pages.map((p, idx) =>
             p === '...' ? (
-              <span key={`e${idx}`} className="px-1.5 text-slate-400 text-xs">
+              <span key={`e${idx}`} className="px-1.5 text-ink-400 text-xs">
                 …
               </span>
             ) : (
@@ -86,8 +86,8 @@ export const Pagination: React.FC<PaginationProps> = ({
                 onClick={() => onPageChange(p)}
                 className={`min-w-8 h-8 px-2 rounded-lg text-xs font-bold border transition ${
                   p === page
-                    ? 'bg-emerald-600 text-white border-emerald-600'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-400'
+                    ? 'bg-brand-600 text-white border-brand-600'
+                    : 'bg-white dark:bg-ink-800 text-ink-600 dark:text-ink-300 border-ink-200 dark:border-ink-700 hover:border-brand-400'
                 }`}
               >
                 {p}

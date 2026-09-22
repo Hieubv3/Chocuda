@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   X, Move, Sparkles, ExternalLink, ChevronRight, ChevronLeft, 
@@ -155,7 +155,7 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
       {isCollapsed ? (
         <button
           onClick={() => setIsCollapsed(false)}
-          className="bg-gradient-to-b from-amber-500 to-rose-600 text-slate-950 font-black py-4 px-2 rounded-l-2xl shadow-2xl flex flex-col items-center gap-2 border-y border-l border-amber-300 hover:scale-105 transition cursor-pointer"
+          className="bg-gradient-to-b from-brand-500 to-rose-600 text-ink-950 font-black py-4 px-2 rounded-l-2xl shadow-2xl flex flex-col items-center gap-2 border-y border-l border-brand-300 hover:scale-105 transition cursor-pointer"
           title="Mở bảng tin quảng cáo & ưu đãi cư dân"
         >
           <ChevronLeft className="w-5 h-5 animate-bounce" />
@@ -166,13 +166,13 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
         </button>
       ) : (
         /* Full Expanded Ad Card */
-        <div className="bg-slate-900/95 backdrop-blur-md border-2 border-amber-500/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-white flex flex-col group">
+        <div className="bg-ink-900/95 backdrop-blur-md border-2 border-brand-500/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-white flex flex-col group">
           
           {/* Header Drag Handle */}
           <div
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
-            className="px-3 py-2 bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 text-slate-950 flex items-center justify-between cursor-move"
+            className="px-3 py-2 bg-gradient-to-r from-brand-500 via-rose-500 to-purple-600 text-ink-950 flex items-center justify-between cursor-move"
           >
             <div className="flex items-center gap-1.5 font-black text-[11px] tracking-tight">
               <Move className="w-3.5 h-3.5" />
@@ -180,7 +180,7 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
             </div>
 
             <div className="flex items-center gap-1">
-              <span className="text-[9px] font-black bg-slate-950 text-amber-400 px-1.5 py-0.5 rounded-full">
+              <span className="text-[9px] font-black bg-ink-950 text-brand-400 px-1.5 py-0.5 rounded-full">
                 {activeAdIndex + 1}/{rightAds.length}
               </span>
               <button
@@ -188,10 +188,10 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
                   e.stopPropagation();
                   setIsCollapsed(true);
                 }}
-                className="p-1 hover:bg-slate-950/20 rounded-md transition"
+                className="p-1 hover:bg-ink-950/20 rounded-md transition"
                 title="Thu gọn quảng cáo"
               >
-                <ChevronRight className="w-3.5 h-3.5 text-slate-950" />
+                <ChevronRight className="w-3.5 h-3.5 text-ink-950" />
               </button>
             </div>
           </div>
@@ -199,15 +199,15 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
           {/* Ad Content Banner */}
           <div
             onClick={() => handleAdClick(currentAd)}
-            className="cursor-pointer relative overflow-hidden bg-slate-950 p-2.5 space-y-2 group/ad"
+            className="cursor-pointer relative overflow-hidden bg-ink-950 p-2.5 space-y-2 group/ad"
           >
-            <div className="relative aspect-16/10 rounded-xl overflow-hidden bg-slate-800 border border-slate-700/80">
+            <div className="relative aspect-16/10 rounded-xl overflow-hidden bg-ink-800 border border-ink-700/80">
               <img loading="lazy"
                 src={currentAd.imageUrl || ''}
                 alt={currentAd.title}
                 className="w-full h-full object-cover group-hover/ad:scale-105 transition-transform duration-300"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/20 to-transparent" />
               
               {currentAd.badgeText && (
                 <span className="absolute top-2 left-2 px-2 py-0.5 bg-rose-600 text-white font-black text-[9px] uppercase tracking-wider rounded-md shadow-md">
@@ -215,23 +215,23 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
                 </span>
               )}
 
-              <span className="absolute bottom-2 right-2 text-[9px] text-amber-400 font-bold bg-slate-900/80 px-1.5 py-0.5 rounded flex items-center gap-1">
+              <span className="absolute bottom-2 right-2 text-[9px] text-brand-400 font-bold bg-ink-900/80 px-1.5 py-0.5 rounded flex items-center gap-1">
                 <Sparkles className="w-2.5 h-2.5" /> Xem Ngay
               </span>
             </div>
 
             <div>
-              <h4 className="font-extrabold text-xs text-white group-hover/ad:text-amber-400 transition line-clamp-2 leading-snug">
+              <h4 className="font-extrabold text-xs text-white group-hover/ad:text-brand-400 transition line-clamp-2 leading-snug">
                 {currentAd.title}
               </h4>
             </div>
 
             {/* Direct Action Link */}
-            <div className="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-800/80">
-              <span className="flex items-center gap-1 text-emerald-400 font-bold">
+            <div className="pt-1 flex items-center justify-between text-[10px] text-ink-400 border-t border-ink-800/80">
+              <span className="flex items-center gap-1 text-brand-400 font-bold">
                 <ShieldCheck className="w-3 h-3" /> Xác thực BQT
               </span>
-              <span className="text-amber-400 font-black flex items-center gap-0.5 group-hover/ad:translate-x-0.5 transition-transform">
+              <span className="text-brand-400 font-black flex items-center gap-0.5 group-hover/ad:translate-x-0.5 transition-transform">
                 Chi tiết <ArrowRight className="w-3 h-3" />
               </span>
             </div>
@@ -239,13 +239,13 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
 
           {/* Ad Carousel Dots & Navigation */}
           {rightAds.length > 1 && (
-            <div className="px-3 py-1.5 bg-slate-950/80 border-t border-slate-800 flex items-center justify-between text-[10px]">
+            <div className="px-3 py-1.5 bg-ink-950/80 border-t border-ink-800 flex items-center justify-between text-[10px]">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setActiveAdIndex(prev => (prev - 1 + rightAds.length) % rightAds.length);
                 }}
-                className="text-slate-400 hover:text-white px-1 font-bold"
+                className="text-ink-400 hover:text-white px-1 font-bold"
               >
                 ◀ Trước
               </button>
@@ -259,7 +259,7 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
                       setActiveAdIndex(idx);
                     }}
                     className={`h-1.5 rounded-full transition-all ${
-                      idx === activeAdIndex ? 'w-4 bg-amber-400' : 'w-1.5 bg-slate-600 hover:bg-slate-400'
+                      idx === activeAdIndex ? 'w-4 bg-brand-400' : 'w-1.5 bg-ink-600 hover:bg-ink-400'
                     }`}
                   />
                 ))}
@@ -270,7 +270,7 @@ export const DraggableSidebarAds: React.FC<DraggableSidebarAdsProps> = ({
                   e.stopPropagation();
                   setActiveAdIndex(prev => (prev + 1) % rightAds.length);
                 }}
-                className="text-slate-400 hover:text-white px-1 font-bold"
+                className="text-ink-400 hover:text-white px-1 font-bold"
               >
                 Tiếp ▶
               </button>

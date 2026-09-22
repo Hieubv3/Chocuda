@@ -792,7 +792,7 @@ export const App: React.FC = () => {
   // If user visits on quantri.chocudan24h.com, render Admin Dashboard / Admin Login
   if (isAdminDomain) {
     return (
-      <div className="min-h-screen w-full bg-slate-950 text-slate-100 font-sans">
+      <div className="min-h-screen w-full bg-ink-950 text-ink-100 font-sans">
         <ScrollToTop />
         {user?.role === 'admin' ? (
           <AdminDashboardPage
@@ -834,7 +834,7 @@ export const App: React.FC = () => {
 
   // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
       <ScrollToTop />
 
       {/* Top Banner (If active) */}
@@ -1570,19 +1570,19 @@ export const App: React.FC = () => {
                   onCancel={() => navigate('/')}
                 />
               ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4 shadow-xl">
-                  <div className="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-950 font-black text-xl mx-auto shadow-md">
+                <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl text-center space-y-4 shadow-xl">
+                  <div className="w-16 h-16 bg-brand-500 rounded-2xl flex items-center justify-center text-ink-950 font-black text-xl mx-auto shadow-md">
                     HB
                   </div>
-                  <h2 className="text-xl font-black text-slate-900 dark:text-white">BẠN CHƯA ĐĂNG NHẬP</h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <h2 className="text-xl font-black text-ink-900 dark:text-white">BẠN CHƯA ĐĂNG NHẬP</h2>
+                  <p className="text-xs text-ink-500 dark:text-ink-400">
                     Vui lòng đăng nhập tài khoản Chủ nhà, Sale hoặc Khách hàng để đăng tin BĐS và dịch vụ cư dân.
                   </p>
                   <button
                     onClick={() => setAuthModalOpen(true)}
-                    className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
+                    className="w-full py-3 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
                   >
-                    🔑 ĐĂNG NHẬP / ĐĂNG KÝ NGAY
+                     ĐĂNG NHẬP / ĐĂNG KÝ NGAY
                   </button>
                 </div>
               )
@@ -1690,19 +1690,19 @@ export const App: React.FC = () => {
                   onLogout={handleLogout}
                 />
               ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4 shadow-xl">
-                  <div className="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-950 font-black text-xl mx-auto shadow-md">
+                <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl text-center space-y-4 shadow-xl">
+                  <div className="w-16 h-16 bg-brand-500 rounded-2xl flex items-center justify-center text-ink-950 font-black text-xl mx-auto shadow-md">
                     HB
                   </div>
-                  <h2 className="text-xl font-black text-slate-900 dark:text-white">BẠN CHƯA ĐĂNG NHẬP</h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <h2 className="text-xl font-black text-ink-900 dark:text-white">BẠN CHƯA ĐĂNG NHẬP</h2>
+                  <p className="text-xs text-ink-500 dark:text-ink-400">
                     Vui lòng đăng nhập để quản lý tin đăng & số dư tài khoản của bạn.
                   </p>
                   <button
                     onClick={() => setAuthModalOpen(true)}
-                    className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
+                    className="w-full py-3 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
                   >
-                    🔑 ĐĂNG NHẬP / ĐĂNG KÝ NGAY
+                     ĐĂNG NHẬP / ĐĂNG KÝ NGAY
                   </button>
                 </div>
               )
@@ -1863,15 +1863,15 @@ export const App: React.FC = () => {
       {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom */}
       <nav
         ref={bottomNavRef}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-1 flex items-center justify-around shadow-2xl pb-[max(0.25rem,env(safe-area-inset-bottom))]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-ink-900/95 backdrop-blur-md border-t border-ink-200 dark:border-ink-800 px-1 py-1 flex items-center justify-around shadow-2xl pb-[max(0.25rem,env(safe-area-inset-bottom))]"
       >
         {/* 1. Trang Chủ */}
         <button
           onClick={() => { window.dispatchEvent(new Event('close-mobile-menu')); navigate('/'); }}
           className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
             location.pathname === '/'
-              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              ? 'text-brand-600 dark:text-brand-400 font-extrabold'
+              : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
           }`}
         >
           <Home className="w-5 h-5 transition-transform" />
@@ -1883,8 +1883,8 @@ export const App: React.FC = () => {
           onClick={() => { window.dispatchEvent(new Event('close-mobile-menu')); navigate('/bat-dong-san'); }}
           className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
             location.pathname.startsWith('/bat-dong-san') || location.pathname.startsWith('/mua-ban') || location.pathname.startsWith('/cho-thue')
-              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              ? 'text-brand-600 dark:text-brand-400 font-extrabold'
+              : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
           }`}
         >
           <Building2 className="w-5 h-5 transition-transform" />
@@ -1901,9 +1901,9 @@ export const App: React.FC = () => {
               navigate('/dang-tin');
             }
           }}
-          className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer text-emerald-600 dark:text-emerald-400 font-black group"
+          className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer text-brand-600 dark:text-brand-400 font-black group"
         >
-          <div className="w-6 h-6 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-brand-500/15 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center">
             <PlusCircle className="w-5 h-5" />
           </div>
           <span className="text-[10px] mt-0.5 font-black whitespace-nowrap">Đăng Tin</span>
@@ -1914,8 +1914,8 @@ export const App: React.FC = () => {
           onClick={() => { window.dispatchEvent(new Event('close-mobile-menu')); navigate('/dich-vu-cu-dan'); }}
           className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
             location.pathname.startsWith('/dich-vu-cu-dan')
-              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              ? 'text-brand-600 dark:text-brand-400 font-extrabold'
+              : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
           }`}
         >
           <ShoppingBag className="w-5 h-5 transition-transform" />
@@ -1925,7 +1925,7 @@ export const App: React.FC = () => {
         {/* 5. Menu (3 gạch) — chuyển từ góc phải header xuống thanh dưới */}
         <button
           onClick={() => window.dispatchEvent(new Event('toggle-mobile-menu'))}
-          className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer relative group text-slate-500 hover:text-slate-900 dark:hover:text-white"
+          className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer relative group text-ink-500 hover:text-ink-900 dark:hover:text-white"
           aria-label="Mở menu"
         >
           <div className="relative">

@@ -191,21 +191,21 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
   }, [navigate, onLoginSuccess]);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-sm w-full text-center space-y-4 shadow-2xl text-white">
+    <div className="min-h-screen bg-ink-950 flex items-center justify-center p-4">
+      <div className="bg-ink-900 border border-ink-800 rounded-3xl p-8 max-w-sm w-full text-center space-y-4 shadow-2xl text-white">
         {status === 'loading' && (
           <>
-            <Loader2 className="w-12 h-12 text-amber-500 animate-spin mx-auto" />
+            <Loader2 className="w-12 h-12 text-brand-500 animate-spin mx-auto" />
             <h2 className="text-lg font-black">Đang xác thực Google...</h2>
-            <p className="text-xs text-slate-400">Vui lòng chờ giây lát trong khi hệ thống hoàn tất đăng nhập.</p>
+            <p className="text-xs text-ink-400">Vui lòng chờ giây lát trong khi hệ thống hoàn tất đăng nhập.</p>
           </>
         )}
 
         {status === 'success' && (
           <>
-            <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto" />
-            <h2 className="text-lg font-black text-emerald-400">ĐĂNG NHẬP THÀNH CÔNG!</h2>
-            <p className="text-xs text-slate-300">Đang chuyển tiếp về trang chính...</p>
+            <CheckCircle2 className="w-12 h-12 text-brand-500 mx-auto" />
+            <h2 className="text-lg font-black text-brand-400">ĐĂNG NHẬP THÀNH CÔNG!</h2>
+            <p className="text-xs text-ink-300">Đang chuyển tiếp về trang chính...</p>
           </>
         )}
 
@@ -213,10 +213,10 @@ export const AuthCallbackPage: React.FC<AuthCallbackPageProps> = ({ onLoginSucce
           <>
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto" />
             <h2 className="text-lg font-black text-red-400">Xác thực thất bại</h2>
-            <p className="text-xs text-slate-400">{errorMsg}</p>
+            <p className="text-xs text-ink-400">{errorMsg}</p>
             <button
               onClick={() => navigate('/', { replace: true })}
-              className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase cursor-pointer"
+              className="px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black rounded-xl text-xs uppercase cursor-pointer"
             >
               Về Trang Chủ
             </button>

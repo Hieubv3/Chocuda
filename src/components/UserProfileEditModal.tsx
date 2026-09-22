@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   X, User, Phone, Mail, MapPin, Building2, CreditCard, 
   Check, ShieldCheck, Sparkles, Image as ImageIcon, Camera, Upload
@@ -143,7 +143,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
       // 4. Callback to parent
       onSave(updatedUser);
 
-      setSuccessMessage('🎉 Đã cập nhật thông tin cá nhân thành công!');
+      setSuccessMessage(' Đã cập nhật thông tin cá nhân thành công!');
       setTimeout(() => {
         setSuccessMessage('');
         onClose();
@@ -157,27 +157,27 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col my-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink-950/80 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto">
+      <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col my-auto">
         
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-10">
+        <div className="p-4 sm:p-5 border-b border-ink-100 dark:border-ink-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-ink-900/95 backdrop-blur-md z-10">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+            <div className="p-2 bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-xl">
               <User className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-black text-slate-900 dark:text-white">
+              <h3 className="text-base font-black text-ink-900 dark:text-white">
                 Cập Nhật Thông Tin Cá Nhân & Tài Khoản
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-ink-500">
                 Thông tin được đồng bộ tự động vào bài đăng BĐS, dịch vụ và ví hoa hồng
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+            className="p-2 text-ink-400 hover:text-ink-600 dark:hover:text-ink-200 rounded-xl hover:bg-ink-100 dark:hover:bg-ink-800 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -187,19 +187,19 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5">
           
           {/* Avatar Section */}
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-3">
-            <label className="text-xs font-black uppercase text-slate-700 dark:text-slate-300 block">
+          <div className="bg-ink-50 dark:bg-ink-800/50 p-4 rounded-2xl border border-ink-200 dark:border-ink-700/80 space-y-3">
+            <label className="text-xs font-black uppercase text-ink-700 dark:text-ink-300 block">
               Ảnh Đại Diện (Avatar)
             </label>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <img loading="lazy"
                 src={avatar}
                 alt="Avatar preview"
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-emerald-500 shadow-md shrink-0"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-brand-500 shadow-md shrink-0"
               />
               <div className="space-y-2 flex-1 w-full">
                 <div className="flex items-center gap-2">
-                  <label className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer inline-flex items-center gap-1.5 transition">
+                  <label className="px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer inline-flex items-center gap-1.5 transition">
                     <Camera className="w-3.5 h-3.5" />
                     <span>Tải Ảnh Mới Lên</span>
                     <input
@@ -209,7 +209,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                       className="hidden"
                     />
                   </label>
-                  <span className="text-[11px] text-slate-500">Hoặc chọn avatar mẫu bên dưới</span>
+                  <span className="text-[11px] text-ink-500">Hoặc chọn avatar mẫu bên dưới</span>
                 </div>
                 <div className="flex items-center gap-2 overflow-x-auto py-1">
                   {PRESET_AVATARS.map((presetUrl, idx) => (
@@ -218,7 +218,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                       key={idx}
                       onClick={() => setAvatar(presetUrl)}
                       className={`w-9 h-9 rounded-xl overflow-hidden border-2 transition shrink-0 cursor-pointer ${
-                        avatar === presetUrl ? 'border-emerald-500 ring-2 ring-emerald-400/40 scale-105' : 'border-slate-300 opacity-70 hover:opacity-100'
+                        avatar === presetUrl ? 'border-brand-500 ring-2 ring-brand-400/40 scale-105' : 'border-ink-300 opacity-70 hover:opacity-100'
                       }`}
                     >
                       <img loading="lazy" src={presetUrl} alt={`Preset ${idx}`} className="w-full h-full object-cover" />
@@ -231,14 +231,14 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
 
           {/* Section 1: Personal Info */}
           <div className="space-y-3">
-            <h4 className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+            <h4 className="text-xs font-black text-brand-600 dark:text-brand-400 uppercase tracking-wider flex items-center gap-1.5">
               <User className="w-3.5 h-3.5" />
               1. Thông Tin Cơ Bản
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Họ và tên <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -246,13 +246,13 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={name}
                   onChange={e => setName(e.target.value)}
                   placeholder="Ví dụ: Nguyễn Văn An"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Số điện thoại liên hệ <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -260,13 +260,13 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
                   placeholder="Ví dụ: 0912345678"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Số Zalo (để khách liên hệ trực tiếp)
                 </label>
                 <input
@@ -274,12 +274,12 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={zalo}
                   onChange={e => setZalo(e.target.value)}
                   placeholder="Ví dụ: 0912345678"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-medium focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-mono font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Email tài khoản
                 </label>
                 <input
@@ -287,7 +287,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="Ví dụ: cudan@vinhomes.vn"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
                 />
               </div>
             </div>
@@ -295,20 +295,20 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
 
           {/* Section 2: Resident Address / Project Area */}
           <div className="space-y-3">
-            <h4 className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+            <h4 className="text-xs font-black text-brand-600 dark:text-brand-400 uppercase tracking-wider flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5" />
               2. Khu Vực & Căn Hộ Cư Dân
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Khu đô thị / Dự án chính
                 </label>
                 <select
                   value={projectArea}
                   onChange={e => setProjectArea(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
                 >
                   <option value="Vinhomes Ocean Park 1">Vinhomes Ocean Park 1 (Gia Lâm)</option>
                   <option value="Vinhomes Ocean Park 2">Vinhomes Ocean Park 2 (Hưng Yên)</option>
@@ -320,7 +320,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Căn hộ / Phân khu cụ thể
                 </label>
                 <input
@@ -328,12 +328,12 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={apartmentAddress}
                   onChange={e => setApartmentAddress(e.target.value)}
                   placeholder="Ví dụ: Tòa S2.08 Căn 12A05 hoặc Chà Là 15-28"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Giới thiệu ngắn (Bio / Dịch vụ sở trường)
                 </label>
                 <textarea
@@ -341,14 +341,14 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={bio}
                   onChange={e => setBio(e.target.value)}
                   placeholder="Ví dụ: Chủ nhà chính chủ cho thuê căn hộ Ocean Park 2 hoặc Chuyên kỹ thuật điện lạnh cư dân 24/7..."
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                  className="w-full px-3 py-2 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-500 outline-hidden"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 3: Doanh Nghiệp & Giấy Phép Kinh Doanh / Chứng Chỉ Ngành Nghề */}
-          <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-blue-500/30 dark:border-blue-500/20 space-y-4">
+          <div className="bg-ink-50 dark:bg-ink-850 p-4 rounded-2xl border border-blue-500/30 dark:border-blue-500/20 space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5" />
@@ -361,42 +361,42 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Loại Hình Tài Khoản
                 </label>
                 <select
                   value={accountType}
                   onChange={e => setAccountType(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-blue-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-blue-500 outline-hidden"
                 >
-                  <option value="individual_resident">🏠 Cư Dân Cá Nhân (Chủ Hộ / Người Ở)</option>
-                  <option value="business_enterprise">🏢 Doanh Nghiệp / Sàn BĐS / Công Ty</option>
-                  <option value="technician">🛠️ Thợ Kỹ Thuật / Đội Cơ Động</option>
-                  <option value="consumer">👤 Khách Hàng Tiêu Dùng (Chỉ Xem / Đặt Lịch)</option>
+                  <option value="individual_resident"> Cư Dân Cá Nhân (Chủ Hộ / Người Ở)</option>
+                  <option value="business_enterprise"> Doanh Nghiệp / Sàn BĐS / Công Ty</option>
+                  <option value="technician"> Thợ Kỹ Thuật / Đội Cơ Động</option>
+                  <option value="consumer"> Khách Hàng Tiêu Dùng (Chỉ Xem / Đặt Lịch)</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Lĩnh Vực / Ngành Nghề Đăng Ký
                 </label>
                 <select
                   value={businessType}
                   onChange={e => setBusinessType(e.target.value as any)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
                 >
-                  <option value="real_estate_agency">🏢 Sàn Giao Dịch & Môi Giới BĐS</option>
-                  <option value="interior_construction">🏗️ Công Ty Xây Dựng & Thiết Kế Nội Thất</option>
-                  <option value="recruitment">💼 Công Ty / Chuỗi Tuyển Dụng Lao Động</option>
-                  <option value="pharmacy_health">💊 Nhà Thuốc, Dược Phẩm & Y Tế Gia Đình</option>
-                  <option value="food_beverage">🍱 Ẩm Thực, F&B & Thực Phẩm Sạch</option>
-                  <option value="general_services">⚡ Kỹ Thuật, Sửa Chữa & Vận Chuyển 24/7</option>
-                  <option value="other">✨ Lĩnh Vực / Ngành Nghề Khác</option>
+                  <option value="real_estate_agency"> Sàn Giao Dịch & Môi Giới BĐS</option>
+                  <option value="interior_construction"> Công Ty Xây Dựng & Thiết Kế Nội Thất</option>
+                  <option value="recruitment"> Công Ty / Chuỗi Tuyển Dụng Lao Động</option>
+                  <option value="pharmacy_health"> Nhà Thuốc, Dược Phẩm & Y Tế Gia Đình</option>
+                  <option value="food_beverage"> Ẩm Thực, F&B & Thực Phẩm Sạch</option>
+                  <option value="general_services"> Kỹ Thuật, Sửa Chữa & Vận Chuyển 24/7</option>
+                  <option value="other"> Lĩnh Vực / Ngành Nghề Khác</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Tên Công Ty / Doanh Nghiệp / Hộ Kinh Doanh
                 </label>
                 <input
@@ -404,12 +404,12 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={companyName}
                   onChange={e => setCompanyName(e.target.value)}
                   placeholder="Ví dụ: Công Ty Cổ Phần BĐS Tân Thời Đại / Nhà Thuốc An Tâm"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Mã Số Thuế (MST) / Số ĐKKD
                 </label>
                 <input
@@ -417,18 +417,18 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={taxCode}
                   onChange={e => setTaxCode(e.target.value)}
                   placeholder="Ví dụ: 0108999888"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-blue-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-blue-500 outline-hidden"
                 />
               </div>
             </div>
 
             {/* Business License & Broker / Industry Certificate Upload */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200 dark:border-slate-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-ink-200 dark:border-ink-700">
               {/* Giấy phép ĐKKD */}
-              <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+              <div className="p-3 bg-white dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-slate-900 dark:text-white text-xs">
-                    📄 Giấy Phép Kinh Doanh (ĐKKD):
+                  <span className="font-extrabold text-ink-900 dark:text-white text-xs">
+                     Giấy Phép Kinh Doanh (ĐKKD):
                   </span>
                   <label className="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] rounded-lg cursor-pointer inline-flex items-center gap-1 transition">
                     <Upload className="w-3 h-3" />
@@ -451,28 +451,28 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   </label>
                 </div>
                 {businessLicenseUrl ? (
-                  <div className="relative rounded-lg overflow-hidden h-20 bg-slate-900 border border-slate-300 dark:border-slate-700">
+                  <div className="relative rounded-lg overflow-hidden h-20 bg-ink-900 border border-ink-300 dark:border-ink-700">
                     <img loading="lazy" src={businessLicenseUrl} alt="Giấy phép ĐKKD" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setBusinessLicenseUrl('')}
                       className="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white rounded text-[10px] flex items-center justify-center"
                     >
-                      ✕
+                      
                     </button>
                   </div>
                 ) : (
-                  <p className="text-[11px] text-slate-400 italic">Chưa tải ảnh giấy phép ĐKKD</p>
+                  <p className="text-[11px] text-ink-400 italic">Chưa tải ảnh giấy phép ĐKKD</p>
                 )}
               </div>
 
               {/* Chứng chỉ hành nghề / Giấy phép chuyên ngành */}
-              <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+              <div className="p-3 bg-white dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-slate-900 dark:text-white text-xs">
-                    📜 Chứng Chỉ Nghề / Giấy Phép Con:
+                  <span className="font-extrabold text-ink-900 dark:text-white text-xs">
+                     Chứng Chỉ Nghề / Giấy Phép Con:
                   </span>
-                  <label className="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] rounded-lg cursor-pointer inline-flex items-center gap-1 transition">
+                  <label className="px-2 py-1 bg-brand-600 hover:bg-brand-500 text-white font-bold text-[10px] rounded-lg cursor-pointer inline-flex items-center gap-1 transition">
                     <Upload className="w-3 h-3" />
                     <span>Tải Lên</span>
                     <input
@@ -493,18 +493,18 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   </label>
                 </div>
                 {brokerLicenseUrl ? (
-                  <div className="relative rounded-lg overflow-hidden h-20 bg-slate-900 border border-slate-300 dark:border-slate-700">
+                  <div className="relative rounded-lg overflow-hidden h-20 bg-ink-900 border border-ink-300 dark:border-ink-700">
                     <img loading="lazy" src={brokerLicenseUrl} alt="Chứng chỉ nghề" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setBrokerLicenseUrl('')}
                       className="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white rounded text-[10px] flex items-center justify-center"
                     >
-                      ✕
+                      
                     </button>
                   </div>
                 ) : (
-                  <p className="text-[11px] text-slate-400 italic">Chứng chỉ Môi giới BĐS, Dược, ATTP...</p>
+                  <p className="text-[11px] text-ink-400 italic">Chứng chỉ Môi giới BĐS, Dược, ATTP...</p>
                 )}
               </div>
             </div>
@@ -522,18 +522,18 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   placeholder="Tên chứng chỉ (VD: Giấy phép Dược / PCCC)"
                   value={newCertName}
                   onChange={e => setNewCertName(e.target.value)}
-                  className="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                  className="px-2.5 py-1.5 bg-white dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-lg text-xs"
                 />
                 <input
                   type="text"
                   placeholder="Số hiệu / Ngày cấp"
                   value={newCertNumber}
                   onChange={e => setNewCertNumber(e.target.value)}
-                  className="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-mono"
+                  className="px-2.5 py-1.5 bg-white dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-lg text-xs font-mono"
                 />
                 <div className="flex items-center gap-1.5">
-                  <label className="flex-1 px-2 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-800 dark:text-slate-200 font-bold text-[11px] rounded-lg cursor-pointer text-center truncate">
-                    <span>{newCertImage ? '✓ Đã chọn ảnh' : '📷 Chọn ảnh'}</span>
+                  <label className="flex-1 px-2 py-1.5 bg-ink-200 dark:bg-ink-700 hover:bg-ink-300 text-ink-800 dark:text-ink-200 font-bold text-[11px] rounded-lg cursor-pointer text-center truncate">
+                    <span>{newCertImage ? ' Đã chọn ảnh' : ' Chọn ảnh'}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -585,18 +585,18 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
               {specializedCertificates.length > 0 && (
                 <div className="flex flex-wrap gap-2 pt-2">
                   {specializedCertificates.map((cert) => (
-                    <div key={cert.id} className="flex items-center gap-2 p-1.5 bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-800 rounded-lg text-[11px]">
+                    <div key={cert.id} className="flex items-center gap-2 p-1.5 bg-white dark:bg-ink-800 border border-blue-300 dark:border-blue-800 rounded-lg text-[11px]">
                       <img loading="lazy" src={cert.certImageUrl} alt={cert.certName} className="w-8 h-8 object-cover rounded" />
                       <div>
-                        <span className="font-bold block text-slate-900 dark:text-white">{cert.certName}</span>
-                        {cert.certNumber && <span className="text-[10px] text-slate-400 font-mono">{cert.certNumber}</span>}
+                        <span className="font-bold block text-ink-900 dark:text-white">{cert.certName}</span>
+                        {cert.certNumber && <span className="text-[10px] text-ink-400 font-mono">{cert.certNumber}</span>}
                       </div>
                       <button
                         type="button"
                         onClick={() => setSpecializedCertificates(prev => prev.filter(c => c.id !== cert.id))}
                         className="text-rose-500 hover:text-rose-700 font-bold px-1"
                       >
-                        ✕
+                        
                       </button>
                     </div>
                   ))}
@@ -606,21 +606,21 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
           </div>
 
           {/* Section 4: Bank Account for Affiliate & Token Payouts */}
-          <div className="bg-amber-500/5 dark:bg-amber-500/10 p-4 rounded-2xl border border-amber-500/30 space-y-3">
-            <h4 className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="bg-brand-500/5 dark:bg-brand-500/10 p-4 rounded-2xl border border-brand-500/30 space-y-3">
+            <h4 className="text-xs font-black text-brand-600 dark:text-brand-400 uppercase tracking-wider flex items-center gap-1.5">
               <CreditCard className="w-3.5 h-3.5" />
               4. Tài Khoản Ngân Hàng Nhận Tiền Rút Hoa Hồng VietQR
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Tên Ngân Hàng
                 </label>
                 <select
                   value={bankName}
                   onChange={e => setBankName(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-amber-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
                 >
                   <option value="MB Bank (Quân Đội)">MB Bank (Quân Đội)</option>
                   <option value="Techcombank">Techcombank</option>
@@ -636,7 +636,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Số Tài Khoản (STK)
                 </label>
                 <input
@@ -644,12 +644,12 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={bankAccountNumber}
                   onChange={e => setBankAccountNumber(e.target.value)}
                   placeholder="Ví dụ: 0988889999"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-amber-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-brand-500 outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                <label className="block text-ink-700 dark:text-ink-300 font-bold mb-1">
                   Tên Chủ Tài Khoản (Không dấu)
                 </label>
                 <input
@@ -657,7 +657,7 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
                   value={bankAccountName}
                   onChange={e => setBankAccountName(e.target.value.toUpperCase())}
                   placeholder="Ví dụ: NGUYEN VAN AN"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold uppercase focus:ring-2 focus:ring-amber-500 outline-hidden"
+                  className="w-full px-3 py-2.5 rounded-xl border border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white font-bold uppercase focus:ring-2 focus:ring-brand-500 outline-hidden"
                 />
               </div>
             </div>
@@ -665,25 +665,25 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
 
           {/* Success Banner */}
           {successMessage && (
-            <div className="p-3 bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
-              <Check className="w-4 h-4 text-emerald-500" />
+            <div className="p-3 bg-brand-500/20 text-brand-800 dark:text-brand-200 border border-brand-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
+              <Check className="w-4 h-4 text-brand-500" />
               <span>{successMessage}</span>
             </div>
           )}
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-ink-100 dark:border-ink-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition cursor-pointer"
+              className="px-4 py-2.5 bg-ink-100 hover:bg-ink-200 dark:bg-ink-800 dark:hover:bg-ink-700 text-ink-700 dark:text-ink-300 font-bold text-xs rounded-xl transition cursor-pointer"
             >
               Hủy Bỏ
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="px-6 py-2.5 bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? (
                 <span>Đang lưu...</span>

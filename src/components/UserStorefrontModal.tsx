@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   X, ShoppingBag, Search, CheckCircle2, Phone, MessageSquare, MapPin, 
   Sparkles, Star, Plus, Minus, Trash2, ArrowRight, ShieldCheck, Clock,
@@ -266,44 +266,44 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-ink-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
       {/* Screen Safety Fixed Close Button */}
       <button
         onClick={onClose}
-        className="fixed top-3 right-3 sm:top-5 sm:right-5 z-[70] p-2.5 bg-slate-900/90 hover:bg-slate-800 text-white rounded-full transition cursor-pointer border border-white/20 shadow-2xl flex items-center justify-center"
+        className="fixed top-3 right-3 sm:top-5 sm:right-5 z-[70] p-2.5 bg-ink-900/90 hover:bg-ink-800 text-white rounded-full transition cursor-pointer border border-white/20 shadow-2xl flex items-center justify-center"
         title="Đóng cửa sổ gian hàng"
       >
         <X className="w-5 h-5 text-white" />
       </button>
 
-      <div className="relative w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] my-auto">
+      <div className="relative w-full max-w-5xl bg-white dark:bg-ink-900 rounded-3xl shadow-2xl overflow-hidden border border-ink-200 dark:border-ink-800 flex flex-col max-h-[90vh] my-auto">
         
         {/* Close Button Inside Modal */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2.5 bg-slate-900/80 hover:bg-slate-900 text-white rounded-full transition backdrop-blur-md shadow-lg border border-slate-700 cursor-pointer"
+          className="absolute top-4 right-4 z-20 p-2.5 bg-ink-900/80 hover:bg-ink-900 text-white rounded-full transition backdrop-blur-md shadow-lg border border-ink-700 cursor-pointer"
           title="Đóng"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* OWNER / VISITOR PERSPECTIVE TOGGLE BAR */}
-        <div className="bg-slate-950 text-white px-4 py-2 border-b border-slate-800 flex items-center justify-between gap-3 text-xs shrink-0">
+        <div className="bg-ink-950 text-white px-4 py-2 border-b border-ink-800 flex items-center justify-between gap-3 text-xs shrink-0">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span className="font-extrabold text-amber-300">
-              {isOwnerMode ? '👑 BẠN ĐANG TRONG GIAO DIỆN QUẢN LÝ CỦA CHỦ GIAN HÀNG' : '👀 GIAO DIỆN KHÁCH XEM GIAN HÀNG CƯ DÂN'}
+            <span className="w-2 h-2 rounded-full bg-brand-400 animate-ping"></span>
+            <span className="font-extrabold text-brand-300">
+              {isOwnerMode ? ' BẠN ĐANG TRONG GIAO DIỆN QUẢN LÝ CỦA CHỦ GIAN HÀNG' : ' GIAO DIỆN KHÁCH XEM GIAN HÀNG CƯ DÂN'}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-slate-400 hidden sm:inline">Chế độ xem:</span>
+            <span className="text-[10px] text-ink-400 hidden sm:inline">Chế độ xem:</span>
             <button
               onClick={() => setIsOwnerMode(!isOwnerMode)}
               className={`px-3 py-1 rounded-xl font-bold text-[11px] transition flex items-center gap-1.5 border ${
                 isOwnerMode
-                  ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
-                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                  ? 'bg-brand-500 text-ink-950 border-brand-400 shadow-md'
+                  : 'bg-ink-800 text-ink-300 border-ink-700 hover:bg-ink-700'
               }`}
             >
               {isOwnerMode ? (
@@ -313,7 +313,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                 </>
               ) : (
                 <>
-                  <Eye className="w-3.5 h-3.5 text-amber-400" />
+                  <Eye className="w-3.5 h-3.5 text-brand-400" />
                   <span>Chuyển Sang QLý Gian Hàng</span>
                 </>
               )}
@@ -322,42 +322,42 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
         </div>
 
         {/* Store Banner & Header */}
-        <div className="relative h-44 sm:h-56 bg-slate-800 shrink-0 overflow-hidden">
+        <div className="relative h-44 sm:h-56 bg-ink-800 shrink-0 overflow-hidden">
           <img loading="lazy" 
             src={storeState.bannerUrl || ''} 
             alt={storeState.storeName}
             className="w-full h-full object-cover opacity-85"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/40 to-transparent" />
           
           <div className="absolute bottom-4 left-4 right-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
             <div className="flex items-center gap-3.5">
               <img loading="lazy" 
                 src={storeState.logoUrl || ''} 
                 alt={storeState.storeName}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-2 border-amber-400 shadow-xl object-cover shrink-0"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-2 border-brand-400 shadow-xl object-cover shrink-0"
               />
               <div className="text-white space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-md uppercase tracking-wide">
+                  <span className="px-2.5 py-0.5 bg-brand-500 text-ink-950 font-black text-[10px] rounded-md uppercase tracking-wide">
                     GIAN HÀNG CƯ DÂN
                   </span>
                   {storeState.kiotVietConfig?.enabled && (
                     <span className="px-2.5 py-0.5 bg-blue-600 text-white font-bold text-[10px] rounded-md flex items-center gap-1 shadow-xs">
-                      ⚡ KẾT NỐI KIOTVIET POS
+                       KẾT NỐI KIOTVIET POS
                     </span>
                   )}
                   {storeState.verified && (
-                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 font-bold text-[10px] rounded-md border border-emerald-500/40 flex items-center gap-1">
-                      <ShieldCheck className="w-3 h-3 text-emerald-400" /> Xác Thực Chính Chủ
+                    <span className="px-2 py-0.5 bg-brand-500/20 text-brand-400 font-bold text-[10px] rounded-md border border-brand-500/40 flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3 text-brand-400" /> Xác Thực Chính Chủ
                     </span>
                   )}
                 </div>
-                <h1 className="text-lg sm:text-2xl font-black text-amber-300 drop-shadow-md">
+                <h1 className="text-lg sm:text-2xl font-black text-brand-300 drop-shadow-md">
                   {storeState.storeName}
                 </h1>
-                <p className="text-xs text-slate-200 flex items-center gap-1.5 line-clamp-1">
-                  <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <p className="text-xs text-ink-200 flex items-center gap-1.5 line-clamp-1">
+                  <MapPin className="w-3.5 h-3.5 text-brand-400 shrink-0" />
                   <span>{storeState.address}</span>
                 </p>
               </div>
@@ -365,19 +365,19 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
             {/* Quick Contact & In-App Chat Buttons */}
             <div className="flex items-center gap-2 flex-wrap self-end">
-              {/* 💬 In-App Direct IB Chat Button */}
+              {/*  In-App Direct IB Chat Button */}
               <button
                 onClick={() => handleOpenChatWithProduct()}
-                className="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black rounded-xl text-xs transition flex items-center gap-1.5 shadow-lg border border-amber-300"
+                className="px-3.5 py-2 bg-gradient-to-r from-brand-500 to-brand-400 hover:from-brand-400 hover:to-brand-300 text-ink-950 font-black rounded-xl text-xs transition flex items-center gap-1.5 shadow-lg border border-brand-300"
                 title="Nhắn tin IB trực tiếp trong App có chuông báo"
               >
-                <MessageSquare className="w-4 h-4 fill-slate-950" />
-                <span>💬 IB Chat Trong App</span>
+                <MessageSquare className="w-4 h-4 fill-ink-950" />
+                <span> IB Chat Trong App</span>
               </button>
 
               <a 
                 href={`tel:${storeState.ownerPhone}`}
-                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md"
+                className="px-3.5 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md"
               >
                 <Phone className="w-3.5 h-3.5" />
                 <span>Gọi Điện</span>
@@ -397,9 +397,9 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
               <button
                 onClick={() => setIsCartOpen(!isCartOpen)}
-                className="relative px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-lg border border-slate-700"
+                className="relative px-3.5 py-2 bg-ink-800 hover:bg-ink-700 text-brand-300 font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-lg border border-ink-700"
               >
-                <ShoppingBag className="w-4 h-4 text-amber-400" />
+                <ShoppingBag className="w-4 h-4 text-brand-400" />
                 <span>Giỏ ({totalCartCount})</span>
                 {totalCartCount > 0 && (
                   <span className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-rose-600 text-white font-black text-[10px] rounded-full animate-bounce shadow-md">
@@ -412,17 +412,17 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
         </div>
 
         {/* Store Details Banner */}
-        <div className="bg-slate-100 dark:bg-slate-800/80 px-4 py-3 border-b border-slate-200 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <p className="text-slate-600 dark:text-slate-300 text-xs line-clamp-1">
-            <span className="font-bold text-slate-900 dark:text-white">Mô tả:</span> {storeState.description}
+        <div className="bg-ink-100 dark:bg-ink-800/80 px-4 py-3 border-b border-ink-200 dark:border-ink-700/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <p className="text-ink-600 dark:text-ink-300 text-xs line-clamp-1">
+            <span className="font-bold text-ink-900 dark:text-white">Mô tả:</span> {storeState.description}
           </p>
-          <div className="flex items-center gap-4 text-slate-500 text-[11px] shrink-0 font-medium">
+          <div className="flex items-center gap-4 text-ink-500 text-[11px] shrink-0 font-medium">
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-amber-500" />
+              <Clock className="w-3.5 h-3.5 text-brand-500" />
               {storeState.operatingHours || '08:00 - 21:00'}
             </span>
-            <span className="flex items-center gap-1 text-amber-500 font-bold">
-              <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+            <span className="flex items-center gap-1 text-brand-500 font-bold">
+              <Star className="w-3.5 h-3.5 fill-brand-500 text-brand-500" />
               {storeState.rating} ({storeState.reviewCount} Đánh giá)
             </span>
           </div>
@@ -430,23 +430,23 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
         {/* OWNER DIRECT MANAGEMENT HEADER CONTROLS (IF IN OWNER MODE) */}
         {isOwnerMode && (
-          <div className="bg-amber-500/10 dark:bg-amber-500/20 p-3 px-4 border-b border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div className="bg-brand-500/10 dark:bg-brand-500/20 p-3 px-4 border-b border-brand-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-2 font-black text-amber-700 dark:text-amber-300">
-                <Settings className="w-4 h-4 text-amber-500 animate-spin" />
+              <div className="flex items-center gap-2 font-black text-brand-700 dark:text-brand-300">
+                <Settings className="w-4 h-4 text-brand-500 animate-spin" />
                 <span>THANH QUẢN LÝ MẶT HÀNG TRỰC TIẾP DÀNH CHO CHỦ SHOP</span>
               </div>
-              <p className="text-[11px] text-slate-600 dark:text-slate-300">
+              <p className="text-[11px] text-ink-600 dark:text-ink-300">
                 Bạn có thể thêm mặt hàng mới, chỉnh sửa giá, số lượng tồn kho hoặc ẩn/hiện sản phẩm ngay trên giao diện này!
               </p>
             </div>
 
             <button
               onClick={handleOpenAddProduct}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl transition shadow-md flex items-center gap-1.5 shrink-0"
+              className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-black text-xs rounded-xl transition shadow-md flex items-center gap-1.5 shrink-0"
             >
               <Plus className="w-4 h-4" />
-              <span>➕ Thêm Mặt Hàng Mới Ngay</span>
+              <span> Thêm Mặt Hàng Mới Ngay</span>
             </button>
           </div>
         )}
@@ -456,13 +456,13 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
           {/* Search & Category Tabs */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3 top-3 text-ink-400" />
               <input
                 type="text"
                 placeholder="Tìm món, dịch vụ trong gian hàng..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full pl-9 pr-3 py-2 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl text-xs focus:ring-2 focus:ring-brand-500 outline-none"
               />
             </div>
 
@@ -471,8 +471,8 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                 onClick={() => setSelectedCategory('all')}
                 className={`px-3 py-1.5 rounded-xl font-bold text-xs transition shrink-0 ${
                   selectedCategory === 'all'
-                    ? 'bg-amber-500 text-slate-950 shadow-sm'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                    ? 'bg-brand-500 text-ink-950 shadow-sm'
+                    : 'bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 hover:bg-ink-200'
                 }`}
               >
                 Tất cả ({storeState.products.length})
@@ -483,8 +483,8 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-3 py-1.5 rounded-xl font-bold text-xs transition shrink-0 ${
                     selectedCategory === cat
-                      ? 'bg-amber-500 text-slate-950 shadow-sm'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                      ? 'bg-brand-500 text-ink-950 shadow-sm'
+                      : 'bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 hover:bg-ink-200'
                   }`}
                 >
                   {cat}
@@ -498,16 +498,16 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
             {filteredProducts.map(product => (
               <div 
                 key={product.id}
-                className={`bg-slate-50 dark:bg-slate-800/60 rounded-2xl border p-3 flex flex-col justify-between gap-3 transition shadow-sm relative group ${
+                className={`bg-ink-50 dark:bg-ink-800/60 rounded-2xl border p-3 flex flex-col justify-between gap-3 transition shadow-sm relative group ${
                   product.isAvailable === false
-                    ? 'border-slate-300 dark:border-slate-700 opacity-70'
-                    : 'border-slate-200 dark:border-slate-700/80 hover:border-amber-500/50'
+                    ? 'border-ink-300 dark:border-ink-700 opacity-70'
+                    : 'border-ink-200 dark:border-ink-700/80 hover:border-brand-500/50'
                 }`}
               >
                 {/* Availability Badge */}
                 {product.isAvailable === false && (
-                  <div className="absolute top-2 right-2 bg-slate-950 text-rose-400 font-bold text-[9px] px-2 py-0.5 rounded-full z-10 border border-rose-500/40">
-                    🔴 Tạm Hết Hàng
+                  <div className="absolute top-2 right-2 bg-ink-950 text-rose-400 font-bold text-[9px] px-2 py-0.5 rounded-full z-10 border border-rose-500/40">
+                     Tạm Hết Hàng
                   </div>
                 )}
 
@@ -515,35 +515,35 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                   <img loading="lazy" 
                     src={product.images[0] || ''} 
                     alt={product.name}
-                    className="w-24 h-24 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700"
+                    className="w-24 h-24 rounded-xl object-cover shrink-0 border border-ink-200 dark:border-ink-700"
                   />
                   <div className="flex-1 flex flex-col justify-between min-w-0">
                     <div>
                       <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">
+                        <span className="text-[10px] font-bold text-ink-400 uppercase tracking-wider truncate">
                           {product.category}
                         </span>
                         {product.code && (
-                          <span className="text-[9px] font-mono font-bold bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-300 shrink-0">
+                          <span className="text-[9px] font-mono font-bold bg-ink-200 dark:bg-ink-700 px-1.5 py-0.5 rounded text-ink-600 dark:text-ink-300 shrink-0">
                             {product.code}
                           </span>
                         )}
                       </div>
-                      <h3 className="font-bold text-xs text-slate-900 dark:text-white line-clamp-2 leading-snug">
+                      <h3 className="font-bold text-xs text-ink-900 dark:text-white line-clamp-2 leading-snug">
                         {product.name}
                       </h3>
                       {product.description && (
-                        <p className="text-[10px] text-slate-500 line-clamp-1 mt-0.5">
+                        <p className="text-[10px] text-ink-500 line-clamp-1 mt-0.5">
                           {product.description}
                         </p>
                       )}
                     </div>
 
                     <div className="pt-1">
-                      <div className="text-amber-600 dark:text-amber-400 font-black text-sm">
+                      <div className="text-brand-600 dark:text-brand-400 font-black text-sm">
                         {product.price.toLocaleString('vi-VN')}đ
                       </div>
-                      <div className="text-[10px] text-slate-400">
+                      <div className="text-[10px] text-ink-400">
                         {product.unit ? `/ ${product.unit}` : ''} (Tồn: {product.stockQuantity})
                       </div>
                     </div>
@@ -551,7 +551,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                 </div>
 
                 {/* BOTTOM ACTION BUTTONS: Differ for Owner vs Guest */}
-                <div className="pt-2 border-t border-slate-200 dark:border-slate-700/60 flex items-center justify-between gap-1 text-xs">
+                <div className="pt-2 border-t border-ink-200 dark:border-ink-700/60 flex items-center justify-between gap-1 text-xs">
                   {isOwnerMode ? (
                     // OWNER MANAGEMENT CONTROLS DIRECTLY ON CARD
                     <div className="flex items-center justify-between w-full gap-1">
@@ -559,8 +559,8 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                         onClick={() => handleToggleProductAvailability(product.id)}
                         className={`px-2 py-1 rounded-lg font-bold text-[10px] transition flex items-center gap-1 ${
                           product.isAvailable === false
-                            ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/30'
-                            : 'bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30'
+                            ? 'bg-brand-500/20 text-brand-600 dark:text-brand-400 hover:bg-brand-500/30'
+                            : 'bg-brand-500/20 text-brand-700 dark:text-brand-300 hover:bg-brand-500/30'
                         }`}
                         title="Bật/tắt trạng thái còn hàng"
                       >
@@ -593,26 +593,26 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                         href={`/gian-hang/${encodeURIComponent(storeState.slug || storeState.id)}/san-pham/${encodeURIComponent(product.id)}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="px-2 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-extrabold text-[10px] rounded-xl transition flex items-center gap-1"
+                        className="px-2 py-1.5 bg-ink-200 dark:bg-ink-700 hover:bg-ink-300 dark:hover:bg-ink-600 text-ink-700 dark:text-ink-200 font-extrabold text-[10px] rounded-xl transition flex items-center gap-1"
                         title="Xem trang chi tiết có link riêng của sản phẩm này"
                       >
-                        <ExternalLink className="w-3 h-3 text-slate-500" />
+                        <ExternalLink className="w-3 h-3 text-ink-500" />
                         <span>Link Riêng</span>
                       </a>
 
                       <button
                         onClick={() => handleOpenChatWithProduct(product)}
-                        className="px-2 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-extrabold text-[10px] rounded-xl transition flex items-center gap-1 border border-amber-500/30"
+                        className="px-2 py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 font-extrabold text-[10px] rounded-xl transition flex items-center gap-1 border border-brand-500/30"
                         title="Nhắn tin IB hỏi về mặt hàng này"
                       >
                         <MessageSquare className="w-3 h-3" />
-                        <span>💬 IB Shop</span>
+                        <span> IB Shop</span>
                       </button>
 
                       <button
                         onClick={() => addToCart(product)}
                         disabled={product.isAvailable === false}
-                        className="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-slate-950 font-black text-xs rounded-xl transition flex items-center gap-1 shadow-xs"
+                        className="px-2.5 py-1.5 bg-brand-500 hover:bg-brand-400 disabled:opacity-40 text-ink-950 font-black text-xs rounded-xl transition flex items-center gap-1 shadow-xs"
                       >
                         <Plus className="w-3 h-3" />
                         <span>Chọn Mua</span>
@@ -625,15 +625,15 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
           </div>
 
           {filteredProducts.length === 0 && (
-            <div className="text-center py-12 text-slate-400 space-y-2">
-              <ShoppingBag className="w-12 h-12 mx-auto text-slate-500 stroke-1" />
+            <div className="text-center py-12 text-ink-400 space-y-2">
+              <ShoppingBag className="w-12 h-12 mx-auto text-ink-500 stroke-1" />
               <p className="font-bold text-sm">Chưa tìm thấy mặt hàng phù hợp.</p>
               {isOwnerMode && (
                 <button
                   onClick={handleOpenAddProduct}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition"
+                  className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow transition"
                 >
-                  ➕ Bấm Vào Đây Để Thêm Mặt Hàng Đầu Tiên
+                   Bấm Vào Đây Để Thêm Mặt Hàng Đầu Tiên
                 </button>
               )}
             </div>
@@ -642,20 +642,20 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
         {/* Floating Cart Drawer / Bottom Bar */}
         {cartItems.length > 0 && (
-          <div className="bg-slate-900 text-white p-4 border-t border-slate-800 flex items-center justify-between gap-4 shrink-0 shadow-2xl">
+          <div className="bg-ink-900 text-white p-4 border-t border-ink-800 flex items-center justify-between gap-4 shrink-0 shadow-2xl">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black">
+              <div className="w-10 h-10 rounded-xl bg-brand-500 text-ink-950 flex items-center justify-center font-black">
                 {totalCartCount}
               </div>
               <div>
-                <span className="text-xs text-slate-400 block font-bold">Tổng thanh toán giỏ hàng:</span>
-                <span className="text-lg font-black text-amber-400">{cartTotalAmount.toLocaleString('vi-VN')} VNĐ</span>
+                <span className="text-xs text-ink-400 block font-bold">Tổng thanh toán giỏ hàng:</span>
+                <span className="text-lg font-black text-brand-400">{cartTotalAmount.toLocaleString('vi-VN')} VNĐ</span>
               </div>
             </div>
 
             <button
               onClick={() => setIsCheckoutModalOpen(true)}
-              className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg hover:brightness-110 transition flex items-center gap-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-brand-400 text-ink-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg hover:brightness-110 transition flex items-center gap-2"
             >
               <span>TIẾN HÀNH ĐẶT HÀNG</span>
               <ArrowRight className="w-4 h-4" />
@@ -665,27 +665,27 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
         {/* OWNER DIRECT PRODUCT ADD / EDIT MODAL OVERLAY */}
         {showProductModal && (
-          <div className="absolute inset-0 z-[80] bg-slate-950/90 backdrop-blur-md p-4 overflow-y-auto flex items-center justify-center">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl relative">
+          <div className="absolute inset-0 z-[80] bg-ink-950/90 backdrop-blur-md p-4 overflow-y-auto flex items-center justify-center">
+            <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl relative">
               <button
                 onClick={() => setShowProductModal(false)}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition"
+                className="absolute top-4 right-4 p-2 text-ink-400 hover:text-white transition"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
-                <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold text-[10px] rounded uppercase">
+              <div className="border-b border-ink-200 dark:border-ink-800 pb-3">
+                <span className="px-2.5 py-0.5 bg-brand-500/10 text-brand-500 font-bold text-[10px] rounded uppercase">
                   QUẢN LÝ DÂN DỤNG
                 </span>
-                <h2 className="text-lg font-black text-slate-900 dark:text-white mt-1">
-                  {editingProductId ? '✏️ CHỈNH SỬA MẶT HÀNG' : '➕ THÊM MẶT HÀNG MỚI NỘI KHU'}
+                <h2 className="text-lg font-black text-ink-900 dark:text-white mt-1">
+                  {editingProductId ? ' CHỈNH SỬA MẶT HÀNG' : ' THÊM MẶT HÀNG MỚI NỘI KHU'}
                 </h2>
               </div>
 
               <form onSubmit={handleSaveProduct} className="space-y-3 text-xs">
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Tên Sản Phẩm / Món Ăn (*):
                   </label>
                   <input
@@ -694,19 +694,19 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                     value={prodName}
                     onChange={(e) => setProdName(e.target.value)}
                     placeholder="Ví dụ: Cơm sườn nướng mật ong..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                    className="w-full px-3 py-2 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                       Danh Mục:
                     </label>
                     <select
                       value={prodCategory}
                       onChange={(e) => setProdCategory(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                      className="w-full px-3 py-2 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                     >
                       <option value="Món Ăn & Đồ Uống">Món Ăn & Đồ Uống</option>
                       <option value="Thực Phẩm Tươi Sạch">Thực Phẩm Tươi Sạch</option>
@@ -717,7 +717,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                       Đơn Vị Tính:
                     </label>
                     <input
@@ -725,14 +725,14 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                       value={prodUnit}
                       onChange={(e) => setProdUnit(e.target.value)}
                       placeholder="suất, cái, hộp..."
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                      className="w-full px-3 py-2 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                       Giá Niêm Yết (VNĐ) (*):
                     </label>
                     <input
@@ -740,25 +740,25 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                       required
                       value={prodPrice}
                       onChange={(e) => setProdPrice(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-amber-600 dark:text-amber-400"
+                      className="w-full px-3 py-2 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-black text-brand-600 dark:text-brand-400"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                       Tồn Kho / Sẵn Có:
                     </label>
                     <input
                       type="number"
                       value={prodStock}
                       onChange={(e) => setProdStock(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                      className="w-full px-3 py-2 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Hình Ảnh Sản Phẩm (Link URL):
                   </label>
                   <input
@@ -766,12 +766,12 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                     value={prodImage}
                     onChange={(e) => setProdImage(e.target.value)}
                     placeholder="https://..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Mô Tả Sản Phẩm / Món Ăn:
                   </label>
                   <textarea
@@ -779,14 +779,14 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                     value={prodDesc}
                     onChange={(e) => setProdDesc(e.target.value)}
                     placeholder="Khẩu phần bao gồm, hương vị, hướng dẫn dùng..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
+                    className="w-full px-3 py-2 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSavingProduct}
-                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl uppercase transition shadow-lg text-xs"
+                  className="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-black rounded-xl uppercase transition shadow-lg text-xs"
                 >
                   {isSavingProduct ? 'Đang Lưu...' : (editingProductId ? 'CẬP NHẬT MẶT HÀNG' : 'LƯU VÀ ĐĂNG BÁN')}
                 </button>
@@ -797,33 +797,33 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
         {/* Checkout Modal Overlay */}
         {isCheckoutModalOpen && (
-          <div className="absolute inset-0 z-50 bg-slate-950/90 backdrop-blur-md p-4 overflow-y-auto flex items-center justify-center">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-lg space-y-5 shadow-2xl relative">
+          <div className="absolute inset-0 z-50 bg-ink-950/90 backdrop-blur-md p-4 overflow-y-auto flex items-center justify-center">
+            <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl p-6 w-full max-w-lg space-y-5 shadow-2xl relative">
               <button
                 onClick={() => setIsCheckoutModalOpen(false)}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition"
+                className="absolute top-4 right-4 p-2 text-ink-400 hover:text-white transition"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
-                <span className="px-2.5 py-0.5 bg-amber-500/10 text-amber-500 font-bold text-[10px] rounded uppercase">
+              <div className="border-b border-ink-200 dark:border-ink-800 pb-3">
+                <span className="px-2.5 py-0.5 bg-brand-500/10 text-brand-500 font-bold text-[10px] rounded uppercase">
                   XÁC NHẬN ĐƠN HÀNG
                 </span>
-                <h2 className="text-lg font-black text-slate-900 dark:text-white mt-1">
+                <h2 className="text-lg font-black text-ink-900 dark:text-white mt-1">
                   ĐẶT MUA TỪ GIAN HÀNG {storeState.storeName.toUpperCase()}
                 </h2>
               </div>
 
               {/* Items Summary */}
-              <div className="max-h-36 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+              <div className="max-h-36 overflow-y-auto divide-y divide-ink-100 dark:divide-ink-800 text-xs">
                 {cartItems.map(({ product, quantity }) => (
                   <div key={product.id} className="py-2 flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-slate-900 dark:text-white">{product.name}</span>
-                      <span className="block text-[10px] text-slate-400">{product.price.toLocaleString('vi-VN')}đ x {quantity}</span>
+                      <span className="font-bold text-ink-900 dark:text-white">{product.name}</span>
+                      <span className="block text-[10px] text-ink-400">{product.price.toLocaleString('vi-VN')}đ x {quantity}</span>
                     </div>
-                    <span className="font-extrabold text-amber-500">
+                    <span className="font-extrabold text-brand-500">
                       {(product.price * quantity).toLocaleString('vi-VN')}đ
                     </span>
                   </div>
@@ -833,7 +833,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
               {/* Customer Form */}
               <form onSubmit={handlePlaceOrder} className="space-y-3 text-xs">
                 {/* Auto-fill interactive checkbox banner */}
-                <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                <div className="p-3 bg-brand-500/10 border border-brand-500/30 rounded-xl">
                   <label className="flex items-start gap-2.5 cursor-pointer select-none">
                     <input
                       type="checkbox"
@@ -846,13 +846,13 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                           if (currentUser.phone) setCustomerPhone(currentUser.phone);
                         }
                       }}
-                      className="w-4 h-4 rounded border-amber-500 text-amber-500 focus:ring-amber-500 mt-0.5 shrink-0"
+                      className="w-4 h-4 rounded border-brand-500 text-brand-500 focus:ring-brand-500 mt-0.5 shrink-0"
                     />
                     <div>
-                      <span className="font-extrabold text-[11px] text-amber-600 dark:text-amber-400 block uppercase">
-                        ☑ Tự động lấy thông tin giao hàng từ tài khoản cư dân
+                      <span className="font-extrabold text-[11px] text-brand-600 dark:text-brand-400 block uppercase">
+                         Tự động lấy thông tin giao hàng từ tài khoản cư dân
                       </span>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                      <p className="text-[10px] text-ink-500 dark:text-ink-400 font-medium mt-0.5">
                         {autoFillCustomerInfo 
                           ? `Đã tích chọn (Đồng ý): Tự động dùng Tên "${customerName || currentUser?.name || 'Cư dân'}" & SĐT "${customerPhone || currentUser?.phone || ''}"` 
                           : 'Bỏ tích chọn (Không đồng ý): Nhập tên & SĐT người nhận mới thủ công.'}
@@ -861,7 +861,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                   </label>
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Họ và Tên Cư Dân Nhận Hàng (*):
                   </label>
                   <input
@@ -870,12 +870,12 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                     placeholder="Nguyễn Văn A"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                    className="w-full px-3.5 py-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Số Điện Thoại Liên Hệ (*):
                   </label>
                   <input
@@ -884,12 +884,12 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                     placeholder="0912345678"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                    className="w-full px-3.5 py-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Địa Chỉ Căn Hộ Nhận Hàng (*):
                   </label>
                   <input
@@ -898,12 +898,12 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                     placeholder="Ví dụ: Căn 15.08 Tòa S2.01 Vinhomes..."
                     value={customerAddress}
                     onChange={(e) => setCustomerAddress(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                    className="w-full px-3.5 py-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Ghi Chú Đơn Hàng:
                   </label>
                   <input
@@ -911,12 +911,12 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                     placeholder="Giao giờ hành chính, gọi trước 10 phút..."
                     value={orderNote}
                     onChange={(e) => setOrderNote(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
+                    className="w-full px-3.5 py-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-ink-700 dark:text-ink-300 mb-1">
                     Hình Thức Thanh Toán:
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -925,49 +925,49 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                       onClick={() => setPaymentMethod('vietqr')}
                       className={`p-2.5 rounded-xl border text-center font-bold transition ${
                         paymentMethod === 'vietqr'
-                          ? 'border-amber-500 bg-amber-500/10 text-amber-500'
-                          : 'border-slate-200 dark:border-slate-700 text-slate-400'
+                          ? 'border-brand-500 bg-brand-500/10 text-brand-500'
+                          : 'border-ink-200 dark:border-ink-700 text-ink-400'
                       }`}
                     >
-                      💳 Chuyển Khoản VietQR
+                       Chuyển Khoản VietQR
                     </button>
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('cod')}
                       className={`p-2.5 rounded-xl border text-center font-bold transition ${
                         paymentMethod === 'cod'
-                          ? 'border-amber-500 bg-amber-500/10 text-amber-500'
-                          : 'border-slate-200 dark:border-slate-700 text-slate-400'
+                          ? 'border-brand-500 bg-brand-500/10 text-brand-500'
+                          : 'border-ink-200 dark:border-ink-700 text-ink-400'
                       }`}
                     >
-                      💵 Thanh Toán COD
+                       Thanh Toán COD
                     </button>
                   </div>
                 </div>
 
                 {/* VAT Invoice Request Toggle */}
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2.5">
+                <div className="p-3 bg-ink-50 dark:bg-ink-800/80 rounded-2xl border border-ink-200 dark:border-ink-700 space-y-2.5">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={needVatInvoice}
                       onChange={(e) => setNeedVatInvoice(e.target.checked)}
-                      className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                      className="w-4 h-4 text-brand-600 rounded focus:ring-brand-500"
                     />
-                    <span className="font-extrabold text-xs text-slate-800 dark:text-slate-200">
-                      📄 Yêu cầu xuất Hóa Đơn Điện Tử VAT (KiotViet / MISA)
+                    <span className="font-extrabold text-xs text-ink-800 dark:text-ink-200">
+                       Yêu cầu xuất Hóa Đơn Điện Tử VAT (KiotViet / MISA)
                     </span>
                   </label>
 
                   {needVatInvoice && (
-                    <div className="space-y-2 pt-1 border-t border-slate-200 dark:border-slate-700 animate-in fade-in duration-150">
+                    <div className="space-y-2 pt-1 border-t border-ink-200 dark:border-ink-700 animate-in fade-in duration-150">
                       <input
                         type="text"
                         required={needVatInvoice}
                         placeholder="Tên Công Ty / Cơ Quan (*)"
                         value={vatCompany}
                         onChange={(e) => setVatCompany(e.target.value)}
-                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                        className="w-full px-3 py-2 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs"
                       />
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <input
@@ -976,7 +976,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                           placeholder="Mã Số Thuế (*)"
                           value={vatTaxCode}
                           onChange={(e) => setVatTaxCode(e.target.value)}
-                          className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono"
+                          className="w-full px-3 py-2 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs font-mono"
                         />
                         <input
                           type="email"
@@ -984,7 +984,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                           placeholder="Email nhận HĐ Điện Tử (*)"
                           value={vatEmail}
                           onChange={(e) => setVatEmail(e.target.value)}
-                          className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                          className="w-full px-3 py-2 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl text-xs"
                         />
                       </div>
                     </div>
@@ -992,15 +992,15 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                 </div>
 
                 {/* Total */}
-                <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-sm">
-                  <span className="font-black text-slate-900 dark:text-white">TỔNG CỘNG:</span>
-                  <span className="font-black text-amber-500 text-base">{cartTotalAmount.toLocaleString('vi-VN')}đ</span>
+                <div className="pt-2 border-t border-ink-200 dark:border-ink-800 flex justify-between items-center text-sm">
+                  <span className="font-black text-ink-900 dark:text-white">TỔNG CỘNG:</span>
+                  <span className="font-black text-brand-500 text-base">{cartTotalAmount.toLocaleString('vi-VN')}đ</span>
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl uppercase tracking-wider transition shadow-lg text-xs"
+                  className="w-full py-3 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black rounded-xl uppercase tracking-wider transition shadow-lg text-xs"
                 >
                   {isSubmitting ? 'Đang Xử Lý Đơn Hàng...' : 'XÁC NHẬN ĐẶT HÀNG NGAY'}
                 </button>
@@ -1011,44 +1011,44 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
 
         {/* Order Success Modal Overlay */}
         {placedOrder && (
-          <div className="absolute inset-0 z-50 bg-slate-950/95 backdrop-blur-md p-4 flex items-center justify-center">
-            <div className="bg-white dark:bg-slate-900 border border-emerald-500/50 rounded-3xl p-6 sm:p-8 w-full max-w-md text-center space-y-4 shadow-2xl relative">
+          <div className="absolute inset-0 z-50 bg-ink-950/95 backdrop-blur-md p-4 flex items-center justify-center">
+            <div className="bg-white dark:bg-ink-900 border border-brand-500/50 rounded-3xl p-6 sm:p-8 w-full max-w-md text-center space-y-4 shadow-2xl relative">
               <button
                 onClick={() => {
                   setPlacedOrder(null);
                   onClose();
                 }}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition bg-slate-800 rounded-full"
+                className="absolute top-4 right-4 p-2 text-ink-400 hover:text-white transition bg-ink-800 rounded-full"
                 title="Đóng Popup"
               >
                 <X className="w-5 h-5" />
               </button>
-              <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/40">
+              <div className="w-16 h-16 bg-brand-500/20 text-brand-400 rounded-full flex items-center justify-center mx-auto border border-brand-500/40">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
 
               <div>
-                <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 font-black text-[10px] rounded-full uppercase">
+                <span className="px-3 py-1 bg-brand-500/10 text-brand-400 font-black text-[10px] rounded-full uppercase">
                   ĐÃ LƯU NHẬT KÝ LỊCH SỬ ĐƠN HÀNG (0% PHÍ SÀN)
                 </span>
-                <h2 className="text-xl font-black text-slate-900 dark:text-white mt-1">
-                  Mã Đơn: <span className="text-amber-500 font-mono">{placedOrder.orderCode}</span>
+                <h2 className="text-xl font-black text-ink-900 dark:text-white mt-1">
+                  Mã Đơn: <span className="text-brand-500 font-mono">{placedOrder.orderCode}</span>
                 </h2>
-                <p className="text-xs text-slate-300 mt-2 bg-slate-800/80 p-2.5 rounded-xl border border-slate-700 leading-relaxed text-left">
-                  ⚡ <strong>Kết Nối Trực Tiếp:</strong> Đơn hàng đã lưu vào lịch sử hệ thống. Sàn không thu % phí. Khách hàng và Chủ gian hàng ({storeState.storeName}) liên hệ &amp; thanh toán trực tiếp.
+                <p className="text-xs text-ink-300 mt-2 bg-ink-800/80 p-2.5 rounded-xl border border-ink-700 leading-relaxed text-left">
+                   <strong>Kết Nối Trực Tiếp:</strong> Đơn hàng đã lưu vào lịch sử hệ thống. Sàn không thu % phí. Khách hàng và Chủ gian hàng ({storeState.storeName}) liên hệ &amp; thanh toán trực tiếp.
                 </p>
               </div>
 
               {placedOrder.paymentMethod === 'vietqr' && (
-                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-left space-y-2 text-xs">
-                  <div className="text-center font-bold text-amber-500 mb-1"> Quét Mã QR Thanh Toán Ngân Hàng</div>
+                <div className="bg-ink-50 dark:bg-ink-800 p-4 rounded-2xl border border-ink-200 dark:border-ink-700 text-left space-y-2 text-xs">
+                  <div className="text-center font-bold text-brand-500 mb-1"> Quét Mã QR Thanh Toán Ngân Hàng</div>
                   <img loading="lazy" 
                     src={`https://img.vietqr.io/image/MB-0868499929-compact2.png?amount=${placedOrder.totalAmount}&addInfo=${encodeURIComponent(placedOrder.orderCode)}&accountName=STORE_${encodeURIComponent(storeState.storeName)}`}
                     alt="VietQR"
-                    className="w-48 h-48 mx-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-md"
+                    className="w-48 h-48 mx-auto rounded-xl border border-ink-200 dark:border-ink-700 shadow-md"
                   />
-                  <p className="text-[10px] text-center text-slate-400">
-                    Nội dung CK: <strong className="text-amber-400">{placedOrder.orderCode}</strong>
+                  <p className="text-[10px] text-center text-ink-400">
+                    Nội dung CK: <strong className="text-brand-400">{placedOrder.orderCode}</strong>
                   </p>
                 </div>
               )}
@@ -1058,7 +1058,7 @@ export const UserStorefrontModal: React.FC<UserStorefrontModalProps> = ({
                   setPlacedOrder(null);
                   onClose();
                 }}
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl uppercase transition shadow-lg"
+                className="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-black text-xs rounded-xl uppercase transition shadow-lg"
               >
                 HOÀN TẤT & ĐÓNG
               </button>

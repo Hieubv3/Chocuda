@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Building2, MapPin, CheckCircle2, ChevronRight, Home, 
@@ -51,8 +51,8 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
   if (!project) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white">Dự án không tồn tại</h1>
-        <Link to="/du-an" className="inline-block px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-sm">
+        <h1 className="text-2xl font-black text-ink-900 dark:text-white">Dự án không tồn tại</h1>
+        <Link to="/du-an" className="inline-block px-6 py-2.5 bg-brand-600 text-white font-bold rounded-xl text-sm">
           Xem Tất Cả Dự Án Vinhomes
         </Link>
       </div>
@@ -132,7 +132,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
   const shareUrl = window.location.href;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={`${projectName} - Sơ Đồ Quy Hoạch & Quỹ Căn Giá Gốc`}
         description={`${projectName}. Vị trí: ${project.location}. Quy mô: ${project.areaSize || 'Quy mô lớn'}. Khám phá sơ đồ phân khu, quỹ căn biệt thự shophouse, giá bán chuyển nhượng tốt nhất.`}
@@ -142,19 +142,19 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       />
 
       {/* Breadcrumb Navigation */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
-            <Link to="/" className="hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
+            <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <Link to="/du-an" className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <Link to="/du-an" className="hover:text-brand-600 dark:hover:text-brand-400">
               Dự Án Vinhomes
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-            <span className="text-slate-900 dark:text-white font-bold truncate">
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
+            <span className="text-ink-900 dark:text-white font-bold truncate">
               {projectName}
             </span>
           </nav>
@@ -162,10 +162,10 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       </div>
 
       {/* Project Selector Bar for Seamless Navigation */}
-      <div className="bg-slate-100 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 py-3">
+      <div className="bg-ink-100 dark:bg-ink-900/60 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold scrollbar-none">
-            <span className="text-slate-400 shrink-0 font-extrabold uppercase text-[10px]">
+            <span className="text-ink-400 shrink-0 font-extrabold uppercase text-[10px]">
               Dự Án:
             </span>
             {projects.map(p => {
@@ -178,12 +178,12 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
                   onClick={() => navigate(`/du-an/${pSlug}`)}
                   className={`px-3.5 py-1.5 rounded-xl whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer shrink-0 ${
                     isCurr
-                      ? 'bg-amber-500 text-slate-950 font-black shadow-md ring-2 ring-amber-400/40'
-                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-amber-400 border border-slate-200 dark:border-slate-700'
+                      ? 'bg-brand-500 text-ink-950 font-black shadow-md ring-2 ring-brand-400/40'
+                      : 'bg-white dark:bg-ink-800 text-ink-700 dark:text-ink-300 hover:border-brand-400 border border-ink-200 dark:border-ink-700'
                   }`}
                 >
                   <span>{displayName}</span>
-                  {isCurr && <span className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                  {isCurr && <span className="w-1.5 h-1.5 rounded-full bg-ink-950" />}
                 </button>
               );
             })}
@@ -192,22 +192,22 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       </div>
 
       {/* Project Hero Banner — ảnh rộng bộ mặt dự án */}
-      <div className="relative bg-slate-950 text-white overflow-hidden">
+      <div className="relative bg-ink-950 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img loading="lazy"
             src={project.image}
             alt={projectName}
             className="w-full h-full object-cover opacity-35 filter brightness-90"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/60 to-transparent" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 space-y-6">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3.5 py-1 bg-emerald-500 text-slate-950 font-black text-xs rounded-full uppercase tracking-wider">
+            <span className="px-3.5 py-1 bg-brand-500 text-ink-950 font-black text-xs rounded-full uppercase tracking-wider">
               ĐẠI ĐÔ THỊ VINHOMES
             </span>
-            <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-emerald-400 border border-emerald-400/30 rounded-full text-xs font-bold">
+            <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-brand-400 border border-brand-400/30 rounded-full text-xs font-bold">
               {projectProperties.length} Căn Đang Bán & Cho Thuê
             </span>
           </div>
@@ -216,23 +216,23 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
             {projectName}
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
+          <p className="text-sm sm:text-base text-ink-300 max-w-3xl leading-relaxed">
             {project.description}
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
+            <div className="flex items-center gap-2 text-xs font-bold text-ink-300">
               <MapPin className="w-4 h-4 text-red-500 shrink-0" />
               <span>{project.location}</span>
             </div>
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-              <Building2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div className="flex items-center gap-2 text-xs font-bold text-ink-300">
+              <Building2 className="w-4 h-4 text-brand-400 shrink-0" />
               <span>Quy mô: {project.areaSize || project.totalUnits || 'Đại đô thị'}</span>
             </div>
 
             <button
               onClick={() => setShowShareModal(true)}
-              className="ml-auto px-4 py-2 bg-slate-800/80 hover:bg-slate-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 backdrop-blur-md transition cursor-pointer"
+              className="ml-auto px-4 py-2 bg-ink-800/80 hover:bg-ink-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 backdrop-blur-md transition cursor-pointer"
             >
               <Share2 className="w-3.5 h-3.5" />
               <span>Chia Sẻ Dự Án</span>
@@ -244,12 +244,12 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {/* Gallery ảnh dự án (nếu có) */}
       {project.images && project.images.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h3 className="text-sm font-black text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wider">
+          <h3 className="text-sm font-black text-ink-700 dark:text-ink-300 mb-3 uppercase tracking-wider">
             Thư viện ảnh dự án
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {project.images.map((img, idx) => (
-              <div key={idx} className="aspect-[4/3] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-md group">
+              <div key={idx} className="aspect-[4/3] rounded-xl overflow-hidden border border-ink-200 dark:border-ink-700 shadow-md group">
                 <img
                   loading="lazy"
                   src={img}
@@ -263,7 +263,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       )}
 
       {/* Project Section Tabs — Menu riêng cho dự án */}
-      <div className="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="sticky top-0 z-30 bg-white/95 dark:bg-ink-900/95 backdrop-blur-md border-b border-ink-200 dark:border-ink-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-1.5 overflow-x-auto py-2.5 scrollbar-none">
             {([
@@ -281,8 +281,8 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
                   onClick={() => setActiveSection(tab.key)}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      ? 'bg-brand-600 text-white shadow-md'
+                      : 'text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -298,11 +298,11 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {isParentProject && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
           <div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <Layers className="w-5 h-5 text-emerald-500" />
+            <h2 className="text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
+              <Layers className="w-5 h-5 text-brand-500" />
               <span>Các Dự Án Con Thuộc {projectName}</span>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
               Chọn một dự án con để xem chi tiết phân khu, tiện ích và quỹ căn
             </p>
           </div>
@@ -314,9 +314,9 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
                 <div
                   key={child.id}
                   onClick={() => navigate(childUrl)}
-                  className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 shadow-md hover:shadow-xl transition cursor-pointer"
+                  className="group bg-white dark:bg-ink-900 rounded-2xl overflow-hidden border border-ink-200 dark:border-ink-800 hover:border-brand-500/60 shadow-md hover:shadow-xl transition cursor-pointer"
                 >
-                  <div className="aspect-[16/10] overflow-hidden relative bg-slate-950">
+                  <div className="aspect-[16/10] overflow-hidden relative bg-ink-950">
                     <img loading="lazy"
                       src={child.image}
                       alt={child.name}
@@ -324,13 +324,13 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
                     />
                   </div>
                   <div className="p-4 space-y-2">
-                    <h3 className="font-black text-slate-900 dark:text-white text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition truncate">
+                    <h3 className="font-black text-ink-900 dark:text-white text-sm group-hover:text-brand-600 dark:group-hover:text-brand-400 transition truncate">
                       {childName}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                    <p className="text-xs text-ink-500 dark:text-ink-400 line-clamp-2">
                       {child.description}
                     </p>
-                    <div className="pt-2 flex items-center justify-between text-[11px] font-bold text-emerald-600 dark:text-emerald-400 border-t border-slate-100 dark:border-slate-800">
+                    <div className="pt-2 flex items-center justify-between text-[11px] font-bold text-brand-600 dark:text-brand-400 border-t border-ink-100 dark:border-ink-800">
                       <span>Xem chi tiết & sơ đồ</span>
                       <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
                     </div>
@@ -346,15 +346,15 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {activeSection === 'masterplan' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
           <div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <Layers className="w-5 h-5 text-emerald-500" />
+            <h2 className="text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
+              <Layers className="w-5 h-5 text-brand-500" />
               <span>Tổng Mặt Bằng & Sơ Đồ Quy Hoạch {projectName}</span>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
               Sơ đồ quy hoạch tổng thể toàn dự án — bấm vào ảnh để xem kích thước đầy đủ
             </p>
           </div>
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 overflow-hidden shadow-md">
             <a href={project.masterplanUrl || project.image} target="_blank" rel="noopener noreferrer" className="block">
               <img
                 loading="lazy"
@@ -364,7 +364,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
               />
             </a>
           </div>
-          <p className="text-[11px] text-slate-400 text-center">
+          <p className="text-[11px] text-ink-400 text-center">
             Bấm vào ảnh để mở sơ đồ quy hoạch kích thước đầy đủ trong tab mới
           </p>
           <DeveloperUnitsPublic projectId={project.id} projectName={projectName} />
@@ -375,31 +375,31 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {activeSection === 'legal' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
           <div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-500" />
+            <h2 className="text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-brand-500" />
               <span>Pháp Lý Dự Án {projectName}</span>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
               Thông tin pháp lý minh bạch, đầy đủ hồ sơ — đảm bảo an toàn cho khách hàng
             </p>
           </div>
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-md">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-6 shadow-md">
             {project.legalInfo ? (
               <div className="space-y-3">
                 {project.legalInfo.split('\n').filter(Boolean).map((line, idx) => (
                   <div key={idx} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{line}</p>
+                    <CheckCircle2 className="w-4 h-4 text-brand-500 mt-0.5 shrink-0" />
+                    <p className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed">{line}</p>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-center py-8 space-y-2">
-                <ShieldCheck className="w-10 h-10 text-slate-300 mx-auto" />
-                <p className="text-sm font-bold text-slate-500">
+                <ShieldCheck className="w-10 h-10 text-ink-300 mx-auto" />
+                <p className="text-sm font-bold text-ink-500">
                   Thông tin pháp lý đang được cập nhật
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-ink-400">
                   Liên hệ Hotline 0868.499.929 để được tư vấn chi tiết hồ sơ pháp lý dự án
                 </p>
               </div>
@@ -412,31 +412,31 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {activeSection === 'status' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
           <div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <Compass className="w-5 h-5 text-emerald-500" />
+            <h2 className="text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
+              <Compass className="w-5 h-5 text-brand-500" />
               <span>Hiện Trạng & Tiến Độ {projectName}</span>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
               Cập nhật tiến độ thi công, bàn giao và hiện trạng thực tế dự án
             </p>
           </div>
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-md">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-6 shadow-md">
             {project.currentStatus ? (
               <div className="space-y-3">
                 {project.currentStatus.split('\n').filter(Boolean).map((line, idx) => (
                   <div key={idx} className="flex items-start gap-3">
-                    <Compass className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{line}</p>
+                    <Compass className="w-4 h-4 text-brand-500 mt-0.5 shrink-0" />
+                    <p className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed">{line}</p>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-center py-8 space-y-2">
-                <Compass className="w-10 h-10 text-slate-300 mx-auto" />
-                <p className="text-sm font-bold text-slate-500">
+                <Compass className="w-10 h-10 text-ink-300 mx-auto" />
+                <p className="text-sm font-bold text-ink-500">
                   Thông tin hiện trạng đang được cập nhật
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-ink-400">
                   Liên hệ Hotline 0868.499.929 để nhận cập nhật tiến độ mới nhất
                 </p>
               </div>
@@ -449,17 +449,17 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {activeSection === 'video' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
           <div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
               <PlayCircle className="w-5 h-5 text-red-500" />
               <span>Video Giới Thiệu {projectName}</span>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
               Video chính thức từ kênh YouTube được chỉ định trên quản trị admin
             </p>
           </div>
           {project.youtubeUrl ? (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 shadow-md">
-              <div className="aspect-video rounded-2xl overflow-hidden bg-slate-950">
+            <div className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-4 sm:p-6 shadow-md">
+              <div className="aspect-video rounded-2xl overflow-hidden bg-ink-950">
                 <iframe
                   src={project.youtubeUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
                   title={`Video giới thiệu ${projectName}`}
@@ -470,12 +470,12 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
               </div>
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-10 text-center shadow-md space-y-3">
-              <PlayCircle className="w-12 h-12 text-slate-300 mx-auto" />
-              <h3 className="font-black text-base text-slate-700 dark:text-slate-200">
+            <div className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-10 text-center shadow-md space-y-3">
+              <PlayCircle className="w-12 h-12 text-ink-300 mx-auto" />
+              <h3 className="font-black text-base text-ink-700 dark:text-ink-200">
                 Video giới thiệu đang được cập nhật
               </h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
+              <p className="text-xs text-ink-500 max-w-md mx-auto">
                 Admin có thể thêm video YouTube giới thiệu dự án trong mục Quản Trị &gt; Dự Án &gt; Chỉnh Sửa Dự Án
               </p>
             </div>
@@ -493,11 +493,11 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
         <div className="px-0 py-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Layers className="w-5 h-5 text-emerald-500" />
+              <h2 className="text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
+                <Layers className="w-5 h-5 text-brand-500" />
                 <span>Các Phân Khu Trọng Điểm Tại Dự Án</span>
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
                 Bấm vào từng phân khu để xem chi tiết vị trí, bảng hàng và sơ đồ căn
               </p>
             </div>
@@ -508,24 +508,24 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
               <div
                 key={sub.id}
                 onClick={() => navigate(getSubdivisionUrl(project.id, sub.id || sub.name))}
-                className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 shadow-md hover:shadow-xl transition cursor-pointer"
+                className="group bg-white dark:bg-ink-900 rounded-2xl overflow-hidden border border-ink-200 dark:border-ink-800 hover:border-brand-500/60 shadow-md hover:shadow-xl transition cursor-pointer"
               >
-                <div className="aspect-[16/10] overflow-hidden relative bg-slate-950">
+                <div className="aspect-[16/10] overflow-hidden relative bg-ink-950">
                   <img loading="lazy"
                     src={sub.images && sub.images[0] ? sub.images[0] : project.image}
                     alt={sub.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 bg-slate-950/80 text-emerald-400 font-black text-[10px] rounded-full backdrop-blur-sm">
+                  <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 bg-ink-950/80 text-brand-400 font-black text-[10px] rounded-full backdrop-blur-sm">
                     {sub.productTypes && sub.productTypes.length > 0 ? sub.productTypes[0] : 'Phân khu VIP'}
                   </div>
                 </div>
 
                 <div className="p-4 space-y-2">
-                  <h3 className="font-black text-slate-900 dark:text-white text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition truncate">
+                  <h3 className="font-black text-ink-900 dark:text-white text-sm group-hover:text-brand-600 dark:group-hover:text-brand-400 transition truncate">
                     {sub.name}
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                  <p className="text-xs text-ink-500 dark:text-ink-400 line-clamp-2">
                     {sub.description}
                   </p>
                   {/* Mục con của phân khu (tầng/block/lô/giai đoạn) */}
@@ -534,14 +534,14 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
                       {sub.subItems.map((item, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-[10px] rounded-full border border-emerald-200 dark:border-emerald-800"
+                          className="px-2 py-0.5 bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 font-bold text-[10px] rounded-full border border-brand-200 dark:border-brand-800"
                         >
                           {item}
                         </span>
                       ))}
                     </div>
                   )}
-                  <div className="pt-2 flex items-center justify-between text-[11px] font-bold text-emerald-600 dark:text-emerald-400 border-t border-slate-100 dark:border-slate-800">
+                  <div className="pt-2 flex items-center justify-between text-[11px] font-bold text-brand-600 dark:text-brand-400 border-t border-ink-100 dark:border-ink-800">
                     <span>Xem sơ đồ & thông số</span>
                     <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
                   </div>
@@ -557,11 +557,11 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
         <div className="px-0 py-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-amber-500" />
+              <h2 className="text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-brand-500" />
                 <span>Chuỗi Tiện Ích Đẳng Cấp Dự Án</span>
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
                 Nhấp vào từng tiện ích để xem bài viết phân tích quy mô & trải nghiệm chi tiết
               </p>
             </div>
@@ -572,17 +572,17 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
               <div
                 key={idx}
                 onClick={() => navigate(getAmenityUrl(project.id, amenity))}
-                className="group p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-amber-500/60 shadow-sm hover:shadow-md transition cursor-pointer flex items-center justify-between"
+                className="group p-4 bg-white dark:bg-ink-900 rounded-2xl border border-ink-200 dark:border-ink-800 hover:border-brand-500/60 shadow-sm hover:shadow-md transition cursor-pointer flex items-center justify-between"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-9 h-9 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition">
+                  <div className="w-9 h-9 rounded-xl bg-brand-500/10 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition">
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
-                  <span className="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition">
+                  <span className="font-bold text-xs text-ink-800 dark:text-ink-200 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition">
                     {amenity}
                   </span>
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-amber-500 group-hover:translate-x-1 shrink-0 transition" />
+                <ChevronRight className="w-4 h-4 text-ink-400 group-hover:text-brand-500 group-hover:translate-x-1 shrink-0 transition" />
               </div>
             ))}
           </div>
@@ -592,21 +592,21 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {/* Property Inventory Section */}
       <div className="px-0 py-4 space-y-6">
         
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-ink-200 dark:border-ink-800 pb-4">
           <div>
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+            <h2 className="text-2xl font-black text-ink-900 dark:text-white">
               Quỹ Căn BĐS Mới Nhất Tại {projectName}
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-ink-500 dark:text-ink-400 mt-1">
               Tổng hợp {displayedProperties.length} căn hộ, shophouse, liền kề & biệt thự có giá chuyển nhượng tốt nhất
             </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center gap-2 bg-white dark:bg-ink-900 p-1.5 rounded-2xl border border-ink-200 dark:border-ink-800 shadow-sm">
             <button
               onClick={() => setActiveTab('all')}
               className={`px-4 py-2 rounded-xl text-xs font-black transition cursor-pointer ${
-                activeTab === 'all' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                activeTab === 'all' ? 'bg-brand-600 text-white shadow-sm' : 'text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'
               }`}
             >
               Tất Cả ({projectProperties.length})
@@ -614,7 +614,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
             <button
               onClick={() => setActiveTab('sale')}
               className={`px-4 py-2 rounded-xl text-xs font-black transition cursor-pointer ${
-                activeTab === 'sale' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                activeTab === 'sale' ? 'bg-brand-600 text-white shadow-sm' : 'text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'
               }`}
             >
               Cần Bán ({projectProperties.filter(p => p.type === 'sale').length})
@@ -622,7 +622,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
             <button
               onClick={() => setActiveTab('rent')}
               className={`px-4 py-2 rounded-xl text-xs font-black transition cursor-pointer ${
-                activeTab === 'rent' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                activeTab === 'rent' ? 'bg-brand-600 text-white shadow-sm' : 'text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'
               }`}
             >
               Cho Thuê ({projectProperties.filter(p => p.type === 'rent').length})
@@ -646,12 +646,12 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
             ))}
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center border border-slate-200 dark:border-slate-800 space-y-3">
-            <Building2 className="w-12 h-12 text-slate-400 mx-auto" />
-            <h3 className="font-black text-base text-slate-800 dark:text-slate-200">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl p-12 text-center border border-ink-200 dark:border-ink-800 space-y-3">
+            <Building2 className="w-12 h-12 text-ink-400 mx-auto" />
+            <h3 className="font-black text-base text-ink-800 dark:text-ink-200">
               Chưa có căn phù hợp trong danh mục này
             </h3>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
+            <p className="text-xs text-ink-500 max-w-md mx-auto">
               Quý khách vui lòng chuyển qua tab "Tất Cả" hoặc liên hệ Hotline Chuyên viên tư vấn 0868.499.929 để nhận bảng hàng độc quyền nội bộ.
             </p>
           </div>

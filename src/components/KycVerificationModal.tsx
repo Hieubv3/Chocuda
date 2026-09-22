@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { User } from '../types';
 import { ShieldCheck, Upload, CheckCircle2, AlertTriangle, Sparkles, X, FileText, UserCheck, Lock } from 'lucide-react';
 import { addWatermarkToImage, validateImageSize, createInstantPreview } from '../lib/watermark';
@@ -74,31 +74,31 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
+    <div className="fixed inset-0 bg-ink-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full transition"
+          className="absolute top-5 right-5 p-2 text-ink-400 hover:text-ink-600 dark:hover:text-white rounded-full transition"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal Header */}
-        <div className="space-y-2 border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div className="space-y-2 border-b border-ink-100 dark:border-ink-800 pb-4">
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-emerald-500/10 text-emerald-500 rounded-xl">
+            <span className="p-2 bg-brand-500/10 text-brand-500 rounded-xl">
               <UserCheck className="w-6 h-6" />
             </span>
             <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-amber-500">
+              <span className="text-[10px] font-black uppercase tracking-wider text-brand-500">
                 XÁC THỰC TÀI KHOẢN CHÍNH CHỦ & CHỐNG SPAM
               </span>
-              <h2 className="text-xl font-black text-slate-900 dark:text-white">
+              <h2 className="text-xl font-black text-ink-900 dark:text-white">
                 Cập Nhật Thông Tin Xác Thực KYC & Chứng Chỉ Môi Giới
               </h2>
             </div>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-ink-500 dark:text-ink-400">
             {user.role === 'sale'
               ? 'Môi giới / Sale bắt buộc cập nhật Chứng chỉ hành nghề & CCCD trong vòng 7 ngày để được tiếp tục đăng tin & Up Top VIP.'
               : 'Xác thực tài khoản chính chủ giúp tăng 300% độ uy tín đối với khách mua & thuê.'}
@@ -109,7 +109,7 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold">
             <div>
-              <label className="block text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-ink-700 dark:text-ink-300 mb-1">
                 Họ và Tên (Theo CCCD) <span className="text-rose-500">*</span>
               </label>
               <input
@@ -118,12 +118,12 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Ví dụ: Nguyễn Văn Hùng"
-                className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
+                className="w-full p-3 bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl text-ink-900 dark:text-white focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-ink-700 dark:text-ink-300 mb-1">
                 Ngày Tháng Năm Sinh (DOB) <span className="text-rose-500">*</span>
               </label>
               <input
@@ -131,12 +131,12 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                 required
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
-                className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
+                className="w-full p-3 bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl text-ink-900 dark:text-white focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-ink-700 dark:text-ink-300 mb-1">
                 Số CCCD / Giấy Tờ Định Danh (12 Chữ Số) <span className="text-rose-500">*</span>
               </label>
               <input
@@ -146,21 +146,21 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
                 value={idCardNumber}
                 onChange={(e) => setIdCardNumber(e.target.value.replace(/\D/g, ''))}
                 placeholder="Ví dụ: 001092008888"
-                className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white font-mono tracking-widest text-sm focus:ring-2 focus:ring-emerald-500"
+                className="w-full p-3 bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl text-ink-900 dark:text-white font-mono tracking-widest text-sm focus:ring-2 focus:ring-brand-500"
               />
             </div>
           </div>
 
           {/* Document Upload Links / Previews */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
-              <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 block">
-                📷 Ảnh CCCD Mặt Trước
+            <div className="p-3 bg-ink-50 dark:bg-ink-950 rounded-2xl border border-ink-200 dark:border-ink-800 space-y-2">
+              <span className="text-[11px] font-extrabold text-ink-700 dark:text-ink-300 block">
+                 Ảnh CCCD Mặt Trước
               </span>
-              <img loading="lazy" src={idCardFrontUrl} alt="CCCD Front" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
+              <img loading="lazy" src={idCardFrontUrl} alt="CCCD Front" className="w-full h-24 object-cover rounded-xl border border-ink-200 dark:border-ink-800" />
               <label className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1.5 cursor-pointer shadow transition">
                 <Upload className="w-3.5 h-3.5" />
-                <span>📁 CHỌN ẢNH (DƯỚI 10MB)</span>
+                <span> CHỌN ẢNH (DƯỚI 10MB)</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -200,14 +200,14 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
               </label>
             </div>
 
-            <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
-              <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 block">
-                📷 Ảnh CCCD Mặt Sau
+            <div className="p-3 bg-ink-50 dark:bg-ink-950 rounded-2xl border border-ink-200 dark:border-ink-800 space-y-2">
+              <span className="text-[11px] font-extrabold text-ink-700 dark:text-ink-300 block">
+                 Ảnh CCCD Mặt Sau
               </span>
-              <img loading="lazy" src={idCardBackUrl} alt="CCCD Back" className="w-full h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
+              <img loading="lazy" src={idCardBackUrl} alt="CCCD Back" className="w-full h-24 object-cover rounded-xl border border-ink-200 dark:border-ink-800" />
               <label className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1.5 cursor-pointer shadow transition">
                 <Upload className="w-3.5 h-3.5" />
-                <span>📁 CHỌN ẢNH (DƯỚI 10MB)</span>
+                <span> CHỌN ẢNH (DƯỚI 10MB)</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -248,20 +248,20 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
             </div>
 
             {user.role === 'sale' && (
-              <div className="sm:col-span-2 p-3 bg-amber-500/10 rounded-2xl border border-amber-500/30 space-y-2">
+              <div className="sm:col-span-2 p-3 bg-brand-500/10 rounded-2xl border border-brand-500/30 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-amber-500 flex items-center gap-1.5">
+                  <span className="text-xs font-black text-brand-500 flex items-center gap-1.5">
                     <FileText className="w-4 h-4" />
-                    📜 Chứng Chỉ Hành Nghề Môi Giới BĐS (Bắt Buộc Cho Sale)
+                     Chứng Chỉ Hành Nghề Môi Giới BĐS (Bắt Buộc Cho Sale)
                   </span>
-                  <span className="text-[10px] bg-amber-500 text-slate-950 px-2 py-0.5 rounded font-black">
+                  <span className="text-[10px] bg-brand-500 text-ink-950 px-2 py-0.5 rounded font-black">
                     YÊU CẦU TRONG 7 NGÀY
                   </span>
                 </div>
-                <img loading="lazy" src={brokerLicenseUrl} alt="Broker License" className="w-full h-32 object-cover rounded-xl border border-amber-500/30" />
-                <label className="w-full py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition">
+                <img loading="lazy" src={brokerLicenseUrl} alt="Broker License" className="w-full h-32 object-cover rounded-xl border border-brand-500/30" />
+                <label className="w-full py-2 bg-brand-600 hover:bg-brand-500 text-ink-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition">
                   <Upload className="w-4 h-4" />
-                  <span>📁 CHỌN CHỨNG CHỈ (DƯỚI 10MB)</span>
+                  <span> CHỌN CHỨNG CHỈ (DƯỚI 10MB)</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -309,42 +309,42 @@ export const KycVerificationModal: React.FC<KycVerificationModalProps> = ({
               type="button"
               onClick={handleSimulateAiScan}
               disabled={isAiScanning}
-              className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 transition shadow-md"
+              className="w-full py-3 bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 text-white font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 transition shadow-md"
             >
-              <Sparkles className="w-4 h-4 text-amber-300 animate-spin" />
-              <span>{isAiScanning ? 'Đang Chạy AI Trích Xuất & Kiểm Tra CCCD...' : '🤖 KÍCH HOẠT AI ĐỐI SOÁT TỰ ĐỘNG CHẤP NHẬN BẢO MẬT'}</span>
+              <Sparkles className="w-4 h-4 text-brand-300 animate-spin" />
+              <span>{isAiScanning ? 'Đang Chạy AI Trích Xuất & Kiểm Tra CCCD...' : ' KÍCH HOẠT AI ĐỐI SOÁT TỰ ĐỘNG CHẤP NHẬN BẢO MẬT'}</span>
             </button>
           </div>
 
           {/* AI Result Box */}
           {aiScanResult && (
-            <div className="p-4 bg-emerald-950/60 border border-emerald-500/40 rounded-2xl text-xs space-y-2 text-emerald-200">
-              <div className="flex items-center justify-between font-black text-emerald-400">
+            <div className="p-4 bg-brand-950/60 border border-brand-500/40 rounded-2xl text-xs space-y-2 text-brand-200">
+              <div className="flex items-center justify-between font-black text-brand-400">
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-brand-400" />
                   XÁC THỰC AI THÀNH CÔNG ({aiScanResult.confidence}%)
                 </span>
-                <span className="text-[10px] bg-emerald-500 text-slate-950 font-black px-2 py-0.5 rounded">
+                <span className="text-[10px] bg-brand-500 text-ink-950 font-black px-2 py-0.5 rounded">
                   HỢP LỆ
                 </span>
               </div>
-              <p className="text-[11px] text-slate-300">{aiScanResult.message}</p>
+              <p className="text-[11px] text-ink-300">{aiScanResult.message}</p>
             </div>
           )}
 
           {/* Submit Footer */}
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-ink-100 dark:border-ink-800 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs rounded-xl transition"
+              className="px-5 py-2.5 bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 font-bold text-xs rounded-xl transition"
             >
               Đóng
             </button>
 
             <button
               type="submit"
-              className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl transition shadow-lg uppercase tracking-wider flex items-center gap-1.5"
+              className="px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-ink-950 font-black text-xs rounded-xl transition shadow-lg uppercase tracking-wider flex items-center gap-1.5"
             >
               <ShieldCheck className="w-4 h-4" />
               <span>GỬI HỒ SƠ CHO ADMIN DUYỆT</span>

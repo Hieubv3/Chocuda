@@ -93,7 +93,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
     if (!completedTasks[taskId]) {
       setCompletedTasks(prev => ({ ...prev, [taskId]: true }));
       setUserPoints(prev => prev + reward);
-      alert(`🎉 CHÚC MỪNG! Bạn vừa nhận +${reward} Điểm Thưởng Up-Tin nhờ Theo Dõi / Tương Tác Kênh Social BĐS!`);
+      alert(` CHÚC MỪNG! Bạn vừa nhận +${reward} Điểm Thưởng Up-Tin nhờ Theo Dõi / Tương Tác Kênh Social BĐS!`);
     } else {
       alert(`Bạn đã nhận phần thưởng từ kênh này rồi!`);
     }
@@ -101,7 +101,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
 
   const handleRedeemPointPush = async () => {
     if (userPoints < 1) {
-      alert('⚠️ Bạn chưa đủ điểm thưởng Social! Vui lòng thực hiện các nhiệm vụ Theo dõi kênh bên dưới để nhận +5 điểm ngay!');
+      alert(' Bạn chưa đủ điểm thưởng Social! Vui lòng thực hiện các nhiệm vụ Theo dõi kênh bên dưới để nhận +5 điểm ngay!');
       return;
     }
 
@@ -161,39 +161,39 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
           name: '1 Lượt Up Tin Lên Đầu Ngay',
           price: pricingConfig.singlePushPrice,
           desc: 'Đẩy bài viết lên Top 1 trang danh sách ngay lập tức, thu hút lượt xem vượt trội.',
-          badge: '⚡ UP TIN TOP 1',
-          color: 'from-emerald-500 to-teal-600'
+          badge: ' UP TIN TOP 1',
+          color: 'from-brand-500 to-teal-600'
         };
       case 'auto_push_5':
         return {
           name: 'Gói Auto-Push 5 Lượt/Ngày',
           price: pricingConfig.autoPush5Price,
           desc: 'Tự động đẩy tin lên đầu 5 lần mỗi ngày vào các khung giờ vàng (8h, 11h, 14h, 18h, 21h).',
-          badge: '🔄 AUTO PUSH 5X',
-          color: 'from-teal-600 to-emerald-700'
+          badge: ' AUTO PUSH 5X',
+          color: 'from-teal-600 to-brand-700'
         };
       case 'vip_silver':
         return {
           name: `VIP Bạc (${days} Ngày Nổi Bật)`,
           price: pricingConfig.vipSilverPriceDay * days,
           desc: 'Gắn huy hiệu VIP Bạc, ưu tiên hiển thị trước các tin thường.',
-          badge: '🥈 VIP BẠC',
-          color: 'from-slate-600 to-slate-800'
+          badge: ' VIP BẠC',
+          color: 'from-ink-600 to-ink-800'
         };
       case 'vip_gold':
         return {
           name: `VIP Vàng (${days} Ngày Nổi Bật)`,
           price: pricingConfig.vipGoldPriceDay * days,
           desc: 'Gắn huy hiệu VIP Vàng + Viền Lục Bảo Mệnh Mộc, hiển thị ưu tiên cao trên Trang chủ & Danh mục.',
-          badge: '🥇 VIP VÀNG',
-          color: 'from-amber-500 to-yellow-600'
+          badge: ' VIP VÀNG',
+          color: 'from-brand-500 to-yellow-600'
         };
       case 'vip_diamond':
         return {
           name: `VIP Kim Cương (${days} Ngày Đỉnh Cao)`,
           price: pricingConfig.vipDiamondPriceDay * days,
           desc: 'Vị trí Top 1 ghim cố định, gắn nhãn Kim Cương sang trọng, tiếp cận 100% khách hàng tiềm năng.',
-          badge: '💎 VIP KIM CƯƠNG',
+          badge: ' VIP KIM CƯƠNG',
           color: 'from-purple-600 via-pink-600 to-blue-600'
         };
     }
@@ -334,39 +334,39 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
   }, [pollTimer]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-3 sm:p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/85 backdrop-blur-md p-3 sm:p-4 overflow-y-auto">
       {/* Screen Safety Fixed Close Button */}
       <button
         onClick={onClose}
-        className="fixed top-3 right-3 sm:top-5 sm:right-5 z-[70] p-2.5 bg-slate-900/90 hover:bg-slate-800 text-white rounded-full transition cursor-pointer border border-white/20 shadow-2xl flex items-center justify-center"
+        className="fixed top-3 right-3 sm:top-5 sm:right-5 z-[70] p-2.5 bg-ink-900/90 hover:bg-ink-800 text-white rounded-full transition cursor-pointer border border-white/20 shadow-2xl flex items-center justify-center"
         title="Đóng cửa sổ"
       >
         <X className="w-5 h-5 text-white" />
       </button>
 
-      <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-emerald-500/20 overflow-hidden my-auto max-h-[88vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-white dark:bg-ink-900 rounded-2xl shadow-2xl border border-brand-500/20 overflow-hidden my-auto max-h-[88vh] flex flex-col">
         
         {/* Top Header - Mệnh Mộc Styling */}
-        <div className="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white p-5 flex items-center justify-between shrink-0">
+        <div className="bg-gradient-to-r from-brand-800 via-brand-700 to-teal-800 text-white p-5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-600/50 rounded-xl border border-emerald-400/30">
-              <Zap className="w-6 h-6 text-emerald-300 animate-pulse" />
+            <div className="p-2.5 bg-brand-600/50 rounded-xl border border-brand-400/30">
+              <Zap className="w-6 h-6 text-brand-300 animate-pulse" />
             </div>
             <div>
               <h3 className="text-lg font-bold flex items-center gap-2">
                 Thanh Toán Up Tin & Nâng Cấp VIP
-                <span className="text-xs bg-emerald-500/40 text-emerald-200 px-2.5 py-0.5 rounded-full font-normal border border-emerald-400/30">
+                <span className="text-xs bg-brand-500/40 text-brand-200 px-2.5 py-0.5 rounded-full font-normal border border-brand-400/30">
                   Mệnh Mộc Vượng Khí
                 </span>
               </h3>
-              <p className="text-xs text-emerald-100 line-clamp-1 mt-0.5">
+              <p className="text-xs text-brand-100 line-clamp-1 mt-0.5">
                 Bất động sản: <span className="font-semibold text-white">{property.title}</span>
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-emerald-200 hover:text-white hover:bg-emerald-700/50 rounded-full transition"
+            className="p-1.5 text-brand-200 hover:text-white hover:bg-brand-700/50 rounded-full transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -377,21 +377,21 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
           {pricingConfig.paymentEnabled === false ? (
             <div className="space-y-6">
               {/* DONATE MODE BANNER */}
-              <div className="bg-gradient-to-r from-amber-500/20 via-emerald-500/15 to-teal-500/20 border-2 border-amber-500/50 p-5 rounded-2xl space-y-4">
+              <div className="bg-gradient-to-r from-brand-500/20 via-brand-500/15 to-teal-500/20 border-2 border-brand-500/50 p-5 rounded-2xl space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="bg-amber-500 text-slate-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                    🎁 CHẾ ĐỘ DONATE TÙY TÂM — PHỤC VỤ MIỄN PHÍ
+                  <span className="bg-brand-500 text-ink-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                     CHẾ ĐỘ DONATE TÙY TÂM — PHỤC VỤ MIỄN PHÍ
                   </span>
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-extrabold bg-emerald-100 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                  <span className="text-xs text-brand-600 dark:text-brand-400 font-extrabold bg-brand-100 dark:bg-brand-950/80 px-2.5 py-0.5 rounded-full border border-brand-500/30">
                     100% MIỄN PHÍ UP TIN
                   </span>
                 </div>
 
-                <h4 className="text-base font-black text-slate-900 dark:text-white">
+                <h4 className="text-base font-black text-ink-900 dark:text-white">
                   Hệ Thống Đang Mở Đăng Tin & Up-Tin Lên Top 1 Hoàn Toàn Miễn Phí!
                 </h4>
 
-                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-xs text-ink-600 dark:text-ink-300 leading-relaxed">
                   {pricingConfig.donateMessage || 'Hệ thống BĐS 24h đang phục vụ cộng đồng hoàn toàn miễn phí. Bạn có thể nhấn nút đẩy tin lên TOP 1 ngay lập tức mà không cần nạp tiền.'}
                 </p>
 
@@ -399,21 +399,21 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleFreeDonatePush}
-                  className="w-full py-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-xl shadow-emerald-600/30 transition transform active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-gradient-to-r from-brand-600 via-teal-600 to-brand-500 hover:from-brand-500 hover:to-teal-500 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-xl shadow-brand-600/30 transition transform active:scale-95 flex items-center justify-center gap-2"
                 >
-                  <Zap className="w-5 h-5 text-amber-300 animate-bounce" />
-                  {isSubmitting ? 'Đang thực thi Up Tin lên Top 1...' : '⚡ THỰC THI UP TIN LÊN TOP 1 NGAY (MIỄN PHÍ 100%)'}
+                  <Zap className="w-5 h-5 text-brand-300 animate-bounce" />
+                  {isSubmitting ? 'Đang thực thi Up Tin lên Top 1...' : ' THỰC THI UP TIN LÊN TOP 1 NGAY (MIỄN PHÍ 100%)'}
                 </button>
               </div>
 
               {/* OPTIONAL DONATE VIETQR CODE */}
-              <div className="p-5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4">
+              <div className="p-5 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700 space-y-4">
                 <div className="text-center">
-                  <h5 className="font-extrabold text-xs text-slate-900 dark:text-white uppercase tracking-wider flex items-center justify-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
+                  <h5 className="font-extrabold text-xs text-ink-900 dark:text-white uppercase tracking-wider flex items-center justify-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-brand-500" />
                     ỦNG HỘ / DONATE TÙY TÂM DUY TRÌ SERVER (KHÔNG BẮT BUỘC)
                   </h5>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                  <p className="text-[11px] text-ink-500 dark:text-ink-400 mt-1">
                     Nếu bạn hài lòng với dịch vụ, bạn có thể quét mã VietQR chuyển khoản tùy tâm (10k, 20k, 50k...) để ủng hộ Admin duy trì máy chủ:
                   </p>
                 </div>
@@ -429,13 +429,13 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                   />
 
                   <div className="space-y-2 text-xs">
-                    <div className="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
-                      <span className="text-[10px] text-slate-400 font-bold block">NGÂN HÀNG:</span>
-                      <span className="font-bold text-slate-900 dark:text-white">{pricingConfig.bankName}</span>
-                      <span className="text-[10px] text-slate-400 font-bold block mt-2">SỐ TÀI KHOẢN:</span>
-                      <span className="font-mono font-extrabold text-emerald-600 dark:text-emerald-400 text-sm block">{pricingConfig.accountNumber}</span>
-                      <span className="text-[10px] text-slate-400 font-bold block mt-2">CHỦ TÀI KHOẢN:</span>
-                      <span className="font-bold uppercase text-slate-800 dark:text-slate-200">{pricingConfig.accountHolder}</span>
+                    <div className="bg-white dark:bg-ink-900 p-3.5 rounded-xl border border-ink-200 dark:border-ink-700 space-y-1">
+                      <span className="text-[10px] text-ink-400 font-bold block">NGÂN HÀNG:</span>
+                      <span className="font-bold text-ink-900 dark:text-white">{pricingConfig.bankName}</span>
+                      <span className="text-[10px] text-ink-400 font-bold block mt-2">SỐ TÀI KHOẢN:</span>
+                      <span className="font-mono font-extrabold text-brand-600 dark:text-brand-400 text-sm block">{pricingConfig.accountNumber}</span>
+                      <span className="text-[10px] text-ink-400 font-bold block mt-2">CHỦ TÀI KHOẢN:</span>
+                      <span className="font-bold uppercase text-ink-800 dark:text-ink-200">{pricingConfig.accountHolder}</span>
                     </div>
                   </div>
                 </div>
@@ -444,28 +444,28 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
           ) : (
             <>
               {/* Payment Method Switcher */}
-              <div className="grid grid-cols-2 gap-2 mb-6 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <div className="grid grid-cols-2 gap-2 mb-6 bg-ink-100 dark:bg-ink-800 p-1.5 rounded-2xl border border-ink-200 dark:border-ink-700">
                 <button
                   type="button"
                   onClick={() => setPayMethod('vietqr')}
                   className={`py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 ${
                     payMethod === 'vietqr'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                      ? 'bg-brand-600 text-white shadow-md'
+                      : 'text-ink-600 dark:text-ink-300 hover:text-ink-900'
                   }`}
                 >
-                  <CreditCard className="w-4 h-4" /> 💳 Nạp Phí VietQR MSB
+                  <CreditCard className="w-4 h-4" />  Nạp Phí VietQR MSB
                 </button>
                 <button
                   type="button"
                   onClick={() => setPayMethod('social_points')}
                   className={`py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 ${
                     payMethod === 'social_points'
-                      ? 'bg-amber-500 text-slate-950 shadow-md'
-                      : 'text-amber-600 dark:text-amber-400 hover:text-amber-500 bg-amber-500/10'
+                      ? 'bg-brand-500 text-ink-950 shadow-md'
+                      : 'text-brand-600 dark:text-brand-400 hover:text-brand-500 bg-brand-500/10'
                   }`}
                 >
-                  <Sparkles className="w-4 h-4" /> 🎁 Up-Tin Bằng Điểm Social ({userPoints} Điểm)
+                  <Sparkles className="w-4 h-4" />  Up-Tin Bằng Điểm Social ({userPoints} Điểm)
                 </button>
               </div>
             </>
@@ -474,57 +474,57 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
           {/* MODE 1: Social Reward Points Mode */}
           {payMethod === 'social_points' && (
             <div className="space-y-6">
-              <div className="bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-emerald-500/15 border-2 border-amber-500/40 rounded-2xl p-5 space-y-4">
+              <div className="bg-gradient-to-r from-brand-500/15 via-brand-400/10 to-brand-500/15 border-2 border-brand-500/40 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="bg-amber-500 text-slate-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    <span className="bg-brand-500 text-ink-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                       CHẾ ĐỘ UP-TIN BẰNG ĐIỂM THƯỞNG
                     </span>
-                    <h4 className="text-base font-black text-slate-900 dark:text-white mt-1">
+                    <h4 className="text-base font-black text-ink-900 dark:text-white mt-1">
                       Đổi 1 Điểm Thưởng = 1 Lượt Up-Tin BĐS Lên Top 1
                     </h4>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs text-slate-500 block font-bold">Số điểm khả dụng:</span>
-                    <span className="text-2xl font-black text-amber-500">{userPoints} Điểm</span>
+                    <span className="text-xs text-ink-500 block font-bold">Số điểm khả dụng:</span>
+                    <span className="text-2xl font-black text-brand-500">{userPoints} Điểm</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                  Nhấn nút bên dưới để dùng <strong>1 Điểm Thưởng</strong> đẩy bất động sản <span className="font-bold text-amber-600">{property.title}</span> nhảy thẳng lên vị trí đầu tiên trang danh sách hoàn toàn miễn phí.
+                <p className="text-xs text-ink-600 dark:text-ink-300 leading-relaxed">
+                  Nhấn nút bên dưới để dùng <strong>1 Điểm Thưởng</strong> đẩy bất động sản <span className="font-bold text-brand-600">{property.title}</span> nhảy thẳng lên vị trí đầu tiên trang danh sách hoàn toàn miễn phí.
                 </p>
 
                 <button
                   type="button"
                   disabled={isSubmitting || userPoints < 1}
                   onClick={handleRedeemPointPush}
-                  className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-gradient-to-r from-brand-500 to-brand-400 hover:from-brand-400 hover:to-brand-300 disabled:opacity-50 text-ink-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition flex items-center justify-center gap-2"
                 >
                   <Zap className="w-4 h-4" />
                   {isSubmitting
                     ? 'Đang đổi điểm & Up tin...'
                     : userPoints >= 1
-                    ? '⚡ ĐỔI 1 ĐIỂM BẤT ĐẦU UP TIN TOP 1 NGAY'
-                    : '⚠️ BẠN CHƯA ĐỦ ĐIỂM - HÃY THEO DÕI KÊNH BÊN DƯỚI'}
+                    ? ' ĐỔI 1 ĐIỂM BẤT ĐẦU UP TIN TOP 1 NGAY'
+                    : ' BẠN CHƯA ĐỦ ĐIỂM - HÃY THEO DÕI KÊNH BÊN DƯỚI'}
                 </button>
               </div>
 
               {/* Tasks to earn MORE points */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
+                  <h4 className="text-xs font-black text-ink-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-brand-500" />
                     NHIỆM VỤ THEO DÕI KÊNH ĐỂ TÍCH LŨY THÊM ĐIỂM (+5 ĐIỂM / KÊNH):
                   </h4>
-                  <span className="text-[11px] text-emerald-600 font-bold">1 Điểm = 1 Lượt Up Tin</span>
+                  <span className="text-[11px] text-brand-600 font-bold">1 Điểm = 1 Lượt Up Tin</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   {/* Task 1: Zalo */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                  <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 flex items-center justify-between">
                     <div>
                       <span className="font-bold text-sky-600 block">Zalo Official Account</span>
-                      <span className="text-[10px] text-slate-500">Quan tâm Zalo OA Nhà đẹp Vinhomes</span>
+                      <span className="text-[10px] text-ink-500">Quan tâm Zalo OA Nhà đẹp Vinhomes</span>
                     </div>
                     <button
                       type="button"
@@ -532,19 +532,19 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       disabled={completedTasks.zalo}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
                         completedTasks.zalo
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                          ? 'bg-ink-200 text-ink-500 cursor-not-allowed'
                           : 'bg-sky-600 hover:bg-sky-700 text-white shadow'
                       }`}
                     >
-                      {completedTasks.zalo ? '✓ Đã Nhận +5' : '+5 Điểm'}
+                      {completedTasks.zalo ? ' Đã Nhận +5' : '+5 Điểm'}
                     </button>
                   </div>
 
                   {/* Task 2: Facebook */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                  <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 flex items-center justify-between">
                     <div>
                       <span className="font-bold text-blue-600 block">Fanpage Facebook</span>
-                      <span className="text-[10px] text-slate-500">Like Fanpage Chợ Cư Dân 24h</span>
+                      <span className="text-[10px] text-ink-500">Like Fanpage Chợ Cư Dân 24h</span>
                     </div>
                     <button
                       type="button"
@@ -552,19 +552,19 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       disabled={completedTasks.facebook}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
                         completedTasks.facebook
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                          ? 'bg-ink-200 text-ink-500 cursor-not-allowed'
                           : 'bg-blue-600 hover:bg-blue-700 text-white shadow'
                       }`}
                     >
-                      {completedTasks.facebook ? '✓ Đã Nhận +5' : '+5 Điểm'}
+                      {completedTasks.facebook ? ' Đã Nhận +5' : '+5 Điểm'}
                     </button>
                   </div>
 
                   {/* Task 3: YouTube */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                  <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 flex items-center justify-between">
                     <div>
                       <span className="font-bold text-rose-600 block">YouTube Nhà đẹp Vinhomes</span>
-                      <span className="text-[10px] text-slate-500">Subscribe kênh YouTube</span>
+                      <span className="text-[10px] text-ink-500">Subscribe kênh YouTube</span>
                     </div>
                     <button
                       type="button"
@@ -572,19 +572,19 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       disabled={completedTasks.youtube}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
                         completedTasks.youtube
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                          ? 'bg-ink-200 text-ink-500 cursor-not-allowed'
                           : 'bg-rose-600 hover:bg-rose-700 text-white shadow'
                       }`}
                     >
-                      {completedTasks.youtube ? '✓ Đã Nhận +5' : '+5 Điểm'}
+                      {completedTasks.youtube ? ' Đã Nhận +5' : '+5 Điểm'}
                     </button>
                   </div>
 
                   {/* Task 4: TikTok */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                  <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-slate-900 dark:text-slate-100 block">TikTok BĐS 24h</span>
-                      <span className="text-[10px] text-slate-500">Follow xem video thực tế</span>
+                      <span className="font-bold text-ink-900 dark:text-ink-100 block">TikTok BĐS 24h</span>
+                      <span className="text-[10px] text-ink-500">Follow xem video thực tế</span>
                     </div>
                     <button
                       type="button"
@@ -592,19 +592,19 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       disabled={completedTasks.tiktok}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
                         completedTasks.tiktok
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                          : 'bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white shadow'
+                          ? 'bg-ink-200 text-ink-500 cursor-not-allowed'
+                          : 'bg-ink-900 dark:bg-ink-100 dark:text-ink-900 text-white shadow'
                       }`}
                     >
-                      {completedTasks.tiktok ? '✓ Đã Nhận +5' : '+5 Điểm'}
+                      {completedTasks.tiktok ? ' Đã Nhận +5' : '+5 Điểm'}
                     </button>
                   </div>
 
                   {/* Task 5: Google Maps Review 5 Star */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                  <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-amber-500 block">Đánh giá 5★ Google Maps</span>
-                      <span className="text-[10px] text-slate-500">Đánh giá uy tín 5 sao</span>
+                      <span className="font-bold text-brand-500 block">Đánh giá 5 Google Maps</span>
+                      <span className="text-[10px] text-ink-500">Đánh giá uy tín 5 sao</span>
                     </div>
                     <button
                       type="button"
@@ -612,19 +612,19 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       disabled={completedTasks.google}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
                         completedTasks.google
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                          : 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow'
+                          ? 'bg-ink-200 text-ink-500 cursor-not-allowed'
+                          : 'bg-brand-500 hover:bg-brand-600 text-ink-950 shadow'
                       }`}
                     >
-                      {completedTasks.google ? '✓ Đã Nhận +10' : '+10 Điểm'}
+                      {completedTasks.google ? ' Đã Nhận +10' : '+10 Điểm'}
                     </button>
                   </div>
 
                   {/* Task 6: Telegram */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                  <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 flex items-center justify-between">
                     <div>
                       <span className="font-bold text-indigo-600 block">Telegram Group</span>
-                      <span className="text-[10px] text-slate-500">Tham gia nhóm BĐS 24h</span>
+                      <span className="text-[10px] text-ink-500">Tham gia nhóm BĐS 24h</span>
                     </div>
                     <button
                       type="button"
@@ -632,11 +632,11 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       disabled={completedTasks.telegram}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black transition ${
                         completedTasks.telegram
-                          ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                          ? 'bg-ink-200 text-ink-500 cursor-not-allowed'
                           : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow'
                       }`}
                     >
-                      {completedTasks.telegram ? '✓ Đã Nhận +5' : '+5 Điểm'}
+                      {completedTasks.telegram ? ' Đã Nhận +5' : '+5 Điểm'}
                     </button>
                   </div>
                 </div>
@@ -648,7 +648,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
           {payMethod === 'vietqr' && paymentStep === 'select' && (
             <div className="space-y-6">
               <div>
-                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-3">
+                <label className="text-xs font-bold text-ink-500 dark:text-ink-400 uppercase tracking-wider block mb-3">
                   1. Chọn Gói Dịch Vụ Up Tin & Đẩy Top
                 </label>
                 
@@ -658,20 +658,20 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                     onClick={() => setSelectedType('single_push')}
                     className={`cursor-pointer p-4 rounded-xl border transition-all ${
                       selectedType === 'single_push'
-                        ? 'border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-slate-700'
+                        ? 'border-brand-600 bg-brand-50/50 dark:bg-brand-950/30 ring-2 ring-brand-500/20'
+                        : 'border-ink-200 dark:border-ink-800 hover:border-brand-300 dark:hover:border-ink-700'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-brand-100 dark:bg-brand-900/60 text-brand-800 dark:text-brand-300 flex items-center gap-1">
                         <Zap className="w-3 h-3" /> 1 Lượt Up Tin
                       </span>
-                      <span className="text-base font-extrabold text-emerald-700 dark:text-emerald-400">
+                      <span className="text-base font-extrabold text-brand-700 dark:text-brand-400">
                         {pricingConfig.singlePushPrice.toLocaleString('vi-VN')} đ
                       </span>
                     </div>
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">Up Tin Lên Đầu Ngay</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Đẩy tin lên Top 1 danh mục ngay lập tức.</p>
+                    <h4 className="font-bold text-ink-900 dark:text-ink-100 text-sm">Up Tin Lên Đầu Ngay</h4>
+                    <p className="text-xs text-ink-500 dark:text-ink-400 mt-1">Đẩy tin lên Top 1 danh mục ngay lập tức.</p>
                   </div>
 
                   {/* Gói 2: Auto Push 5 */}
@@ -679,20 +679,20 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                     onClick={() => setSelectedType('auto_push_5')}
                     className={`cursor-pointer p-4 rounded-xl border transition-all ${
                       selectedType === 'auto_push_5'
-                        ? 'border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-slate-700'
+                        ? 'border-brand-600 bg-brand-50/50 dark:bg-brand-950/30 ring-2 ring-brand-500/20'
+                        : 'border-ink-200 dark:border-ink-800 hover:border-brand-300 dark:hover:border-ink-700'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-bold px-2 py-0.5 rounded bg-teal-100 dark:bg-teal-900/60 text-teal-800 dark:text-teal-300 flex items-center gap-1">
-                        🔄 Gói 5 Lượt
+                         Gói 5 Lượt
                       </span>
                       <span className="text-base font-extrabold text-teal-700 dark:text-teal-400">
                         {pricingConfig.autoPush5Price.toLocaleString('vi-VN')} đ
                       </span>
                     </div>
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">Auto-Push 5 Lượt/Ngày</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Tự động đẩy tin 5 khung giờ vàng trong ngày.</p>
+                    <h4 className="font-bold text-ink-900 dark:text-ink-100 text-sm">Auto-Push 5 Lượt/Ngày</h4>
+                    <p className="text-xs text-ink-500 dark:text-ink-400 mt-1">Tự động đẩy tin 5 khung giờ vàng trong ngày.</p>
                   </div>
 
                   {/* Gói 3: VIP Bạc */}
@@ -700,20 +700,20 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                     onClick={() => setSelectedType('vip_silver')}
                     className={`cursor-pointer p-4 rounded-xl border transition-all ${
                       selectedType === 'vip_silver'
-                        ? 'border-slate-500 bg-slate-50 dark:bg-slate-800/40 ring-2 ring-slate-400/20'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-400'
+                        ? 'border-ink-500 bg-ink-50 dark:bg-ink-800/40 ring-2 ring-ink-400/20'
+                        : 'border-ink-200 dark:border-ink-800 hover:border-ink-400'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 flex items-center gap-1">
-                        🥈 VIP BẠC
+                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-ink-200 dark:bg-ink-700 text-ink-800 dark:text-ink-200 flex items-center gap-1">
+                         VIP BẠC
                       </span>
-                      <span className="text-base font-extrabold text-slate-700 dark:text-slate-300">
+                      <span className="text-base font-extrabold text-ink-700 dark:text-ink-300">
                         {(pricingConfig.vipSilverPriceDay * days).toLocaleString('vi-VN')} đ
                       </span>
                     </div>
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">Tin Nổi Bật VIP Bạc</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Nổi bật x3 so với tin thường.</p>
+                    <h4 className="font-bold text-ink-900 dark:text-ink-100 text-sm">Tin Nổi Bật VIP Bạc</h4>
+                    <p className="text-xs text-ink-500 dark:text-ink-400 mt-1">Nổi bật x3 so với tin thường.</p>
                   </div>
 
                   {/* Gói 4: VIP Vàng */}
@@ -721,20 +721,20 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                     onClick={() => setSelectedType('vip_gold')}
                     className={`cursor-pointer p-4 rounded-xl border transition-all ${
                       selectedType === 'vip_gold'
-                        ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30 ring-2 ring-amber-500/20'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-amber-400'
+                        ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/30 ring-2 ring-brand-500/20'
+                        : 'border-ink-200 dark:border-ink-800 hover:border-brand-400'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 flex items-center gap-1">
-                        🥇 VIP VÀNG
+                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-brand-100 dark:bg-brand-900/60 text-brand-800 dark:text-brand-300 flex items-center gap-1">
+                         VIP VÀNG
                       </span>
-                      <span className="text-base font-extrabold text-amber-600 dark:text-amber-400">
+                      <span className="text-base font-extrabold text-brand-600 dark:text-brand-400">
                         {(pricingConfig.vipGoldPriceDay * days).toLocaleString('vi-VN')} đ
                       </span>
                     </div>
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">Tin VIP Vàng Nổi Bật</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Khung viền Lục Bảo + Nhãn VIP Vàng nổi bật.</p>
+                    <h4 className="font-bold text-ink-900 dark:text-ink-100 text-sm">Tin VIP Vàng Nổi Bật</h4>
+                    <p className="text-xs text-ink-500 dark:text-ink-400 mt-1">Khung viền Lục Bảo + Nhãn VIP Vàng nổi bật.</p>
                   </div>
 
                   {/* Gói 5: VIP Kim Cương */}
@@ -743,18 +743,18 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                     className={`col-span-1 md:col-span-2 cursor-pointer p-4 rounded-xl border transition-all ${
                       selectedType === 'vip_diamond'
                         ? 'border-purple-500 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 dark:from-purple-950/40 dark:to-blue-950/40 ring-2 ring-purple-500/30'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-purple-400'
+                        : 'border-ink-200 dark:border-ink-800 hover:border-purple-400'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-bold px-2.5 py-0.5 rounded-full badge-vip-diamond flex items-center gap-1">
-                        <Crown className="w-3 h-3" /> 💎 VIP KIM CƯƠNG ĐỈNH CAO
+                        <Crown className="w-3 h-3" />  VIP KIM CƯƠNG ĐỈNH CAO
                       </span>
                       <span className="text-lg font-black text-purple-700 dark:text-purple-300">
                         {(pricingConfig.vipDiamondPriceDay * days).toLocaleString('vi-VN')} đ
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                    <p className="text-xs text-ink-600 dark:text-ink-300 font-medium">
                       Ghim vị trí Top 1 ưu tiên tuyệt đối, hiển thị trên cả Trang chủ và Banner nổi bật.
                     </p>
                   </div>
@@ -763,8 +763,8 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
 
               {/* Day Selector for VIP packages */}
               {['vip_silver', 'vip_gold', 'vip_diamond'].includes(selectedType) && (
-                <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Thời gian duy trì VIP:</span>
+                <div className="bg-ink-50 dark:bg-ink-800/50 p-4 rounded-xl border border-ink-200 dark:border-ink-700 flex items-center justify-between">
+                  <span className="text-xs font-bold text-ink-700 dark:text-ink-300">Thời gian duy trì VIP:</span>
                   <div className="flex items-center gap-2">
                     {[3, 7, 15, 30].map(d => (
                       <button
@@ -773,8 +773,8 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                         onClick={() => setDays(d)}
                         className={`px-3 py-1 text-xs font-bold rounded-lg transition ${
                           days === d
-                            ? 'bg-emerald-600 text-white shadow-sm'
-                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-emerald-500'
+                            ? 'bg-brand-600 text-white shadow-sm'
+                            : 'bg-white dark:bg-ink-800 text-ink-600 dark:text-ink-300 border border-ink-300 dark:border-ink-700 hover:border-brand-500'
                         }`}
                       >
                         {d} Ngày
@@ -785,10 +785,10 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
               )}
 
               {/* Order Summary */}
-              <div className="bg-emerald-50/70 dark:bg-emerald-950/30 p-4 rounded-xl border border-emerald-200 dark:border-emerald-900/60 flex items-center justify-between">
+              <div className="bg-brand-50/70 dark:bg-brand-950/30 p-4 rounded-xl border border-brand-200 dark:border-brand-900/60 flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-emerald-800 dark:text-emerald-300 font-medium">Tổng tiền cần thanh toán:</span>
-                  <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400">
+                  <span className="text-xs text-brand-800 dark:text-brand-300 font-medium">Tổng tiền cần thanh toán:</span>
+                  <div className="text-2xl font-black text-brand-700 dark:text-brand-400">
                     {packageInfo.price.toLocaleString('vi-VN')} VNĐ
                   </div>
                 </div>
@@ -796,7 +796,7 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleCreateOrder}
-                  className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition transform active:scale-95 disabled:opacity-50"
+                  className="px-6 py-3 bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-600/30 flex items-center gap-2 transition transform active:scale-95 disabled:opacity-50"
                 >
                   <QrCode className="w-5 h-5" />
                   {isSubmitting ? 'Đang tạo mã QR...' : 'Tiếp Tục Quét Mã VietQR'}
@@ -809,17 +809,17 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
           {paymentStep === 'qr' && (
             <div className="space-y-6">
               <div className="text-center">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs font-bold rounded-full mb-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" /> Cổng Thanh Toán VietQR Tự Động 24/7
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-100 dark:bg-brand-900/50 text-brand-800 dark:text-brand-300 text-xs font-bold rounded-full mb-2">
+                  <ShieldCheck className="w-4 h-4 text-brand-600" /> Cổng Thanh Toán VietQR Tự Động 24/7
                 </span>
-                <h4 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                <h4 className="text-base font-bold text-ink-900 dark:text-ink-100">
                   Quét Mã QR Để Chuyển Khoản & Up Tin Tự Động
                 </h4>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                 {/* VietQR Image Container */}
-                <div className="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <div className="flex flex-col items-center justify-center p-4 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700">
                   <img loading="lazy"
                     src={qrUrl}
                     alt="VietQR Transfer"
@@ -829,76 +829,76 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       e.currentTarget.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`STK:${pricingConfig.accountNumber}|ST:${packageInfo.price}|ND:${paymentCode}`)}`;
                     }}
                   />
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 text-center">
+                  <p className="text-[11px] text-ink-500 dark:text-ink-400 mt-2 text-center">
                     Sử dụng ứng dụng Ngân hàng (MB, Vietcombank, Momo, VPBank...) để quét mã
                   </p>
                 </div>
 
                 {/* Transfer Details */}
                 <div className="space-y-3">
-                  <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2 text-xs">
-                    <div className="flex items-center justify-between text-slate-500">
+                  <div className="p-3 bg-white dark:bg-ink-800 rounded-xl border border-ink-200 dark:border-ink-700 space-y-2 text-xs">
+                    <div className="flex items-center justify-between text-ink-500">
                       <span>Ngân hàng:</span>
-                      <span className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1">
-                        <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="font-bold text-ink-900 dark:text-ink-100 flex items-center gap-1">
+                        <Building2 className="w-3.5 h-3.5 text-brand-600" />
                         {pricingConfig.bankName}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Số tài khoản:</span>
+                      <span className="text-ink-500">Số tài khoản:</span>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-extrabold text-sm text-emerald-700 dark:text-emerald-400">
+                        <span className="font-mono font-extrabold text-sm text-brand-700 dark:text-brand-400">
                           {pricingConfig.accountNumber}
                         </span>
                         <button
                           onClick={() => handleCopy(pricingConfig.accountNumber, 'account')}
-                          className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-500 hover:text-emerald-600 transition"
+                          className="p-1 hover:bg-ink-100 dark:hover:bg-ink-700 rounded text-ink-500 hover:text-brand-600 transition"
                           title="Sao chép số tài khoản"
                         >
                           <Copy className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
-                    {isCopiedAccount && <p className="text-[10px] text-emerald-600 font-bold text-right">Đã chép số tài khoản!</p>}
+                    {isCopiedAccount && <p className="text-[10px] text-brand-600 font-bold text-right">Đã chép số tài khoản!</p>}
 
-                    <div className="flex items-center justify-between text-slate-500">
+                    <div className="flex items-center justify-between text-ink-500">
                       <span>Chủ tài khoản:</span>
-                      <span className="font-bold text-slate-900 dark:text-slate-100 uppercase">
+                      <span className="font-bold text-ink-900 dark:text-ink-100 uppercase">
                         {pricingConfig.accountHolder}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-700/60">
-                      <span className="text-slate-500">Số tiền:</span>
-                      <span className="font-extrabold text-base text-emerald-600">
+                    <div className="flex items-center justify-between pt-1 border-t border-ink-100 dark:border-ink-700/60">
+                      <span className="text-ink-500">Số tiền:</span>
+                      <span className="font-extrabold text-base text-brand-600">
                         {packageInfo.price.toLocaleString('vi-VN')} VNĐ
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-1 bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-lg border border-emerald-200 dark:border-emerald-900/40">
-                      <span className="text-emerald-800 dark:text-emerald-300 font-semibold">Nội dung chuyển:</span>
+                    <div className="flex items-center justify-between pt-1 bg-brand-50 dark:bg-brand-950/40 p-2 rounded-lg border border-brand-200 dark:border-brand-900/40">
+                      <span className="text-brand-800 dark:text-brand-300 font-semibold">Nội dung chuyển:</span>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono font-black text-slate-900 dark:text-slate-100">
+                        <span className="font-mono font-black text-ink-900 dark:text-ink-100">
                           {paymentCode}
                         </span>
                         <button
                           onClick={() => handleCopy(paymentCode, 'code')}
-                          className="p-1 hover:bg-emerald-200 dark:hover:bg-emerald-800 rounded text-emerald-700 transition"
+                          className="p-1 hover:bg-brand-200 dark:hover:bg-brand-800 rounded text-brand-700 transition"
                           title="Sao chép nội dung chuyển khoản"
                         >
                           <Copy className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
-                    {isCopiedCode && <p className="text-[10px] text-emerald-600 font-bold text-right">Đã chép nội dung!</p>}
+                    {isCopiedCode && <p className="text-[10px] text-brand-600 font-bold text-right">Đã chép nội dung!</p>}
                   </div>
 
                   {/* Actions */}
                   <div className="pt-2 flex flex-col gap-2">
                     {isPolling ? (
-                      <div className="w-full py-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold text-sm rounded-xl flex items-center justify-center gap-2">
-                        <span className="inline-block w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-full py-3 bg-brand-50 dark:bg-brand-950/40 border border-brand-300 dark:border-brand-800 text-brand-800 dark:text-brand-300 font-bold text-sm rounded-xl flex items-center justify-center gap-2">
+                        <span className="inline-block w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
                         Đang chờ hệ thống xác nhận thanh toán...
                       </div>
                     ) : (
@@ -906,9 +906,9 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                         type="button"
                         disabled={isSubmitting}
                         onClick={startPolling}
-                        className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition disabled:opacity-50"
+                        className="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition disabled:opacity-50"
                       >
-                        <CheckCircle2 className="w-5 h-5 text-emerald-200" />
+                        <CheckCircle2 className="w-5 h-5 text-brand-200" />
                         Tôi Đã Chuyển Khoản — Chờ Xác Nhận Tự Động
                       </button>
                     )}
@@ -919,14 +919,14 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
                       </p>
                     )}
 
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-relaxed">
-                      Sau khi bạn chuyển khoản, hệ thống <strong>tự động xác nhận</strong> qua SePay trong vòng 15-30 giây và đẩy tin lên TOP 1. Vui lòng giữ nguyên nội dung chuyển khoản <span className="font-mono font-bold text-emerald-600">{paymentCode}</span>.
+                    <p className="text-[11px] text-ink-500 dark:text-ink-400 text-center leading-relaxed">
+                      Sau khi bạn chuyển khoản, hệ thống <strong>tự động xác nhận</strong> qua SePay trong vòng 15-30 giây và đẩy tin lên TOP 1. Vui lòng giữ nguyên nội dung chuyển khoản <span className="font-mono font-bold text-brand-600">{paymentCode}</span>.
                     </p>
 
                     <button
                       type="button"
                       onClick={() => setPaymentStep('select')}
-                      className="w-full py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition"
+                      className="w-full py-2 text-xs font-semibold text-ink-500 hover:text-ink-800 dark:hover:text-ink-300 transition"
                     >
                        Quay lại chọn gói khác
                     </button>
@@ -938,18 +938,18 @@ export const UpTinPaymentModal: React.FC<UpTinPaymentModalProps> = ({
 
           {paymentStep === 'success' && (
             <div className="py-8 text-center space-y-4">
-              <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-300 rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
+              <div className="w-16 h-16 bg-brand-100 dark:bg-brand-900/60 text-brand-600 dark:text-brand-300 rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
                 <Sparkles className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-black text-slate-900 dark:text-slate-100">
+              <h3 className="text-xl font-black text-ink-900 dark:text-ink-100">
                 Thanh Toán Up Tin Thành Công!
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                Bất động sản <span className="font-bold text-emerald-600">{property.title}</span> đã được đẩy lên TOP 1 danh mục và kích hoạt gói <span className="font-bold">{packageInfo.name}</span>.
+              <p className="text-xs text-ink-600 dark:text-ink-400 max-w-md mx-auto">
+                Bất động sản <span className="font-bold text-brand-600">{property.title}</span> đã được đẩy lên TOP 1 danh mục và kích hoạt gói <span className="font-bold">{packageInfo.name}</span>.
               </p>
               <div className="pt-4">
-                <span className="text-xs text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-4 py-2 rounded-full border border-emerald-200">
-                  ⚡ Đang cập nhật thứ tự hiển thị...
+                <span className="text-xs text-brand-600 font-bold bg-brand-50 dark:bg-brand-950/60 px-4 py-2 rounded-full border border-brand-200">
+                   Đang cập nhật thứ tự hiển thị...
                 </span>
               </div>
             </div>

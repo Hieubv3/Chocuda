@@ -160,7 +160,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={`${employer.companyName} — Hồ Sơ Nhà Tuyển Dụng & Tin Tuyển Việc Làm | Chợ Cư Dân 24h`}
         description={`Hồ sơ nhà tuyển dụng ${employer.companyName} tại ${employer.address}. ${employer.tagline || employer.introduction}. Xem ngay ${employerJobs.length} vị trí đang tuyển lương cao, làm việc ngay tại Vinhomes!`}
@@ -175,18 +175,18 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
       />
 
       {/* Breadcrumb Bar */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 sticky top-16 z-30 shadow-xs">
+      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3 sticky top-16 z-30 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap gap-1.5">
+          <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
             <Link to="/" className="hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1">
               <Home className="w-3.5 h-3.5" />
               <span>Trang chủ</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
             <Link to="/tuyen-dung" className="hover:text-teal-600 dark:hover:text-teal-400">
               Tuyển Dụng & Việc Làm
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+            <ChevronRight className="w-3.5 h-3.5 shrink-0 text-ink-400" />
             <span className="text-teal-600 dark:text-teal-400 font-bold truncate max-w-[280px]">
               {employer.companyName}
             </span>
@@ -200,7 +200,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
         <div className="flex items-center justify-between gap-3">
           <Link
             to="/tuyen-dung"
-            className="inline-flex items-center gap-1.5 text-xs font-black text-slate-700 dark:text-slate-300 hover:text-teal-600 transition"
+            className="inline-flex items-center gap-1.5 text-xs font-black text-ink-700 dark:text-ink-300 hover:text-teal-600 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Xem Tất Cả Tin Tuyển Dụng & Ứng Viên</span>
@@ -209,9 +209,9 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyLink}
-              className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-teal-600 font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition cursor-pointer"
+              className="px-3 py-1.5 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-700 dark:text-ink-300 hover:text-teal-600 font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition cursor-pointer"
             >
-              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-brand-500" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copiedLink ? 'Đã copy link' : 'Sao chép link profile'}</span>
             </button>
             <button
@@ -225,19 +225,19 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
         </div>
 
         {/* Employer Header Banner Card */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
+        <div className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 overflow-hidden shadow-xl">
           
           {/* Banner cover */}
-          <div className="relative h-48 sm:h-64 bg-slate-950 overflow-hidden">
+          <div className="relative h-48 sm:h-64 bg-ink-950 overflow-hidden">
             <img loading="lazy"
               src={employer.bannerUrl || ''}
               alt={employer.companyName}
               className="w-full h-full object-cover opacity-60"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/30 to-transparent" />
             
             <div className="absolute top-4 right-4 flex items-center gap-2">
-              <span className="px-3 py-1 bg-emerald-500 text-slate-950 font-black text-xs rounded-full uppercase flex items-center gap-1 shadow-md">
+              <span className="px-3 py-1 bg-brand-500 text-ink-950 font-black text-xs rounded-full uppercase flex items-center gap-1 shadow-md">
                 <ShieldCheck className="w-3.5 h-3.5" /> Doanh Nghiệp Xác Thực KYC
               </span>
             </div>
@@ -245,13 +245,13 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
 
           {/* Profile Details Header */}
           <div className="p-6 sm:p-8 -mt-16 relative z-10 space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 pb-6 border-b border-ink-100 dark:border-ink-800">
               
               <div className="flex items-start gap-4 sm:gap-6">
                 <img loading="lazy"
                   src={employer.logoUrl || ''}
                   alt={employer.companyName}
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-2xl bg-white shrink-0"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-4 border-white dark:border-ink-900 shadow-2xl bg-white shrink-0"
                 />
                 
                 <div className="space-y-1.5">
@@ -260,23 +260,23 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
                       {employer.industry}
                     </span>
                     {employer.scaleSize && (
-                      <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
+                      <span className="text-xs font-bold text-ink-500 flex items-center gap-1">
                         <Users className="w-3.5 h-3.5" /> {employer.scaleSize}
                       </span>
                     )}
                   </div>
 
-                  <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                  <h1 className="text-2xl sm:text-3xl font-black text-ink-900 dark:text-white leading-tight">
                     {employer.companyName}
                   </h1>
 
                   {employer.tagline && (
-                    <p className="text-xs sm:text-sm font-semibold text-amber-600 dark:text-amber-400">
+                    <p className="text-xs sm:text-sm font-semibold text-brand-600 dark:text-brand-400">
                       {employer.tagline}
                     </p>
                   )}
 
-                  <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 pt-0.5">
+                  <p className="text-xs text-ink-500 dark:text-ink-400 flex items-center gap-1.5 pt-0.5">
                     <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0" />
                     <span>{employer.address}</span>
                   </p>
@@ -287,7 +287,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
               <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                 <a
                   href={`tel:${employer.contactPhone}`}
-                  className="flex-1 sm:flex-none px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg flex items-center justify-center gap-2 transition"
+                  className="flex-1 sm:flex-none px-5 py-3 bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-500 hover:to-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg flex items-center justify-center gap-2 transition"
                 >
                   <Phone className="w-4 h-4" />
                   <span>Gọi Hotline: {employer.contactPhone}</span>
@@ -310,24 +310,24 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-              <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-                <span className="text-slate-400 font-bold block">Vị Trí Đang Tuyển:</span>
+              <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+                <span className="text-ink-400 font-bold block">Vị Trí Đang Tuyển:</span>
                 <span className="text-lg font-black text-teal-600 dark:text-teal-400">{employerJobs.length} Công việc</span>
               </div>
 
-              <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-                <span className="text-slate-400 font-bold block">Người Phụ Trách:</span>
-                <span className="text-sm font-black text-slate-800 dark:text-slate-200">{employer.contactName}</span>
+              <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+                <span className="text-ink-400 font-bold block">Người Phụ Trách:</span>
+                <span className="text-sm font-black text-ink-800 dark:text-ink-200">{employer.contactName}</span>
               </div>
 
-              <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-                <span className="text-slate-400 font-bold block">Khu Đô Thị Trọng Điểm:</span>
-                <span className="text-sm font-black text-slate-800 dark:text-slate-200">{employer.projectName || 'Vinhomes'}</span>
+              <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+                <span className="text-ink-400 font-bold block">Khu Đô Thị Trọng Điểm:</span>
+                <span className="text-sm font-black text-ink-800 dark:text-ink-200">{employer.projectName || 'Vinhomes'}</span>
               </div>
 
-              <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-                <span className="text-slate-400 font-bold block">Email Nhận CV:</span>
-                <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 truncate block">{employer.contactEmail}</span>
+              <div className="p-3.5 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200/80 dark:border-ink-700/80 space-y-1">
+                <span className="text-ink-400 font-bold block">Email Nhận CV:</span>
+                <span className="text-xs font-mono font-bold text-ink-700 dark:text-ink-300 truncate block">{employer.contactEmail}</span>
               </div>
             </div>
 
@@ -341,22 +341,22 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
           <div className="lg:col-span-8 space-y-8">
             
             {/* Open Vacancies Section */}
-            <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-sm">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+            <section className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-6 sm:p-8 space-y-6 shadow-sm">
+              <div className="flex items-center justify-between border-b border-ink-100 dark:border-ink-800 pb-4">
                 <div className="space-y-1">
-                  <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <h2 className="text-lg font-black text-ink-900 dark:text-white flex items-center gap-2">
                     <Briefcase className="w-5 h-5 text-teal-600" />
                     <span>CÁC VỊ TRÍ ĐANG TUYỂN DỤNG ({employerJobs.length})</span>
                   </h2>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-ink-500">
                     Ứng tuyển trực tiếp với nhà tuyển dụng, nhận phản hồi nhanh trong 24h
                   </p>
                 </div>
               </div>
 
               {employerJobs.length === 0 ? (
-                <div className="text-center py-12 text-slate-400 space-y-2">
-                  <Briefcase className="w-10 h-10 mx-auto text-slate-300 opacity-60" />
+                <div className="text-center py-12 text-ink-400 space-y-2">
+                  <Briefcase className="w-10 h-10 mx-auto text-ink-300 opacity-60" />
                   <p className="text-xs font-bold">Hiện tại doanh nghiệp chưa có tin tuyển dụng mới mở.</p>
                 </div>
               ) : (
@@ -364,29 +364,29 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
                   {employerJobs.map(job => (
                     <div
                       key={job.id}
-                      className="p-4 sm:p-5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 hover:border-teal-500 transition shadow-xs space-y-3 group"
+                      className="p-4 sm:p-5 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700/80 hover:border-teal-500 transition shadow-xs space-y-3 group"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <Link
                           to={getJobDetailUrl(job)}
-                          className="font-black text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition leading-snug"
+                          className="font-black text-sm sm:text-base text-ink-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition leading-snug"
                         >
                           {job.title}
                         </Link>
-                        <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm whitespace-nowrap">
+                        <span className="font-black text-brand-600 dark:text-brand-400 text-sm whitespace-nowrap">
                           {job.salaryDisplay}
                         </span>
                       </div>
 
-                      <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
+                      <p className="text-xs text-ink-600 dark:text-ink-300 line-clamp-2">
                         {job.description}
                       </p>
 
-                      <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 text-xs">
-                        <div className="flex flex-wrap items-center gap-3 text-slate-500">
-                          <span>📍 {job.location}</span>
+                      <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-ink-200/60 dark:border-ink-700/60 text-xs">
+                        <div className="flex flex-wrap items-center gap-3 text-ink-500">
+                          <span> {job.location}</span>
                           <span>•</span>
-                          <span>🕒 {job.jobType === 'full-time' ? 'Toàn thời gian' : 'Theo ca / Bán thời gian'}</span>
+                          <span> {job.jobType === 'full-time' ? 'Toàn thời gian' : 'Theo ca / Bán thời gian'}</span>
                         </div>
 
                         <Link
@@ -404,13 +404,13 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
             </section>
 
             {/* Company Introduction & Working Culture */}
-            <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-sm text-xs">
-              <h2 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wider text-teal-600 flex items-center gap-2">
+            <section className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-6 sm:p-8 space-y-4 shadow-sm text-xs">
+              <h2 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wider text-teal-600 flex items-center gap-2">
                 <Building2 className="w-4 h-4" />
                 <span>Giới Thiệu Về Doanh Nghiệp & Môi Trường Làm Việc</span>
               </h2>
 
-              <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line font-medium">
+              <p className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line font-medium">
                 {employer.introduction}
               </p>
 
@@ -419,7 +419,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
                   <Sparkles className="w-3.5 h-3.5 text-teal-500" />
                   <span>Quyền Lợi & Văn Hóa Tuyển Dụng Đặc Quyền Cư Dân:</span>
                 </h3>
-                <ul className="space-y-1 text-slate-700 dark:text-slate-300 list-disc list-inside">
+                <ul className="space-y-1 text-ink-700 dark:text-ink-300 list-disc list-inside">
                   <li>Ưu tiên ứng viên là cư dân sinh sống tại các phân khu Vinhomes nội đô và biển.</li>
                   <li>Môi trường làm việc văn minh, đồng nghiệp thân thiện, giao thông thuận tiện không tắc đường.</li>
                   <li>Lộ trình thăng tiến rõ ràng, ký hợp đồng lao động đầy đủ chế độ bảo hiểm.</li>
@@ -433,33 +433,33 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
           <div className="lg:col-span-4 space-y-6">
             
             {/* Direct Contact Card */}
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm text-xs">
-              <h3 className="font-black text-sm text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <Phone className="w-4 h-4 text-emerald-500" />
+            <div className="bg-white dark:bg-ink-900 rounded-3xl border border-ink-200 dark:border-ink-800 p-6 space-y-4 shadow-sm text-xs">
+              <h3 className="font-black text-sm text-ink-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                <Phone className="w-4 h-4 text-brand-500" />
                 <span>Thông Tin Liên Hệ Trực Tiếp</span>
               </h3>
 
               <div className="space-y-3">
-                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-0.5">
-                  <span className="text-slate-400 font-bold block text-[11px]">Người đại diện tuyển dụng:</span>
-                  <span className="font-extrabold text-slate-900 dark:text-white text-sm">{employer.contactName}</span>
+                <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl space-y-0.5">
+                  <span className="text-ink-400 font-bold block text-[11px]">Người đại diện tuyển dụng:</span>
+                  <span className="font-extrabold text-ink-900 dark:text-white text-sm">{employer.contactName}</span>
                 </div>
 
-                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-0.5">
-                  <span className="text-slate-400 font-bold block text-[11px]">Hotline / Zalo:</span>
-                  <a href={`tel:${employer.contactPhone}`} className="font-black text-emerald-600 dark:text-emerald-400 text-base hover:underline block font-mono">
+                <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl space-y-0.5">
+                  <span className="text-ink-400 font-bold block text-[11px]">Hotline / Zalo:</span>
+                  <a href={`tel:${employer.contactPhone}`} className="font-black text-brand-600 dark:text-brand-400 text-base hover:underline block font-mono">
                     {employer.contactPhone}
                   </a>
                 </div>
 
-                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-0.5">
-                  <span className="text-slate-400 font-bold block text-[11px]">Địa chỉ trụ sở / Cửa hàng:</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{employer.address}</span>
+                <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl space-y-0.5">
+                  <span className="text-ink-400 font-bold block text-[11px]">Địa chỉ trụ sở / Cửa hàng:</span>
+                  <span className="font-bold text-ink-800 dark:text-ink-200">{employer.address}</span>
                 </div>
 
                 {employer.website && (
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-0.5">
-                    <span className="text-slate-400 font-bold block text-[11px]">Website chính thức:</span>
+                  <div className="p-3 bg-ink-50 dark:bg-ink-800 rounded-xl space-y-0.5">
+                    <span className="text-ink-400 font-bold block text-[11px]">Website chính thức:</span>
                     <a href={employer.website} target="_blank" rel="noreferrer" className="text-teal-600 hover:underline font-bold truncate block">
                       {employer.website}
                     </a>
@@ -470,7 +470,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
               <div className="pt-2 space-y-2">
                 <button
                   onClick={() => setInquiryModalOpen(true)}
-                  className="w-full py-3 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md flex items-center justify-center gap-1.5 transition cursor-pointer"
+                  className="w-full py-3 bg-gradient-to-r from-teal-600 to-brand-600 hover:from-teal-500 hover:to-brand-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md flex items-center justify-center gap-1.5 transition cursor-pointer"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Gửi Tin Nhắn Hỏi Tuyển Dụng</span>
@@ -479,15 +479,15 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
             </div>
 
             {/* Platform Trust Box */}
-            <div className="p-5 bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-3xl border border-slate-800 space-y-3 text-xs">
+            <div className="p-5 bg-gradient-to-br from-ink-900 to-ink-950 text-white rounded-3xl border border-ink-800 space-y-3 text-xs">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+                <ShieldCheck className="w-5 h-5 text-brand-400 shrink-0" />
                 <span className="font-black text-sm">Chợ Cư Dân 24h Bảo Trợ</span>
               </div>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-ink-300 leading-relaxed">
                 Hồ sơ nhà tuyển dụng đã được Ban Quản Trị xác minh thông tin pháp lý, địa chỉ Shophouse thực tế và cam kết tin tuyển dụng chuẩn xác, không thu bất kỳ khoản phí nào của người tìm việc.
               </p>
-              <div className="text-[11px] text-amber-400 font-bold pt-1">
+              <div className="text-[11px] text-brand-400 font-bold pt-1">
                 Hotline BQL: 0868.499.929
               </div>
             </div>
@@ -500,26 +500,26 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
 
       {/* Inquiry Modal */}
       {inquiryModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl p-6 max-w-md w-full border border-ink-200 dark:border-ink-800 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-ink-100 dark:border-ink-800 pb-3">
+              <h3 className="text-sm font-black text-ink-900 dark:text-white flex items-center gap-2">
                 <Send className="w-4 h-4 text-teal-600" />
                 <span>Liên Hệ Nhà Tuyển Dụng</span>
               </h3>
-              <button onClick={() => setInquiryModalOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+              <button onClick={() => setInquiryModalOpen(false)} className="text-ink-400 hover:text-ink-600 font-bold"></button>
             </div>
 
             {inquirySuccess ? (
               <div className="text-center py-6 space-y-3">
-                <div className="w-12 h-12 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 bg-brand-500/10 text-brand-500 rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h4 className="font-black text-slate-900 dark:text-white text-base">ĐÃ GỬI THÀNH CÔNG!</h4>
-                <p className="text-xs text-slate-500">Nhà tuyển dụng {employer.companyName} sẽ sớm liên hệ lại với bạn qua SĐT {inquiryPhone}.</p>
+                <h4 className="font-black text-ink-900 dark:text-white text-base">ĐÃ GỬI THÀNH CÔNG!</h4>
+                <p className="text-xs text-ink-500">Nhà tuyển dụng {employer.companyName} sẽ sớm liên hệ lại với bạn qua SĐT {inquiryPhone}.</p>
                 <button
                   onClick={() => setInquiryModalOpen(false)}
-                  className="mt-2 px-6 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs"
+                  className="mt-2 px-6 py-2 bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 font-bold rounded-xl text-xs"
                 >
                   Đóng
                 </button>
@@ -527,37 +527,37 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
             ) : (
               <form onSubmit={handleInquirySubmit} className="space-y-3 text-xs">
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">Họ và tên của bạn (*)</label>
+                  <label className="font-bold text-ink-700 dark:text-ink-300">Họ và tên của bạn (*)</label>
                   <input
                     type="text"
                     required
                     value={inquiryName}
                     onChange={e => setInquiryName(e.target.value)}
                     placeholder="Ví dụ: Nguyễn Văn A"
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl outline-hidden focus:ring-2 focus:ring-teal-500"
+                    className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-300 dark:border-ink-700 rounded-xl outline-hidden focus:ring-2 focus:ring-teal-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">Số điện thoại / Zalo (*)</label>
+                  <label className="font-bold text-ink-700 dark:text-ink-300">Số điện thoại / Zalo (*)</label>
                   <input
                     type="tel"
                     required
                     value={inquiryPhone}
                     onChange={e => setInquiryPhone(e.target.value)}
                     placeholder="0988.xxx.xxx"
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl outline-hidden focus:ring-2 focus:ring-teal-500"
+                    className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-300 dark:border-ink-700 rounded-xl outline-hidden focus:ring-2 focus:ring-teal-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">Nội dung trao đổi</label>
+                  <label className="font-bold text-ink-700 dark:text-ink-300">Nội dung trao đổi</label>
                   <textarea
                     rows={3}
                     value={inquiryMessage}
                     onChange={e => setInquiryMessage(e.target.value)}
                     placeholder="Mình muốn tìm hiểu vị trí nhân viên bán hàng / kinh doanh..."
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl outline-hidden focus:ring-2 focus:ring-teal-500"
+                    className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-300 dark:border-ink-700 rounded-xl outline-hidden focus:ring-2 focus:ring-teal-500"
                   />
                 </div>
 

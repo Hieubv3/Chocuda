@@ -33,11 +33,11 @@ export const ZaloWidget: React.FC = () => {
 
   const categories = [
     { id: 'all', label: 'Tất cả' },
-    { id: 'BĐS & Căn Hộ', label: '🏢 BĐS & Căn Hộ' },
-    { id: 'Nhà Hàng & Ẩm Thực', label: '🍽️ Nhà Hàng & Ẩm Thực' },
-    { id: 'Cafe & Trà Sữa', label: '☕ Cafe & Trà Sữa' },
-    { id: 'Quảng Cáo & Dịch Vụ', label: '🛠️ Quảng Cáo & Dịch Vụ' },
-    { id: 'Taxi & Xe Tiện Chuyến', label: '🚖 Taxi & Xe Tiện Chuyến' },
+    { id: 'BĐS & Căn Hộ', label: ' BĐS & Căn Hộ' },
+    { id: 'Nhà Hàng & Ẩm Thực', label: ' Nhà Hàng & Ẩm Thực' },
+    { id: 'Cafe & Trà Sữa', label: ' Cafe & Trà Sữa' },
+    { id: 'Quảng Cáo & Dịch Vụ', label: ' Quảng Cáo & Dịch Vụ' },
+    { id: 'Taxi & Xe Tiện Chuyến', label: ' Taxi & Xe Tiện Chuyến' },
   ];
 
   const handleOpenHub = () => {
@@ -70,7 +70,7 @@ export const ZaloWidget: React.FC = () => {
         >
           {/* Live green dot indicator */}
           <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400 border border-white dark:border-slate-900"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-400 border border-white dark:border-ink-900"></span>
           </span>
 
           <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white/20 rounded-full flex items-center justify-center font-black text-xs text-white shrink-0">
@@ -85,17 +85,17 @@ export const ZaloWidget: React.FC = () => {
 
       {/* Unified Zalo Community & Chat Hub Modal */}
       {hubOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-4 sm:p-6 shadow-2xl relative text-white space-y-4 max-h-[92vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-ink-950/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-ink-900 border border-ink-800 rounded-3xl max-w-xl w-full p-4 sm:p-6 shadow-2xl relative text-white space-y-4 max-h-[92vh] overflow-y-auto">
             
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-ink-800 pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="w-10 h-10 bg-blue-600/20 text-blue-400 rounded-2xl flex items-center justify-center font-black text-xl border border-blue-500/30 shrink-0">
                   Z
                 </div>
                 <div>
-                  <span className="text-[10px] font-black uppercase text-amber-400 tracking-wider flex items-center gap-1">
+                  <span className="text-[10px] font-black uppercase text-brand-400 tracking-wider flex items-center gap-1">
                     <Sparkles className="w-3.5 h-3.5" />
                     ZALO COMMUNITY & HOTLINE CHỢ CƯ DÂN 24H
                   </span>
@@ -107,14 +107,14 @@ export const ZaloWidget: React.FC = () => {
 
               <button
                 onClick={() => setHubOpen(false)}
-                className="text-slate-400 hover:text-white font-bold p-1 rounded-xl hover:bg-slate-800 transition"
+                className="text-ink-400 hover:text-white font-bold p-1 rounded-xl hover:bg-ink-800 transition"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Top Quick Actions Bar (Chat Zalo Admin + Call Hotline + View QR) */}
-            <div className="grid grid-cols-3 gap-2 bg-slate-800/80 p-2.5 rounded-2xl border border-slate-700/80">
+            <div className="grid grid-cols-3 gap-2 bg-ink-800/80 p-2.5 rounded-2xl border border-ink-700/80">
               <a
                 href="https://zalo.me/0868499929"
                 target="_blank"
@@ -127,7 +127,7 @@ export const ZaloWidget: React.FC = () => {
 
               <a
                 href="tel:0868499929"
-                className="py-2 px-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl font-extrabold text-[11px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-1.5 text-center transition shadow-md"
+                className="py-2 px-2 bg-brand-500 hover:bg-brand-400 text-ink-950 rounded-xl font-extrabold text-[11px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-1.5 text-center transition shadow-md"
               >
                 <Phone className="w-4 h-4 fill-current" />
                 <span>0868.499.929</span>
@@ -135,7 +135,7 @@ export const ZaloWidget: React.FC = () => {
 
               <button
                 onClick={() => setShowQr(!showQr)}
-                className="py-2 px-2 bg-slate-700 hover:bg-slate-600 text-amber-300 rounded-xl font-bold text-[11px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-1.5 text-center transition"
+                className="py-2 px-2 bg-ink-700 hover:bg-ink-600 text-brand-300 rounded-xl font-bold text-[11px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-1.5 text-center transition"
               >
                 <QrCode className="w-4 h-4" />
                 <span>{showQr ? 'Ẩn Mã QR' : 'Mã QR Zalo'}</span>
@@ -144,18 +144,18 @@ export const ZaloWidget: React.FC = () => {
 
             {/* QR Code Collapsible View */}
             {showQr && (
-              <div className="p-4 bg-slate-800/90 rounded-2xl border border-amber-500/30 text-center space-y-2 animate-in zoom-in-95 duration-200">
+              <div className="p-4 bg-ink-800/90 rounded-2xl border border-brand-500/30 text-center space-y-2 animate-in zoom-in-95 duration-200">
                 <img loading="lazy"
                   src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://zalo.me/0868499929"
                   alt="QR Zalo Admin"
                   className="w-36 h-36 mx-auto rounded-xl shadow-lg border border-white/20"
                 />
-                <p className="text-xs text-amber-300 font-bold">Quét QR bằng app Zalo để nhắn tin trao đổi trực tiếp với BQT Chợ Cư Dân 24H</p>
+                <p className="text-xs text-brand-300 font-bold">Quét QR bằng app Zalo để nhắn tin trao đổi trực tiếp với BQT Chợ Cư Dân 24H</p>
               </div>
             )}
 
-            <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed bg-slate-800/40 p-2.5 rounded-xl border border-slate-800">
-              💬 Đăng quảng cáo mua bán căn hộ, dịch vụ sửa chữa, đồ ăn thức uống, taxi tiện chuyến <b className="text-amber-400">MIỄN PHÍ 100%</b>:
+            <p className="text-[11px] sm:text-xs text-ink-300 leading-relaxed bg-ink-800/40 p-2.5 rounded-xl border border-ink-800">
+               Đăng quảng cáo mua bán căn hộ, dịch vụ sửa chữa, đồ ăn thức uống, taxi tiện chuyến <b className="text-brand-400">MIỄN PHÍ 100%</b>:
             </p>
 
             {/* Category Filter Chips - Scrollable on Mobile */}
@@ -167,7 +167,7 @@ export const ZaloWidget: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold whitespace-nowrap transition shrink-0 ${
                     selectedCategory === cat.id
                       ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700/60'
+                      : 'bg-ink-800 text-ink-300 hover:bg-ink-700 border border-ink-700/60'
                   }`}
                 >
                   {cat.label}
@@ -178,7 +178,7 @@ export const ZaloWidget: React.FC = () => {
             {/* 3-Column Grid Group List with QR codes & small Tham gia button */}
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
               {displayGroups.length === 0 ? (
-                <div className="col-span-3 py-6 text-center text-xs text-slate-400">
+                <div className="col-span-3 py-6 text-center text-xs text-ink-400">
                   Chưa có nhóm nào thuộc danh mục này.
                 </div>
               ) : (
@@ -187,7 +187,7 @@ export const ZaloWidget: React.FC = () => {
                   return (
                     <div
                       key={group.id}
-                      className="p-2 sm:p-3 bg-slate-800/80 rounded-2xl border border-slate-700/70 hover:border-blue-500/60 transition flex flex-col items-center justify-between text-center group shadow-md hover:bg-slate-800"
+                      className="p-2 sm:p-3 bg-ink-800/80 rounded-2xl border border-ink-700/70 hover:border-blue-500/60 transition flex flex-col items-center justify-between text-center group shadow-md hover:bg-ink-800"
                     >
                       {/* Header Category & Title */}
                       <div className="w-full space-y-1 mb-1">
@@ -210,7 +210,7 @@ export const ZaloWidget: React.FC = () => {
                       </div>
 
                       {/* Member count */}
-                      <span className="text-[8px] sm:text-[10px] text-emerald-400 font-semibold flex items-center justify-center gap-0.5 mt-0.5">
+                      <span className="text-[8px] sm:text-[10px] text-brand-400 font-semibold flex items-center justify-center gap-0.5 mt-0.5">
                         <Users className="w-2.5 h-2.5" />
                         ~{group.memberCount ? group.memberCount.toLocaleString('vi-VN') : 500}
                       </span>
@@ -232,8 +232,8 @@ export const ZaloWidget: React.FC = () => {
               )}
             </div>
 
-            <div className="pt-2 border-t border-slate-800 text-center text-[11px] text-slate-400">
-              Ban quản trị hỗ trợ 24/7 qua Zalo/Hotline: <a href="tel:0868499929" className="text-amber-400 font-bold hover:underline">0868.499.929</a>
+            <div className="pt-2 border-t border-ink-800 text-center text-[11px] text-ink-400">
+              Ban quản trị hỗ trợ 24/7 qua Zalo/Hotline: <a href="tel:0868499929" className="text-brand-400 font-bold hover:underline">0868.499.929</a>
             </div>
 
           </div>
