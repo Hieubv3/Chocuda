@@ -112,6 +112,24 @@ export const HomePage: React.FC<HomePageProps> = ({
         bannerImage="/images/demo/hero-city-1.jpg"
       />
 
+      {/* 1.5. CTA theo mẫu 02: mở gian hàng / đăng tin tuyển dụng / tạo CV tìm việc */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <button onClick={() => setCurrentTab('services')} className="btn btn-primary">
+            <Wrench className="w-4 h-4" />
+            <span>Mở gian hàng, bán dịch vụ</span>
+          </button>
+          <button onClick={() => setCurrentTab('recruitment')} className="btn btn-secondary">
+            <Briefcase className="w-4 h-4" />
+            <span>Đăng tin tuyển dụng</span>
+          </button>
+          <button onClick={() => setCurrentTab('recruitment')} className="btn btn-secondary">
+            <UserCheck className="w-4 h-4" />
+            <span>Tạo CV, tìm việc</span>
+          </button>
+        </div>
+      </section>
+
       {/* 2. Key Values Bar - compact */}
       <section className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 p-2.5 bg-white dark:bg-ink-800 rounded-2xl border border-ink-200 dark:border-ink-700 shadow-md">
@@ -148,6 +166,89 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
       </section>
+      {/* 2.5. DỊCH VỤ CƯ DÂN — ưu tiên theo mẫu 02 */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-ink-200 dark:border-ink-800 pb-3">
+          <div>
+            <span className="text-[10px] font-black uppercase text-brand-600 dark:text-brand-400 tracking-wider">Dịch vụ cư dân</span>
+            <h2 className="text-xl font-black text-ink-900 dark:text-white mt-0.5">Dịch vụ cư dân nội khu</h2>
+            <p className="text-[11px] text-ink-500 dark:text-ink-400">Thợ &amp; dịch vụ đã xác minh KYC trong khu đô thị</p>
+          </div>
+          <button onClick={() => setCurrentTab('services')} className="btn btn-secondary btn-sm shrink-0">
+            <span>{t.ui.viewAll}</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {(INITIAL_RESIDENT_SERVICES as any[]).filter((sv: any) => sv.verified).slice(0, 6).map((sv: any) => (
+            <div key={sv.id} onClick={() => setCurrentTab('services')} className="card24 p-3.5 flex gap-3 cursor-pointer">
+              <div className="w-16 h-16 rounded-xl overflow-hidden bg-ink-100 dark:bg-ink-800 shrink-0">
+                {sv.images && sv.images[0] ? (
+                  <img loading="lazy" src={sv.images[0]} alt={sv.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-ink-400"><Wrench className="w-5 h-5" /></div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="flex items-start gap-1.5">
+                  <span className="text-xs font-black text-ink-900 dark:text-white line-clamp-2">{sv.title}</span>
+                  {sv.verified && (
+                    <span className="badge badge-soft shrink-0"><ShieldCheck className="w-2.5 h-2.5" /> KYC</span>
+                  )}
+                </div>
+                <p className="spec24 line-clamp-1">{sv.providerName} • {sv.address}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="price24">{sv.priceDisplay}</span>
+                  <span className="rating24"><Star className="w-3 h-3" /> {sv.rating} ({sv.reviewCount})</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 2.6. VIỆC LÀM NỘI KHU — ưu tiên theo mẫu 02 */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-ink-200 dark:border-ink-800 pb-3">
+          <div>
+            <span className="text-[10px] font-black uppercase text-brand-600 dark:text-brand-400 tracking-wider">Việc làm</span>
+            <h2 className="text-xl font-black text-ink-900 dark:text-white mt-0.5">Việc làm nội khu</h2>
+            <p className="text-[11px] text-ink-500 dark:text-ink-400">Tuyển dụng &amp; tìm việc ngay trong khu đô thị</p>
+          </div>
+          <button onClick={() => setCurrentTab('recruitment')} className="btn btn-secondary btn-sm shrink-0">
+            <span>{t.ui.viewAll}</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {(INITIAL_RECRUITMENT_JOBS as any[]).filter((j: any) => j.status === 'active').slice(0, 6).map((j: any) => (
+            <div key={j.id} onClick={() => setCurrentTab('recruitment')} className="card24 p-3.5 flex gap-3 cursor-pointer">
+              <div className="w-16 h-16 rounded-xl overflow-hidden bg-ink-100 dark:bg-ink-800 shrink-0">
+                {j.companyLogo ? (
+                  <img loading="lazy" src={j.companyLogo} alt={j.companyName} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-ink-400"><Briefcase className="w-5 h-5" /></div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="flex items-start gap-1.5">
+                  <span className="text-xs font-black text-ink-900 dark:text-white line-clamp-2">{j.title}</span>
+                  {j.isUrgent && <span className="badge badge-job shrink-0">Gấp</span>}
+                </div>
+                <p className="spec24 line-clamp-1">{j.companyName} • {j.location}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="price24">{j.salaryDisplay}</span>
+                  <span className="note24 line-clamp-1">{j.jobType}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+
 
       {/* Tổng hợp 3 ngành: Dịch vụ · Cho thuê · Chuyển nhượng (dạng gian hàng, thẻ ảnh lớn) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -326,21 +427,6 @@ export const HomePage: React.FC<HomePageProps> = ({
 
 
 
-      {/* 6. Bank Mortgage Estimator Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <MortgageCalculator language={language} />
-      </section>
-
-      {/* 6.5. Comprehensive Q&A Knowledge Hub Section for SEO & Investors */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ProjectFaqHub />
-      </section>
-
-      {/* 6.5 Official Video Media Channel Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <RealestateVideoChannelSection />
-      </section>
-
       {/* 7. Tin Tức & 4 Nhóm Ngành — 1 lớp hiển thị */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-ink-200 dark:border-ink-800 pb-4">
@@ -436,6 +522,30 @@ export const HomePage: React.FC<HomePageProps> = ({
             ))}
           </div>
         </div>
+      </section>
+
+      {/* 8. BẤT ĐỘNG SẢN — KÊNH PHỤ TRỢ (ưu tiên dịch vụ cư dân & việc làm phía trên) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="border-b border-ink-200 dark:border-ink-800 pb-3">
+          <span className="text-[10px] font-black uppercase text-ink-500 dark:text-ink-400 tracking-wider">Kênh phụ trợ</span>
+          <h2 className="text-xl font-black text-ink-900 dark:text-white mt-0.5">Bất động sản, kênh phụ trợ</h2>
+          <p className="text-[11px] text-ink-500 dark:text-ink-400">Mua bán, cho thuê &amp; dự án Vinhomes trong khu đô thị</p>
+        </div>
+      </section>
+
+      {/* 6. Bank Mortgage Estimator Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <MortgageCalculator language={language} />
+      </section>
+
+      {/* 6.5. Comprehensive Q&A Knowledge Hub Section for SEO & Investors */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ProjectFaqHub />
+      </section>
+
+      {/* 6.5 Official Video Media Channel Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <RealestateVideoChannelSection />
       </section>
 
       {/* 3. Featured Projects Cards */}
