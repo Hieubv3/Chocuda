@@ -60,7 +60,20 @@ export const App: React.FC = () => {
 
   // Theme & Language
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [language, setLanguage] = useState<Language>('vi');
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window === 'undefined') return 'vi';
+    const saved = localStorage.getItem('hb_language') || localStorage.getItem('chocudan24h_language');
+    return (saved === 'vi' || saved === 'en' || saved === 'zh') ? (saved as Language) : 'vi';
+  });
+
+  // Ngôn ngữ: ghi nhớ lựa chọn và cập nhật thuộc tính lang của trang
+  useEffect(() => {
+    try {
+      localStorage.setItem('hb_language', language);
+      localStorage.setItem('chocudan24h_language', language);
+    } catch { /* ignore */ }
+    if (typeof document !== 'undefined') document.documentElement.lang = language;
+  }, [language]);
 
   // Khu vực người dùng (chọn lần đầu tham gia)
   const [userArea, setUserArea] = useState<AreaOption | null>(() =>

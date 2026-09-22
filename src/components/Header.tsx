@@ -64,6 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [saleHover, setSaleHover] = useState(false);
   const [rentHover, setRentHover] = useState(false);
 
+  const [langOpen, setLangOpen] = useState(false);
   const t = getTranslation(language);
   const { views, onlineCount } = useVisitorStats();
 
@@ -355,27 +356,28 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
 
             {/* Ngôn ngữ */}
-            <div className="relative group">
-              <button className="p-1.5 sm:p-2 text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-white/5 rounded-xl flex items-center text-xs font-bold transition">
+            <div className="relative">
+              <button onClick={() => setLangOpen((v) => !v)} aria-haspopup="true" aria-expanded={langOpen} className="p-1.5 sm:p-2 text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-white/5 rounded-xl flex items-center text-xs font-bold transition">
                 <Globe className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
                 <span className="uppercase text-[11px] hidden sm:inline ml-1">{language}</span>
               </button>
-              <div className="absolute right-0 top-full pt-1.5 w-32 hidden group-hover:block z-50">
+              {langOpen && <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} />}
+              <div className={langOpen ? 'absolute right-0 top-full pt-1.5 w-32 block z-50' : 'absolute right-0 top-full pt-1.5 w-32 hidden z-50'}>
                 <div className="bg-white dark:bg-ink-900 rounded-xl shadow-xl border border-ink-200 dark:border-white/10 py-1 text-xs font-medium">
                   <button
-                    onClick={() => setLanguage('vi')}
+                    onClick={() => { setLanguage('vi'); setLangOpen(false); }}
                     className={`w-full text-left px-3 py-1.5 ${language === 'vi' ? 'text-brand-700 font-bold bg-brand-500/10' : 'text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-white/5'}`}
                   >
                     Tiếng Việt
                   </button>
                   <button
-                    onClick={() => setLanguage('en')}
+                    onClick={() => { setLanguage('en'); setLangOpen(false); }}
                     className={`w-full text-left px-3 py-1.5 ${language === 'en' ? 'text-brand-700 font-bold bg-brand-500/10' : 'text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-white/5'}`}
                   >
                     English
                   </button>
                   <button
-                    onClick={() => setLanguage('zh')}
+                    onClick={() => { setLanguage('zh'); setLangOpen(false); }}
                     className={`w-full text-left px-3 py-1.5 ${language === 'zh' ? 'text-brand-700 font-bold bg-brand-500/10' : 'text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-white/5'}`}
                   >
                     中文
