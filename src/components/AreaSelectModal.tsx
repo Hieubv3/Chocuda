@@ -45,8 +45,8 @@ interface AreaSelectModalProps {
  * Luồng chọn khu vực và dự án trước khi vào giao diện chính.
  * Ba bước: khu vực, dự án đang ở hoặc muốn tìm hiểu, nhu cầu quan tâm.
  */
-export const AreaSelectModal: React.FC<AreaSelectModalProps> = ({ isOpen, onSelect, onClose, language = 'vi' }) => {
-  const t = getTranslation(language);
+export const AreaSelectModal: React.FC<AreaSelectModalProps> = ({ isOpen, onSelect, onClose, language = 'vi' as Language }) => {
+  const t = getTranslation(language as Language);
   const [step, setStep] = React.useState(1);
   const [area, setArea] = React.useState<AreaOption | null>(null);
   const [project, setProject] = React.useState<string>('all');
