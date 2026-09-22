@@ -35,6 +35,12 @@ export const AdminSiteSettingsPanel: React.FC = () => {
 
   const handleReset = () => setForm({ ...DEFAULT_SITE_SETTINGS });
 
+  // Quản lý danh sách số điện thoại ban quản trị
+  const addPhone = () => setForm((prev) => ({ ...prev, adminPhones: [...(prev.adminPhones || []), { id: 'p' + Date.now(), label: '', phone: '' }] }));
+  const updatePhone = (id: string, patch: Partial<{ label: string; phone: string }>) =>
+    setForm((prev) => ({ ...prev, adminPhones: (prev.adminPhones || []).map((p) => (p.id === id ? { ...p, ...patch } : p)) }));
+  const removePhone = (id: string) => setForm((prev) => ({ ...prev, adminPhones: (prev.adminPhones || []).filter((p) => p.id !== id) }));
+
   const field = (
     label: string,
     key: keyof SiteSettings,
@@ -108,6 +114,26 @@ export const AdminSiteSettingsPanel: React.FC = () => {
           {field('Facebook', 'facebook', 'https://facebook.com/...', Facebook)}
           {field('YouTube', 'youtube', 'https://youtube.com/@...', Youtube)}
           {field('TikTok', 'tiktok', 'https://tiktok.com/@...', User)}
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 p-3 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-emerald-600">Số điện thoại ban quản trị</span>
+            <button type="button" onClick={addPhone} className="h-8 px-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-200">+ Thêm số</button>
+          </div>
+          <p className="text-[10.5px] text-slate-400">Các số này hiển thị ở menu di động (nút gọi BQL). Thêm/xoá/sửa tuỳ ý.</p>
+          {(form.adminPhones || []).length === 0 && (
+            <p className="text-[11px] text-amber-600 font-semibold">Chưa có số nào — menu di động sẽ dùng Hotline hiển thị ở trên.</p>
+          )}
+          {(form.adminPhones || []).map((p) => (
+            <div key={p.id} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <input value={p.label} onChange={(e) => updatePhone(p.id, { label: e.target.value })} placeholder="Nhãn (VD: Ban quản trị)"
+                className="flex-1 h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-semibold text-slate-800 dark:text-slate-100 outline-none focus:border-emerald-500" />
+              <input value={p.phone} onChange={(e) => updatePhone(p.id, { phone: e.target.value })} placeholder="Số điện thoại"
+                className="flex-1 h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-semibold text-slate-800 dark:text-slate-100 outline-none focus:border-emerald-500" />
+              <button type="button" onClick={() => removePhone(p.id)} className="h-10 px-3 rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-600 text-xs font-bold">Xoá</button>
+            </div>
+          ))}
         </div>
 
         <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-[11.5px] text-slate-600 dark:text-slate-300">

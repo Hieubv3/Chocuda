@@ -24,7 +24,9 @@ export type PropertyCategory =
   | '3pn' 
   | 'shophouse' 
   | 'biet-thu-don-lap' 
-  | 'biet-thu-song-lap' 
+  | 'biet-thu-song-lap'
+  | 'phong-dai-han'
+  | 'homestay' 
   | 'lien-ke'
   | 'thue-tang'
   | 'mat-bang';
@@ -34,6 +36,8 @@ export type HeightCategory = 'all' | 'cao-tang' | 'thap-tang' | 'thue-tang';
 export const HIGH_RISE_CATEGORIES: PropertyCategory[] = ['studio', '1pn', '2pn', '3pn'];
 export const LOW_RISE_CATEGORIES: PropertyCategory[] = ['shophouse', 'biet-thu-don-lap', 'biet-thu-song-lap', 'lien-ke'];
 export const FLOOR_RENTAL_CATEGORIES: PropertyCategory[] = ['thue-tang', 'mat-bang'];
+/** Phòng cho thuê lâu dài & lưu trú ngắn hạn (homestay) — bổ sung theo yêu cầu */
+export const ROOM_RENTAL_CATEGORIES: PropertyCategory[] = ['phong-dai-han', 'homestay'];
 
 export type PropertyDirection = 'Đông' | 'Tây' | 'Nam' | 'Bắc' | 'Đông Nam' | 'Tây Nam' | 'Đông Bắc' | 'Tây Bắc';
 

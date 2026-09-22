@@ -1343,6 +1343,9 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
                   <option value="lien-ke">Nhà Liền Kề</option>
                   <option value="2pn">Căn Hộ 2PN</option>
                   <option value="3pn">Căn Hộ 3PN+</option>
+                  <option value="studio">Căn hộ Studio</option>
+                  <option value="phong-dai-han">Phòng cho thuê lâu dài</option>
+                  <option value="homestay">Homestay / Lưu trú ngắn hạn</option>
                 </select>
               </div>
             </div>

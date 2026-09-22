@@ -16,6 +16,8 @@ export interface SiteSettings {
   footerNote: string;
   facebook: string;
   youtube: string;
+  /** Danh sách số điện thoại ban quản trị (hiển thị ở menu di động) */
+  adminPhones?: { id: string; label: string; phone: string }[];
   tiktok: string;
 }
 
@@ -32,6 +34,9 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   facebook: 'https://facebook.com/chocudan24h',
   youtube: 'https://youtube.com/@chocudan24h',
   tiktok: 'https://tiktok.com/@chocudan24h',
+  adminPhones: [
+    { id: 'bql', label: 'Ban quản trị', phone: '0868.499.929' },
+  ],
 };
 
 const STORAGE_KEY = 'chocudan24h_site_settings';

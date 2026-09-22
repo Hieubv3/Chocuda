@@ -149,6 +149,25 @@ export const App: React.FC = () => {
   };
 
   // Up-Tin & VietQR Pricing Config State
+  // Ẩn thanh menu dưới cùng khi người dùng đang nhập văn bản (tránh che ô nhập)
+  const [isTypingField, setIsTypingField] = useState(false);
+  React.useEffect(() => {
+    const isField = (el: EventTarget | null) => {
+      const t = el as HTMLElement | null;
+      if (!t || !(t as any).tagName) return false;
+      const tag = String((t as any).tagName).toLowerCase();
+      return tag === 'input' || tag === 'textarea' || tag === 'select' || (t as any).isContentEditable === true;
+    };
+    const onFocusIn = (e: FocusEvent) => { if (isField(e.target)) setIsTypingField(true); };
+    const onFocusOut = () => { window.setTimeout(() => setIsTypingField(isField(document.activeElement)), 80); };
+    document.addEventListener('focusin', onFocusIn);
+    document.addEventListener('focusout', onFocusOut);
+    return () => {
+      document.removeEventListener('focusin', onFocusIn);
+      document.removeEventListener('focusout', onFocusOut);
+    };
+  }, []);
+
   const [pricingConfig, setPricingConfig] = useState<UpTinPricingConfig>({
     singlePushPrice: 20000,
     autoPush5Price: 90000,
@@ -1876,7 +1895,7 @@ export const App: React.FC = () => {
       {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom */}
       <nav
         ref={bottomNavRef}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-ink-900/95 backdrop-blur-md border-t border-ink-200 dark:border-ink-800 px-1 py-1 flex items-center justify-around shadow-2xl pb-[max(0.25rem,env(safe-area-inset-bottom))]"
+        className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-ink-900/95 backdrop-blur-md border-t border-ink-200 dark:border-ink-800 px-1 py-1 flex items-center justify-around shadow-2xl pb-[max(0.25rem,env(safe-area-inset-bottom))]${isTypingField ? ' hidden' : ''}`}
       >
         {/* 1. Trang Chủ */}
         <button

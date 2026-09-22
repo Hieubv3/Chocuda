@@ -45,7 +45,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     'shophouse': 'Shophouse',
     'biet-thu-don-lap': 'Biệt Thự Đơn Lập',
     'biet-thu-song-lap': 'Biệt Thự Song Lập',
-    'lien-ke': 'Nhà Liền Kề'
+    'lien-ke': 'Nhà Liền Kề',
+    'phong-dai-han': 'Phòng Cho Thuê Lâu Dài',
+    'homestay': 'Homestay'
   };
 
   // Determine VIP badge or Up-tin status

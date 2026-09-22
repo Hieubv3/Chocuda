@@ -85,7 +85,9 @@ export const TRANSLATIONS = {
       shophouse: 'Shophouse',
       'biet-thu-don-lap': 'Biệt Thự Đơn Lập',
       'biet-thu-song-lap': 'Biệt Thự Song Lập',
-      'lien-ke': 'Nhà Liền Kề'
+      'lien-ke': 'Nhà Liền Kề',
+      'phong-dai-han': 'Phòng Cho Thuê Lâu Dài',
+      'homestay': 'Homestay / Lưu Trú Ngắn Hạn',
     },
     furniture: {
       raw: 'Bàn giao thô',
@@ -232,7 +234,9 @@ export const TRANSLATIONS = {
       shophouse: 'Shophouse',
       'biet-thu-don-lap': 'Single Villa',
       'biet-thu-song-lap': 'Duplex Villa',
-      'lien-ke': 'Townhouse'
+      'lien-ke': 'Townhouse',
+      'phong-dai-han': 'Long-term Rental Room',
+      'homestay': 'Homestay',
     },
     furniture: {
       raw: 'Raw Shell',
@@ -379,7 +383,9 @@ export const TRANSLATIONS = {
       shophouse: '沿街商铺/商用房',
       'biet-thu-don-lap': '独栋别墅',
       'biet-thu-song-lap': '双拼别墅',
-      'lien-ke': '联排住宅'
+      'lien-ke': 'Nhà phố liền kề',
+      'phong-dai-han': '长期租赁房间',
+      'homestay': '民宿',
     },
     furniture: {
       raw: '毛坯房',

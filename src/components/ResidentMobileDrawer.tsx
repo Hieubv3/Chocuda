@@ -35,6 +35,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { User as UserType, Language } from '../types';
+import { useSiteSettings } from '../lib/siteSettings';
 
 interface ResidentMobileDrawerProps {
   isOpen: boolean;
@@ -70,6 +71,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
   setLanguage
 }) => {
   const navigate = useNavigate();
+  const siteSettings = useSiteSettings();
   const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
   const [selectedProjectName, setSelectedProjectName] = useState('Vinhomes Ocean Park 2 (The Empire)');
   const [menuSearchText, setMenuSearchText] = useState('');
@@ -309,11 +311,11 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
             </button>
 
             <a
-              href="tel:1900232389"
+              href={`tel:${String((siteSettings.adminPhones && siteSettings.adminPhones[0] && siteSettings.adminPhones[0].phone) || siteSettings.hotlineRaw).replace(/[^\d+]/g, '')}`}
               className="bg-rose-600 hover:bg-rose-700 text-white font-black text-xs py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 shadow-md transition cursor-pointer"
             >
               <PhoneCall className="w-4 h-4" />
-              <span>BQL: 1900 232389</span>
+              <span>{((siteSettings.adminPhones && siteSettings.adminPhones[0]) ? (siteSettings.adminPhones[0].label || 'BQL') : 'BQL')}: {(siteSettings.adminPhones && siteSettings.adminPhones[0] && siteSettings.adminPhones[0].phone) || siteSettings.hotline}</span>
             </a>
           </div>
 
@@ -750,7 +752,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
             </span>
           </div>
           <div className="flex items-center justify-between text-[11px] text-ink-400 pt-1">
-            <a href="tel:0868499929" className="text-ink-400 hover:text-brand-400 flex items-center gap-1.5 transition">
+            <a href={`tel:${siteSettings.hotlineRaw}`} className="text-ink-400 hover:text-brand-400 flex items-center gap-1.5 transition">
               <HelpCircle className="w-3.5 h-3.5 text-sky-400" />
               <span>Hỗ trợ cư dân</span>
             </a>
