@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BusinessRegistrationModal } from './BusinessRegistrationModal';
 import { Building2, Phone, Heart, Scale, User, ShieldCheck, Globe, Menu, X, PlusCircle, Sparkles, Sun, Moon, Zap, KeyRound, ChevronDown, Home, Store, Wrench, Smartphone, Briefcase, Coins, LogOut } from 'lucide-react';
 import { Language, User as UserType, HeightCategory, PropertyCategory } from '../types';
 import { getTranslation } from '../lib/i18n';
@@ -66,6 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [rentHover, setRentHover] = useState(false);
 
   const [langOpen, setLangOpen] = useState(false);
+  const [isBusinessModalOpen, setIsBusinessModalOpen] = useState(false);
   const t = getTranslation(language);
   const siteSettings = useSiteSettings();
   const { views, onlineCount } = useVisitorStats();
@@ -534,13 +536,22 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
               </div>
             ) : (
+              <>
+              <button
+                onClick={() => setIsBusinessModalOpen(true)}
+                className="px-2 sm:px-3 py-1.5 bg-white dark:bg-ink-800 border border-brand-500/40 text-brand-700 dark:text-brand-300 hover:bg-brand-50 dark:hover:bg-ink-700 rounded-xl text-xs font-bold hidden md:flex items-center gap-1 transition shrink-0 whitespace-nowrap"
+              >
+                <Building2 className="w-3.5 h-3.5 shrink-0" />
+                <span>Doanh nghiệp</span>
+              </button>
               <button
                 onClick={onOpenAuth}
                 className="px-2 sm:px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold flex items-center gap-1 transition shrink-0 whitespace-nowrap"
               >
                 <User className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden xs:inline sm:inline">Đăng nhập</span>
+<span className="hidden xs:inline sm:inline">Đăng nhập</span>
               </button>
+              </>
             )}
           </div>
 
@@ -616,6 +627,12 @@ export const Header: React.FC<HeaderProps> = ({
         setDarkMode={setDarkMode}
         language={language}
         setLanguage={setLanguage}
+      />
+      <BusinessRegistrationModal
+        isOpen={isBusinessModalOpen}
+        onClose={() => setIsBusinessModalOpen(false)}
+        currentUser={currentUser}
+        language={language}
       />
     </header>
   );
