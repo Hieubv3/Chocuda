@@ -1530,7 +1530,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             </p>
 
             {/* Reputation PR Feed List */}
-            <div className="space-y-3 max-h-[720px] overflow-y-auto pr-1 scrollbar-thin">
+            
                         {reputationPosts.length === 0 ? (
             <div className="p-4 text-center text-[11px] text-ink-400">Chưa có bài viết nào.</div>
           ) : (
