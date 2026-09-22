@@ -4,6 +4,7 @@ import { Language } from '../types';
 import { getTranslation } from '../lib/i18n';
 import { Logo } from './Logo';
 import { useVisitorStats } from '../lib/visitorStats';
+import { useSiteSettings } from '../lib/siteSettings';
 
 interface FooterProps {
   language: Language;
@@ -14,6 +15,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenSecretAdmin, onOpenAndroidModal }) => {
   const t = getTranslation(language);
+  const siteSettings = useSiteSettings();
   const { views, zaloInteractions, onlineCount } = useVisitorStats();
   const [isBannerDismissed, setIsBannerDismissed] = useState(false);
   // Thu gọn liên kết trên di động
@@ -52,7 +54,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
                 <Facebook className="w-4 h-4" />
               </a>
               <a
-                href="https://zalo.me/0868499929"
+                href={`https://zalo.me/${siteSettings.zalo}`}
                 target="_blank"
                 rel="noreferrer"
                 className="w-9 h-9 rounded-lg bg-white/5 hover:bg-brand-500 hover:text-ink-950 flex items-center justify-center transition font-bold text-xs"
@@ -168,13 +170,13 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
             <div className="space-y-3 text-xs text-ink-300">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
-                <span>Phân khu Chà Là, Vinhomes Ocean Park 2, Văn Giang, Hưng Yên</span>
+                                <span>{siteSettings.address}</span>
               </div>
               <div className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
                 <div>
-                  <a href="tel:0868499929" className="text-brand-300 font-bold hover:underline block">
-                    0868.499.929
+                  <a href={`tel:${siteSettings.hotlineRaw}`} className="text-brand-300 font-bold hover:underline block">
+                    {siteSettings.hotline}
                   </a>
                   <span className="text-[10px] text-ink-400 font-medium">
                     Hotline hỗ trợ cư dân đăng tin và quản trị nền tảng
@@ -183,7 +185,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-brand-400 shrink-0" />
-                <span>hotro.chocudan24h@gmail.com</span>
+                <span>{siteSettings.email}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Globe className="w-4 h-4 text-brand-400 shrink-0" />

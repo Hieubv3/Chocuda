@@ -4,6 +4,7 @@ import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTran
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2, Save } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { AdminKycManager } from '../components/AdminKycManager';
+import { AdminSiteSettingsPanel } from '../components/AdminSiteSettingsPanel';
 import { DeveloperUnitsAdmin } from '../components/DeveloperUnitsAdmin';
 import { calculateExpiryInfo } from '../lib/expiration';
 
@@ -86,7 +87,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [activeTab, setActiveTab] = useState<
     | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'faq'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
-    | 'developer_units'
+    | 'developer_units' | 'site_settings'
   >('properties');
   const [devSubTab, setDevSubTab] = useState('matbang');
 
@@ -99,6 +100,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
     if (['users', 'leads', 'enterprise_core'].includes(activeTab)) return 'users_leads';
     if (activeTab === 'ads') return 'ads';
+    if (activeTab === 'site_settings') return 'ads';
     return 'tools';
   })();
 
@@ -2100,6 +2102,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           >
             <UserCheck className="w-3.5 h-3.5 text-blue-500" />
             <span>Thành Viên</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => { handleSelectMainTab('ads'); setActiveTab('site_settings'); }}
+            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
+              activeTab === 'site_settings'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
+            }`}
+            title="Cấu hình hotline và thông tin chân trang"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+            <span>Cấu hình Web</span>
           </button>
         </div>
 
@@ -4426,7 +4441,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       )}
 
       {/* Tab: Zalo Groups Community Center */}
-      {activeTab === 'zalo' && (
+      {activeTab === 'site_settings' && (
+          <AdminSiteSettingsPanel />
+        )}
+
+        {activeTab === 'zalo' && (
         <AdminZaloGroupCenter />
       )}
 

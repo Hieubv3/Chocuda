@@ -555,6 +555,36 @@ let workspaceConfigStore: any = {};
 let storeOrdersStore: StoreOrder[] = [...INITIAL_STORE_ORDERS];
 let adsStore: AdBanner[] = [...INITIAL_ADS];
 
+// Cấu hình website (hotline, Zalo, email, địa chỉ, thông tin chân trang)
+// Quản trị trong trang admin, toàn bộ web đọc lại từ đây.
+const DEFAULT_SITE_SETTINGS = {
+  hotline: '0868.499.929',
+  hotlineRaw: '0868499929',
+  zalo: '0868499929',
+  email: 'hotro.chocudan24h@gmail.com',
+  address: 'Phân khu Chà Là, Vinhomes Ocean Park 2, Văn Giang, Hưng Yên',
+  company: 'Chợ Cư Dân 24H Vinhomes',
+  taxId: '0109882341',
+  workingHours: 'Trực tuyến 24/7',
+  footerNote: 'Nền tảng kết nối cư dân Vinhomes',
+  facebook: 'https://facebook.com/chocudan24h',
+  youtube: 'https://youtube.com/@chocudan24h',
+  tiktok: 'https://tiktok.com/@chocudan24h'
+};
+let siteSettingsStore: Record<string, unknown> = { ...DEFAULT_SITE_SETTINGS };
+
+// GET /api/site-settings - Trả cấu hình website hiện hành
+app.get("/api/site-settings", (_req, res) => {
+  res.json(siteSettingsStore);
+});
+
+// POST /api/site-settings - Cập nhật cấu hình website (chỉ quản trị)
+app.post("/api/site-settings", authenticateToken, requireAdmin, (req, res) => {
+  const body = (req.body || {}) as Record<string, unknown>;
+  siteSettingsStore = { ...siteSettingsStore, ...body };
+  res.json({ ok: true, settings: siteSettingsStore });
+});
+
 // Danh sách id đã bị xóa (để merge seed data không thêm lại bài đã xóa khi restart)
 let deletedIds: Record<string, string[]> = {
   properties: [],

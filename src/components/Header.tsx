@@ -5,6 +5,7 @@ import { getTranslation } from '../lib/i18n';
 import { Logo } from './Logo';
 import { ResidentMobileDrawer } from './ResidentMobileDrawer';
 import { useVisitorStats } from '../lib/visitorStats';
+import { useSiteSettings } from '../lib/siteSettings';
 
 interface HeaderProps {
   currentTab: string;
@@ -66,6 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const [langOpen, setLangOpen] = useState(false);
   const t = getTranslation(language);
+  const siteSettings = useSiteSettings();
   const { views, onlineCount } = useVisitorStats();
 
   const handleNavFilter = (type: 'sale' | 'rent', heightCategory?: HeightCategory, category?: PropertyCategory | 'all') => {
@@ -132,9 +134,9 @@ export const Header: React.FC<HeaderProps> = ({
               <span>Tải app Android (.APK)</span>
             </button>
 
-            <a href="tel:0868499929" title="Hotline hỗ trợ cư dân đăng tin và vận hành nền tảng" className="flex items-center text-brand-300 font-bold hover:text-brand-200 transition">
+            <a href={`tel:${siteSettings.hotlineRaw}`} title="Hotline hỗ trợ cư dân đăng tin và vận hành nền tảng" className="flex items-center text-brand-300 font-bold hover:text-brand-200 transition">
               <Phone className="w-3 h-3 mr-1" />
-              Hotline: 0868.499.929
+              Hotline: {siteSettings.hotline}
             </a>
 
             {currentUser?.role === 'admin' && (
