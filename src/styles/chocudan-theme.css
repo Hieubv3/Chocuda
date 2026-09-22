@@ -1,0 +1,166 @@
+/* ==========================================================================
+   CHỢ CƯ DÂN 24H - THEME ÁP TRỰC TIẾP VÀO APP (Tailwind CSS v4)
+   Import trong src/index.css, ngay sau @import "tailwindcss";
+   --------------------------------------------------------------------------
+   1) Token gốc + chế độ tối (app dùng class .dark)
+   2) Sáu bảng màu qua thuộc tính data-skin trên <html>
+   3) @theme: làm tươi bảng emerald đang dùng khắp app, thay trung tính sang sage,
+      thêm token thương hiệu mới (brand-*, ink-*)
+   4) Lớp component dùng chung: .btn, .chip, .badge, .card24, .cd-input, ...
+   5) Tương thích biến cũ của app (--primary-moc, --primary-jade, ...)
+
+   LƯU Ý PHÔNG: CSP hiện tại chỉ cho font-src 'self' data:, nên KHÔNG dùng phông
+   từ Google Fonts. Muốn dùng đúng bộ phông, hãy tự host và thêm @font-face.
+   Hiện tại stack chữ đã trỏ sẵn tên phông, nếu máy chưa có thì tự lùi về hệ thống.
+   ========================================================================== */
+
+/* 1. TOKEN GỐC ------------------------------------------------------------ */
+:root{
+  --brand-50:#ecfdf5; --brand-100:#d1fae5; --brand-200:#a7f3d0; --brand-300:#6ee7b7;
+  --brand-400:#34d399; --brand-500:#10b981; --brand-600:#059669; --brand-700:#047857;
+  --brand-800:#065f46; --brand-900:#064e3b; --brand-950:#022c22;
+
+  --ink-50:#f6f7f4; --ink-100:#eceee8; --ink-200:#dcdfd6; --ink-300:#c3c8bb; --ink-400:#9aa095;
+  --ink-500:#767c72; --ink-600:#5a6057; --ink-700:#454a42; --ink-800:#2f332c; --ink-900:#1d201a; --ink-950:#111309;
+
+  --success:#047857; --warn:#b45309; --danger:#b91c1c; --info:#0369a1;
+
+  --bg:#f7f8f5; --surface:#ffffff; --surface-2:#f1f3ee; --surface-3:#e8ebe2;
+  --fg:#15180f; --fg-2:#4a5044; --muted:#6f756a; --border:#e3e6dd; --border-strong:#cfd4c9;
+
+  --accent:#047857; --accent-soft:#ecfdf5; --accent-line:#a7f3d0;
+  --btn-bg:#047857; --btn-bg-hover:#065f46; --btn-fg:#ffffff;
+  --job:#0b6fb0; --job-soft:#e8f5fd; --job-line:#a9d9f5;
+  --pick:#b45309; --pick-soft:#fff6e6;
+
+  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:18px; --r-xl:24px; --r-pill:999px;
+  --elev-1:0 1px 2px rgba(21,24,15,.05);
+  --elev-2:0 2px 8px rgba(21,24,15,.07), 0 1px 2px rgba(21,24,15,.05);
+  --elev-3:0 12px 32px rgba(21,24,15,.12), 0 2px 8px rgba(21,24,15,.06);
+  --focus:0 0 0 3px color-mix(in oklab, var(--accent), transparent 65%);
+  --m-fast:140ms; --m-base:200ms; --ease:cubic-bezier(.2,0,0,1);
+}
+
+/* 1b. CHẾ ĐỘ TỐI (app bật bằng class .dark trên <html>) ------------------- */
+html.dark, html[data-theme="dark"]{
+  --bg:#0c0e0b; --surface:#161a13; --surface-2:#1e231a; --surface-3:#262c20;
+  --fg:#eef1e9; --fg-2:#bcc2b4; --muted:#8b9284;
+  --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.17);
+  --accent:#34d399; --accent-soft:rgba(16,185,129,.14); --accent-line:rgba(52,211,153,.36);
+  --btn-bg:#10b981; --btn-bg-hover:#34d399; --btn-fg:#052e22;
+  --job:#5cc0ff; --job-soft:rgba(46,166,240,.16); --job-line:rgba(92,192,255,.36);
+  --pick:#fbbf24; --pick-soft:rgba(240,169,46,.16);
+  --success:#34d399; --warn:#fbbf24; --danger:#f87171; --info:#38bdf8;
+  --elev-1:0 1px 2px rgba(0,0,0,.4); --elev-2:0 2px 10px rgba(0,0,0,.45); --elev-3:0 16px 40px rgba(0,0,0,.55);
+}
+
+/* 2. SÁU BẢNG MÀU (đặt data-skin trên <html>) ---------------------------- */
+html[data-skin="emerald"]{ --brand-500:#10d493; --brand-700:#07946a; --brand-950:#04311f; --accent:#059669; --accent-soft:#e7fdf4; --accent-line:#9df0cd; --btn-bg:#07946a; --btn-bg-hover:#057a58; --btn-fg:#ffffff; --bg:#f5fbf7; --surface:#ffffff; --surface-2:#edf7f1; --surface-3:#e1f1e9; --border:#dcebe3; --border-strong:#c0dbce; }
+html.dark[data-skin="emerald"], html[data-theme="dark"][data-skin="emerald"]{ --accent:#34d399; --accent-soft:rgba(16,185,129,.15); --accent-line:rgba(52,211,153,.38); --btn-bg:#10b981; --btn-bg-hover:#34d399; --btn-fg:#052e22; --bg:#0a1511; --surface:#10201a; --surface-2:#17291f; --surface-3:#1d3327; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+html[data-skin="coral"]{ --brand-500:#ff7a5c; --brand-700:#d13a17; --accent:#c2350f; --accent-soft:#fff0ec; --accent-line:#ffc6b8; --btn-bg:#d13a17; --btn-bg-hover:#b3300f; --btn-fg:#ffffff; --bg:#fdf7f5; --surface:#ffffff; --surface-2:#fbeee9; --surface-3:#f7e0d8; --border:#f0ddd5; --border-strong:#e3c4b7; }
+html.dark[data-skin="coral"], html[data-theme="dark"][data-skin="coral"]{ --accent:#ff8a6b; --accent-soft:rgba(242,84,56,.16); --accent-line:rgba(255,138,107,.38); --btn-bg:#f2543a; --btn-bg-hover:#ff7a5c; --btn-fg:#2a0a03; --bg:#160d0a; --surface:#1e1210; --surface-2:#261815; --surface-3:#2f1d19; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+html[data-skin="ocean"]{ --brand-500:#38a8f0; --brand-700:#0b6fb0; --accent:#0b6fb0; --accent-soft:#e8f5fd; --accent-line:#a9d9f5; --btn-bg:#0b6fb0; --btn-bg-hover:#095a90; --btn-fg:#ffffff; --bg:#f4f9fc; --surface:#ffffff; --surface-2:#e9f2f8; --surface-3:#dbeaf4; --border:#d9e8f2; --border-strong:#bcd6e7; }
+html.dark[data-skin="ocean"], html[data-theme="dark"][data-skin="ocean"]{ --accent:#5cc0ff; --accent-soft:rgba(46,166,240,.16); --accent-line:rgba(92,192,255,.38); --btn-bg:#2ea6f0; --btn-bg-hover:#5cc0ff; --btn-fg:#04202f; --bg:#08131b; --surface:#0e1e29; --surface-2:#132734; --surface-3:#183040; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+html[data-skin="honey"]{ --brand-500:#f5b02a; --brand-700:#b45309; --accent:#96500a; --accent-soft:#fff6e6; --accent-line:#ffd79a; --btn-bg:#b45309; --btn-bg-hover:#94440a; --btn-fg:#ffffff; --bg:#fdfaf3; --surface:#ffffff; --surface-2:#f8f0e2; --surface-3:#f1e5cf; --border:#efe3cd; --border-strong:#ddc9a4; }
+html.dark[data-skin="honey"], html[data-theme="dark"][data-skin="honey"]{ --accent:#fbbf24; --accent-soft:rgba(240,169,46,.16); --accent-line:rgba(251,191,36,.38); --btn-bg:#f0a92e; --btn-bg-hover:#fbbf24; --btn-fg:#2a1a02; --bg:#17130a; --surface:#201a0f; --surface-2:#292115; --surface-3:#332a1a; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+html[data-skin="rose"]{ --brand-500:#f4566f; --brand-700:#be123c; --accent:#be123c; --accent-soft:#ffeef3; --accent-line:#ffc2d3; --btn-bg:#be123c; --btn-bg-hover:#9f0f33; --btn-fg:#ffffff; --bg:#fdf6f8; --surface:#ffffff; --surface-2:#f9e9ee; --surface-3:#f4dae2; --border:#f0dae2; --border-strong:#dfbcc9; }
+html.dark[data-skin="rose"], html[data-theme="dark"][data-skin="rose"]{ --accent:#fb7185; --accent-soft:rgba(244,86,111,.17); --accent-line:rgba(251,113,133,.38); --btn-bg:#f4566f; --btn-bg-hover:#fb7185; --btn-fg:#2b0710; --bg:#160b10; --surface:#1f1016; --surface-2:#28151d; --surface-3:#321b24; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+html[data-skin="teal"]{ --brand-500:#2dd4bf; --brand-700:#0d7d74; --accent:#0d7d74; --accent-soft:#e6f7f5; --accent-line:#a3e3dd; --btn-bg:#0d7d74; --btn-bg-hover:#0a665f; --btn-fg:#ffffff; --bg:#f3faf9; --surface:#ffffff; --surface-2:#e7f3f1; --surface-3:#d9ede9; --border:#d7eae5; --border-strong:#b8dcd5; }
+html.dark[data-skin="teal"], html[data-theme="dark"][data-skin="teal"]{ --accent:#2dd4bf; --accent-soft:rgba(20,184,166,.16); --accent-line:rgba(45,212,191,.38); --btn-bg:#14b8a6; --btn-bg-hover:#2dd4bf; --btn-fg:#04201d; --bg:#081613; --surface:#0e201c; --surface-2:#132a25; --surface-3:#19342d; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+
+/* 3. NHỊP TAILWIND v4 ----------------------------------------------------
+   - emerald-* đang dùng khắp app: làm tươi theo bảng mới
+   - slate-* và gray-*: đổi sang trung tính ngả xanh (sage) của thiết kế
+   - thêm token brand-*, ink-*, font, bo góc
+   ------------------------------------------------------------------------ */
+@theme {
+  --color-brand-50: var(--brand-50); --color-brand-100: var(--brand-100); --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300); --color-brand-400: var(--brand-400); --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600); --color-brand-700: var(--brand-700); --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900); --color-brand-950: var(--brand-950);
+
+  --color-ink-50: var(--ink-50); --color-ink-100: var(--ink-100); --color-ink-200: var(--ink-200); --color-ink-300: var(--ink-300);
+  --color-ink-400: var(--ink-400); --color-ink-500: var(--ink-500); --color-ink-600: var(--ink-600); --color-ink-700: var(--ink-700);
+  --color-ink-800: var(--ink-800); --color-ink-900: var(--ink-900); --color-ink-950: var(--ink-950);
+
+  --color-emerald-50:#ecfdf5; --color-emerald-100:#d1fae5; --color-emerald-200:#a7f3d0; --color-emerald-300:#6ee7b7;
+  --color-emerald-400:#34d399; --color-emerald-500:#10d493; --color-emerald-600:#07946a; --color-emerald-700:#057a58;
+  --color-emerald-800:#04311f; --color-emerald-900:#032818; --color-emerald-950:#021a10;
+
+  --color-slate-50:#f6f7f4; --color-slate-100:#eceee8; --color-slate-200:#dcdfd6; --color-slate-300:#c3c8bb;
+  --color-slate-400:#9aa095; --color-slate-500:#767c72; --color-slate-600:#5a6057; --color-slate-700:#454a42;
+  --color-slate-800:#2f332c; --color-slate-900:#1d201a; --color-slate-950:#111309;
+
+  --color-gray-50:#f6f7f4; --color-gray-100:#eceee8; --color-gray-200:#dcdfd6; --color-gray-300:#c3c8bb;
+  --color-gray-400:#9aa095; --color-gray-500:#767c72; --color-gray-600:#5a6057; --color-gray-700:#454a42;
+  --color-gray-800:#2f332c; --color-gray-900:#1d201a; --color-gray-950:#111309;
+
+  --font-sans: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* 4. LỚP COMPONENT DÙNG CHUNG -------------------------------------------- */
+@layer components {
+  .btn{ display:inline-flex; align-items:center; gap:8px; justify-content:center; height:44px; padding:0 20px;
+    border-radius:var(--r-sm); font-weight:600; font-size:14.5px; white-space:nowrap; border:0;
+    transition:background var(--m-fast) var(--ease), color var(--m-fast) var(--ease), border-color var(--m-fast) var(--ease), transform var(--m-fast) var(--ease); }
+  .btn:focus-visible{ outline:none; box-shadow:var(--focus); }
+  .btn-primary{ background:var(--btn-bg); color:var(--btn-fg); }
+  .btn-primary:hover{ background:var(--btn-bg-hover); }
+  .btn-primary:active{ transform:translateY(1px); }
+  .btn-secondary{ background:var(--surface); color:var(--fg); border:1px solid var(--border-strong); }
+  .btn-secondary:hover{ background:var(--surface-2); }
+  .btn-ghost{ background:transparent; color:var(--accent); }
+  .btn-ghost:hover{ background:var(--accent-soft); }
+  .btn-job{ background:var(--job-soft); color:var(--job); border:1px solid var(--job-line); }
+  .btn-sm{ height:38px; padding:0 15px; font-size:13.5px; }
+  .btn-block{ width:100%; }
+  .btn:disabled, .btn[aria-disabled="true"]{ background:var(--surface-3); color:var(--muted); border-color:transparent; cursor:not-allowed; }
+
+  .chip{ display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 14px; border-radius:var(--r-pill);
+    background:var(--surface); border:1px solid var(--border); color:var(--fg-2); font-size:13.5px; font-weight:500; }
+  .chip:hover{ border-color:var(--border-strong); color:var(--fg); }
+  .chip[aria-pressed="true"], .chip.is-active{ background:var(--accent-soft); border-color:var(--accent-line); color:var(--accent); font-weight:600; }
+
+  .badge{ display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 9px; border-radius:var(--r-xs); font-size:11.5px; font-weight:600; }
+  .badge-sale{ background:var(--accent-soft); color:var(--accent); }
+  .badge-job{ background:var(--job-soft); color:var(--job); }
+  .badge-pick{ background:var(--pick-soft); color:var(--pick); }
+  .badge-soft{ background:var(--surface-2); color:var(--fg-2); }
+
+  .cd-input{ height:44px; width:100%; border-radius:var(--r-sm); border:1px solid var(--border);
+    background:var(--surface); padding:0 14px; font-size:14.5px; color:var(--fg); font-family:inherit; }
+  .cd-input::placeholder{ color:var(--muted); }
+  .cd-input:focus{ border-color:var(--accent); box-shadow:var(--focus); outline:none; }
+
+  .card24{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); overflow:hidden;
+    transition:border-color var(--m-fast) var(--ease), box-shadow var(--m-fast) var(--ease); }
+  .card24:hover{ border-color:var(--border-strong); box-shadow:var(--elev-2); }
+
+  .price24{ font-family:var(--font-display); font-weight:800; font-size:16px; letter-spacing:-.02em; color:var(--fg); }
+  .price24 small{ display:block; font-family:var(--font-body, inherit); font-weight:500; font-size:11px; color:var(--muted); }
+  .rating24{ display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:600; color:var(--fg-2); }
+  .spec24{ display:inline-flex; align-items:center; gap:7px; padding:7px 12px; border-radius:var(--r-sm); background:var(--surface-2); font-size:13px; color:var(--fg-2); }
+  .note24{ display:flex; gap:12px; padding:14px 16px; border-radius:var(--r-md); background:var(--accent-soft); border:1px solid var(--accent-line); font-size:13.5px; color:var(--fg-2); }
+}
+
+/* 5. TƯƠNG THÍCH BIẾN CŨ CỦA APP ----------------------------------------- */
+@layer base {
+  :root{
+    --primary-moc: var(--brand-600);
+    --primary-dark-moc: var(--brand-700);
+    --primary-jade: var(--brand-500);
+    --accent-thuy: #0284c7;
+  }
+}
+
+/* Tiện ích phụ trợ */
+.cd-tnum{ font-variant-numeric:tabular-nums; }
+.cd-mono{ font-family:var(--font-mono); }
+.cd-shadow-2{ box-shadow:var(--elev-2); }
+.cd-shadow-3{ box-shadow:var(--elev-3); }
+
+@media (prefers-reduced-motion: reduce){
+  .btn, .card24, .chip, .cd-input{ transition:none; }
+}
