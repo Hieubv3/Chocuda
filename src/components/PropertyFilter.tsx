@@ -317,6 +317,10 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
                 <option value="thue-tang">Thuê Tầng Shophouse</option>
                 <option value="mat-bang">Mặt Bằng Kinh Doanh</option>
               </optgroup>
+              <optgroup label=" PHÒNG THUÊ / LƯU TRÚ">
+                <option value="phong-dai-han">Phòng Cho Thuê Lâu Dài</option>
+                <option value="homestay">Homestay / Lưu Trú Ngắn Hạn</option>
+              </optgroup>
             </select>
           </div>
 

@@ -352,6 +352,36 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
                 <option value="rent">Cho Thuê Bất Động Sản</option>
               </select>
             </div>
+            <div>
+              <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Loại Căn (*):</label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
+              >
+                <optgroup label="Cao tầng (căn hộ)">
+                  <option value="studio">Căn hộ Studio</option>
+                  <option value="1pn">Căn hộ 1PN</option>
+                  <option value="2pn">Căn hộ 2PN</option>
+                  <option value="3pn">Căn hộ 3PN+</option>
+                </optgroup>
+                <optgroup label="Thấp tầng">
+                  <option value="shophouse">Shophouse</option>
+                  <option value="lien-ke">Nhà liền kề</option>
+                  <option value="biet-thu-song-lap">Biệt thự song lập</option>
+                  <option value="biet-thu-don-lap">Biệt thự đơn lập</option>
+                </optgroup>
+                <optgroup label="Thuê tầng / Mặt bằng">
+                  <option value="thue-tang">Thuê tầng</option>
+                  <option value="mat-bang">Mặt bằng kinh doanh</option>
+                </optgroup>
+                <optgroup label="Phòng thuê / Lưu trú">
+                  <option value="phong-dai-han">Phòng cho thuê lâu dài</option>
+                  <option value="homestay">Homestay / Lưu trú ngắn hạn</option>
+                </optgroup>
+              </select>
+            </div>
+
 
             <div>
               <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Dự Án Vinhomes (*):</label>
