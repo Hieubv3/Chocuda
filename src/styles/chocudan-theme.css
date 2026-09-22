@@ -205,3 +205,9 @@ html.dark .price, html.dark .price24, html.dark .price-display,
 [data-theme="dark"] .price, [data-theme="dark"] .price24, [data-theme="dark"] .price-display{
   color: var(--price, #ffa06b) !important;
 }
+
+/* ===== MENU: khong de chu xuong dong tung chu ===== */
+header nav a,
+nav a{ white-space: nowrap; }
+.site-nav__links{ white-space: nowrap; }
+.chip, .badge, .spec24, .tabs button, .tabbar a{ white-space: nowrap; }
