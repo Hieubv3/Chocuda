@@ -1965,6 +1965,7 @@ export const App: React.FC = () => {
 
       {/* Chọn khu vực lần đầu tham gia */}
       <AreaSelectModal
+        language={language}
         isOpen={areaModalOpen}
         onSelect={(area) => {
           setUserArea(area);

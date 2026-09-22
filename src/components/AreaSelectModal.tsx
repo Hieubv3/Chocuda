@@ -1,6 +1,8 @@
 import React from 'react';
 import { MapPin, ChevronRight, ChevronLeft, Check, Wrench, Briefcase, Store, Building2, Search, Users } from 'lucide-react';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
+import { Language } from '../types';
+import { getTranslation } from '../lib/i18n';
 
 export interface AreaOption {
   key: string;
@@ -36,13 +38,15 @@ interface AreaSelectModalProps {
   isOpen: boolean;
   onSelect: (area: AreaOption) => void;
   onClose?: () => void;
+  language?: Language;
 }
 
 /**
  * Luồng chọn khu vực và dự án trước khi vào giao diện chính.
  * Ba bước: khu vực, dự án đang ở hoặc muốn tìm hiểu, nhu cầu quan tâm.
  */
-export const AreaSelectModal: React.FC<AreaSelectModalProps> = ({ isOpen, onSelect, onClose }) => {
+export const AreaSelectModal: React.FC<AreaSelectModalProps> = ({ isOpen, onSelect, onClose, language = 'vi' }) => {
+  const t = getTranslation(language);
   const [step, setStep] = React.useState(1);
   const [area, setArea] = React.useState<AreaOption | null>(null);
   const [project, setProject] = React.useState<string>('all');
@@ -63,11 +67,11 @@ export const AreaSelectModal: React.FC<AreaSelectModalProps> = ({ isOpen, onSele
   });
 
   const NEED_OPTIONS = [
-    { key: 'services', label: 'Dịch vụ cư dân', icon: Wrench },
-    { key: 'recruitment', label: 'Việc làm', icon: Briefcase },
-    { key: 'market', label: 'Chợ cư dân', icon: Store },
-    { key: 'realestate', label: 'Mua, thuê BĐS', icon: Building2 },
-    { key: 'community', label: 'Cộng đồng', icon: Users },
+    { key: 'services', label: t.ui.needServices, icon: Wrench },
+    { key: 'recruitment', label: t.ui.needJobs, icon: Briefcase },
+    { key: 'market', label: t.ui.needMarket, icon: Store },
+    { key: 'realestate', label: t.ui.needRealEstate, icon: Building2 },
+    { key: 'community', label: t.ui.needCommunity, icon: Users },
   ];
 
   const toggleNeed = (key: string) => {
@@ -92,10 +96,10 @@ export const AreaSelectModal: React.FC<AreaSelectModalProps> = ({ isOpen, onSele
               <MapPin className="w-6 h-6" />
             </div>
             <h2 className="text-lg font-black text-ink-900 dark:text-white">
-              {step === 1 ? 'Chọn khu vực của bạn' : step === 2 ? 'Chọn dự án' : 'Bạn quan tâm gì'}
+              {step === 1 ? t.ui.chooseAreaTitle : step === 2 ? t.ui.chooseProjectTitle : t.ui.chooseNeedsTitle}
             </h2>
             <p className="text-xs text-ink-500 dark:text-ink-400">
-              {step === 1 ? 'Chúng tôi sẽ ưu tiên tin và dịch vụ gần bạn nhất.' : step === 2 ? 'Chọn khu đô thị bạn đang ở hoặc muốn tìm hiểu.' : 'Chọn một hoặc nhiều mục, có thể đổi lại sau.'}
+              {step === 1 ? t.ui.chooseAreaSub : step === 2 ? t.ui.chooseProjectSub : t.ui.chooseNeedsSub}
             </p>
           </div>
 
@@ -122,14 +126,14 @@ export const AreaSelectModal: React.FC<AreaSelectModalProps> = ({ isOpen, onSele
               <div className="flex items-center gap-2 px-3 h-11 rounded-2xl border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800/60">
                 <Search className="w-4 h-4 text-ink-400" />
                 <input value={query} onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Tìm dự án, khu vực..."
+                  placeholder={t.ui.searchProjectPlaceholder}
                   className="flex-1 bg-transparent outline-none text-xs font-semibold text-ink-800 dark:text-ink-100 placeholder:text-ink-400" />
               </div>
               <div className="space-y-2">
                 <button type="button" onClick={() => setProject('all')}
                   className={project === 'all' ? 'w-full flex items-center gap-2 p-3 rounded-2xl border-2 border-brand-500 bg-brand-500/10 text-left' : 'w-full flex items-center gap-2 p-3 rounded-2xl border border-ink-200 dark:border-ink-700 text-left'}>
                   <Building2 className="w-4 h-4 text-brand-500" />
-                  <span className="text-xs font-bold text-ink-800 dark:text-ink-100">Tất cả dự án</span>
+                  <span className="text-xs font-bold text-ink-800 dark:text-ink-100">{t.ui.allProjects}</span>
                   {project === 'all' && <Check className="w-4 h-4 text-brand-500 ml-auto" />}
                 </button>
                 {filteredProjects.map((p) => (
@@ -167,23 +171,23 @@ export const AreaSelectModal: React.FC<AreaSelectModalProps> = ({ isOpen, onSele
             {step > 1 ? (
               <button type="button" onClick={() => setStep(step - 1)}
                 className="h-11 px-4 rounded-2xl border border-ink-300 dark:border-ink-600 text-xs font-bold text-ink-700 dark:text-ink-200 flex items-center gap-1 active:scale-95 transition">
-                <ChevronLeft className="w-4 h-4" /> Quay lại
+                <ChevronLeft className="w-4 h-4" /> {t.ui.back}
               </button>
             ) : (
               <button type="button" onClick={onClose}
                 className="h-11 px-4 rounded-2xl border border-ink-300 dark:border-ink-600 text-xs font-bold text-ink-700 dark:text-ink-200 active:scale-95 transition">
-                Bỏ qua
+                {t.ui.skip}
               </button>
             )}
             {step < 3 ? (
               <button type="button" onClick={() => setStep(step + 1)}
                 className="flex-1 h-11 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-black flex items-center justify-center gap-1 active:scale-95 transition">
-                Tiếp tục <ChevronRight className="w-4 h-4" />
+                {t.ui.continue} <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
               <button type="button" onClick={finish}
                 className="flex-1 h-11 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-black flex items-center justify-center gap-1 active:scale-95 transition">
-                Vào Chợ Cư Dân <ChevronRight className="w-4 h-4" />
+                {t.ui.enterApp} <ChevronRight className="w-4 h-4" />
               </button>
             )}
           </div>

@@ -152,14 +152,14 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* Tổng hợp 3 ngành: Dịch vụ · Cho thuê · Chuyển nhượng (dạng gian hàng, thẻ ảnh lớn) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="border-b border-ink-200 dark:border-ink-800 pb-2 mb-3">
-          <span className="text-[10px] font-black uppercase text-brand-600 tracking-wider">DÀNH CHO CƯ DÂN</span>
-          <h2 className="text-base sm:text-xl font-black text-ink-900 dark:text-white mt-0.5 leading-tight">DỊCH VỤ · VIỆC LÀM · BẤT ĐỘNG SẢN</h2>
-          <p className="text-[11px] text-ink-500 dark:text-ink-400 mt-0">Dịch vụ cư dân và việc làm là trọng tâm, bất động sản là kênh phụ trợ</p>
+          <span className="text-[10px] font-black uppercase text-brand-600 tracking-wider">{t.ui.forResidents}</span>
+          <h2 className="text-base sm:text-xl font-black text-ink-900 dark:text-white mt-0.5 leading-tight">{t.ui.servicesJobsRealestate}</h2>
+          <p className="text-[11px] text-ink-500 dark:text-ink-400 mt-0">{t.ui.residentsTagline}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
             {
-              title: 'DỊCH VỤ CƯ DÂN',
+              title: t.ui.residentServices,
               accent: 'bg-brand-600',
               tab: 'services',
               items: (INITIAL_RESIDENT_SERVICES as any[]).slice(0, 4).map((s: any) => ({
@@ -170,7 +170,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               })),
             },
             {
-              title: 'VIỆC LÀM NỘI KHU',
+              title: t.ui.jobsInArea,
               accent: 'bg-sky-600',
               tab: 'recruitment',
               items: (INITIAL_RECRUITMENT_JOBS as any[]).filter((j: any) => j.status === 'active').slice(0, 4).map((j: any) => ({
@@ -181,7 +181,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               })),
             },
             {
-              title: 'MUA BÁN & CHO THUÊ BĐS',
+              title: t.ui.buyRentRealEstate,
               accent: 'bg-ink-500',
               tab: 'sale',
               items: properties.slice(0, 4).map((p) => ({
@@ -202,12 +202,12 @@ export const HomePage: React.FC<HomePageProps> = ({
                   onClick={() => setCurrentTab(col.tab)}
                   className="text-[10px] font-bold bg-black/20 hover:bg-black/30 text-white px-2 py-0.5 rounded transition cursor-pointer"
                 >
-                  Xem tất cả
+                  {t.ui.viewAll}
                 </button>
               </div>
               <div className="p-3 grid grid-cols-2 gap-2.5">
                 {col.items.length === 0 ? (
-                  <p className="col-span-2 text-xs italic text-ink-400 py-4 text-center">Chưa có tin</p>
+                  <p className="col-span-2 text-xs italic text-ink-400 py-4 text-center">{t.ui.noListings}</p>
                 ) : (
                   col.items.map((it) => (
                     <button
@@ -224,7 +224,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-ink-300 text-xs">Chưa có ảnh</div>
+                          <div className="w-full h-full flex items-center justify-center text-ink-300 text-xs">{t.ui.noImage}</div>
                         )}
                       </div>
                       <div className="p-2">
