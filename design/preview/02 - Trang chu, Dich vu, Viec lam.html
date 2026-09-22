@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="vi" data-theme="light" data-skin="bright" class="notranslate" translate="no">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chợ Cư Dân 24h - Nhóm 1: Trang chủ, Dịch vụ, Việc làm</title>
+<meta name="auto-designer-preview-device" content="web" />
+<script id="auto-designer-preview-contract" type="application/json">{"artifactRole":"web","authoringViewport":"desktop","deviceAdaptation":true}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand-500:#10b981; --brand-700:#047857; --brand-950:#022c22;
+  --ink-50:#f6f7f4; --ink-100:#eceee8; --ink-200:#dcdfd6; --ink-300:#c3c8bb; --ink-400:#9aa095;
+  --ink-500:#767c72; --ink-600:#5a6057; --ink-700:#454a42; --ink-800:#2f332c; --ink-900:#1d201a; --ink-950:#111309;
+  --success:#047857; --warn:#b45309; --danger:#b91c1c; --info:#0369a1;
+  --bg:#f7f8f5; --surface:#ffffff; --surface-2:#f1f3ee; --surface-3:#e8ebe2;
+  --fg:#15180f; --fg-2:#4a5044; --muted:#6f756a; --border:#e3e6dd; --border-strong:#cfd4c9;
+  --accent:#047857; --accent-soft:#ecfdf5; --accent-line:#a7f3d0;
+  --btn-bg:#047857; --btn-bg-hover:#065f46; --btn-fg:#ffffff; --btn-ghost-fg:#15180f;
+  --job:#0b6fb0; --job-soft:#e8f5fd; --job-line:#a9d9f5; --pick:#b45309; --pick-soft:#fff6e6;
+  --font-display:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px; --s12:48px; --s16:64px;
+  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:18px; --r-xl:24px; --r-pill:999px;
+  --elev-1:0 1px 2px rgba(21,24,15,.05); --elev-2:0 2px 8px rgba(21,24,15,.07),0 1px 2px rgba(21,24,15,.05); --elev-3:0 12px 32px rgba(21,24,15,.12),0 2px 8px rgba(21,24,15,.06);
+  --focus:0 0 0 3px color-mix(in oklab,var(--accent),transparent 65%);
+  --m-fast:140ms; --m-base:200ms; --ease:cubic-bezier(.2,0,0,1);
+}
+[data-theme="dark"]{
+  --bg:#0c0e0b; --surface:#161a13; --surface-2:#1e231a; --surface-3:#262c20;
+  --fg:#eef1e9; --fg-2:#bcc2b4; --muted:#8b9284; --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.17);
+  --accent:#34d399; --accent-soft:rgba(16,185,129,.14); --accent-line:rgba(52,211,153,.36);
+  --btn-bg:#10b981; --btn-bg-hover:#34d399; --btn-fg:#052e22; --btn-ghost-fg:#eef1e9;
+  --job:#5cc0ff; --job-soft:rgba(46,166,240,.16); --job-line:rgba(92,192,255,.36); --pick:#fbbf24; --pick-soft:rgba(240,169,46,.16);
+  --success:#34d399; --warn:#fbbf24; --danger:#f87171; --info:#38bdf8;
+  --elev-1:0 1px 2px rgba(0,0,0,.4); --elev-2:0 2px 10px rgba(0,0,0,.45); --elev-3:0 16px 40px rgba(0,0,0,.55);
+}
+[data-skin="bright"]{ --brand-500:#10b981; --brand-700:#07946a; --brand-950:#04311f; --accent:#059669; --accent-soft:#e7fdf4; --accent-line:#9df0cd; --btn-bg:#07946a; --btn-bg-hover:#057a58; --btn-fg:#ffffff; --bg:#f5fbf7; --surface:#ffffff; --surface-2:#edf7f1; --surface-3:#e1f1e9; --border:#dcebe3; --border-strong:#c0dbce; }
+[data-theme="dark"][data-skin="bright"]{ --accent:#34d399; --accent-soft:rgba(16,185,129,.15); --accent-line:rgba(52,211,153,.38); --btn-bg:#10b981; --btn-bg-hover:#34d399; --btn-fg:#052e22; --bg:#0a1511; --surface:#10201a; --surface-2:#17291f; --surface-3:#1d3327; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+[data-skin="coral"]{ --brand-500:#ff7a5c; --brand-700:#d13a17; --brand-950:#3d1206; --accent:#c2350f; --accent-soft:#fff0ec; --accent-line:#ffc6b8; --btn-bg:#d13a17; --btn-bg-hover:#b3300f; --btn-fg:#fff; --bg:#fdf7f5; --surface:#fff; --surface-2:#fbeee9; --surface-3:#f7e0d8; --border:#f0ddd5; --border-strong:#e3c4b7; }
+[data-theme="dark"][data-skin="coral"]{ --accent:#ff8a6b; --accent-soft:rgba(242,84,56,.16); --accent-line:rgba(255,138,107,.38); --btn-bg:#f2543a; --btn-bg-hover:#ff7a5c; --btn-fg:#2a0a03; --bg:#160d0a; --surface:#1e1210; --surface-2:#261815; --surface-3:#2f1d19; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+[data-skin="ocean"]{ --brand-500:#38a8f0; --brand-700:#0b6fb0; --brand-950:#062338; --accent:#0b6fb0; --accent-soft:#e8f5fd; --accent-line:#a9d9f5; --btn-bg:#0b6fb0; --btn-bg-hover:#095a90; --btn-fg:#fff; --bg:#f4f9fc; --surface:#fff; --surface-2:#e9f2f8; --surface-3:#dbeaf4; --border:#d9e8f2; --border-strong:#bcd6e7; }
+[data-theme="dark"][data-skin="ocean"]{ --accent:#5cc0ff; --accent-soft:rgba(46,166,240,.16); --accent-line:rgba(92,192,255,.38); --btn-bg:#2ea6f0; --btn-bg-hover:#5cc0ff; --btn-fg:#04202f; --bg:#08131b; --surface:#0e1e29; --surface-2:#132734; --surface-3:#183040; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+[data-skin="honey"]{ --brand-500:#f5b02a; --brand-700:#b45309; --brand-950:#3d2606; --accent:#96500a; --accent-soft:#fff6e6; --accent-line:#ffd79a; --btn-bg:#b45309; --btn-bg-hover:#94440a; --btn-fg:#fff; --bg:#fdfaf3; --surface:#fff; --surface-2:#f8f0e2; --surface-3:#f1e5cf; --border:#efe3cd; --border-strong:#ddc9a4; }
+[data-theme="dark"][data-skin="honey"]{ --accent:#fbbf24; --accent-soft:rgba(240,169,46,.16); --accent-line:rgba(251,191,36,.38); --btn-bg:#f0a92e; --btn-bg-hover:#fbbf24; --btn-fg:#2a1a02; --bg:#17130a; --surface:#201a0f; --surface-2:#292115; --surface-3:#332a1a; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+[data-skin="rose"]{ --brand-500:#f4566f; --brand-700:#be123c; --brand-950:#3d0715; --accent:#be123c; --accent-soft:#ffeef3; --accent-line:#ffc2d3; --btn-bg:#be123c; --btn-bg-hover:#9f0f33; --btn-fg:#fff; --bg:#fdf6f8; --surface:#fff; --surface-2:#f9e9ee; --surface-3:#f4dae2; --border:#f0dae2; --border-strong:#dfbcc9; }
+[data-theme="dark"][data-skin="rose"]{ --accent:#fb7185; --accent-soft:rgba(244,86,111,.17); --accent-line:rgba(251,113,133,.38); --btn-bg:#f4566f; --btn-bg-hover:#fb7185; --btn-fg:#2b0710; --bg:#160b10; --surface:#1f1016; --surface-2:#28151d; --surface-3:#321b24; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+[data-skin="teal"]{ --brand-500:#2dd4bf; --brand-700:#0d7d74; --brand-950:#04302c; --accent:#0d7d74; --accent-soft:#e6f7f5; --accent-line:#a3e3dd; --btn-bg:#0d7d74; --btn-bg-hover:#0a665f; --btn-fg:#fff; --bg:#f3faf9; --surface:#fff; --surface-2:#e7f3f1; --surface-3:#d9ede9; --border:#d7eae5; --border-strong:#b8dcd5; }
+[data-theme="dark"][data-skin="teal"]{ --accent:#2dd4bf; --accent-soft:rgba(20,184,166,.16); --accent-line:rgba(45,212,191,.38); --btn-bg:#14b8a6; --btn-bg-hover:#2dd4bf; --btn-fg:#04201d; --bg:#081613; --surface:#0e201c; --surface-2:#132a25; --surface-3:#19342d; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+/* ===== BO MAU TUOI SANG CHUYEN NGHIEP (mac dinh) ===== */
+[data-skin="bright"]{
+  --brand-500:#10b981; --brand-700:#068763; --brand-950:#04331f;
+  --accent:#047857; --accent-soft:#ecfdf5; --accent-line:#a7f3d0;
+  --btn-bg:#068763; --btn-bg-hover:#047857; --btn-fg:#ffffff;
+  --bg:#f7f9fb; --surface:#ffffff; --surface-2:#f1f5f9; --surface-3:#e6ecf2;
+  --border:#e3e9f0; --border-strong:#cbd5e1;
+  --fg:#0f172a; --fg-2:#475569; --muted:#64748b;
+  --ink-50:#f8fafc; --ink-100:#f1f5f9; --ink-200:#e2e8f0; --ink-300:#cbd5e1;
+  --ink-400:#94a3b8; --ink-500:#64748b; --ink-600:#475569; --ink-700:#334155;
+  --ink-800:#1e293b; --ink-900:#0f172a; --ink-950:#020617;
+  --job:#0369a1; --job-soft:#e0f2fe; --job-line:#a5d8f5;
+  --pick:#b45309; --pick-soft:#fffbeb;
+  --price:#d9480f;
+}
+[data-theme="dark"][data-skin="bright"], .dark[data-skin="bright"]{
+  --accent:#34d399; --accent-soft:rgba(16,185,129,.16); --accent-line:rgba(52,211,153,.42);
+  --btn-bg:#10b981; --btn-bg-hover:#34d399; --btn-fg:#04241a;
+  --bg:#0b1220; --surface:#111c2e; --surface-2:#16233a; --surface-3:#1d2c47;
+  --fg:#f1f5f9; --fg-2:#cbd5e1; --muted:#94a3b8;
+  --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.18);
+  --price:#ffa06b;
+}
+.price, .price24 { color: var(--price, #d9480f) !important; }
+
+/* ===== MENU: khong de chu xuong dong tung chu ===== */
+.site-nav{flex-wrap:wrap}
+.site-nav__links{flex:1 1 100%;order:3;display:flex;gap:18px;margin-top:8px;padding-top:10px;border-top:1px solid var(--border);white-space:nowrap;overflow-x:auto}
+.site-nav__links a{white-space:nowrap;flex:0 0 auto}
+.doc-nav__links,.doc-nav__links a,.tabs button,.tabbar a,.chip,.badge,.spec{white-space:nowrap}
+.hscroll{white-space:nowrap}
+.nav-scroll::-webkit-scrollbar{height:0}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;transition:background var(--m-base) var(--ease),color var(--m-base) var(--ease)}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;line-height:1.15;letter-spacing:-.02em;font-weight:700}
+p{margin:0} a{color:inherit;text-decoration:none} img{max-width:100%;display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:none;box-shadow:var(--focus);border-radius:var(--r-xs)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--s6)}
+.ic{width:1.25em;height:1.25em;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.doc-head{position:sticky;top:0;z-index:40;background:color-mix(in oklab,var(--bg),transparent 8%);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.doc-head__in{display:flex;align-items:center;gap:var(--s4);height:64px}
+.doc-mark{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;letter-spacing:-.02em}
+.doc-mark__logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(145deg,var(--brand-500),var(--brand-700));display:grid;place-items:center;color:#fff;flex:0 0 auto}
+.doc-mark__logo svg{width:20px;height:20px}
+.doc-mark small{display:block;font-family:var(--font-body);font-weight:500;font-size:11.5px;color:var(--muted);letter-spacing:0}
+.doc-nav{margin-left:auto;display:flex;align-items:center;gap:var(--s2)}
+.doc-nav__links{display:flex;gap:var(--s5);font-size:13.5px;color:var(--fg-2);font-weight:500}
+.doc-nav__links a:hover{color:var(--accent)}
+@media(max-width:900px){.doc-nav__links{display:none}}
+.icon-btn{width:40px;height:40px;border-radius:var(--r-sm);display:grid;place-items:center;border:1px solid var(--border);background:var(--surface);color:var(--fg-2);transition:all var(--m-fast) var(--ease)}
+.icon-btn:hover{color:var(--fg);border-color:var(--border-strong)} .icon-btn:active{transform:scale(.96)}
+.sec{padding:var(--s12) 0}
+.sec-head{display:flex;flex-direction:column;gap:var(--s3);max-width:760px;margin-bottom:var(--s6)}
+.kicker{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.sec-head h2{font-size:clamp(22px,2.6vw,30px)} .sec-head p{color:var(--fg-2);font-size:15px}
+.hr{height:1px;background:var(--border);border:0;margin:0}
+.btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;height:44px;padding:0 20px;border-radius:var(--r-sm);font-weight:600;font-size:14.5px;white-space:nowrap;transition:all var(--m-fast) var(--ease)}
+.btn .ic{width:18px;height:18px}
+.btn--primary{background:var(--btn-bg);color:var(--btn-fg)} .btn--primary:hover{background:var(--btn-bg-hover)} .btn--primary:active{transform:translateY(1px) scale(.99)}
+.btn--secondary{background:var(--surface);color:var(--btn-ghost-fg);border:1px solid var(--border-strong)} .btn--secondary:hover{background:var(--surface-2);border-color:var(--muted)}
+.btn--ghost{background:transparent;color:var(--accent);padding:0 12px} .btn--ghost:hover{background:var(--accent-soft)}
+.btn--job{background:var(--job-soft);color:var(--job);border:1px solid var(--job-line)} .btn--job:hover{filter:brightness(.97)}
+.btn--sm{height:38px;padding:0 15px;font-size:13.5px} .btn--block{width:100%}
+.btn[aria-disabled="true"]{background:var(--surface-3);color:var(--muted);border-color:transparent;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border);color:var(--fg-2);font-size:13.5px;font-weight:500;transition:all var(--m-fast) var(--ease)}
+.chip .ic{width:16px;height:16px} .chip:hover{border-color:var(--border-strong);color:var(--fg)}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent);font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:var(--r-xs);font-size:11.5px;font-weight:600}
+.badge--sale{background:var(--accent-soft);color:var(--accent)} .badge--job{background:var(--job-soft);color:var(--job)}
+.badge--pick{background:var(--pick-soft);color:var(--pick)} .badge--soft{background:var(--surface-2);color:var(--fg-2)}
+.badge--hot{background:#fef2f2;color:#b91c1c} [data-theme="dark"] .badge--hot{background:rgba(248,113,113,.16);color:#fca5a5}
+.field{display:flex;flex-direction:column;gap:6px} .field label{font-size:12.5px;font-weight:600;color:var(--fg-2)}
+.input{height:44px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface);padding:0 14px;font-size:14.5px;color:var(--fg);font-family:inherit;width:100%;transition:all var(--m-fast) var(--ease)}
+.input::placeholder{color:var(--muted)} .input:focus{border-color:var(--accent);box-shadow:var(--focus);outline:none}
+select.input{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+.searchbar{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--r-pill);padding:6px;box-shadow:var(--elev-2);gap:2px}
+.searchbar__seg{flex:1;min-width:0;padding:6px 18px;border-radius:var(--r-pill);cursor:pointer;transition:background var(--m-fast) var(--ease)}
+.searchbar__seg:hover{background:var(--surface-2)}
+.searchbar__seg span{display:block;font-size:11.5px;font-weight:700;color:var(--fg)} .searchbar__seg em{display:block;font-style:normal;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.searchbar__div{width:1px;height:30px;background:var(--border)}
+.searchbar__go{width:48px;height:48px;flex:0 0 auto;border-radius:50%;background:var(--btn-bg);color:var(--btn-fg);display:grid;place-items:center;transition:all var(--m-fast) var(--ease)}
+.searchbar__go:hover{background:var(--btn-bg-hover)} .searchbar__go:active{transform:scale(.94)} .searchbar__go .ic{width:22px;height:22px}
+.svc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;display:flex;flex-direction:column;transition:all var(--m-fast) var(--ease)}
+.svc:hover{border-color:var(--border-strong);box-shadow:var(--elev-2);transform:translateY(-2px)}
+.svc__media{aspect-ratio:16/10;background:var(--surface-3);position:relative;overflow:hidden} .svc__media img{width:100%;height:100%;object-fit:cover}
+.svc__body{padding:14px 15px 16px;display:flex;flex-direction:column;gap:8px}
+.svc__top{display:flex;align-items:center;gap:10px}
+.svc__ico{width:38px;height:38px;border-radius:var(--r-sm);background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:0 0 auto} .svc__ico .ic{width:20px;height:20px}
+.svc__name{font-family:var(--font-display);font-weight:700;font-size:14.5px;line-height:1.3}
+.svc__by{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.svc__foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:10px;border-top:1px solid var(--border);margin-top:2px}
+.price{font-family:var(--font-display);font-weight:800;font-size:16px;letter-spacing:-.02em} .price small{display:block;font-family:var(--font-body);font-weight:500;font-size:11px;color:var(--muted)}
+.rating{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:var(--fg-2)} .rating .ic{width:14px;height:14px;color:var(--pick)}
+.job{display:flex;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;transition:all var(--m-fast) var(--ease)}
+.job:hover{border-color:var(--border-strong);box-shadow:var(--elev-2)}
+.job__logo{width:52px;height:52px;border-radius:var(--r-sm);background:var(--job-soft);color:var(--job);display:grid;place-items:center;font-family:var(--font-display);font-weight:800;flex:0 0 auto}
+.job__main{min-width:0;flex:1;display:flex;flex-direction:column;gap:6px}
+.job__title{font-family:var(--font-display);font-weight:700;font-size:15.5px;line-height:1.3}
+.job__co{font-size:12.5px;color:var(--muted)} .job__tags{display:flex;gap:6px;flex-wrap:wrap}
+.job__side{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex:0 0 auto}
+.job__pay{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--accent);white-space:nowrap}
+.store{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;transition:all var(--m-fast) var(--ease)}
+.store:hover{border-color:var(--border-strong);box-shadow:var(--elev-2)}
+.store__cover{aspect-ratio:16/9;background:var(--surface-3);overflow:hidden} .store__cover img{width:100%;height:100%;object-fit:cover}
+.store__body{padding:14px 15px 16px;display:flex;flex-direction:column;gap:8px}
+.store__name{font-family:var(--font-display);font-weight:700;font-size:15px}
+.store__meta{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted)}
+.tile{display:flex;flex-direction:column;gap:10px;padding:20px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--border);transition:all var(--m-fast) var(--ease)}
+.tile:hover{border-color:var(--accent-line);background:var(--accent-soft)}
+.tile__ico{width:46px;height:46px;border-radius:var(--r-sm);background:var(--accent-soft);color:var(--accent);display:grid;place-items:center} .tile__ico .ic{width:24px;height:24px}
+.tile h4{font-size:15.5px} .tile p{font-size:12.5px;color:var(--muted)}
+.tile__go{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--accent);margin-top:2px} .tile__go .ic{width:16px;height:16px}
+.spec{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:var(--r-sm);background:var(--surface-2);font-size:13px;color:var(--fg-2)} .spec .ic{width:16px;height:16px;color:var(--muted)} .spec b{color:var(--fg);font-weight:600}
+.tabs{display:inline-flex;gap:4px;padding:4px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--border)}
+.tabs button{height:34px;padding:0 16px;border-radius:var(--r-pill);font-size:13.5px;font-weight:600;color:var(--fg-2);transition:all var(--m-fast) var(--ease)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--accent);box-shadow:var(--elev-1)}
+.note{display:flex;gap:12px;padding:14px 16px;border-radius:var(--r-md);background:var(--accent-soft);border:1px solid var(--accent-line);font-size:13.5px;color:var(--fg-2)} .note .ic{color:var(--accent);margin-top:2px} .note b{color:var(--fg)}
+.spec-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:18px}
+.spec-card h4{font-size:13px;color:var(--muted);font-weight:600;font-family:var(--font-body);letter-spacing:.03em;text-transform:uppercase;margin-bottom:12px}
+.info-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px} .info-row:last-child{border-bottom:0}
+.info-row span{color:var(--muted)} .info-row b{font-weight:600}
+.grid{display:grid;gap:var(--s4)} .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.g3,.g4{grid-template-columns:repeat(2,1fr)}} @media(max-width:560px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.pal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+@media(max-width:760px){.pal-grid{grid-template-columns:1fr 1fr}}
+.pal{display:flex;flex-direction:column;gap:8px;text-align:left;padding:14px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);transition:all var(--m-fast) var(--ease)}
+.pal[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)} .pal__dots{display:flex;gap:6px} .pal__dots i{width:26px;height:26px;border-radius:8px;display:block}
+.pal b{font-family:var(--font-display);font-size:14px} .pal small{color:var(--muted);font-size:11.5px}
+.skinfab{position:fixed;right:16px;bottom:16px;z-index:60;display:flex;gap:8px;padding:9px;border-radius:var(--r-pill);background:color-mix(in oklab,var(--surface),transparent 4%);backdrop-filter:blur(10px);border:1px solid var(--border);box-shadow:var(--elev-3)}
+.skinfab button{width:26px;height:26px;border-radius:50%;border:2px solid transparent;padding:0;transition:transform var(--m-fast) var(--ease)}
+.skinfab button:hover{transform:scale(1.12)} .skinfab button[aria-pressed="true"]{border-color:var(--fg);box-shadow:0 0 0 2px var(--surface)}
+@media(max-width:520px){.skinfab{right:10px;bottom:10px;gap:6px;padding:8px}.skinfab button{width:22px;height:22px}}
+.frame{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);box-shadow:var(--elev-2)}
+.frame__bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface-2);border-bottom:1px solid var(--border)}
+.dots{display:flex;gap:6px} .dots i{width:11px;height:11px;border-radius:50%;background:var(--border-strong);display:block}
+.frame__url{margin-left:10px;flex:1;height:26px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;padding:0 12px;font-size:12px;color:var(--muted);gap:7px;max-width:380px}
+.frame__url .ic{width:13px;height:13px} .frame__body{background:var(--bg)}
+.frame-title{display:flex;align-items:baseline;gap:12px;margin:var(--s10) 0 var(--s3)}
+.frame-title h3{font-size:18px} .frame-title span{font-size:12.5px;color:var(--muted);font-family:var(--font-mono)}
+.phone{width:330px;max-width:100%;border-radius:40px;padding:10px;background:var(--ink-900);box-shadow:var(--elev-3);border:1px solid var(--ink-800)}
+.phone__screen{background:var(--bg);border-radius:32px;overflow:hidden;position:relative;height:690px;overflow-y:auto;scrollbar-width:none} .phone__screen::-webkit-scrollbar{display:none}
+.phone__notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:22px;background:var(--ink-900);border-radius:0 0 14px 14px;z-index:3}
+.statbar{display:flex;justify-content:space-between;padding:12px 20px 4px;font-size:11px;font-weight:600;color:var(--fg-2);font-family:var(--font-mono)}
+.mobile-row{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.site-top{background:var(--surface);border-bottom:1px solid var(--border)}
+.site-util{display:flex;align-items:center;gap:14px;font-size:11.5px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border)}
+.site-util .sp{margin-left:auto;display:flex;gap:14px} .site-util b{color:var(--fg-2);font-weight:600}
+.site-nav{display:flex;align-items:center;gap:18px;padding:12px 0}
+.site-nav__links{display:flex;gap:18px;font-size:13.5px;font-weight:500;color:var(--fg-2)} .site-nav__links a:hover{color:var(--accent)} .site-nav__links a.on{color:var(--accent);font-weight:600}
+.site-nav__right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.hero{position:relative;border-radius:var(--r-xl);overflow:hidden;background:var(--ink-900);color:#fff;padding:44px 40px}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5}
+.hero__grad{position:absolute;inset:0;background:linear-gradient(115deg,rgba(12,14,13,.9),rgba(12,14,13,.55) 55%,rgba(12,14,13,.24))}
+.hero__in{position:relative;max-width:700px} .hero h1{font-size:clamp(26px,3.4vw,40px);font-weight:800;letter-spacing:-.03em}
+.hero p{margin-top:12px;color:rgba(255,255,255,.86);font-size:15.5px;max-width:54ch} .hero .searchbar{margin-top:22px;box-shadow:var(--elev-3)}
+.hero__chips{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap} .hero__chips .chip{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff} .hero__chips .chip:hover{background:rgba(255,255,255,.2)}
+.hero__cta{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap} .hero__cta .btn--secondary{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);color:#fff} .hero__cta .btn--secondary:hover{background:rgba(255,255,255,.24)}
+.sect{padding:24px 0}
+.sect-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}
+.sect-head h3{font-size:19px;display:flex;align-items:center;gap:9px} .sect-head h3 .ic{width:20px;height:20px;color:var(--accent)}
+.sect-head p{font-size:13px;color:var(--muted);margin-top:3px}
+.sect-head a{font-size:13.5px;color:var(--accent);font-weight:600;display:inline-flex;align-items:center;gap:5px} .sect-head a .ic{width:16px;height:16px}
+.sect--sub{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;margin-top:8px}
+.band{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 4px}
+.crumbs{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin-bottom:14px}
+.page-h{font-size:24px;margin-bottom:6px} .page-sub{color:var(--muted);font-size:13.5px;margin-bottom:18px}
+.detail-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
+@media(max-width:900px){.detail-grid{grid-template-columns:1fr}}
+.gallery{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;border-radius:var(--r-lg);overflow:hidden;aspect-ratio:16/9}
+.gallery img{width:100%;height:100%;object-fit:cover;background:var(--surface-2)} .gallery a:first-child{grid-row:1/3} .gallery a{overflow:hidden}
+.sticky-panel{position:sticky;top:80px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--elev-2)}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,var(--brand-400),var(--brand-700));display:grid;place-items:center;color:#fff;font-weight:700;font-family:var(--font-display);font-size:15px;flex:0 0 auto}
+.listing-grid{display:grid;grid-template-columns:250px 1fr;gap:24px;align-items:start}
+@media(max-width:900px){.listing-grid{grid-template-columns:1fr}}
+.filter-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;position:sticky;top:80px}
+.filter-card h4{font-size:13px;font-weight:700;margin-bottom:10px;font-family:var(--font-display)}
+.filter-group{padding:12px 0;border-bottom:1px solid var(--border)} .filter-group:last-child{border-bottom:0}
+.filter-group>span{display:block;font-size:12px;font-weight:600;color:var(--fg-2);margin-bottom:8px}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--fg-2);padding:4px 0;cursor:pointer} .check input{width:16px;height:16px;accent-color:var(--brand-600)}
+.pager{display:flex;justify-content:center;gap:8px;margin-top:24px}
+.msearch{margin:0 14px;height:42px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;gap:9px;padding:0 15px;color:var(--muted);font-size:13.5px}
+.appbar{display:flex;align-items:center;gap:10px;padding:8px 14px 10px}
+.appbar__logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(145deg,var(--brand-500),var(--brand-700));display:grid;place-items:center;color:#fff;flex:0 0 auto} .appbar__logo svg{width:18px;height:18px}
+.appbar strong{font-family:var(--font-display);font-weight:800;font-size:14px;letter-spacing:-.02em}
+.tabbar{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--border);background:var(--surface);position:sticky;bottom:0}
+.tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 10px;font-size:10.5px;color:var(--muted);font-weight:500} .tabbar a .ic{width:21px;height:21px} .tabbar a[aria-current="page"]{color:var(--accent)}
+.tabbar__fab .ic{background:var(--btn-bg);color:var(--btn-fg);border-radius:14px;width:38px;height:38px;padding:9px;margin-top:-16px;box-shadow:var(--elev-2)}
+.m-section{padding:14px 14px 4px} .m-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px} .m-h h3{font-size:15px} .m-h a{font-size:12.5px;color:var(--accent);font-weight:600}
+.m-cat{display:flex;gap:10px;padding:2px 14px 6px} .m-cat a{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--fg-2);text-align:center}
+.m-cat .tile__ico{width:46px;height:46px;border-radius:14px} .m-cat .tile__ico .ic{width:23px;height:23px}
+.mcard{display:flex;gap:11px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:10px;margin:0 14px 10px}
+.mcard__media{width:96px;flex:0 0 auto;aspect-ratio:1;border-radius:var(--r-sm);overflow:hidden;background:var(--surface-3);position:relative} .mcard__media img{width:100%;height:100%;object-fit:cover}
+.mcard__body{min-width:0;display:flex;flex-direction:column;gap:4px;flex:1}
+.mcard__title{font-family:var(--font-display);font-size:13px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mcard__specs{font-size:11.5px;color:var(--muted);display:flex;gap:10px}
+.hscroll{display:flex;gap:12px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none} .hscroll::-webkit-scrollbar{display:none}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.toc a{display:flex;align-items:center;gap:9px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);font-size:13.5px;font-weight:500;transition:all var(--m-fast) var(--ease)}
+.toc a:hover{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent)}
+.toc a .ic{width:17px;height:17px;color:var(--accent)} .toc a b{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--muted);font-weight:500}
+.foot{padding:var(--s12) 0 var(--s16);border-top:1px solid var(--border);color:var(--muted);font-size:13px} .foot strong{color:var(--fg)}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M9 7.5h2M13 7.5h2M9 11h2M13 11h2M9 14.5h2M13 14.5h2"/><path d="M10.5 20.5v-3h3v3"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.8 6.2a4 4 0 0 0-5.3 5.3l-5 5V20h3.5l5-5a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.1-2.1z"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><path d="M3.5 12.5h17"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9.5 5.6 4.8h12.8L20 9.5"/><path d="M4 9.5h16v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z"/><path d="M9.5 20v-5.5h5V20"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.6a3.2 3.2 0 0 1 0 6.3"/><path d="M17 13.6a5.5 5.5 0 0 1 3.5 5.4"/></symbol>
+  <symbol id="i-news" viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="2"/><path d="M8 9h8M8 12.5h8M8 16h4.5"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20C5.5 15.4 4 10.6 6.9 8.2 9.3 6.2 11.6 7.7 12 9.5c.4-1.8 2.7-3.3 5.1-1.3C20 10.6 18.5 15.4 12 20z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18v-8"/><path d="M3 13h18v5"/><path d="M7 13V9.5h6a3 3 0 0 1 3 3"/><path d="M3 18h18"/></symbol>
+  <symbol id="i-area" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M8 3.5v3M12 3.5v3M16 3.5v3"/><path d="M3.5 8h3M3.5 12h3"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3.5v4M15 3.5v4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.6 4-2.2 1.4a12 12 0 0 0 5 5l1.4-2.2 4 1.6v3a2 2 0 0 1-2 2A16.5 16.5 0 0 1 4.5 5.5a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4.5 5h15A1.5 1.5 0 0 1 21 6.5v8a1.5 1.5 0 0 1-1.5 1.5H10l-5 3.5V16H4.5A1.5 1.5 0 0 1 3 14.5v-8A1.5 1.5 0 0 1 4.5 5z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="6" r="2.3"/><circle cx="18" cy="18" r="2.3"/><path d="M8 11 16 7M8 13l8 4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.5 2.7 5.5 6 .9-4.3 4.2 1 6-5.4-2.9-5.4 2.9 1-6L3.3 9.9l6-.9z"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M12 6l6 6-6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5 5l1.8 1.8M17.2 17.2 19 19M19 5l-1.8 1.8M6.8 17.2 5 19"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 10 4.2a6.4 6.4 0 0 0 10 10.3z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5 19 6v6c0 4.5-3 7.5-7 8.5-4-1-7-4-7-8.5V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="13" rx="2.5"/><path d="M3.5 10h17"/><circle cx="16.5" cy="14" r="1.3"/></symbol>
+  <symbol id="i-calc" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8 7.5h8M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M4 4h7l9 9-7 7-9-9z"/><circle cx="8.5" cy="8.5" r="1.4"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4M9 12h6M9 15.5h6"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-broom" viewBox="0 0 24 24"><path d="M14 4l6 6-3 1.5L15.5 10z"/><path d="M13 6 5.5 13.5a4 4 0 0 0-1 2.2L4 20l4.3-.5a4 4 0 0 0 2.2-1L18 11"/></symbol>
+  <symbol id="i-food" viewBox="0 0 24 24"><path d="M5 3.5v7a2.5 2.5 0 0 0 5 0v-7"/><path d="M7.5 10.5V20"/><path d="M17 3.5c-1.6 1-2.4 3-2.4 5.5s.8 3.5 2.4 3.5V20"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5 13.6 9 19 10.5 13.6 12 12 17.5 10.4 12 5 10.5 10.4 9z"/><path d="M18.5 16.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M3 6.5h11v9H3z"/><path d="M14 9.5h3.5l2.5 3v3H14z"/><circle cx="7" cy="17.5" r="1.7"/><circle cx="17" cy="17.5" r="1.7"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2 2 0 0 1 6 3.5h13v15H6a2 2 0 0 0-2 2z"/><path d="M4 5.5v15"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-graduation" viewBox="0 0 24 24"><path d="M3 9.5 12 5l9 4.5-9 4.5z"/><path d="M7 12v4.5c0 1.2 2.2 2 5 2s5-.8 5-2V12"/></symbol>
+</svg>
+
+<header class="doc-head">
+  <div class="wrap doc-head__in">
+    <div class="doc-mark">
+      <span class="doc-mark__logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"/><path d="M6 9v10h12V9"/><path d="M10 19v-4h4v4"/></svg></span>
+      <span>Chợ Cư Dân 24h<small>Nhóm 1: Trang chủ, Dịch vụ, Việc làm</small></span>
+    </div>
+    <nav class="doc-nav">
+      <div class="doc-nav__links"><a href="#toc">Mục lục</a><a href="#trang-chu">Trang chủ</a><a href="#dich-vu">Dịch vụ</a><a href="#viec-lam">Việc làm</a><a href="#di-dong">Di động</a></div>
+      <button class="icon-btn" id="themeBtn" aria-label="Chuyển chế độ sáng/tối"><svg class="ic" id="themeIcon"><use href="#i-moon"/></svg></button>
+    </nav>
+  </div>
+</header>
+
+<div class="skinfab" role="group" aria-label="Đổi nhanh bảng màu giao diện">
+  <button data-skin-btn="bright" aria-pressed="true" aria-label="Sáng rõ" style="background:#10b981"></button>
+  <button data-skin-btn="coral" aria-label="San hô" style="background:#ff7a5c"></button>
+  <button data-skin-btn="ocean" aria-label="Xanh biển" style="background:#38a8f0"></button>
+  <button data-skin-btn="honey" aria-label="Nắng mật" style="background:#f5b02a"></button>
+  <button data-skin-btn="rose" aria-label="Hồng đào" style="background:#f4566f"></button>
+  <button data-skin-btn="teal" aria-label="Xanh ngọc" style="background:#2dd4bf"></button>
+</div>
+
+<main>
+<section class="sec wrap" id="toc" style="padding-bottom:var(--s6)">
+  <div class="sec-head"><span class="kicker">Bộ trang để duyệt · Nhóm 1</span><h2>Trang chủ, Dịch vụ cư dân và Việc làm</h2><p>Bảy màn hình chính của mảng ưu tiên, cùng ba màn hình di động. Mọi trang dùng chung một hệ thống thiết kế và đổi được bảng màu.</p></div>
+  <div class="toc">
+    <a href="#trang-chu"><svg class="ic"><use href="#i-home"/></svg>Trang chủ<b>/</b></a>
+    <a href="#dich-vu"><svg class="ic"><use href="#i-wrench"/></svg>Dịch vụ cư dân<b>/dich-vu-cu-dan</b></a>
+    <a href="#dich-vu-ct"><svg class="ic"><use href="#i-doc"/></svg>Chi tiết dịch vụ<b>/:serviceSlug</b></a>
+    <a href="#viec-lam"><svg class="ic"><use href="#i-briefcase"/></svg>Việc làm nội khu<b>/tuyen-dung</b></a>
+    <a href="#viec-lam-ct"><svg class="ic"><use href="#i-doc"/></svg>Chi tiết việc làm<b>/viec-lam/:id</b></a>
+    <a href="#cv"><svg class="ic"><use href="#i-user"/></svg>Hồ sơ ứng viên<b>/cv/:id</b></a>
+    <a href="#nha-tuyen-dung"><svg class="ic"><use href="#i-store"/></svg>Nhà tuyển dụng<b>/nha-tuyen-dung/:id</b></a>
+    <a href="#di-dong"><svg class="ic"><use href="#i-phone"/></svg>Màn hình di động<b>3 màn</b></a>
+  </div>
+</section>
+
+<hr class="hr" />
+
+<!-- TRANG CHỦ -->
+<section class="sec wrap" id="trang-chu">
+  <div class="frame-title"><h3>Trang chủ</h3><span>/</span></div>
+  <div class="frame">
+    <div class="frame__bar"><span class="dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="ic"><use href="#i-shield"/></svg>chocudan24h.com</span></div>
+    <div class="frame__body">
+      <div class="site-top">
+        <div class="wrap" style="padding-top:0;padding-bottom:0">
+          <div class="site-util"><span><b>Hotline:</b> 0868.499.929</span><span>Tải app Android</span><span class="sp"><span>0 đang online</span><span>VI</span></span></div>
+          <div class="site-nav">
+            <span class="doc-mark__logo" style="width:36px;height:36px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"/><path d="M6 9v10h12V9"/><path d="M10 19v-4h4v4"/></svg></span>
+            <div style="line-height:1.1"><strong style="font-family:var(--font-display);font-weight:800;letter-spacing:-.02em">Chợ Cư Dân 24h</strong><br><span style="font-size:11px;color:var(--muted)">Cộng đồng cư dân Vinhomes</span></div>
+            <nav class="site-nav__links" style="margin-left:22px"><a href="#dich-vu" class="on">Dịch vụ cư dân</a><a href="#viec-lam">Việc làm</a><a href="#trang-chu">Chợ cư dân</a><a href="#trang-chu">Cộng đồng</a><a href="#trang-chu">Bất động sản</a><a href="#trang-chu">Tin tức</a></nav>
+            <div class="site-nav__right"><button class="btn btn--secondary btn--sm"><svg class="ic"><use href="#i-wallet"/></svg>Ví cư dân</button><button class="btn btn--secondary btn--sm">Đăng nhập</button><button class="btn btn--primary btn--sm"><svg class="ic"><use href="#i-plus"/></svg>Đăng tin</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="wrap" style="padding-top:20px">
+        <div class="hero">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=70" alt="Cư dân Vinhomes kết nối và kinh doanh" />
+          <div class="hero__grad"></div>
+          <div class="hero__in">
+            <h1>Cư dân Vinhomes, kinh doanh và làm việc ngay trong khu đô thị</h1>
+            <p>Mở gian hàng, đăng dịch vụ, tuyển người và tìm việc nội khu. Bất động sản là kênh phụ trợ, giúp cộng đồng kết nối và phát triển bền vững.</p>
+            <div class="searchbar">
+              <div class="searchbar__seg"><span>Bạn cần gì</span><em>Dịch vụ, việc làm, gian hàng</em></div>
+              <div class="searchbar__div"></div>
+              <div class="searchbar__seg"><span>Khu đô thị</span><em>Ocean Park 1, 2, 3...</em></div>
+              <div class="searchbar__div"></div>
+              <div class="searchbar__seg"><span>Khu vực</span><em>Gần bạn nhất</em></div>
+              <button class="searchbar__go" aria-label="Tìm kiếm"><svg class="ic"><use href="#i-search"/></svg></button>
+            </div>
+            <div class="hero__chips"><button class="chip">Sửa điện nước</button><button class="chip">Giúp việc</button><button class="chip">Gia sư</button><button class="chip">Pha chế</button><button class="chip">Tài xế buggy</button><button class="chip">Cắt tóc</button></div>
+            <div class="hero__cta"><button class="btn btn--primary"><svg class="ic"><use href="#i-store"/></svg>Mở gian hàng, bán dịch vụ</button><button class="btn btn--secondary"><svg class="ic"><use href="#i-briefcase"/></svg>Đăng tin việc làm</button></div>
+          </div>
+        </div>
+        <div class="sect">
+          <div class="grid g3">
+            <a class="tile" href="#"><span class="tile__ico"><svg class="ic"><use href="#i-store"/></svg></span><h4>Mở gian hàng, bán dịch vụ</h4><p>Tạo gian hàng miễn phí, đăng dịch vụ và nhận khách trong khu đô thị.</p><span class="tile__go">Tạo gian hàng<svg class="ic"><use href="#i-arrow"/></svg></span></a>
+            <a class="tile" href="#"><span class="tile__ico"><svg class="ic"><use href="#i-briefcase"/></svg></span><h4>Đăng tin tuyển dụng</h4><p>Chủ quán, hộ kinh doanh và cư dân đăng tin tuyển người làm nội khu.</p><span class="tile__go">Đăng tuyển dụng<svg class="ic"><use href="#i-arrow"/></svg></span></a>
+            <a class="tile" href="#"><span class="tile__ico"><svg class="ic"><use href="#i-doc"/></svg></span><h4>Tạo CV, tìm việc</h4><p>Cư dân tạo hồ sơ và ứng tuyển công việc gần nơi ở, không cần đi xa.</p><span class="tile__go">Tạo CV miễn phí<svg class="ic"><use href="#i-arrow"/></svg></span></a>
+          </div>
+        </div>
+        <div class="sect">
+          <div class="sect-head"><div><h3><svg class="ic"><use href="#i-wrench"/></svg>Dịch vụ cư dân</h3><p>Sửa chữa, dọn dẹp, ẩm thực, làm đẹp, gia sư và tiện ích nội khu</p></div><a href="#dich-vu">Xem tất cả<svg class="ic"><use href="#i-arrow"/></svg></a></div>
+          <div class="band"><button class="chip" aria-pressed="true">Tất cả</button><button class="chip">Thiết bị điện, máy tính</button><button class="chip">Giặt là & gia đình</button><button class="chip">Ẩm thực & cơm cư dân</button><button class="chip">Spa & làm đẹp</button><button class="chip">Gia sư</button><button class="chip"><svg class="ic"><use href="#i-sliders"/></svg>Bộ lọc</button></div>
+          <div class="grid g4" style="margin-top:14px">
+            <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=600&q=70" alt="Thiết bị điện và smarthome" /><span class="badge badge--pick" style="position:absolute;top:10px;left:10px">Nổi bật</span></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-wrench"/></svg></span><div><div class="svc__name">Thiết bị điện, máy tính & smarthome</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-shield"/></svg>Đã xác minh cư dân</div></div></div><div class="svc__foot"><span class="price mono">150.000<small>Từ, mỗi lần</small></span><button class="btn btn--primary btn--sm">Đặt dịch vụ</button></div></div></article>
+            <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=70" alt="Giặt là và dịch vụ gia đình" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-broom"/></svg></span><div><div class="svc__name">Giặt là & dọn dẹp gia đình</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-user"/></svg>6 nhà cung cấp</div></div></div><div class="svc__foot"><span class="price mono">80.000<small>/giờ</small></span><button class="btn btn--primary btn--sm">Đặt dịch vụ</button></div></div></article>
+            <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=70" alt="Ẩm thực và cơm cư dân" /><span class="badge badge--pick" style="position:absolute;top:10px;left:10px">Bán chạy</span></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-food"/></svg></span><div><div class="svc__name">Ẩm thực & cơm cư dân</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-pin"/></svg>Giao trong khu</div></div></div><div class="svc__foot"><span class="price mono">35.000<small>/suất</small></span><button class="btn btn--primary btn--sm">Đặt món</button></div></div></article>
+            <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=70" alt="Spa và làm đẹp" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-sparkle"/></svg></span><div><div class="svc__name">Spa, làm đẹp & y tế gia đình</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-user"/></svg>4 nhà cung cấp</div></div></div><div class="svc__foot"><span class="price mono">250.000<small>Từ, mỗi buổi</small></span><button class="btn btn--primary btn--sm">Đặt dịch vụ</button></div></div></article>
+          </div>
+          <div class="note" style="margin-top:16px"><svg class="ic"><use href="#i-shield"/></svg><div>Thanh toán và <b>đặt cọc an toàn qua Ví Cư Dân</b>. Tiền chỉ chuyển cho nhà cung cấp khi dịch vụ hoàn tất.</div></div>
+        </div>
+        <div class="sect">
+          <div class="sect-head"><div><h3><svg class="ic"><use href="#i-briefcase"/></svg>Việc làm nội khu</h3><p>Tuyển dụng và tìm việc ngay trong khu đô thị</p></div><div style="display:flex;gap:10px;align-items:center"><div class="tabs"><button aria-selected="true">Tìm việc</button><button aria-selected="false">Tuyển dụng</button></div><a href="#viec-lam">Xem tất cả<svg class="ic"><use href="#i-arrow"/></svg></a></div></div>
+          <div class="grid g2" style="margin-top:6px">
+            <article class="job"><span class="job__logo">F&B</span><div class="job__main"><div class="job__title">Pha chế Barista & Latte Art</div><div class="job__co">Tiệm Trà & Cafe Giá Biển, S2.05 Ocean Park 2</div><div class="job__tags"><span class="badge badge--job">Toàn thời gian</span><span class="badge badge--soft">Bao ăn</span></div></div><div class="job__side"><span class="job__pay">8 - 12 tr</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+            <article class="job"><span class="job__logo">KT</span><div class="job__main"><div class="job__title">Kỹ thuật viên điện nước, điều hòa</div><div class="job__co">Trung Tâm Cơ Điện & Kỹ Thuật Cư Dân 24H</div><div class="job__tags"><span class="badge badge--job">Toàn thời gian</span><span class="badge badge--soft">Có xe</span></div></div><div class="job__side"><span class="job__pay">10 - 15 tr</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+          </div>
+        </div>
+        <div class="sect">
+          <div class="sect-head"><div><h3><svg class="ic"><use href="#i-store"/></svg>Chợ cư dân & gian hàng</h3><p>Gian hàng do chính cư dân vận hành</p></div><a href="#trang-chu">Xem tất cả gian hàng<svg class="ic"><use href="#i-arrow"/></svg></a></div>
+          <div class="grid g4">
+            <article class="store"><div class="store__cover"><img loading="lazy" src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=700&q=70" alt="Bếp Cư Dân" /></div><div class="store__body"><div class="store__name">Bếp Cư Dân, cơm cửa hàng & đồ ăn sạch</div><div class="store__meta"><span>Ẩm thực & cơm cư dân</span><span class="rating"><svg class="ic"><use href="#i-star"/></svg>4,8</span></div></div></article>
+            <article class="store"><div class="store__cover"><img loading="lazy" src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=700&q=70" alt="Tiệm Trà và Cafe Giá Biển" /></div><div class="store__body"><div class="store__name">Tiệm Trà & Cafe Giá Biển, S2.05</div><div class="store__meta"><span>F&B, cafe & pha chế</span><span class="rating"><svg class="ic"><use href="#i-star"/></svg>4,7</span></div></div></article>
+            <article class="store"><div class="store__cover"><img loading="lazy" src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=700&q=70" alt="Siêu thị thực phẩm sạch" /></div><div class="store__body"><div class="store__name">Siêu Thị Thực Phẩm Sạch & Tiện Lợi Cư Dân</div><div class="store__meta"><span>Thực phẩm & tiện lợi</span><span class="rating"><svg class="ic"><use href="#i-star"/></svg>4,9</span></div></div></article>
+            <article class="store"><div class="store__cover"><img loading="lazy" src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=700&q=70" alt="Trung tâm cơ điện kỹ thuật" /></div><div class="store__body"><div class="store__name">Trung Tâm Cơ Điện & Kỹ Thuật Cư Dân 24H</div><div class="store__meta"><span>Kỹ thuật, điện nước</span><span class="rating"><svg class="ic"><use href="#i-star"/></svg>4,9</span></div></div></article>
+          </div>
+        </div>
+        <div class="sect">
+          <div class="sect-head"><div><h3><svg class="ic"><use href="#i-users"/></svg>Cộng đồng cư dân</h3><p>Nhóm cộng đồng, chợ thanh lý và tin tức nội khu</p></div><a href="#trang-chu">Tham gia cộng đồng<svg class="ic"><use href="#i-arrow"/></svg></a></div>
+          <div class="grid g3">
+            <a class="tile" href="#" style="flex-direction:row;align-items:center;gap:12px"><span class="tile__ico"><svg class="ic"><use href="#i-users"/></svg></span><div><h4 style="font-size:14.5px">Nhóm cư dân theo khu</h4><p>Câu lạc bộ và nhóm chat theo tòa, phân khu.</p></div></a>
+            <a class="tile" href="#" style="flex-direction:row;align-items:center;gap:12px"><span class="tile__ico"><svg class="ic"><use href="#i-tag"/></svg></span><div><h4 style="font-size:14.5px">Chợ thanh lý cư dân</h4><p>Thanh lý đồ dùng, thời trang, nội thất nội khu.</p></div></a>
+            <a class="tile" href="#" style="flex-direction:row;align-items:center;gap:12px"><span class="tile__ico"><svg class="ic"><use href="#i-news"/></svg></span><div><h4 style="font-size:14.5px">Tin tức & tiện ích</h4><p>Thông báo nội khu, sự kiện và tiện ích chung.</p></div></a>
+          </div>
+        </div>
+        <div class="sect sect--sub">
+          <div class="sect-head"><div><h3><svg class="ic"><use href="#i-building"/></svg>Bất động sản, kênh phụ trợ</h3><p>Mua bán, cho thuê và chuyển nhượng giúp cư dân mới kết nối cộng đồng</p></div><a href="#trang-chu">Xem BĐS<svg class="ic"><use href="#i-arrow"/></svg></a></div>
+          <div class="grid g3">
+            <article class="store"><div class="store__cover"><img loading="lazy" src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=70" alt="Căn hộ cho thuê" /></div><div class="store__body"><div class="store__name">Căn hộ 2PN2WC Ocean Park 2, full nội thất</div><div class="store__meta"><span>Cho thuê, 9,5 tr/tháng</span><span class="rating"><svg class="ic"><use href="#i-pin"/></svg>Văn Giang</span></div></div></article>
+            <article class="store"><div class="store__cover"><img loading="lazy" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=70" alt="Shophouse chuyển nhượng" /></div><div class="store__body"><div class="store__name">Shophouse Chà Là, mặt tiền kinh doanh</div><div class="store__meta"><span>Chuyển nhượng, 8,5 tỷ</span><span class="rating"><svg class="ic"><use href="#i-pin"/></svg>Ocean Park 2</span></div></div></article>
+            <article class="store"><div class="store__cover"><img loading="lazy" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=70" alt="Liền kề bán" /></div><div class="store__body"><div class="store__name">Liền kề Phố Biển Ocean Park 3, nhận nhà ngay</div><div class="store__meta"><span>Bán, 12,5 tỷ</span><span class="rating"><svg class="ic"><use href="#i-pin"/></svg>Ocean Park 3</span></div></div></article>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap"><button class="btn btn--secondary btn--sm"><svg class="ic"><use href="#i-building"/></svg>Mua bán BĐS</button><button class="btn btn--secondary btn--sm"><svg class="ic"><use href="#i-calendar"/></svg>Tính lãi vay</button><button class="btn btn--secondary btn--sm"><svg class="ic"><use href="#i-plus"/></svg>Đăng tin BĐS</button></div>
+        </div>
+      </div>
+      <footer class="site-top" style="border-top:1px solid var(--border);border-bottom:0"><div class="wrap" style="padding-top:24px;padding-bottom:28px"><div class="grid g4" style="gap:24px">
+        <div><strong style="font-family:var(--font-display)">Chợ Cư Dân 24h</strong><p style="font-size:12.5px;color:var(--muted);margin-top:8px">Nền tảng cộng đồng cư dân Vinhomes: dịch vụ, việc làm và BĐS.</p></div>
+        <div><div style="font-size:12px;font-weight:700;margin-bottom:8px">Dành cho cư dân</div><div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--muted)"><a>Mở gian hàng</a><a>Đăng dịch vụ</a><a>Tạo CV</a></div></div>
+        <div><div style="font-size:12px;font-weight:700;margin-bottom:8px">Hỗ trợ</div><div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--muted)"><a>Chính sách bảo mật</a><a>Điều khoản sử dụng</a><a>Sơ đồ website</a></div></div>
+        <div><div style="font-size:12px;font-weight:700;margin-bottom:8px">Liên hệ</div><div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--muted)"><span>Hotline 0868.499.929</span><span>Văn Giang, Hưng Yên</span></div></div>
+      </div></div></footer>
+    </div>
+  </div>
+</section>
+
+<!-- DỊCH VỤ CƯ DÂN -->
+<section class="sec wrap" id="dich-vu">
+  <div class="frame-title"><h3>Danh sách dịch vụ cư dân</h3><span>/dich-vu-cu-dan</span></div>
+  <div class="frame"><div class="frame__bar"><span class="dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="ic"><use href="#i-shield"/></svg>chocudan24h.com/dich-vu-cu-dan</span></div>
+    <div class="frame__body">
+      <div class="site-top"><div class="wrap" style="padding-top:0;padding-bottom:0"><div class="site-nav">
+        <span class="doc-mark__logo" style="width:36px;height:36px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"/><path d="M6 9v10h12V9"/><path d="M10 19v-4h4v4"/></svg></span>
+        <strong style="font-family:var(--font-display);font-weight:800">Chợ Cư Dân 24h</strong>
+        <nav class="site-nav__links" style="margin-left:22px"><a href="#dich-vu" class="on">Dịch vụ cư dân</a><a href="#viec-lam">Việc làm</a><a href="#dich-vu">Chợ cư dân</a><a href="#trang-chu">Bất động sản</a></nav>
+        <div class="site-nav__right"><button class="btn btn--secondary btn--sm"><svg class="ic"><use href="#i-wallet"/></svg>Ví cư dân</button><button class="btn btn--primary btn--sm"><svg class="ic"><use href="#i-plus"/></svg>Đăng dịch vụ</button></div>
+      </div></div></div>
+      <div class="wrap" style="padding-top:20px;padding-bottom:32px">
+        <div class="crumbs"><span>Trang chủ</span><span>/</span><span style="color:var(--fg)">Dịch vụ cư dân</span></div>
+        <h2 class="page-h">Dịch vụ cư dân nội khu</h2>
+        <p class="page-sub">Đặt dịch vụ từ cư dân và hộ kinh doanh trong khu đô thị, đặt cọc an toàn qua Ví Cư Dân.</p>
+        <div class="band" style="margin-top:0">
+          <div class="chip" style="height:44px;border-radius:var(--r-sm);flex:1;min-width:240px;justify-content:flex-start;color:var(--muted)"><svg class="ic"><use href="#i-search"/></svg>Tìm dịch vụ, nhà cung cấp...</div>
+          <select class="input" style="width:auto"><option>Khu đô thị</option></select>
+          <select class="input" style="width:auto"><option>Danh mục</option></select>
+          <select class="input" style="width:auto"><option>Sắp xếp: Đánh giá cao</option></select>
+          <span style="font-size:13.5px;color:var(--muted);margin-left:auto"><b style="color:var(--fg)">86</b> dịch vụ</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0">
+          <button class="chip" aria-pressed="true">Thiết bị điện, máy tính</button><button class="chip">Giặt là & gia đình</button><button class="chip">Ẩm thực & cơm cư dân</button><button class="chip">Spa & làm đẹp</button><button class="chip">Homestay</button><button class="chip">Gia sư</button><button class="chip">Chăm sóc thú cưng</button><button class="chip">Thời trang & thanh lý</button><button class="chip">Xây lắp & hoàn thiện</button>
+        </div>
+        <div class="grid g4">
+          <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=600&q=70" alt="Điện nước smarthome" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-wrench"/></svg></span><div><div class="svc__name">Sửa điện nước, điều hòa 24/7</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-shield"/></svg>Đã xác minh</div></div></div><div class="svc__foot"><span class="price mono">150.000<small>Từ</small></span><button class="btn btn--primary btn--sm">Đặt lịch</button></div></div></article>
+          <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=70" alt="Giặt là" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-broom"/></svg></span><div><div class="svc__name">Giặt là & dọn dẹp gia đình</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-user"/></svg>6 nhà cung cấp</div></div></div><div class="svc__foot"><span class="price mono">80.000<small>/giờ</small></span><button class="btn btn--primary btn--sm">Đặt lịch</button></div></div></article>
+          <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=70" alt="Cơm cư dân" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-food"/></svg></span><div><div class="svc__name">Ẩm thực & cơm cư dân</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-pin"/></svg>Giao trong khu</div></div></div><div class="svc__foot"><span class="price mono">35.000<small>/suất</small></span><button class="btn btn--primary btn--sm">Đặt món</button></div></div></article>
+          <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=70" alt="Spa làm đẹp" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-sparkle"/></svg></span><div><div class="svc__name">Spa, làm đẹp & y tế gia đình</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-user"/></svg>4 nhà cung cấp</div></div></div><div class="svc__foot"><span class="price mono">250.000<small>Từ</small></span><button class="btn btn--primary btn--sm">Đặt lịch</button></div></div></article>
+          <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=600&q=70" alt="Gia sư" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-book"/></svg></span><div><div class="svc__name">Gia sư & rèn kỹ năng trẻ em</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-user"/></svg>9 gia sư</div></div></div><div class="svc__foot"><span class="price mono">150.000<small>/buổi</small></span><button class="btn btn--primary btn--sm">Đặt lịch</button></div></div></article>
+          <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=600&q=70" alt="Chăm sóc thú cưng" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-heart"/></svg></span><div><div class="svc__name">Chăm sóc thú cưng (Pet Care)</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-user"/></svg>3 nhà cung cấp</div></div></div><div class="svc__foot"><span class="price mono">120.000<small>/buổi</small></span><button class="btn btn--primary btn--sm">Đặt lịch</button></div></div></article>
+          <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=600&q=70" alt="Homestay" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-building"/></svg></span><div><div class="svc__name">Homestay & cho thuê du lịch</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-user"/></svg>5 chủ hộ</div></div></div><div class="svc__foot"><span class="price mono">600.000<small>/đêm</small></span><button class="btn btn--primary btn--sm">Đặt phòng</button></div></div></article>
+          <article class="svc"><div class="svc__media"><img loading="lazy" src="https://images.unsplash.com/photo-1521334884684-d80222895322?auto=format&fit=crop&w=600&q=70" alt="Xây lắp hoàn thiện" /></div><div class="svc__body"><div class="svc__top"><span class="svc__ico"><svg class="ic"><use href="#i-truck"/></svg></span><div><div class="svc__name">Xây lắp, sửa chữa & hoàn thiện</div><div class="svc__by"><svg class="ic" style="width:13px;height:13px"><use href="#i-user"/></svg>7 nhà thầu</div></div></div><div class="svc__foot"><span class="price mono">Liên hệ<small>Báo giá riêng</small></span><button class="btn btn--primary btn--sm">Nhận báo giá</button></div></div></article>
+        </div>
+        <div class="pager"><button class="chip" aria-pressed="true">1</button><button class="chip">2</button><button class="chip">3</button><button class="chip">Tiếp<svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        <div class="note" style="margin-top:16px"><svg class="ic"><use href="#i-shield"/></svg><div>Mỗi dịch vụ có hồ sơ nhà cung cấp, đánh giá thật và <b>xác minh cư dân</b>.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHI TIẾT DỊCH VỤ -->
+<section class="sec wrap" id="dich-vu-ct">
+  <div class="frame-title"><h3>Chi tiết dịch vụ</h3><span>/dich-vu-cu-dan/:serviceSlug</span></div>
+  <div class="frame"><div class="frame__bar"><span class="dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="ic"><use href="#i-shield"/></svg>chocudan24h.com/dich-vu-cu-dan/sua-dien-nuoc-24-7</span></div>
+    <div class="frame__body">
+      <div class="site-top"><div class="wrap" style="padding-top:0;padding-bottom:0"><div class="site-nav">
+        <span class="doc-mark__logo" style="width:36px;height:36px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"/><path d="M6 9v10h12V9"/><path d="M10 19v-4h4v4"/></svg></span>
+        <strong style="font-family:var(--font-display);font-weight:800">Chợ Cư Dân 24h</strong>
+        <div class="site-nav__right"><button class="icon-btn" aria-label="Lưu dịch vụ"><svg class="ic"><use href="#i-heart"/></svg></button><button class="icon-btn" aria-label="Chia sẻ"><svg class="ic"><use href="#i-share"/></svg></button></div>
+      </div></div></div>
+      <div class="wrap" style="padding-top:20px;padding-bottom:32px">
+        <div class="crumbs"><span>Trang chủ</span><span>/</span><span>Dịch vụ cư dân</span><span>/</span><span style="color:var(--fg)">Sửa điện nước 24/7</span></div>
+        <div class="detail-grid">
+          <div>
+            <div class="gallery"><a href="#"><img loading="lazy" src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=1000&q=70" alt="Sửa điện nước, ảnh chính" /></a><a href="#"><img loading="lazy" src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=500&q=70" alt="Kỹ thuật viên" /></a><a href="#"><img loading="lazy" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=70" alt="Không gian căn hộ" /></a><a href="#"><img loading="lazy" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=500&q=70" alt="Thiết bị" /></a><a href="#"><img loading="lazy" src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=500&q=70" alt="Dụng cụ" /></a></div>
+            <div style="margin-top:20px">
+              <div style="display:flex;gap:8px;margin-bottom:10px"><span class="badge badge--pick">Nổi bật</span><span class="badge badge--soft">Đã xác minh cư dân</span></div>
+              <h2 style="font-size:24px">Sửa điện nước, máy tính & smarthome 24/7</h2>
+              <div style="display:flex;align-items:center;gap:16px;margin-top:10px;color:var(--muted);font-size:13.5px"><span class="rating"><svg class="ic"><use href="#i-star"/></svg>4,9</span><span>128 đánh giá</span><span style="display:inline-flex;align-items:center;gap:5px"><svg class="ic"><use href="#i-clock"/></svg>Có mặt trong 30 phút</span></div>
+            </div>
+            <div class="spec-card" style="margin-top:22px"><h4>Mô tả dịch vụ</h4><p style="font-size:14px;color:var(--fg-2)">Nhận sửa chữa điện, nước, máy tính và thiết bị smarthome trong khu đô thị. Báo giá trước khi làm, bảo hành 30 ngày. Phục vụ cư dân Vinhomes Ocean Park 1, 2, 3 và Smart City.</p></div>
+            <div class="spec-card" style="margin-top:16px"><h4>Thông tin nổi bật</h4><div class="grid g2" style="gap:0 24px">
+              <div class="info-row"><span>Nhà cung cấp</span><b>Trung Tâm Cơ Điện Cư Dân</b></div>
+              <div class="info-row"><span>Khu vực</span><b>Ocean Park 1, 2, 3</b></div>
+              <div class="info-row"><span>Bảo hành</span><b>30 ngày</b></div>
+              <div class="info-row"><span>Hình thức</span><b>Tại nhà cư dân</b></div>
+              <div class="info-row"><span>Thanh toán</span><b>Ví cư dân</b></div>
+              <div class="info-row"><span>Mã dịch vụ</span><b class="mono">DV-2041</b></div>
+            </div></div>
+          </div>
+          <aside>
+            <div class="sticky-panel">
+              <div style="font-size:12px;color:var(--muted)">Giá dịch vụ</div>
+              <div class="price mono" style="font-size:26px;margin-top:2px">150.000<small style="font-size:12px">Từ, mỗi lần khảo sát</small></div>
+              <div style="display:flex;gap:10px;margin:16px 0"><button class="btn btn--primary btn--block"><svg class="ic"><use href="#i-calendar"/></svg>Đặt dịch vụ</button></div>
+              <div style="display:flex;gap:10px"><button class="btn btn--secondary" style="flex:1"><svg class="ic"><use href="#i-chat"/></svg>Chat Zalo</button><button class="btn btn--secondary" style="flex:1"><svg class="ic"><use href="#i-phone"/></svg>Gọi ngay</button></div>
+              <div style="display:flex;align-items:center;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)"><span class="avatar">TH</span><div style="min-width:0"><div style="font-weight:600;font-size:14px">Trần Hà</div><div style="font-size:12px;color:var(--muted)">Nhà cung cấp đã xác minh</div></div><button class="btn btn--ghost btn--sm" style="margin-left:auto">Xem</button></div>
+            </div>
+            <div class="note" style="margin-top:14px"><svg class="ic"><use href="#i-wallet"/></svg><div>Đặt cọc được giữ an toàn qua Ví Cư Dân, chỉ chuyển khi dịch vụ hoàn tất.</div></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIỆC LÀM -->
+<section class="sec wrap" id="viec-lam">
+  <div class="frame-title"><h3>Việc làm nội khu</h3><span>/tuyen-dung</span></div>
+  <div class="frame"><div class="frame__bar"><span class="dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="ic"><use href="#i-shield"/></svg>chocudan24h.com/tuyen-dung</span></div>
+    <div class="frame__body">
+      <div class="site-top"><div class="wrap" style="padding-top:0;padding-bottom:0"><div class="site-nav">
+        <span class="doc-mark__logo" style="width:36px;height:36px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"/><path d="M6 9v10h12V9"/><path d="M10 19v-4h4v4"/></svg></span>
+        <strong style="font-family:var(--font-display);font-weight:800">Chợ Cư Dân 24h</strong>
+        <nav class="site-nav__links" style="margin-left:22px"><a href="#dich-vu">Dịch vụ cư dân</a><a href="#viec-lam" class="on">Việc làm</a><a href="#viec-lam">Chợ cư dân</a><a href="#trang-chu">Bất động sản</a></nav>
+        <div class="site-nav__right"><button class="btn btn--secondary btn--sm"><svg class="ic"><use href="#i-doc"/></svg>Tạo CV</button><button class="btn btn--primary btn--sm"><svg class="ic"><use href="#i-plus"/></svg>Đăng tuyển</button></div>
+      </div></div></div>
+      <div class="wrap" style="padding-top:20px;padding-bottom:32px">
+        <div class="crumbs"><span>Trang chủ</span><span>/</span><span style="color:var(--fg)">Việc làm nội khu</span></div>
+        <h2 class="page-h">Việc làm nội khu Vinhomes</h2>
+        <p class="page-sub">Việc làm gần nơi ở, do chủ quán, hộ kinh doanh và cư dân tuyển trực tiếp.</p>
+        <div class="tabs" style="margin-bottom:16px"><button aria-selected="true">Tìm việc</button><button aria-selected="false">Tuyển dụng</button><button aria-selected="false">Ứng viên</button></div>
+        <div class="band" style="margin-top:0">
+          <div class="chip" style="height:44px;border-radius:var(--r-sm);flex:1;min-width:220px;justify-content:flex-start;color:var(--muted)"><svg class="ic"><use href="#i-search"/></svg>Tìm theo vị trí, quán, khu...</div>
+          <select class="input" style="width:auto"><option>Ngành nghề</option></select><select class="input" style="width:auto"><option>Khu đô thị</option></select><select class="input" style="width:auto"><option>Hình thức</option></select><select class="input" style="width:auto"><option>Mức lương</option></select>
+          <span style="font-size:13.5px;color:var(--muted);margin-left:auto"><b style="color:var(--fg)">64</b> tin tuyển</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0"><button class="chip" aria-pressed="true">Tất cả ngành nghề</button><button class="chip">F&B, cafe & pha chế</button><button class="chip">Giúp việc, chăm bé</button><button class="chip">Kỹ thuật, điện nước</button><button class="chip">Bán hàng, CSKH</button><button class="chip">Gia sư, tiếng Anh</button><button class="chip">Tài xế, shipper</button><button class="chip">Bảo vệ, quản lý tòa</button><button class="chip">Hành chính, kế toán</button></div>
+        <div class="grid g2">
+          <article class="job"><span class="job__logo">F&B</span><div class="job__main"><div class="job__title">Pha chế Barista & Latte Art</div><div class="job__co">Tiệm Trà & Cafe Giá Biển, S2.05 Ocean Park 2</div><div class="job__tags"><span class="badge badge--job">Toàn thời gian</span><span class="badge badge--soft">Bao ăn</span><span class="badge badge--soft">Xoay ca</span></div></div><div class="job__side"><span class="job__pay">8 - 12 tr</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+          <article class="job"><span class="job__logo">KT</span><div class="job__main"><div class="job__title">Kỹ thuật viên điện nước, điều hòa</div><div class="job__co">Trung Tâm Cơ Điện & Kỹ Thuật Cư Dân 24H</div><div class="job__tags"><span class="badge badge--job">Toàn thời gian</span><span class="badge badge--soft">Có xe</span></div></div><div class="job__side"><span class="job__pay">10 - 15 tr</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+          <article class="job"><span class="job__logo">GV</span><div class="job__main"><div class="job__title">Gia sư tiếng Anh tiểu học</div><div class="job__co">Gia đình cư dân, khu Ngọc Trai Ocean Park 1</div><div class="job__tags"><span class="badge badge--job">Bán thời gian</span><span class="badge badge--soft">Tại nhà</span></div></div><div class="job__side"><span class="job__pay">150k / buổi</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+          <article class="job"><span class="job__logo">GH</span><div class="job__main"><div class="job__title">Nhân viên bán hàng, thu ngân</div><div class="job__co">Siêu Thị Thực Phẩm Sạch & Tiện Lợi Cư Dân</div><div class="job__tags"><span class="badge badge--job">Theo ca</span><span class="badge badge--soft">Cư dân ưu tiên</span></div></div><div class="job__side"><span class="job__pay">7 - 9 tr</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+          <article class="job"><span class="job__logo">TX</span><div class="job__main"><div class="job__title">Tài xế buggy nội khu</div><div class="job__co">Ban quản lý vận hành Ocean Park 3</div><div class="job__tags"><span class="badge badge--job">Theo ca</span><span class="badge badge--soft">Có GPLX</span></div></div><div class="job__side"><span class="job__pay">9 - 11 tr</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+          <article class="job"><span class="job__logo">SP</span><div class="job__main"><div class="job__title">Kỹ thuật viên nail & chăm sóc da</div><div class="job__co">Spa cư dân, Shophouse San Hô</div><div class="job__tags"><span class="badge badge--job">Toàn thời gian</span><span class="badge badge--soft">Hoa hồng</span></div></div><div class="job__side"><span class="job__pay">10 - 18 tr</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+        </div>
+        <div class="pager"><button class="chip" aria-pressed="true">1</button><button class="chip">2</button><button class="chip">3</button><button class="chip">Tiếp<svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"><button class="btn btn--primary"><svg class="ic"><use href="#i-briefcase"/></svg>Đăng tin tuyển dụng</button><button class="btn btn--secondary"><svg class="ic"><use href="#i-doc"/></svg>Tạo CV của bạn</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHI TIẾT VIỆC LÀM -->
+<section class="sec wrap" id="viec-lam-ct">
+  <div class="frame-title"><h3>Chi tiết việc làm</h3><span>/tuyen-dung/viec-lam/:jobId</span></div>
+  <div class="frame"><div class="frame__bar"><span class="dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="ic"><use href="#i-shield"/></svg>chocudan24h.com/tuyen-dung/viec-lam/2418</span></div>
+    <div class="frame__body">
+      <div class="site-top"><div class="wrap" style="padding-top:0;padding-bottom:0"><div class="site-nav">
+        <span class="doc-mark__logo" style="width:36px;height:36px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"/><path d="M6 9v10h12V9"/><path d="M10 19v-4h4v4"/></svg></span>
+        <strong style="font-family:var(--font-display);font-weight:800">Chợ Cư Dân 24h</strong>
+        <div class="site-nav__right"><button class="icon-btn" aria-label="Lưu tin"><svg class="ic"><use href="#i-heart"/></svg></button><button class="icon-btn" aria-label="Chia sẻ"><svg class="ic"><use href="#i-share"/></svg></button></div>
+      </div></div></div>
+      <div class="wrap" style="padding-top:20px;padding-bottom:32px">
+        <div class="crumbs"><span>Trang chủ</span><span>/</span><span>Việc làm</span><span>/</span><span style="color:var(--fg)">Pha chế Barista</span></div>
+        <div class="detail-grid">
+          <div>
+            <div style="display:flex;gap:16px;align-items:flex-start">
+              <span class="job__logo" style="width:64px;height:64px;font-size:18px">F&B</span>
+              <div><h2 style="font-size:23px">Pha chế Barista & Latte Art</h2><div style="color:var(--muted);font-size:14px;margin-top:6px">Tiệm Trà & Cafe Giá Biển, S2.05 Ocean Park 2</div><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><span class="badge badge--job">Toàn thời gian</span><span class="badge badge--soft">Bao ăn</span><span class="badge badge--soft">Xoay ca linh hoạt</span></div></div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"><span class="spec"><svg class="ic"><use href="#i-wallet"/></svg><b>8 - 12 tr</b></span><span class="spec"><svg class="ic"><use href="#i-clock"/></svg>Toàn thời gian</span><span class="spec"><svg class="ic"><use href="#i-pin"/></svg>Ocean Park 2</span><span class="spec"><svg class="ic"><use href="#i-user"/></svg><b>12</b> ứng viên</span></div>
+            <div class="spec-card" style="margin-top:22px"><h4>Mô tả công việc</h4><p style="font-size:14px;color:var(--fg-2)">Pha chế đồ uống theo menu của quán, trang trí latte art, giữ vệ sinh quầy bar và hỗ trợ phục vụ khách. Làm việc tại quán trong khu Ocean Park 2.</p></div>
+            <div class="spec-card" style="margin-top:16px"><h4>Yêu cầu</h4><div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--fg-2)">
+              <span style="display:flex;gap:8px"><svg class="ic" style="width:18px;height:18px;color:var(--accent)"><use href="#i-check"/></svg>Có kinh nghiệm pha chế, ưu tiên biết latte art</span>
+              <span style="display:flex;gap:8px"><svg class="ic" style="width:18px;height:18px;color:var(--accent)"><use href="#i-check"/></svg>Có thể xoay ca theo lịch quán</span>
+              <span style="display:flex;gap:8px"><svg class="ic" style="width:18px;height:18px;color:var(--accent)"><use href="#i-check"/></svg>Ưu tiên cư dân trong khu đô thị</span>
+            </div></div>
+            <div class="spec-card" style="margin-top:16px"><h4>Quyền lợi</h4><div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--fg-2)">
+              <span style="display:flex;gap:8px"><svg class="ic" style="width:18px;height:18px;color:var(--accent)"><use href="#i-check"/></svg>Lương 8 đến 12 triệu, thưởng theo ca</span>
+              <span style="display:flex;gap:8px"><svg class="ic" style="width:18px;height:18px;color:var(--accent)"><use href="#i-check"/></svg>Bao ăn tại quán</span>
+              <span style="display:flex;gap:8px"><svg class="ic" style="width:18px;height:18px;color:var(--accent)"><use href="#i-check"/></svg>Làm việc gần nhà, không phải đi xa</span>
+            </div></div>
+          </div>
+          <aside>
+            <div class="sticky-panel">
+              <div style="font-size:12px;color:var(--muted)">Mức lương</div>
+              <div class="price mono" style="font-size:24px;margin-top:2px">8 - 12 tr<small style="font-size:12px">Tháng</small></div>
+              <div style="margin:16px 0"><button class="btn btn--primary btn--block"><svg class="ic"><use href="#i-doc"/></svg>Ứng tuyển ngay</button></div>
+              <div style="display:flex;gap:10px"><button class="btn btn--secondary" style="flex:1"><svg class="ic"><use href="#i-chat"/></svg>Chat</button><button class="btn btn--secondary" style="flex:1"><svg class="ic"><use href="#i-heart"/></svg>Lưu tin</button></div>
+              <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+                <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Nhà tuyển dụng</div>
+                <div style="display:flex;align-items:center;gap:12px"><span class="avatar">GB</span><div><div style="font-weight:600;font-size:14px">Tiệm Trà & Cafe Giá Biển</div><div style="font-size:12px;color:var(--muted)">S2.05 Ocean Park 2</div></div></div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CV ỨNG VIÊN -->
+<section class="sec wrap" id="cv">
+  <div class="frame-title"><h3>Hồ sơ ứng viên</h3><span>/tuyen-dung/cv/:candidateId</span></div>
+  <div class="frame"><div class="frame__bar"><span class="dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="ic"><use href="#i-shield"/></svg>chocudan24h.com/tuyen-dung/cv/512</span></div>
+    <div class="frame__body">
+      <div class="site-top"><div class="wrap" style="padding-top:0;padding-bottom:0"><div class="site-nav">
+        <span class="doc-mark__logo" style="width:36px;height:36px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"/><path d="M6 9v10h12V9"/><path d="M10 19v-4h4v4"/></svg></span>
+        <strong style="font-family:var(--font-display);font-weight:800">Chợ Cư Dân 24h</strong>
+        <div class="site-nav__right"><button class="btn btn--secondary btn--sm"><svg class="ic"><use href="#i-share"/></svg>Chia sẻ</button><button class="btn btn--primary btn--sm"><svg class="ic"><use href="#i-chat"/></svg>Liên hệ</button></div>
+      </div></div></div>
+      <div class="wrap" style="padding-top:20px;padding-bottom:32px">
+        <div class="detail-grid">
+          <div>
+            <div style="display:flex;gap:18px;align-items:flex-start">
+              <span class="avatar" style="width:72px;height:72px;font-size:24px">TH</span>
+              <div><h2 style="font-size:23px">Trần Thị Thu Hà</h2><div style="color:var(--muted);font-size:14px;margin-top:6px">Ứng viên pha chế, cư dân Vinhomes Ocean Park 1</div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><span class="spec"><svg class="ic"><use href="#i-briefcase"/></svg>2 năm kinh nghiệm</span><span class="spec"><svg class="ic"><use href="#i-graduation"/></svg>Cao đẳng</span><span class="spec"><svg class="ic"><use href="#i-pin"/></svg>Ocean Park 1</span></div></div>
+            </div>
+            <div class="spec-card" style="margin-top:22px"><h4>Giới thiệu</h4><p style="font-size:14px;color:var(--fg-2)">Pha chế tại quán cafe và trà sữa trong khu đô thị, thành thạo latte art và pha chế máy. Mong muốn tìm việc gần nơi ở để tiện chăm sóc gia đình.</p></div>
+            <div class="spec-card" style="margin-top:16px"><h4>Kinh nghiệm làm việc</h4>
+              <div class="info-row"><span>Pha chế chính, Tiệm Trà & Cafe Giá Biển</span><b>2024 - nay</b></div>
+              <div class="info-row"><span>Nhân viên pha chế, quán trong Ocean Park 1</span><b>2023 - 2024</b></div>
+            </div>
+            <div class="spec-card" style="margin-top:16px"><h4>Kỹ năng</h4><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="spec">Latte art</span><span class="spec">Pha máy</span><span class="spec">Trà sữa</span><span class="spec">Giao tiếp</span><span class="spec">Xoay ca</span></div></div>
+          </div>
+          <aside>
+            <div class="sticky-panel">
+              <div style="font-size:12px;color:var(--muted)">Mức lương mong muốn</div>
+              <div class="price mono" style="font-size:22px;margin-top:2px">9 - 12 tr<small style="font-size:12px">Tháng</small></div>
+              <div style="margin:16px 0;display:flex;flex-direction:column;gap:10px">
+                <button class="btn btn--primary btn--block"><svg class="ic"><use href="#i-chat"/></svg>Liên hệ ứng viên</button>
+                <button class="btn btn--secondary btn--block"><svg class="ic"><use href="#i-doc"/></svg>Tải CV (PDF)</button>
+              </div>
+              <div class="info-row"><span>Trạng thái</span><b style="color:var(--accent)">Đang tìm việc</b></div>
+              <div class="info-row"><span>Hình thức</span><b>Toàn thời gian</b></div>
+              <div class="info-row"><span>Khu vực</span><b>Ocean Park 1, 2</b></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NHÀ TUYỂN DỤNG -->
+<section class="sec wrap" id="nha-tuyen-dung">
+  <div class="frame-title"><h3>Trang nhà tuyển dụng</h3><span>/tuyen-dung/nha-tuyen-dung/:employerId</span></div>
+  <div class="frame"><div class="frame__bar"><span class="dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="ic"><use href="#i-shield"/></svg>chocudan24h.com/tuyen-dung/nha-tuyen-dung/88</span></div>
+    <div class="frame__body">
+      <div class="site-top"><div class="wrap" style="padding-top:0;padding-bottom:0"><div class="site-nav">
+        <span class="doc-mark__logo" style="width:36px;height:36px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"/><path d="M6 9v10h12V9"/><path d="M10 19v-4h4v4"/></svg></span>
+        <strong style="font-family:var(--font-display);font-weight:800">Chợ Cư Dân 24h</strong>
+        <div class="site-nav__right"><button class="btn btn--secondary btn--sm"><svg class="ic"><use href="#i-heart"/></svg>Theo dõi</button><button class="btn btn--primary btn--sm"><svg class="ic"><use href="#i-chat"/></svg>Liên hệ</button></div>
+      </div></div></div>
+      <div class="wrap" style="padding-top:20px;padding-bottom:32px">
+        <div class="spec-card" style="padding:0;overflow:hidden">
+          <div style="height:150px;background:var(--surface-3)"><img loading="lazy" src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=1200&q=70" alt="Tiệm Trà và Cafe Giá Biển" style="width:100%;height:100%;object-fit:cover" /></div>
+          <div style="padding:20px;display:flex;gap:16px;align-items:flex-start">
+            <span class="avatar" style="width:64px;height:64px;font-size:20px;margin-top:-46px;border:3px solid var(--surface)">GB</span>
+            <div style="flex:1"><h2 style="font-size:22px">Tiệm Trà & Cafe Giá Biển</h2><div style="color:var(--muted);font-size:13.5px;margin-top:6px">F&B, cafe & pha chế, S2.05 Vinhomes Ocean Park 2</div><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><span class="badge badge--soft">Đã xác minh</span><span class="badge badge--soft">Hộ kinh doanh cư dân</span><span class="rating"><svg class="ic"><use href="#i-star"/></svg>4,7</span></div></div>
+            <div style="display:flex;gap:10px"><button class="btn btn--secondary btn--sm">Xem gian hàng</button></div>
+          </div>
+        </div>
+        <div class="sect" style="padding-bottom:0">
+          <div class="sect-head"><div><h3><svg class="ic"><use href="#i-briefcase"/></svg>Tin đang tuyển</h3><p>3 vị trí đang mở</p></div></div>
+          <div class="grid g2">
+            <article class="job"><span class="job__logo">F&B</span><div class="job__main"><div class="job__title">Pha chế Barista & Latte Art</div><div class="job__co">Toàn thời gian, Ocean Park 2</div><div class="job__tags"><span class="badge badge--job">Bao ăn</span></div></div><div class="job__side"><span class="job__pay">8 - 12 tr</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+            <article class="job"><span class="job__logo">PV</span><div class="job__main"><div class="job__title">Nhân viên phục vụ ca tối</div><div class="job__co">Bán thời gian, Ocean Park 2</div><div class="job__tags"><span class="badge badge--job">Theo ca</span></div></div><div class="job__side"><span class="job__pay">5 - 7 tr</span><button class="btn btn--job btn--sm">Ứng tuyển</button></div></article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hr" />
+
+<!-- DI ĐỘNG -->
+<section class="sec wrap" id="di-dong">
+  <div class="sec-head"><span class="kicker">Ưu tiên di động</span><h2>Ba màn hình di động của nhóm ưu tiên</h2><p>Cư dân chủ yếu dùng điện thoại nên dịch vụ và việc làm nằm ngay màn hình đầu và thanh điều hướng dưới.</p></div>
+  <div class="mobile-row">
+    <div class="phone"><div class="phone__notch"></div><div class="phone__screen">
+      <div class="statbar"><span>9:41</span><span>Vinhomes</span></div>
+      <div class="appbar"><span class="appbar__logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"/><path d="M6 9v10h12V9"/><path d="M10 19v-4h4v4"/></svg></span><strong>Chợ Cư Dân 24h</strong><button class="icon-btn" style="width:36px;height:36px;margin-left:auto" aria-label="Thông báo"><svg class="ic"><use href="#i-bell"/></svg></button></div>
+      <div class="msearch"><svg class="ic"><use href="#i-search"/></svg>Tìm dịch vụ, việc làm...</div>
+      <div class="m-cat" style="margin-top:12px"><a href="#"><span class="tile__ico"><svg class="ic"><use href="#i-wrench"/></svg></span>Dịch vụ</a><a href="#"><span class="tile__ico"><svg class="ic"><use href="#i-briefcase"/></svg></span>Việc làm</a><a href="#"><span class="tile__ico"><svg class="ic"><use href="#i-store"/></svg></span>Gian hàng</a><a href="#"><span class="tile__ico"><svg class="ic"><use href="#i-building"/></svg></span>BĐS</a></div>
+      <div style="margin:6px 14px;border-radius:var(--r-md);overflow:hidden;position:relative;aspect-ratio:16/9;background:var(--surface-3)"><img loading="lazy" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=700&q=70" alt="Cư dân kinh doanh" style="width:100%;height:100%;object-fit:cover" /><div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;background:linear-gradient(to top,rgba(12,14,13,.82),rgba(12,14,13,.1) 60%,transparent);color:#fff"><strong style="font-family:var(--font-display);font-size:15px">Mở gian hàng, bán dịch vụ</strong><span style="font-size:11.5px;opacity:.9">Nhận khách trong khu đô thị</span></div></div>
+      <div class="m-section"><div class="m-h"><h3>Dịch vụ gần bạn</h3><a href="#dich-vu">Xem tất cả</a></div></div>
+      <div class="mcard"><div class="mcard__media"><img loading="lazy" src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=300&q=70" alt="Sửa điện nước" /></div><div class="mcard__body"><div class="mcard__title">Sửa điện nước, điều hòa 24/7</div><div class="mcard__specs"><span><svg class="ic" style="width:13px;height:13px"><use href="#i-shield"/></svg>Đã xác minh</span></div><div class="price mono" style="font-size:15px">150.000<small>Từ</small></div></div></div>
+      <div class="mcard"><div class="mcard__media"><img loading="lazy" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=300&q=70" alt="Cơm cư dân" /></div><div class="mcard__body"><div class="mcard__title">Cơm cư dân, giao trong khu</div><div class="mcard__specs"><span><svg class="ic" style="width:13px;height:13px"><use href="#i-pin"/></svg>Ocean Park 1</span></div><div class="price mono" style="font-size:15px">35.000<small>/suất</small></div></div></div>
+      <div class="m-section" style="padding-top:6px"><div class="m-h"><h3>Việc làm mới</h3><a href="#viec-lam">Xem tất cả</a></div></div>
+      <div class="mcard"><div class="mcard__media" style="display:grid;place-items:center;background:var(--job-soft);color:var(--job);font-family:var(--font-display);font-weight:800">F&B</div><div class="mcard__body"><div class="mcard__title">Pha chế Barista & Latte Art</div><div class="mcard__specs"><span>Toàn thời gian</span></div><div class="price mono" style="font-size:15px;color:var(--accent)">8 - 12 tr</div></div></div>
+      <div style="height:12px"></div>
+      <nav class="tabbar"><a href="#trang-chu" aria-current="page"><svg class="ic"><use href="#i-home"/></svg>Trang chủ</a><a href="#dich-vu"><svg class="ic"><use href="#i-wrench"/></svg>Dịch vụ</a><a href="#" class="tabbar__fab"><svg class="ic"><use href="#i-plus"/></svg>Đăng tin</a><a href="#viec-lam"><svg class="ic"><use href="#i-briefcase"/></svg>Việc làm</a><a href="#toc"><svg class="ic"><use href="#i-menu"/></svg>Menu</a></nav>
+    </div></div>
+
+    <div class="phone"><div class="phone__notch"></div><div class="phone__screen">
+      <div class="statbar"><span>9:41</span><span>Vinhomes</span></div>
+      <div class="appbar"><button class="icon-btn" style="width:36px;height:36px" aria-label="Quay lại"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-arrow"/></svg></button><strong style="margin:0 auto">Việc làm nội khu</strong><button class="icon-btn" style="width:36px;height:36px" aria-label="Bộ lọc"><svg class="ic"><use href="#i-sliders"/></svg></button></div>
+      <div class="msearch"><svg class="ic"><use href="#i-search"/></svg>Tìm vị trí, quán, khu...</div>
+      <div class="hscroll" style="margin-top:10px;padding:2px 14px 8px"><button class="chip" aria-pressed="true">Tất cả</button><button class="chip">F&B</button><button class="chip">Giúp việc</button><button class="chip">Kỹ thuật</button><button class="chip">Gia sư</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 8px"><span style="font-size:12.5px;color:var(--muted)"><b style="color:var(--fg)">64</b> tin tuyển</span><span class="chip" style="height:30px">Mới nhất</span></div>
+      <div class="mcard"><div class="mcard__media" style="display:grid;place-items:center;background:var(--job-soft);color:var(--job);font-family:var(--font-display);font-weight:800">F&B</div><div class="mcard__body"><div class="mcard__title">Pha chế Barista & Latte Art</div><div class="mcard__specs"><span>Toàn thời gian</span><span>Bao ăn</span></div><div class="price mono" style="font-size:15px;color:var(--accent)">8 - 12 tr</div></div></div>
+      <div class="mcard"><div class="mcard__media" style="display:grid;place-items:center;background:var(--job-soft);color:var(--job);font-family:var(--font-display);font-weight:800">KT</div><div class="mcard__body"><div class="mcard__title">Kỹ thuật viên điện nước, điều hòa</div><div class="mcard__specs"><span>Toàn thời gian</span></div><div class="price mono" style="font-size:15px;color:var(--accent)">10 - 15 tr</div></div></div>
+      <div class="mcard"><div class="mcard__media" style="display:grid;place-items:center;background:var(--job-soft);color:var(--job);font-family:var(--font-display);font-weight:800">GV</div><div class="mcard__body"><div class="mcard__title">Gia sư tiếng Anh tiểu học</div><div class="mcard__specs"><span>Bán thời gian</span></div><div class="price mono" style="font-size:15px;color:var(--accent)">150k / buổi</div></div></div>
+      <div class="mcard"><div class="mcard__media" style="display:grid;place-items:center;background:var(--job-soft);color:var(--job);font-family:var(--font-display);font-weight:800">TX</div><div class="mcard__body"><div class="mcard__title">Tài xế buggy nội khu</div><div class="mcard__specs"><span>Theo ca</span></div><div class="price mono" style="font-size:15px;color:var(--accent)">9 - 11 tr</div></div></div>
+      <div style="padding:12px 14px"><button class="btn btn--primary btn--block"><svg class="ic"><use href="#i-doc"/></svg>Tạo CV để ứng tuyển nhanh</button></div>
+      <nav class="tabbar"><a href="#trang-chu"><svg class="ic"><use href="#i-home"/></svg>Trang chủ</a><a href="#dich-vu"><svg class="ic"><use href="#i-wrench"/></svg>Dịch vụ</a><a href="#" class="tabbar__fab"><svg class="ic"><use href="#i-plus"/></svg>Đăng tin</a><a href="#viec-lam" aria-current="page"><svg class="ic"><use href="#i-briefcase"/></svg>Việc làm</a><a href="#toc"><svg class="ic"><use href="#i-menu"/></svg>Menu</a></nav>
+    </div></div>
+
+    <div class="phone"><div class="phone__notch"></div><div class="phone__screen">
+      <div class="statbar"><span>9:41</span><span>Vinhomes</span></div>
+      <div style="position:relative">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=700&q=70" alt="Sửa điện nước" style="width:100%;aspect-ratio:4/3;object-fit:cover" />
+        <button class="icon-btn" style="position:absolute;top:12px;left:14px;width:36px;height:36px;background:rgba(255,255,255,.92)" aria-label="Quay lại"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-arrow"/></svg></button>
+        <button class="icon-btn" style="position:absolute;top:12px;right:14px;width:36px;height:36px;background:rgba(255,255,255,.92)" aria-label="Lưu"><svg class="ic"><use href="#i-heart"/></svg></button>
+      </div>
+      <div class="m-section">
+        <div style="display:flex;gap:8px;margin-bottom:8px"><span class="badge badge--pick">Nổi bật</span><span class="badge badge--soft">Đã xác minh cư dân</span></div>
+        <h3 style="font-size:17px;line-height:1.3">Sửa điện nước, máy tính & smarthome 24/7</h3>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:8px;color:var(--muted);font-size:12.5px"><span class="rating"><svg class="ic"><use href="#i-star"/></svg>4,9</span><span>128 đánh giá</span></div>
+        <div class="price mono" style="font-size:20px;margin-top:12px">150.000<small style="font-size:11.5px">Từ, mỗi lần khảo sát</small></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><span class="spec"><svg class="ic"><use href="#i-shield"/></svg>KYC cư dân</span><span class="spec"><svg class="ic"><use href="#i-calendar"/></svg>24/7</span><span class="spec"><svg class="ic"><use href="#i-wallet"/></svg>Đặt cọc an toàn</span></div>
+      </div>
+      <div class="m-section" style="padding-top:6px"><div class="spec-card" style="padding:14px"><h4 style="margin-bottom:8px">Mô tả dịch vụ</h4><p style="font-size:13px;color:var(--fg-2)">Nhận sửa chữa điện, nước, máy tính và thiết bị smarthome trong khu đô thị. Có mặt trong 30 phút, báo giá trước khi làm.</p></div></div>
+      <div style="height:78px"></div>
+      <div style="position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 14px;display:flex;gap:10px;align-items:center">
+        <div style="line-height:1.1"><div style="font-size:10.5px;color:var(--muted)">Từ</div><div class="mono" style="font-family:var(--font-display);font-weight:800">150.000</div></div>
+        <button class="btn btn--secondary" aria-label="Chat" style="width:44px;padding:0"><svg class="ic"><use href="#i-chat"/></svg></button>
+        <button class="btn btn--secondary" aria-label="Gọi" style="width:44px;padding:0"><svg class="ic"><use href="#i-phone"/></svg></button>
+        <button class="btn btn--primary" style="flex:1">Đặt lịch ngay</button>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<div class="wrap"><div class="note" style="margin:var(--s6) 0"><svg class="ic"><use href="#i-shield"/></svg><div><b>Dữ liệu minh hoạ:</b> tên, mức lương và giá trong bộ trang này là ví dụ để thể hiện bố cục, không phải dữ liệu vận hành thật.</div></div></div>
+
+<footer class="foot"><div class="wrap"><p><strong>Chợ Cư Dân 24h</strong> - nhóm 1: Trang chủ, Dịch vụ cư dân, Việc làm. Bản V4.</p><p style="margin-top:6px">Ảnh chỉ dùng để minh hoạ bố cục.</p></div></footer>
+</main>
+
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themeBtn'), icon=document.getElementById('themeIcon'), saved=null;
+  try{ saved=localStorage.getItem('cd24-theme'); }catch(e){}
+  if(saved){ root.setAttribute('data-theme',saved); } else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){ root.setAttribute('data-theme','dark'); }
+  function syncTheme(){ var d=root.getAttribute('data-theme')==='dark'; icon.innerHTML='<use href="'+(d?'#i-sun':'#i-moon')+'"/>'; }
+  syncTheme();
+  btn.addEventListener('click',function(){ var n=root.getAttribute('data-theme')==='dark'?'light':'dark'; root.setAttribute('data-theme',n); try{localStorage.setItem('cd24-theme',n);}catch(e){} syncTheme(); });
+  var sb=document.querySelectorAll('[data-skin-btn]'), ss=null; try{ ss=localStorage.getItem('cd24-skin'); }catch(e){}
+  if(ss){ root.setAttribute('data-skin',ss); }
+  function syncSkin(){ var c=root.getAttribute('data-skin')||'emerald'; sb.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-skin-btn')===c?'true':'false'); }); }
+  syncSkin();
+  sb.forEach(function(b){ b.addEventListener('click',function(){ var s=b.getAttribute('data-skin-btn'); root.setAttribute('data-skin',s); try{localStorage.setItem('cd24-skin',s);}catch(e){} syncSkin(); }); });
+  document.querySelectorAll('.chip[aria-pressed]').forEach(function(ch){ ch.addEventListener('click',function(){ if(ch.closest('.tabs'))return; ch.setAttribute('aria-pressed', ch.getAttribute('aria-pressed')==='true'?'false':'true'); }); });
+  document.querySelectorAll('.tabs').forEach(function(g){ g.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ g.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-selected','false'); }); b.setAttribute('aria-selected','true'); }); }); });
+})();
+</script>
+</body>
+</html>
