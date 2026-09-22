@@ -16,6 +16,7 @@ export const ProjectFaqHub: React.FC<ProjectFaqHubProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [faqItems, setFaqItems] = useState<ProjectFaqItem[]>(PROJECT_FAQ_DATA);
   const [openFaqId, setOpenFaqId] = useState<string | null>(PROJECT_FAQ_DATA[0]?.id || null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
 
   // Load FAQ from server (admin-managed), fallback to static data
   useEffect(() => {
@@ -154,19 +155,19 @@ export const ProjectFaqHub: React.FC<ProjectFaqHubProps> = ({
       </div>
 
       {/* Accordion FAQ List */}
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 items-start">
         {filteredFaqs.length === 0 ? (
           <div className="p-8 text-center bg-ink-50 dark:bg-ink-950 rounded-2xl border border-ink-200 dark:border-ink-800 text-ink-500 text-xs">
             <BookOpen className="w-8 h-8 mx-auto text-brand-500 mb-2" />
             Không tìm thấy câu hỏi phù hợp từ khóa &quot;{searchTerm}&quot;. Vui lòng thử lại với từ khóa khác như Sổ đỏ, Vành đai, Vinschool...
           </div>
         ) : (
-          filteredFaqs.map((item) => {
+          filteredFaqs.map((item, idx) => {
             const isOpen = openFaqId === item.id;
             return (
               <div
                 key={item.id}
-                className="bg-ink-50 dark:bg-ink-950/80 rounded-2xl border border-ink-200 dark:border-ink-800/80 overflow-hidden transition shadow-sm hover:border-brand-500/50"
+                className={`bg-ink-50 dark:bg-ink-950/80 rounded-2xl border border-ink-200 dark:border-ink-800/80 overflow-hidden transition shadow-sm hover:border-brand-500/50 ${!showAllFaqs && idx >= 4 ? 'hidden lg:block' : ''}`}
               >
                 <button
                   onClick={() => toggleFaq(item.id)}
@@ -216,6 +217,16 @@ export const ProjectFaqHub: React.FC<ProjectFaqHubProps> = ({
           })
         )}
       </div>
+
+      {filteredFaqs.length > 4 && (
+        <button
+          type="button"
+          onClick={() => setShowAllFaqs((v) => !v)}
+          className="lg:hidden w-full h-11 rounded-2xl border border-ink-200 dark:border-ink-800 bg-ink-50 dark:bg-ink-950 text-xs font-black text-brand-600 dark:text-brand-400"
+        >
+          {showAllFaqs ? 'Thu gọn' : `Xem thêm ${filteredFaqs.length - 4} câu hỏi`}
+        </button>
+      )}
     </div>
   );
 };
