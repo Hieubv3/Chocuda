@@ -2,16 +2,20 @@
    CHỢ CƯ DÂN 24H - THEME ÁP TRỰC TIẾP VÀO APP (Tailwind CSS v4)
    Import trong src/index.css, ngay sau @import "tailwindcss";
    --------------------------------------------------------------------------
+   PHẠM VI: bản này CHỈ làm tươi bảng emerald và thêm token mới. KHÔNG đổi
+   bảng trung tính (slate, gray) để khu quản trị giữ nguyên phong cách cũ.
+   Bảng trung tính sage được để sẵn ở mục 3b, bật khi muốn áp riêng cho web
+   công khai.
+
    1) Token gốc + chế độ tối (app dùng class .dark)
    2) Sáu bảng màu qua thuộc tính data-skin trên <html>
-   3) @theme: làm tươi bảng emerald đang dùng khắp app, thay trung tính sang sage,
-      thêm token thương hiệu mới (brand-*, ink-*)
+   3) @theme: làm tươi emerald đang dùng khắp app + token brand-*, ink-*
    4) Lớp component dùng chung: .btn, .chip, .badge, .card24, .cd-input, ...
    5) Tương thích biến cũ của app (--primary-moc, --primary-jade, ...)
 
    LƯU Ý PHÔNG: CSP hiện tại chỉ cho font-src 'self' data:, nên KHÔNG dùng phông
-   từ Google Fonts. Muốn dùng đúng bộ phông, hãy tự host và thêm @font-face.
-   Hiện tại stack chữ đã trỏ sẵn tên phông, nếu máy chưa có thì tự lùi về hệ thống.
+   từ Google Fonts. Muốn đúng bộ phông, hãy tự host và thêm @font-face. Hiện
+   stack chữ đã trỏ sẵn tên phông, máy chưa có thì tự lùi về hệ thống.
    ========================================================================== */
 
 /* 1. TOKEN GỐC ------------------------------------------------------------ */
@@ -69,9 +73,8 @@ html[data-skin="teal"]{ --brand-500:#2dd4bf; --brand-700:#0d7d74; --accent:#0d7d
 html.dark[data-skin="teal"], html[data-theme="dark"][data-skin="teal"]{ --accent:#2dd4bf; --accent-soft:rgba(20,184,166,.16); --accent-line:rgba(45,212,191,.38); --btn-bg:#14b8a6; --btn-bg-hover:#2dd4bf; --btn-fg:#04201d; --bg:#081613; --surface:#0e201c; --surface-2:#132a25; --surface-3:#19342d; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
 
 /* 3. NHỊP TAILWIND v4 ----------------------------------------------------
-   - emerald-* đang dùng khắp app: làm tươi theo bảng mới
-   - slate-* và gray-*: đổi sang trung tính ngả xanh (sage) của thiết kế
-   - thêm token brand-*, ink-*, font, bo góc
+   Chỉ làm tươi bảng emerald đang dùng khắp app, giữ nguyên slate/gray để
+   khu quản trị không đổi. Thêm token mới brand-*, ink-*, font, bo góc.
    ------------------------------------------------------------------------ */
 @theme {
   --color-brand-50: var(--brand-50); --color-brand-100: var(--brand-100); --color-brand-200: var(--brand-200);
@@ -83,22 +86,23 @@ html.dark[data-skin="teal"], html[data-theme="dark"][data-skin="teal"]{ --accent
   --color-ink-400: var(--ink-400); --color-ink-500: var(--ink-500); --color-ink-600: var(--ink-600); --color-ink-700: var(--ink-700);
   --color-ink-800: var(--ink-800); --color-ink-900: var(--ink-900); --color-ink-950: var(--ink-950);
 
+  /* Làm tươi bảng emerald (thay cho bảng mặc định) */
   --color-emerald-50:#ecfdf5; --color-emerald-100:#d1fae5; --color-emerald-200:#a7f3d0; --color-emerald-300:#6ee7b7;
   --color-emerald-400:#34d399; --color-emerald-500:#10d493; --color-emerald-600:#07946a; --color-emerald-700:#057a58;
   --color-emerald-800:#04311f; --color-emerald-900:#032818; --color-emerald-950:#021a10;
-
-  --color-slate-50:#f6f7f4; --color-slate-100:#eceee8; --color-slate-200:#dcdfd6; --color-slate-300:#c3c8bb;
-  --color-slate-400:#9aa095; --color-slate-500:#767c72; --color-slate-600:#5a6057; --color-slate-700:#454a42;
-  --color-slate-800:#2f332c; --color-slate-900:#1d201a; --color-slate-950:#111309;
-
-  --color-gray-50:#f6f7f4; --color-gray-100:#eceee8; --color-gray-200:#dcdfd6; --color-gray-300:#c3c8bb;
-  --color-gray-400:#9aa095; --color-gray-500:#767c72; --color-gray-600:#5a6057; --color-gray-700:#454a42;
-  --color-gray-800:#2f332c; --color-gray-900:#1d201a; --color-gray-950:#111309;
 
   --font-sans: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
+
+/* 3b. TRUNG TÍNH SAGE (để sẵn, bật khi muốn áp RIÊNG cho web công khai) ----
+@theme {
+  --color-slate-50:#f6f7f4; --color-slate-100:#eceee8; --color-slate-200:#dcdfd6; --color-slate-300:#c3c8bb;
+  --color-slate-400:#9aa095; --color-slate-500:#767c72; --color-slate-600:#5a6057; --color-slate-700:#454a42;
+  --color-slate-800:#2f332c; --color-slate-900:#1d201a; --color-slate-950:#111309;
+}
+------------------------------------------------------------------------------ */
 
 /* 4. LỚP COMPONENT DÙNG CHUNG -------------------------------------------- */
 @layer components {
@@ -139,18 +143,18 @@ html.dark[data-skin="teal"], html[data-theme="dark"][data-skin="teal"]{ --accent
   .card24:hover{ border-color:var(--border-strong); box-shadow:var(--elev-2); }
 
   .price24{ font-family:var(--font-display); font-weight:800; font-size:16px; letter-spacing:-.02em; color:var(--fg); }
-  .price24 small{ display:block; font-family:var(--font-body, inherit); font-weight:500; font-size:11px; color:var(--muted); }
+  .price24 small{ display:block; font-weight:500; font-size:11px; color:var(--muted); }
   .rating24{ display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:600; color:var(--fg-2); }
   .spec24{ display:inline-flex; align-items:center; gap:7px; padding:7px 12px; border-radius:var(--r-sm); background:var(--surface-2); font-size:13px; color:var(--fg-2); }
   .note24{ display:flex; gap:12px; padding:14px 16px; border-radius:var(--r-md); background:var(--accent-soft); border:1px solid var(--accent-line); font-size:13.5px; color:var(--fg-2); }
 }
 
-/* 5. TƯƠNG THÍCH BIẾN CŨ CỦA APP ----------------------------------------- */
+/* 5. TƯƠNG THÍCH BIẾN CŨ CỦA APP (chỉ ảnh hưởng các lớp Mệnh Mộc công khai) */
 @layer base {
   :root{
-    --primary-moc: var(--brand-600);
-    --primary-dark-moc: var(--brand-700);
-    --primary-jade: var(--brand-500);
+    --primary-moc: #10d493;
+    --primary-dark-moc: #07946a;
+    --primary-jade: #059669;
     --accent-thuy: #0284c7;
   }
 }
