@@ -308,6 +308,55 @@ export const BUSINESS_CATEGORIES = [
 ] as const;
 
 // Dynamic Store & Resident Service Packages (Quản Lý Gói Dịch Vụ Gian Hàng & Dịch Vụ Cư Dân)
+// ===== TÀI KHOẢN DOANH NGHIỆP (spec: docs/de-xuat-tai-khoan-doanh-nghiep.md) =====
+export type BusinessType = 'real_estate' | 'resident_service' | 'fnb' | 'other';
+export type BusinessStatus = 'draft' | 'pending' | 'verified' | 'rejected' | 'suspended';
+export type BusinessTier = 'starter' | 'verified' | 'pro' | 'enterprise';
+
+export interface BusinessAccount {
+  id: string;
+  ownerUserId: string;
+  name: string;
+  brandName?: string;
+  type: BusinessType;
+  taxCode?: string;
+  businessLicenseNo?: string;
+  licenseFileUrl?: string;
+  address?: string;
+  project?: string;
+  legalRepName?: string;
+  legalRepPhone?: string;
+  contactEmail?: string;
+  industryNote?: string;
+  status: BusinessStatus;
+  tierCode?: BusinessTier;
+  verifiedAt?: string;
+  adminNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BusinessMember {
+  id: string;
+  businessId: string;
+  userId: string;
+  role: 'owner' | 'manager' | 'editor' | 'viewer';
+  status: 'active' | 'invited' | 'removed';
+  invitedAt: string;
+}
+
+export interface BusinessPackageTierInfo {
+  code: BusinessTier;
+  name: string;
+  priceMonthly: number;
+  priceYearly: number;
+  usersMax: number;
+  quotaListings: number;
+  quotaJobs: number;
+  popular?: boolean;
+  features: string[];
+}
+
 export interface StorePackage {
   id: string;
   name: string;

@@ -825,6 +825,8 @@ const INITIAL_STORE_PACKAGES: any[] = [
 
 let storePackagesStore: any[] = [...INITIAL_STORE_PACKAGES];
 let packageOrdersStore: any[] = [];
+let businessAccountsStore: any[] = [];
+let businessMembersStore: any[] = [];
 
 // Recruitment & Candidate CV Stores
 let recruitmentJobsStore: RecruitmentJob[] = [...INITIAL_RECRUITMENT_JOBS];
@@ -1355,6 +1357,7 @@ function loadDataStore() {
       if (Array.isArray(data.reputationPosts) && data.reputationPosts.length > 0) reputationPostsStore = data.reputationPosts;
       if (Array.isArray(data.storePackages) && data.storePackages.length > 0) storePackagesStore = data.storePackages;
       if (Array.isArray(data.packageOrders) && data.packageOrders.length > 0) packageOrdersStore = data.packageOrders;
+      if (Array.isArray(data.businessAccounts) && data.businessAccounts.length > 0) businessAccountsStore = data.businessAccounts;
       if (Array.isArray(data.techOrders) && data.techOrders.length > 0) techOrdersStore = data.techOrders;
       if (Array.isArray(data.walletTransactions) && data.walletTransactions.length > 0) walletTransactionsStore = data.walletTransactions;
       if (Array.isArray(data.withdrawalRequests)) withdrawalRequestsStore = data.withdrawalRequests;
@@ -1427,6 +1430,7 @@ function loadDataStore() {
         if (Array.isArray(data.storeOrders)) storeOrdersStore = data.storeOrders;
         if (Array.isArray(data.storePackages)) storePackagesStore = data.storePackages;
         if (Array.isArray(data.packageOrders)) packageOrdersStore = data.packageOrders;
+      if (Array.isArray(data.businessAccounts)) businessAccountsStore = data.businessAccounts;
         console.log(`[DataStore] Successfully recovered data from backup store.`);
       } catch (backupErr) {
         console.error("Failed to load backup data store:", backupErr);
@@ -1451,6 +1455,8 @@ function saveDataStore() {
       reputationPosts: reputationPostsStore,
       storePackages: storePackagesStore,
       packageOrders: packageOrdersStore,
+      businessAccounts: businessAccountsStore,
+      businessMembers: businessMembersStore,
 ads: adsStore,
       homepageCategoryImages: homepageCategoryImagesStore,
       techOrders: techOrdersStore,
@@ -3338,6 +3344,8 @@ app.get("/api/admin/export-data-store", authenticateToken, requireAdmin, (req, r
     reputationPosts: reputationPostsStore,
     storePackages: storePackagesStore,
     packageOrders: packageOrdersStore,
+      businessAccounts: businessAccountsStore,
+      businessMembers: businessMembersStore,
     ads: adsStore,
     projects: projectsStore,
     news: newsStore,
@@ -3363,6 +3371,7 @@ app.post("/api/admin/import-data-store", authenticateToken, requireAdmin, (req, 
     if (Array.isArray(data.reputationPosts)) reputationPostsStore = data.reputationPosts;
     if (Array.isArray(data.storePackages)) storePackagesStore = data.storePackages;
     if (Array.isArray(data.packageOrders)) packageOrdersStore = data.packageOrders;
+      if (Array.isArray(data.businessAccounts)) businessAccountsStore = data.businessAccounts;
     if (Array.isArray(data.ads)) adsStore = data.ads;
     if (Array.isArray(data.projects)) projectsStore = data.projects;
     if (Array.isArray(data.news)) newsStore = data.news;
@@ -3874,6 +3883,126 @@ app.put("/api/stores/orders/:orderId", (req, res) => {
 
 // ------------------- QUẢN LÝ GÓI DỊCH VỤ & BÁO GIÁ GIAN HÀNG CƯ DÂN -------------------
 // 1. Get all store packages
+// ===== TÀI KHOẢN DOANH NGHIỆP (G1+G2): gói, hồ sơ, phê duyệt =====
+const BUSINESS_PACKAGE_TIERS = [
+  { code: "starter", name: "DN Khởi tạo", priceMonthly: 0, priceYearly: 0, usersMax: 1, quotaListings: 3, quotaJobs: 1,
+    features: ["1 người dùng", "3 tin BĐS/tháng", "1 tin tuyển dụng/tháng", "Hiển thị thường", "Huy hiệu DN mới"] },
+  { code: "verified", name: "DN Xác thực", priceMonthly: 690000, priceYearly: 6900000, usersMax: 3, quotaListings: 15, quotaJobs: 5, popular: true,
+    features: ["3 người dùng", "15 tin BĐS/tháng", "5 tin tuyển dụng/tháng", "Ưu tiên hiển thị mức 1", "Huy hiệu Đã xác thực", "Hoá đơn điện tử"] },
+  { code: "pro", name: "DN Pro", priceMonthly: 1980000, priceYearly: 19800000, usersMax: 10, quotaListings: 60, quotaJobs: 20,
+    features: ["10 người dùng", "60 tin BĐS/tháng", "20 tin tuyển dụng/tháng", "Ưu tiên mức 2 + đầu danh mục", "1 banner luân phiên", "Báo cáo chi tiết", "Hotline ưu tiên"] },
+  { code: "enterprise", name: "DN Enterprise", priceMonthly: 4900000, priceYearly: 49000000, usersMax: 999, quotaListings: 200, quotaJobs: 60,
+    features: ["Không giới hạn người dùng", "Từ 200 tin BĐS/tháng", "Banner + slider + bài PR", "Dashboard riêng + API/feed", "CSKH riêng theo hợp đồng"] }
+];
+
+app.get("/api/business-packages", (req, res) => {
+  res.json(BUSINESS_PACKAGE_TIERS);
+});
+
+app.get("/api/business/mine", authenticateToken, (req, res) => {
+  const userId = String(((req as any).user || {}).userId || "");
+  const mine = businessAccountsStore
+    .filter(b => b.ownerUserId === userId)
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  res.json(mine[0] || null);
+});
+
+app.post("/api/business/register", authenticateToken, (req, res) => {
+  try {
+    const userId = String(((req as any).user || {}).userId || "");
+    const body = req.body || {};
+    if (!body.name || !String(body.name).trim()) {
+      return res.status(400).json({ error: "Thiếu tên doanh nghiệp." });
+    }
+    const now = new Date().toISOString();
+    const idx = businessAccountsStore.findIndex(b => b.ownerUserId === userId && (b.status === "draft" || b.status === "rejected"));
+    let acc;
+    if (idx >= 0) {
+      acc = { ...businessAccountsStore[idx], ...body, status: "draft", updatedAt: now };
+      businessAccountsStore[idx] = acc;
+    } else {
+      acc = {
+        id: "biz_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+        ownerUserId: userId,
+        name: String(body.name).trim(),
+        brandName: body.brandName || "",
+        type: body.type || "resident_service",
+        taxCode: body.taxCode || "",
+        businessLicenseNo: body.businessLicenseNo || "",
+        licenseFileUrl: body.licenseFileUrl || "",
+        address: body.address || "",
+        project: body.project || "",
+        legalRepName: body.legalRepName || "",
+        legalRepPhone: body.legalRepPhone || "",
+        contactEmail: body.contactEmail || "",
+        industryNote: body.industryNote || "",
+        status: "draft",
+        tierCode: body.tierCode || "starter",
+        createdAt: now,
+        updatedAt: now
+      };
+      businessAccountsStore.unshift(acc);
+    }
+    saveDataStore();
+    res.json({ success: true, account: acc });
+  } catch (err) {
+    res.status(500).json({ error: "Không lưu được hồ sơ doanh nghiệp." });
+  }
+});
+
+app.post("/api/business/:id/submit", authenticateToken, (req, res) => {
+  const userId = String(((req as any).user || {}).userId || "");
+  const acc = businessAccountsStore.find(b => b.id === req.params.id);
+  if (!acc) return res.status(404).json({ error: "Không tìm thấy hồ sơ doanh nghiệp." });
+  if (acc.ownerUserId !== userId) return res.status(403).json({ error: "Bạn không có quyền gửi hồ sơ này." });
+  acc.status = "pending";
+  acc.updatedAt = new Date().toISOString();
+  saveDataStore();
+  res.json({ success: true, account: acc });
+});
+
+app.get("/api/admin/businesses", authenticateToken, requireAdmin, (req, res) => {
+  const status = String(req.query.status || "").trim();
+  const type = String(req.query.type || "").trim();
+  const q = String(req.query.q || "").trim().toLowerCase();
+  let list = businessAccountsStore.slice();
+  if (status) list = list.filter(b => b.status === status);
+  if (type) list = list.filter(b => b.type === type);
+  if (q) list = list.filter(b => String(b.name || "").toLowerCase().includes(q) || String(b.taxCode || "").toLowerCase().includes(q));
+  list.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  res.json({
+    list,
+    stats: {
+      total: businessAccountsStore.length,
+      pending: businessAccountsStore.filter(b => b.status === "pending").length,
+      verified: businessAccountsStore.filter(b => b.status === "verified").length,
+      rejected: businessAccountsStore.filter(b => b.status === "rejected").length
+    }
+  });
+});
+
+app.post("/api/admin/businesses/:id/approve", authenticateToken, requireAdmin, (req, res) => {
+  const acc = businessAccountsStore.find(b => b.id === req.params.id);
+  if (!acc) return res.status(404).json({ error: "Không tìm thấy hồ sơ doanh nghiệp." });
+  acc.status = "verified";
+  acc.tierCode = (req.body && req.body.tierCode) || acc.tierCode || "starter";
+  acc.verifiedAt = new Date().toISOString();
+  acc.updatedAt = acc.verifiedAt;
+  acc.adminNote = (req.body && req.body.adminNote) || acc.adminNote || "";
+  saveDataStore();
+  res.json({ success: true, account: acc });
+});
+
+app.post("/api/admin/businesses/:id/reject", authenticateToken, requireAdmin, (req, res) => {
+  const acc = businessAccountsStore.find(b => b.id === req.params.id);
+  if (!acc) return res.status(404).json({ error: "Không tìm thấy hồ sơ doanh nghiệp." });
+  acc.status = "rejected";
+  acc.adminNote = (req.body && req.body.adminNote) || "";
+  acc.updatedAt = new Date().toISOString();
+  saveDataStore();
+  res.json({ success: true, account: acc });
+});
+
 app.get("/api/store-packages", (req, res) => {
   res.json(storePackagesStore);
 });
