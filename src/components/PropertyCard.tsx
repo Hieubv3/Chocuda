@@ -141,7 +141,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           {/* Price & Specs Row */}
           <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1.5 border-t border-ink-100 dark:border-ink-800">
             <div className="flex items-center gap-2">
-              <span className="text-sm sm:text-base font-black text-brand-600 dark:text-brand-400 tracking-tight">
+              <span className="text-sm sm:text-base font-black text-price dark:text-price-dark tracking-tight">
                 {property.priceDisplay}
               </span>
               <span className="text-[10px] sm:text-xs font-bold text-ink-700 dark:text-ink-300 bg-ink-100 dark:bg-ink-700/60 px-2 py-0.5 rounded-md border border-ink-200/50 dark:border-ink-600/50">
@@ -423,7 +423,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         <div className="pt-1.5 border-t border-ink-100 dark:border-ink-700/80 flex items-center justify-between gap-1">
           <div className="min-w-0 flex-1">
             <span className="text-[8px] sm:text-[9px] text-ink-400 block font-medium leading-none mb-0.5">Mức giá</span>
-            <span className="text-xs sm:text-sm md:text-base font-black text-brand-600 dark:text-brand-400 tracking-tight block truncate">
+            <span className="text-xs sm:text-sm md:text-base font-black text-price dark:text-price-dark tracking-tight block truncate">
               {property.priceDisplay}
             </span>
           </div>

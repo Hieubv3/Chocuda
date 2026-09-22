@@ -1060,7 +1060,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                             </span>
 
                             {/* Price */}
-                            <span className="text-xs font-black text-brand-600 dark:text-brand-400 font-mono">
+                            <span className="text-xs font-black text-price dark:text-price-dark font-mono">
                                {prop.priceDisplay}
                             </span>
 

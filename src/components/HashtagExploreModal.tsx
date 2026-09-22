@@ -299,7 +299,7 @@ export const HashtagExploreModal: React.FC<HashtagExploreModalProps> = ({
                           <h4 className="font-bold text-xs text-ink-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition line-clamp-2">
                             {s.title}
                           </h4>
-                          <p className="text-xs font-black text-brand-600 dark:text-brand-400">{s.priceDisplay || 'Thỏa thuận'}</p>
+                          <p className="text-xs font-black text-price dark:text-price-dark">{s.priceDisplay || 'Thỏa thuận'}</p>
                           <div className="flex items-center gap-1 text-[10px] text-ink-400">
                             <span className="truncate">Thợ: {s.providerName} ({s.providerPhone})</span>
                           </div>
@@ -331,7 +331,7 @@ export const HashtagExploreModal: React.FC<HashtagExploreModalProps> = ({
                           <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">
                             {j.companyName}
                           </span>
-                          <span className="text-[10px] font-bold text-brand-600">{j.salaryDisplay}</span>
+                          <span className="text-[10px] font-bold text-price">{j.salaryDisplay}</span>
                         </div>
                         <h4 className="font-bold text-xs text-ink-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition line-clamp-1">
                           {j.title}

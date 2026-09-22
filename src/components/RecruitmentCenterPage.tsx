@@ -1404,7 +1404,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
                           <span className="text-xs text-ink-400">{job.projectName}</span>
                         </div>
                         <h4 className="font-black text-sm text-ink-900 dark:text-white mt-1">{job.title}</h4>
-                        <div className="text-xs text-brand-600 font-bold mt-0.5">
+                        <div className="text-xs text-price font-bold mt-0.5">
                           {job.companyName} • Lương: {job.salaryDisplay} • {job.viewsCount || 0} lượt xem • {job.applicationsCount || 0} ứng tuyển
                         </div>
                       </div>
@@ -1761,7 +1761,7 @@ export const RecruitmentCenterPage: React.FC<RecruitmentCenterPageProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-ink-50 dark:bg-ink-800 p-3 rounded-2xl text-xs">
               <div>
                 <span className="text-[10px] text-ink-400 block font-medium">Mức lương:</span>
-                <span className="font-black text-brand-600 dark:text-brand-400">{selectedJobModal.salaryDisplay}</span>
+                <span className="font-black text-price dark:text-price-dark">{selectedJobModal.salaryDisplay}</span>
               </div>
               <div>
                 <span className="text-[10px] text-ink-400 block font-medium">Hình thức:</span>

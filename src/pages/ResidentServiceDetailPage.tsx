@@ -156,7 +156,7 @@ export const ResidentServiceDetailPage: React.FC<ResidentServiceDetailPageProps>
                   {service.title}
                 </h1>
 
-                <div className="text-lg font-black text-brand-600 dark:text-brand-400">
+                <div className="text-lg font-black text-price dark:text-price-dark">
                   {service.priceDisplay || 'Liên hệ báo giá'}
                 </div>
               </div>

@@ -273,7 +273,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                   <DollarSign className="w-3.5 h-3.5 text-brand-500" />
                   Mức thu nhập
                 </span>
-                <span className="text-sm font-black text-brand-600 dark:text-brand-400 block">
+                <span className="text-sm font-black text-price dark:text-price-dark block">
                   {job.salaryDisplay}
                 </span>
               </div>
@@ -563,7 +563,7 @@ export const RecruitmentJobDetailPage: React.FC<RecruitmentJobDetailPageProps> =
                       </h5>
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="text-ink-500 dark:text-ink-400 truncate max-w-[120px]">{rj.companyName}</span>
-                        <span className="font-black text-brand-600 dark:text-brand-400">{rj.salaryDisplay}</span>
+                        <span className="font-black text-price dark:text-price-dark">{rj.salaryDisplay}</span>
                       </div>
                     </Link>
                   ))}

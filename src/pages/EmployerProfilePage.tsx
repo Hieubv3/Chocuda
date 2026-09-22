@@ -373,7 +373,7 @@ export const EmployerProfilePage: React.FC<EmployerProfilePageProps> = ({
                         >
                           {job.title}
                         </Link>
-                        <span className="font-black text-brand-600 dark:text-brand-400 text-sm whitespace-nowrap">
+                        <span className="font-black text-price dark:text-price-dark text-sm whitespace-nowrap">
                           {job.salaryDisplay}
                         </span>
                       </div>

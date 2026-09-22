@@ -630,7 +630,7 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
                         )}
                         <div className="flex-1 min-w-0">
                           <h5 className="font-extrabold text-ink-900 dark:text-white text-xs truncate">{item.name}</h5>
-                          <span className="text-[10px] text-brand-600 dark:text-brand-400 font-black">
+                          <span className="text-[10px] text-price dark:text-price-dark font-black">
                             {item.priceDisplay} <span className="text-ink-400 font-normal">/ {item.unit}</span>
                           </span>
                         </div>

@@ -979,7 +979,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       <div className="text-[11px] font-bold text-ink-800 dark:text-white truncate">{s.title}</div>
                       <div className="text-[9px] text-ink-500 dark:text-ink-400 truncate">{s.subCategory} · {s.providerName}</div>
                     </div>
-                    <span className="text-[10px] font-black text-brand-600 dark:text-brand-400 shrink-0"> {s.priceDisplay}</span>
+                    <span className="text-[10px] font-black text-price dark:text-price-dark shrink-0"> {s.priceDisplay}</span>
                   </button>
                 ))}
                 {(expandedCatId === 'all' ? services : services.filter(s => s.categoryId === expandedCatId)).length === 0 && (
@@ -1307,7 +1307,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                           </div>
 
                           <div className="pt-2 border-t border-ink-100 dark:border-ink-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                            <span className="text-xs font-black text-brand-600 dark:text-brand-400">
+                            <span className="text-xs font-black text-price dark:text-price-dark">
                                {service.priceDisplay}
                             </span>
 
@@ -1392,7 +1392,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                           </div>
 
                           <div className="pt-2 border-t border-ink-100 dark:border-ink-800 space-y-1.5">
-                            <div className="text-xs font-black text-brand-600 dark:text-brand-400 truncate">
+                            <div className="text-xs font-black text-price dark:text-price-dark truncate">
                                {service.priceDisplay}
                             </div>
 
@@ -1519,7 +1519,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
 
                           {/* Price & Contact Action Bar */}
                           <div className="pt-3 border-t border-ink-100 dark:border-ink-800 space-y-2">
-                            <div className="text-xs font-black text-brand-600 dark:text-brand-400">
+                            <div className="text-xs font-black text-price dark:text-price-dark">
                                {service.priceDisplay}
                             </div>
 
@@ -1824,7 +1824,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="font-black text-xs uppercase text-ink-400 tracking-wider">MÔ TẢ CHI TIẾT & BẢNG GIÁ NIÊM YẾT:</h4>
-                  <span className="text-sm font-black text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 px-3 py-1 rounded-xl border border-brand-500/30">
+                  <span className="text-sm font-black text-price dark:text-price-dark bg-brand-50 dark:bg-brand-950/60 px-3 py-1 rounded-xl border border-brand-500/30">
                      {selectedServiceModal.priceDisplay}
                   </span>
                 </div>

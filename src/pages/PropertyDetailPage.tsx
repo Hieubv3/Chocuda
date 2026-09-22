@@ -325,7 +325,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700/60">
                 <div className="space-y-0.5">
                   <span className="text-[11px] font-bold text-ink-400 uppercase">Mức Giá</span>
-                  <div className="text-lg sm:text-xl font-black text-brand-600 dark:text-brand-400">
+                  <div className="text-lg sm:text-xl font-black text-price dark:text-price-dark">
                     {property.priceDisplay}
                   </div>
                 </div>

@@ -312,7 +312,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
                   <DollarSign className="w-3.5 h-3.5 text-brand-500" />
                   Mức lương kỳ vọng
                 </span>
-                <span className="text-sm font-black text-brand-600 dark:text-brand-400 block">
+                <span className="text-sm font-black text-price dark:text-price-dark block">
                   {candidate.expectedSalaryDisplay || 'Thỏa thuận'}
                 </span>
               </div>

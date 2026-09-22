@@ -234,7 +234,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                     <h3 className="font-black text-xs text-ink-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition truncate">
                       {service.title}
                     </h3>
-                    <span className="text-[11px] text-brand-600 font-bold block">
+                    <span className="text-[11px] text-price font-bold block">
                       {service.priceDisplay}
                     </span>
                     <span className="text-[10px] text-ink-400 truncate block">
@@ -268,7 +268,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                   <h3 className="font-black text-xs text-ink-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition truncate">
                     {job.title}
                   </h3>
-                  <div className="text-[11px] text-brand-600 font-bold">
+                  <div className="text-[11px] text-price font-bold">
                     Lương: {job.salaryDisplay}
                   </div>
                   <span className="text-[10px] text-ink-400 block truncate">
@@ -343,7 +343,7 @@ export const SitemapDirectoryPage: React.FC = () => {
                     <h3 className="font-black text-xs text-ink-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition truncate">
                       {prop.title}
                     </h3>
-                    <div className="text-[11px] text-brand-600 font-bold">
+                    <div className="text-[11px] text-price font-bold">
                       {prop.priceDisplay}
                     </div>
                     <span className="text-[10px] text-ink-400 truncate block">

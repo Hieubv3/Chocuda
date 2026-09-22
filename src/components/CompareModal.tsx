@@ -74,7 +74,7 @@ export const CompareModal: React.FC<CompareModalProps> = ({
                         <h4 className="font-bold line-clamp-2 text-ink-900 dark:text-white hover:text-brand-500 cursor-pointer" onClick={() => onSelectProperty(prop)}>
                           {prop.title}
                         </h4>
-                        <span className="text-sm font-black text-brand-600 dark:text-brand-400 block">
+                        <span className="text-sm font-black text-price dark:text-price-dark block">
                           {prop.priceDisplay}
                         </span>
                       </div>

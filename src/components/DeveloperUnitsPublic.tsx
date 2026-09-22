@@ -356,7 +356,7 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
                           </span>
                         </span>
                         <span className="flex items-center gap-2">
-                          <span className={`font-black ${sold ? 'line-through text-ink-400' : 'text-brand-700 dark:text-brand-400'}`}>
+                          <span className={`font-black ${sold ? 'line-through text-ink-400' : 'text-price dark:text-price-dark'}`}>
                             {u.priceDisplay}
                           </span>
                           {g === 'hold' && (
@@ -438,7 +438,7 @@ export const DeveloperUnitsPublic: React.FC<DeveloperUnitsPublicProps> = ({ proj
 
             <div className="px-5 py-4">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-black text-2xl text-brand-600 dark:text-brand-400">
+                <span className="font-black text-2xl text-price dark:text-price-dark">
                   {selected.priceDisplay}
                 </span>
                 <span className="text-[11px] font-bold text-ink-400">
