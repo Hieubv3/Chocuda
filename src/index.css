@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./styles/chocudan-theme.css";
 
 html, body {
   max-width: 100vw;
@@ -45,20 +46,20 @@ img[src=""], img:not([src]) {
 
 @layer base {
   :root {
-    --primary-moc: #059669; /* Emerald 600 - Mệnh Mộc */
-    --primary-dark-moc: #047857; /* Emerald 700 */
-    --primary-jade: #10b981; /* Emerald 500 - Ngọc Bích */
+    --primary-moc: #10d493; /* làm tươi theo bảng mới */
+    --primary-dark-moc: #07946a;
+    --primary-jade: #059669;
     --accent-thuy: #0284c7; /* Thủy sinh Mộc */
   }
 }
 
 /* Custom Mệnh Mộc Element styling & Animations */
 .bg-menh-moc-gradient {
-  background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #022c22 100%);
+  background: linear-gradient(135deg, #04311f 0%, #07946a 50%, #021a10 100%);
 }
 
 .bg-menh-moc-card {
-  background: linear-gradient(180deg, rgba(6, 78, 59, 0.03) 0%, rgba(4, 120, 87, 0.08) 100%);
+  background: linear-gradient(180deg, rgba(4, 49, 31, 0.03) 0%, rgba(7, 148, 106, 0.08) 100%);
 }
 
 .badge-vip-diamond {
@@ -75,14 +76,14 @@ img[src=""], img:not([src]) {
 }
 
 .badge-vip-silver {
-  background: linear-gradient(135deg, #94a3b8 0%, #475569 100%);
+  background: linear-gradient(135deg, #9aa095 0%, #454a42 100%);
   color: white;
 }
 
 .badge-uptin {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #10d493 0%, #07946a 100%);
   color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 2px 8px rgba(16, 212, 147, 0.4);
   animation: pulse 2s infinite;
 }
 
@@ -97,15 +98,15 @@ img[src=""], img:not([src]) {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #eceee8;
 }
 .dark ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #111309;
 }
 ::-webkit-scrollbar-thumb {
-  background: #059669;
+  background: #07946a;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #047857;
+  background: #057a58;
 }
