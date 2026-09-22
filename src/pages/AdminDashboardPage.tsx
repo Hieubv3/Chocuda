@@ -35,6 +35,7 @@ import { AdminZaloGroupCenter } from '../components/AdminZaloGroupCenter';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
+import { AdminBusinessManager } from '../components/AdminBusinessManager';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
 // GoogleWorkspaceCenter removed — feature not applied to chocudan24h.com
 
@@ -88,6 +89,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'faq'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
     | 'developer_units' | 'site_settings'
+    | 'business_mgmt'
   >('properties');
   const [devSubTab, setDevSubTab] = useState('matbang');
 
@@ -98,7 +100,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (activeTab === 'resident_services_mgmt') return 'technicians';
     if (activeTab === 'recruitment_mgmt') return 'recruitment';
     if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
-    if (['users', 'leads', 'enterprise_core'].includes(activeTab)) return 'users_leads';
+    if (['users', 'leads', 'enterprise_core', 'business_mgmt'].includes(activeTab)) return 'users_leads';
     if (activeTab === 'ads') return 'ads';
     if (activeTab === 'site_settings') return 'ads';
     return 'tools';
@@ -127,7 +129,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         setActiveTab('stores_mgmt');
       }
     } else if (tab === 'users_leads') {
-      if (!['users', 'leads', 'enterprise_core'].includes(activeTab)) {
+      if (!['users', 'leads', 'enterprise_core', 'business_mgmt'].includes(activeTab)) {
         setActiveTab('users');
       }
     } else if (tab === 'ads') {
@@ -3001,6 +3003,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     }`}
                   >
                     • Phân Quyền & Quản Trị
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('business_mgmt')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'business_mgmt'
+                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    🏢 Quản Lý Doanh Nghiệp
                   </button>
                 </div>
               )}
@@ -7879,6 +7891,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           currentUser={registeredUsers[0] || null}
           users={registeredUsers}
         />
+      )}
+
+      {/* Tab Quản Lý Doanh Nghiệp (G1+G2) */}
+      {activeTab === 'business_mgmt' && (
+        <AdminBusinessManager />
       )}
 
       {/* Google Workspace tab removed — feature not applied to chocudan24h.com */}
