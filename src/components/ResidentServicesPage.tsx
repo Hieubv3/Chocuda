@@ -313,22 +313,6 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     });
   }, [filteredServices, storeVerificationTab]);
 
-  // Filtered Stores by Verification Tab
-  const displayStoresByTab = useMemo(() => {
-    return stores.filter(st => {
-      if (selectedProject !== 'all' && st.project !== selectedProject) return false;
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchName = st.storeName.toLowerCase().includes(q);
-        const matchOwner = st.ownerName.toLowerCase().includes(q);
-        const matchCat = st.category.toLowerCase().includes(q);
-        if (!matchName && !matchOwner && !matchCat) return false;
-      }
-      // Chỉ hiển thị gian hàng đã định danh (KYC) trên trang công khai
-      return st.verified;
-    });
-  }, [stores, selectedProject, searchQuery, storeVerificationTab]);
-
   // Phân trang: 20 / 100 / 200 dịch vụ mỗi trang
   const servicesPager = usePagination(displayServicesByTab, 'hb_services_page_size');
 
@@ -336,10 +320,9 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   const verifiedServicesCount = useMemo(() => filteredServices.filter(s => s.verified || s.kycStatus === 'verified').length, [filteredServices]);
   const pendingServicesCount = useMemo(() => filteredServices.filter(s => !s.verified && s.kycStatus !== 'verified').length, [filteredServices]);
 
-  const verifiedStoresCount = useMemo(() => stores.filter(st => st.verified && (selectedProject === 'all' || st.project === selectedProject)).length, [stores, selectedProject]);
   const pendingStoresCount = useMemo(() => stores.filter(st => !st.verified && (selectedProject === 'all' || st.project === selectedProject)).length, [stores, selectedProject]);
 
-  const totalVerified = verifiedServicesCount + verifiedStoresCount;
+  const totalVerified = verifiedServicesCount;
   const totalPending = pendingServicesCount + pendingStoresCount;
 
   // Submit Post Service Handler
@@ -1136,7 +1119,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
             {/* View Mode & Count Bar */}
             <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-ink-100 dark:border-ink-800">
               <span className="text-[11px] font-extrabold text-ink-500 dark:text-ink-400">
-                {displayStoresByTab.length} gian hàng · {displayServicesByTab.length} thợ &amp; dịch vụ
+                {displayServicesByTab.length} thợ &amp; dịch vụ
               </span>
 
               {/* View Mode Buttons */}
@@ -1172,57 +1155,6 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
               </div>
             </div>
 
-            {/* SECTION 1: STORES / GIAN HÀNG CỬA HÀNG */}
-            {displayStoresByTab.length > 0 && (
-              <div className="space-y-3 pt-2 border-t border-ink-100 dark:border-ink-800">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-brand-500 uppercase tracking-wider flex items-center gap-1.5">
-                    <ShoppingBag className="w-4 h-4" />
-                    <span>GIAN HÀNG CỬA HÀNG IN-STORE ({displayStoresByTab.length})</span>
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {displayStoresByTab.map((st) => (
-                    <div 
-                      key={st.id} 
-                      className="bg-ink-950 text-white rounded-2xl border border-ink-800 p-3.5 space-y-3 hover:border-brand-500 transition group flex flex-col justify-between"
-                    >
-                      <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(getStoreDetailUrl(st))}>
-                        <img loading="lazy" 
-                          src={st.logoUrl} 
-                          alt={st.storeName}
-                          className="w-12 h-12 rounded-xl object-cover border-2 border-brand-400 shadow-sm shrink-0"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-black text-white line-clamp-1 group-hover:text-brand-400 transition">{st.storeName}</span>
-                            {st.verified && (
-                              <span className="bg-brand-500/20 text-brand-400 text-[9px] font-black px-1.5 py-0.2 rounded border border-brand-500/30 shrink-0 flex items-center gap-0.5">
-                                <ShieldCheck className="w-2.5 h-2.5" /> KYC
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-[10px] text-brand-300 font-bold block">{st.category} • {st.address}</span>
-                          <span className="text-[9px] text-ink-400">Chủ tiệm: <strong className="text-white">{st.ownerName}</strong> ({st.ownerPhone})</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 pt-1 border-t border-ink-800">
-                        <button
-                          onClick={() => navigate(getStoreDetailUrl(st))}
-                          className="flex-1 py-1.5 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1 cursor-pointer shadow-xs"
-                        >
-                          <ShoppingBag className="w-3.5 h-3.5" />
-                          <span>Vào Gian Hàng ({st.products?.length || 0} món)</span>
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* SECTION 2: SERVICES & CRAFTSMEN / THỢ DỊCH VỤ CƯ DÂN */}
             <div className="space-y-3 pt-2 border-t border-ink-100 dark:border-ink-800">
               <div className="flex items-center justify-between">
@@ -1232,12 +1164,12 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                 </span>
               </div>
 
-              {displayServicesByTab.length === 0 && displayStoresByTab.length === 0 ? (
+              {displayServicesByTab.length === 0 ? (
                 <div className="bg-ink-50 dark:bg-ink-800/50 border border-dashed border-ink-300 dark:border-ink-700 rounded-2xl p-8 text-center space-y-2">
                   <Wrench className="w-10 h-10 text-ink-400 mx-auto" />
                   <h3 className="text-sm font-extrabold text-ink-700 dark:text-ink-300">
                     {storeVerificationTab === 'verified'
-                      ? 'Chưa có gian hàng / dịch vụ nào trong Tab Cửa Hàng Đã Định Danh'
+                      ? 'Chưa có thợ / dịch vụ nào trong Tab Cửa Hàng Đã Định Danh'
                       : 'Tất cả gian hàng & dịch vụ hiện đã được định danh xác minh thành công! '}
                   </h3>
                   <p className="text-xs text-ink-500 max-w-md mx-auto">
