@@ -19,6 +19,7 @@ import {
   DEFAULT_INDUSTRY_KYC_RULES
 } from '../data/residentServicesData';
 import { INITIAL_USER_STOREFRONTS } from '../data/residentStoresData';
+import { INITIAL_RESIDENT_SERVICES } from '../data/residentServicesData';
 import { UserStorefrontModal } from './UserStorefrontModal';
 import { StoreLocatorMapModal } from './StoreLocatorMapModal';
 import { ServicePricingModal } from './ServicePricingModal';
@@ -194,12 +195,12 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
           const map = new Map<string, any>();
           data.forEach(s => map.set(s.id, s));
           localSaved.forEach((ls: any) => { if (ls && ls.id && !map.has(ls.id)) map.set(ls.id, ls); });
-          const merged = Array.from(map.values());
+          const mergedRaw = Array.from(map.values()); const merged = mergedRaw.length > 0 ? mergedRaw : (INITIAL_RESIDENT_SERVICES as any[]);
           setServices(merged);
           localStorage.setItem('hb_resident_services', JSON.stringify(merged));
         }
       })
-      .catch(err => console.warn('Using local fallback for resident services:', err));
+      .catch(err => { console.warn('Using local fallback for resident services:', err); setServices(INITIAL_RESIDENT_SERVICES as any); });
 
     fetch('/api/stores')
       .then(res => res.json())

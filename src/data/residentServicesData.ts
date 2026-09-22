@@ -754,3 +754,6 @@ export const INITIAL_RESIDENT_SERVICES: ResidentServiceItem[] = [
   }
 ];
 
+// Bo sung bai demo cho cac danh muc dich vu (co the xoa khi van hanh that)
+import { DEMO_EXTRA_SERVICES } from './residentServicesDemoExtra';
+INITIAL_RESIDENT_SERVICES.push(...DEMO_EXTRA_SERVICES);
