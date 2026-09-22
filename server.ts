@@ -431,6 +431,7 @@ async function sendEmailOtp(toEmail: string, otpCode: string): Promise<{ sent: b
 }
 
 interface StoredUser extends User {
+  isBlocked?: boolean;
   password?: string;
   totpSecret?: string; // base32 secret, chỉ tồn tại khi đang setup hoặc đã bật 2FA
   totpEnabled?: boolean;
@@ -548,6 +549,9 @@ let projectsStore: Project[] = [...INITIAL_PROJECTS];
 let newsStore: NewsArticle[] = [...INITIAL_NEWS];
 let residentServicesStore = [...INITIAL_RESIDENT_SERVICES];
 let storesStore: UserStorefront[] = [...INITIAL_USER_STOREFRONTS];
+
+// Google Workspace config store (Google Sheets/Drive)
+let workspaceConfigStore: any = {};
 let storeOrdersStore: StoreOrder[] = [...INITIAL_STORE_ORDERS];
 let adsStore: AdBanner[] = [...INITIAL_ADS];
 
@@ -7551,7 +7555,7 @@ function registerSeoMetaMiddleware(app: express.Express) {
     // ============ 9. DỊCH VỤ CƯ DÂN ============
     // /dich-vu-cu-dan/:serviceSlug
     if (!title && firstSeg === 'dich-vu-cu-dan' && segments.length === 2) {
-      const service = residentServicesStore.find((s: any) => s.id === lastSeg || slugify(s.title || s.name) === lastSeg) || null;
+      const service: any = residentServicesStore.find((s: any) => s.id === lastSeg || slugify(s.title || s.name) === lastSeg) || null;
       if (service) {
         title = `${service.title || service.name || 'Dịch vụ'} | Chợ Cư Dân 24H`;
         desc = (service.description || service.summary || '').slice(0, 160);
@@ -7574,7 +7578,7 @@ function registerSeoMetaMiddleware(app: express.Express) {
     // ============ 11. ỨNG VIÊN ============
     // /tuyen-dung/ung-vien/:candidateId/:slug, /tuyen-dung/ung-vien/:candidateId
     if (!title && firstSeg === 'tuyen-dung' && segments[1] === 'ung-vien' && segments.length >= 3) {
-      const cand = candidateProfilesStore.find((c: any) => String(c.id) === segments[2]) || null;
+      const cand: any = candidateProfilesStore.find((c: any) => String(c.id) === segments[2]) || null;
       if (cand) {
         title = `${cand.fullName || cand.name || 'Ứng viên'} | Tuyển Dụng | Chợ Cư Dân 24H`;
         desc = (cand.introduction || cand.summary || cand.bio || '').slice(0, 160);
@@ -7586,7 +7590,7 @@ function registerSeoMetaMiddleware(app: express.Express) {
     // ============ 12. NHÀ TUYỂN DỤNG ============
     // /tuyen-dung/nha-tuyen-dung/:employerId/:slug, /tuyen-dung/nha-tuyen-dung/:employerId
     if (!title && firstSeg === 'tuyen-dung' && segments[1] === 'nha-tuyen-dung' && segments.length >= 3) {
-      const emp = employersStore.find((e: any) => String(e.id) === segments[2] || String(e.employerUserId) === segments[2]) || null;
+      const emp: any = employersStore.find((e: any) => String(e.id) === segments[2] || String(e.employerUserId) === segments[2]) || null;
       if (emp) {
         title = `${emp.companyName || emp.brandName || emp.name || 'Nhà tuyển dụng'} | Chợ Cư Dân 24H`;
         desc = (emp.introduction || emp.tagline || emp.description || '').slice(0, 160);

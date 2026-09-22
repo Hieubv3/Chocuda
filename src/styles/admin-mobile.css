@@ -1,0 +1,63 @@
+/* ==========================================================================
+   TỐI ƯU QUẢN TRỊ CHO DI ĐỘNG
+   Chỉ áp dụng dưới 1024px. Giao diện PC hoàn toàn giữ nguyên.
+   Phạm vi: chỉ trong khối .cd24-admin nên không ảnh hưởng phần còn lại.
+   ========================================================================== */
+
+@media (max-width: 1023px) {
+  /* Vùng nội dung: chừa lề và chừa chỗ cho thanh thao tác dưới cùng */
+  .cd24-admin {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-bottom: 5.5rem;
+  }
+
+  /* Thanh điều hướng nhanh dính trên đầu, luôn thao tác được khi cuộn */
+  .cd24-admin > div:first-child {
+    position: sticky;
+    top: 0.25rem;
+    z-index: 30;
+    backdrop-filter: blur(6px);
+  }
+
+  /* Cuộn ngang mượt cho bảng và dải chip */
+  .cd24-admin .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .cd24-admin .overflow-x-auto::-webkit-scrollbar { height: 6px; }
+  .cd24-admin .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.5);
+    border-radius: 999px;
+  }
+  /* Bảng nằm trong khung cuộn thì giữ cột đủ rộng, không bị bóp chữ */
+  .cd24-admin .overflow-x-auto > table { min-width: 640px; }
+
+  /* Sàn cỡ chữ: các nhãn quá nhỏ được nâng lên mức đọc được trên điện thoại */
+  .cd24-admin .text-\[9px\] { font-size: 10.5px; line-height: 1.35; }
+  .cd24-admin .text-\[10px\] { font-size: 11px; line-height: 1.35; }
+  .cd24-admin .text-\[11px\] { font-size: 11.5px; line-height: 1.4; }
+
+  /* Vùng chạm tối thiểu cho nút bấm và ô nhập */
+  .cd24-admin button,
+  .cd24-admin input,
+  .cd24-admin select,
+  .cd24-admin textarea {
+    touch-action: manipulation;
+  }
+  .cd24-admin input,
+  .cd24-admin select { min-height: 40px; }
+
+  /* Hộp thoại và bảng nổi: không tràn khỏi màn hình, cuộn được bên trong */
+  .cd24-admin .fixed.inset-0 > div {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  /* Bảng dữ liệu: hàng cao hơn một chút cho dễ chạm khi thao tác duyệt */
+  .cd24-admin table td,
+  .cd24-admin table th { padding-top: 0.6rem; padding-bottom: 0.6rem; }
+
+  /* Khu quản trị trên điện thoại: bớt bo góc lớn cho đỡ chiếm chỗ */
+  .cd24-admin .rounded-3xl { border-radius: 1rem; }
+}

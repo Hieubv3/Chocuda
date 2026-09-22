@@ -1971,7 +1971,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   return (
-    <div className="max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4">
+    <div className="cd24-admin max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4">
       
       {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Điều hướng nhanh trực tiếp bên trong Admin */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
