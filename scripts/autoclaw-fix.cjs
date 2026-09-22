@@ -26,6 +26,63 @@ function applyFile(file, patches) {
 }
 
 /* ============================================================
+   GUARD: chong khai bao trung "workspaceConfigStore" trong server.ts
+   ------------------------------------------------------------
+   server.ts da co san "let workspaceConfigStore: any = {};" o pham vi
+   module (comment "// Google Workspace config store (Google Sheets/Drive)"),
+   nhung patch "1) DATA_DIR ben vung" lai chen them dung khai bao do
+   => esbuild bao: The symbol "workspaceConfigStore" has already been declared
+   => build that bai. Guard nay chay SAU khi ap het patch, giu dung MOT khai bao:
+     - dem > 1  -> giu dong dau tien, xoa cac dong khai bao trung con lai
+     - dem = 0  -> chen lai truoc anchor "let deletedIds..." (phong khi patch bi SKIP)
+   Guard chi dung theo nguyen van dong khai bao nen khong dung den patch khac.
+   ============================================================ */
+const WS_DECL = 'let workspaceConfigStore: any = {};';
+const WS_PATCH_COMMENT = '// Workspace config (Google Sheets/Drive) - luu ben vung cung data store';
+const DELETED_IDS_ANCHOR = 'let deletedIds: Record<string, string[]>';
+
+function guardWorkspaceConfigStore(file) {
+  if (!fs.existsSync(file)) {
+    console.log('SKIP guard (khong ton tai): ' + file);
+    return;
+  }
+  const s = fs.readFileSync(file, 'utf8');
+  const lines = s.split('\n');
+  const declIdx = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].trim() === WS_DECL) declIdx.push(i);
+  }
+
+  if (declIdx.length === 1) return; // da dung, khong can can thiep
+
+  if (declIdx.length === 0) {
+    const at = lines.findIndex((l) => l.startsWith(DELETED_IDS_ANCHOR));
+    if (at < 0) {
+      console.log('GUARD: CANH BAO khong tim thay anchor "' + DELETED_IDS_ANCHOR + '" -> khong chen duoc khai bao workspaceConfigStore');
+      return;
+    }
+    lines.splice(at, 0,
+      '// Google Workspace config store (Google Sheets/Drive)',
+      WS_DECL);
+    fs.writeFileSync(file, lines.join('\n'));
+    console.log('GUARD: da chen lai khai bao workspaceConfigStore (bi thieu, dong ' + (at + 1) + ')');
+    return;
+  }
+
+  // > 1: giu dong dau tien, xoa cac dong trung (kem comment mo ta do patch chen vao ngay truoc, neu con)
+  const drop = new Set(declIdx.slice(1));
+  const out = [];
+  let removed = 0;
+  for (let i = 0; i < lines.length; i++) {
+    if (drop.has(i)) { removed++; continue; }
+    if (drop.has(i + 1) && lines[i].trim() === WS_PATCH_COMMENT) continue;
+    out.push(lines[i]);
+  }
+  fs.writeFileSync(file, out.join('\n'));
+  console.log('GUARD: da xoa ' + removed + ' khai bao workspaceConfigStore trung lap');
+}
+
+/* ============================================================
    1) server.ts
    ============================================================ */
 applyFile('server.ts', [
@@ -263,6 +320,9 @@ app.get("/api/system/storage-status", (req, res) => {
     '7) missing APIs + storage-status'
   ],
 ]);
+
+// Guard chay SAU khi ap het patch: dam bao server.ts chi co dung 1 khai bao
+guardWorkspaceConfigStore('server.ts');
 
 /* ============================================================
    2) AdminDashboardPage.tsx  (THEM BDS MOI: can ban / can thue)
