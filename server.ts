@@ -11,7 +11,7 @@ import { PROJECT_FAQ_DATA } from "./src/data/projectFaqData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
 import { INITIAL_USER_STOREFRONTS, INITIAL_STORE_ORDERS } from "./src/data/residentStoresData.ts";
 import { INITIAL_RECRUITMENT_JOBS, INITIAL_CANDIDATE_PROFILES, INITIAL_EMPLOYERS, EmployerProfile, RECRUITMENT_PACKAGES, INITIAL_EMPLOYER_REGISTRATIONS, INITIAL_TASK_DELEGATIONS } from "./src/data/recruitmentData.ts";
-import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation, DeveloperUnit, F1Agent, DeveloperPolicy, DeveloperInstallment, DeveloperBank, DeveloperFloorplan } from "./src/types.ts";
+import { Property, NewsArticle, LeadContact, Project, User, UserStorefront, StoreOrder, StoreProduct, AdBanner, RecruitmentJob, CandidateProfile, JobApplication, CvUnlockRecord, RecruitmentPackage, EmployerRegistrationRequest, AdminTaskDelegation, DeveloperUnit, F1Agent, DeveloperPolicy, DeveloperInstallment, DeveloperBank, DeveloperFloorplan, TrashItem, TrashEntityType, ActivityAction, ActivityLogEntry } from "./src/types.ts";
 import { slugify, extractIdFromSlug, getProjectIdFromSlug } from "./src/lib/slugs.ts";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -586,6 +586,10 @@ app.post("/api/site-settings", authenticateToken, requireAdmin, (req, res) => {
 });
 
 // Danh sách id đã bị xóa (để merge seed data không thêm lại bài đã xóa khi restart)
+// Thùng rác & Lịch sử thao tác
+let trashStore: TrashItem[] = [];
+let activityLogStore: ActivityLogEntry[] = [];
+
 let deletedIds: Record<string, string[]> = {
   properties: [],
   projects: [],
@@ -1309,6 +1313,24 @@ function loadDataStore() {
         adsStore = [...INITIAL_ADS];
       }
 
+      // 6c. Thung rac & Lich su thao tac
+      if (Array.isArray(data.trash) && data.trash.length > 0) {
+        // Tu dong loai bo item het han (> 30 ngay)
+        const nowMs = Date.now();
+        trashStore = (data.trash as TrashItem[]).filter(item => {
+          if (!item.expiresAt) return true;
+          return new Date(item.expiresAt).getTime() > nowMs;
+        });
+      } else {
+        trashStore = [];
+      }
+
+      if (Array.isArray(data.activityLogs) && data.activityLogs.length > 0) {
+        activityLogStore = (data.activityLogs as ActivityLogEntry[]).slice(0, 5000);
+      } else {
+        activityLogStore = [];
+      }
+
       // 7. Deleted IDs — đọc danh sách id đã xóa để không merge lại bài đã xóa
       if (data.deletedIds && typeof data.deletedIds === 'object') {
         deletedIds = {
@@ -1478,6 +1500,8 @@ ads: adsStore,
       employers: employersStore,
       jobApplications: jobApplicationsStore,
       cvUnlocks: cvUnlocksStore,
+      trash: trashStore,
+      activityLogs: activityLogStore,
       deletedIds,
       savedAt: new Date().toISOString()
     };
@@ -3044,6 +3068,132 @@ function checkServerPostExpiry(item: any, defaultDays = 30) {
   return { isExpired, daysRemaining, expiresAt: new Date(expiryTime).toISOString() };
 }
 
+
+// ==========================================
+// TRASH & ACTIVITY LOG HELPERS
+// ==========================================
+function resolveActor(req: express.Request): { id: string; name: string; email?: string; role?: string } {
+  const user = (req as any).user;
+  if (!user) {
+    return { id: 'anonymous', name: 'Khách / Hệ thống', role: 'visitor' };
+  }
+  const dbUser = usersStore.find(u => u.id === user.userId || u.email === user.email);
+  return {
+    id: user.userId || 'system',
+    name: dbUser?.name || user.name || user.email?.split('@')[0] || 'Người dùng',
+    email: user.email,
+    role: dbUser?.role || user.role || 'user'
+  };
+}
+
+function logActivity(
+  entityType: TrashEntityType,
+  entityId: string,
+  entityLabel: string,
+  action: ActivityAction,
+  actor: { id: string; name: string; email?: string; role?: string },
+  summary: string,
+  meta?: any
+) {
+  const entry: ActivityLogEntry = {
+    id: `act-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    entityType,
+    entityId,
+    entityLabel,
+    action,
+    actor,
+    at: new Date().toISOString(),
+    summary,
+    meta
+  };
+  activityLogStore.unshift(entry);
+  if (activityLogStore.length > 5000) {
+    activityLogStore = activityLogStore.slice(0, 5000);
+  }
+}
+
+function softDeleteEntity(
+  entityType: TrashEntityType,
+  entityId: string,
+  entityLabel: string,
+  entityData: any,
+  req: express.Request,
+  reason?: string,
+  entityImage?: string
+): TrashItem {
+  const actor = resolveActor(req);
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  // Xóa bản cũ nếu đã từng có trong trash
+  trashStore = trashStore.filter(t => !(t.entityType === entityType && t.entityId === entityId));
+
+  const trashItem: TrashItem = {
+    id: `trash-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    entityType,
+    entityId,
+    entityLabel,
+    entityImage: entityImage || entityData?.image || (Array.isArray(entityData?.images) ? entityData.images[0] : undefined),
+    entityData,
+    deletedAt: now.toISOString(),
+    deletedBy: actor,
+    reason: reason || 'Người dùng hoặc Admin xóa',
+    expiresAt
+  };
+
+  trashStore.unshift(trashItem);
+
+  // Ghi vào deletedIds
+  if (entityType === 'property') {
+    if (!deletedIds.properties.includes(entityId)) deletedIds.properties.push(entityId);
+  } else if (entityType === 'project') {
+    if (!deletedIds.projects.includes(entityId)) deletedIds.projects.push(entityId);
+  } else if (entityType === 'news') {
+    if (!deletedIds.news.includes(entityId)) deletedIds.news.push(entityId);
+  } else if (entityType === 'resident_service') {
+    if (!deletedIds.residentServices.includes(entityId)) deletedIds.residentServices.push(entityId);
+  } else if (entityType === 'store') {
+    if (!deletedIds.stores.includes(entityId)) deletedIds.stores.push(entityId);
+  }
+
+  // Ghi activity log
+  logActivity(
+    entityType,
+    entityId,
+    entityLabel,
+    'delete',
+    actor,
+    `Đã chuyển vào thùng rác: "${entityLabel}" (${reason || 'Xóa tin'})`,
+    { deletedBy: actor }
+  );
+
+  return trashItem;
+}
+
+// Định kỳ dọn dẹp các mục quá hạn 30 ngày trong thùng rác
+setInterval(() => {
+  const nowMs = Date.now();
+  const initialLen = trashStore.length;
+  trashStore = trashStore.filter(item => {
+    if (!item.expiresAt) return true;
+    const isExpired = new Date(item.expiresAt).getTime() <= nowMs;
+    if (isExpired) {
+      logActivity(
+        item.entityType,
+        item.entityId,
+        item.entityLabel,
+        'purge',
+        { id: 'system', name: 'Hệ thống tự động', role: 'admin' },
+        `Tự động dọn sạch mục quá hạn 30 ngày trong thùng rác: "${item.entityLabel}"`
+      );
+    }
+    return !isExpired;
+  });
+  if (trashStore.length !== initialLen) {
+    saveDataStore();
+  }
+}, 6 * 60 * 60 * 1000); // Mỗi 6 tiếng
+
 // Properties GET with filters
 app.get("/api/properties", (req, res) => {
   const { type, project, category, minPrice, maxPrice, bedrooms, furniture, search, status, userId, isAdmin } = req.query;
@@ -3165,7 +3315,16 @@ app.post("/api/properties", authenticateToken, (req, res) => {
     approved: isVerifiedAdmin,
   };
 
+  // CHẶN HỒI SINH: không cho tạo lại tin đã bị xóa/đang trong thùng rác
+  if (deletedIds.properties.includes(newProperty.id) || trashStore.some(t => t.entityType === 'property' && t.entityId === newProperty.id)) {
+    return res.status(409).json({
+      error: "Bài đăng này đã bị xóa hoặc đang nằm trong thùng rác. Vui lòng khôi phục từ thùng rác trước khi đăng lại!",
+      code: "ITEM_DELETED"
+    });
+  }
+
   propertiesStore.unshift(newProperty);
+  logActivity('property', newProperty.id, newProperty.title, 'create', resolveActor(req), `Đăng tin BĐS mới: "${newProperty.title}"`, { price: newProperty.price, type: newProperty.type });
   saveDataStore();
   res.status(201).json({
     success: true,
@@ -3174,18 +3333,29 @@ app.post("/api/properties", authenticateToken, (req, res) => {
   });
 });
 
-// Property PUT (Approve / Edit with Upsert fallback)
+// Property PUT (Cập nhật tin BĐS - CHẶN tái sinh tin đã xóa)
 app.put("/api/properties/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
-  const index = propertiesStore.findIndex(p => p.id === id);
-  if (index === -1) {
-    const newProp = { id, ...req.body };
-    propertiesStore.unshift(newProp as any);
-    saveDataStore();
-    return res.json({ message: "Đã thêm mới và lưu thành công!", property: newProp });
+
+  // CHẶN HỒI SINH: Nếu id đang nằm trong thùng rác hoặc danh sách đã xóa, từ chối
+  if (deletedIds.properties.includes(id) || trashStore.some(t => t.entityType === 'property' && t.entityId === id)) {
+    return res.status(409).json({
+      error: "Bài đăng này đã bị xóa hoặc đang nằm trong thùng rác. Vui lòng khôi phục từ thùng rác!",
+      code: "ITEM_DELETED"
+    });
   }
 
+  const index = propertiesStore.findIndex(p => p.id === id);
+  if (index === -1) {
+    return res.status(404).json({
+      error: "Không tìm thấy bất động sản để cập nhật.",
+      code: "ITEM_NOT_FOUND"
+    });
+  }
+
+  const actor = resolveActor(req);
   propertiesStore[index] = { ...propertiesStore[index], ...req.body };
+  logActivity('property', id, propertiesStore[index].title, 'update', actor, `Cập nhật tin BĐS: "${propertiesStore[index].title}"`);
   saveDataStore();
   res.json({ message: "Cập nhật thành công!", property: propertiesStore[index] });
 });
@@ -3207,13 +3377,22 @@ app.put("/api/properties/:id/approve", (req, res) => {
   res.json({ message: "Đã duyệt và đồng bộ thành công!", property: propertiesStore[index] });
 });
 
-// Property DELETE
+// Property DELETE (Chuyển vào thùng rác + ghi lịch sử)
 app.delete("/api/properties/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
+  const prop = propertiesStore.find(p => p.id === id);
+  if (!prop) {
+    // Nếu đã ở trong thùng rác thì coi như thành công
+    if (trashStore.some(t => t.entityType === 'property' && t.entityId === id)) {
+      return res.json({ message: "Bài đăng đã nằm trong thùng rác." });
+    }
+    return res.status(404).json({ error: "Không tìm thấy bài đăng để xóa." });
+  }
+
   propertiesStore = propertiesStore.filter(p => p.id !== id);
-  if (!deletedIds.properties.includes(id)) deletedIds.properties.push(id);
+  softDeleteEntity('property', id, prop.title, prop, req, req.body?.reason || 'Xóa bài đăng BĐS', prop.images?.[0]);
   saveDataStore();
-  res.json({ message: "Đã xóa bài đăng." });
+  res.json({ message: "Đã chuyển bài đăng vào thùng rác thành công!" });
 });
 
 // Projects GET, POST, PUT & DELETE
@@ -3280,10 +3459,15 @@ app.put("/api/projects/:id", authenticateToken, (req, res) => {
 
 app.delete("/api/projects/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
+  const proj = projectsStore.find(p => p.id === id);
   projectsStore = projectsStore.filter(p => p.id !== id);
-  if (!deletedIds.projects.includes(id)) deletedIds.projects.push(id);
+  if (proj) {
+    softDeleteEntity('project', id, proj.name || proj.title || 'Dự án', proj, req, req.body?.reason || 'Xóa dự án', proj.image);
+  } else {
+    if (!deletedIds.projects.includes(id)) deletedIds.projects.push(id);
+  }
   saveDataStore();
-  res.json({ message: "Đã xóa dự án thành công." });
+  res.json({ message: "Đã chuyển dự án vào thùng rác thành công." });
 });
 
 // News GET
@@ -3323,13 +3507,281 @@ app.put("/api/news/:id", authenticateToken, (req, res) => {
   res.json({ message: "Cập nhật bài viết thành công!", news: newsStore[index] });
 });
 
-// News DELETE
+// News DELETE (Soft delete)
 app.delete("/api/news/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
+  const article = newsStore.find(n => n.id === id);
   newsStore = newsStore.filter(n => n.id !== id);
-  if (!deletedIds.news.includes(id)) deletedIds.news.push(id);
+  if (article) {
+    softDeleteEntity('news', id, article.title, article, req, req.body?.reason || 'Xóa bài viết', article.image);
+  } else {
+    if (!deletedIds.news.includes(id)) deletedIds.news.push(id);
+  }
   saveDataStore();
-  res.json({ message: "Đã xóa bài viết thành công." });
+  res.json({ message: "Đã chuyển bài viết vào thùng rác thành công." });
+});
+
+
+// ==========================================
+// API THÙNG RÁC (TRASH) & LỊCH SỬ THAO TÁC (ACTIVITY HISTORY)
+// ==========================================
+
+// --- ADMIN API: THÙNG RÁC ---
+app.get("/api/admin/trash", authenticateToken, requireAdmin, (req, res) => {
+  const { entityType, q } = req.query;
+  let items = [...trashStore];
+
+  if (entityType && entityType !== 'all') {
+    items = items.filter(t => t.entityType === entityType);
+  }
+  if (q) {
+    const kw = String(q).toLowerCase();
+    items = items.filter(t => 
+      t.entityLabel.toLowerCase().includes(kw) || 
+      t.entityId.toLowerCase().includes(kw) ||
+      (t.deletedBy?.name && t.deletedBy.name.toLowerCase().includes(kw))
+    );
+  }
+
+  const countsByType = {
+    property: trashStore.filter(t => t.entityType === 'property').length,
+    project: trashStore.filter(t => t.entityType === 'project').length,
+    news: trashStore.filter(t => t.entityType === 'news').length,
+    resident_service: trashStore.filter(t => t.entityType === 'resident_service').length,
+    store: trashStore.filter(t => t.entityType === 'store').length,
+    recruitment_job: trashStore.filter(t => t.entityType === 'recruitment_job').length,
+    candidate_profile: trashStore.filter(t => t.entityType === 'candidate_profile').length,
+    total: trashStore.length
+  };
+
+  res.json({
+    success: true,
+    items,
+    total: items.length,
+    countsByType
+  });
+});
+
+// Khôi phục 1 mục từ thùng rác (Admin)
+app.post("/api/admin/trash/:id/restore", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const itemIndex = trashStore.findIndex(t => t.id === id || t.entityId === id);
+  if (itemIndex === -1) {
+    return res.status(404).json({ error: "Không tìm thấy mục trong thùng rác." });
+  }
+
+  const item = trashStore[itemIndex];
+  const actor = resolveActor(req);
+
+  // Khôi phục dữ liệu về store gốc
+  if (item.entityType === 'property' && item.entityData) {
+    propertiesStore = propertiesStore.filter(p => p.id !== item.entityId);
+    propertiesStore.unshift(item.entityData);
+    deletedIds.properties = deletedIds.properties.filter(id => id !== item.entityId);
+  } else if (item.entityType === 'project' && item.entityData) {
+    projectsStore = projectsStore.filter(p => p.id !== item.entityId);
+    projectsStore.unshift(item.entityData);
+    deletedIds.projects = deletedIds.projects.filter(id => id !== item.entityId);
+  } else if (item.entityType === 'news' && item.entityData) {
+    newsStore = newsStore.filter(n => n.id !== item.entityId);
+    newsStore.unshift(item.entityData);
+    deletedIds.news = deletedIds.news.filter(id => id !== item.entityId);
+  } else if (item.entityType === 'resident_service' && item.entityData) {
+    residentServicesStore = (residentServicesStore as any[]).filter(s => s.id !== item.entityId);
+    residentServicesStore.unshift(item.entityData);
+    deletedIds.residentServices = deletedIds.residentServices.filter(id => id !== item.entityId);
+  } else if (item.entityType === 'store' && item.entityData) {
+    storesStore = (storesStore as any[]).filter(s => s.id !== item.entityId);
+    storesStore.unshift(item.entityData);
+    deletedIds.stores = deletedIds.stores.filter(id => id !== item.entityId);
+  }
+
+  // Xóa khỏi thùng rác
+  trashStore.splice(itemIndex, 1);
+
+  // Ghi log lịch sử khôi phục
+  logActivity(
+    item.entityType,
+    item.entityId,
+    item.entityLabel,
+    'restore',
+    actor,
+    `Admin ${actor.name} đã khôi phục: "${item.entityLabel}" từ thùng rác`
+  );
+
+  saveDataStore();
+  res.json({ success: true, message: `Đã khôi phục "${item.entityLabel}" thành công!`, restoredItem: item });
+});
+
+// Xóa vĩnh viễn 1 mục khỏi thùng rác (Admin Purge)
+app.delete("/api/admin/trash/:id", authenticateToken, requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const itemIndex = trashStore.findIndex(t => t.id === id || t.entityId === id);
+  if (itemIndex === -1) {
+    return res.status(404).json({ error: "Không tìm thấy mục trong thùng rác." });
+  }
+
+  const item = trashStore[itemIndex];
+  const actor = resolveActor(req);
+
+  trashStore.splice(itemIndex, 1);
+
+  logActivity(
+    item.entityType,
+    item.entityId,
+    item.entityLabel,
+    'purge',
+    actor,
+    `Admin ${actor.name} đã XÓA VĨNH VIỄN: "${item.entityLabel}"`
+  );
+
+  saveDataStore();
+  res.json({ success: true, message: `Đã xóa vĩnh viễn "${item.entityLabel}".` });
+});
+
+// Dọn sạch toàn bộ thùng rác (Admin)
+app.post("/api/admin/trash/empty", authenticateToken, requireAdmin, (req, res) => {
+  const { entityType } = req.body || {};
+  const actor = resolveActor(req);
+  let count = 0;
+
+  if (entityType && entityType !== 'all') {
+    const toRemove = trashStore.filter(t => t.entityType === entityType);
+    count = toRemove.length;
+    trashStore = trashStore.filter(t => t.entityType !== entityType);
+  } else {
+    count = trashStore.length;
+    trashStore = [];
+  }
+
+  logActivity(
+    'property',
+    'all',
+    'Dọn sạch thùng rác',
+    'purge',
+    actor,
+    `Admin ${actor.name} đã làm trống ${count} mục trong thùng rác`
+  );
+
+  saveDataStore();
+  res.json({ success: true, message: `Đã dọn sạch ${count} mục khỏi thùng rác!` });
+});
+
+// --- ADMIN API: LỊCH SỬ THAO TÁC (ACTIVITY LOG) ---
+app.get("/api/admin/history", authenticateToken, requireAdmin, (req, res) => {
+  const { entityType, action, q } = req.query;
+  let logs = [...activityLogStore];
+
+  if (entityType && entityType !== 'all') {
+    logs = logs.filter(l => l.entityType === entityType);
+  }
+  if (action && action !== 'all') {
+    logs = logs.filter(l => l.action === action);
+  }
+  if (q) {
+    const kw = String(q).toLowerCase();
+    logs = logs.filter(l => 
+      l.summary.toLowerCase().includes(kw) ||
+      l.entityLabel.toLowerCase().includes(kw) ||
+      (l.actor?.name && l.actor.name.toLowerCase().includes(kw))
+    );
+  }
+
+  res.json({
+    success: true,
+    items: logs,
+    total: logs.length
+  });
+});
+
+// --- USER API: THÙNG RÁC VÀ LỊCH SỬ CỦA TÔI (/api/me/trash & /api/me/history) ---
+app.get("/api/me/trash", authenticateToken, (req, res) => {
+  const user = (req as any).user;
+  if (!user || !user.userId) {
+    return res.status(401).json({ error: "Yêu cầu đăng nhập." });
+  }
+
+  // Lọc chỉ những bài do user này đăng hoặc user này xóa
+  const myTrash = trashStore.filter(t => {
+    const isDeleter = t.deletedBy?.id === user.userId;
+    const isOwner = t.entityData?.userId === user.userId || 
+                    t.entityData?.sellerPhone === user.phone ||
+                    t.entityData?.email === user.email;
+    return isDeleter || isOwner;
+  });
+
+  res.json({
+    success: true,
+    items: myTrash,
+    total: myTrash.length
+  });
+});
+
+// User tự khôi phục tin của mình trong vòng 30 ngày
+app.post("/api/me/trash/:id/restore", authenticateToken, (req, res) => {
+  const user = (req as any).user;
+  const { id } = req.params;
+
+  const itemIndex = trashStore.findIndex(t => t.id === id || t.entityId === id);
+  if (itemIndex === -1) {
+    return res.status(404).json({ error: "Không tìm thấy bài viết trong thùng rác." });
+  }
+
+  const item = trashStore[itemIndex];
+  const isOwner = item.deletedBy?.id === user.userId || 
+                  item.entityData?.userId === user.userId ||
+                  item.entityData?.email === user.email ||
+                  user.role === 'admin';
+
+  if (!isOwner) {
+    return res.status(403).json({ error: "Bạn không có quyền khôi phục tin này." });
+  }
+
+  const actor = resolveActor(req);
+
+  // Khôi phục
+  if (item.entityType === 'property' && item.entityData) {
+    propertiesStore = propertiesStore.filter(p => p.id !== item.entityId);
+    propertiesStore.unshift(item.entityData);
+    deletedIds.properties = deletedIds.properties.filter(delId => delId !== item.entityId);
+  } else if (item.entityType === 'resident_service' && item.entityData) {
+    residentServicesStore = (residentServicesStore as any[]).filter(s => s.id !== item.entityId);
+    residentServicesStore.unshift(item.entityData);
+    deletedIds.residentServices = deletedIds.residentServices.filter(delId => delId !== item.entityId);
+  }
+
+  trashStore.splice(itemIndex, 1);
+
+  logActivity(
+    item.entityType,
+    item.entityId,
+    item.entityLabel,
+    'restore',
+    actor,
+    `Người dùng ${actor.name} đã tự khôi phục tin: "${item.entityLabel}"`
+  );
+
+  saveDataStore();
+  res.json({ success: true, message: `Đã khôi phục bài đăng "${item.entityLabel}" thành công!`, restoredItem: item });
+});
+
+// User xem lịch sử đăng tin & xóa tin của mình
+app.get("/api/me/history", authenticateToken, (req, res) => {
+  const user = (req as any).user;
+  if (!user || !user.userId) {
+    return res.status(401).json({ error: "Yêu cầu đăng nhập." });
+  }
+
+  const myLogs = activityLogStore.filter(l => 
+    l.actor?.id === user.userId || 
+    l.meta?.userId === user.userId
+  );
+
+  res.json({
+    success: true,
+    items: myLogs,
+    total: myLogs.length
+  });
 });
 
 // Admin Data Backup & Restore Endpoints (Comprehensive Multi-Collection Backup)
@@ -3404,7 +3856,9 @@ app.post("/api/sync-batch/properties", (req, res) => {
     const existingMap = new Map(propertiesStore.map(p => [p.id, p]));
     items.forEach((item: Property) => {
       if (item && item.id) {
-        if (!existingMap.has(item.id)) {
+        // CHẶN HỒI SINH: bỏ qua tin đã bị xóa hoặc đang trong thùng rác
+        const isDeleted = deletedIds.properties.includes(item.id) || trashStore.some(t => t.entityType === 'property' && t.entityId === item.id);
+        if (!existingMap.has(item.id) && !isDeleted) {
           propertiesStore.unshift(item);
           existingMap.set(item.id, item);
         }
@@ -3643,10 +4097,15 @@ app.put("/api/resident-services/:id/approve", (req, res) => {
 
 app.delete("/api/resident-services/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
-  residentServicesStore = residentServicesStore.filter(s => s.id !== id);
-  if (!deletedIds.residentServices.includes(id)) deletedIds.residentServices.push(id);
+  const srv = (residentServicesStore as any[]).find(s => s.id === id);
+  residentServicesStore = (residentServicesStore as any[]).filter(s => s.id !== id);
+  if (srv) {
+    softDeleteEntity('resident_service', id, srv.title || srv.name || 'Dịch vụ cư dân', srv, req, req.body?.reason || 'Xóa dịch vụ cư dân', srv.image || srv.images?.[0]);
+  } else {
+    if (!deletedIds.residentServices.includes(id)) deletedIds.residentServices.push(id);
+  }
   saveDataStore();
-  res.json({ message: "Đã xóa bài dịch vụ cư dân." });
+  res.json({ message: "Đã chuyển dịch vụ cư dân vào thùng rác thành công." });
 });
 
 // ------------------- BÀI VIẾT PR CƯ DÂN & YOUTUBE REVIEW -------------------

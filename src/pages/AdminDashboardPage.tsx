@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder, AmenityArticle } from '../types';
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2, Save } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
+import { AdminTrashManager } from '../components/AdminTrashManager';
+import { AdminActivityLogManager } from '../components/AdminActivityLogManager';
+import { History } from 'lucide-react';
 import { AdminKycManager } from '../components/AdminKycManager';
 import { AdminSiteSettingsPanel } from '../components/AdminSiteSettingsPanel';
 import { DeveloperUnitsAdmin } from '../components/DeveloperUnitsAdmin';
@@ -90,6 +93,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
     | 'developer_units' | 'site_settings'
     | 'business_mgmt'
+    | 'trash' | 'activity_history'
   >('properties');
   const [devSubTab, setDevSubTab] = useState('matbang');
 
@@ -103,6 +107,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (['users', 'leads', 'enterprise_core', 'business_mgmt'].includes(activeTab)) return 'users_leads';
     if (activeTab === 'ads') return 'ads';
     if (activeTab === 'site_settings') return 'ads';
+    if (activeTab === 'trash' || activeTab === 'activity_history') return 'bds';
     return 'tools';
   })();
 
@@ -2529,6 +2534,36 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <span>• Chờ Duyệt</span>
                     <span className="font-mono text-[10px] text-amber-400 font-bold">{pendingProperties.length}</span>
                   </button>
+                  {/* Menu Thùng rác & Lịch sử trong BĐS */}
+                  <div className="pt-2 mt-2 border-t border-slate-800/80">
+                    <button
+                      onClick={() => setActiveTab('trash')}
+                      className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                        activeTab === 'trash'
+                          ? 'bg-rose-500/20 text-rose-300 font-extrabold border border-rose-500/30'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                        Thùng rác
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('activity_history')}
+                      className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between mt-1 ${
+                        activeTab === 'activity_history'
+                          ? 'bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <History className="w-3.5 h-3.5 text-amber-400" />
+                        Lịch sử thao tác
+                      </span>
+                    </button>
+                  </div>
+
                   <button
                     onClick={() => { setActiveTab('projects'); setSidebarProjectsOpen(prev => !prev); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
@@ -5152,6 +5187,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       )}
 
       {/* Tab 1: Properties Table */}
+            {/* TAB THÙNG RÁC HỆ THỐNG */}
+      {activeTab === 'trash' && (
+        <AdminTrashManager />
+      )}
+
+      {/* TAB LỊCH SỬ THAO TÁC */}
+      {activeTab === 'activity_history' && (
+        <AdminActivityLogManager />
+      )}
+
       {activeTab === 'properties' && (
         <div className="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 space-y-4 shadow-xl">
           {/* Header & Title */}

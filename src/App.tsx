@@ -185,7 +185,10 @@ export const App: React.FC = () => {
   // App Data with LocalStorage Persistence Fallback
   const [properties, setProperties] = useState<Property[]>(() => {
     const saved = safeLocalStorageGet<Property[]>('hb_properties', INITIAL_PROPERTIES);
-    return Array.isArray(saved) && saved.length > 0 ? saved : INITIAL_PROPERTIES;
+    const base = Array.isArray(saved) && saved.length > 0 ? saved : INITIAL_PROPERTIES;
+    // Tôn trọng danh sách tombstone: không để tin đã xóa quay lại từ localStorage
+    const deletedIds = safeLocalStorageGet<string[]>('chocudan24h_deleted_ids', []);
+    return deletedIds.length > 0 ? base.filter(p => !deletedIds.includes(p.id)) : base;
   });
   const [projects, setProjects] = useState<Project[]>(() => {
     const saved = safeLocalStorageGet<Project[]>('hb_projects', INITIAL_PROJECTS);
@@ -273,27 +276,15 @@ export const App: React.FC = () => {
         if (Array.isArray(data)) {
           const localSaved = safeLocalStorageGet<Property[]>('hb_properties', []);
           
-          // Merge server properties + local properties to ensure user additions are NEVER lost
-          const mergedMap = new Map<string, Property>();
+          // Server là Single Source of Truth: CHẶN hồi sinh các tin đã bị xóa.
+          // Lấy danh sách tombstone đã xóa ở client (nếu có)
+          const clientDeletedIds = safeLocalStorageGet<string[]>('chocudan24h_deleted_ids', []);
           
-          // 1. Add server properties
-          data.forEach(p => mergedMap.set(p.id, p));
-          
-          // 2. Add local properties if not on server yet & sync to server
-          localSaved.forEach(lp => {
-            if (!mergedMap.has(lp.id)) {
-              mergedMap.set(lp.id, lp);
-              fetch(`/api/properties/${lp.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(lp)
-              }).catch(() => {});
-            }
-          });
+          // Lọc bỏ bất kỳ tin nào nằm trong danh sách đã xóa
+          const filteredServerData = data.filter(p => !clientDeletedIds.includes(p.id));
 
-          const finalProps = Array.from(mergedMap.values());
-          setProperties(finalProps);
-          safeLocalStorageSet('hb_properties', finalProps);
+          setProperties(filteredServerData);
+          safeLocalStorageSet('hb_properties', filteredServerData);
         }
       })
       .catch(err => console.warn('Using initial properties fallback:', err));
@@ -783,6 +774,13 @@ export const App: React.FC = () => {
       alert('Không kết nối được máy chủ. Bài chưa được xóa.');
       return;
     }
+    // Cập nhật danh sách tombstone ở client để không bao giờ hồi sinh tin này
+    const deletedList = safeLocalStorageGet<string[]>('chocudan24h_deleted_ids', []);
+    if (!deletedList.includes(id)) {
+      deletedList.push(id);
+      safeLocalStorageSet('chocudan24h_deleted_ids', deletedList);
+    }
+
     setProperties(prev => {
       const updated = prev.filter(p => p.id !== id);
       safeLocalStorageSet('hb_properties', updated);

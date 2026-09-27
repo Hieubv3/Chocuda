@@ -1165,3 +1165,46 @@ export interface DeveloperFloorplan {
   label: string;
 }
 
+// --- TRASH & ACTIVITY LOG TYPES ---
+export type TrashEntityType = 'property' | 'resident_service' | 'news' | 'project' | 'store' | 'recruitment_job' | 'candidate_profile';
+
+export interface TrashItem {
+  id: string;
+  entityType: TrashEntityType;
+  entityId: string;
+  entityLabel: string;
+  entityImage?: string;
+  data?: any;
+  entityData?: any;
+  deletedAt: string;
+  deletedBy: {
+    id?: string;
+    userId?: string;
+    email?: string;
+    name?: string;
+    role?: string;
+  };
+  expiresAt: string;
+  reason?: string;
+}
+
+export type ActivityAction = 'create' | 'update' | 'delete' | 'restore' | 'purge';
+
+export interface ActivityLogEntry {
+  id: string;
+  at: string;
+  action: ActivityAction;
+  entityType: TrashEntityType;
+  entityId: string;
+  entityLabel?: string;
+  summary: string;
+  actor: {
+    id?: string;
+    userId?: string;
+    email?: string;
+    name?: string;
+    role?: string;
+  };
+  metadata?: any;
+  meta?: any;
+}

@@ -17,6 +17,9 @@ import { InteractionProofChatModal } from '../components/InteractionProofChatMod
 import { UserCvManagement } from '../components/UserCvManagement';
 import { UserEmployerRegistrationModal } from '../components/UserEmployerRegistrationModal';
 import { UserWalletSection } from '../components/UserWalletSection';
+import { UserTrashManager } from '../components/UserTrashManager';
+import { UserActivityHistory } from '../components/UserActivityHistory';
+import { History } from 'lucide-react';
 import { UserProfileEditModal } from '../components/UserProfileEditModal';
 import { UserPropertyEditModal } from '../components/UserPropertyEditModal';
 import { UserResidentServicesManager } from '../components/UserResidentServicesManager';
@@ -77,7 +80,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const handleSelectProp = onSelectProperty || ((p: Property) => navigate(getPropertyDetailUrl(p)));
   const handleDeleteProp = onDeleteProperty || (() => {});
 
-  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_services' | 'my_store' | 'wallet_tokens' | 'my_cv' | 'recruiter_packages' | 'affiliate' | 'account_profile' | 'transactions' | 'resident_utilities'>('my_properties');
+  const [activeTab, setActiveTab] = useState<'my_properties' | 'my_services' | 'my_store' | 'wallet_tokens' | 'my_cv' | 'recruiter_packages' | 'affiliate' | 'account_profile' | 'transactions' | 'resident_utilities' | 'my_trash' | 'my_post_history'>('my_properties');
   const [propertyFilter, setPropertyFilter] = useState<'all' | 'approved' | 'pending' | 'expired'>('all');
   const [selectedPropertyForUpTin, setSelectedPropertyForUpTin] = useState<Property | null>(null);
   const [localTransactions, setLocalTransactions] = useState<UpTinTransaction[]>([]);
@@ -851,6 +854,31 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           <Clock className="w-3.5 h-3.5" />
           <span>Lịch Sử Up Tin</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('my_post_history')}
+          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'my_post_history'
+              ? 'bg-ink-800 text-white shadow-xs font-black'
+              : 'text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-white'
+          }`}
+        >
+          <History className="w-3.5 h-3.5 text-amber-500" />
+          <span>Lịch Sử Đăng Tin</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('my_trash')}
+          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            activeTab === 'my_trash'
+              ? 'bg-ink-800 text-white shadow-xs font-black'
+              : 'text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-white'
+          }`}
+        >
+          <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+          <span>Lịch Sử Xóa (Thùng Rác)</span>
+        </button>
+
       </div>
 
       {/* ========================================================================= */}
@@ -1563,6 +1591,15 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
       {/* ========================================================================= */}
       {/* TAB: ACCOUNT PROFILE & BANK DETAILS */}
       {/* ========================================================================= */}
+      
+      {activeTab === 'my_post_history' && (
+        <UserActivityHistory />
+      )}
+
+      {activeTab === 'my_trash' && (
+        <UserTrashManager onRefreshParent={onRefreshData} />
+      )}
+
       {activeTab === 'account_profile' && (
         <div className="bg-white dark:bg-ink-900 rounded-2xl border border-ink-200 dark:border-ink-800 p-5 sm:p-6 space-y-6 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-ink-100 dark:border-ink-800">
