@@ -1321,6 +1321,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             upTinCredits={upTinCredits}
             serverWalletTransactions={serverWalletTransactions}
             onRefreshBalance={refreshUserBalance}
+            onGoToCv={() => navigate('/tuyen-dung/ung-vien')}
             isSyncingBalance={isSyncingBalance}
             onOpenEscrowModal={() => setShowEscrowModal(true)}
             onQuickExchangeAffiliate={(credits) => {

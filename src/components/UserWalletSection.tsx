@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, UpTinPricingConfig } from '../types';
 import { 
   Zap, Crown, Wallet, ArrowUpRight, Copy, Check, Clock, RefreshCw, 
-  Sparkles, CheckCircle2, ShieldCheck, DollarSign, QrCode
+  Sparkles, CheckCircle2, ShieldCheck, DollarSign, QrCode, GraduationCap
 } from 'lucide-react';
 import { PaymentQRModal } from './PaymentQRModal';
 
@@ -16,6 +16,8 @@ interface UserWalletSectionProps {
   isSyncingBalance: boolean;
   onQuickExchangeAffiliate: (credits: number) => void;
   onOpenEscrowModal?: () => void;
+  /** Nhảy tới màn hình xem/mở khóa CV ứng viên (dùng Token) */
+  onGoToCv?: () => void;
 }
 
 export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
@@ -27,7 +29,8 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
   onRefreshBalance,
   isSyncingBalance,
   onQuickExchangeAffiliate,
-  onOpenEscrowModal
+  onOpenEscrowModal,
+  onGoToCv
 }) => {
   const [topupTab, setTopupTab] = useState<'qr' | 'crypto'>('qr');
   const [copiedAccount, setCopiedAccount] = useState(false);
@@ -105,6 +108,16 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
               <span>{isSyncingBalance ? 'Đang nạp...' : 'Đồng Bộ / Nạp Tự Động'}</span>
             </button>
           </div>
+          {onGoToCv && (
+            <button
+              onClick={onGoToCv}
+              className="w-full py-2 bg-ink-800 hover:bg-ink-700 text-brand-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer border border-brand-500/30"
+              title="Dùng Token để mở khóa xem CV ứng viên (tài khoản doanh nghiệp)"
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Xem CV Ứng Viên (dùng Token)</span>
+            </button>
+          )}
         </div>
 
         {/* 2. Điểm Thưởng & Quy Đổi (KHÔNG rút tiền — chỉ nạp & quy đổi) */}
