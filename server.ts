@@ -4811,6 +4811,7 @@ app.post("/api/contacts", (req, res) => {
   };
 
   contactsStore.unshift(newLead);
+  saveDataStore();
   res.status(201).json({ message: "Đặt lịch tư vấn thành công! Khách hàng sẽ kết nối trực tiếp với người đăng tin.", lead: newLead });
 });
 
@@ -4826,13 +4827,41 @@ app.patch("/api/contacts/:id", authenticateToken, requireAdmin, (req, res) => {
     return res.status(404).json({ error: "Không tìm thấy yêu cầu" });
   }
   if (status) lead.status = status;
+  saveDataStore();
   res.json({ message: "Cập nhật trạng thái thành công", lead });
 });
 
 app.delete("/api/contacts/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   contactsStore = contactsStore.filter(c => c.id !== id);
+  saveDataStore();
   res.json({ message: "Xóa yêu cầu thành công" });
+});
+
+// Admin: thêm khách hàng (lead) thủ công từ CRM
+app.post("/api/admin/contacts", authenticateToken, requireAdmin, (req, res) => {
+  const { fullName, phone, email, projectInterest, note, type, status, preferredTime, propertyTitle } = req.body || {};
+  if (!fullName || !phone) {
+    return res.status(400).json({ error: "Vui lòng nhập Họ tên và Số điện thoại." });
+  }
+  const newLead: LeadContact = {
+    id: `lead-${Date.now()}`,
+    fullName,
+    phone,
+    email: email || "",
+    projectInterest: projectInterest || "Vinhomes Ocean Park 2",
+    propertyTitle: propertyTitle || "",
+    sellerName: "Admin (nhập tay CRM)",
+    sellerPhone: "",
+    note: note || "",
+    preferredTime: preferredTime || "Giờ hành chính",
+    type: type || "consultation",
+    status: status || "new",
+    createdAt: new Date().toISOString()
+  };
+  contactsStore.unshift(newLead);
+  saveDataStore();
+  res.status(201).json({ success: true, message: "Đã thêm khách hàng vào hệ thống CRM!", lead: newLead });
 });
 
 // Gemini AI Client Helper

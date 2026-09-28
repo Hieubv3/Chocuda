@@ -773,6 +773,33 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     }
   };
 
+  // CRM: thêm khách hàng thủ công
+  const [showAddLeadModal, setShowAddLeadModal] = useState(false);
+  const [leadDraft, setLeadDraft] = useState<any>({ fullName: '', phone: '', email: '', projectInterest: 'Vinhomes Ocean Park 2', note: '', type: 'consultation', status: 'new', preferredTime: 'Giờ hành chính' });
+
+  const handleSaveNewLead = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!leadDraft.fullName?.trim() || !leadDraft.phone?.trim()) {
+      alert('Vui lòng nhập Họ tên và Số điện thoại.');
+      return;
+    }
+    try {
+      const res = await fetch('/api/admin/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(leadDraft)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+      setShowAddLeadModal(false);
+      setLeadDraft({ fullName: '', phone: '', email: '', projectInterest: 'Vinhomes Ocean Park 2', note: '', type: 'consultation', status: 'new', preferredTime: 'Giờ hành chính' });
+      alert('Đã thêm khách hàng vào hệ thống CRM!');
+      onRefreshData();
+    } catch (err: any) {
+      alert('Thêm khách hàng thất bại: ' + (err?.message || 'lỗi không xác định'));
+    }
+  };
+
   const handleExportLeadsCSV = (listToExport: LeadContact[]) => {
     if (!listToExport || listToExport.length === 0) {
       alert('Chưa có dữ liệu đặt lịch xem nhà để xuất file!');
@@ -6846,6 +6873,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
             <div className="flex flex-wrap items-center gap-2">
               <button
+                onClick={() => setShowAddLeadModal(true)}
+                className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-extrabold rounded-xl flex items-center gap-2 transition text-xs shadow-md"
+              >
+                <UserPlus className="w-4 h-4" /> Thêm khách hàng
+              </button>
+              <button
                 onClick={() => handleExportLeadsCSV(filteredContacts)}
                 className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl flex items-center gap-2 transition text-xs shadow-md"
               >
@@ -6861,6 +6894,60 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
             </div>
           </div>
+
+          {showAddLeadModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-slate-900/50" onClick={() => setShowAddLeadModal(false)} />
+              <form onSubmit={handleSaveNewLead} className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-4 space-y-3 max-h-[90vh] overflow-y-auto">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-black text-slate-800 dark:text-slate-100">Thêm khách hàng (CRM)</div>
+                  <button type="button" onClick={() => setShowAddLeadModal(false)} className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-pointer"><X className="w-4 h-4" /></button>
+                </div>
+                <div className="grid grid-cols-2 gap-2.5 text-xs">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Họ tên *</label>
+                    <input value={leadDraft.fullName} onChange={(e) => setLeadDraft({ ...leadDraft, fullName: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">SĐT / Zalo *</label>
+                    <input value={leadDraft.phone} onChange={(e) => setLeadDraft({ ...leadDraft, phone: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Email</label>
+                    <input value={leadDraft.email} onChange={(e) => setLeadDraft({ ...leadDraft, email: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Dự án quan tâm</label>
+                    <input value={leadDraft.projectInterest} onChange={(e) => setLeadDraft({ ...leadDraft, projectInterest: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Loại yêu cầu</label>
+                    <select value={leadDraft.type} onChange={(e) => setLeadDraft({ ...leadDraft, type: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2">
+                      <option value="consultation">💬 Tư vấn chung</option>
+                      <option value="viewing">📅 Đặt lịch xem nhà</option>
+                      <option value="deposit">💰 Cọc giữ chỗ</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Trạng thái</label>
+                    <select value={leadDraft.status} onChange={(e) => setLeadDraft({ ...leadDraft, status: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2">
+                      <option value="new">🔴 Yêu cầu mới</option>
+                      <option value="contacted">🟡 Đã liên hệ</option>
+                      <option value="done">🟢 Hoàn tất</option>
+                    </select>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Ghi chú</label>
+                    <textarea value={leadDraft.note} onChange={(e) => setLeadDraft({ ...leadDraft, note: e.target.value })} rows={2} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <button type="button" onClick={() => setShowAddLeadModal(false)} className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 cursor-pointer">Hủy</button>
+                  <button type="submit" className="flex-1 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black cursor-pointer">Thêm khách hàng</button>
+                </div>
+              </form>
+            </div>
+          )}
 
           {/* Metrics Summary Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
