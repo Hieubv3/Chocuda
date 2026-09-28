@@ -400,6 +400,35 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
     setProjBusy(false);
   };
 
+  // Sơ đồ riêng của từng phân khu (lưu trong dự án động)
+  const getSubFloorplan = (pid: string, sid: string): string => {
+    const dyn = dynProjects.find((p: any) => p.id === pid);
+    const sub = dyn && (dyn.subs || []).find((s: any) => s.id === sid);
+    return (sub && sub.floorplanImage) || '';
+  };
+
+  const handleSaveSubFloorplan = async () => {
+    const subs = getProjectSubs(currentProject);
+    const idx = subs.findIndex((s: any) => s.id === currentSub);
+    if (idx === -1) { showToast('Chưa chọn được phân khu để lưu'); return; }
+    subs[idx].floorplanImage = fpImage;
+    const projName = dynProjects.find((p: any) => p.id === currentProject)?.name || PROJECTS_BASE[currentProject]?.name || currentProject;
+    setProjBusy(true);
+    try {
+      const r = await api(`/api/admin/developer-projects/${currentProject}`, 'PUT', { name: projName, subs });
+      if (r && r.error) showToast('❌ ' + r.error);
+      else { showToast('💾 Đã lưu sơ đồ cho phân khu'); await refreshProjects(); }
+    } catch { showToast('❌ Lỗi lưu sơ đồ'); }
+    setProjBusy(false);
+  };
+
+  // Tự nạp sơ đồ đã lưu khi đổi dự án/phân khu
+  useEffect(() => {
+    const img = getSubFloorplan(currentProject, currentSub);
+    if (img) setFpImage(img);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentProject, currentSub, dynProjects]);
+
   const saveUnit = async () => {
     if (!editingUnit) return;
     if (editingUnit.id.startsWith('du-') && units.some(u => u.id === editingUnit.id)) {
@@ -794,7 +823,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
               <span className="text-[10px] font-mono text-slate-400">{currentUnits.length} căn</span>
             </div>
             <div className="relative" ref={floorRef}>
-              <img src={fpImage} alt="Sơ đồ mặt bằng" className="w-full h-[420px] object-cover" />
+              <img src={getSubFloorplan(currentProject, currentSub) || fpImage} alt="Sơ đồ mặt bằng" className="w-full h-[420px] object-cover" />
               {currentUnits.map(u => {
                 const pos = dragPos && dragPos.id === u.id ? dragPos : u;
                 const isDrag = !!(dragPos && dragPos.id === u.id);
@@ -1032,12 +1061,13 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
             <span className="text-[10px] text-slate-400 font-bold">URL ảnh sơ đồ</span>
             <input value={fpImage} onChange={e => setFpImage(e.target.value)} className="w-full px-3 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl border border-slate-200 dark:border-slate-700 text-xs" />
           </label>
+          <button onClick={handleSaveSubFloorplan} disabled={projBusy} className="px-4 py-2.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white disabled:opacity-50 cursor-pointer">💾 Lưu sơ đồ cho phân khu</button>
           <button onClick={() => setPinMode(!pinMode)} className={`px-4 py-2.5 rounded-xl text-xs font-black transition cursor-pointer ${pinMode ? 'bg-amber-500 text-slate-950' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>
             📍 {pinMode ? 'Đang chọn vị trí — click lên sơ đồ' : 'Bật chế độ đặt căn'}
           </button>
         </div>
         <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
-          <img src={fpImage} alt="Sơ đồ" className="w-full h-[480px] object-cover" />
+          <img src={getSubFloorplan(currentProject, currentSub) || fpImage} alt="Sơ đồ" className="w-full h-[480px] object-cover" />
           {units.filter(u => u.subdivisionId === currentSub).map(u => (
             <button
               key={u.id}
