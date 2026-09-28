@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Building2, CheckCircle2, XCircle, Search, RefreshCw, ShieldCheck, Clock, Users, Phone, Mail, MapPin, FileText } from 'lucide-react';
+import { Building2, CheckCircle2, XCircle, Search, RefreshCw, ShieldCheck, Clock, Users, Phone, Mail, MapPin, FileText, Trash2 } from 'lucide-react';
 import { BusinessTier } from '../types';
 
 /**
@@ -111,6 +111,22 @@ export const AdminBusinessManager: React.FC = () => {
       await load();
     } catch (err: any) {
       setMessage('Thao tác thất bại: ' + (err?.message || 'lỗi không xác định'));
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  // Xóa doanh nghiệp (chuyển vào Thùng rác - khôi phục được)
+  const handleDeleteBusiness = async (id: string, label: string) => {
+    if (!confirm(`Xóa doanh nghiệp "${label}"? (Có thể khôi phục từ Thùng rác)`)) return;
+    setBusy(id + 'delete');
+    try {
+      const res = await fetch(`/api/admin/businesses/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      setMessage('Đã chuyển doanh nghiệp vào Thùng rác.');
+      await load();
+    } catch (err: any) {
+      setMessage('Xóa thất bại: ' + (err?.message || 'lỗi không xác định'));
     } finally {
       setBusy(null);
     }
@@ -294,6 +310,14 @@ export const AdminBusinessManager: React.FC = () => {
                         className="px-3 py-1.5 rounded-xl text-[11px] font-black bg-rose-600 hover:bg-rose-500 text-white inline-flex items-center gap-1.5 disabled:opacity-50"
                       >
                         <XCircle className="w-3.5 h-3.5" /> Từ chối
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy === b.id + 'delete'}
+                        onClick={() => handleDeleteBusiness(b.id, b.name || b.brandName || b.id)}
+                        className="px-3 py-1.5 rounded-xl text-[11px] font-black bg-slate-700 hover:bg-slate-600 text-white inline-flex items-center gap-1.5 disabled:opacity-50"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Xóa
                       </button>
                     </div>
                   </div>

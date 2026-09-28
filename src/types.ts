@@ -1166,7 +1166,7 @@ export interface DeveloperFloorplan {
 }
 
 // --- TRASH & ACTIVITY LOG TYPES ---
-export type TrashEntityType = 'property' | 'resident_service' | 'news' | 'project' | 'store' | 'recruitment_job' | 'candidate_profile';
+export type TrashEntityType = 'property' | 'resident_service' | 'news' | 'project' | 'store' | 'recruitment_job' | 'candidate_profile' | 'user' | 'business';
 
 export interface TrashItem {
   id: string;

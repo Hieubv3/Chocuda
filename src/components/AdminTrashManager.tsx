@@ -140,6 +140,9 @@ export const AdminTrashManager: React.FC = () => {
       case 'project': return <Building2 className="w-4 h-4 text-purple-400" />;
       case 'store': return <Store className="w-4 h-4 text-pink-400" />;
       case 'recruitment_job': return <Briefcase className="w-4 h-4 text-indigo-400" />;
+      case 'candidate_profile': return <User className="w-4 h-4 text-cyan-400" />;
+      case 'user': return <User className="w-4 h-4 text-blue-400" />;
+      case 'business': return <Building2 className="w-4 h-4 text-emerald-400" />;
       default: return <Trash2 className="w-4 h-4 text-slate-400" />;
     }
   };
@@ -152,6 +155,9 @@ export const AdminTrashManager: React.FC = () => {
       case 'project': return 'Dự án BĐS';
       case 'store': return 'Gian hàng';
       case 'recruitment_job': return 'Việc làm';
+      case 'candidate_profile': return 'Hồ sơ ứng viên';
+      case 'user': return 'Tài khoản';
+      case 'business': return 'Doanh nghiệp';
       default: return 'Khác';
     }
   };
@@ -250,6 +256,36 @@ export const AdminTrashManager: React.FC = () => {
             }`}
           >
             <Building2 className="w-3.5 h-3.5" /> Dự án ({counts.project || 0})
+          </button>
+          <button
+            onClick={() => setFilterType('store')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 ${
+              filterType === 'store'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Store className="w-3.5 h-3.5" /> Gian hàng ({counts.store || 0})
+          </button>
+          <button
+            onClick={() => setFilterType('user')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 ${
+              filterType === 'user'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <User className="w-3.5 h-3.5" /> Tài khoản ({counts.user || 0})
+          </button>
+          <button
+            onClick={() => setFilterType('business')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 ${
+              filterType === 'business'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Building2 className="w-3.5 h-3.5" /> Doanh nghiệp ({counts.business || 0})
           </button>
         </div>
 

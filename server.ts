@@ -2254,13 +2254,16 @@ app.all(["/api/auth/users/:id", "/api/users/:id"], authenticateToken, requireOwn
 // Delete User Endpoint
 app.delete("/api/auth/users/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
-  const initialLen = usersStore.length;
-  usersStore = usersStore.filter(u => u.id !== id);
-  if (usersStore.length === initialLen) {
+  const targetUser = usersStore.find(u => u.id === id);
+  if (!targetUser) {
     return res.status(404).json({ error: "Thành viên không tồn tại" });
   }
+  // FIX: chuyển vào Thùng rác (khôi phục được) thay vì xóa vĩnh viễn
+  const actor = resolveActor(req);
+  usersStore = usersStore.filter(u => u.id !== id);
+  softDeleteEntity('user', id, (targetUser as any).name || (targetUser as any).email || id, targetUser, req, `Admin ${actor.name} đã xóa tài khoản`);
   saveDataStore();
-  return res.json({ success: true, message: "Đã xóa tài khoản thành công!" });
+  return res.json({ success: true, message: "Đã chuyển tài khoản vào Thùng rác (có thể khôi phục)!" });
 });
 
 // Realtime Traffic & Visitor Analytics Endpoint
@@ -3577,6 +3580,8 @@ app.get("/api/admin/trash", authenticateToken, requireAdmin, (req, res) => {
     store: trashStore.filter(t => t.entityType === 'store').length,
     recruitment_job: trashStore.filter(t => t.entityType === 'recruitment_job').length,
     candidate_profile: trashStore.filter(t => t.entityType === 'candidate_profile').length,
+    user: trashStore.filter(t => t.entityType === 'user').length,
+    business: trashStore.filter(t => t.entityType === 'business').length,
     total: trashStore.length
   };
 
@@ -3620,6 +3625,18 @@ app.post("/api/admin/trash/:id/restore", authenticateToken, requireAdmin, (req, 
     storesStore = (storesStore as any[]).filter(s => s.id !== item.entityId);
     storesStore.unshift(item.entityData);
     deletedIds.stores = deletedIds.stores.filter(id => id !== item.entityId);
+  } else if (item.entityType === 'user' && item.entityData) {
+    usersStore = usersStore.filter(u => u.id !== item.entityId);
+    usersStore.unshift(item.entityData);
+  } else if (item.entityType === 'business' && item.entityData) {
+    businessAccountsStore = businessAccountsStore.filter(b => b.id !== item.entityId);
+    businessAccountsStore.unshift(item.entityData);
+  } else if (item.entityType === 'recruitment_job' && item.entityData) {
+    recruitmentJobsStore = recruitmentJobsStore.filter(j => j.id !== item.entityId);
+    recruitmentJobsStore.unshift(item.entityData);
+  } else if (item.entityType === 'candidate_profile' && item.entityData) {
+    candidateProfilesStore = candidateProfilesStore.filter(cp => cp.id !== item.entityId);
+    candidateProfilesStore.unshift(item.entityData);
   }
 
   // Xóa khỏi thùng rác
@@ -4486,6 +4503,17 @@ app.post("/api/admin/businesses/:id/reject", authenticateToken, requireAdmin, (r
   acc.updatedAt = new Date().toISOString();
   saveDataStore();
   res.json({ success: true, account: acc });
+});
+
+// Xóa doanh nghiệp (chuyển vào Thùng rác - khôi phục được)
+app.delete("/api/admin/businesses/:id", authenticateToken, requireAdmin, (req, res) => {
+  const acc = businessAccountsStore.find(b => b.id === req.params.id);
+  if (!acc) return res.status(404).json({ error: "Không tìm thấy hồ sơ doanh nghiệp." });
+  const actor = resolveActor(req);
+  businessAccountsStore = businessAccountsStore.filter(b => b.id !== req.params.id);
+  softDeleteEntity('business', acc.id, acc.name || acc.brandName || acc.id, acc, req, `Admin ${actor.name} đã xóa doanh nghiệp`);
+  saveDataStore();
+  res.json({ success: true, message: "Đã chuyển doanh nghiệp vào Thùng rác (có thể khôi phục)." });
 });
 
 app.get("/api/store-packages", (req, res) => {
