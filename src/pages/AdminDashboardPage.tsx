@@ -40,6 +40,7 @@ import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
 import { AdminMobileNav } from '../components/AdminMobileNav';
 import { AdminMobileDashboard } from '../components/AdminMobileDashboard';
+import { AdminMobileMenu } from '../components/AdminMobileMenu';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminBusinessManager } from '../components/AdminBusinessManager';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
@@ -180,6 +181,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const [showMobileMenuDrawer, setShowMobileMenuDrawer] = useState<boolean>(false);
+
+  // Điều hướng từ Menu mobile: chuyển tab + cuộn lên đầu + đóng drawer
+  const goMobileTab = (fn: () => void) => {
+    fn();
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { window.scrollTo(0, 0); }
+    }
+    setShowMobileMenuDrawer(false);
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
@@ -10274,6 +10284,74 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           { key: 'jobs', label: 'Việc làm', icon: <Briefcase className="w-4 h-4" />, onClick: () => handleSelectMainTab('recruitment'), active: effectiveMainTab === 'recruitment' },
           { key: 'stores', label: 'Gian hàng', icon: <Store className="w-4 h-4" />, onClick: () => handleSelectMainTab('resident_market'), active: effectiveMainTab === 'resident_market' },
           { key: 'menu', label: 'Menu', icon: <Menu className="w-4 h-4" />, onClick: () => setShowMobileMenuDrawer(true) }
+        ]}
+      />
+
+      {/* Drawer "Tất cả chức năng" cho mobile — bấm từng mục sẽ nhảy tới khu chức năng */}
+      <AdminMobileMenu
+        open={showMobileMenuDrawer}
+        onClose={() => setShowMobileMenuDrawer(false)}
+        groups={[
+          {
+            title: '🏠 Bất động sản',
+            items: [
+              { key: 'bds-all', label: 'Bài đăng BĐS (tất cả)', active: activeTab === 'properties' && propertySubFilter === 'all', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('all'); }) },
+              { key: 'bds-sale', label: 'BĐS Mua Bán', active: activeTab === 'properties' && propertySubFilter === 'sale', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); }) },
+              { key: 'bds-rent', label: 'BĐS Cho Thuê', active: activeTab === 'properties' && propertySubFilter === 'rent', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('rent'); }) },
+              { key: 'bds-pending', label: '⏳ Chờ duyệt', active: activeTab === 'properties' && propertySubFilter === 'pending', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('pending'); }) },
+              { key: 'bds-projects', label: 'Dự án & Mặt bằng', active: activeTab === 'projects', onClick: () => goMobileTab(() => setActiveTab('projects')) },
+              { key: 'bds-news', label: 'Tin tức', active: activeTab === 'news', onClick: () => goMobileTab(() => setActiveTab('news')) },
+              { key: 'bds-pricing', label: 'Bảng giá up-tin', active: activeTab === 'pricing', onClick: () => goMobileTab(() => setActiveTab('pricing')) },
+              { key: 'bds-aff', label: 'Affiliate', active: activeTab === 'affiliate_mgmt', onClick: () => goMobileTab(() => setActiveTab('affiliate_mgmt')) },
+              { key: 'bds-faq', label: 'FAQ', active: activeTab === 'faq', onClick: () => goMobileTab(() => setActiveTab('faq')) }
+            ]
+          },
+          {
+            title: '🛠 Dịch vụ & Việc làm',
+            items: [
+              { key: 'svc', label: 'Dịch vụ cư dân & KYC', active: activeTab === 'resident_services_mgmt', onClick: () => goMobileTab(() => handleSelectMainTab('technicians')) },
+              { key: 'jobs', label: 'Tuyển dụng & Việc làm', active: activeTab === 'recruitment_mgmt', onClick: () => goMobileTab(() => handleSelectMainTab('recruitment')) }
+            ]
+          },
+          {
+            title: '🏪 Gian hàng & Cư dân',
+            items: [
+              { key: 'stores', label: 'Gian hàng', active: activeTab === 'stores_mgmt', onClick: () => goMobileTab(() => handleSelectMainTab('resident_market')) },
+              { key: 'orders', label: 'Đơn hàng', active: activeTab === 'orders_mgmt', onClick: () => goMobileTab(() => setActiveTab('orders_mgmt')) },
+              { key: 'pkgo', label: 'Gói dịch vụ', active: activeTab === 'package_orders_mgmt', onClick: () => goMobileTab(() => setActiveTab('package_orders_mgmt')) },
+              { key: 'fin', label: 'Tài chính cư dân', active: activeTab === 'resident_finance', onClick: () => goMobileTab(() => setActiveTab('resident_finance')) },
+              { key: 'rep', label: 'Đánh giá đối tác', active: activeTab === 'partners_reputation', onClick: () => goMobileTab(() => setActiveTab('partners_reputation')) }
+            ]
+          },
+          {
+            title: '🏢 Chủ đầu tư',
+            items: [
+              { key: 'dev', label: 'Căn hộ chủ đầu tư', active: activeTab === 'developer_units', onClick: () => goMobileTab(() => handleSelectMainTab('developer_units')) }
+            ]
+          },
+          {
+            title: '👥 Người dùng',
+            items: [
+              { key: 'users', label: 'Tài khoản', active: activeTab === 'users', onClick: () => goMobileTab(() => setActiveTab('users')) },
+              { key: 'leads', label: 'Khách hàng (Leads)', active: activeTab === 'leads', onClick: () => goMobileTab(() => setActiveTab('leads')) },
+              { key: 'ent', label: 'Doanh nghiệp', active: activeTab === 'enterprise_core', onClick: () => goMobileTab(() => setActiveTab('enterprise_core')) },
+              { key: 'biz', label: 'Quản lý doanh nghiệp', active: activeTab === 'business_mgmt', onClick: () => goMobileTab(() => setActiveTab('business_mgmt')) }
+            ]
+          },
+          {
+            title: '📣 Marketing & Hệ thống',
+            items: [
+              { key: 'mkt', label: 'Marketing', active: activeTab === 'marketing', onClick: () => goMobileTab(() => setActiveTab('marketing')) },
+              { key: 'seo', label: 'SEO Center', active: activeTab === 'seo', onClick: () => goMobileTab(() => setActiveTab('seo')) },
+              { key: 'zalo', label: 'Zalo Group', active: activeTab === 'zalo', onClick: () => goMobileTab(() => setActiveTab('zalo')) },
+              { key: 'n8n', label: 'n8n Automation', active: activeTab === 'n8n', onClick: () => goMobileTab(() => setActiveTab('n8n')) },
+              { key: 'ads', label: 'Quảng cáo (Banner)', active: activeTab === 'ads', onClick: () => goMobileTab(() => setActiveTab('ads')) },
+              { key: 'settings', label: 'Cài đặt site', active: activeTab === 'site_settings', onClick: () => goMobileTab(() => setActiveTab('site_settings')) },
+              { key: 'trash', label: 'Thùng rác', active: activeTab === 'trash', onClick: () => goMobileTab(() => setActiveTab('trash')) },
+              { key: 'history', label: 'Lịch sử thao tác', active: activeTab === 'activity_history', onClick: () => goMobileTab(() => setActiveTab('activity_history')) },
+              { key: 'inbox', label: 'Hộp thư Chat', active: activeTab === 'support_inbox', onClick: () => goMobileTab(() => setActiveTab('support_inbox')) }
+            ]
+          }
         ]}
       />
     </div>
