@@ -20,6 +20,33 @@ import { loadHeroCards } from '../data/heroCardsData';
 import { HomeBannerSection } from '../components/HomeBannerSection';
 import { getTranslation } from '../lib/i18n';
 
+// Mẫu 02 — thẻ "Dịch vụ cư dân" & "Việc làm nội khu" (tối ưu mobile)
+const THUMB_GRADS = [
+  'bg-gradient-to-br from-[#0a9d72] to-[#04624a]',
+  'bg-gradient-to-br from-[#2b8ef0] to-[#0f4e93]',
+  'bg-gradient-to-br from-[#f2994a] to-[#c05a12]',
+  'bg-gradient-to-br from-[#8e5cf0] to-[#4d1f96]'
+];
+const JOB_TYPE_LABEL: Record<string, string> = {
+  'full-time': 'Toàn thời gian',
+  'part-time': 'Bán thời gian',
+  'shift': 'Theo ca',
+  'freelance': 'Tự do',
+  'internship': 'Thực tập'
+};
+const SERVICE_CAT_LABEL: Record<string, string> = {
+  'thang-may-sua-nha': 'Thang máy',
+  'dien-may-tinh-cong-nghe': 'Điện · CNTT',
+  'van-chuyen-taxi': 'Vận chuyển',
+  'dich-vu-gia-dinh-giat-la': 'Giặt là',
+  'am-thuc-com-cu-dan': 'Ẩm thực',
+  'spa-lam-dep-suc-khoe': 'Sức khỏe',
+  'homestay-luu-tru': 'Lưu trú',
+  'giao-duc-gia-su': 'Giáo dục',
+  'pet-care': 'Thú cưng',
+  'cho-thanh-ly-hang-tieu-dung': 'Thanh lý'
+};
+
 interface HomePageProps {
   language: Language;
   projects: Project[];
@@ -181,13 +208,13 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {(INITIAL_RESIDENT_SERVICES as any[]).filter((sv: any) => sv.verified).slice(0, 6).map((sv: any) => (
+          {(INITIAL_RESIDENT_SERVICES as any[]).filter((sv: any) => sv.verified).slice(0, 6).map((sv: any, idx: number) => (
             <div key={sv.id} onClick={() => setCurrentTab('services')} className="card24 p-3.5 flex gap-3 cursor-pointer">
-              <div className="w-16 h-16 rounded-xl overflow-hidden bg-ink-100 dark:bg-ink-800 shrink-0">
+              <div className={`w-16 h-16 rounded-xl overflow-hidden shrink-0 ${sv.images && sv.images[0] ? '' : THUMB_GRADS[idx % THUMB_GRADS.length]}`}>
                 {sv.images && sv.images[0] ? (
                   <img loading="lazy" src={sv.images[0]} alt={sv.title} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-ink-400"><Wrench className="w-5 h-5" /></div>
+                  <div className="w-full h-full flex items-center justify-center text-white"><Wrench className="w-5 h-5" /></div>
                 )}
               </div>
               <div className="min-w-0 flex-1 space-y-1">
@@ -197,7 +224,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <span className="badge badge-soft shrink-0"><ShieldCheck className="w-2.5 h-2.5" /> KYC</span>
                   )}
                 </div>
-                <p className="spec24 line-clamp-1">{sv.providerName} • {sv.address}</p>
+                <div className="flex flex-wrap gap-1.5 items-center">
+                  {SERVICE_CAT_LABEL[sv.categoryId] && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300">{SERVICE_CAT_LABEL[sv.categoryId]}</span>}
+                  <span className="spec24 line-clamp-1">{sv.providerName} • {sv.address}</span>
+                </div>
                 <div className="flex items-center justify-between gap-2">
                   <span className="price24">{sv.priceDisplay}</span>
                   <span className="rating24"><Star className="w-3 h-3" /> {sv.rating} ({sv.reviewCount})</span>
@@ -223,24 +253,26 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {(INITIAL_RECRUITMENT_JOBS as any[]).filter((j: any) => j.status === 'active').slice(0, 6).map((j: any) => (
+          {(INITIAL_RECRUITMENT_JOBS as any[]).filter((j: any) => j.status === 'active').slice(0, 6).map((j: any, idx: number) => (
             <div key={j.id} onClick={() => setCurrentTab('recruitment')} className="card24 p-3.5 flex gap-3 cursor-pointer">
-              <div className="w-16 h-16 rounded-xl overflow-hidden bg-ink-100 dark:bg-ink-800 shrink-0">
+              <div className={`w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 ${j.companyLogo ? '' : THUMB_GRADS[idx % THUMB_GRADS.length]}`}>
                 {j.companyLogo ? (
                   <img loading="lazy" src={j.companyLogo} alt={j.companyName} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-ink-400"><Briefcase className="w-5 h-5" /></div>
+                  <div className="w-full h-full flex items-end justify-start p-2 text-white">
+                    <span className="text-[10px] font-black leading-none drop-shadow">VIN JOB</span>
+                  </div>
                 )}
               </div>
-              <div className="min-w-0 flex-1 space-y-1">
+              <div className="min-w-0 flex-1 flex flex-col gap-1.5">
                 <div className="flex items-start gap-1.5">
                   <span className="text-xs font-black text-ink-900 dark:text-white line-clamp-2">{j.title}</span>
                   {j.isUrgent && <span className="badge badge-job shrink-0">Gấp</span>}
                 </div>
-                <p className="spec24 line-clamp-1">{j.companyName} • {j.location}</p>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="price24">{j.salaryDisplay}</span>
-                  <span className="note24 line-clamp-1">{j.jobType}</span>
+                <div className="flex flex-wrap gap-1.5 items-center mt-auto">
+                  <span className="text-[10.5px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 line-clamp-1">{j.salaryDisplay}</span>
+                  {j.projectName && <span className="text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 line-clamp-1">{j.projectName}</span>}
+                  <span className="text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 shrink-0">{JOB_TYPE_LABEL[j.jobType] || j.jobType}</span>
                 </div>
               </div>
             </div>
