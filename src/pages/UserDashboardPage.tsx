@@ -155,7 +155,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             localStorage.setItem('hb_user', JSON.stringify(merged));
           } catch (e) {}
           if (showToast) {
-            alert(` ĐÃ ĐỒNG BỘ SỐ DƯ TỨC THÌ TỪ HỆ THỐNG:\n• Token Cư Dân: ${(freshData.balance || 0).toLocaleString('vi-VN')} Token\n• Điểm Rút Tiền: ${(freshData.affiliatePoints || 0).toLocaleString('vi-VN')} đ\n• Lượt Up Tin: ${freshData.upTinCredits || 0} lượt`);
+            alert(` ĐÃ ĐỒNG BỘ SỐ DƯ TỨC THÌ TỪ HỆ THỐNG:\n• Token Cư Dân: ${(freshData.balance || 0).toLocaleString('vi-VN')} Token\n• Điểm Thưởng: ${(freshData.affiliatePoints || 0).toLocaleString('vi-VN')} điểm\n• Lượt Up Tin: ${freshData.upTinCredits || 0} lượt`);
           }
         }
       }
@@ -551,7 +551,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             className="bg-ink-900/90 hover:bg-ink-800/90 border border-brand-500/40 p-2.5 rounded-xl transition cursor-pointer flex items-center justify-between gap-2"
           >
             <div>
-              <span className="text-[10px] text-brand-400 font-bold uppercase block">Ví Rút Tiền</span>
+              <span className="text-[10px] text-brand-400 font-bold uppercase block">Điểm Thưởng</span>
               <span className="text-base font-black text-brand-300 font-mono">
                 {(userState.affiliatePoints || affiliateWallet || 0).toLocaleString('vi-VN')}đ
               </span>
@@ -816,7 +816,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           }`}
         >
           <Share2 className="w-3.5 h-3.5" />
-          <span>Rút Hoa Hồng VietQR</span>
+          <span>Hoa Hồng &amp; Điểm</span>
         </button>
 
         <button
@@ -1320,7 +1320,6 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             affiliateWallet={affiliateWallet}
             upTinCredits={upTinCredits}
             serverWalletTransactions={serverWalletTransactions}
-            onOpenWithdrawModal={() => setShowWithdrawModal(true)}
             onRefreshBalance={refreshUserBalance}
             isSyncingBalance={isSyncingBalance}
             onOpenEscrowModal={() => setShowEscrowModal(true)}
@@ -1544,7 +1543,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                   Giới Thiệu Cư Dân & Môi Giới — Nhận Hoa Hồng Nạp Tiền Tự Động
                 </h2>
                 <p className="text-xs text-ink-300">
-                  Khi người được bạn giới thiệu mua gói Up Tin hoặc đăng ký dịch vụ, bạn sẽ nhận hoa hồng rút về ATM hoặc quy đổi Up Tin.
+                  Khi người được bạn giới thiệu mua gói Up Tin hoặc đăng ký dịch vụ, bạn sẽ nhận điểm thưởng — quy đổi sang Lượt Up Tin hoặc dùng để xem CV ứng viên (tài khoản doanh nghiệp).
                 </p>
               </div>
 
@@ -1552,10 +1551,10 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                 <span className="text-[10px] text-ink-300 font-bold block">VÍ HOA HỒNG KHẢ DỤNG</span>
                 <span className="text-xl font-black text-brand-400 block">{affiliateWallet.toLocaleString('vi-VN')} VNĐ</span>
                 <button
-                  onClick={() => setShowWithdrawModal(true)}
+                  onClick={() => setActiveTab('wallet_tokens')}
                   className="px-3 py-1.5 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black rounded-xl text-xs transition cursor-pointer"
                 >
-                  <Wallet className="w-3.5 h-3.5 inline mr-1" /> Rút Tiền VietQR
+                  <Wallet className="w-3.5 h-3.5 inline mr-1" /> Quy Đổi Điểm / Up Tin
                 </button>
               </div>
             </div>

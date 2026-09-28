@@ -11,7 +11,7 @@ interface UserWalletSectionProps {
   affiliateWallet: number;
   upTinCredits: number;
   serverWalletTransactions: any[];
-  onOpenWithdrawModal: () => void;
+  onOpenWithdrawModal?: () => void;
   onRefreshBalance: (showToast?: boolean) => void;
   isSyncingBalance: boolean;
   onQuickExchangeAffiliate: (credits: number) => void;
@@ -107,30 +107,24 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
           </div>
         </div>
 
-        {/* 2. Tiền Rút ATM Affiliate */}
+        {/* 2. Điểm Thưởng & Quy Đổi (KHÔNG rút tiền — chỉ nạp & quy đổi) */}
         <div className="bg-gradient-to-br from-brand-500/10 via-ink-900 to-ink-900 text-white p-4 sm:p-5 rounded-2xl border border-brand-500/40 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase bg-brand-500 text-ink-950 px-2 py-0.5 rounded">
-               TIỀN RÚT VỀ ATM
+               ĐIỂM THƯỞNG &amp; QUY ĐỔI
             </span>
-            <span className="text-xs text-brand-400 font-bold">VietQR 24/7</span>
+            <span className="text-xs text-brand-400 font-bold">Up Tin / Xem CV</span>
           </div>
           <div className="flex items-baseline gap-1 mt-1">
             <span className="text-2xl sm:text-3xl font-black text-brand-400 font-mono">
               {(userState.affiliatePoints || affiliateWallet || 0).toLocaleString('vi-VN')}
             </span>
-            <span className="text-xs font-bold text-brand-300">VNĐ</span>
+            <span className="text-xs font-bold text-brand-300">điểm</span>
           </div>
           <p className="text-[11px] text-ink-400 border-t border-ink-800 pt-2">
-            Hoa hồng nhận từ giới thiệu cư dân (15% F1, 5% F2). Rút trực tiếp về tài khoản ngân hàng.
+            Điểm thưởng từ giới thiệu cư dân (15% F1, 5% F2). Quy đổi sang Lượt Up Tin hoặc dùng để mở khóa xem CV ứng viên (tài khoản doanh nghiệp).
           </p>
           <div className="flex gap-2">
-            <button
-              onClick={onOpenWithdrawModal}
-              className="flex-1 py-2 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black text-xs rounded-xl transition cursor-pointer"
-            >
-              Rút Tiền Về ATM
-            </button>
             <button
               onClick={() => {
                 const currentAff = userState.affiliatePoints || affiliateWallet || 0;
@@ -141,10 +135,10 @@ export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
                 const newCredits = Math.floor(currentAff / 10000);
                 onQuickExchangeAffiliate(newCredits);
               }}
-              className="py-2 px-3 bg-ink-800 hover:bg-ink-700 text-ink-200 font-bold text-xs rounded-xl transition cursor-pointer"
+              className="flex-1 py-2 bg-brand-500 hover:bg-brand-400 text-ink-950 font-black text-xs rounded-xl transition cursor-pointer"
               title="Đổi 10.000đ = 1 lượt Đẩy Tin"
             >
-              Đổi Lượt Đẩy Tin
+               Đổi Lượt Đẩy Tin
             </button>
           </div>
         </div>
