@@ -11,6 +11,7 @@ import { VinhomesProjectSelectModal } from '../components/VinhomesProjectSelectM
 import { PopularVinhomesLinksSection } from '../components/PopularVinhomesLinksSection';
 import { RealTimeNewsBoard } from '../components/RealTimeNewsBoard';
 import { DeveloperUnitsPublic } from '../components/DeveloperUnitsPublic';
+import { DeveloperUnitsHomeSection } from '../components/DeveloperUnitsHomeSection';
 import { VIN_MAJOR_PROJECTS } from '../data/residentServicesData';
 import { HIEU_BUI_PROFILE, INITIAL_ADS } from '../data/initialData';
 import { IndustryFeed } from '../components/IndustryFeed';
@@ -686,6 +687,9 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
       </section>
+
+      {/* Quỹ căn chủ đầu tư trên trang chủ (đồng bộ từ Admin — Mặt bằng dự án) */}
+      <DeveloperUnitsHomeSection />
 
       {/* Middle Banner Ad */}
       <AdBannerWidget ads={liveAds} position="home_middle" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" />{/* SEO Popular Links Section at Bottom of HomePage */}
