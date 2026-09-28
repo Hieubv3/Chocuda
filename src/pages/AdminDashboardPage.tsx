@@ -38,6 +38,7 @@ import { AdminSeoCenter } from '../components/AdminSeoCenter';
 import { AdminZaloGroupCenter } from '../components/AdminZaloGroupCenter';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
+import { AdminMobileNav } from '../components/AdminMobileNav';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminBusinessManager } from '../components/AdminBusinessManager';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
@@ -1981,7 +1982,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   return (
-    <div className="cd24-admin max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4">
+    <div className="cd24-admin max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 pb-24 md:pb-4 space-y-4">
       
       {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Điều hướng nhanh trực tiếp bên trong Admin */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
@@ -10240,6 +10241,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
+      {/* Bottom navigation cho Admin trên mobile (thiết kế mới) */}
+      <AdminMobileNav
+        items={[
+          { key: 'bds', label: 'BĐS', icon: <Home className="w-4 h-4" />, onClick: () => handleSelectMainTab('bds'), active: effectiveMainTab === 'bds' },
+          { key: 'services', label: 'Dịch vụ', icon: <Wrench className="w-4 h-4" />, onClick: () => handleSelectMainTab('technicians'), active: effectiveMainTab === 'technicians' },
+          { key: 'jobs', label: 'Việc làm', icon: <Briefcase className="w-4 h-4" />, onClick: () => handleSelectMainTab('recruitment'), active: effectiveMainTab === 'recruitment' },
+          { key: 'stores', label: 'Gian hàng', icon: <Store className="w-4 h-4" />, onClick: () => handleSelectMainTab('resident_market'), active: effectiveMainTab === 'resident_market' },
+          { key: 'menu', label: 'Menu', icon: <Menu className="w-4 h-4" />, onClick: () => setShowMobileMenuDrawer(true) }
+        ]}
+      />
     </div>
   );
 };
