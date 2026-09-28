@@ -7,11 +7,12 @@ export interface AdminMobileStats {
   services: number;
   stores: number;
   jobs: number;
+  revenue: number;
 }
 
 interface AdminMobileDashboardProps {
   stats: AdminMobileStats;
-  onNavigate: (target: 'sale' | 'rent' | 'pending' | 'services' | 'stores' | 'jobs') => void;
+  onNavigate: (target: 'sale' | 'rent' | 'pending' | 'services' | 'stores' | 'jobs' | 'analytics') => void;
 }
 
 /**
@@ -81,6 +82,21 @@ export const AdminMobileDashboard: React.FC<AdminMobileDashboardProps> = ({ stat
         </button>
       </div>
 
+      {/* Doanh thu đã thu (nguồn: /api/analytics/stats) */}
+      <button
+        type="button"
+        onClick={() => onNavigate('analytics')}
+        className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-left shadow-sm active:scale-[0.98] transition cursor-pointer flex items-center justify-between gap-3"
+      >
+        <div className="min-w-0">
+          <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400">💰 Doanh thu đã thu</div>
+          <div className="text-xl font-black text-slate-900 dark:text-white mt-1 tabular-nums leading-none">
+            {stats.revenue.toLocaleString('vi-VN')} <span className="text-[11px] font-bold text-slate-400">VND</span>
+          </div>
+        </div>
+        <span className="text-[11px] font-black text-emerald-700 dark:text-emerald-400 shrink-0">Phân tích →</span>
+      </button>
+
       {/* Thao tác nhanh */}
       <div className="grid grid-cols-4 gap-2">
         <button
@@ -109,11 +125,11 @@ export const AdminMobileDashboard: React.FC<AdminMobileDashboardProps> = ({ stat
         </button>
         <button
           type="button"
-          onClick={() => onNavigate('services')}
+          onClick={() => onNavigate('analytics')}
           className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-2.5 text-center shadow-sm active:scale-95 transition cursor-pointer"
         >
-          <div className="text-base leading-none">🛠</div>
-          <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-1.5">Dịch vụ</div>
+          <div className="text-base leading-none">📊</div>
+          <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-1.5">Phân tích</div>
         </button>
       </div>
     </div>

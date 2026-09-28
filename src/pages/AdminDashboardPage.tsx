@@ -2196,7 +2196,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           pending: pendingProperties.length,
           services: adminResidentServices.length,
           stores: adminStores.length,
-          jobs: contacts.length
+          jobs: contacts.length,
+          revenue: Number(analyticsData?.revenue || 0)
         }}
         onNavigate={(target) => {
           if (target === 'sale') { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); }
@@ -2205,6 +2206,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           else if (target === 'services') { handleSelectMainTab('technicians'); }
           else if (target === 'jobs') { handleSelectMainTab('recruitment'); }
           else if (target === 'stores') { handleSelectMainTab('resident_market'); }
+          else if (target === 'analytics') { setActiveTab('analytics'); }
         }}
       />
 
@@ -10320,7 +10322,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               { key: 'orders', label: 'Đơn hàng', active: activeTab === 'orders_mgmt', onClick: () => goMobileTab(() => setActiveTab('orders_mgmt')) },
               { key: 'pkgo', label: 'Gói dịch vụ', active: activeTab === 'package_orders_mgmt', onClick: () => goMobileTab(() => setActiveTab('package_orders_mgmt')) },
               { key: 'fin', label: 'Tài chính cư dân', active: activeTab === 'resident_finance', onClick: () => goMobileTab(() => setActiveTab('resident_finance')) },
-              { key: 'rep', label: 'Đánh giá đối tác', active: activeTab === 'partners_reputation', onClick: () => goMobileTab(() => setActiveTab('partners_reputation')) }
+              { key: 'rep', label: 'Đánh giá đối tác', active: activeTab === 'partners_reputation', onClick: () => goMobileTab(() => setActiveTab('partners_reputation')) },
+              { key: 'reputation', label: '📰 Bảng tin cư dân & YouTube PR', active: activeTab === 'reputation', onClick: () => goMobileTab(() => setActiveTab('reputation')) }
             ]
           },
           {
@@ -10341,6 +10344,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           {
             title: '📣 Marketing & Hệ thống',
             items: [
+              { key: 'analytics', label: '📊 Phân tích & Doanh thu', active: activeTab === 'analytics', onClick: () => goMobileTab(() => setActiveTab('analytics')) },
               { key: 'mkt', label: 'Marketing', active: activeTab === 'marketing', onClick: () => goMobileTab(() => setActiveTab('marketing')) },
               { key: 'seo', label: 'SEO Center', active: activeTab === 'seo', onClick: () => goMobileTab(() => setActiveTab('seo')) },
               { key: 'zalo', label: 'Zalo Group', active: activeTab === 'zalo', onClick: () => goMobileTab(() => setActiveTab('zalo')) },
