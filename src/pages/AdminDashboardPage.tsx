@@ -39,6 +39,7 @@ import { AdminZaloGroupCenter } from '../components/AdminZaloGroupCenter';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
 import { AdminMobileNav } from '../components/AdminMobileNav';
+import { AdminMobileDashboard } from '../components/AdminMobileDashboard';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminBusinessManager } from '../components/AdminBusinessManager';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
@@ -2176,6 +2177,26 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Màn Tổng quan kiểu mới cho mobile (bộ mockup 9 màn) — chỉ hiện < 1024px */}
+      <AdminMobileDashboard
+        stats={{
+          sale: saleProperties.length,
+          rent: rentProperties.length,
+          pending: pendingProperties.length,
+          services: adminResidentServices.length,
+          stores: adminStores.length,
+          jobs: contacts.length
+        }}
+        onNavigate={(target) => {
+          if (target === 'sale') { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); }
+          else if (target === 'rent') { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('rent'); }
+          else if (target === 'pending') { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('pending'); }
+          else if (target === 'services') { handleSelectMainTab('technicians'); }
+          else if (target === 'jobs') { handleSelectMainTab('recruitment'); }
+          else if (target === 'stores') { handleSelectMainTab('resident_market'); }
+        }}
+      />
 
       {/* 1. TOP HEADER - Tinh gọn, hiện đại, không chiếm diện tích */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl border border-slate-800 shadow-xl">
