@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { 
   ShieldCheck, Users, Trophy, Clock, Target, Award, CheckCircle2, 
   AlertTriangle, Filter, Search, Plus, Play, Check, Star, DollarSign, 
-  Car, Wrench, Sparkles, Building2, UserCheck, Layers, ChevronRight, Zap, RefreshCw, Lock
-} from 'lucide-react';
+  Car, Wrench, Sparkles, Building2, UserCheck, Layers, ChevronRight, Zap, RefreshCw, Lock,
+  X} from 'lucide-react';
 import { 
   User, BranchScope, UserActivityMetrics, RewardConfig, 
   HourlyTask, CRMContactRecord, ServiceJobDispatch 
@@ -293,6 +293,15 @@ export const EnterpriseAdminCore: React.FC<EnterpriseAdminCoreProps> = ({
   const [metrics, setMetrics] = useState<UserActivityMetrics[]>(INITIAL_METRICS);
   const [rewards, setRewards] = useState<RewardConfig[]>(INITIAL_REWARDS);
   const [hourlyTasks, setHourlyTasks] = useState<HourlyTask[]>(INITIAL_HOURLY_TASKS);
+
+  const handleDeleteBranch = (id: string) => {
+    if (!confirm('Xóa chi nhánh này?')) return;
+    setBranches(prev => prev.filter(b => b.id !== id));
+  };
+  const handleDeleteTask = (id: string) => {
+    if (!confirm('Xóa nhiệm vụ này?')) return;
+    setHourlyTasks(prev => prev.filter(t => t.id !== id));
+  };
   const [crmContacts, setCrmContacts] = useState<CRMContactRecord[]>(INITIAL_CRM_CONTACTS);
   const [jobDispatches, setJobDispatches] = useState<ServiceJobDispatch[]>(INITIAL_JOB_DISPATCHES);
 
@@ -687,6 +696,7 @@ export const EnterpriseAdminCore: React.FC<EnterpriseAdminCoreProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {branches.map((br) => (
               <div key={br.id} className="p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-sm space-y-3 relative">
+                <button type="button" onClick={() => handleDeleteBranch(br.id)} title="Xóa chi nhánh" className="absolute top-3 right-3 p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"><X className="w-4 h-4" /></button>
                 <div className="flex items-center justify-between">
                   <span className="px-2.5 py-0.5 bg-purple-500/10 text-purple-600 dark:text-purple-300 font-extrabold text-[10px] rounded-full border border-purple-500/30">
                     🏷️ {br.categorySector}
@@ -758,7 +768,8 @@ export const EnterpriseAdminCore: React.FC<EnterpriseAdminCoreProps> = ({
 
           <div className="space-y-4">
             {hourlyTasks.map((t) => (
-              <div key={t.id} className="p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-sm space-y-3">
+              <div key={t.id} className="p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-sm space-y-3 relative">
+                <button type="button" onClick={() => handleDeleteTask(t.id)} title="Xóa nhiệm vụ" className="absolute top-3 right-3 p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"><X className="w-4 h-4" /></button>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-3">
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-300 font-extrabold text-[10px] rounded-full">
