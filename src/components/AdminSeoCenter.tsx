@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { 
   Globe, Search, Sparkles, CheckCircle2, ShieldCheck, AlertCircle, FileCode, 
   Share2, RefreshCw, Copy, ExternalLink, Sliders, Database, Layers, Eye, Code, 
-  Tag, Download, ArrowUpRight, Zap, Check, HelpCircle, Award
-} from 'lucide-react';
+  Tag, Download, ArrowUpRight, Zap, Check, HelpCircle, Award,
+  Trash2} from 'lucide-react';
 import { Property, NewsArticle, Project } from '../types';
 import { ArticleAuditCenter } from './ArticleAuditCenter';
 import { INITIAL_USER_STOREFRONTS } from '../data/residentStoresData';
@@ -246,6 +246,11 @@ export const AdminSeoCenter: React.FC<AdminSeoCenterProps> = ({
     setNewFromUrl('');
     setNewToUrl('');
     alert('Thêm đường dẫn Chuyển Hướng 301 Redirects thành công!');
+  };
+
+  const handleDeleteRedirect = (from: string) => {
+    if (!confirm(`Xóa redirect ${from}?`)) return;
+    setRedirectList(prev => prev.filter(r => r.from !== from));
   };
 
   // Dynamic Sitemap Generation
@@ -1163,6 +1168,13 @@ Sitemap: https://chocudan24h.com/sitemap.xml`;
                     <td className="p-3 font-mono text-rose-500">{r.from}</td>
                     <td className="p-3 font-mono text-emerald-500">{r.to}</td>
                     <td className="p-3 font-bold">{r.code} Permanent</td>
+                    <td className="p-3 text-right">
+                      <button type="button" onClick={() => handleDeleteRedirect(r.from)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                        title="Xóa redirect">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
