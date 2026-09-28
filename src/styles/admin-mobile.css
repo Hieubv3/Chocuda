@@ -74,4 +74,7 @@
 
   /* Thanh điều hướng nhanh trên cùng: nổi khối nhệ */
   .cd24-admin > div:first-child { box-shadow: 0 6px 18px rgba(16, 40, 32, 0.06); }
+
+  /* Focus mode: an khoi tong quan khi vao phan he (chi <=1023px) */
+  .cd24-mobile-focus .cd24-mobile-collapsible { display: none; }
 }

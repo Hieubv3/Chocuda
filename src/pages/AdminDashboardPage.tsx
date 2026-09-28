@@ -116,7 +116,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   })();
 
   const handleSelectMainTab = (tab: 'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools') => {
-    // Mobile: cuộn về đầu trang khi chuyển phân hệ (tránh bị "đứng giữa trang")
+    // Mobile: bật chế độ tập trung + cuộn về đầu trang khi chuyển phân hệ
+    setMobileTabFocus(true);
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { window.scrollTo(0, 0); }
     }
@@ -181,10 +182,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const [showMobileMenuDrawer, setShowMobileMenuDrawer] = useState<boolean>(false);
+  // Chế độ tập trung mobile: khi vào 1 phân hệ, ẩn khối tổng quan để phân hệ chiếm trọn màn hình
+  const [mobileTabFocus, setMobileTabFocus] = useState<boolean>(false);
 
   // Điều hướng từ Menu mobile: chuyển tab + cuộn lên đầu + đóng drawer
   const goMobileTab = (fn: () => void) => {
     fn();
+    setMobileTabFocus(true);
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { window.scrollTo(0, 0); }
     }
@@ -1997,7 +2001,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   return (
-    <div className="cd24-admin max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4">
+    <div className={`cd24-admin${mobileTabFocus ? ' cd24-mobile-focus' : ''} max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4`}>
       
       {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Điều hướng nhanh trực tiếp bên trong Admin */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
@@ -2188,6 +2192,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       </div>
 
+      {/* Khối tổng quan mobile — ẩn khi ở chế độ tập trung */}
+      <div className="cd24-mobile-collapsible">
+
       {/* Màn Tổng quan kiểu mới cho mobile (bộ mockup 9 màn) — chỉ hiện < 1024px */}
       <AdminMobileDashboard
         stats={{
@@ -2206,7 +2213,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           else if (target === 'services') { handleSelectMainTab('technicians'); }
           else if (target === 'jobs') { handleSelectMainTab('recruitment'); }
           else if (target === 'stores') { handleSelectMainTab('resident_market'); }
-          else if (target === 'analytics') { setActiveTab('analytics'); }
+          else if (target === 'analytics') { goMobileTab(() => setActiveTab('analytics')); }
         }}
       />
 
@@ -2296,42 +2303,72 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* 2. LIVE METRICS - THỐNG KÊ NHANH (Sổ ra / Thu gọn để tiết kiệm tối đa không gian) */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-xs transition">
         <div className="flex items-center justify-between gap-2">
-          {/* Quick summary inline text/chips */}
-          <button
-            type="button"
-            onClick={() => setShowMetricsDropdown(!showMetricsDropdown)}
-            className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-none text-left cursor-pointer py-0.5"
-            title="Bấm để mở rộng / thu gọn thẻ thống kê chi tiết"
-          >
-            <span className="p-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md font-bold text-xs shrink-0 flex items-center gap-1">
+          {/* Quick summary chips — bấm chip nào nhảy thẳng tới khu đó ngay lập tức */}
+          <div className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
+            <button
+              type="button"
+              onClick={() => setShowMetricsDropdown(!showMetricsDropdown)}
+              className="p-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md font-bold text-xs shrink-0 flex items-center gap-1 cursor-pointer"
+              title="Bấm để mở rộng / thu gọn thẻ thống kê chi tiết"
+            >
               📊 <span className="font-extrabold hidden xs:inline">Chỉ số:</span>
-            </span>
+            </button>
             
             <div className="flex items-center gap-1.5 text-xs font-bold shrink-0">
-              <span className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 whitespace-nowrap">
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); }}
+                className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 whitespace-nowrap cursor-pointer active:scale-95 transition"
+                title="Xem danh sách BĐS đang bán"
+              >
                 🏠 {saleProperties.length} Bán
-              </span>
-              <span className="px-2 py-0.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 whitespace-nowrap">
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('rent'); }}
+                className="px-2 py-0.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 whitespace-nowrap cursor-pointer active:scale-95 transition"
+                title="Xem danh sách BĐS cho thuê"
+              >
                 🔑 {rentProperties.length} Thuê
-              </span>
-              <span className={`px-2 py-0.5 rounded-lg border whitespace-nowrap ${
-                pendingProperties.length > 0
-                  ? 'bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-300 border-amber-300 dark:border-amber-700 animate-pulse'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
-              }`}>
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('pending'); }}
+                className={`px-2 py-0.5 rounded-lg border whitespace-nowrap cursor-pointer active:scale-95 transition ${
+                  pendingProperties.length > 0
+                    ? 'bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-300 border-amber-300 dark:border-amber-700 animate-pulse'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                }`}
+                title="Xem bài đang chờ duyệt"
+              >
                 ⏳ {pendingProperties.length} Duyệt
-              </span>
-              <span className="px-2 py-0.5 rounded-lg bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60 whitespace-nowrap">
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectMainTab('technicians')}
+                className="px-2 py-0.5 rounded-lg bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60 whitespace-nowrap cursor-pointer active:scale-95 transition"
+                title="Xem dịch vụ cư dân & thợ"
+              >
                 🛠️ {adminResidentServices.length} Thợ
-              </span>
-              <span className="px-2 py-0.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 whitespace-nowrap">
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectMainTab('resident_market')}
+                className="px-2 py-0.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 whitespace-nowrap cursor-pointer active:scale-95 transition"
+                title="Xem gian hàng"
+              >
                 🏪 {adminStores.length} Shop
-              </span>
-              <span className="px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 whitespace-nowrap">
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); }}
+                className="px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 whitespace-nowrap cursor-pointer active:scale-95 transition"
+                title="Xem khách & việc làm"
+              >
                 💼 {contacts.length} Việc
-              </span>
+              </button>
             </div>
-          </button>
+          </div>
 
           {/* Toggle Button */}
           <button
@@ -2467,6 +2504,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </div>
         )}
       </div>
+      </div>{/* /cd24-mobile-collapsible — hết khối tổng quan */}
 
       {/* 3. MAIN ADMIN WORKSPACE: 2-COLUMN WITH PERSISTENT LEFT SIDEBAR + MAIN WORKSPACE */}
       <div className="flex flex-col lg:flex-row items-start gap-4">
@@ -10276,6 +10314,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </form>
           </div>
         </div>
+      )}
+
+      {/* Nút về Tổng quan khi đang ở chế độ tập trung (mobile) */}
+      {mobileTabFocus && (
+        <button
+          type="button"
+          onClick={() => {
+            setMobileTabFocus(false);
+            if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+              try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { window.scrollTo(0, 0); }
+            }
+          }}
+          className="lg:hidden fixed bottom-[80px] right-3 z-40 px-3 py-2 rounded-full bg-slate-900/90 text-white text-[11px] font-bold shadow-lg active:scale-95 transition cursor-pointer"
+        >
+          🏠 Tổng quan
+        </button>
       )}
 
       {/* Bottom navigation cho Admin trên mobile (thiết kế mới) */}
