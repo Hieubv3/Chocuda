@@ -1,0 +1,56 @@
+/* ==========================================================================
+   ADMIN THEME V2 — "Giao diện mới" cho khu quản trị (28/09/2026)
+   --------------------------------------------------------------------------
+   - Áp bảng màu SAGE (đã thiết kế sẵn trong chocudan-theme.css – mục 3b)
+     RIÊNG cho .cd24-admin bằng cách ghi đè biến --color-slate-*.
+     (Tailwind v4 dùng var() cho mọi utility màu => không cần sửa markup.)
+   - Tăng chất "mềm": nền ấm, thẻ bo tròn + bóng mềm, ô nhập bo 12px.
+   - Không đổi bố cục, không đổi logic. Áp cho cả PC lẫn mobile.
+   ========================================================================== */
+
+/* 1) Bảng màu sage riêng cho admin -------------------------------------- */
+.cd24-admin {
+  --color-slate-50: #f6f7f4;
+  --color-slate-100: #eceee8;
+  --color-slate-200: #dcdfd6;
+  --color-slate-300: #c3c8bb;
+  --color-slate-400: #9aa095;
+  --color-slate-500: #767c72;
+  --color-slate-600: #5a6057;
+  --color-slate-700: #454a42;
+  --color-slate-800: #2f332c;
+  --color-slate-900: #1d201a;
+  --color-slate-950: #111309;
+
+  /* Nền khối quản trị: trắng ấm sage, tách hẳn khỏi tông lạnh cũ */
+  background: #f6f7f4;
+}
+
+.dark .cd24-admin,
+html[data-theme="dark"] .cd24-admin {
+  background: #14170f;
+}
+
+/* 2) Thẻ trắng: bóng mềm thay cho viền phẳng ---------------------------- */
+.cd24-admin .bg-white.rounded-2xl,
+.cd24-admin .bg-white.rounded-3xl {
+  box-shadow: 0 4px 16px rgba(21, 24, 15, 0.05);
+}
+
+/* 3) Ô nhập liệu: bo mềm 12px đồng nhất --------------------------------- */
+.cd24-admin input:not([type='checkbox']):not([type='radio']):not([type='file']),
+.cd24-admin select,
+.cd24-admin textarea {
+  border-radius: 12px;
+}
+
+/* 4) Bảng: đường kẻ ngả sage cho đồng bộ -------------------------------- */
+.cd24-admin table td,
+.cd24-admin table th {
+  border-color: #e3e6dd;
+}
+
+/* 5) Thanh điều hướng nhanh trên cùng: bo mềm hơn ----------------------- */
+.cd24-admin > div:first-child {
+  border-radius: 16px;
+}
