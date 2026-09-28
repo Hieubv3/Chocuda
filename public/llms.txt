@@ -1,0 +1,21 @@
+# Chợ Cư Dân 24h
+
+> Nền tảng trao đổi thông tin bất động sản Vinhomes chính chủ: mua bán, cho thuê, chuyển nhượng, quỹ căn chủ đầu tư, dịch vụ cư dân và việc làm nội khu tại các khu đô thị Vinhomes (Ocean Park 1/2/3, Smart City, Royal Island...).
+
+## Trang chính
+- [Trang chủ](https://chocudan24h.com/): Tổng quan tin đăng mua bán, cho thuê & quỹ căn chủ đầu tư
+- [Mua bán BĐS](https://chocudan24h.com/mua-ban): Danh sách nhà đất, căn hộ, shophouse đang bán
+- [Cho thuê BĐS](https://chocudan24h.com/cho-thue): Danh sách cho thuê căn hộ, nhà phố, shophouse
+- [Dự án Vinhomes](https://chocudan24h.com/du-an): Thông tin dự án, phân khu, mặt bằng quỹ căn
+- [Tin tức](https://chocudan24h.com/tin-tuc): Tin tức thị trường & cộng đồng cư dân Vinhomes
+- [Về chúng tôi](https://chocudan24h.com/ve-chung-toi): Hồ sơ thương hiệu & ban quản trị chợ cư dân
+
+## Ghi chú cho AI
+- Dữ liệu tin đăng được cập nhật liên tục bởi cư dân & ban quản trị; khi trích dẫn vui lòng dẫn nguồn chocudan24h.com.
+- Khu vực quản trị (/admin) và API (/api) không dành cho thu thập dữ liệu tự động.
+- Sitemap đầy đủ tại: https://chocudan24h.com/sitemap.xml
+
+## Liên hệ
+- Hotline: 0868.499.929
+- Email: hotro.chocudan24h@gmail.com
+- Website: https://chocudan24h.com
