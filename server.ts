@@ -2206,6 +2206,13 @@ app.all(["/api/auth/users/:id", "/api/users/:id"], authenticateToken, requireOwn
   const targetUser = usersStore[userIndex];
   const oldBalance = targetUser.balance || 0;
 
+  // SECURITY: chặn hạ cấp quản trị viên CUỐI CÙNG (tránh tự khóa hệ thống)
+  if (role !== undefined && targetUser.role === 'admin' && role !== 'admin') {
+    const adminCount = usersStore.filter(u => u.role === 'admin').length;
+    if (adminCount <= 1) {
+      return res.status(400).json({ success: false, error: 'Không thể hạ cấp quản trị viên cuối cùng của hệ thống!' });
+    }
+  }
   if (role !== undefined) targetUser.role = role;
   if (upTinCredits !== undefined) targetUser.upTinCredits = Number(upTinCredits);
   
@@ -2271,8 +2278,15 @@ app.delete("/api/auth/users/:id", authenticateToken, requireAdmin, (req, res) =>
   if (!targetUser) {
     return res.status(404).json({ error: "Thành viên không tồn tại" });
   }
-  // FIX: chuyển vào Thùng rác (khôi phục được) thay vì xóa vĩnh viễn
   const actor = resolveActor(req);
+  // SECURITY: không cho xóa chính mình & không cho xóa quản trị viên CUỐI CÙNG của hệ thống
+  if (actor.id === id) {
+    return res.status(400).json({ error: "Bạn không thể tự xóa tài khoản của chính mình!" });
+  }
+  if (targetUser.role === 'admin' && usersStore.filter(u => u.role === 'admin').length <= 1) {
+    return res.status(400).json({ error: "Không thể xóa quản trị viên cuối cùng của hệ thống!" });
+  }
+  // Chuyển vào Thùng rác (khôi phục được) thay vì xóa vĩnh viễn
   usersStore = usersStore.filter(u => u.id !== id);
   softDeleteEntity('user', id, (targetUser as any).name || (targetUser as any).email || id, targetUser, req, `Admin ${actor.name} đã xóa tài khoản`);
   saveDataStore();

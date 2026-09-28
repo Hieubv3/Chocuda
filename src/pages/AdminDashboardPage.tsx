@@ -873,12 +873,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // User Management Actions
   const handleUpdateUserRole = async (userId: string, newRole: string) => {
     try {
-      setRegisteredUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole as any } : u));
-      await fetch(`/api/auth/users/${userId}`, {
+      const res = await fetch(`/api/auth/users/${userId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole })
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data.error || 'Đổi vai trò thất bại!');
+        fetchUsers();
+        return;
+      }
+      setRegisteredUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole as any } : u));
       fetchUsers();
     } catch (e) {
       console.error('Error updating user role:', e);
@@ -926,15 +932,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!window.confirm('⚠️ CẢNH BÁO: Xóa tài khoản này khỏi hệ thống vĩnh viễn?')) return;
+    if (!window.confirm('Xóa tài khoản này? Tài khoản sẽ được chuyển vào Thùng rác (có thể khôi phục).')) return;
 
     try {
+      const res = await fetch(`/api/auth/users/${userId}`, { method: 'DELETE' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data.error || 'Xóa thất bại!');
+        fetchUsers();
+        return;
+      }
       setRegisteredUsers(prev => prev.filter(u => u.id !== userId));
-      await fetch(`/api/auth/users/${userId}`, { method: 'DELETE' });
-      alert('Đã xóa tài khoản thành công!');
+      alert(data.message || 'Đã chuyển tài khoản vào Thùng rác (có thể khôi phục)!');
       fetchUsers();
     } catch (e) {
       console.error('Error deleting user:', e);
+      fetchUsers();
     }
   };
 
@@ -4581,9 +4594,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* Tab: Zalo Groups Community Center */}
       {activeTab === 'site_settings' && (
           <div className="space-y-4">
-            <AdminSiteSettingsPanel />
-            {/* Ban quản trị Chợ cư dân — hiển thị ở trang "Về chúng tôi" trên web */}
+            {/* Ban quản trị Chợ cư dân — hiển thị ở trang "Về chúng tôi" trên web (đặt trên cùng cho dễ thấy) */}
             <AdminBoardMembersManager />
+            <AdminSiteSettingsPanel />
           </div>
         )}
 
