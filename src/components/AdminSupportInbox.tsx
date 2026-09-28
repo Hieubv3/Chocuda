@@ -105,12 +105,17 @@ export const AdminSupportInbox: React.FC = () => {
     return list.sort((a, b) => new Date(b.lastAt).getTime() - new Date(a.lastAt).getTime());
   })();
 
-  const filteredThreads = search.trim()
-    ? threads.filter(t =>
-        t.partnerName.toLowerCase().includes(search.toLowerCase()) ||
-        t.title.toLowerCase().includes(search.toLowerCase()) ||
-        t.lastMessage.toLowerCase().includes(search.toLowerCase()))
-    : threads;
+  const filteredThreads = (() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return threads;
+    return threads.filter(t =>
+      t.partnerName.toLowerCase().includes(q) ||
+      t.title.toLowerCase().includes(q) ||
+      t.lastMessage.toLowerCase().includes(q) ||
+      // Tra lịch sử chat: tìm trong TOÀN BỘ nội dung tin nhắn của hội thoại
+      t.messages.some(m => (m.content || '').toLowerCase().includes(q))
+    );
+  })();
 
   const selected = threads.find(t => t.key === selectedKey) || null;
 
@@ -183,7 +188,7 @@ export const AdminSupportInbox: React.FC = () => {
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm cư dân / dịch vụ..."
+                placeholder="Tìm theo tên, dịch vụ hoặc nội dung tin nhắn..."
                 className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

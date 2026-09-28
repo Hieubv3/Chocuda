@@ -6005,34 +6005,59 @@ Trả về DUY NHẤT một JSON object:
 });
 
 // MESSAGING ENDPOINTS
-app.get("/api/messages", (req, res) => {
+app.get("/api/messages", optionalAuth, (req, res) => {
   const { userId, threadId } = req.query;
+  const authUser = (req as any).user;
   if (threadId) {
-    // Lấy toàn bộ hội thoại theo thread (chat dịch vụ cư dân nội bộ)
+    // Lấy toàn bộ hội thoại theo thread (chat dịch vụ cư dân nội bộ — khách có thể chat không cần đăng nhập)
     const threadMsgs = messagesStore
       .filter(m => (m as any).threadId === threadId)
       .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     return res.json(threadMsgs);
   }
   if (userId) {
+    // SECURITY: chỉ chính chủ (đã đăng nhập) hoặc admin được tra tin nhắn theo userId
+    if (!authUser) return res.status(401).json({ error: "Cần đăng nhập để xem tin nhắn." });
+    if (authUser.role !== 'admin' && authUser.userId !== String(userId)) {
+      return res.status(403).json({ error: "Không có quyền xem tin nhắn của người khác." });
+    }
     const userMsgs = messagesStore.filter(m => m.senderId === userId || m.receiverId === userId || m.receiverId === 'ALL');
     return res.json(userMsgs);
+  }
+  // SECURITY: danh sách TOÀN BỘ tin nhắn chỉ dành cho admin (Hộp thư Chat / tra lịch sử chat)
+  if (!authUser || authUser.role !== 'admin') {
+    return res.status(401).json({ error: "Chỉ quản trị viên được xem toàn bộ tin nhắn." });
   }
   res.json(messagesStore);
 });
 
-app.post("/api/messages", (req, res) => {
+app.post("/api/messages", optionalAuth, (req, res) => {
   const { senderId, senderName, senderAvatar, receiverId, receiverName, storeId, content } = req.body;
   const { threadId, threadTitle, serviceId, serviceName } = req.body;
+  const authUser = (req as any).user;
   if (!content || !senderId) {
     return res.status(400).json({ error: "Nội dung tin nhắn không thể để trống." });
   }
 
+  // SECURITY: chống giả mạo danh tính — nếu là người dùng đã đăng nhập (không phải admin),
+  // ép senderId/tên theo token thay vì tin dự liệu client gửi lên.
+  let finalSenderId = senderId;
+  let finalSenderName = senderName || 'Cư Dân';
+  let finalSenderAvatar = senderAvatar;
+  if (authUser && authUser.role !== 'admin') {
+    finalSenderId = authUser.userId || senderId;
+    const dbUser = usersStore.find(u => u.id === finalSenderId);
+    if (dbUser) {
+      finalSenderName = (dbUser as any).name || finalSenderName;
+      finalSenderAvatar = (dbUser as any).avatar || finalSenderAvatar;
+    }
+  }
+
   const newMsg = {
     id: `msg-${Date.now()}`,
-    senderId,
-    senderName: senderName || 'Cư Dân',
-    senderAvatar,
+    senderId: finalSenderId,
+    senderName: finalSenderName,
+    senderAvatar: finalSenderAvatar,
     receiverId: receiverId || 'user-admin',
     receiverName: receiverName || 'Người Nhận',
     storeId,
@@ -6052,7 +6077,7 @@ app.post("/api/messages", (req, res) => {
 });
 
 // ADMIN: đánh dấu đã đọc / trả lời 1 thread chat dịch vụ cư dân
-app.post("/api/messages/:id/read", (req, res) => {
+app.post("/api/messages/:id/read", authenticateToken, requireAdmin, (req, res) => {
   const msg = messagesStore.find(m => m.id === req.params.id);
   if (msg) {
     msg.read = true;
@@ -6061,7 +6086,7 @@ app.post("/api/messages/:id/read", (req, res) => {
   res.json({ success: true });
 });
 
-app.put("/api/messages/:id", (req, res) => {
+app.put("/api/messages/:id", authenticateToken, requireAdmin, (req, res) => {
   const msg = messagesStore.find(m => m.id === req.params.id);
   if (!msg) {
     return res.status(404).json({ error: "Không tìm thấy tin nhắn." });
