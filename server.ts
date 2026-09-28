@@ -830,6 +830,13 @@ const INITIAL_STORE_PACKAGES: any[] = [
 let storePackagesStore: any[] = [...INITIAL_STORE_PACKAGES];
 let packageOrdersStore: any[] = [];
 let businessAccountsStore: any[] = [];
+
+// Ban quản trị chợ cư dân (hiển thị công khai ở trang "Về chúng tôi", admin thêm/sửa/xóa)
+let boardMembersStore: any[] = [
+  { id: 'bm-1', name: 'Chợ Cư Dân 24h', role: 'Trưởng ban Quản trị', avatar: '', phone: '0868.499.929', note: 'Điều hành chung & kết nối cư dân toàn hệ thống', sortOrder: 1 },
+  { id: 'bm-2', name: 'Ban Vận hành Khu đô thị', role: 'Phó ban Thường trực', avatar: '', phone: '', note: 'Phối hợp BQL các khu & xử lý vận hành', sortOrder: 2 },
+  { id: 'bm-3', name: 'Tổ Hỗ trợ Cư dân 24/7', role: 'Thành viên', avatar: '', phone: '0868.499.929', note: 'Tiếp nhận thông tin, hỗ trợ đăng tin & chăm sóc cư dân', sortOrder: 3 }
+];
 let businessMembersStore: any[] = [];
 
 // Recruitment & Candidate CV Stores
@@ -1363,6 +1370,11 @@ function loadDataStore() {
           .filter((c: any) => defaultKeys.includes(c.key)) as any;
       }
 
+      // 6c. Board members (Ban quản trị chợ cư dân)
+      if (Array.isArray(data.boardMembers)) {
+        boardMembersStore = data.boardMembers;
+      }
+
       // 7. Users
       if (Array.isArray(data.users) && data.users.length > 0) {
         const userMap = new Map(data.users.map((u: any) => [u.id, u]));
@@ -1488,6 +1500,7 @@ ads: adsStore,
       upTinOrders: upTinOrdersStore,
       paymentOrders: paymentOrdersStore,
       faq: faqStore,
+      boardMembers: boardMembersStore,
       taxConfig: taxConfigStore,
       taxLedger: taxLedgerStore,
       developerUnits: developerUnitsStore,
@@ -4514,6 +4527,64 @@ app.delete("/api/admin/businesses/:id", authenticateToken, requireAdmin, (req, r
   softDeleteEntity('business', acc.id, acc.name || acc.brandName || acc.id, acc, req, `Admin ${actor.name} đã xóa doanh nghiệp`);
   saveDataStore();
   res.json({ success: true, message: "Đã chuyển doanh nghiệp vào Thùng rác (có thể khôi phục)." });
+});
+
+// ===== BAN QUẢN TRỊ CHỢ CƯ DÂN (Board members) =====
+// Công khai: danh sách ban quản trị (hiển thị ở trang Về chúng tôi)
+app.get("/api/board-members", (req, res) => {
+  const list = boardMembersStore.slice().sort((a: any, b: any) => (a.sortOrder || 99) - (b.sortOrder || 99));
+  res.json(list);
+});
+
+// Admin: thêm thành viên
+app.post("/api/admin/board-members", authenticateToken, requireAdmin, (req, res) => {
+  const body = req.body || {};
+  if (!body.name || !String(body.name).trim()) {
+    return res.status(400).json({ error: "Thiếu tên thành viên." });
+  }
+  const member = {
+    id: `bm-${Date.now()}`,
+    name: String(body.name).trim(),
+    role: String(body.role || 'Thành viên').trim(),
+    avatar: String(body.avatar || ''),
+    phone: String(body.phone || ''),
+    note: String(body.note || ''),
+    sortOrder: Number(body.sortOrder) || boardMembersStore.length + 1,
+    createdAt: new Date().toISOString()
+  };
+  boardMembersStore.push(member);
+  saveDataStore();
+  res.status(201).json({ success: true, member });
+});
+
+// Admin: sửa thành viên
+app.put("/api/admin/board-members/:id", authenticateToken, requireAdmin, (req, res) => {
+  const idx = boardMembersStore.findIndex((m: any) => m.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy thành viên." });
+  const body = req.body || {};
+  boardMembersStore[idx] = {
+    ...boardMembersStore[idx],
+    name: body.name !== undefined ? String(body.name).trim() : boardMembersStore[idx].name,
+    role: body.role !== undefined ? String(body.role).trim() : boardMembersStore[idx].role,
+    avatar: body.avatar !== undefined ? String(body.avatar) : boardMembersStore[idx].avatar,
+    phone: body.phone !== undefined ? String(body.phone) : boardMembersStore[idx].phone,
+    note: body.note !== undefined ? String(body.note) : boardMembersStore[idx].note,
+    sortOrder: body.sortOrder !== undefined ? Number(body.sortOrder) || 0 : boardMembersStore[idx].sortOrder,
+    updatedAt: new Date().toISOString()
+  };
+  saveDataStore();
+  res.json({ success: true, member: boardMembersStore[idx] });
+});
+
+// Admin: xóa thành viên
+app.delete("/api/admin/board-members/:id", authenticateToken, requireAdmin, (req, res) => {
+  const before = boardMembersStore.length;
+  boardMembersStore = boardMembersStore.filter((m: any) => m.id !== req.params.id);
+  if (boardMembersStore.length === before) {
+    return res.status(404).json({ error: "Không tìm thấy thành viên." });
+  }
+  saveDataStore();
+  res.json({ success: true, message: "Đã xóa thành viên ban quản trị." });
 });
 
 app.get("/api/store-packages", (req, res) => {

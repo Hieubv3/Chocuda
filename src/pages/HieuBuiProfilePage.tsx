@@ -4,6 +4,7 @@ import logoImg from '../assets/images/chocudan24h_custom_logo_1785384117746.jpg'
 import { HIEU_BUI_PROFILE } from '../data/initialData';
 import { Language } from '../types';
 import { RealestateVideoChannelSection } from '../components/RealestateVideoChannelSection';
+import { BoardMembersSection } from '../components/BoardMembersSection';
 
 export const HieuBuiProfilePage: React.FC<{ language: Language }> = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -107,6 +108,9 @@ export const HieuBuiProfilePage: React.FC<{ language: Language }> = () => {
           ))}
         </div>
       </div>
+
+      {/* Ban quản trị Chợ cư dân (có avatar) */}
+      <BoardMembersSection />
 
       {/* Embedded Personal Video Channel Section */}
       <RealestateVideoChannelSection />

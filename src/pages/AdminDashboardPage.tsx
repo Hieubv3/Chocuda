@@ -9,6 +9,7 @@ import { AdminSupportInbox } from '../components/AdminSupportInbox';
 import { History } from 'lucide-react';
 import { AdminKycManager } from '../components/AdminKycManager';
 import { AdminSiteSettingsPanel } from '../components/AdminSiteSettingsPanel';
+import { AdminBoardMembersManager } from '../components/AdminBoardMembersManager';
 import { DeveloperUnitsAdmin } from '../components/DeveloperUnitsAdmin';
 import { calculateExpiryInfo } from '../lib/expiration';
 
@@ -4579,7 +4580,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
       {/* Tab: Zalo Groups Community Center */}
       {activeTab === 'site_settings' && (
-          <AdminSiteSettingsPanel />
+          <div className="space-y-4">
+            <AdminSiteSettingsPanel />
+            {/* Ban quản trị Chợ cư dân — hiển thị ở trang "Về chúng tôi" trên web */}
+            <AdminBoardMembersManager />
+          </div>
         )}
 
         {activeTab === 'zalo' && (
