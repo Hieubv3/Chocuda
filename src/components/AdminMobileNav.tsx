@@ -20,7 +20,7 @@ interface AdminMobileNavProps {
 export const AdminMobileNav: React.FC<AdminMobileNavProps> = ({ items }) => {
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-[70] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-6px_20px_rgba(16,40,32,0.06)]"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-6px_20px_rgba(16,40,32,0.06)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       aria-label="Điều hướng quản trị"
     >

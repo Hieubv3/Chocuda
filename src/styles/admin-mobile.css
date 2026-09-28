@@ -60,4 +60,18 @@
 
   /* Khu quản trị trên điện thoại: bớt bo góc lớn cho đỡ chiếm chỗ */
   .cd24-admin .rounded-3xl { border-radius: 1rem; }
+
+  /* ===== Đợt 2-4 (28/09/2026): polish theo thiết kế mới ===== */
+
+  /* Chừa đáy cho bottom nav mới + safe-area iPhone */
+  .cd24-admin { padding-bottom: calc(6.25rem + env(safe-area-inset-bottom)); }
+
+  /* Cuộn mượt trong khối admin, hạn chế lọt cuộn ra ngoài */
+  .cd24-admin { overscroll-behavior-y: contain; }
+
+  /* Chip lọc dạng viên: vùng chạm tối thiểu 32px cho ngón tay */
+  .cd24-admin button.rounded-full { min-height: 32px; }
+
+  /* Thanh điều hướng nhanh trên cùng: nổi khối nhệ */
+  .cd24-admin > div:first-child { box-shadow: 0 6px 18px rgba(16, 40, 32, 0.06); }
 }

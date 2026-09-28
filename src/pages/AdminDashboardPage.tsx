@@ -114,6 +114,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   })();
 
   const handleSelectMainTab = (tab: 'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools') => {
+    // Mobile: cuộn về đầu trang khi chuyển phân hệ (tránh bị "đứng giữa trang")
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { window.scrollTo(0, 0); }
+    }
     if (tab === 'bds') {
       setAdminSector('bds');
       if (!['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt', 'faq'].includes(activeTab)) {
@@ -1982,7 +1986,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   return (
-    <div className="cd24-admin max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 pb-24 md:pb-4 space-y-4">
+    <div className="cd24-admin max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4">
       
       {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Điều hướng nhanh trực tiếp bên trong Admin */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
