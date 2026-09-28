@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Building2, CheckCircle2, XCircle, Search, RefreshCw, ShieldCheck, Clock, Users, Phone, Mail, MapPin, FileText, Trash2 } from 'lucide-react';
+import { Building2, CheckCircle2, XCircle, Search, RefreshCw, ShieldCheck, Clock, Users, Phone, Mail, MapPin, FileText, Trash2, Plus, Edit3 } from 'lucide-react';
 import { BusinessTier } from '../types';
 
 /**
@@ -134,6 +134,48 @@ export const AdminBusinessManager: React.FC = () => {
 
   const pendingList = useMemo(() => list.filter(b => b.status === 'pending'), [list]);
 
+  // Form thêm/sửa doanh nghiệp (admin)
+  const [bizFormOpen, setBizFormOpen] = useState(false);
+  const [editingBiz, setEditingBiz] = useState<BusinessAccountRow | null>(null);
+  const [bizDraft, setBizDraft] = useState<any>({});
+
+  const openCreateBiz = () => {
+    setEditingBiz(null);
+    setBizDraft({ name: '', brandName: '', type: 'resident_service', taxCode: '', businessLicenseNo: '', address: '', project: '', legalRepName: '', legalRepPhone: '', contactEmail: '', status: 'verified', tierCode: 'starter', adminNote: '' });
+    setBizFormOpen(true);
+  };
+
+  const openEditBiz = (b: BusinessAccountRow) => {
+    setEditingBiz(b);
+    setBizDraft({ name: b.name || '', brandName: b.brandName || '', type: b.type || 'resident_service', taxCode: b.taxCode || '', businessLicenseNo: b.businessLicenseNo || '', address: b.address || '', project: b.project || '', legalRepName: b.legalRepName || '', legalRepPhone: b.legalRepPhone || '', contactEmail: b.contactEmail || '', status: b.status || 'draft', tierCode: b.tierCode || 'starter', adminNote: b.adminNote || '' });
+    setBizFormOpen(true);
+  };
+
+  const handleSaveBiz = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!String(bizDraft.name || '').trim()) {
+      setMessage('Vui lòng nhập tên doanh nghiệp.');
+      return;
+    }
+    setBusy('biz-save');
+    try {
+      const res = await fetch(editingBiz ? `/api/admin/businesses/${editingBiz.id}` : '/api/admin/businesses', {
+        method: editingBiz ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bizDraft)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+      setBizFormOpen(false);
+      setMessage(editingBiz ? 'Đã cập nhật doanh nghiệp.' : 'Đã thêm doanh nghiệp mới.');
+      await load();
+    } catch (err: any) {
+      setMessage('Lưu thất bại: ' + (err?.message || 'lỗi không xác định'));
+    } finally {
+      setBusy(null);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -150,13 +192,22 @@ export const AdminBusinessManager: React.FC = () => {
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={load}
-            className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center gap-1.5"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Tải lại
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={openCreateBiz}
+              className="px-3 py-1.5 rounded-xl text-[11px] font-black bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" /> Thêm doanh nghiệp
+            </button>
+            <button
+              type="button"
+              onClick={load}
+              className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 cursor-pointer"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Tải lại
+            </button>
+          </div>
         </div>
 
         {/* Stats */}
@@ -257,6 +308,11 @@ export const AdminBusinessManager: React.FC = () => {
 
                   <div className="flex items-center gap-2">
                     <button type="button"
+                      onClick={() => openEditBiz(b)}
+                      className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 inline-flex items-center gap-1.5 cursor-pointer">
+                      <Edit3 className="w-3.5 h-3.5" /> Sửa
+                    </button>
+                    <button type="button"
                       onClick={() => setExpanded(expanded === b.id ? null : b.id)}
                       className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200">
                       {expanded === b.id ? 'Thu gọn' : 'Chi tiết'}
@@ -331,6 +387,91 @@ export const AdminBusinessManager: React.FC = () => {
       <p className="text-[10px] text-slate-400 flex items-center gap-1.5">
         <Users className="w-3 h-3" /> Giai đoạn G1–G2: hồ sơ + duyệt + gán gói. Quota/ưu tiên hiển thị và thành viên sẽ bổ sung ở G3–G4.
       </p>
+
+      {/* Modal Thêm/Sửa doanh nghiệp */}
+      {bizFormOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/50" onClick={() => setBizFormOpen(false)} />
+          <form onSubmit={handleSaveBiz} className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-4 space-y-3 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-black text-slate-800 dark:text-slate-100">
+                {editingBiz ? 'Sửa thông tin doanh nghiệp' : 'Thêm doanh nghiệp mới'}
+              </div>
+              <button type="button" onClick={() => setBizFormOpen(false)} className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-pointer">
+                <XCircle className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5 text-xs">
+              <div className="col-span-2">
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Tên doanh nghiệp *</label>
+                <input value={bizDraft.name || ''} onChange={(e) => setBizDraft({ ...bizDraft, name: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" placeholder="VD: Công ty TNHH ABC" />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Thương hiệu</label>
+                <input value={bizDraft.brandName || ''} onChange={(e) => setBizDraft({ ...bizDraft, brandName: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Loại hình</label>
+                <select value={bizDraft.type || 'resident_service'} onChange={(e) => setBizDraft({ ...bizDraft, type: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2">
+                  {Object.entries(TYPE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Mã số thuế</label>
+                <input value={bizDraft.taxCode || ''} onChange={(e) => setBizDraft({ ...bizDraft, taxCode: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Số GPKD</label>
+                <input value={bizDraft.businessLicenseNo || ''} onChange={(e) => setBizDraft({ ...bizDraft, businessLicenseNo: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Địa chỉ</label>
+                <input value={bizDraft.address || ''} onChange={(e) => setBizDraft({ ...bizDraft, address: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Khu / Dự án</label>
+                <input value={bizDraft.project || ''} onChange={(e) => setBizDraft({ ...bizDraft, project: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" placeholder="VD: Vinhomes Ocean Park 2" />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Người đại diện</label>
+                <input value={bizDraft.legalRepName || ''} onChange={(e) => setBizDraft({ ...bizDraft, legalRepName: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">SĐT đại diện</label>
+                <input value={bizDraft.legalRepPhone || ''} onChange={(e) => setBizDraft({ ...bizDraft, legalRepPhone: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Email liên hệ</label>
+                <input value={bizDraft.contactEmail || ''} onChange={(e) => setBizDraft({ ...bizDraft, contactEmail: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Trạng thái</label>
+                <select value={bizDraft.status || 'draft'} onChange={(e) => setBizDraft({ ...bizDraft, status: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2">
+                  {Object.entries(STATUS_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Gói (Tier)</label>
+                <select value={bizDraft.tierCode || 'starter'} onChange={(e) => setBizDraft({ ...bizDraft, tierCode: e.target.value })} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2">
+                  {TIERS.map(t => <option key={t.code} value={t.code}>{t.name}</option>)}
+                </select>
+              </div>
+              <div className="col-span-2">
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Ghi chú admin</label>
+                <textarea value={bizDraft.adminNote || ''} onChange={(e) => setBizDraft({ ...bizDraft, adminNote: e.target.value })} rows={2} className="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2" />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-1">
+              <button type="button" onClick={() => setBizFormOpen(false)} className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 cursor-pointer">Hủy</button>
+              <button type="submit" disabled={busy === 'biz-save'} className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black disabled:opacity-50 cursor-pointer">
+                {busy === 'biz-save' ? 'Đang lưu…' : editingBiz ? 'Lưu thay đổi' : 'Tạo doanh nghiệp'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

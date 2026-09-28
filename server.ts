@@ -4543,6 +4543,54 @@ app.delete("/api/admin/businesses/:id", authenticateToken, requireAdmin, (req, r
   res.json({ success: true, message: "Đã chuyển doanh nghiệp vào Thùng rác (có thể khôi phục)." });
 });
 
+// Admin: thêm doanh nghiệp mới (tạo trực tiếp)
+app.post("/api/admin/businesses", authenticateToken, requireAdmin, (req, res) => {
+  const body = req.body || {};
+  if (!body.name || !String(body.name).trim()) {
+    return res.status(400).json({ error: "Thiếu tên doanh nghiệp." });
+  }
+  const now = new Date().toISOString();
+  const acc = {
+    id: "biz_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+    ownerUserId: body.ownerUserId || "",
+    name: String(body.name).trim(),
+    brandName: body.brandName || "",
+    type: body.type || "resident_service",
+    taxCode: body.taxCode || "",
+    businessLicenseNo: body.businessLicenseNo || "",
+    licenseFileUrl: body.licenseFileUrl || "",
+    address: body.address || "",
+    project: body.project || "",
+    legalRepName: body.legalRepName || "",
+    legalRepPhone: body.legalRepPhone || "",
+    contactEmail: body.contactEmail || "",
+    industryNote: body.industryNote || "",
+    status: body.status || "verified",
+    tierCode: body.tierCode || "starter",
+    adminNote: body.adminNote || "",
+    createdAt: now,
+    updatedAt: now
+  };
+  businessAccountsStore.unshift(acc);
+  saveDataStore();
+  res.status(201).json({ success: true, account: acc });
+});
+
+// Admin: sửa thông tin doanh nghiệp
+app.put("/api/admin/businesses/:id", authenticateToken, requireAdmin, (req, res) => {
+  const idx = businessAccountsStore.findIndex(b => b.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy hồ sơ doanh nghiệp." });
+  const body = req.body || {};
+  const acc = businessAccountsStore[idx];
+  const fields = ['name','brandName','type','taxCode','businessLicenseNo','licenseFileUrl','address','project','legalRepName','legalRepPhone','contactEmail','industryNote','status','tierCode','adminNote'];
+  for (const f of fields) {
+    if (body[f] !== undefined) (acc as any)[f] = body[f];
+  }
+  acc.updatedAt = new Date().toISOString();
+  saveDataStore();
+  res.json({ success: true, account: acc });
+});
+
 // ===== BAN QUẢN TRỊ CHỢ CƯ DÂN (Board members) =====
 // Công khai: danh sách ban quản trị (hiển thị ở trang Về chúng tôi)
 app.get("/api/board-members", (req, res) => {
