@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { 
   X, User, Phone, Mail, MapPin, Building2, CreditCard, 
-  Check, ShieldCheck, Sparkles, Image as ImageIcon, Camera, Upload
+  Check, ShieldCheck, Sparkles, Image as ImageIcon, Camera, Upload, QrCode, Wallet
 } from 'lucide-react';
 import { User as UserType } from '../types';
 import { createInstantPreview, validateImageSize } from '../lib/watermark';
 import { uploadFiles } from '../lib/uploadService';
+import { PaymentQRModal } from './PaymentQRModal';
 
 interface UserProfileEditModalProps {
   user: UserType;
@@ -55,6 +56,11 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Nạp tiền vào ví (QR + tài khoản do admin cấu hình)
+  const [showDepositPanel, setShowDepositPanel] = useState(false);
+  const [depositAmount, setDepositAmount] = useState<number>(100000);
+  const [showDepositQR, setShowDepositQR] = useState(false);
 
   const PRESET_AVATARS: string[] = [];
 
@@ -176,12 +182,74 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
             </div>
           </div>
           <button
+            type="button"
+            onClick={() => setShowDepositPanel(v => !v)}
+            className="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-ink-950 font-black text-xs rounded-xl flex items-center gap-1.5 transition shadow-sm cursor-pointer mr-2"
+            title="Nạp tiền vào ví Token"
+          >
+            <QrCode className="w-4 h-4" />
+            <span>Nạp tiền</span>
+          </button>
+          <button
             onClick={onClose}
             className="p-2 text-ink-400 hover:text-ink-600 dark:hover:text-ink-200 rounded-xl hover:bg-ink-100 dark:hover:bg-ink-800 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* NẠP TIỀN VÀO VÍ (QR + tài khoản do ADMIN quản lý) */}
+        {showDepositPanel && (
+          <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800/60 space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-black text-amber-800 dark:text-amber-300 uppercase flex items-center gap-1.5">
+                <Wallet className="w-4 h-4" /> Nạp tiền vào ví Token Cư Dân
+              </h4>
+              <button type="button" onClick={() => setShowDepositPanel(false)} className="text-ink-400 hover:text-ink-600 dark:hover:text-ink-200 cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-[11px] text-ink-500 dark:text-ink-400">
+              Chọn số tiền, sau đó quét QR hoặc chuyển khoản tới <strong>tài khoản do Ban Quản Trị cấu hình</strong>. Ví sẽ tự động cộng sau khi giao dịch thành công.
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              {[50000, 100000, 200000, 500000, 1000000].map(a => (
+                <button
+                  key={a}
+                  type="button"
+                  onClick={() => setDepositAmount(a)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition cursor-pointer ${
+                    depositAmount === a
+                      ? 'bg-amber-500 text-ink-950 border-amber-500'
+                      : 'bg-white dark:bg-ink-800 text-ink-600 dark:text-ink-300 border-ink-200 dark:border-ink-700'
+                  }`}
+                >
+                  {a.toLocaleString('vi-VN')}đ
+                </button>
+              ))}
+              <input
+                type="number"
+                min={10000}
+                step={10000}
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(Number(e.target.value) || 0)}
+                className="w-32 px-3 py-1.5 rounded-lg text-xs font-mono border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-900 dark:text-white"
+                placeholder="Số tiền khác"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (depositAmount >= 10000) setShowDepositQR(true);
+                else alert('Số tiền nạp tối thiểu là 10.000đ');
+              }}
+              className="w-full py-2.5 bg-gradient-to-r from-amber-500 to-brand-500 hover:from-amber-400 hover:to-brand-400 text-ink-950 font-black text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <QrCode className="w-4 h-4" />
+              <span>HIỂN THỊ QR & TÀI KHOẢN NẠP TIỀN</span>
+            </button>
+          </div>
+        )}
 
         {/* Modal Body / Form */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5">
@@ -696,6 +764,20 @@ export const UserProfileEditModal: React.FC<UserProfileEditModalProps> = ({
             </button>
           </div>
         </form>
+
+        {/* Modal nạp tiền VietQR (SePay tự động xác nhận) */}
+        <PaymentQRModal
+          open={showDepositQR}
+          onClose={() => setShowDepositQR(false)}
+          title="Nạp Tiền Vào Ví Chợ Cư Dân 24h"
+          description={`Nạp ${depositAmount.toLocaleString('vi-VN')} VNĐ — tự động cộng sau khi chuyển khoản`}
+          amount={depositAmount}
+          type="wallet_deposit"
+          userId={user.id}
+          userName={user.name}
+          userPhone={user.phone}
+          onSuccess={() => setShowDepositQR(false)}
+        />
       </div>
     </div>
   );

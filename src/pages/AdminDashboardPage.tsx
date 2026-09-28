@@ -5,6 +5,7 @@ import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
 import { AdminTrashManager } from '../components/AdminTrashManager';
 import { AdminActivityLogManager } from '../components/AdminActivityLogManager';
+import { AdminSupportInbox } from '../components/AdminSupportInbox';
 import { History } from 'lucide-react';
 import { AdminKycManager } from '../components/AdminKycManager';
 import { AdminSiteSettingsPanel } from '../components/AdminSiteSettingsPanel';
@@ -93,7 +94,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
     | 'developer_units' | 'site_settings'
     | 'business_mgmt'
-    | 'trash' | 'activity_history'
+    | 'trash' | 'activity_history' | 'support_inbox'
   >('properties');
   const [devSubTab, setDevSubTab] = useState('matbang');
 
@@ -107,7 +108,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (['users', 'leads', 'enterprise_core', 'business_mgmt'].includes(activeTab)) return 'users_leads';
     if (activeTab === 'ads') return 'ads';
     if (activeTab === 'site_settings') return 'ads';
-    if (activeTab === 'trash' || activeTab === 'activity_history') return 'bds';
+    if (activeTab === 'trash' || activeTab === 'activity_history' || activeTab === 'support_inbox') return 'bds';
     return 'tools';
   })();
 
@@ -2560,6 +2561,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       <span className="flex items-center gap-1.5">
                         <History className="w-3.5 h-3.5 text-amber-400" />
                         Lịch sử thao tác
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('support_inbox')}
+                      className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between mt-1 ${
+                        activeTab === 'support_inbox'
+                          ? 'bg-blue-500/20 text-blue-300 font-extrabold border border-blue-500/30'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
+                        Hộp thư Chat
                       </span>
                     </button>
                   </div>
@@ -5195,6 +5209,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* TAB LỊCH SỬ THAO TÁC */}
       {activeTab === 'activity_history' && (
         <AdminActivityLogManager />
+      )}
+
+      {/* TAB HỘP THƯ CHAT NỘI BỘ */}
+      {activeTab === 'support_inbox' && (
+        <AdminSupportInbox />
       )}
 
       {activeTab === 'properties' && (

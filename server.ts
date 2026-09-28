@@ -1385,6 +1385,7 @@ function loadDataStore() {
       if (Array.isArray(data.withdrawalRequests)) withdrawalRequestsStore = data.withdrawalRequests;
       if (Array.isArray(data.upTinOrders) && data.upTinOrders.length > 0) upTinOrdersStore = data.upTinOrders;
       if (Array.isArray(data.paymentOrders) && data.paymentOrders.length > 0) paymentOrdersStore = data.paymentOrders;
+      if (Array.isArray(data.messages) && data.messages.length > 0) messagesStore = data.messages;
       if (Array.isArray(data.faq) && data.faq.length > 0) faqStore = data.faq;
       if (data.taxConfig) taxConfigStore = data.taxConfig;
       if (Array.isArray(data.taxLedger) && data.taxLedger.length > 0) taxLedgerStore = data.taxLedger;
@@ -1502,6 +1503,7 @@ ads: adsStore,
       cvUnlocks: cvUnlocksStore,
       trash: trashStore,
       activityLogs: activityLogStore,
+      messages: messagesStore,
       deletedIds,
       savedAt: new Date().toISOString()
     };
@@ -2580,17 +2582,41 @@ app.post("/api/properties/:id/push", authenticateToken, (req, res) => {
 // Covers ALL payment types: wallet_deposit, package, up_tin, service, etc.
 // ==========================================
 
+// Helper: quy đổi tên ngân hàng -> mã BIN dùng cho VietQR
+function resolveVietQrBankCode(rawName: string): string {
+  const n = String(rawName || '').toUpperCase();
+  if (n.includes('ACB')) return 'ACB';
+  if (n.includes('VIETCOMBANK') || n.includes('VCB')) return 'VCB';
+  if (n.includes('VIETINBANK') || n.includes('ICB')) return 'ICB';
+  if (n.includes('BIDV')) return 'BIDV';
+  if (n.includes('TECHCOMBANK') || n.includes('TCB')) return 'TCB';
+  if (n.includes('VPBANK') || n.includes('VPB')) return 'VPB';
+  if (n.includes('MBBANK') || n.includes('MB')) return 'MB';
+  if (n.includes('MSB')) return 'MSB';
+  if (n.includes('SACOMBANK') || n.includes('STB')) return 'STB';
+  if (n.includes('TPBANK') || n.includes('TPB')) return 'TPB';
+  if (n.includes('AGRIBANK') || n.includes('VBA')) return 'VBA';
+  if (n.includes('VIB')) return 'VIB';
+  return 'ACB';
+}
+
 // Helper: build a VietQR URL from the configured bank + amount + payment code
 function buildVietQrUrl(amount: number, paymentCode: string) {
   const bankAccountClean = String(pricingConfigStore.accountNumber).replace(/[^0-9]/g, '');
-  const bankNameRaw = String(pricingConfigStore.bankName).toUpperCase();
-  const bankCode = bankNameRaw.includes('ACB') ? 'ACB'
-    : bankNameRaw.includes('VCB') || bankNameRaw.includes('VIETCOMBANK') ? 'VCB'
-    : bankNameRaw.includes('MB') ? 'MB'
-    : bankNameRaw.includes('MSB') ? 'MSB'
-    : 'ACB';
+  const bankCode = resolveVietQrBankCode(String(pricingConfigStore.bankName));
   return `https://img.vietqr.io/image/${bankCode}-${bankAccountClean}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(paymentCode)}&accountName=${encodeURIComponent(pricingConfigStore.accountHolder)}`;
 }
+
+// GET /api/system/deposit-info — thông tin tài khoản nhận nạp tiền (cấu hình trong ADMIN)
+app.get("/api/system/deposit-info", (_req, res) => {
+  res.json({
+    bankName: pricingConfigStore.bankName,
+    accountNumber: pricingConfigStore.accountNumber,
+    accountHolder: pricingConfigStore.accountHolder,
+    bankCode: resolveVietQrBankCode(String(pricingConfigStore.bankName)),
+    qrNotePrefix: (pricingConfigStore as any).qrNotePrefix || 'CC24H'
+  });
+});
 
 // POST /api/payment/orders — create a generic pending payment order + VietQR URL.
 // Body: { type, amount, userId, userName, userPhone, metadata }
@@ -5881,7 +5907,14 @@ Trả về DUY NHẤT một JSON object:
 
 // MESSAGING ENDPOINTS
 app.get("/api/messages", (req, res) => {
-  const { userId } = req.query;
+  const { userId, threadId } = req.query;
+  if (threadId) {
+    // Lấy toàn bộ hội thoại theo thread (chat dịch vụ cư dân nội bộ)
+    const threadMsgs = messagesStore
+      .filter(m => (m as any).threadId === threadId)
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    return res.json(threadMsgs);
+  }
   if (userId) {
     const userMsgs = messagesStore.filter(m => m.senderId === userId || m.receiverId === userId || m.receiverId === 'ALL');
     return res.json(userMsgs);
@@ -5891,6 +5924,7 @@ app.get("/api/messages", (req, res) => {
 
 app.post("/api/messages", (req, res) => {
   const { senderId, senderName, senderAvatar, receiverId, receiverName, storeId, content } = req.body;
+  const { threadId, threadTitle, serviceId, serviceName } = req.body;
   if (!content || !senderId) {
     return res.status(400).json({ error: "Nội dung tin nhắn không thể để trống." });
   }
@@ -5903,13 +5937,41 @@ app.post("/api/messages", (req, res) => {
     receiverId: receiverId || 'user-admin',
     receiverName: receiverName || 'Người Nhận',
     storeId,
+    // Chat nội bộ dịch vụ cư dân: gom theo thread để admin theo dõi & trả lời
+    threadId: threadId || (serviceId ? `service-${serviceId}-${senderId}` : undefined),
+    threadTitle: threadTitle || (serviceName ? `Dịch vụ: ${serviceName}` : undefined),
+    serviceId,
+    serviceName,
     content,
-    createdAt: new Date().toLocaleString('vi-VN'),
+    createdAt: new Date().toISOString(),
     read: false
   };
 
   messagesStore.push(newMsg);
+  saveDataStore();
   res.status(201).json({ success: true, message: newMsg });
+});
+
+// ADMIN: đánh dấu đã đọc / trả lời 1 thread chat dịch vụ cư dân
+app.post("/api/messages/:id/read", (req, res) => {
+  const msg = messagesStore.find(m => m.id === req.params.id);
+  if (msg) {
+    msg.read = true;
+    saveDataStore();
+  }
+  res.json({ success: true });
+});
+
+app.put("/api/messages/:id", (req, res) => {
+  const msg = messagesStore.find(m => m.id === req.params.id);
+  if (!msg) {
+    return res.status(404).json({ error: "Không tìm thấy tin nhắn." });
+  }
+  const { content, read } = req.body || {};
+  if (typeof content === 'string' && content.trim()) msg.content = content.trim();
+  if (typeof read === 'boolean') msg.read = read;
+  saveDataStore();
+  res.json({ success: true, message: msg });
 });
 
 // NOTIFICATIONS & BROADCAST EMAIL/ZALO ENDPOINTS

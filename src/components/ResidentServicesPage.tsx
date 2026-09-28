@@ -26,6 +26,7 @@ import { ServicePricingModal } from './ServicePricingModal';
 import { AllStorefrontsDirectoryModal } from './AllStorefrontsDirectoryModal';
 import { TripartiteAgreementModal } from './TripartiteAgreementModal';
 import { TechnicalServiceEscrowModal } from './TechnicalServiceEscrowModal';
+import { ResidentServiceChatModal } from './ResidentServiceChatModal';
 import { AiMenuScannerModal, AiMenuScanResult, ScannedMenuItem } from './AiMenuScannerModal';
 import { dispatchCustomerLead } from '../lib/leadNotifier';
 import { validateImageSize, createInstantPreview, addWatermarkToImage } from '../lib/watermark';
@@ -115,6 +116,16 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   const [constructionImages, setConstructionImages] = useState<string[]>([]);
   const [isSubmittingConstruction, setIsSubmittingConstruction] = useState<boolean>(false);
   const [constructionSubmitResult, setConstructionSubmitResult] = useState<string | null>(null);
+
+  // CHAT NỘI BỘ (thay nút Zalo — mọi hội thoại chỉ nằm trong web)
+  const [chatTargetService, setChatTargetService] = useState<ResidentServiceItem | null>(null);
+  const openInternalChat = (service: ResidentServiceItem) => {
+    if (!currentUser) {
+      onOpenAuth();
+      return;
+    }
+    setChatTargetService(service);
+  };
 
   // Reputation PR posts state for resident partners & stores
   const [reputationPosts, setReputationPosts] = useState<any[]>([
@@ -1252,15 +1263,15 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                                 <Phone className="w-3.5 h-3.5" />
                                 <span>Gọi</span>
                               </a>
-                              <a
-                                href={service.providerZalo || `https://zalo.me/${service.providerPhone}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center justify-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition"
+                              <button
+                                type="button"
+                                onClick={() => openInternalChat(service)}
+                                className="flex items-center justify-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                                title="Chat nội bộ trong web với dịch vụ này"
                               >
                                 <MessageSquare className="w-3.5 h-3.5" />
-                                <span>Zalo</span>
-                              </a>
+                                <span>Chat</span>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -1337,15 +1348,15 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                                 <Phone className="w-3 h-3" />
                                 <span>Gọi</span>
                               </a>
-                              <a
-                                href={service.providerZalo || `https://zalo.me/${service.providerPhone}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center justify-center gap-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-extrabold"
+                              <button
+                                type="button"
+                                onClick={() => openInternalChat(service)}
+                                className="flex items-center justify-center gap-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-extrabold cursor-pointer"
+                                title="Chat nội bộ trong web với dịch vụ này"
                               >
                                 <MessageSquare className="w-3 h-3" />
-                                <span>Zalo</span>
-                              </a>
+                                <span>Chat</span>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -1465,15 +1476,15 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                                 <span>Gọi Điện</span>
                               </a>
 
-                              <a
-                                href={service.providerZalo || `https://zalo.me/${service.providerPhone}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-xs"
+                              <button
+                                type="button"
+                                onClick={() => openInternalChat(service)}
+                                className="flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                                title="Chat nội bộ trong web với dịch vụ này"
                               >
                                 <MessageSquare className="w-3.5 h-3.5" />
-                                <span>Chat Zalo</span>
-                              </a>
+                                <span>Chat Nội Bộ</span>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -1832,15 +1843,14 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   <span>GỌI HOTLINE ({selectedServiceModal.providerPhone})</span>
                 </a>
 
-                <a
-                  href={selectedServiceModal.providerZalo || `https://zalo.me/${selectedServiceModal.providerPhone}`}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
+                  onClick={() => { openInternalChat(selectedServiceModal); setSelectedServiceModal(null); }}
                   className="flex-1 sm:flex-none px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-black text-center transition flex items-center justify-center gap-2 shadow-md cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>CHAT ZALO TƯ VẤN</span>
-                </a>
+                  <span>CHAT NỘI BỘ TƯ VẤN</span>
+                </button>
               </div>
             </div>
 
@@ -2642,6 +2652,19 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
         <UserStorefrontModal
           store={selectedStoreModal}
           onClose={() => setSelectedStoreModal(null)}
+          currentUser={currentUser}
+        />
+      )}
+
+      {/* CHAT NỘI BỘ DỊCH VỤ CƯ DÂN (thay nút Zalo — chỉ chat trong web) */}
+      {chatTargetService && (
+        <ResidentServiceChatModal
+          open={Boolean(chatTargetService)}
+          onClose={() => setChatTargetService(null)}
+          serviceId={chatTargetService.id}
+          serviceName={chatTargetService.title}
+          providerName={chatTargetService.providerName}
+          providerPhone={chatTargetService.providerPhone}
           currentUser={currentUser}
         />
       )}
