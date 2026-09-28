@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { DeveloperUnit, F1Agent, DeveloperPolicy, DeveloperInstallment, DeveloperBank, DeveloperFloorplan, DEVELOPER_UNIT_STATUS_LABELS, DeveloperUnitStatus } from '../types';
 import { Building2, MapPin, Download, Upload, FileSpreadsheet, Plus, Trash2, Check, RefreshCw, X, Save, Search, Filter, Landmark, CalendarClock, ClipboardList, LayoutDashboard, Import, Map as MapIcon, Home, FileText, Share2 } from 'lucide-react';
 
@@ -128,6 +128,13 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const [pinMode, setPinMode] = useState(false);
   const [editingUnit, setEditingUnit] = useState<DeveloperUnit | null>(null);
 
+  // Kéo-thả điểm căn trên sơ đồ mặt bằng (chỉnh vị trí trực tiếp)
+  const floorRef = useRef<HTMLDivElement | null>(null);
+  const dragUnitRef = useRef<DeveloperUnit | null>(null);
+  const dragMovedRef = useRef(false);
+  const dragPosRef = useRef<{ x: number; y: number } | null>(null);
+  const [dragPos, setDragPos] = useState<{ id: string; x: number; y: number } | null>(null);
+
   // Chính sách form
   const [policyForm, setPolicyForm] = useState<any>({});
 
@@ -216,6 +223,55 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
     const a = agents.find(x => x.id === agentId);
     if (!a) return;
     showToast(`🔄 Đã đọc quỹ căn của ${a.name} (${a.totalCount} căn)`);
+  };
+
+  // === Kéo-thả điểm căn trên sơ đồ để chỉnh vị trí; bấm (không kéo) để mở chi tiết ===
+  const handleDotPointerDown = (e: React.PointerEvent, u: DeveloperUnit) => {
+    e.stopPropagation();
+    try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* ignore */ }
+    dragUnitRef.current = u;
+    dragMovedRef.current = false;
+    dragPosRef.current = { x: u.x, y: u.y };
+    setDragPos({ id: u.id, x: u.x, y: u.y });
+  };
+
+  const handleDotPointerMove = (e: React.PointerEvent) => {
+    const u = dragUnitRef.current;
+    if (!u || !floorRef.current) return;
+    const rect = floorRef.current.getBoundingClientRect();
+    const nx = Math.max(1, Math.min(99, ((e.clientX - rect.left) / rect.width) * 100));
+    const ny = Math.max(1, Math.min(99, ((e.clientY - rect.top) / rect.height) * 100));
+    if (Math.abs(nx - u.x) > 1 || Math.abs(ny - u.y) > 1) dragMovedRef.current = true;
+    dragPosRef.current = { x: nx, y: ny };
+    setDragPos({ id: u.id, x: nx, y: ny });
+  };
+
+  const handleDotPointerUp = async () => {
+    const u = dragUnitRef.current;
+    const pos = dragPosRef.current;
+    dragUnitRef.current = null;
+    dragPosRef.current = null;
+    if (!u) return;
+    if (!dragMovedRef.current || !pos) {
+      setDragPos(null);
+      setSelectedUnit(u);
+      return;
+    }
+    const nx = Math.round(pos.x * 10) / 10;
+    const ny = Math.round(pos.y * 10) / 10;
+    setDragPos(null);
+    setUnits(prev => prev.map(it => (it.id === u.id ? { ...it, x: nx, y: ny } : it)));
+    try {
+      const target = { ...u, x: nx, y: ny };
+      if (u.id.startsWith('du-') && units.some(it => it.id === u.id)) {
+        await api(`/api/developer-units/${u.id}`, 'PUT', target);
+      } else {
+        await api('/api/developer-units', 'POST', target);
+      }
+      showToast('📍 Đã lưu vị trí căn trên mặt bằng');
+    } catch {
+      showToast('❌ Lưu vị trí thất bại');
+    }
   };
 
   const saveUnit = async () => {
@@ -379,11 +435,20 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
               <span className="text-slate-400 font-bold">Tầng</span>
               <input value={u.floor || ''} onChange={e => set({ floor: e.target.value })} placeholder="Thấp tầng bỏ trống" className="w-full px-3 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white" />
             </label>
+            <label className="space-y-1">
+              <span className="text-slate-400 font-bold">Vị trí X (%)</span>
+              <input type="number" step="0.5" value={u.x} onChange={e => set({ x: Number(e.target.value) })} className="w-full px-3 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white" />
+            </label>
+            <label className="space-y-1">
+              <span className="text-slate-400 font-bold">Vị trí Y (%)</span>
+              <input type="number" step="0.5" value={u.y} onChange={e => set({ y: Number(e.target.value) })} className="w-full px-3 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white" />
+            </label>
             <label className="space-y-1 col-span-2">
               <span className="text-slate-400 font-bold">Ghi chú</span>
               <input value={u.note || ''} onChange={e => set({ note: e.target.value })} className="w-full px-3 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white" />
             </label>
           </div>
+          <p className="text-[10px] text-slate-500">💡 Mẹo: kéo trực tiếp điểm căn trên Sơ đồ mặt bằng để di chuyển nhanh; hoặc nhập tọa độ X/Y chính xác trong ô phía trên.</p>
           <div className="flex gap-2 pt-2">
             {!editingUnit && (
               <>
@@ -474,19 +539,25 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
               <h3 className="font-black text-sm text-slate-800 dark:text-white">🗺️ Sơ đồ — {SUB_CONFIG[currentSub]?.name} · {tierLabel(currentTier)}</h3>
               <span className="text-[10px] font-mono text-slate-400">{currentUnits.length} căn</span>
             </div>
-            <div className="relative">
+            <div className="relative" ref={floorRef}>
               <img src={fpImage} alt="Sơ đồ mặt bằng" className="w-full h-[420px] object-cover" />
-              {currentUnits.map(u => (
+              {currentUnits.map(u => {
+                const pos = dragPos && dragPos.id === u.id ? dragPos : u;
+                const isDrag = !!(dragPos && dragPos.id === u.id);
+                return (
                 <button
                   key={u.id}
-                  onClick={() => setSelectedUnit(u)}
-                  title={`${u.code} — ${DEVELOPER_UNIT_STATUS_LABELS[u.status]} — ${u.price} tỷ`}
-                  className={`absolute w-7 h-7 -ml-3.5 -mt-3.5 rounded-full text-[9px] font-black text-white flex items-center justify-center border-2 shadow-lg transition hover:scale-125 cursor-pointer ${u.source === 'f1' ? 'border-dashed' : ''}`}
-                  style={{ left: `${u.x}%`, top: `${u.y}%`, background: u.source === 'f1' ? (u.status === 'conhang' ? '#3b82f6' : u.status === 'dabooking' ? '#8b5cf6' : '#94a3b8') : STATUS_DOT[u.status], borderColor: u.source === 'f1' ? '#60a5fa' : 'rgba(255,255,255,0.6)' }}
+                  onPointerDown={(e) => handleDotPointerDown(e, u)}
+                  onPointerMove={handleDotPointerMove}
+                  onPointerUp={() => void handleDotPointerUp()}
+                  title={`${u.code} — ${DEVELOPER_UNIT_STATUS_LABELS[u.status]} — ${u.price} tỷ · Kéo để di chuyển, bấm để mở chi tiết`}
+                  className={`absolute w-7 h-7 -ml-3.5 -mt-3.5 rounded-full text-[9px] font-black text-white flex items-center justify-center border-2 shadow-lg transition ${isDrag ? 'scale-125 z-10 cursor-grabbing' : 'hover:scale-125 cursor-grab'} ${u.source === 'f1' ? 'border-dashed' : ''}`}
+                  style={{ left: `${pos.x}%`, top: `${pos.y}%`, touchAction: 'none', background: u.source === 'f1' ? (u.status === 'conhang' ? '#3b82f6' : u.status === 'dabooking' ? '#8b5cf6' : '#94a3b8') : STATUS_DOT[u.status], borderColor: u.source === 'f1' ? '#60a5fa' : 'rgba(255,255,255,0.6)' }}
                 >
                   {u.code.replace(/^[A-Z]+-/, '').replace('-F1', '')}
                 </button>
-              ))}
+                );
+              })}
             </div>
             <div className="px-4 py-3 flex flex-wrap gap-3 text-[10px] text-slate-500 dark:text-slate-400">
               <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> Còn hàng</span>
