@@ -52,6 +52,25 @@ export const DeveloperUnitsHomeSection: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [projNames, setProjNames] = useState<Record<string, string>>({});
+  const [subNames, setSubNames] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    fetch('/api/developer-projects')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((d: any) => {
+        if (!Array.isArray(d)) return;
+        const pn: Record<string, string> = {};
+        const sn: Record<string, string> = {};
+        d.forEach((p: any) => {
+          pn[p.id] = p.name;
+          (p.subs || []).forEach((s: any) => { if (s && s.id) sn[s.id] = String(s.name || '').replace(/^Phân khu /, ''); });
+        });
+        setProjNames(pn);
+        setSubNames(sn);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     fetch('/api/developer-units')
@@ -117,7 +136,7 @@ export const DeveloperUnitsHomeSection: React.FC = () => {
                   <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full border whitespace-nowrap ${st.cls}`}>{st.label}</span>
                 </div>
                 <div className="text-[10.5px] text-ink-500 dark:text-ink-400 truncate">
-                  {SUB_NAMES[u.subdivisionId] || u.subdivisionId} · {PROJECT_NAMES[u.projectId] || u.projectId}
+                  {subNames[u.subdivisionId] || SUB_NAMES[u.subdivisionId] || u.subdivisionId} · {projNames[u.projectId] || PROJECT_NAMES[u.projectId] || u.projectId}
                 </div>
                 <div className="flex items-end justify-between gap-1 mt-auto">
                   <span className="price24 text-[13px]">{u.priceDisplay || (u.price ? `${u.price} tỷ` : '—')}</span>

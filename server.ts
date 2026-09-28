@@ -1078,6 +1078,76 @@ let taxLedgerStore: any[] = [
 // MẶT BẰNG & BẢNG HÀNG CHỦ ĐẦU TƯ (Developer Units / F1)
 // ==========================================
 let developerUnitsStore: DeveloperUnit[] = [];
+
+// ===== DỰ ÁN CHỦ ĐẦU TƯ (động — admin thêm/sửa/xóa; seed bằng danh mục hiện có) =====
+const SEED_DEVELOPER_PROJECTS: any[] = [
+  { id: 'ocean-park-2', name: 'Vinhomes Ocean Park 2 - The Empire', subs: [
+    { id: 'op2-cha-la', name: 'Phân khu Chà Là', prefix: 'CL', tier: 'thap' },
+    { id: 'op2-co-xanh', name: 'Phân khu Cọ Xanh', prefix: 'CX', tier: 'thap' },
+    { id: 'op2-hai-tang', name: 'Phân khu Hải Tăng', prefix: 'HT', tier: 'cao' },
+    { id: 'op2-san-ho', name: 'Phân khu San Hô', prefix: 'SH', tier: 'thap' },
+    { id: 'op2-sao-bien', name: 'Phân khu Sao Biển', prefix: 'SB', tier: 'thap' },
+    { id: 'op2-dao-ngoc', name: 'Phân khu Đảo Ngọc', prefix: 'DN', tier: 'thap' },
+    { id: 'op2-cho-dem', name: 'Phân khu Chợ Đêm Grand World', prefix: 'CD', tier: 'thap' }
+  ] },
+  { id: 'ocean-park-1', name: 'Vinhomes Ocean Park 1 - Gia Lâm', subs: [
+    { id: 'op1-san-ho', name: 'Phân khu San Hô', prefix: 'SH', tier: 'thap' },
+    { id: 'op1-ngoc-trai', name: 'Phân khu Ngọc Trai', prefix: 'NT', tier: 'thap' },
+    { id: 'op1-sapphire', name: 'Phân khu Sapphire', prefix: 'SP', tier: 'cao' },
+    { id: 'op1-zen-park', name: 'Phân khu Zen Park', prefix: 'ZP', tier: 'thap' },
+    { id: 'op1-masteri', name: 'Phân khu Masteri Waterfront', prefix: 'MW', tier: 'cao' },
+    { id: 'op1-hai-tang', name: 'Phân khu Hải Tăng', prefix: 'HT', tier: 'cao' },
+    { id: 'op1-sao-bien', name: 'Phân khu Sao Biển', prefix: 'SB', tier: 'thap' }
+  ] },
+  { id: 'ocean-park-3', name: 'Vinhomes Ocean Park 3 - Grand Park', subs: [
+    { id: 'op3-pho-bien', name: 'Phân khu Phố Biển', prefix: 'PB', tier: 'thap' },
+    { id: 'op3-vinh-thien-duong', name: 'Phân khu Vịnh Thiên Đường', prefix: 'VT', tier: 'thap' },
+    { id: 'op3-anh-duong', name: 'Phân khu Ánh Dương', prefix: 'AD', tier: 'thap' },
+    { id: 'op3-thoi-dai', name: 'Phân khu Thời Đại', prefix: 'TD', tier: 'thap' },
+    { id: 'op3-vinh-tay', name: 'Phân khu Vịnh Tây', prefix: 'VW', tier: 'thap' },
+    { id: 'op3-vinh-hai-tang', name: 'Phân khu Vịnh Hải Tăng', prefix: 'VH', tier: 'cao' }
+  ] },
+  { id: 'ha-long-xanh', name: 'Vinhomes Hạ Long Xanh', subs: [
+    { id: 'hlx-hoang-tan', name: 'Phân khu Hoàng Tân', prefix: 'HT', tier: 'thap' },
+    { id: 'hlx-ha-an', name: 'Phân khu Hà An', prefix: 'HA', tier: 'thap' },
+    { id: 'hlx-ben-du-thuyen', name: 'Phân khu Bến du thuyền', prefix: 'BD', tier: 'thap' },
+    { id: 'hlx-san-golf', name: 'Phân khu Sân Golf', prefix: 'SG', tier: 'thap' },
+    { id: 'hlx-can-ho', name: 'Phân khu Căn hộ cao tầng', prefix: 'CH', tier: 'cao' }
+  ] },
+  { id: 'green-paradise-can-gio', name: 'Vinhomes Green Paradise Cần Giờ', subs: [
+    { id: 'gp-a', name: 'Phân khu A Sinh thái', prefix: 'GA', tier: 'thap' },
+    { id: 'gp-b', name: 'Phân khu B Thương mại', prefix: 'GB', tier: 'thap' },
+    { id: 'gp-c', name: 'Phân khu C Trung tâm', prefix: 'GC', tier: 'cao' },
+    { id: 'gp-d', name: 'Phân khu D Du lịch', prefix: 'GD', tier: 'thap' },
+    { id: 'gp-e', name: 'Phân khu E Đô thị Biển', prefix: 'GE', tier: 'cao' }
+  ] },
+  { id: 'tan-my-hau-nghia', name: 'Vinhomes Tân Mỹ - Hậu Nghĩa', subs: [
+    { id: 'tm-biet-thu', name: 'Phân khu Biệt thự', prefix: 'TB', tier: 'thap' },
+    { id: 'tm-shophouse', name: 'Phân khu Shophouse', prefix: 'TS', tier: 'thap' },
+    { id: 'tm-can-ho', name: 'Phân khu Căn hộ', prefix: 'TC', tier: 'cao' },
+    { id: 'tm-cong-vien', name: 'Phân khu Công viên', prefix: 'TP', tier: 'thap' }
+  ] },
+  { id: 'green-city-hoc-mon', name: 'Vinhomes Green City Hóc Môn', subs: [
+    { id: 'gc-sinh-thai', name: 'Phân khu Sinh thái', prefix: 'GS', tier: 'thap' },
+    { id: 'gc-dai-hoc', name: 'Phân khu Làng Đại học', prefix: 'GU', tier: 'cao' },
+    { id: 'gc-tai-chinh', name: 'Phân khu Tài chính', prefix: 'GF', tier: 'cao' },
+    { id: 'gc-biet-thu', name: 'Phân khu Biệt thự', prefix: 'GB', tier: 'thap' }
+  ] },
+  { id: 'lang-van-da-nang', name: 'Vinhomes Làng Vân Đà Nẵng', subs: [
+    { id: 'lv-biet-thu-bien', name: 'Phân khu Biệt thự biển', prefix: 'LB', tier: 'thap' },
+    { id: 'lv-condotel', name: 'Phân khu Condotel', prefix: 'LC', tier: 'cao' },
+    { id: 'lv-resort', name: 'Phân khu Resort', prefix: 'LR', tier: 'thap' },
+    { id: 'lv-giai-tri', name: 'Phân khu Giải trí', prefix: 'LG', tier: 'thap' }
+  ] },
+  { id: 'smart-city', name: 'Vinhomes Smart City - Tây Mỗ', subs: [
+    { id: 'sc-sapphire', name: 'Phân khu Sapphire Parkville', prefix: 'SS', tier: 'thap' },
+    { id: 'sc-tonkin', name: 'Phân khu Tonkin', prefix: 'ST', tier: 'thap' },
+    { id: 'sc-masteri', name: 'Phân khu Masteri West Heights', prefix: 'SM', tier: 'cao' },
+    { id: 'sc-imperia', name: 'Phân khu Imperia Smart City', prefix: 'SI', tier: 'thap' },
+    { id: 'sc-canopy', name: 'Phân khu The Canopy', prefix: 'SC', tier: 'thap' }
+  ] }
+];
+let developerProjectsStore: any[] = SEED_DEVELOPER_PROJECTS.map(p => ({ ...p, status: 'active', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }));
 let f1AgentsStore: F1Agent[] = [];
 let developerPoliciesStore: DeveloperPolicy[] = [];
 let developerInstallmentsStore: DeveloperInstallment[] = [];
@@ -1404,6 +1474,7 @@ function loadDataStore() {
 
       // Developer Units / F1 (Mặt Bằng & Bảng Hàng CĐT)
       if (Array.isArray(data.developerUnits) && data.developerUnits.length > 0) developerUnitsStore = data.developerUnits;
+      if (Array.isArray(data.developerProjects) && data.developerProjects.length > 0) developerProjectsStore = data.developerProjects;
       if (Array.isArray(data.f1Agents) && data.f1Agents.length > 0) f1AgentsStore = data.f1Agents;
       if (Array.isArray(data.developerPolicies) && data.developerPolicies.length > 0) developerPoliciesStore = data.developerPolicies;
       if (Array.isArray(data.developerInstallments) && data.developerInstallments.length > 0) developerInstallmentsStore = data.developerInstallments;
@@ -1504,6 +1575,7 @@ ads: adsStore,
       taxConfig: taxConfigStore,
       taxLedger: taxLedgerStore,
       developerUnits: developerUnitsStore,
+      developerProjects: developerProjectsStore,
       f1Agents: f1AgentsStore,
       developerPolicies: developerPoliciesStore,
       developerInstallments: developerInstallmentsStore,
@@ -2784,6 +2856,209 @@ app.get("/api/health", (req, res) => {
 // ============================================================
 
 // GET /api/developer-units — lọc theo project/subdivision/tier/source/status
+// ===== DỰ ÁN CHỦ ĐẦU TƯ (động): GET công khai + CRUD admin =====
+app.get("/api/developer-projects", (req, res) => {
+  res.json(developerProjectsStore);
+});
+
+app.post("/api/admin/developer-projects", authenticateToken, requireAdmin, (req, res) => {
+  const body = req.body || {};
+  if (!body.name || !String(body.name).trim()) return res.status(400).json({ error: "Thiếu tên dự án." });
+  const newId = String(body.id || '').trim() || ('dp-' + Date.now().toString(36));
+  if (developerProjectsStore.some(p => p.id === newId)) return res.status(400).json({ error: "Mã dự án đã tồn tại." });
+  const project = {
+    id: newId,
+    name: String(body.name).trim(),
+    status: body.status || 'active',
+    subs: Array.isArray(body.subs) ? body.subs : [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  developerProjectsStore.unshift(project);
+  saveDataStore();
+  res.status(201).json({ success: true, project });
+});
+
+app.put("/api/admin/developer-projects/:id", authenticateToken, requireAdmin, (req, res) => {
+  const idx = developerProjectsStore.findIndex(p => p.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: "Không tìm thấy dự án." });
+  const body = req.body || {};
+  const p = developerProjectsStore[idx];
+  if (body.name !== undefined) p.name = String(body.name).trim();
+  if (body.status !== undefined) p.status = body.status;
+  if (Array.isArray(body.subs)) p.subs = body.subs;
+  p.updatedAt = new Date().toISOString();
+  saveDataStore();
+  res.json({ success: true, project: p });
+});
+
+app.delete("/api/admin/developer-projects/:id", authenticateToken, requireAdmin, (req, res) => {
+  const before = developerProjectsStore.length;
+  developerProjectsStore = developerProjectsStore.filter(p => p.id !== req.params.id);
+  if (developerProjectsStore.length === before) return res.status(404).json({ error: "Không tìm thấy dự án." });
+  saveDataStore();
+  res.json({ success: true, message: "Đã xóa dự án (quỹ căn giữ nguyên, có thể nhập lại)." });
+});
+
+// ===== NHẬP QUỸ CĂN TỪ GOOGLE SHEET (admin) =====
+function normalizeVnKey(s: string): string {
+  return String(s || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/[^a-z0-9%]+/g, ' ')
+    .trim();
+}
+
+function parseCsvText(text: string): string[][] {
+  const rows: string[][] = [];
+  let cur: string[] = [];
+  let field = '';
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += ch;
+    } else {
+      if (ch === '"') inQuotes = true;
+      else if (ch === ',') { cur.push(field); field = ''; }
+      else if (ch === '\n') { cur.push(field); rows.push(cur); cur = []; field = ''; }
+      else if (ch !== '\r') field += ch;
+    }
+  }
+  if (field.length > 0 || cur.length > 0) { cur.push(field); rows.push(cur); }
+  return rows.filter(r => r.some(c => String(c).trim() !== ''));
+}
+
+const SHEET_STATUS_MAP: Record<string, string> = {
+  'con hang': 'conhang', 'conhang': 'conhang', 'available': 'conhang', 'trong': 'conhang',
+  'booking': 'dabooking', 'da booking': 'dabooking', 'dabooking': 'dabooking', 'giu cho': 'dabooking',
+  'da coc': 'dacoc', 'dacoc': 'dacoc', 'coc': 'dacoc',
+  'da ban': 'daban', 'daban': 'daban', 'sold': 'daban',
+  'thu hoi': 'thuhoi', 'thuhoi': 'thuhoi'
+};
+
+app.post("/api/admin/developer-units/import-sheet", authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { sheetUrl, projectId, defaultSubdivisionId, defaultTier } = req.body || {};
+    if (!sheetUrl || !/docs\.google\.com\/spreadsheets/.test(String(sheetUrl))) {
+      return res.status(400).json({ error: "Link Google Sheet không hợp lệ." });
+    }
+    const idMatch = String(sheetUrl).match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+    if (!idMatch) return res.status(400).json({ error: "Không tìm thấy ID bảng tính trong link." });
+    const gidMatch = String(sheetUrl).match(/[#&?]gid=([0-9]+)/);
+    const gid = gidMatch ? gidMatch[1] : '0';
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${idMatch[1]}/export?format=csv&gid=${gid}`;
+    const resp = await fetch(csvUrl, { redirect: 'follow' });
+    if (!resp.ok) {
+      return res.status(400).json({ error: `Không đọc được Sheet (HTTP ${resp.status}). Hãy để chế độ chia sẻ "Bất kỳ ai có link đều xem được".` });
+    }
+    const csvText = await resp.text();
+    const rows = parseCsvText(csvText);
+    if (rows.length < 2) return res.status(400).json({ error: "Sheet trống hoặc thiếu dữ liệu (cần 1 dòng tiêu đề + dữ liệu)." });
+
+    const header = rows[0].map(h => normalizeVnKey(h));
+    const findCol = (names: string[]) => header.findIndex(h => names.some(n => h === n || h.includes(n)));
+    const col = {
+      code: findCol(['ma can', 'code', 'ma']),
+      sub: findCol(['phan khu', 'subdivision', 'khu']),
+      type: findCol(['loai', 'type']),
+      area: findCol(['dien tich', 'area', 'dt']),
+      price: findCol(['gia', 'price']),
+      status: findCol(['trang thai', 'status']),
+      floor: findCol(['tang', 'floor']),
+      note: findCol(['ghi chu', 'note']),
+      x: header.findIndex(h => h === 'x' || h === 'x%'),
+      y: header.findIndex(h => h === 'y' || h === 'y%'),
+      tier: findCol(['tier', 'cao thap'])
+    };
+    if (col.code === -1) return res.status(400).json({ error: 'Thiếu cột "Mã căn" trong dòng tiêu đề.' });
+
+    const subLookup: { sub: any; projectId: string }[] = [];
+    developerProjectsStore.forEach(p => (p.subs || []).forEach((s: any) => subLookup.push({ sub: s, projectId: p.id })));
+    const findSubByNameOrId = (key: string) => {
+      const k = normalizeVnKey(key).replace(/^phan khu /, '');
+      if (!k) return null;
+      for (const entry of subLookup) {
+        if (String(entry.sub.id || '').toLowerCase() === String(key).toLowerCase()) return entry;
+        const n = normalizeVnKey(entry.sub.name || '').replace(/^phan khu /, '');
+        if (n === k || n.includes(k) || k.includes(n)) return entry;
+      }
+      return null;
+    };
+
+    let added = 0, updated = 0;
+    const errors: string[] = [];
+    for (let r = 1; r < rows.length; r++) {
+      const row = rows[r];
+      const get = (i: number) => (i >= 0 && i < row.length ? String(row[i] || '').trim() : '');
+      const code = get(col.code);
+      if (!code) { errors.push(`Dòng ${r + 1}: thiếu Mã căn`); continue; }
+      let subEntry: any = null;
+      const subCell = get(col.sub);
+      if (subCell) subEntry = findSubByNameOrId(subCell);
+      if (!subEntry && defaultSubdivisionId) subEntry = subLookup.find(x => x.sub.id === defaultSubdivisionId) || null;
+      if (!subEntry) { errors.push(`Dòng ${r + 1} (${code}): không xác định được phân khu "${subCell || '(trống)'}"`); continue; }
+      const projId = subEntry.projectId;
+      const subId = subEntry.sub.id;
+      const tierKey = normalizeVnKey(get(col.tier));
+      const tier = tierKey.includes('cao') ? 'cao' : tierKey.includes('thap') ? 'thap' : (subEntry.sub.tier || defaultTier || 'thap');
+      const statusRaw = normalizeVnKey(get(col.status));
+      const status = SHEET_STATUS_MAP[statusRaw] || (['conhang','dabooking','dacoc','daban','thuhoi'].includes(statusRaw) ? statusRaw : 'conhang');
+      const area = Number(String(get(col.area)).replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
+      const price = Number(String(get(col.price)).replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
+      const floor = get(col.floor);
+      const note = get(col.note);
+      const xRaw = Number(get(col.x));
+      const yRaw = Number(get(col.y));
+
+      const existingIdx = developerUnitsStore.findIndex(u => u.code === code && (u as any).subdivisionId === subId);
+      if (existingIdx >= 0) {
+        const u = developerUnitsStore[existingIdx];
+        if (get(col.type)) u.type = get(col.type);
+        if (area > 0) u.area = area;
+        if (price > 0) { u.price = price; (u as any).priceDisplay = `${price} tỷ`; }
+        u.status = status as any;
+        if (floor) u.floor = floor;
+        if (note) (u as any).note = note;
+        if (!isNaN(xRaw) && xRaw > 0) (u as any).x = xRaw;
+        if (!isNaN(yRaw) && yRaw > 0) (u as any).y = yRaw;
+        (u as any).tier = tier;
+        (u as any).updatedAt = new Date().toISOString();
+        updated++;
+      } else {
+        const idxNew = developerUnitsStore.length;
+        developerUnitsStore.push({
+          id: `du-${Date.now()}-${idxNew}-${Math.random().toString(36).slice(2, 6)}`,
+          projectId: projId,
+          subdivisionId: subId,
+          code,
+          type: get(col.type) || 'Nhà phố thương mại',
+          area: area || 0,
+          price: price || 0,
+          priceDisplay: price ? `${price} tỷ` : 'Liên hệ',
+          status,
+          source: 'cdt',
+          tier,
+          floor: floor || undefined,
+          note: note || undefined,
+          x: (!isNaN(xRaw) && xRaw > 0) ? xRaw : 8 + ((idxNew % 8) * 11),
+          y: (!isNaN(yRaw) && yRaw > 0) ? yRaw : 12 + (Math.floor(idxNew / 8) % 6) * 12,
+          updatedAt: new Date().toISOString()
+        } as any);
+        added++;
+      }
+    }
+    saveDataStore();
+    res.json({ success: true, message: `Nhập Sheet thành công: thêm ${added}, cập nhật ${updated}.`, added, updated, errors: errors.slice(0, 12), totalRows: rows.length - 1 });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Lỗi nhập Sheet: ' + (err?.message || 'không xác định') });
+  }
+});
+
 app.get("/api/developer-units", (req, res) => {
   const { project, subdivision, tier, source, status, approved } = req.query;
   let filtered = [...developerUnitsStore];

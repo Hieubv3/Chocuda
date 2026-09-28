@@ -27,7 +27,7 @@ const STATUS_DOT: Record<DeveloperUnitStatus, string> = {
   thuhoi: '#f43f5e'
 };
 
-const SUB_CONFIG: Record<string, { name: string; prefix: string; tier: 'cao' | 'thap' }> = {
+const SUB_CONFIG_BASE: Record<string, { name: string; prefix: string; tier: 'cao' | 'thap' }> = {
   // Ocean Park 2
   'op2-cha-la': { name: 'Phân khu Chà Là', prefix: 'CL', tier: 'thap' },
   'op2-co-xanh': { name: 'Phân khu Cọ Xanh', prefix: 'CX', tier: 'thap' },
@@ -86,7 +86,7 @@ const SUB_CONFIG: Record<string, { name: string; prefix: string; tier: 'cao' | '
   'sc-canopy': { name: 'Phân khu The Canopy', prefix: 'SC', tier: 'thap' }
 };
 
-const PROJECTS: Record<string, { name: string; subs: string[] }> = {
+const PROJECTS_BASE: Record<string, { name: string; subs: string[] }> = {
   'ocean-park-2': { name: 'Vinhomes Ocean Park 2 - The Empire', subs: ['op2-cha-la', 'op2-co-xanh', 'op2-hai-tang', 'op2-san-ho', 'op2-sao-bien', 'op2-dao-ngoc', 'op2-cho-dem'] },
   'ocean-park-1': { name: 'Vinhomes Ocean Park 1 - Gia Lâm', subs: ['op1-san-ho', 'op1-ngoc-trai', 'op1-sapphire', 'op1-zen-park', 'op1-masteri', 'op1-hai-tang', 'op1-sao-bien'] },
   'ocean-park-3': { name: 'Vinhomes Ocean Park 3 - Grand Park', subs: ['op3-pho-bien', 'op3-vinh-thien-duong', 'op3-anh-duong', 'op3-thoi-dai', 'op3-vinh-tay', 'op3-vinh-hai-tang'] },
@@ -135,6 +135,23 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const dragPosRef = useRef<{ x: number; y: number } | null>(null);
   const [dragPos, setDragPos] = useState<{ id: string; x: number; y: number } | null>(null);
 
+  // ===== Dự án động (từ /api/developer-projects) ghép với danh mục nền =====
+  const [dynProjects, setDynProjects] = useState<any[]>([]);
+  useEffect(() => {
+    fetch('/api/developer-projects')
+      .then(r => (r.ok ? r.json() : []))
+      .then(d => { if (Array.isArray(d) && d.length > 0) setDynProjects(d); })
+      .catch(() => {});
+  }, []);
+  const PROJ_ALL: Record<string, { name: string; subs: string[] }> = { ...PROJECTS_BASE };
+  dynProjects.forEach((p: any) => { PROJ_ALL[p.id] = { name: p.name, subs: (p.subs || []).map((s: any) => s.id) }; });
+  const SUB_ALL: Record<string, { name: string; prefix: string; tier: 'cao' | 'thap' }> = { ...SUB_CONFIG_BASE };
+  dynProjects.forEach((p: any) => (p.subs || []).forEach((s: any) => {
+    if (s && s.id) SUB_ALL[s.id] = { name: s.name || s.id, prefix: s.prefix || '', tier: s.tier === 'cao' ? 'cao' : 'thap' };
+  }));
+  const PROJECTS = PROJ_ALL;
+  const SUB_CONFIG = SUB_ALL;
+
   // Chính sách form
   const [policyForm, setPolicyForm] = useState<any>({});
 
@@ -170,7 +187,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
 
   // Khi đổi project/tier → chọn phân khu đầu tiên phù hợp
   useEffect(() => {
-    const subs = PROJECTS[currentProject].subs.filter(s => SUB_CONFIG[s].tier === currentTier);
+    const subs = (PROJECTS[currentProject]?.subs || []).filter(s => SUB_CONFIG[s]?.tier === currentTier);
     if (subs.length > 0 && !subs.includes(currentSub)) {
       setCurrentSub(subs[0]);
     }
@@ -272,6 +289,115 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
     } catch {
       showToast('❌ Lưu vị trí thất bại');
     }
+  };
+
+  // ===== Nhập quỹ căn từ Google Sheet =====
+  const [showSheetImport, setShowSheetImport] = useState(false);
+  const [sheetUrl, setSheetUrl] = useState('');
+  const [sheetProject, setSheetProject] = useState('ocean-park-2');
+  const [sheetSub, setSheetSub] = useState('');
+  const [sheetImporting, setSheetImporting] = useState(false);
+  const [sheetResult, setSheetResult] = useState<any>(null);
+
+  // ===== Quản lý dự án & phân khu =====
+  const [showProjMgr, setShowProjMgr] = useState(false);
+  const [newProjName, setNewProjName] = useState('');
+  const [newSubDraft, setNewSubDraft] = useState<{ projectId: string; name: string; tier: 'cao' | 'thap'; prefix: string }>({ projectId: '', name: '', tier: 'thap', prefix: '' });
+  const [projBusy, setProjBusy] = useState(false);
+
+  const refreshProjects = async () => {
+    try {
+      const r = await fetch('/api/developer-projects');
+      const d = r.ok ? await r.json() : [];
+      if (Array.isArray(d) && d.length > 0) setDynProjects(d);
+    } catch { /* ignore */ }
+  };
+
+  const slugifyVn = (s: string) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+  const handleImportSheet = async () => {
+    if (!sheetUrl.trim()) { showToast('Dán link Google Sheet trước đã'); return; }
+    setSheetImporting(true);
+    setSheetResult(null);
+    try {
+      const result = await api('/api/admin/developer-units/import-sheet', 'POST', {
+        sheetUrl: sheetUrl.trim(),
+        projectId: sheetProject || undefined,
+        defaultSubdivisionId: sheetSub || undefined
+      });
+      setSheetResult(result);
+      if (result && result.success) {
+        showToast(`📥 Nhập xong: +${result.added} mới, ${result.updated} cập nhật`);
+        await fetchAll();
+      }
+    } catch (e: any) {
+      setSheetResult({ error: e?.message || 'Lỗi nhập Sheet' });
+    }
+    setSheetImporting(false);
+  };
+
+  const getProjectSubs = (pid: string): any[] => {
+    const dyn = dynProjects.find((p: any) => p.id === pid);
+    if (dyn) return (dyn.subs || []).map((s: any) => ({ ...s }));
+    const base = PROJECTS_BASE[pid];
+    if (base) return base.subs.map(sid => ({ id: sid, name: SUB_CONFIG_BASE[sid]?.name || sid, prefix: SUB_CONFIG_BASE[sid]?.prefix || '', tier: SUB_CONFIG_BASE[sid]?.tier || 'thap' }));
+    return [];
+  };
+
+  const handleCreateProject = async () => {
+    if (!newProjName.trim()) { showToast('Nhập tên dự án'); return; }
+    setProjBusy(true);
+    try {
+      const r = await api('/api/admin/developer-projects', 'POST', { name: newProjName.trim() });
+      if (r && r.error) { showToast('❌ ' + r.error); }
+      else { showToast('🏗️ Đã thêm dự án mới'); setNewProjName(''); await refreshProjects(); }
+    } catch { showToast('❌ Lỗi thêm dự án'); }
+    setProjBusy(false);
+  };
+
+  const handleDeleteProject = async (p: { id: string; name: string }) => {
+    if (!confirm(`Xóa dự án "${p.name}"? (Quỹ căn giữ nguyên)`)) return;
+    setProjBusy(true);
+    try {
+      const r = await api(`/api/admin/developer-projects/${p.id}`, 'DELETE');
+      if (r && r.error) showToast('❌ ' + r.error);
+      else { showToast('🗑️ Đã xóa dự án'); await refreshProjects(); }
+    } catch { showToast('❌ Lỗi xóa dự án'); }
+    setProjBusy(false);
+  };
+
+  const handleAddSub = async () => {
+    const pid = newSubDraft.projectId;
+    if (!pid) { showToast('Chọn dự án'); return; }
+    if (!newSubDraft.name.trim()) { showToast('Nhập tên phân khu'); return; }
+    setProjBusy(true);
+    try {
+      const subs = getProjectSubs(pid);
+      const sid = `${slugifyVn(newSubDraft.name).slice(0, 24) || 'pk'}-${Date.now().toString(36).slice(-4)}`;
+      subs.push({ id: sid, name: newSubDraft.name.trim(), prefix: (newSubDraft.prefix || '').trim().toUpperCase(), tier: newSubDraft.tier });
+      const projName = dynProjects.find((p: any) => p.id === pid)?.name || PROJECTS_BASE[pid]?.name || pid;
+      const r = await api(`/api/admin/developer-projects/${pid}`, 'PUT', { name: projName, subs });
+      if (r && r.error) showToast('❌ ' + r.error);
+      else {
+        showToast('✅ Đã thêm phân khu');
+        setNewSubDraft({ projectId: pid, name: '', tier: 'thap', prefix: '' });
+        await refreshProjects();
+      }
+    } catch { showToast('❌ Lỗi thêm phân khu'); }
+    setProjBusy(false);
+  };
+
+  const handleDeleteSub = async (pid: string, subId: string) => {
+    if (!confirm('Xóa phân khu này khỏi dự án? (Quỹ căn giữ nguyên)')) return;
+    setProjBusy(true);
+    try {
+      const subs = getProjectSubs(pid).filter((s: any) => s.id !== subId);
+      const projName = dynProjects.find((p: any) => p.id === pid)?.name || PROJECTS_BASE[pid]?.name || pid;
+      const r = await api(`/api/admin/developer-projects/${pid}`, 'PUT', { name: projName, subs });
+      if (r && r.error) showToast('❌ ' + r.error);
+      else { showToast('🗑️ Đã xóa phân khu'); await refreshProjects(); }
+    } catch { showToast('❌ Lỗi xóa phân khu'); }
+    setProjBusy(false);
   };
 
   const saveUnit = async () => {
@@ -466,6 +592,128 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
     );
   };
 
+  const renderSheetImportModal = () => {
+    if (!showSheetImport) return null;
+    const projectSubs = (PROJECTS[sheetProject]?.subs || []).map((sid: string) => ({ id: sid, name: SUB_CONFIG[sid]?.name || sid }));
+    return (
+      <div className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowSheetImport(false)}>
+        <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center justify-between">
+            <h3 className="font-black text-white text-base flex items-center gap-2"><Import className="w-4 h-4 text-emerald-400" /> Nhập quỹ căn từ Google Sheet</h3>
+            <button onClick={() => setShowSheetImport(false)} className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 cursor-pointer"><X className="w-4 h-4" /></button>
+          </div>
+          <div className="space-y-3 text-xs">
+            <label className="space-y-1 block">
+              <span className="text-slate-400 font-bold">Link Google Sheet *</span>
+              <input value={sheetUrl} onChange={e => setSheetUrl(e.target.value)} placeholder="https://docs.google.com/spreadsheets/d/..." className="w-full px-3 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white" />
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="space-y-1 block">
+                <span className="text-slate-400 font-bold">Dự án</span>
+                <select value={sheetProject} onChange={e => { setSheetProject(e.target.value); setSheetSub(''); }} className="w-full px-3 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white">
+                  {Object.keys(PROJECTS).map(pid => <option key={pid} value={pid}>{PROJECTS[pid].name}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 block">
+                <span className="text-slate-400 font-bold">Phân khu mặc định</span>
+                <select value={sheetSub} onChange={e => setSheetSub(e.target.value)} className="w-full px-3 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white">
+                  <option value="">— Theo cột "Phân khu" trong Sheet —</option>
+                  {projectSubs.map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+              </label>
+            </div>
+            <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-3 text-[11px] text-slate-300 space-y-1 leading-relaxed">
+              <p className="font-black text-emerald-400">📌 Cột chuẩn trong Sheet (dòng 1 là tiêu đề):</p>
+              <p>Mã căn | Phân khu | Loại | Diện tích | Giá (tỷ) | Trạng thái | Tầng | Ghi chú | X% | Y%</p>
+              <p>- Trạng thái: "Còn hàng", "Đã cọc", "Đã bán"... (hoặc mã conhang/dacoc/daban).</p>
+              <p>- Trùng <b>Mã căn</b> trong cùng phân khu → cập nhật, không tạo trùng.</p>
+              <p>- Sheet phải để chế độ chia sẻ <b>"Bất kỳ ai có link đều xem được"</b>.</p>
+            </div>
+            {sheetResult && (
+              <div className={`rounded-xl p-3 text-[11px] font-bold border ${sheetResult.success ? 'bg-emerald-950/40 border-emerald-700 text-emerald-300' : 'bg-rose-950/40 border-rose-700 text-rose-300'}`}>
+                {sheetResult.success ? (
+                  <>
+                    ✅ Thêm {sheetResult.added} · Cập nhật {sheetResult.updated} · Tổng {sheetResult.totalRows} dòng
+                    {Array.isArray(sheetResult.errors) && sheetResult.errors.length > 0 && (
+                      <div className="mt-1 text-amber-300 font-normal">⚠️ {sheetResult.errors.length} dòng lỗi: {sheetResult.errors.slice(0, 3).join(' • ')}…</div>
+                    )}
+                  </>
+                ) : ('❌ ' + (sheetResult.error || 'Nhập thất bại'))}
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button onClick={() => setShowSheetImport(false)} className="flex-1 px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-black rounded-xl text-xs cursor-pointer">Đóng</button>
+            <button onClick={handleImportSheet} disabled={sheetImporting} className="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs disabled:opacity-50 cursor-pointer">{sheetImporting ? 'Đang nhập…' : '📥 Nhập quỹ căn'}</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderProjectManagerModal = () => {
+    if (!showProjMgr) return null;
+    const projIds = Object.keys(PROJECTS);
+    return (
+      <div className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowProjMgr(false)}>
+        <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center justify-between">
+            <h3 className="font-black text-white text-base flex items-center gap-2"><Building2 className="w-4 h-4 text-emerald-400" /> Quản lý dự án & phân khu (Cao/Thấp tầng)</h3>
+            <button onClick={() => setShowProjMgr(false)} className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 cursor-pointer"><X className="w-4 h-4" /></button>
+          </div>
+
+          <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-3 space-y-2">
+            <p className="text-[11px] font-black text-emerald-400">➕ Thêm dự án mới</p>
+            <div className="flex gap-2">
+              <input value={newProjName} onChange={e => setNewProjName(e.target.value)} placeholder="VD: Vinhomes Royal Island" className="flex-1 px-3 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white text-xs" />
+              <button onClick={handleCreateProject} disabled={projBusy} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black disabled:opacity-50 cursor-pointer">Tạo dự án</button>
+            </div>
+          </div>
+
+          <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-3 space-y-2">
+            <p className="text-[11px] font-black text-sky-400">➕ Thêm phân khu vào dự án</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <select value={newSubDraft.projectId} onChange={e => setNewSubDraft({ ...newSubDraft, projectId: e.target.value })} className="px-2 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white text-xs col-span-2 sm:col-span-1">
+                <option value="">— Chọn dự án —</option>
+                {projIds.map(pid => <option key={pid} value={pid}>{PROJECTS[pid].name}</option>)}
+              </select>
+              <input value={newSubDraft.name} onChange={e => setNewSubDraft({ ...newSubDraft, name: e.target.value })} placeholder="Tên phân khu" className="px-2 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white text-xs" />
+              <input value={newSubDraft.prefix} onChange={e => setNewSubDraft({ ...newSubDraft, prefix: e.target.value })} placeholder="Mã (CL, SH...)" className="px-2 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white text-xs" />
+              <select value={newSubDraft.tier} onChange={e => setNewSubDraft({ ...newSubDraft, tier: e.target.value as any })} className="px-2 py-2 bg-slate-800 rounded-xl border border-slate-700 text-white text-xs">
+                <option value="thap">🏘️ Thấp tầng</option>
+                <option value="cao">🏢 Cao tầng</option>
+              </select>
+            </div>
+            <button onClick={handleAddSub} disabled={projBusy} className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-black disabled:opacity-50 cursor-pointer">Thêm phân khu</button>
+          </div>
+
+          <div className="space-y-2">
+            {projIds.map(pid => (
+              <div key={pid} className="border border-slate-700 rounded-xl p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-xs font-black text-white">{PROJECTS[pid].name} <span className="text-slate-500 font-mono font-normal">({pid})</span></div>
+                  <button onClick={() => handleDeleteProject({ id: pid, name: PROJECTS[pid].name })} className="text-[10px] px-2 py-1 bg-rose-600/20 text-rose-300 border border-rose-700 rounded-lg cursor-pointer">🗑 Xóa dự án</button>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {(PROJECTS[pid].subs || []).map((sid: string) => (
+                    <span key={sid} className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
+                      {SUB_CONFIG[sid]?.name || sid} · {SUB_CONFIG[sid]?.tier === 'cao' ? '🏢 Cao tầng' : '🏘️ Thấp tầng'}
+                      <button onClick={() => handleDeleteSub(pid, sid)} className="text-rose-400 hover:text-rose-300 cursor-pointer">✕</button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-end">
+            <button onClick={() => setShowProjMgr(false)} className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-black rounded-xl text-xs cursor-pointer">Đóng</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderMatBang = () => (
     <div className="space-y-4">
       {/* Header */}
@@ -478,10 +726,16 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
             </h2>
             <p className="text-xs text-slate-300 mt-0.5">Sơ đồ mặt bằng trực quan, cập nhật trạng thái căn theo thời gian thực, duyệt căn từ đại lý F1.</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <select value={currentProject} onChange={e => setCurrentProject(e.target.value)} className="px-3 py-2 bg-slate-800 text-white rounded-xl border border-slate-700 text-xs font-bold">
               {Object.keys(PROJECTS).map(p => <option key={p} value={p}>{PROJECTS[p].name}</option>)}
             </select>
+            <button type="button" onClick={() => setShowSheetImport(true)} className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black flex items-center gap-1.5 cursor-pointer">
+              <Import className="w-3.5 h-3.5" /> Nhập quỹ căn từ Google Sheet
+            </button>
+            <button type="button" onClick={() => { setShowProjMgr(true); void refreshProjects(); }} className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs font-black flex items-center gap-1.5 cursor-pointer">
+              <Building2 className="w-3.5 h-3.5" /> Quản lý dự án
+            </button>
           </div>
         </div>
       </div>
@@ -675,6 +929,9 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
           </div>
         </div>
       )}
+
+      {renderSheetImportModal()}
+      {renderProjectManagerModal()}
     </div>
   );
 
