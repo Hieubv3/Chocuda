@@ -690,7 +690,8 @@ export const App: React.FC = () => {
     if (!confirm('Bạn có chắc chắn muốn xóa dự án này?')) return;
     try {
       const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
-      if (!res.ok) {
+      // 404 = dự án không còn trên server -> coi như đã xóa thành công
+      if (!res.ok && res.status !== 404) {
         alert(`Xóa dự án thất bại (mã lỗi ${res.status}). Vui lòng thử lại.`);
         return;
       }
@@ -746,7 +747,8 @@ export const App: React.FC = () => {
     if (!confirm('Bạn có chắc chắn muốn xóa bài viết này?')) return;
     try {
       const res = await fetch(`/api/news/${id}`, { method: 'DELETE' });
-      if (!res.ok) {
+      // 404 = bài viết không còn trên server -> coi như đã xóa thành công
+      if (!res.ok && res.status !== 404) {
         alert(`Xóa bài viết thất bại (mã lỗi ${res.status}). Vui lòng thử lại.`);
         return;
       }
@@ -766,7 +768,9 @@ export const App: React.FC = () => {
     if (!confirm('Bạn có chắc chắn muốn xóa tin đăng BĐS này?')) return;
     try {
       const res = await fetch(`/api/properties/${id}`, { method: 'DELETE' });
-      if (!res.ok) {
+      // 404 = tin không còn trên server (đã xóa/không tồn tại) -> coi như xóa thành công,
+      // tránh trường hợp tin còn trong cache trình duyệt mà không gỡ được.
+      if (!res.ok && res.status !== 404) {
         alert(`Xóa bài thất bại (mã lỗi ${res.status}). Vui lòng thử lại.`);
         return;
       }
