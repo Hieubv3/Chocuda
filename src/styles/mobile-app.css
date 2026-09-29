@@ -262,7 +262,7 @@
   padding:8px 2px; border-radius:16px; border:0; background:transparent; cursor:pointer;
   color:#7c8a80; font-size:9.5px; font-weight:700; transition:color .15s, background .15s;
 }
-.mapp-nav-item span{ white-space:nowrap; }
+.mapp-nav-item span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
 .mapp-nav-item.active{ color:#0b6b40; background:#e8fbef; font-weight:800; }
 .dark .mapp-nav-item.active{ color:#8fe3b0; background:rgba(34,197,94,.16); }
 .mapp-nav-item:active{ transform:scale(.94); }
@@ -281,3 +281,9 @@
 
 /* CHOT CHAN: menu ngang duoi CHI danh cho di dong, khong bao gio hien tren PC */
 @media (min-width:768px){ .mapp-nav{ display:none !important; } }
+
+/* CHONG NGAT CHU TUNG TU: nhan menu / chip / nut luon tren mot dong */
+.mapp-qchip, .mapp-qchip span{ white-space:nowrap; }
+.mapp-strip-card b{ white-space:nowrap; }
+.mapp-filter button{ white-space:nowrap; }
+.mapp-account .rounded-full span, .mapp-account a[class*=rounded]{ white-space:nowrap; }
