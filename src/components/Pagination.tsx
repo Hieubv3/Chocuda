@@ -43,7 +43,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     'w-8 h-8 rounded-lg border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-ink-600 dark:text-ink-300 flex items-center justify-center transition disabled:opacity-40 disabled:cursor-not-allowed hover:border-brand-400';
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 mt-4 border-t border-ink-200 dark:border-ink-700">
+    <div className="mapp-pagination flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 mt-4 border-t border-ink-200 dark:border-ink-700">
       <div className="flex items-center gap-2 text-xs text-ink-500 dark:text-ink-400">
         <span>
           Hiển thị <strong className="text-ink-800 dark:text-ink-100">{from}–{to}</strong> / {total} {label}

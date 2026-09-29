@@ -83,7 +83,7 @@ export const PropertyFilter: React.FC<PropertyFilterProps> = ({
   }, [selectedProject, selectedHeightCategory, selectedCategory, minPrice, maxPrice, bedrooms, furniture, sortBy]);
 
   return (
-    <div className="bg-white dark:bg-ink-800 rounded-xl p-2.5 sm:p-3 shadow-xs border border-ink-200 dark:border-ink-700 space-y-2">
+    <div className="mapp-filter bg-white dark:bg-ink-800 rounded-xl p-2.5 sm:p-3 shadow-xs border border-ink-200 dark:border-ink-700 space-y-2">
       
       {/* Top Main Controls Bar: Type Switcher + Search + Filter Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">

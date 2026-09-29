@@ -144,6 +144,27 @@
     background: #ffffff !important;
   }
   .dark .mapp-pcard{ background:#0f1a14 !important; border-color: rgba(255,255,255,.08) !important; }
+
+  /* Bo loc (PropertyFilter) kieu app */
+  .mapp-filter{
+    border-radius: 20px !important;
+    border-color: #e9e5d6 !important;
+    padding: 12px !important;
+    box-shadow: 0 14px 28px rgba(10,60,38,.10) !important;
+  }
+  .mapp-filter input{ border-radius: 999px !important; }
+
+  /* Phan trang kieu app */
+  .mapp-pagination{ border-top-color: #e9e5d6 !important; }
+  .mapp-pagination button{ min-width: 34px; height: 34px; border-radius: 999px !important; }
+
+  /* Footer gon + dong bo mau app */
+  .mapp-footer{
+    padding-top: 26px !important;
+    padding-bottom: 26px !important;
+    background: linear-gradient(150deg, #0a3c26, #072a1a) !important;
+  }
+  .mapp-footer .grid{ gap: 22px !important; }
 }
 
 /* ---------- FLOATING BOTTOM NAV ---------- */

@@ -25,7 +25,7 @@ export const Footer: React.FC<FooterProps> = ({ language, setCurrentTab, onOpenS
   const headClass = 'text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-2';
 
   return (
-    <footer className="bg-ink-950 text-ink-200 pt-10 pb-8 border-t border-white/10">
+    <footer className="mapp-footer bg-ink-950 text-ink-200 pt-10 pb-8 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
