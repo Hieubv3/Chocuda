@@ -558,8 +558,8 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Bốn lối tắt, chỉ hiện trên máy tính */}
-      <div className="hidden lg:block bg-ink-100/80 dark:bg-ink-950/80 border-t border-ink-200/80 dark:border-white/10 py-1.5 px-2 sm:px-3">
+      {/* Bốn lối tắt trùng với thanh 4 ngành (IndustryQuickNav) và banner trang chủ -> TẠM ẨN để tránh trùng lặp */}
+      <div className="hidden bg-ink-100/80 dark:bg-ink-950/80 border-t border-ink-200/80 dark:border-white/10 py-1.5 px-2 sm:px-3">
         <div className="max-w-4xl mx-auto grid grid-cols-4 gap-1 sm:gap-2.5">
           <button
             onClick={() => handleNavFilter('sale', 'all')}
