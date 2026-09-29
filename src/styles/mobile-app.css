@@ -185,6 +185,18 @@
 
   /* Nut Zalo noi -> xanh app (giu nguyen tinh nang lien he) */
   .from-blue-600.to-indigo-600{ background: linear-gradient(135deg,#17a862,#0a3c26) !important; }
+
+  /* Nen trang tong the kieu app (paper) — chi mobile */
+  .mapp-bg{ background: #f6f3ea !important; }
+  .dark .mapp-bg{ background: #0a100d !important; }
+
+  /* Modal chi tiet BĐS: bo goc mem kieu app */
+  .mapp-detail-modal > div{ border-radius: 26px !important; }
+  .mapp-detail-modal .bg-gradient-to-br.from-brand-500.to-brand-600{
+    background: linear-gradient(150deg,#17a862,#0a3c26) !important;
+    color:#f0dfa8 !important;
+    border-radius: 18px !important;
+  }
 }
 
 /* ---------- FLOATING BOTTOM NAV ---------- */

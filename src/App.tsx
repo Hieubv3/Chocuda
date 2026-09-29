@@ -899,7 +899,7 @@ export const App: React.FC = () => {
 
   // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="mapp-bg min-h-screen w-full max-w-full overflow-x-hidden bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <ScrollToTop />
 
       {/* Top Banner (If active) */}

@@ -81,7 +81,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-ink-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div className="mapp-detail-modal fixed inset-0 z-50 bg-ink-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
       <div className="bg-white dark:bg-ink-900 rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative border border-ink-200 dark:border-ink-800 text-ink-900 dark:text-white my-auto animate-in fade-in zoom-in duration-200">
         
         {/* Close Button */}
