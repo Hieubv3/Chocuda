@@ -636,6 +636,34 @@ export const App: React.FC = () => {
     }
   };
 
+  // Property Add handler (admin tạo tin BĐS mới)
+  const handleAddProperty = async (newProperty: Property) => {
+    setProperties(prev => {
+      const updated = [newProperty, ...prev.filter(p => p.id !== newProperty.id)];
+      safeLocalStorageSet('hb_properties', updated);
+      return updated;
+    });
+    try {
+      const res = await fetch('/api/properties', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProperty)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.property) {
+          setProperties(prev => {
+            const updated = prev.map(p => p.id === newProperty.id ? data.property : p);
+            safeLocalStorageSet('hb_properties', updated);
+            return updated;
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Added property locally:', newProperty.id);
+    }
+  };
+
   // Project Update & Add handlers
   const handleUpdateProject = async (updatedProject: Project) => {
     setProjects(prev => {
@@ -838,6 +866,7 @@ export const App: React.FC = () => {
             onSavePricingConfig={handleSavePricingConfig}
             onApproveProperty={handleApproveProperty}
             onUpdateProperty={handleUpdateProperty}
+            onAddProperty={handleAddProperty}
             onDeleteProperty={handleDeleteProperty}
             onUpdateProject={handleUpdateProject}
             onAddProject={handleAddProject}
@@ -1784,6 +1813,7 @@ export const App: React.FC = () => {
                   onSavePricingConfig={handleSavePricingConfig}
                   onApproveProperty={handleApproveProperty}
                   onUpdateProperty={handleUpdateProperty}
+                  onAddProperty={handleAddProperty}
                   onDeleteProperty={handleDeleteProperty}
                   onUpdateProject={handleUpdateProject}
                   onAddProject={handleAddProject}

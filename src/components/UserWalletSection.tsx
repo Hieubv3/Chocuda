@@ -20,6 +20,9 @@ interface UserWalletSectionProps {
   onGoToCv?: () => void;
 }
 
+// WALLET_DISABLED: KHONG ap dung — nghiep vu moi nhat cua chu web:
+// vi chi NAP (khong RUT), Token/diem dung de Up tin & mo khoa xem CV ung vien.
+// (Chan patch build tu dong tat khoi vi nay.)
 export const UserWalletSection: React.FC<UserWalletSectionProps> = ({
   userState,
   affiliateWallet,

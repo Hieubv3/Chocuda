@@ -56,6 +56,7 @@ interface AdminDashboardPageProps {
   onSavePricingConfig: (newConfig: UpTinPricingConfig) => void;
   onApproveProperty: (id: string) => void;
   onUpdateProperty?: (property: Property) => void;
+  onAddProperty?: (property: Property) => void;
   onDeleteProperty: (id: string) => void;
   onUpdateProject?: (project: Project) => void;
   onAddProject?: (project: Project) => void;
@@ -78,6 +79,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   onSavePricingConfig,
   onApproveProperty,
   onUpdateProperty,
+  onAddProperty,
   onDeleteProperty,
   onUpdateProject,
   onAddProject,
@@ -981,6 +983,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // Asset Modals State
   const [showTaxModal, setShowTaxModal] = useState<boolean>(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
+  // AUTOCLAW:THEM-BDS-NEW — trạng thái thêm mới BĐS (Căn bán / Căn thuê)
+  const [isAddingProperty, setIsAddingProperty] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [projectSearchQuery, setProjectSearchQuery] = useState('');
@@ -2310,6 +2314,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           >
             <Globe className="w-3.5 h-3.5 text-amber-400" />
             <span className="hidden sm:inline">Theo Dõi AI</span>
+          </button>
+
+          {/* AUTOCLAW:THEM-BDS-NEW — nút thêm mới BĐS (Căn bán / Căn thuê) */}
+          <button
+            onClick={() => setIsAddingProperty(true)}
+            className="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+            title="Thêm căn bán / căn cho thuê mới"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">+ Thêm BĐS Mới</span>
           </button>
 
           <button
@@ -8763,14 +8777,46 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         />
       )}
 
-      {/* Edit Property Modal */}
-      {editingProperty && (
+      {/* Edit / Add Property Modal */}
+      {(editingProperty || isAddingProperty) && (
         <EditPropertyModal
-          property={editingProperty}
-          onClose={() => setEditingProperty(null)}
+          property={editingProperty || ({
+            id: 'prop-new-' + Date.now(),
+            title: '',
+            type: propertySubFilter === 'rent' ? 'rent' : 'sale',
+            project: 'ocean-park-2',
+            category: 'shophouse',
+            price: 0,
+            priceDisplay: '',
+            area: 0,
+            bedrooms: 0,
+            bathrooms: 0,
+            direction: 'Đông Nam',
+            furniture: 'basic',
+            legal: 'so-do',
+            address: '',
+            description: '',
+            images: [],
+            featured: false,
+            approved: true,
+            status: 'approved',
+            sellerName: 'Admin',
+            sellerPhone: '0868499929',
+            createdAt: new Date().toISOString()
+          } as any)}
+          isCreate={!editingProperty}
+          onClose={() => { setEditingProperty(null); setIsAddingProperty(false); }}
           onSave={(updated) => {
-            if (onUpdateProperty) onUpdateProperty(updated);
+            if (isAddingProperty) {
+              // Tạo mới: đảm bảo tin thuộc admin (tự duyệt) và gọi handler POST
+              const toCreate: any = { ...updated, userId: updated.userId || 'user-admin', approved: true, status: 'approved' };
+              if (onAddProperty) onAddProperty(toCreate);
+              else if (onUpdateProperty) onUpdateProperty(toCreate);
+            } else {
+              if (onUpdateProperty) onUpdateProperty(updated);
+            }
             setEditingProperty(null);
+            setIsAddingProperty(false);
           }}
         />
       )}
