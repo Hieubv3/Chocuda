@@ -177,6 +177,14 @@
   /* Bo goc mem dong bo app (mobile) */
   .rounded-2xl{ border-radius: 18px !important; }
   .rounded-3xl{ border-radius: 22px !important; }
+
+  /* O navy cu trong Dich vu cu dan -> tong xanh app */
+  .bg-\[\#141f38\]{ background: linear-gradient(160deg,#0f2f21,#0a2418) !important; }
+  .bg-\[\#1c2945\]{ background: #143625 !important; }
+  .bg-\[\#25375d\]{ background: #1c4a30 !important; }
+
+  /* Nut Zalo noi -> xanh app (giu nguyen tinh nang lien he) */
+  .from-blue-600.to-indigo-600{ background: linear-gradient(135deg,#17a862,#0a3c26) !important; }
 }
 
 /* ---------- FLOATING BOTTOM NAV ---------- */
