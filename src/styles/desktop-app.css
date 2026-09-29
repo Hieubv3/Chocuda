@@ -114,3 +114,17 @@
   /* 11. Nút Zalo nổi -> xanh app */
   .from-blue-600.to-indigo-600 { background: linear-gradient(135deg,#16a34a,#166534) !important; }
 }
+
+
+/* ============================================================
+   THANH BREADCRUMB HOP NHAT DAU TRANG (moi trang chi tiet)
+   Ap dung ca PC + mobile: dai xanh lien mach voi hero phia duoi
+   ============================================================ */
+.mapp-crumb{
+  background: linear-gradient(150deg,#0f8f4f,#166534) !important;
+  border-bottom: 0 !important;
+}
+.mapp-crumb nav, .mapp-crumb nav a, .mapp-crumb nav span{ color:#e9f9ef !important; }
+.mapp-crumb nav span.font-bold{ color:#ffffff !important; }
+.mapp-crumb nav svg{ color: rgba(255,255,255,.75) !important; }
+.mapp-crumb a:hover{ color:#ffe9a8 !important; }
