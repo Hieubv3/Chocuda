@@ -1,6 +1,7 @@
 /**
- * Utility functions for calculating post expiration & auto-hide dates (30 days default)
+ * Utility functions for calculating post expiration & auto-hide dates (365 days default)
  * IMPORTANT: Expiration count & days remaining are STRICTLY for Admin dashboard and the Post Owner's private dashboard.
+ * (2026-09: windows extended 30 -> 365 days so old posts remain visible on the public site)
  * Public users will only see active (non-expired) posts and never see private countdown clocks.
  */
 
@@ -21,7 +22,7 @@ export function calculateExpiryInfo(
     expiresAt?: string;
     durationDays?: number;
   },
-  defaultDurationDays = 30
+  defaultDurationDays = 365
 ): ExpiryInfo {
   const duration = item.durationDays || defaultDurationDays;
   const now = new Date();

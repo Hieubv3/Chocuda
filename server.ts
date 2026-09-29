@@ -3410,7 +3410,7 @@ app.post("/api/emergency/reset-admin-password", authLimiter, async (req, res) =>
 });
 
 // Server-side expiration checker (Default 30 days auto-hide for public visibility)
-function checkServerPostExpiry(item: any, defaultDays = 30) {
+function checkServerPostExpiry(item: any, defaultDays = 365) {
   const duration = Number(item.durationDays) || defaultDays;
   const now = Date.now();
   let expiryTime: number;
@@ -3603,7 +3603,7 @@ app.get("/api/properties", (req, res) => {
 
       // Public users: must be approved AND not expired (30-day auto-hide)
       const isApproved = p.status === 'approved' || p.approved === true;
-      const expiry = checkServerPostExpiry(p, 30);
+      const expiry = checkServerPostExpiry(p, 365);
       return isApproved && !expiry.isExpired;
     });
   }
@@ -4392,7 +4392,7 @@ app.get("/api/resident-services", (req, res) => {
 
     // Public users: must be approved AND not expired (30-day auto-hide)
     const isApproved = (s.status === 'approved' || s.approved === true || s.status === undefined);
-    const expiry = checkServerPostExpiry(s, 30);
+    const expiry = checkServerPostExpiry(s, 365);
     return isApproved && !expiry.isExpired;
   });
 
