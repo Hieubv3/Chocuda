@@ -4,6 +4,7 @@ import { Home, Building2, PlusCircle, ShoppingBag, User as UserIcon, Menu as Men
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
+import { MobileAppHome } from './components/MobileAppHome';
 import { ScrollToTop } from './components/ScrollToTop';
 import { IndustryQuickNav } from './components/IndustryQuickNav';
 import { MobileIndustryMenu } from './components/MobileIndustryMenu';
@@ -897,7 +898,7 @@ export const App: React.FC = () => {
 
   // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <ScrollToTop />
 
       {/* Top Banner (If active) */}
@@ -994,7 +995,9 @@ export const App: React.FC = () => {
           <Route
             path="/"
             element={
-              <HomePage
+              <>
+                <MobileAppHome />
+                <HomePage
                 language={language}
                 projects={projects}
                 properties={properties.filter(p => p.approved || p.status === 'approved')}
@@ -1010,6 +1013,7 @@ export const App: React.FC = () => {
                   navigate(`/du-an/${getProjectSlug(projId)}`);
                 }}
               />
+              </>
             }
           />
 
@@ -1927,15 +1931,15 @@ export const App: React.FC = () => {
       {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom */}
       <nav
         ref={bottomNavRef}
-        className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-ink-900/95 backdrop-blur-md border-t border-ink-200 dark:border-ink-800 px-1 py-1 flex items-center justify-around shadow-2xl pb-[max(0.25rem,env(safe-area-inset-bottom))]${isTypingField ? ' hidden' : ''}`}
+        className={`md:hidden mapp-nav${isTypingField ? ' hidden' : ''}`}
       >
         {/* 1. Trang Chủ */}
         <button
           onClick={() => { window.dispatchEvent(new Event('close-mobile-menu')); navigate('/'); }}
-          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
+          className={`mapp-nav-item ${
             location.pathname === '/'
-              ? 'text-brand-600 dark:text-brand-400 font-extrabold'
-              : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
+              ? 'active'
+              : ''
           }`}
         >
           <Home className="w-5 h-5 transition-transform" />
@@ -1945,10 +1949,10 @@ export const App: React.FC = () => {
         {/* 2. Bất Động Sản */}
         <button
           onClick={() => { window.dispatchEvent(new Event('close-mobile-menu')); navigate('/bat-dong-san'); }}
-          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
+          className={`mapp-nav-item ${
             location.pathname.startsWith('/bat-dong-san') || location.pathname.startsWith('/mua-ban') || location.pathname.startsWith('/cho-thue')
-              ? 'text-brand-600 dark:text-brand-400 font-extrabold'
-              : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
+              ? 'active'
+              : ''
           }`}
         >
           <Building2 className="w-5 h-5 transition-transform" />
@@ -1965,9 +1969,9 @@ export const App: React.FC = () => {
               navigate('/dang-tin');
             }
           }}
-          className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer text-brand-600 dark:text-brand-400 font-black group"
+          className="mapp-nav-item mapp-nav-add group"
         >
-          <div className="w-6 h-6 rounded-full bg-brand-500/15 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+          <div className="mapp-nav-bubble">
             <PlusCircle className="w-5 h-5" />
           </div>
           <span className="text-[10px] mt-0.5 font-black whitespace-nowrap">Đăng Tin</span>
@@ -1976,20 +1980,20 @@ export const App: React.FC = () => {
         {/* 4. Chợ Cư Dân */}
         <button
           onClick={() => { window.dispatchEvent(new Event('close-mobile-menu')); navigate('/dich-vu-cu-dan'); }}
-          className={`flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer ${
+          className={`mapp-nav-item ${
             location.pathname.startsWith('/dich-vu-cu-dan')
-              ? 'text-brand-600 dark:text-brand-400 font-extrabold'
-              : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
+              ? 'active'
+              : ''
           }`}
         >
           <ShoppingBag className="w-5 h-5 transition-transform" />
-          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Chợ Cư Dân</span>
+          <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Dịch Vụ Cư Dân</span>
         </button>
 
         {/* 5. Menu (3 gạch) — chuyển từ góc phải header xuống thanh dưới */}
         <button
           onClick={() => window.dispatchEvent(new Event('toggle-mobile-menu'))}
-          className="flex-1 flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 hover:scale-115 active:scale-125 cursor-pointer relative group text-ink-500 hover:text-ink-900 dark:hover:text-white"
+          className="mapp-nav-item group"
           aria-label="Mở menu"
         >
           <div className="relative">
