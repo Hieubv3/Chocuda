@@ -10,7 +10,7 @@ interface PageHeroProps {
 export const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, badge, right }) => (
   <section className="px-3 sm:px-6 lg:px-8 pt-3">
     <div className="max-w-7xl mx-auto">
-      <div className="relative overflow-hidden rounded-2xl bg-[#16284e] border border-ink-700/50 shadow-xl px-5 py-4 sm:px-7 sm:py-5">
+      <div className="mapp-page-hero relative overflow-hidden rounded-2xl bg-[#16284e] border border-ink-700/50 shadow-xl px-5 py-4 sm:px-7 sm:py-5">
         <div className="absolute inset-0 opacity-[0.14] bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]" />
         <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="min-w-0">

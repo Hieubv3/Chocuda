@@ -92,7 +92,7 @@
 .dark .mapp-cell span{ color:#d6e7da; }
 .mapp-cell em{ font-style:normal; font-size:8.5px; font-weight:800; color:#0f6a41; letter-spacing:.2px; }
 
-/* ---------- FLOATING BOTTOM NAV ---------- */
+/* ---------- MOBILE APP HEADER ---------- */
 .mapp-header{
   position:sticky; top:0; z-index:50; display:flex; align-items:center; gap:10px;
   padding:10px 12px; background:rgba(246,243,234,.92);
@@ -121,6 +121,30 @@
   font-weight:900; font-size:13px; cursor:pointer;
 }
 .mapp-header-avatar img{ width:100%; height:100%; object-fit:cover; }
+
+/* ---------- APP SKIN CHO NOI DUNG CAC TRANG (mobile) ---------- */
+@media (max-width:767.98px){
+  /* Page hero (cac trang phu) kieu app */
+  .mapp-page-hero{
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(23,168,98,.5), transparent 55%),
+      linear-gradient(150deg,#0a3c26,#072a1a) !important;
+    border-color: transparent !important;
+    border-radius: 22px !important;
+    box-shadow: 0 18px 36px rgba(10,60,38,.22) !important;
+  }
+  .mapp-page-hero > div.absolute{ display:none !important; }
+  .mapp-page-hero h1{ letter-spacing: -.2px; }
+
+  /* The tin BĐS kieu app */
+  .mapp-pcard{
+    border-radius: 20px !important;
+    border-color: #e9e5d6 !important;
+    box-shadow: 0 14px 28px rgba(10,60,38,.10) !important;
+    background: #ffffff !important;
+  }
+  .dark .mapp-pcard{ background:#0f1a14 !important; border-color: rgba(255,255,255,.08) !important; }
+}
 
 /* ---------- FLOATING BOTTOM NAV ---------- */
 .mapp-nav{

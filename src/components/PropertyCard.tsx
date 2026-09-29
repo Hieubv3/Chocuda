@@ -62,7 +62,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     const sellerName = property.sellerName || 'Người đăng tin';
 
     return (
-      <div className={`group bg-white dark:bg-ink-800/95 rounded-2xl border transition-all duration-200 flex flex-row items-stretch overflow-hidden shadow-xs hover:shadow-md relative ${
+      <div className={`mapp-pcard group bg-white dark:bg-ink-800/95 rounded-2xl border transition-all duration-200 flex flex-row items-stretch overflow-hidden shadow-xs hover:shadow-md relative ${
         isVipDiamond
           ? 'border-purple-500/80 ring-1 ring-purple-500/30'
           : isVipGold
@@ -227,7 +227,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   }
 
   return (
-    <div className={`group bg-white dark:bg-ink-800/90 rounded-2xl border transition-all duration-300 flex flex-col h-full relative overflow-hidden ${
+    <div className={`mapp-pcard group bg-white dark:bg-ink-800/90 rounded-2xl border transition-all duration-300 flex flex-col h-full relative overflow-hidden ${
       isVipDiamond
         ? 'border-purple-500/80 shadow-lg shadow-purple-500/10 ring-2 ring-purple-500/30'
         : isVipGold
