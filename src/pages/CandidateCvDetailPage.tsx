@@ -195,7 +195,7 @@ export const CandidateCvDetailPage: React.FC<CandidateCvDetailPageProps> = ({
       />
 
       {/* Breadcrumbs Navigation */}
-      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
+      <div className="mapp-crumb bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
             <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1">

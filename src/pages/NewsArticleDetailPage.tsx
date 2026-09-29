@@ -72,7 +72,7 @@ export const NewsArticleDetailPage: React.FC<NewsArticleDetailPageProps> = ({ ne
       />
 
       {/* Breadcrumbs */}
-      <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
+      <div className="mapp-crumb bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 py-3">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <nav className="flex items-center text-xs font-semibold text-ink-500 dark:text-ink-400 overflow-x-auto whitespace-nowrap gap-1.5">
             <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1">
