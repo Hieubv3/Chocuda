@@ -278,3 +278,6 @@
   position:absolute; top:-2px; right:-4px; width:8px; height:8px; border-radius:50%;
   background:#f97316; box-shadow:0 0 0 2px #fff;
 }
+
+/* CHOT CHAN: menu ngang duoi CHI danh cho di dong, khong bao gio hien tren PC */
+@media (min-width:768px){ .mapp-nav{ display:none !important; } }
