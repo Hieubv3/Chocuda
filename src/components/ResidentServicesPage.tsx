@@ -520,7 +520,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
         
         <div className="max-w-7xl mx-auto relative z-20 space-y-3.5">
           {/* Row 1: Title & Store Verification Button */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pb-1 border-b border-ink-800/60">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="inline-flex items-center gap-1.5 bg-brand-500/20 text-brand-300 border border-brand-500/30 px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-xs">

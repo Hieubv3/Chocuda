@@ -47,22 +47,24 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
-      {/* Title */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-ink-200 dark:border-ink-800 pb-4">
-        <div>
-          <span className="text-xs font-black uppercase text-brand-500 tracking-wider">
-            TIN TỨC BĐS & PHÂN TÍCH THỊ TRƯỜNG
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-ink-900 dark:text-white mt-1">
-            BẢN TIN THỊ TRƯỜNG VINHOMES 24/7
-          </h1>
-          <p className="text-xs text-ink-500 dark:text-ink-400">
-            Đồng bộ bài viết tự động từ webhook n8n & Phân tích chuyên sâu từ Gemini AI
-          </p>
-        </div>
+      {/* Đầu trang gộp: tiêu đề + bộ lọc trong một khối */}
+      <div className="mapp-page-hero relative overflow-hidden rounded-2xl bg-[#16284e] border border-ink-700/50 shadow-xl px-5 py-4 sm:px-7 sm:py-5">
+        <div className="absolute inset-0 opacity-[0.14] bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]" />
+        <div className="relative space-y-3">
+          <div>
+            <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-brand-400 bg-brand-500/10 border border-brand-500/30 rounded-full px-2.5 py-0.5 mb-1.5">
+              TIN TỨC BĐS &amp; PHÂN TÍCH THỊ TRƯỜNG
+            </span>
+            <h1 className="text-white font-black text-lg sm:text-2xl tracking-tight uppercase">
+              BẢN TIN THỊ TRƯỜNG VINHOMES 24/7
+            </h1>
+            <p className="text-ink-300 text-xs sm:text-sm mt-0.5">
+              Đồng bộ bài viết tự động từ webhook n8n &amp; Phân tích chuyên sâu từ Gemini AI
+            </p>
+          </div>
 
-        {/* Category Filter Pills */}
-        <div className="flex bg-ink-100 dark:bg-ink-800 p-1 rounded-2xl overflow-x-auto shrink-0">
+          {/* Category Filter Pills (gộp chung khối đầu trang) */}
+          <div className="flex bg-ink-900/50 border border-white/10 p-1 rounded-2xl overflow-x-auto">
           <button
             onClick={() => setSelectedCat('all')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
@@ -103,6 +105,7 @@ export const NewsPage: React.FC<NewsPageProps> = ({ news, language, currentUser,
           >
             Chia Sẻ Kinh Nghiệm
           </button>
+        </div>
         </div>
       </div>
 
