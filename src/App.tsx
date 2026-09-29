@@ -5,6 +5,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ZaloWidget } from './components/ZaloWidget';
 import { MobileAppHome } from './components/MobileAppHome';
+import { MobileAppHeader } from './components/MobileAppHeader';
 import { ScrollToTop } from './components/ScrollToTop';
 import { IndustryQuickNav } from './components/IndustryQuickNav';
 import { MobileIndustryMenu } from './components/MobileIndustryMenu';
@@ -904,7 +905,11 @@ export const App: React.FC = () => {
       {/* Top Banner (If active) */}
       <AdBannerWidget ads={ads} position="header_top" />
 
-      {/* Navigation Header */}
+      {/* Mobile App Header (giao diện app — hiển thị trên MỌI trang mobile) */}
+      <MobileAppHeader currentUser={user} onOpenAuth={() => setAuthModalOpen(true)} />
+
+      {/* Navigation Header (desktop) */}
+      <div className="hidden md:block">
       <Header
         language={language}
         setLanguage={setLanguage}
@@ -924,6 +929,7 @@ export const App: React.FC = () => {
         onOpenAndroidModal={() => setAndroidModalOpen(true)}
         onNavigateWithFilter={handleNavigateWithFilter}
       />
+      </div>
 
       {/* 4 nhom nganh: hien o MOI TRANG (tru trang chu) tren desktop */}
       {location.pathname !== '/' && (
@@ -997,6 +1003,7 @@ export const App: React.FC = () => {
             element={
               <>
                 <MobileAppHome />
+                <div className="hidden md:block">
                 <HomePage
                 language={language}
                 projects={projects}
@@ -1013,6 +1020,7 @@ export const App: React.FC = () => {
                   navigate(`/du-an/${getProjectSlug(projId)}`);
                 }}
               />
+                </div>
               </>
             }
           />
