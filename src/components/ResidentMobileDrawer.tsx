@@ -125,10 +125,10 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
       />
 
       {/* Thân Drawer kéo từ bên trái sang */}
-      <div className="relative w-full h-full max-h-[100dvh] bg-[#0c1322] text-white flex flex-col shadow-2xl z-10 overflow-y-auto overscroll-contain animate-in fade-in duration-200 select-none">
+      <div className="relative w-full h-full max-h-[100dvh] bg-[#0c1d14] text-white flex flex-col shadow-2xl z-10 overflow-y-auto overscroll-contain animate-in fade-in duration-200 select-none">
         
         {/* Header Drawer: Thông tin tài khoản cư dân */}
-        <div className="p-4 border-b border-ink-800/80 flex items-start justify-between gap-3 bg-[#10192d] sticky top-0 z-20">
+        <div className="p-4 border-b border-ink-800/80 flex items-start justify-between gap-3 bg-[#102419] sticky top-0 z-20">
           {currentUser ? (
             <div
               onClick={() => {
@@ -146,7 +146,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
                     <span className="text-brand-400 font-extrabold text-lg">{currentUser.name?.charAt(0)?.toUpperCase() || 'U'}</span>
                   )}
                 </div>
-                <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-brand-500 border-2 border-[#10192d] rounded-full shadow-sm" />
+                <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-brand-500 border-2 border-[#102419] rounded-full shadow-sm" />
               </div>
 
               <div className="min-w-0">
@@ -220,7 +220,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
             <button
               type="button"
               onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
-              className="w-full bg-[#141d33] hover:bg-[#1b2642] border border-ink-700/80 rounded-xl px-3 py-2.5 flex items-center justify-between text-xs text-ink-100 transition cursor-pointer shadow-inner"
+              className="w-full bg-[#14291b] hover:bg-[#1b3524] border border-ink-700/80 rounded-xl px-3 py-2.5 flex items-center justify-between text-xs text-ink-100 transition cursor-pointer shadow-inner"
             >
               <div className="flex items-center gap-2 truncate">
                 <MapPin className="w-4 h-4 text-brand-500 shrink-0" />
@@ -230,7 +230,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
             </button>
 
             {projectDropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-[#141d33] border border-ink-700 rounded-xl shadow-2xl overflow-hidden z-30">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[#14291b] border border-ink-700 rounded-xl shadow-2xl overflow-hidden z-30">
                 {projectList.map((p) => (
                   <button
                     key={p.slug}
@@ -273,7 +273,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
               placeholder="Tìm căn hộ, shophouse, dịch vụ..."
               value={menuSearchText}
               onChange={(e) => setMenuSearchText(e.target.value)}
-              className="w-full bg-[#141d33] border border-ink-700/80 rounded-xl pl-9 pr-16 py-2.5 text-xs text-white placeholder:text-ink-400 focus:outline-none focus:border-brand-400 transition"
+              className="w-full bg-[#14291b] border border-ink-700/80 rounded-xl pl-9 pr-16 py-2.5 text-xs text-white placeholder:text-ink-400 focus:outline-none focus:border-brand-400 transition"
             />
             {menuSearchText.trim() && (
               <button
@@ -670,7 +670,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
             </h4>
 
             {/* Sáng / Tối */}
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#141d33] border border-ink-800">
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#14291b] border border-ink-800">
               <div className="flex items-center gap-2 text-xs font-semibold text-ink-300">
                 {darkMode ? <Moon className="w-4 h-4 text-brand-400" /> : <Sun className="w-4 h-4 text-brand-500" />}
                 <span>Chế độ hiển thị</span>
@@ -689,7 +689,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
             </div>
 
             {/* Chuyển ngôn ngữ */}
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#141d33] border border-ink-800">
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#14291b] border border-ink-800">
               <div className="flex items-center gap-2 text-xs font-semibold text-ink-300">
                 <Globe className="w-4 h-4 text-brand-400" />
                 <span>Ngôn ngữ</span>
@@ -743,7 +743,7 @@ export const ResidentMobileDrawer: React.FC<ResidentMobileDrawerProps> = ({
         </div>
 
         {/* Footer Drawer */}
-        <div className="p-4 bg-[#080d19] border-t border-ink-800/80 text-xs mt-auto">
+        <div className="p-4 bg-[#08130c] border-t border-ink-800/80 text-xs mt-auto">
           <div className="flex items-center justify-between text-[11.5px] text-ink-400 pb-2.5">
             <span className="font-normal text-ink-400">Phiên bản v2.5 (Cư dân)</span>
             <span className="text-[#10b981] font-bold flex items-center gap-1">
