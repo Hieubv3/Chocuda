@@ -28,7 +28,7 @@ export const MobileAppHeader: React.FC<MobileAppHeaderProps> = ({ currentUser, o
       </button>
 
       <div className="mapp-header-search">
-        <span style={{ color: '#0f6a41', fontSize: 13 }}>⌕</span>
+        <span style={{ color: '#12a150', fontSize: 13 }}>⌕</span>
         <input
           placeholder="Tìm căn hộ, dịch vụ..."
           onKeyDown={(e) => { if (e.key === 'Enter') navigate('/mua-ban'); }}

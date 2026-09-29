@@ -70,7 +70,7 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], n
             <span className="mapp-eyebrow2">Bất động sản</span>
             <div className="mapp-title2">Tin mua bán mới</div>
           </div>
-          <button style={{ fontSize: 12, fontWeight: 800, color: '#0f6a41', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/mua-ban')}>
+          <button style={{ fontSize: 12, fontWeight: 800, color: '#12a150', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/mua-ban')}>
             Xem tất cả →
           </button>
         </div>
@@ -99,7 +99,7 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], n
             <span className="mapp-eyebrow2">Tiện ích</span>
             <div className="mapp-title2">Dịch vụ cư dân</div>
           </div>
-          <button style={{ fontSize: 12, fontWeight: 800, color: '#0f6a41', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/dich-vu-cu-dan')}>
+          <button style={{ fontSize: 12, fontWeight: 800, color: '#12a150', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/dich-vu-cu-dan')}>
             Xem tất cả →
           </button>
         </div>
@@ -127,7 +127,7 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], n
             <span className="mapp-eyebrow2">Cập nhật</span>
             <div className="mapp-title2">Tin tức mới</div>
           </div>
-          <button style={{ fontSize: 12, fontWeight: 800, color: '#0f6a41', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/tin-tuc')}>
+          <button style={{ fontSize: 12, fontWeight: 800, color: '#12a150', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/tin-tuc')}>
             Xem tất cả →
           </button>
         </div>
@@ -148,7 +148,7 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], n
             <span className="mapp-eyebrow2">Tất cả chức năng</span>
             <div className="mapp-title2">Danh mục chính</div>
           </div>
-          <button style={{ fontSize: 12, fontWeight: 800, color: '#0f6a41', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/sitemap')}>
+          <button style={{ fontSize: 12, fontWeight: 800, color: '#12a150', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/sitemap')}>
             Xem tất cả →
           </button>
         </div>
