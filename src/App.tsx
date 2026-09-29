@@ -931,13 +931,7 @@ export const App: React.FC = () => {
       />
       </div>
 
-      {/* 4 nhom nganh: hien o MOI TRANG (tru trang chu) tren desktop */}
-      {location.pathname !== '/' && (
-        <IndustryQuickNav
-          currentTab={getCurrentTabName()}
-          setCurrentTab={handleTabSwitch}
-        />
-      )}
+      {/* (Đã gộp) Thanh 4 ngành rời đã được gộp vào đầu trang từng mục chính để tránh chồng lớp */}
 
       {/* Menu 4 nganh dang NOI cho DI DONG - chi hien khi bam */}
       <MobileIndustryMenu

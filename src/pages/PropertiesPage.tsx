@@ -166,18 +166,20 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-3">
 
-      <PageHero title="Bất Động Sản" subtitle="Mua bán & cho thuê BĐS Vinhomes toàn quốc - chính chủ" badge="CHỢ CƯ DÂN 24H" />
-      
-      {/* Header Title & View Toggle */}
-      <div className="flex flex-row items-center justify-between gap-2 border-b border-ink-200 dark:border-ink-800 pb-2.5">
-        <div>
-          <h1 className="text-base sm:text-xl font-black text-ink-900 dark:text-white flex items-center gap-2">
-            Quỹ Căn Mua Bán & Cho Thuê
-            <span className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 px-2 py-0.5 rounded-full">
-              {filteredProperties.length} căn
-            </span>
-          </h1>
-        </div>
+      <PageHero
+        title="Bất Động Sản"
+        subtitle="Mua bán & cho thuê BĐS Vinhomes toàn quốc - chính chủ"
+        badge="CHỢ CƯ DÂN 24H"
+        right={
+          <span className="inline-flex items-center gap-1.5 bg-white/15 border border-white/25 text-white text-xs font-black px-3 py-1.5 rounded-full">
+            {filteredProperties.length} căn đang hiển thị
+          </span>
+        }
+      />
+
+      {/* Thanh công cụ gộp liền khối đầu trang */}
+      <div className="flex flex-row items-center justify-between gap-2 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl px-3 py-2 shadow-xs -mt-1">
+        <span className="text-xs font-bold text-ink-600 dark:text-ink-300 truncate">Quỹ Căn Mua Bán &amp; Cho Thuê</span>
 
         {/* Grid / List View Toggle */}
         <div className="flex bg-ink-100 dark:bg-ink-800 p-0.5 rounded-lg shrink-0 gap-0.5 border border-ink-200 dark:border-ink-700">

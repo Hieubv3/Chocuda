@@ -13,10 +13,10 @@
 .mapp-hero{
   position:relative; overflow:hidden; border-radius:24px; padding:22px 20px; color:#fff;
   background:
-    radial-gradient(120% 140% at 100% 0%, rgba(34,197,94,.55), transparent 55%),
+    radial-gradient(120% 140% at 100% 0%, rgba(22,163,74,.55), transparent 55%),
     radial-gradient(90% 120% at 0% 100%, rgba(182,145,44,.32), transparent 55%),
-    linear-gradient(150deg,#0b6b40,#0a5c38 80%);
-  box-shadow:0 18px 36px rgba(16,140,80,.22);
+    linear-gradient(150deg,#166534,#14532d 80%);
+  box-shadow:0 18px 36px rgba(15,120,63,.22);
 }
 .mapp-hero::after{
   content:""; position:absolute; inset:0; opacity:.10; pointer-events:none;
@@ -35,26 +35,26 @@
 .mapp-hero-btn{
   position:relative; z-index:1; display:inline-flex; align-items:center; gap:6px;
   margin-top:14px; padding:10px 16px; border-radius:999px; font-size:12.5px; font-weight:800;
-  background:linear-gradient(135deg,#ffe9a8,#ffffff); color:#0b6b40;
+  background:linear-gradient(135deg,#ffe9a8,#ffffff); color:#166534;
   box-shadow:0 10px 22px rgba(0,0,0,.18); cursor:pointer; border:0;
 }
 
 .mapp-search{
   position:relative; z-index:2; margin:-16px 6px 0;
-  background:#fff; border:1px solid #e3efe5; border-radius:999px;
+  background:#fff; border:1px solid #d9e9de; border-radius:999px;
   display:flex; align-items:center; gap:8px; padding:6px 6px 6px 16px;
-  box-shadow:0 14px 30px rgba(16,140,80,.14);
+  box-shadow:0 14px 30px rgba(15,120,63,.14);
 }
 .dark .mapp-search{ background:#0f1a14; border-color:rgba(255,255,255,.1); }
-.mapp-search span{ color:#12a150; font-size:15px; }
+.mapp-search span{ color:#15803d; font-size:15px; }
 .mapp-search input{
   flex:1; border:0; outline:0; background:transparent; padding:11px 2px;
   font-size:13px; color:inherit;
 }
 .mapp-search button{
   flex:none; width:40px; height:40px; border-radius:50%; border:0; cursor:pointer;
-  background:linear-gradient(150deg,#22c55e,#0b6b40); color:#fff; font-size:14px;
-  box-shadow:0 8px 18px rgba(34,197,94,.35);
+  background:linear-gradient(150deg,#16a34a,#166534); color:#fff; font-size:14px;
+  box-shadow:0 8px 18px rgba(22,163,74,.35);
 }
 
 .mapp-quick{ display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding:12px 2px 2px; }
@@ -62,18 +62,18 @@
 .mapp-qchip{
   flex:none; display:inline-flex; align-items:center; gap:6px;
   padding:9px 14px; border-radius:999px; font-size:12px; font-weight:800; cursor:pointer;
-  background:#fff; border:1px solid #e3efe5; color:#33463c;
+  background:#fff; border:1px solid #d9e9de; color:#33463c;
 }
 .dark .mapp-qchip{ background:#0f1a14; border-color:rgba(255,255,255,.1); color:#cde7d7; }
 .mapp-qchip.gold{ background:linear-gradient(135deg,#f6d97a,#ffe9a8); border-color:#e8cf8a; color:#5d490e; }
-.mapp-qchip.green{ background:linear-gradient(135deg,#22c55e,#12a150); border-color:transparent; color:#fff; }
+.mapp-qchip.green{ background:linear-gradient(135deg,#16a34a,#15803d); border-color:transparent; color:#fff; }
 
 /* ---------- STRIPS (Tin BĐS / Dịch vụ / Tin tức trên home app) ---------- */
 .mapp-strip{ display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding:2px 2px 6px; }
 .mapp-strip::-webkit-scrollbar{ display:none; }
 .mapp-strip-card{
-  flex:0 0 46%; background:#fff; border:1px solid #e3efe5; border-radius:16px; padding:9px;
-  text-align:left; cursor:pointer; box-shadow:0 10px 22px rgba(16,140,80,.08);
+  flex:0 0 46%; background:#fff; border:1px solid #d9e9de; border-radius:16px; padding:9px;
+  text-align:left; cursor:pointer; box-shadow:0 10px 22px rgba(15,120,63,.08);
   display:flex; flex-direction:column; gap:4px;
 }
 .dark .mapp-strip-card{ background:#0f1a14; border-color:rgba(255,255,255,.08); }
@@ -86,7 +86,7 @@
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
 }
 .dark .mapp-strip-card strong{ color:#e6f3ea; }
-.mapp-strip-card b{ font-size:12.5px; font-weight:900; color:#12a150; }
+.mapp-strip-card b{ font-size:12.5px; font-weight:900; color:#15803d; }
 .dark .mapp-strip-card b{ color:#8fe3b0; }
 .mapp-strip-card em{ font-style:normal; font-size:10px; color:#7c8a80; }
 
@@ -97,7 +97,7 @@
 
 .mapp-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:9px; }
 .mapp-cell{
-  border:1px solid #e3efe5; background:#fff; border-radius:16px; padding:12px 4px;
+  border:1px solid #d9e9de; background:#fff; border-radius:16px; padding:12px 4px;
   display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;
   transition:transform .15s, box-shadow .15s; text-align:center;
 }
@@ -105,14 +105,14 @@
 .mapp-cell:active{ transform:scale(.96); }
 .mapp-cell-ic{
   width:38px; height:38px; border-radius:13px; display:grid; place-items:center; font-size:19px;
-  background:#e8fbef;
+  background:#e3f5ea;
 }
 .mapp-cell:nth-child(4n+2) .mapp-cell-ic{ background:#f7ecc9; }
 .mapp-cell:nth-child(4n+3) .mapp-cell-ic{ background:#e4eef8; }
 .mapp-cell:nth-child(4n+4) .mapp-cell-ic{ background:#f7e7e7; }
 .mapp-cell span{ font-size:10.5px; line-height:1.3; font-weight:700; color:#243528; }
 .dark .mapp-cell span{ color:#d6e7da; }
-.mapp-cell em{ font-style:normal; font-size:8.5px; font-weight:800; color:#12a150; letter-spacing:.2px; }
+.mapp-cell em{ font-style:normal; font-size:8.5px; font-weight:800; color:#15803d; letter-spacing:.2px; }
 
 /* ---------- MOBILE APP HEADER ---------- */
 .mapp-header{
@@ -124,22 +124,22 @@
 .mapp-logo{ display:flex; align-items:center; gap:8px; border:0; background:none; cursor:pointer; padding:0; }
 .mapp-logo-mark{
   width:34px; height:34px; border-radius:11px; display:grid; place-items:center;
-  background:linear-gradient(150deg,#22c55e,#0b6b40); color:#ffe9a8; font-weight:800; font-size:16px;
-  box-shadow:0 8px 18px rgba(34,197,94,.35);
+  background:linear-gradient(150deg,#16a34a,#166534); color:#ffe9a8; font-weight:800; font-size:16px;
+  box-shadow:0 8px 18px rgba(22,163,74,.35);
 }
 .mapp-logo-text{ text-align:left; }
-.mapp-logo-text strong{ display:block; font-size:13px; color:#0b6b40; font-weight:900; line-height:1.1; }
+.mapp-logo-text strong{ display:block; font-size:13px; color:#166534; font-weight:900; line-height:1.1; }
 .dark .mapp-logo-text strong{ color:#eaf6ee; }
 .mapp-logo-text span{ font-size:9px; color:#7c8a80; letter-spacing:.5px; font-weight:700; }
 .mapp-header-search{
   flex:1; display:flex; align-items:center; gap:6px; min-width:0;
-  background:#fff; border:1px solid #e3efe5; border-radius:999px; padding:8px 13px;
+  background:#fff; border:1px solid #d9e9de; border-radius:999px; padding:8px 13px;
 }
 .dark .mapp-header-search{ background:#0f1a14; border-color:rgba(255,255,255,.1); }
 .mapp-header-search input{ flex:1; border:0; outline:0; background:transparent; font-size:12px; min-width:0; color:inherit; }
 .mapp-header-avatar{
-  flex:none; width:36px; height:36px; border-radius:50%; border:2px solid #22c55e;
-  overflow:hidden; display:grid; place-items:center; background:#e8fbef; color:#0b6b40;
+  flex:none; width:36px; height:36px; border-radius:50%; border:2px solid #16a34a;
+  overflow:hidden; display:grid; place-items:center; background:#e3f5ea; color:#166534;
   font-weight:900; font-size:13px; cursor:pointer;
 }
 .mapp-header-avatar img{ width:100%; height:100%; object-fit:cover; }
@@ -149,11 +149,11 @@
   /* Page hero (cac trang phu) kieu app */
   .mapp-page-hero{
     background:
-      radial-gradient(120% 140% at 100% 0%, rgba(34,197,94,.5), transparent 55%),
-      linear-gradient(150deg,#14a75b,#0b6b40) !important;
+      radial-gradient(120% 140% at 100% 0%, rgba(22,163,74,.5), transparent 55%),
+      linear-gradient(150deg,#0f8f4f,#166534) !important;
     border-color: transparent !important;
     border-radius: 22px !important;
-    box-shadow: 0 18px 36px rgba(16,140,80,.22) !important;
+    box-shadow: 0 18px 36px rgba(15,120,63,.22) !important;
   }
   .mapp-page-hero > div.absolute{ display:none !important; }
   .mapp-page-hero h1{ letter-spacing: -.2px; }
@@ -161,8 +161,8 @@
   /* The tin BĐS kieu app */
   .mapp-pcard{
     border-radius: 20px !important;
-    border-color: #e3efe5 !important;
-    box-shadow: 0 14px 28px rgba(16,140,80,.10) !important;
+    border-color: #d9e9de !important;
+    box-shadow: 0 14px 28px rgba(15,120,63,.10) !important;
     background: #ffffff !important;
   }
   .dark .mapp-pcard{ background:#0f1a14 !important; border-color: rgba(255,255,255,.08) !important; }
@@ -170,29 +170,29 @@
   /* Bo loc (PropertyFilter) kieu app */
   .mapp-filter{
     border-radius: 20px !important;
-    border-color: #e3efe5 !important;
+    border-color: #d9e9de !important;
     padding: 12px !important;
-    box-shadow: 0 14px 28px rgba(16,140,80,.10) !important;
+    box-shadow: 0 14px 28px rgba(15,120,63,.10) !important;
   }
   .mapp-filter input{ border-radius: 999px !important; }
 
   /* Phan trang kieu app */
-  .mapp-pagination{ border-top-color: #e3efe5 !important; }
+  .mapp-pagination{ border-top-color: #d9e9de !important; }
   .mapp-pagination button{ min-width: 34px; height: 34px; border-radius: 999px !important; }
 
   /* Footer gon + dong bo mau app */
   .mapp-footer{
     padding-top: 26px !important;
     padding-bottom: 26px !important;
-    background: linear-gradient(150deg, #14a75b, #0b6b40) !important;
+    background: linear-gradient(150deg, #0f8f4f, #166534) !important;
   }
   .mapp-footer .grid{ gap: 22px !important; }
 
   /* Header navy cu (Tuyen dung, cac trang phu...) -> xanh app */
   .bg-\[\#16284e\]{
     background:
-      radial-gradient(120% 140% at 100% 0%, rgba(34,197,94,.5), transparent 55%),
-      linear-gradient(150deg,#14a75b,#0b6b40) !important;
+      radial-gradient(120% 140% at 100% 0%, rgba(22,163,74,.5), transparent 55%),
+      linear-gradient(150deg,#0f8f4f,#166534) !important;
     border-color: transparent !important;
   }
 
@@ -201,12 +201,12 @@
   .rounded-3xl{ border-radius: 22px !important; }
 
   /* O navy cu trong Dich vu cu dan -> tong xanh app */
-  .bg-\[\#141f38\]{ background: linear-gradient(160deg,#12a150,#0b6b40) !important; }
+  .bg-\[\#141f38\]{ background: linear-gradient(160deg,#15803d,#166534) !important; }
   .bg-\[\#1c2945\]{ background: #11784a !important; }
   .bg-\[\#25375d\]{ background: #149358 !important; }
 
   /* Nut Zalo noi -> xanh app (giu nguyen tinh nang lien he) */
-  .from-blue-600.to-indigo-600{ background: linear-gradient(135deg,#22c55e,#0b6b40) !important; }
+  .from-blue-600.to-indigo-600{ background: linear-gradient(135deg,#16a34a,#166534) !important; }
 
   /* Nen trang tong the kieu app (paper) — chi mobile */
   .mapp-bg{ background: #f8faf5 !important; }
@@ -215,7 +215,7 @@
   /* Modal chi tiet BĐS: bo goc mem kieu app */
   .mapp-detail-modal > div{ border-radius: 26px !important; }
   .mapp-detail-modal .bg-gradient-to-br.from-brand-500.to-brand-600{
-    background: linear-gradient(150deg,#22c55e,#0b6b40) !important;
+    background: linear-gradient(150deg,#16a34a,#166534) !important;
     color:#ffe9a8 !important;
     border-radius: 18px !important;
   }
@@ -224,22 +224,22 @@
   .mapp-account .from-ink-950.via-ink-900.to-brand-950,
   .mapp-account .from-brand-950.via-ink-900.to-teal-950,
   .mapp-account .from-ink-900.via-ink-800.to-brand-950{
-    background: linear-gradient(150deg,#14a75b,#0b6b40) !important;
-    border-color: rgba(34,197,94,.35) !important;
+    background: linear-gradient(150deg,#0f8f4f,#166534) !important;
+    border-color: rgba(22,163,74,.35) !important;
   }
 
   /* Modal dang nhap kieu app */
   .mapp-auth-card{
     border-radius: 24px !important;
-    box-shadow: 0 24px 60px rgba(16,140,80,.25) !important;
+    box-shadow: 0 24px 60px rgba(15,120,63,.25) !important;
   }
 
   /* Modal thanh toan (Up tin / Nạp ví) + chat — header gradient -> xanh app */
   .from-brand-800.via-brand-700.to-teal-800{
-    background: linear-gradient(150deg,#14a75b,#0b6b40) !important;
+    background: linear-gradient(150deg,#0f8f4f,#166534) !important;
   }
   .from-ink-900.via-ink-950.to-indigo-950{
-    background: linear-gradient(150deg,#14a75b,#0b6b40) !important;
+    background: linear-gradient(150deg,#0f8f4f,#166534) !important;
   }
 
   /* Trang Dang tin kieu app */
@@ -251,8 +251,8 @@
   position:fixed; left:12px; right:12px; bottom:12px; z-index:40;
   height:66px; display:flex; align-items:center; justify-content:space-around;
   padding:0 4px calc(env(safe-area-inset-bottom,0px));
-  background:rgba(255,255,255,.95); border:1px solid #e3efe5; border-radius:22px;
-  box-shadow:0 20px 44px rgba(16,140,80,.20);
+  background:rgba(255,255,255,.95); border:1px solid #d9e9de; border-radius:22px;
+  box-shadow:0 20px 44px rgba(15,120,63,.20);
   backdrop-filter:blur(18px) saturate(160%);
 }
 .dark .mapp-nav{ background:rgba(13,23,18,.92); border-color:rgba(255,255,255,.08); }
@@ -263,15 +263,15 @@
   color:#7c8a80; font-size:9.5px; font-weight:700; transition:color .15s, background .15s;
 }
 .mapp-nav-item span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
-.mapp-nav-item.active{ color:#0b6b40; background:#e8fbef; font-weight:800; }
-.dark .mapp-nav-item.active{ color:#8fe3b0; background:rgba(34,197,94,.16); }
+.mapp-nav-item.active{ color:#166534; background:#e3f5ea; font-weight:800; }
+.dark .mapp-nav-item.active{ color:#8fe3b0; background:rgba(22,163,74,.16); }
 .mapp-nav-item:active{ transform:scale(.94); }
-.mapp-nav-add{ color:#12a150; }
+.mapp-nav-add{ color:#15803d; }
 .mapp-nav-bubble{
   width:36px; height:36px; margin-top:-20px; border-radius:50%;
   display:grid; place-items:center;
-  background:linear-gradient(150deg,#22c55e,#0b6b40); color:#ffe9a8;
-  border:4px solid #f8faf5; box-shadow:0 10px 22px rgba(16,140,80,.35);
+  background:linear-gradient(150deg,#16a34a,#166534); color:#ffe9a8;
+  border:4px solid #f8faf5; box-shadow:0 10px 22px rgba(15,120,63,.35);
 }
 .dark .mapp-nav-bubble{ border-color:#0d1712; }
 .mapp-nav-dot{

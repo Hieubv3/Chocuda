@@ -21,7 +21,7 @@
 /* 1. TOKEN GỐC ------------------------------------------------------------ */
 :root{
   --brand-50:#ecfdf5; --brand-100:#d1fae5; --brand-200:#a7f3d0; --brand-300:#6ee7b7;
-  --brand-400:#34d399; --brand-500:#10b981; --brand-600:#059669; --brand-700:#047857;
+  --brand-400:#2bbf7f; --brand-500:#10b981; --brand-600:#059669; --brand-700:#047857;
   --brand-800:#065f46; --brand-900:#064e3b; --brand-950:#022c22;
 
   --ink-50:#f6f7f4; --ink-100:#eceee8; --ink-200:#dcdfd6; --ink-300:#c3c8bb; --ink-400:#9aa095;
@@ -50,17 +50,17 @@ html.dark, html[data-theme="dark"]{
   --bg:#0c0e0b; --surface:#161a13; --surface-2:#1e231a; --surface-3:#262c20;
   --fg:#eef1e9; --fg-2:#bcc2b4; --muted:#8b9284;
   --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.17);
-  --accent:#34d399; --accent-soft:rgba(16,185,129,.14); --accent-line:rgba(52,211,153,.36);
-  --btn-bg:#10b981; --btn-bg-hover:#34d399; --btn-fg:#052e22;
+  --accent:#2bbf7f; --accent-soft:rgba(16,185,129,.14); --accent-line:rgba(52,211,153,.36);
+  --btn-bg:#10b981; --btn-bg-hover:#2bbf7f; --btn-fg:#052e22;
   --job:#5cc0ff; --job-soft:rgba(46,166,240,.16); --job-line:rgba(92,192,255,.36);
   --pick:#fbbf24; --pick-soft:rgba(240,169,46,.16);
-  --success:#34d399; --warn:#fbbf24; --danger:#f87171; --info:#38bdf8;
+  --success:#2bbf7f; --warn:#fbbf24; --danger:#f87171; --info:#38bdf8;
   --elev-1:0 1px 2px rgba(0,0,0,.4); --elev-2:0 2px 10px rgba(0,0,0,.45); --elev-3:0 16px 40px rgba(0,0,0,.55);
 }
 
 /* 2. SÁU BẢNG MÀU (đặt data-skin trên <html>) ---------------------------- */
 html[data-skin="emerald"]{ --brand-500:#10d493; --brand-700:#07946a; --brand-950:#04311f; --accent:#059669; --accent-soft:#e7fdf4; --accent-line:#9df0cd; --btn-bg:#07946a; --btn-bg-hover:#057a58; --btn-fg:#ffffff; --bg:#f5fbf7; --surface:#ffffff; --surface-2:#edf7f1; --surface-3:#e1f1e9; --border:#dcebe3; --border-strong:#c0dbce; }
-html.dark[data-skin="emerald"], html[data-theme="dark"][data-skin="emerald"]{ --accent:#34d399; --accent-soft:rgba(16,185,129,.15); --accent-line:rgba(52,211,153,.38); --btn-bg:#10b981; --btn-bg-hover:#34d399; --btn-fg:#052e22; --bg:#0a1511; --surface:#10201a; --surface-2:#17291f; --surface-3:#1d3327; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
+html.dark[data-skin="emerald"], html[data-theme="dark"][data-skin="emerald"]{ --accent:#2bbf7f; --accent-soft:rgba(16,185,129,.15); --accent-line:rgba(52,211,153,.38); --btn-bg:#10b981; --btn-bg-hover:#2bbf7f; --btn-fg:#052e22; --bg:#0a1511; --surface:#10201a; --surface-2:#17291f; --surface-3:#1d3327; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
 html[data-skin="coral"]{ --brand-500:#ff7a5c; --brand-700:#d13a17; --accent:#c2350f; --accent-soft:#fff0ec; --accent-line:#ffc6b8; --btn-bg:#d13a17; --btn-bg-hover:#b3300f; --btn-fg:#ffffff; --bg:#fdf7f5; --surface:#ffffff; --surface-2:#fbeee9; --surface-3:#f7e0d8; --border:#f0ddd5; --border-strong:#e3c4b7; }
 html.dark[data-skin="coral"], html[data-theme="dark"][data-skin="coral"]{ --accent:#ff8a6b; --accent-soft:rgba(242,84,56,.16); --accent-line:rgba(255,138,107,.38); --btn-bg:#f2543a; --btn-bg-hover:#ff7a5c; --btn-fg:#2a0a03; --bg:#160d0a; --surface:#1e1210; --surface-2:#261815; --surface-3:#2f1d19; --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19); }
 html[data-skin="ocean"]{ --brand-500:#38a8f0; --brand-700:#0b6fb0; --accent:#0b6fb0; --accent-soft:#e8f5fd; --accent-line:#a9d9f5; --btn-bg:#0b6fb0; --btn-bg-hover:#095a90; --btn-fg:#ffffff; --bg:#f4f9fc; --surface:#ffffff; --surface-2:#e9f2f8; --surface-3:#dbeaf4; --border:#d9e8f2; --border-strong:#bcd6e7; }
@@ -88,7 +88,7 @@ html.dark[data-skin="teal"], html[data-theme="dark"][data-skin="teal"]{ --accent
 
   /* Làm tươi bảng emerald (thay cho bảng mặc định) */
   --color-emerald-50:#ecfdf5; --color-emerald-100:#d1fae5; --color-emerald-200:#a7f3d0; --color-emerald-300:#6ee7b7;
-  --color-emerald-400:#34d399; --color-emerald-500:#10d493; --color-emerald-600:#07946a; --color-emerald-700:#057a58;
+  --color-emerald-400:#2bbf7f; --color-emerald-500:#10d493; --color-emerald-600:#07946a; --color-emerald-700:#057a58;
   --color-emerald-800:#04311f; --color-emerald-900:#032818; --color-emerald-950:#021a10;
 
   --font-sans: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -176,23 +176,23 @@ html.dark[data-skin="teal"], html[data-theme="dark"][data-skin="teal"]{ --accent
    ========================================================================== */
 [data-skin="bright"]{
   --brand-50:#effdf4; --brand-100:#d9fbe6; --brand-200:#b5f5cd; --brand-300:#83ecac;
-  --brand-400:#4ade80; --brand-500:#22c55e; --brand-600:#12a150; --brand-700:#0b6b40;
-  --brand-800:#0a5c38; --brand-900:#074a2e; --brand-950:#042517;
-  --accent:#12a150; --accent-soft:#e8fbef; --accent-line:#b9f0cf;
-  --btn-bg:#12a150; --btn-bg-hover:#0b6b40; --btn-fg:#ffffff;
-  --bg:#f8faf5; --surface:#ffffff; --surface-2:#f3f7f1; --surface-3:#e9f0e9;
-  --border:#e3efe5; --border-strong:#c9dfd0;
+  --brand-400:#4ade80; --brand-500:#16a34a; --brand-600:#15803d; --brand-700:#166534;
+  --brand-800:#14532d; --brand-900:#0f4426; --brand-950:#052e16;
+  --accent:#15803d; --accent-soft:#e3f5ea; --accent-line:#b7e4c7;
+  --btn-bg:#15803d; --btn-bg-hover:#166534; --btn-fg:#ffffff;
+  --bg:#f8faf5; --surface:#ffffff; --surface-2:#f1f6f1; --surface-3:#e6efe8;
+  --border:#d9e9de; --border-strong:#c2dbc9;
   --fg:#122016; --fg-2:#42564a; --muted:#5f6d63;
-  --ink-50:#f8faf5; --ink-100:#f1f6f0; --ink-200:#e3efe5; --ink-300:#cddcd0;
+  --ink-50:#f8faf5; --ink-100:#f1f6f0; --ink-200:#d9e9de; --ink-300:#cddcd0;
   --ink-400:#9aa89e; --ink-500:#6f7d72; --ink-600:#5a675d; --ink-700:#42564a;
   --ink-800:#2c3a31; --ink-900:#1b271e; --ink-950:#0f1712;
   --job:#0369a1; --job-soft:#e0f2fe; --job-line:#a5d8f5;
   --pick:#d99a06; --pick-soft:#fff6dd;
-  --price:#0b6b40;
+  --price:#166534;
 }
 html.dark[data-skin="bright"], [data-theme="dark"][data-skin="bright"]{
-  --accent:#34d399; --accent-soft:rgba(34,197,94,.16); --accent-line:rgba(34,197,94,.42);
-  --btn-bg:#22c55e; --btn-bg-hover:#34d399; --btn-fg:#04241a;
+  --accent:#2bbf7f; --accent-soft:rgba(22,163,74,.16); --accent-line:rgba(22,163,74,.42);
+  --btn-bg:#16a34a; --btn-bg-hover:#2bbf7f; --btn-fg:#04241a;
   --bg:#0a100d; --surface:#121a14; --surface-2:#17231b; --surface-3:#1e2c22;
   --fg:#f1f5f1; --fg-2:#c9d6cc; --muted:#93a397;
   --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.18);
