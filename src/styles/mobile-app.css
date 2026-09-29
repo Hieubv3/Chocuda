@@ -307,3 +307,14 @@
   .from-ink-950.via-ink-900.to-brand-950{ background: linear-gradient(150deg,#14a75b,#0b6b40) !important; border-color: rgba(34,197,94,.35) !important; }
   .from-ink-900.via-ink-800.to-brand-950{ background: linear-gradient(150deg,#14a75b,#0b6b40) !important; border-color: rgba(34,197,94,.35) !important; }
 }
+
+/* ---------- BATCH 3 (GD7): accent tim / xanh duong con sot -> xanh app (mobile) ---------- */
+@media (max-width:767.98px){
+  .from-purple-600.to-indigo-600{ background: linear-gradient(150deg,#22c55e,#0b6b40) !important; border-color: transparent !important; }
+  .bg-purple-600{ background:#12a150 !important; }
+  .bg-purple-500{ background:#22c55e !important; }
+  .bg-indigo-600{ background:#12a150 !important; }
+  .bg-indigo-500{ background:#22c55e !important; }
+  .border-purple-500{ border-color: rgba(34,197,94,.45) !important; }
+  .border-indigo-500{ border-color: rgba(34,197,94,.45) !important; }
+}
