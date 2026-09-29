@@ -1002,7 +1002,7 @@ export const App: React.FC = () => {
             path="/"
             element={
               <>
-                <MobileAppHome />
+                <MobileAppHome properties={properties.filter(p => p.approved || p.status === 'approved')} news={news} services={INITIAL_RESIDENT_SERVICES} />
                 <div className="hidden md:block">
                 <HomePage
                 language={language}

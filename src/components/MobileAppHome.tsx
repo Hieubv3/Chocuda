@@ -5,19 +5,21 @@ import { getPropertyDetailUrl } from '../lib/slugs';
 interface MobileAppHomeProps {
   properties?: any[];
   news?: any[];
+  services?: any[];
 }
 
 /**
  * MOBILE APP HOME — khối trang chủ kiểu "app" cho mobile (<768px).
- * Giai đoạn 1 của lộ trình "giao diện app" cho chocudan24h.com:
  *  - Hero + tìm kiếm + lưới icon chức năng (phong cách Chợ Cư Dân App)
- *  - Dải "Tin mua bán mới" lấy dữ liệu THẬT từ hệ thống
+ *  - Dải "Tin mua bán mới" + "Dịch vụ cư dân" + "Tin tức" lấy dữ liệu THẬT
  *  - Mọi mục điều hướng tới các trang HIỆN CÓ của web (không bỏ tính năng nào)
  * Desktop không bị ảnh hưởng (ẩn qua .mapp-only).
  */
-export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [] }) => {
+export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], news = [], services = [] }) => {
   const navigate = useNavigate();
   const featured = (properties || []).slice(0, 6);
+  const topServices = (services || []).slice(0, 6);
+  const topNews = (news || []).slice(0, 3);
 
   const cells: { icon: string; label: string; tag?: string; to: string }[] = [
     { icon: '👥', label: 'Cộng đồng', to: '/cong-dong' },
@@ -91,6 +93,55 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [] })
             </div>
           ))}
         </div>
+
+        <div className="mapp-section-head">
+          <div>
+            <span className="mapp-eyebrow2">Tiện ích</span>
+            <div className="mapp-title2">Dịch vụ cư dân</div>
+          </div>
+          <button style={{ fontSize: 12, fontWeight: 800, color: '#0f6a41', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/dich-vu-cu-dan')}>
+            Xem tất cả →
+          </button>
+        </div>
+        <div className="mapp-strip">
+          {topServices.length === 0 && (
+            <div className="mapp-strip-card" onClick={() => navigate('/dich-vu-cu-dan')}>
+              <div className="mapp-strip-img">🛠</div>
+              <strong>Khám phá dịch vụ cư dân</strong>
+              <em>Xem dịch vụ →</em>
+            </div>
+          )}
+          {topServices.map((s: any, i: number) => (
+            <div key={s.id || i} className="mapp-strip-card" onClick={() => navigate('/dich-vu-cu-dan')}>
+              <div className="mapp-strip-img" style={s.images && s.images[0] ? { backgroundImage: `url(${s.images[0]})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}>
+                {!(s.images && s.images[0]) ? '🛠' : ''}
+              </div>
+              <strong>{s.title || 'Dịch vụ cư dân'}</strong>
+              <em>{s.providerName || ''}</em>
+            </div>
+          ))}
+        </div>
+
+        <div className="mapp-section-head">
+          <div>
+            <span className="mapp-eyebrow2">Cập nhật</span>
+            <div className="mapp-title2">Tin tức mới</div>
+          </div>
+          <button style={{ fontSize: 12, fontWeight: 800, color: '#0f6a41', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/tin-tuc')}>
+            Xem tất cả →
+          </button>
+        </div>
+        {topNews.map((n: any, i: number) => (
+          <button key={n.id || i} className="news" onClick={() => navigate('/tin-tuc')} style={{ width: '100%' }}>
+            <div className="news-image" style={n.image ? { backgroundImage: `url(${n.image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}>
+              {!n.image ? '📰' : ''}
+            </div>
+            <div className="news-body">
+              <div className="news-title">{n.title || 'Bài viết'}</div>
+              <div className="news-meta">{n.date || ''}</div>
+            </div>
+          </button>
+        ))}
 
         <div className="mapp-section-head">
           <div>

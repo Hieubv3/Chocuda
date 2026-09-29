@@ -590,6 +590,42 @@ app.post("/api/site-settings", authenticateToken, requireAdmin, (req, res) => {
 let trashStore: TrashItem[] = [];
 let activityLogStore: ActivityLogEntry[] = [];
 
+// In-memory data store for messaging and notifications
+// (dat o day de san sang truoc khi loadDataStore/saveDataStore chay luc khoi dong)
+let messagesStore: {
+  id: string;
+  senderId: string;
+  senderName: string;
+  senderAvatar?: string;
+  receiverId: string;
+  receiverName: string;
+  storeId?: string;
+  content: string;
+  createdAt: string;
+  read: boolean;
+}[] = [
+  {
+    id: 'msg-101',
+    senderId: 'user-trangnguyen',
+    senderName: 'Nguyễn Thu Trang (Chị Căn San Hô OCP2)',
+    receiverId: 'user-admin',
+    receiverName: 'BQL chocudan24h',
+    content: 'Chào Admin, tiệm bánh ngọt của mình đã cập nhật thêm 5 món mới, nhờ Admin duyệt nút xanh nhé!',
+    createdAt: new Date(Date.now() - 3600000).toLocaleString('vi-VN'),
+    read: false
+  },
+  {
+    id: 'msg-102',
+    senderId: 'user-admin',
+    senderName: 'BQL Chợ Cư Dân 24h',
+    receiverId: 'user-hieubui',
+    receiverName: 'Bùi Văn Hiếu',
+    content: 'Đã xác nhận tài khoản uy tín! Bàn giao quyền quản trị gian hàng thành công.',
+    createdAt: new Date(Date.now() - 7200000).toLocaleString('vi-VN'),
+    read: true
+  }
+];
+
 let deletedIds: Record<string, string[]> = {
   properties: [],
   projects: [],
@@ -6258,40 +6294,8 @@ app.post("/api/marketing/broadcast", async (req, res) => {
   });
 });
 
-// In-memory data store for messaging and notifications
-let messagesStore: {
-  id: string;
-  senderId: string;
-  senderName: string;
-  senderAvatar?: string;
-  receiverId: string;
-  receiverName: string;
-  storeId?: string;
-  content: string;
-  createdAt: string;
-  read: boolean;
-}[] = [
-  {
-    id: 'msg-101',
-    senderId: 'user-trangnguyen',
-    senderName: 'Nguyễn Thu Trang (Chị Căn San Hô OCP2)',
-    receiverId: 'user-admin',
-    receiverName: 'BQL chocudan24h',
-    content: 'Chào Admin, tiệm bánh ngọt của mình đã cập nhật thêm 5 món mới, nhờ Admin duyệt nút xanh nhé!',
-    createdAt: new Date(Date.now() - 3600000).toLocaleString('vi-VN'),
-    read: false
-  },
-  {
-    id: 'msg-102',
-    senderId: 'user-admin',
-    senderName: 'BQL Chợ Cư Dân 24h',
-    receiverId: 'user-hieubui',
-    receiverName: 'Bùi Văn Hiếu',
-    content: 'Đã xác nhận tài khoản uy tín! Bàn giao quyền quản trị gian hàng thành công.',
-    createdAt: new Date(Date.now() - 7200000).toLocaleString('vi-VN'),
-    read: true
-  }
-];
+// (messagesStore da duoc chuyen len khoi khai bao store phia tren — tranh loi khoi tao som)
+
 
 let notificationsStore: {
   id: string;

@@ -96,14 +96,28 @@ async function loadFromSupabase() {
       try { saveDataStore(); } catch (e) { /* ignore */ }
       return;
     }
-    // CHI phuc hoi tu Supabase khi file local KHONG CON (lan dau / bi mat du lieu).
-    // Neu file local da co -> giu nguyen (tranh ghi de bang du lieu cu => xoa bai xong lai hoi sinh).
-    if (!fs.existsSync(DATA_STORE_PATH)) {
+    // CHI phuc hoi tu Supabase khi: file local KHONG CON, HOAC du lieu Supabase DAY DU HON
+    // (tranh ghi de nguoc lam mat du lieu; dong thoi tu phuc hoi neu local bi reset ve seed).
+    const __aggCount = function (d) {
+      if (!d || typeof d !== 'object') return 0;
+      const keys = ['properties','projects','news','residentServices','stores','users','recruitmentJobs','candidateProfiles','walletTransactions','paymentOrders','messages','trash'];
+      let n = 0;
+      keys.forEach(function (k) { n += Array.isArray(d[k]) ? d[k].length : 0; });
+      return n;
+    };
+    let __localAgg = -1;
+    try {
+      if (fs.existsSync(DATA_STORE_PATH)) {
+        __localAgg = __aggCount(JSON.parse(fs.readFileSync(DATA_STORE_PATH, "utf-8")));
+      }
+    } catch (e) { __localAgg = -1; }
+    const __supaAgg = __aggCount(rows[0].data);
+    if (__localAgg === -1 || (__supaAgg > __localAgg && __supaAgg > 0)) {
       fs.writeFileSync(DATA_STORE_PATH, JSON.stringify(rows[0].data, null, 2), "utf-8");
       loadDataStore();
-      console.log("[Supabase] Phuc hoi du lieu tu Supabase (file local mat).");
+      console.log("[Supabase] Phuc hoi du lieu tu Supabase (localAgg=" + __localAgg + ", supaAgg=" + __supaAgg + ").");
     } else {
-      console.log("[Supabase] File local da co -> giu nguyen, day len Supabase de dong bo.");
+      console.log("[Supabase] File local day du -> giu nguyen, day len Supabase de dong bo.");
       try { saveDataStore(); } catch (e) { /* ignore */ }
     }
   } catch (err) {
