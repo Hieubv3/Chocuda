@@ -211,6 +211,17 @@
     border-radius: 24px !important;
     box-shadow: 0 24px 60px rgba(10,60,38,.25) !important;
   }
+
+  /* Modal thanh toan (Up tin / Nạp ví) + chat — header gradient -> xanh app */
+  .from-brand-800.via-brand-700.to-teal-800{
+    background: linear-gradient(150deg,#0a3c26,#072a1a) !important;
+  }
+  .from-ink-900.via-ink-950.to-indigo-950{
+    background: linear-gradient(150deg,#0a3c26,#072a1a) !important;
+  }
+
+  /* Trang Dang tin kieu app */
+  .mapp-post h1{ letter-spacing: -.2px; }
 }
 
 /* ---------- FLOATING BOTTOM NAV ---------- */

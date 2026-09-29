@@ -581,7 +581,7 @@ export const PostPropertyPage: React.FC<PostPropertyPageProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="mapp-post max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       <div className="text-center space-y-2">
         <span className="text-xs font-black uppercase text-brand-500 tracking-wider">KÊNH KẾT NỐI CHÍNH CHỦ CƯ DÂN VINHOMES</span>
