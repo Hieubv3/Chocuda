@@ -546,7 +546,7 @@ const [totpCode, setTotpCode] = useState('');
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-ink-950/85 backdrop-blur-md flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto">
+    <div className="mapp-auth fixed inset-0 z-50 bg-ink-950/85 backdrop-blur-md flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto">
       {/* Screen Safety Fixed Close Button */}
       <button
         type="button"
@@ -557,7 +557,7 @@ const [totpCode, setTotpCode] = useState('');
         <X className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
       </button>
 
-      <div className="bg-white dark:bg-ink-900 rounded-2xl sm:rounded-3xl max-w-sm sm:max-w-md w-full p-4 sm:p-6 shadow-2xl relative border border-ink-200 dark:border-ink-800 text-ink-900 dark:text-white animate-in fade-in zoom-in duration-200 max-h-[92vh] overflow-y-auto my-auto">
+      <div className="mapp-auth-card bg-white dark:bg-ink-900 rounded-2xl sm:rounded-3xl max-w-sm sm:max-w-md w-full p-4 sm:p-6 shadow-2xl relative border border-ink-200 dark:border-ink-800 text-ink-900 dark:text-white animate-in fade-in zoom-in duration-200 max-h-[92vh] overflow-y-auto my-auto">
         
         <button
           onClick={onClose}

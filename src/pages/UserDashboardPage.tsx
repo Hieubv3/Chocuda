@@ -345,7 +345,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 space-y-4">
+    <div className="mapp-account max-w-7xl mx-auto px-3 sm:px-6 py-4 space-y-4">
       {/* QUICK SYSTEM NAVIGATION SHORTCUTS BAR (Fixed access to all app sections) */}
       <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl p-2 sm:p-2.5 shadow-xs flex items-center justify-between gap-2 overflow-x-auto text-xs">
         <div className="flex items-center gap-1.5 shrink-0 font-bold text-ink-700 dark:text-ink-300">

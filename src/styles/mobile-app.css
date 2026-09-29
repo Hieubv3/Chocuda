@@ -197,6 +197,20 @@
     color:#f0dfa8 !important;
     border-radius: 18px !important;
   }
+
+  /* Tai khoan: cac the header toi -> xanh app */
+  .mapp-account .from-ink-950.via-ink-900.to-brand-950,
+  .mapp-account .from-brand-950.via-ink-900.to-teal-950,
+  .mapp-account .from-ink-900.via-ink-800.to-brand-950{
+    background: linear-gradient(150deg,#0a3c26,#072a1a) !important;
+    border-color: rgba(23,168,98,.35) !important;
+  }
+
+  /* Modal dang nhap kieu app */
+  .mapp-auth-card{
+    border-radius: 24px !important;
+    box-shadow: 0 24px 60px rgba(10,60,38,.25) !important;
+  }
 }
 
 /* ---------- FLOATING BOTTOM NAV ---------- */
