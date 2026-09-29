@@ -175,26 +175,28 @@ html.dark[data-skin="teal"], html[data-theme="dark"][data-skin="teal"]{ --accent
    Giá tiền dùng màu rực, không dùng màu đen.
    ========================================================================== */
 [data-skin="bright"]{
-  --brand-500:#10b981; --brand-700:#068763; --brand-950:#04331f;
-  --accent:#047857; --accent-soft:#ecfdf5; --accent-line:#a7f3d0;
-  --btn-bg:#068763; --btn-bg-hover:#047857; --btn-fg:#ffffff;
-  --bg:#f7f9fb; --surface:#ffffff; --surface-2:#f1f5f9; --surface-3:#e6ecf2;
-  --border:#e3e9f0; --border-strong:#cbd5e1;
-  --fg:#0f172a; --fg-2:#475569; --muted:#64748b;
-  --ink-50:#f8fafc; --ink-100:#f1f5f9; --ink-200:#e2e8f0; --ink-300:#cbd5e1;
-  --ink-400:#94a3b8; --ink-500:#64748b; --ink-600:#475569; --ink-700:#334155;
-  --ink-800:#1e293b; --ink-900:#0f172a; --ink-950:#020617;
+  --brand-50:#effdf4; --brand-100:#d9fbe6; --brand-200:#b5f5cd; --brand-300:#83ecac;
+  --brand-400:#4ade80; --brand-500:#22c55e; --brand-600:#12a150; --brand-700:#0b6b40;
+  --brand-800:#0a5c38; --brand-900:#074a2e; --brand-950:#042517;
+  --accent:#12a150; --accent-soft:#e8fbef; --accent-line:#b9f0cf;
+  --btn-bg:#12a150; --btn-bg-hover:#0b6b40; --btn-fg:#ffffff;
+  --bg:#f8faf5; --surface:#ffffff; --surface-2:#f3f7f1; --surface-3:#e9f0e9;
+  --border:#e3efe5; --border-strong:#c9dfd0;
+  --fg:#122016; --fg-2:#42564a; --muted:#5f6d63;
+  --ink-50:#f8faf5; --ink-100:#f1f6f0; --ink-200:#e3efe5; --ink-300:#cddcd0;
+  --ink-400:#9aa89e; --ink-500:#6f7d72; --ink-600:#5a675d; --ink-700:#42564a;
+  --ink-800:#2c3a31; --ink-900:#1b271e; --ink-950:#0f1712;
   --job:#0369a1; --job-soft:#e0f2fe; --job-line:#a5d8f5;
-  --pick:#b45309; --pick-soft:#fffbeb;
-  --price:#d9480f;
+  --pick:#d99a06; --pick-soft:#fff6dd;
+  --price:#0b6b40;
 }
 html.dark[data-skin="bright"], [data-theme="dark"][data-skin="bright"]{
-  --accent:#34d399; --accent-soft:rgba(16,185,129,.16); --accent-line:rgba(52,211,153,.42);
-  --btn-bg:#10b981; --btn-bg-hover:#34d399; --btn-fg:#04241a;
-  --bg:#0b1220; --surface:#111c2e; --surface-2:#16233a; --surface-3:#1d2c47;
-  --fg:#f1f5f9; --fg-2:#cbd5e1; --muted:#94a3b8;
+  --accent:#34d399; --accent-soft:rgba(34,197,94,.16); --accent-line:rgba(34,197,94,.42);
+  --btn-bg:#22c55e; --btn-bg-hover:#34d399; --btn-fg:#04241a;
+  --bg:#0a100d; --surface:#121a14; --surface-2:#17231b; --surface-3:#1e2c22;
+  --fg:#f1f5f1; --fg-2:#c9d6cc; --muted:#93a397;
   --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.18);
-  --price:#ffa06b;
+  --price:#8fe3b0;
 }
 @theme{
   --color-price:var(--price);

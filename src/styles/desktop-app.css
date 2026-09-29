@@ -1,0 +1,116 @@
+/* ============================================================
+   DESKTOP APP SKIN — Đồng bộ giao diện PC theo phong cách app
+   Phạm vi: CHỈ màn hình >= 768px. Mobile đã có mobile-app.css.
+   Nguyên tắc: chỉ CSS, không đổi logic. Namespace .mapp-* + các lớp cũ
+   đã được gắn sẵn (PageHero, PropertyCard, Filter, Pagination, Footer...).
+   ============================================================ */
+@media (min-width: 768px) {
+
+  /* 1. Nền giấy toàn cục */
+  .mapp-bg { background: #f8faf5 !important; }
+  .dark .mapp-bg { background: #0a100d !important; }
+
+  /* 2. Bo góc mềm đồng bộ */
+  .rounded-2xl { border-radius: 18px !important; }
+  .rounded-3xl { border-radius: 22px !important; }
+
+  /* 3. Khối navy cũ -> xanh app */
+  .bg-\[\#16284e\], .bg-\[\#1c2945\], .bg-\[\#141f38\] {
+    background: linear-gradient(150deg,#14a75b,#0b6b40) !important;
+    border-color: transparent !important;
+  }
+  .bg-\[\#25375d\] { background: #149358 !important; }
+
+  /* 4. Gradient tối cũ -> xanh app (đồng bộ với mobile) */
+  .from-purple-900.via-ink-900.to-indigo-900,
+  .from-ink-900.via-ink-800.to-ink-900,
+  .from-brand-900.via-brand-700.to-brand-800,
+  .from-ink-900.to-brand-950,
+  .from-brand-900.via-ink-900.to-teal-950,
+  .from-ink-900.via-ink-950.to-indigo-950,
+  .from-ink-900.to-ink-800,
+  .from-ink-950.via-indigo-950.to-ink-950,
+  .from-brand-800.via-brand-700.to-teal-800,
+  .from-ink-900.to-indigo-950,
+  .from-ink-900.via-indigo-950.to-ink-900,
+  .from-ink-900.via-brand-950.to-ink-900,
+  .from-brand-900.via-teal-900.to-ink-900,
+  .from-ink-900.via-brand-950.to-teal-900,
+  .from-teal-950.via-ink-900.to-brand-950,
+  .from-teal-950.to-ink-900,
+  .from-ink-900.via-blue-950.to-ink-900,
+  .from-ink-900.to-ink-950,
+  .from-ink-900.via-ink-950.to-ink-900,
+  .from-brand-950.via-teal-900.to-ink-900,
+  .from-ink-900.via-ink-950.to-brand-950,
+  .from-brand-950.via-ink-900.to-teal-950,
+  .from-ink-900.via-ink-900.to-brand-950,
+  .from-ink-950.via-ink-900.to-brand-950,
+  .from-ink-900.via-ink-800.to-brand-950 {
+    background: linear-gradient(150deg,#14a75b,#0b6b40) !important;
+    border-color: rgba(34,197,94,.35) !important;
+  }
+  .from-purple-600.to-indigo-600 { background: linear-gradient(150deg,#22c55e,#0b6b40) !important; border-color: transparent !important; }
+  .bg-purple-600 { background: #12a150 !important; }
+  .bg-purple-500 { background: #22c55e !important; }
+  .bg-indigo-600 { background: #12a150 !important; }
+  .bg-indigo-500 { background: #22c55e !important; }
+  .border-purple-500, .border-indigo-500 { border-color: rgba(34,197,94,.45) !important; }
+
+  /* 5. PageHero */
+  .mapp-page-hero {
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(34,197,94,.5), transparent 55%),
+      linear-gradient(150deg,#14a75b,#0b6b40) !important;
+    border-color: transparent !important;
+    border-radius: 22px !important;
+    box-shadow: 0 18px 36px rgba(16,140,80,.22) !important;
+  }
+  .mapp-page-hero > div.absolute { display: none !important; }
+
+  /* 6. Thẻ tin BĐS */
+  .mapp-pcard {
+    border-radius: 20px !important;
+    border-color: #e3efe5 !important;
+    box-shadow: 0 14px 28px rgba(16,140,80,.10) !important;
+    background: #ffffff !important;
+  }
+  .dark .mapp-pcard { background: #0f1a14 !important; border-color: rgba(255,255,255,.08) !important; }
+
+  /* 7. Bộ lọc + phân trang */
+  .mapp-filter {
+    border-radius: 20px !important;
+    border-color: #e3efe5 !important;
+    box-shadow: 0 14px 28px rgba(16,140,80,.10) !important;
+  }
+  .mapp-pagination { border-top-color: #e3efe5 !important; }
+  .mapp-pagination button { border-radius: 999px !important; }
+
+  /* 8. Footer */
+  .mapp-footer {
+    background: linear-gradient(150deg,#14a75b,#0b6b40) !important;
+  }
+
+  /* 9. Tài khoản: thẻ header tối -> xanh app */
+  .mapp-account .from-ink-950.via-ink-900.to-brand-950,
+  .mapp-account .from-brand-950.via-ink-900.to-teal-950,
+  .mapp-account .from-ink-900.via-ink-800.to-brand-950 {
+    background: linear-gradient(150deg,#14a75b,#0b6b40) !important;
+    border-color: rgba(34,197,94,.35) !important;
+  }
+
+  /* 10. Modal đăng nhập + chi tiết BĐS */
+  .mapp-auth-card {
+    border-radius: 24px !important;
+    box-shadow: 0 24px 60px rgba(16,140,80,.25) !important;
+  }
+  .mapp-detail-modal > div { border-radius: 26px !important; }
+  .mapp-detail-modal .bg-gradient-to-br.from-brand-500.to-brand-600 {
+    background: linear-gradient(150deg,#17a862,#0b6b40) !important;
+    color: #ffe9a8 !important;
+    border-radius: 18px !important;
+  }
+
+  /* 11. Nút Zalo nổi -> xanh app */
+  .from-blue-600.to-indigo-600 { background: linear-gradient(135deg,#22c55e,#0b6b40) !important; }
+}
