@@ -10333,6 +10333,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
                   >
                     <option value="Thực Phẩm & Ăn Uống">Thực Phẩm & Ăn Uống</option>
+                    <option value="Quán Ăn, Cafe & Đồ Uống">Quán Ăn, Cafe & Đồ Uống</option>
+                    <option value="Tạp Hóa & Siêu Thị Mini">Tạp Hóa & Siêu Thị Mini</option>
                     <option value="Nội Thất & Gia Dụng">Nội Thất & Gia Dụng</option>
                     <option value="Bảo Trì & Sửa Chữa">Bảo Trì & Sửa Chữa</option>
                     <option value="Chăm Sóc & Làm Đẹp">Chăm Sóc & Làm Đẹp</option>

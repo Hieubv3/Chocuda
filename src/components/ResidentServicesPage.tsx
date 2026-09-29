@@ -2393,6 +2393,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                     className="w-full p-2.5 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                   >
                     <option value="Quán Ăn & Nhà Hàng">Quán Ăn & Nhà Hàng</option>
+                    <option value="Tạp Hóa & Siêu Thị Mini">Tạp Hóa & Siêu Thị Mini</option>
                     <option value="Sửa Chữa Gia Đình">Sửa Chữa Gia Đình</option>
                     <option value="Làm Đẹp & Spa">Làm Đẹp & Spa</option>
                     <option value="Đi Chợ & Đồ Ăn Sạch">Đi Chợ & Đồ Ăn Sạch</option>

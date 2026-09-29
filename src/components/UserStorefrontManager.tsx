@@ -570,6 +570,8 @@ export const UserStorefrontManager: React.FC<UserStorefrontManagerProps> = ({ us
                   className="w-full px-3.5 py-2.5 bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-bold"
                 >
                   <option value="Thực Phẩm & Ăn Uống">Thực Phẩm & Ăn Uống</option>
+                  <option value="Quán Ăn, Cafe & Đồ Uống">Quán Ăn, Cafe & Đồ Uống</option>
+                  <option value="Tạp Hóa & Siêu Thị Mini">Tạp Hóa & Siêu Thị Mini</option>
                   <option value="Nội Thất & Thi Công">Nội Thất & Thi Công</option>
                   <option value="Sửa Chữa & Bảo Trì">Sửa Chữa & Bảo Trì</option>
                   <option value="Giặt Là & Dịch Vụ Gia Đình">Giặt Là & Dịch Vụ Gia Đình</option>
