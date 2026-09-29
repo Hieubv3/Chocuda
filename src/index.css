@@ -3,6 +3,7 @@
 @import "./styles/admin-mobile.css";
 @import "./styles/admin-theme-v2.css";
 @import "./styles/mobile-app.css";
+@import "./styles/desktop-app.css";
 
 html, body {
   max-width: 100vw;
