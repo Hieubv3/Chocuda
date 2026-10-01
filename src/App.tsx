@@ -9,6 +9,7 @@ import { MobileAppHeader } from './components/MobileAppHeader';
 import { ScrollToTop } from './components/ScrollToTop';
 import { IndustryQuickNav } from './components/IndustryQuickNav';
 import { MobileIndustryMenu } from './components/MobileIndustryMenu';
+import { AdminMobileMenu, AdminMobileMenuGroup } from './components/AdminMobileMenu';
 import { HomePage } from './pages/HomePage';
 import { PropertiesPage } from './pages/PropertiesPage';
 import { PropertyDetailPage } from './pages/PropertyDetailPage';
@@ -158,6 +159,7 @@ export const App: React.FC = () => {
   // Up-Tin & VietQR Pricing Config State
   // Ẩn thanh menu dưới cùng khi người dùng đang nhập văn bản (tránh che ô nhập)
   const [isTypingField, setIsTypingField] = useState(false);
+  const [adminMobileMenuOpen, setAdminMobileMenuOpen] = useState(false);
   React.useEffect(() => {
     const isField = (el: EventTarget | null) => {
       const t = el as HTMLElement | null;
@@ -907,6 +909,74 @@ export const App: React.FC = () => {
   }
 
   // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
+  const canAccessAdmin = user?.role === 'admin' || user?.role === 'manager';
+  const openAdminAction = (action: string) => {
+    setAdminMobileMenuOpen(false);
+    navigate(`/admin?adminAction=${encodeURIComponent(action)}`);
+  };
+  const homepageAdminGroups: AdminMobileMenuGroup[] = [
+    {
+      title: '🏠 Bất động sản',
+      items: [
+        { key: 'bds-add', label: '＋ Thêm bài đăng mới', onClick: () => openAdminAction('bds-add') },
+        { key: 'bds-all', label: 'Bài đăng BĐS (tất cả)', onClick: () => openAdminAction('bds-all') },
+        { key: 'bds-sale', label: 'BĐS Mua Bán', onClick: () => openAdminAction('bds-sale') },
+        { key: 'bds-rent', label: 'BĐS Cho Thuê', onClick: () => openAdminAction('bds-rent') },
+        { key: 'bds-pending', label: '⏳ Chờ duyệt', onClick: () => openAdminAction('bds-pending') },
+        { key: 'bds-projects', label: 'Dự án & Mặt bằng', onClick: () => openAdminAction('bds-projects') },
+        { key: 'bds-news', label: 'Tin tức', onClick: () => openAdminAction('bds-news') },
+        { key: 'bds-pricing', label: 'Bảng giá up-tin', onClick: () => openAdminAction('bds-pricing') },
+        { key: 'bds-aff', label: 'Affiliate', onClick: () => openAdminAction('bds-aff') },
+        { key: 'bds-faq', label: 'FAQ', onClick: () => openAdminAction('bds-faq') },
+      ]
+    },
+    {
+      title: '🛠 Dịch vụ & Việc làm',
+      items: [
+        { key: 'svc', label: 'Dịch vụ cư dân & KYC', onClick: () => openAdminAction('svc') },
+        { key: 'jobs', label: 'Tuyển dụng & Việc làm', onClick: () => openAdminAction('jobs') },
+      ]
+    },
+    {
+      title: '🏪 Gian hàng & Cư dân',
+      items: [
+        { key: 'stores', label: 'Gian hàng', onClick: () => openAdminAction('stores') },
+        { key: 'orders', label: 'Đơn hàng', onClick: () => openAdminAction('orders') },
+        { key: 'pkgo', label: 'Gói dịch vụ', onClick: () => openAdminAction('pkgo') },
+        { key: 'fin', label: 'Tài chính cư dân', onClick: () => openAdminAction('fin') },
+        { key: 'rep', label: 'Đánh giá đối tác', onClick: () => openAdminAction('rep') },
+        { key: 'reputation', label: 'Bảng tin cư dân & YouTube PR', onClick: () => openAdminAction('reputation') },
+      ]
+    },
+    {
+      title: '🏢 Chủ đầu tư',
+      items: [{ key: 'dev', label: 'Căn hộ chủ đầu tư', onClick: () => openAdminAction('dev') }]
+    },
+    {
+      title: '👥 Người dùng',
+      items: [
+        { key: 'users', label: 'Tài khoản', onClick: () => openAdminAction('users') },
+        { key: 'leads', label: 'Khách hàng (Leads)', onClick: () => openAdminAction('leads') },
+        { key: 'ent', label: 'Doanh nghiệp', onClick: () => openAdminAction('ent') },
+        { key: 'biz', label: 'Quản lý doanh nghiệp', onClick: () => openAdminAction('biz') },
+      ]
+    },
+    {
+      title: '📣 Marketing & Hệ thống',
+      items: [
+        { key: 'analytics', label: 'Phân tích & Doanh thu', onClick: () => openAdminAction('analytics') },
+        { key: 'mkt', label: 'Marketing', onClick: () => openAdminAction('mkt') },
+        { key: 'seo', label: 'SEO Center', onClick: () => openAdminAction('seo') },
+        { key: 'zalo', label: 'Zalo Group', onClick: () => openAdminAction('zalo') },
+        { key: 'n8n', label: 'n8n Automation', onClick: () => openAdminAction('n8n') },
+        { key: 'ads', label: 'Quảng cáo Banner', onClick: () => openAdminAction('ads') },
+        { key: 'settings', label: 'Cài đặt site', onClick: () => openAdminAction('settings') },
+        { key: 'trash', label: 'Thùng rác', onClick: () => openAdminAction('trash') },
+        { key: 'history', label: 'Lịch sử thao tác', onClick: () => openAdminAction('history') },
+        { key: 'inbox', label: 'Hộp thư Chat', onClick: () => openAdminAction('inbox') },
+      ]
+    }
+  ];
   return (
     <div className="cd24-root mapp-bg min-h-screen w-full max-w-full overflow-x-hidden bg-bg text-fg flex flex-col transition-colors duration-300 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <ScrollToTop />
@@ -916,7 +986,19 @@ export const App: React.FC = () => {
 
       {/* Mobile App Header (giao diện app — hiển thị trên MỌI trang mobile) */}
       {location.pathname !== '/admin' && (
-        <MobileAppHeader currentUser={user} onOpenAuth={() => setAuthModalOpen(true)} />
+        <MobileAppHeader
+          currentUser={user}
+          onOpenAuth={() => setAuthModalOpen(true)}
+          onOpenAdminMenu={canAccessAdmin ? () => setAdminMobileMenuOpen(true) : undefined}
+        />
+      )}
+
+      {canAccessAdmin && location.pathname !== '/admin' && (
+        <AdminMobileMenu
+          open={adminMobileMenuOpen}
+          onClose={() => setAdminMobileMenuOpen(false)}
+          groups={homepageAdminGroups}
+        />
       )}
 
       {/* Navigation Header (desktop) */}
@@ -945,7 +1027,7 @@ export const App: React.FC = () => {
       {/* (Đã gộp) Thanh 4 ngành rời đã được gộp vào đầu trang từng mục chính để tránh chồng lớp */}
 
       {/* Menu 4 nganh dang NOI cho DI DONG - chi hien khi bam */}
-      {location.pathname !== '/admin' && (
+      {location.pathname !== '/admin' && !canAccessAdmin && (
         <MobileIndustryMenu
           currentTab={getCurrentTabName()}
           setCurrentTab={handleTabSwitch}
@@ -1992,7 +2074,7 @@ export const App: React.FC = () => {
       />
 
       {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom */}
-      {location.pathname !== '/admin' && <nav
+      {location.pathname !== '/admin' && !canAccessAdmin && <nav
         ref={bottomNavRef}
         className={`md:hidden mapp-nav${isTypingField ? ' hidden' : ''}`}
       >
