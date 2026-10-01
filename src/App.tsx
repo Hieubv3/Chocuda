@@ -56,6 +56,11 @@ import { getProjectSlug } from './lib/slugs';
 import { AreaSelectModal, getStoredArea, AREA_STORAGE_KEY, AreaOption } from './components/AreaSelectModal';
 import { clearToken } from './lib/api';
 
+const RouteAlias: React.FC<{ to: string }> = ({ to }) => {
+  const location = useLocation();
+  return <Navigate to={{ pathname: to, search: location.search, hash: location.hash }} replace />;
+};
+
 export const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1854,34 +1859,34 @@ export const App: React.FC = () => {
           <Route path="/admin-login" element={<Navigate to="/admin" replace />} />
 
           {/* Compatibility aliases for the integrated static UI package. */}
-          <Route path="/index.html" element={<Navigate to="/" replace />} />
-          <Route path="/bai-viet" element={<Navigate to="/tin-tuc" replace />} />
-          <Route path="/bai-viet.html" element={<Navigate to="/tin-tuc" replace />} />
-          <Route path="/cho-cu-dan.html" element={<Navigate to="/cho-cu-dan" replace />} />
-          <Route path="/dich-vu-cu-dan.html" element={<Navigate to="/dich-vu-cu-dan" replace />} />
-          <Route path="/mua-ban.html" element={<Navigate to="/mua-ban" replace />} />
-          <Route path="/tuyen-dung.html" element={<Navigate to="/tuyen-dung" replace />} />
-          <Route path="/tin-tuc.html" element={<Navigate to="/tin-tuc" replace />} />
-          <Route path="/du-an.html" element={<Navigate to="/du-an" replace />} />
-          <Route path="/dang-tin.html" element={<Navigate to="/dang-tin" replace />} />
-          <Route path="/tai-khoan.html" element={<Navigate to="/tai-khoan" replace />} />
-          <Route path="/tinh-lai-vay.html" element={<Navigate to="/tinh-lai-vay" replace />} />
-          <Route path="/chinh-sach-bao-mat.html" element={<Navigate to="/chinh-sach-bao-mat" replace />} />
-          <Route path="/dieu-khoan.html" element={<Navigate to="/dieu-khoan-su-dung" replace />} />
-          <Route path="/san-pham.html" element={<Navigate to="/cho-cu-dan" replace />} />
-          <Route path="/gian-hang.html" element={<Navigate to="/gian-hang" replace />} />
-          <Route path="/nganh-hang" element={<Navigate to="/cho-cu-dan" replace />} />
-          <Route path="/nganh-hang.html" element={<Navigate to="/cho-cu-dan" replace />} />
-          <Route path="/gio-hang" element={<Navigate to="/cho-cu-dan" replace />} />
-          <Route path="/gio-hang.html" element={<Navigate to="/cho-cu-dan" replace />} />
-          <Route path="/lien-he" element={<Navigate to="/bui-van-hieu" replace />} />
-          <Route path="/lien-he.html" element={<Navigate to="/bui-van-hieu" replace />} />
-          <Route path="/nang-cap" element={<Navigate to="/tai-khoan" replace />} />
-          <Route path="/nang-cap.html" element={<Navigate to="/tai-khoan" replace />} />
-          <Route path="/quan-tri-mobi" element={<Navigate to="/admin" replace />} />
-          <Route path="/quan-tri-mobi.html" element={<Navigate to="/admin" replace />} />
-          <Route path="/xem-mobi" element={<Navigate to="/sitemap" replace />} />
-          <Route path="/xem-mobi.html" element={<Navigate to="/sitemap" replace />} />
+          <Route path="/index.html" element={<RouteAlias to="/" />} />
+          <Route path="/bai-viet" element={<RouteAlias to="/tin-tuc" />} />
+          <Route path="/bai-viet.html" element={<RouteAlias to="/tin-tuc" />} />
+          <Route path="/cho-cu-dan.html" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/dich-vu-cu-dan.html" element={<RouteAlias to="/dich-vu-cu-dan" />} />
+          <Route path="/mua-ban.html" element={<RouteAlias to="/mua-ban" />} />
+          <Route path="/tuyen-dung.html" element={<RouteAlias to="/tuyen-dung" />} />
+          <Route path="/tin-tuc.html" element={<RouteAlias to="/tin-tuc" />} />
+          <Route path="/du-an.html" element={<RouteAlias to="/du-an" />} />
+          <Route path="/dang-tin.html" element={<RouteAlias to="/dang-tin" />} />
+          <Route path="/tai-khoan.html" element={<RouteAlias to="/tai-khoan" />} />
+          <Route path="/tinh-lai-vay.html" element={<RouteAlias to="/tinh-lai-vay" />} />
+          <Route path="/chinh-sach-bao-mat.html" element={<RouteAlias to="/chinh-sach-bao-mat" />} />
+          <Route path="/dieu-khoan.html" element={<RouteAlias to="/dieu-khoan-su-dung" />} />
+          <Route path="/san-pham.html" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/gian-hang.html" element={<RouteAlias to="/gian-hang" />} />
+          <Route path="/nganh-hang" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/nganh-hang.html" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/gio-hang" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/gio-hang.html" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/lien-he" element={<RouteAlias to="/bui-van-hieu" />} />
+          <Route path="/lien-he.html" element={<RouteAlias to="/bui-van-hieu" />} />
+          <Route path="/nang-cap" element={<RouteAlias to="/tai-khoan" />} />
+          <Route path="/nang-cap.html" element={<RouteAlias to="/tai-khoan" />} />
+          <Route path="/quan-tri-mobi" element={<RouteAlias to="/admin" />} />
+          <Route path="/quan-tri-mobi.html" element={<RouteAlias to="/admin" />} />
+          <Route path="/xem-mobi" element={<RouteAlias to="/sitemap" />} />
+          <Route path="/xem-mobi.html" element={<RouteAlias to="/sitemap" />} />
 
           {/* Catch-all Wildcard Route -> Redirect Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
