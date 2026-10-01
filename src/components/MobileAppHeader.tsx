@@ -5,6 +5,7 @@ import { Menu, X, ShieldCheck, UserRound, Home, Building2, BriefcaseBusiness } f
 interface MobileAppHeaderProps {
   currentUser: any;
   onOpenAuth: () => void;
+  onOpenAdminMenu?: () => void;
 }
 
 /**
@@ -12,7 +13,7 @@ interface MobileAppHeaderProps {
  * hiển thị trên MỌI trang (trang chính + trang phụ). Desktop giữ Header cũ.
  * Không thay đổi chức năng: tìm kiếm, tài khoản đăng nhập, về trang chủ.
  */
-export const MobileAppHeader: React.FC<MobileAppHeaderProps> = ({ currentUser, onOpenAuth }) => {
+export const MobileAppHeader: React.FC<MobileAppHeaderProps> = ({ currentUser, onOpenAuth, onOpenAdminMenu }) => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const name = currentUser?.displayName || currentUser?.name || 'C';
@@ -51,7 +52,14 @@ export const MobileAppHeader: React.FC<MobileAppHeaderProps> = ({ currentUser, o
 
       <button
         className="mapp-header-menu"
-        onClick={() => setMenuOpen(value => !value)}
+        onClick={() => {
+          if (onOpenAdminMenu) {
+            setMenuOpen(false);
+            onOpenAdminMenu();
+          } else {
+            setMenuOpen(value => !value);
+          }
+        }}
         aria-label={menuOpen ? 'Đóng menu' : 'Mở menu'}
         aria-expanded={menuOpen}
       >

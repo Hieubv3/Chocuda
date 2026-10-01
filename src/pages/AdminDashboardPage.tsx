@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder, AmenityArticle } from '../types';
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2, Save } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
@@ -93,6 +93,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   // 7 Mảng Quản Trị Chuyên Biệt Tách Rời (1. BĐS, 2. Thợ Dịch Vụ, 3. Tuyển Dụng, 4. Dịch Vụ Cư Dân, 5. Người Dùng, 6. Quảng Cáo, 7. Công Cụ)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
@@ -985,6 +986,48 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   // AUTOCLAW:THEM-BDS-NEW — trạng thái thêm mới BĐS (Căn bán / Căn thuê)
   const [isAddingProperty, setIsAddingProperty] = useState(false);
+
+  // Nhận lệnh từ menu quản trị mở trên trang chủ mobile và vào đúng phân hệ cũ.
+  React.useEffect(() => {
+    const action = new URLSearchParams(location.search).get('adminAction');
+    if (!action) return;
+    const bdsTabs: Record<string, 'properties' | 'projects' | 'news' | 'pricing' | 'affiliate_mgmt' | 'faq'> = {
+      'bds-all': 'properties', 'bds-sale': 'properties', 'bds-rent': 'properties',
+      'bds-pending': 'properties', 'bds-projects': 'projects', 'bds-news': 'news',
+      'bds-pricing': 'pricing', 'bds-aff': 'affiliate_mgmt', 'bds-faq': 'faq'
+    };
+    if (action === 'bds-add') {
+      handleSelectMainTab('bds');
+      setActiveTab('properties');
+      setPropertySubFilter('all');
+      setIsAddingProperty(true);
+    } else if (bdsTabs[action]) {
+      handleSelectMainTab('bds');
+      setActiveTab(bdsTabs[action]);
+      if (action === 'bds-sale' || action === 'bds-rent' || action === 'bds-pending') {
+        setPropertySubFilter(action === 'bds-sale' ? 'sale' : action === 'bds-rent' ? 'rent' : 'pending');
+      } else if (bdsTabs[action] === 'properties') {
+        setPropertySubFilter('all');
+      }
+    } else if (action === 'svc') {
+      handleSelectMainTab('technicians');
+    } else if (action === 'jobs') {
+      handleSelectMainTab('recruitment');
+    } else if (action === 'stores') {
+      handleSelectMainTab('resident_market');
+    } else if (['orders', 'pkgo', 'fin', 'rep', 'reputation'].includes(action)) {
+      handleSelectMainTab('resident_market');
+      setActiveTab(({ orders: 'orders_mgmt', pkgo: 'package_orders_mgmt', fin: 'resident_finance', rep: 'partners_reputation', reputation: 'reputation' } as Record<string, any>)[action]);
+    } else if (action === 'dev') {
+      handleSelectMainTab('developer_units');
+    } else if (['users', 'leads', 'ent', 'biz'].includes(action)) {
+      handleSelectMainTab('users_leads');
+      setActiveTab(({ users: 'users', leads: 'leads', ent: 'enterprise_core', biz: 'business_mgmt' } as Record<string, any>)[action]);
+    } else {
+      const tab = ({ analytics: 'analytics', mkt: 'marketing', seo: 'seo', zalo: 'zalo', n8n: 'n8n', ads: 'ads', settings: 'site_settings', trash: 'trash', history: 'activity_history', inbox: 'support_inbox' } as Record<string, any>)[action];
+      if (tab) setActiveTab(tab);
+    }
+  }, [location.search]);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [projectSearchQuery, setProjectSearchQuery] = useState('');
