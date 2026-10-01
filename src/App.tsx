@@ -242,6 +242,10 @@ export const App: React.FC = () => {
     } else {
       document.documentElement.classList.remove('dark');
     }
+    // Public UI uses the integrated Chợ Cư Dân design tokens. Keep the
+    // admin surface isolated while exposing theme state to CSS tokens.
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.skin = document.documentElement.dataset.skin || 'emerald';
   }, [theme]);
 
   // Giữ menu dưới luôn bám đáy vùng nhìn thực tế trên mobile.
@@ -899,7 +903,7 @@ export const App: React.FC = () => {
 
   // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
   return (
-    <div className="mapp-bg min-h-screen w-full max-w-full overflow-x-hidden bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="cd24-root mapp-bg min-h-screen w-full max-w-full overflow-x-hidden bg-bg text-fg flex flex-col transition-colors duration-300 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <ScrollToTop />
 
       {/* Top Banner (If active) */}
