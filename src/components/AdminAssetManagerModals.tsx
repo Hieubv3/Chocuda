@@ -115,7 +115,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
 
   return (
     <div className={inline ? 'w-full max-md:fixed max-md:inset-0 max-md:z-50 max-md:overflow-y-auto max-md:bg-slate-950/80' : 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto'}>
-      <div className={inline ? 'relative w-full min-h-full md:min-h-0 bg-white dark:bg-slate-900 rounded-3xl max-md:rounded-none border border-slate-200 dark:border-slate-800 max-md:border-0 shadow-xl max-md:shadow-none overflow-hidden text-xs' : 'relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl my-8 overflow-hidden text-xs'}>
+      <div className={`${inline ? 'relative w-full min-h-full md:min-h-0 bg-white dark:bg-slate-900 rounded-3xl max-md:rounded-none border border-slate-200 dark:border-slate-800 max-md:border-0 shadow-xl max-md:shadow-none overflow-hidden text-xs' : 'relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl my-8 overflow-hidden text-xs'} ${inline ? 'admin-property-editor' : ''}`}>
         {/* Editor Header */}
         <div className="flex items-center justify-between p-6 bg-slate-900 text-white border-b border-slate-800">
           <div className="flex items-center space-x-3">
@@ -142,7 +142,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
         )}
 
         {/* Editor Form Content */}
-        <form onSubmit={handleSubmit} className={inline ? 'p-6 space-y-6' : 'p-6 space-y-6 max-h-[75vh] overflow-y-auto'}>
+        <form onSubmit={handleSubmit} className={inline ? 'p-6 sm:p-8 space-y-8' : 'p-6 space-y-6 max-h-[75vh] overflow-y-auto'}>
           
           {/* SECTION 1: MANAGE IMAGES (THAY/XÓA/SỬA ẢNH DEMO) */}
           <div className="p-5 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 space-y-4">
