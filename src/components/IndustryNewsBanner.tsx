@@ -37,7 +37,7 @@ export const IndustryNewsBanner: React.FC<IndustryNewsBannerProps> = ({
   if (displayNews.length === 0) return null;
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`mapp-industry-news w-full ${className}`}>
       {/* Unified block — PC: 65/35 split, Mobile: stacked 2 rows */}
       <div className="grid grid-cols-1 md:grid-cols-[65fr_35fr] gap-3">
         {/* Column 1: Banner (65% on PC) */}
