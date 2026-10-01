@@ -5447,6 +5447,52 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
           </div>
 
+      {/* Edit / Add Property — inline editor, không dùng popup trong admin */}
+      {(editingProperty || isAddingProperty) && (
+        <EditPropertyModal
+          property={editingProperty || ({
+            id: 'prop-new-' + Date.now(),
+            title: '',
+            type: propertySubFilter === 'rent' ? 'rent' : 'sale',
+            project: 'ocean-park-2',
+            category: 'shophouse',
+            price: 0,
+            priceDisplay: '',
+            area: 0,
+            bedrooms: 0,
+            bathrooms: 0,
+            direction: 'Đông Nam',
+            furniture: 'basic',
+            legal: 'so-do',
+            address: '',
+            description: '',
+            images: [],
+            featured: false,
+            approved: true,
+            status: 'approved',
+            sellerName: 'Admin',
+            sellerPhone: '0868499929',
+            createdAt: new Date().toISOString()
+          } as any)}
+          isCreate={!editingProperty}
+          inline
+          onClose={() => { setEditingProperty(null); setIsAddingProperty(false); }}
+          onSave={(updated) => {
+            if (isAddingProperty) {
+              // Tạo mới: đảm bảo tin thuộc admin (tự duyệt) và gọi handler POST
+              const toCreate: any = { ...updated, userId: updated.userId || 'user-admin', approved: true, status: 'approved' };
+              if (onAddProperty) onAddProperty(toCreate);
+              else if (onUpdateProperty) onUpdateProperty(toCreate);
+            } else {
+              if (onUpdateProperty) onUpdateProperty(updated);
+            }
+            setEditingProperty(null);
+            setIsAddingProperty(false);
+          }}
+        />
+      )}
+
+
           {/* Sub-Filters Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-bold scrollbar-none">
             <button
@@ -8801,51 +8847,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           phone={sharingProperty.sellerPhone || ''}
           url={`${window.location.origin}/#property-${sharingProperty.id}`}
           onClose={() => setSharingProperty(null)}
-        />
-      )}
-
-      {/* Edit / Add Property — inline editor, không dùng popup trong admin */}
-      {(editingProperty || isAddingProperty) && (
-        <EditPropertyModal
-          property={editingProperty || ({
-            id: 'prop-new-' + Date.now(),
-            title: '',
-            type: propertySubFilter === 'rent' ? 'rent' : 'sale',
-            project: 'ocean-park-2',
-            category: 'shophouse',
-            price: 0,
-            priceDisplay: '',
-            area: 0,
-            bedrooms: 0,
-            bathrooms: 0,
-            direction: 'Đông Nam',
-            furniture: 'basic',
-            legal: 'so-do',
-            address: '',
-            description: '',
-            images: [],
-            featured: false,
-            approved: true,
-            status: 'approved',
-            sellerName: 'Admin',
-            sellerPhone: '0868499929',
-            createdAt: new Date().toISOString()
-          } as any)}
-          isCreate={!editingProperty}
-          inline
-          onClose={() => { setEditingProperty(null); setIsAddingProperty(false); }}
-          onSave={(updated) => {
-            if (isAddingProperty) {
-              // Tạo mới: đảm bảo tin thuộc admin (tự duyệt) và gọi handler POST
-              const toCreate: any = { ...updated, userId: updated.userId || 'user-admin', approved: true, status: 'approved' };
-              if (onAddProperty) onAddProperty(toCreate);
-              else if (onUpdateProperty) onUpdateProperty(toCreate);
-            } else {
-              if (onUpdateProperty) onUpdateProperty(updated);
-            }
-            setEditingProperty(null);
-            setIsAddingProperty(false);
-          }}
         />
       )}
 
