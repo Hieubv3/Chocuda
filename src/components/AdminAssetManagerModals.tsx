@@ -13,17 +13,20 @@ interface EditPropertyModalProps {
   onClose: () => void;
   onSave: (updated: Property) => void;
   isCreate?: boolean;
+  inline?: boolean;
 }
 
 export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
   property,
   onClose,
   onSave,
-  isCreate = false
+  isCreate = false,
+  inline = false
 }) => {
   const [formData, setFormData] = useState<Property>({ ...property });
   const [newImageUrl, setNewImageUrl] = useState('');
   const [imageError, setImageError] = useState('');
+  const [notice, setNotice] = useState('');
   const [censorTargetIndex, setCensorTargetIndex] = useState<number | null>(null);
   const [showSoDoCensorAdmin, setShowSoDoCensorAdmin] = useState(false);
 
@@ -32,7 +35,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 15 * 1024 * 1024) {
-        alert('Kích thước ảnh tối đa là 15MB');
+        setNotice('Kích thước ảnh tối đa là 15MB.');
         return;
       }
       try {
@@ -48,12 +51,12 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               images: [url, ...prev.images]
             }));
           } else {
-            alert('Upload ảnh thất bại. Vui lòng thử lại!');
+            setNotice('Upload ảnh thất bại. Vui lòng thử lại.');
           }
         }
       } catch (err: any) {
         console.error('Error compressing/uploading image file:', err);
-        alert(err?.message || 'Không thể upload ảnh. Vui lòng kiểm tra kết nối!');
+        setNotice(err?.message || 'Không thể upload ảnh. Vui lòng kiểm tra kết nối.');
       }
     }
   };
@@ -74,7 +77,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
 
   const handleDeleteImage = (index: number) => {
     if (formData.images.length <= 1) {
-      alert('Bất động sản cần giữ lại ít nhất 1 hình ảnh hiển thị.');
+      setNotice('Bất động sản cần giữ lại ít nhất 1 hình ảnh hiển thị.');
       return;
     }
     setFormData(prev => ({
@@ -107,15 +110,13 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
       status: 'approved'
     };
     onSave(approvedProperty);
-    alert('✅ Đã lưu cập nhật bất động sản & đồng bộ trực tiếp lên Public Website thành công!');
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl my-8 overflow-hidden text-xs">
-        
-        {/* Modal Header */}
+    <div className={inline ? 'w-full' : 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto'}>
+      <div className={inline ? 'relative w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden text-xs' : 'relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl my-8 overflow-hidden text-xs'}>
+        {/* Editor Header */}
         <div className="flex items-center justify-between p-6 bg-slate-900 text-white border-b border-slate-800">
           <div className="flex items-center space-x-3">
             <span className="p-2 bg-emerald-600 rounded-xl text-white">
@@ -134,8 +135,14 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
           </button>
         </div>
 
-        {/* Modal Form Content */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+        {notice && (
+          <div className="mx-6 mt-4 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-800 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-200" role="status">
+            {notice}
+          </div>
+        )}
+
+        {/* Editor Form Content */}
+        <form onSubmit={handleSubmit} className={inline ? 'p-6 space-y-6' : 'p-6 space-y-6 max-h-[75vh] overflow-y-auto'}>
           
           {/* SECTION 1: MANAGE IMAGES (THAY/XÓA/SỬA ẢNH DEMO) */}
           <div className="p-5 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 space-y-4">
@@ -254,7 +261,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
                   onSaveRedacted={(redactedDataUrl) => {
                     handleUpdateImageAt(censorTargetIndex, redactedDataUrl);
                     setCensorTargetIndex(null);
-                    alert(`Đã lưu ảnh đã che mờ/bôi đen vị trí cho Ảnh #${censorTargetIndex + 1}!`);
+                    setNotice(`Đã lưu ảnh đã che mờ/bôi đen vị trí cho Ảnh #${censorTargetIndex + 1}.`);
                   }}
                   onCancel={() => setCensorTargetIndex(null)}
                 />
@@ -319,7 +326,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
                   onSaveRedacted={(dataUrl) => {
                     setFormData({ ...formData, soDoRedactedImage: dataUrl });
                     setShowSoDoCensorAdmin(false);
-                    alert('Admin đã bôi đen/che mờ Sổ Đỏ thành công!');
+                    setNotice('Admin đã bôi đen/che mờ Sổ Đỏ thành công.');
                   }}
                   onCancel={() => setShowSoDoCensorAdmin(false)}
                 />

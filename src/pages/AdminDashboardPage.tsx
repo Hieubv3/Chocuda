@@ -8804,7 +8804,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         />
       )}
 
-      {/* Edit / Add Property Modal */}
+      {/* Edit / Add Property — inline editor, không dùng popup trong admin */}
       {(editingProperty || isAddingProperty) && (
         <EditPropertyModal
           property={editingProperty || ({
@@ -8832,6 +8832,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             createdAt: new Date().toISOString()
           } as any)}
           isCreate={!editingProperty}
+          inline
           onClose={() => { setEditingProperty(null); setIsAddingProperty(false); }}
           onSave={(updated) => {
             if (isAddingProperty) {
