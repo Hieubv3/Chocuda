@@ -8,7 +8,8 @@ import {
   Building2, ExternalLink, X, Info, Car, Utensils, Cpu, HeartHandshake,
   GraduationCap, Hotel, Dog, ShoppingBag, ArrowUpRightSquare, Home, FileText, User,
   Award, ShieldAlert, Clock, FileCheck, Upload, Grid2x2, Grid3x3, List, LayoutGrid,
-  Compass, Navigation, Hammer, Wallet, Lock, BedSingle
+  Compass, Navigation, Hammer, Wallet, Lock, BedSingle,
+  Zap, Scale, Landmark, Camera
 } from 'lucide-react';
 import { ProjectCategory, User as UserType, UserStorefront } from '../types';
 import { 
@@ -850,7 +851,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
         <div className="lg:col-span-8 space-y-6">
 
           {/* Categories Grid — lưới ô vuông 4 cột (không cuộn ngang) */}
-          <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+          <div className="grid grid-cols-4 lg:grid-cols-5 gap-0.5 sm:gap-1 rounded-2xl border border-ink-700/50 bg-[#141f38] p-1.5 sm:p-2">
             <button
               onClick={() => {
                 if (window.innerWidth < 1024) {
@@ -861,17 +862,17 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   navigate('/dich-vu-cu-dan');
                 }
               }}
-              className={`group w-full rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 py-2.5 px-1.5 min-h-[92px] ${
+              className={`group w-full rounded-xl border transition cursor-pointer flex flex-col items-center justify-center text-center gap-1 py-1 px-1 min-h-[60px] ${
                 selectedCategory === 'all'
                   ? 'bg-brand-600 text-white border-brand-500 shadow-md font-black'
-                  : 'bg-[#1c2945] text-white border-ink-700/60 hover:bg-[#25375d] hover:border-brand-400/60'
+                  : 'bg-transparent text-white border-transparent hover:bg-[#25375d]/70'
               } ${expandedCatId === 'all' ? 'ring-2 ring-brand-400' : ''}`}
             >
-              <div className="w-10 h-10 rounded-xl border border-brand-500/40 bg-gradient-to-br from-brand-500/20 to-teal-500/20 text-brand-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-7 h-7 rounded-lg border border-brand-500/30 bg-gradient-to-br from-brand-500/15 to-teal-500/15 text-brand-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <Wrench className="w-5 h-5" />
               </div>
               <div className="min-w-0 w-full lg:w-auto mt-0.5 lg:mt-0">
-                <div className="text-[11px] font-bold leading-tight line-clamp-2">Tất Cả Dịch Vụ</div>
+                <div className="text-[10px] font-bold leading-tight line-clamp-2">Tất Cả Dịch Vụ</div>
                 <div className="text-[9px] text-ink-400 truncate">{services.length} bài</div>
               </div>
             </button>
@@ -883,9 +884,9 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   const el = document.getElementById('gian-hang-cu-dan');
                   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }}
-                className="group w-full rounded-xl border border-ink-700/60 bg-[#1c2945] text-white hover:bg-[#25375d] hover:border-brand-400/60 transition cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 py-2.5 px-1.5 min-h-[92px] shadow-sm"
+                className="group w-full rounded-xl border border-transparent bg-transparent text-white hover:bg-[#25375d]/70 transition cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 py-2.5 px-1.5 min-h-[92px] shadow-sm"
               >
-                <div className="w-10 h-10 rounded-xl border border-brand-500/40 bg-gradient-to-br from-brand-500/20 to-orange-500/20 text-brand-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <div className="w-7 h-7 rounded-lg border border-brand-500/30 bg-gradient-to-br from-brand-500/15 to-orange-500/15 text-brand-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                   <ShoppingBag className="w-5 h-5" />
                 </div>
                 <div className="min-w-0 w-full">
@@ -894,7 +895,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                 </div>
               </button>
 
-            {RESIDENT_SERVICE_CATEGORIES.map(cat => {
+            {(services.length === 0 ? RESIDENT_SERVICE_CATEGORIES : RESIDENT_SERVICE_CATEGORIES.filter(c => services.some(s => s.categoryId === c.id))).map(cat => {
               const isActive = selectedCategory === cat.id;
               const count = services.filter(s => s.categoryId === cat.id).length;
               const industryRule = DEFAULT_INDUSTRY_KYC_RULES.find(r => r.categoryId === cat.id);
@@ -919,11 +920,11 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   } ${expandedCatId === cat.id ? 'ring-2 ring-brand-400' : ''}`}
                 >
                   <div className="flex flex-col lg:flex-row items-center gap-0.5 lg:gap-1 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'bg-white/20 border-white/30 text-white' : 'border-brand-500/40 bg-gradient-to-br from-brand-500/20 to-teal-500/20 text-brand-400'}`}>
-                      {renderCategoryIcon(cat.iconName, "w-5 h-5")}
+                    <div className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'bg-white/20 border-white/30 text-white' : 'border-brand-500/40 bg-gradient-to-br from-brand-500/20 to-teal-500/20 text-brand-400'}`}>
+                      {renderCategoryIcon(cat.iconName, "w-3.5 h-3.5")}
                     </div>
                     <div className="min-w-0 w-full lg:w-auto mt-0.5 lg:mt-0">
-                      <div className="text-[11px] font-bold leading-tight line-clamp-2">{cat.name}</div>
+                      <div className="text-[11px] font-bold leading-tight line-clamp-2" title={cat.name}>{cat.name.split(',')[0].split('(')[0].trim()}</div>
                       <div className="text-[9px] text-ink-400 truncate">{count} {countLabel}</div>
                     </div>
                   </div>

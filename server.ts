@@ -1337,8 +1337,114 @@ seedF1Agents();
 seedDeveloperExtras();
 
 // Data Store File Persistence (Local JSON Database)
-const DATA_STORE_PATH = path.join(process.cwd(), "app_data_store.json");
-const DATA_STORE_BACKUP_PATH = path.join(process.cwd(), "app_data_store.backup.json");
+// FIX: luu du lieu vao thu muc BEN VUNG (UPLOADS_DIR = /app/uploads tren Render)
+const DATA_DIR = (process.env.DATA_DIR && String(process.env.DATA_DIR).trim()) || UPLOADS_DIR;
+try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) { /* ignore */ }
+const DATA_STORE_PATH = path.join(DATA_DIR, "app_data_store.json");
+const DATA_STORE_BACKUP_PATH = path.join(DATA_DIR, "app_data_store.backup.json");
+const LEGACY_DATA_STORE_PATH = path.join(process.cwd(), "app_data_store.json");
+const LEGACY_DATA_STORE_BACKUP_PATH = path.join(process.cwd(), "app_data_store.backup.json");
+try {
+  if (!fs.existsSync(DATA_STORE_PATH) && fs.existsSync(LEGACY_DATA_STORE_PATH)) {
+    fs.copyFileSync(LEGACY_DATA_STORE_PATH, DATA_STORE_PATH);
+    console.log("[DataStore] Migrated app_data_store.json ->", DATA_STORE_PATH);
+  }
+  if (!fs.existsSync(DATA_STORE_BACKUP_PATH) && fs.existsSync(LEGACY_DATA_STORE_BACKUP_PATH)) {
+    fs.copyFileSync(LEGACY_DATA_STORE_BACKUP_PATH, DATA_STORE_BACKUP_PATH);
+  }
+} catch (migErr) {
+  console.warn("[DataStore] Migration skipped:", migErr);
+}
+
+
+// ===== SUPABASE: luu tru ben vung (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY hoac VITE_*) =====
+const SUPABASE_URL = String(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/+$/, "");
+const SUPABASE_KEY = String(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "").trim();
+const SUPABASE_TABLE = String(process.env.SUPABASE_TABLE || "app_state").trim();
+const SUPABASE_ENABLED = Boolean(SUPABASE_URL && SUPABASE_KEY);
+const SUPABASE_ROW_ID = "main";
+
+function supabaseHeaders(extra) {
+  const h = {
+    apikey: SUPABASE_KEY,
+    Authorization: "Bearer " + SUPABASE_KEY,
+    "Content-Type": "application/json"
+  };
+  if (extra) Object.keys(extra).forEach(function (k) { h[k] = extra[k]; });
+  return h;
+}
+
+async function loadFromSupabase() {
+  if (!SUPABASE_ENABLED) {
+    console.log("[Supabase] Chua cau hinh -> dung file local.");
+    return;
+  }
+  try {
+    const url = SUPABASE_URL + "/rest/v1/" + SUPABASE_TABLE + "?id=eq." + SUPABASE_ROW_ID + "&select=data,updated_at";
+    const res = await fetch(url, { headers: supabaseHeaders(null) });
+    if (!res.ok) {
+      console.warn("[Supabase] Load that bai:", res.status, String(await res.text()).slice(0, 200));
+      return;
+    }
+    const rows = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0 || !rows[0] || !rows[0].data) {
+      console.warn("[Supabase] Chua co du lieu -> se day trang thai hien tai len.");
+      try { saveDataStore(); } catch (e) { /* ignore */ }
+      return;
+    }
+    // CHI phuc hoi tu Supabase khi: file local KHONG CON, HOAC du lieu Supabase DAY DU HON
+    // (tranh ghi de nguoc lam mat du lieu; dong thoi tu phuc hoi neu local bi reset ve seed).
+    const __aggCount = function (d) {
+      if (!d || typeof d !== 'object') return 0;
+      const keys = ['properties','projects','news','residentServices','stores','users','recruitmentJobs','candidateProfiles','walletTransactions','paymentOrders','messages','trash'];
+      let n = 0;
+      keys.forEach(function (k) { n += Array.isArray(d[k]) ? d[k].length : 0; });
+      return n;
+    };
+    let __localAgg = -1;
+    try {
+      if (fs.existsSync(DATA_STORE_PATH)) {
+        __localAgg = __aggCount(JSON.parse(fs.readFileSync(DATA_STORE_PATH, "utf-8")));
+      }
+    } catch (e) { __localAgg = -1; }
+    const __supaAgg = __aggCount(rows[0].data);
+    if (__localAgg === -1 || (__supaAgg > __localAgg && __supaAgg > 0)) {
+      fs.writeFileSync(DATA_STORE_PATH, JSON.stringify(rows[0].data, null, 2), "utf-8");
+      loadDataStore();
+      console.log("[Supabase] Phuc hoi du lieu tu Supabase (localAgg=" + __localAgg + ", supaAgg=" + __supaAgg + ").");
+    } else {
+      console.log("[Supabase] File local day du -> giu nguyen, day len Supabase de dong bo.");
+      try { saveDataStore(); } catch (e) { /* ignore */ }
+    }
+  } catch (err) {
+    console.warn("[Supabase] Load loi:", err);
+  }
+}
+
+let supabaseSaveTimer = null;
+let supabasePending = "";
+function scheduleSupabaseSave(jsonStr) {
+  if (!SUPABASE_ENABLED) return;
+  supabasePending = jsonStr;
+  if (supabaseSaveTimer) return;
+  supabaseSaveTimer = setTimeout(async function () {
+    supabaseSaveTimer = null;
+    const payload = supabasePending;
+    supabasePending = "";
+    if (!payload) return;
+    try {
+      const url = SUPABASE_URL + "/rest/v1/" + SUPABASE_TABLE;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: supabaseHeaders({ Prefer: "resolution=merge-duplicates,return=minimal" }),
+        body: JSON.stringify([{ id: SUPABASE_ROW_ID, data: JSON.parse(payload), updated_at: new Date().toISOString() }])
+      });
+      if (!res.ok) console.warn("[Supabase] Save that bai:", res.status, String(await res.text()).slice(0, 200));
+    } catch (err) {
+      console.warn("[Supabase] Save loi:", err);
+    }
+  }, 1500);
+}
 
 function loadDataStore() {
   try {
@@ -1457,6 +1563,21 @@ function loadDataStore() {
       }
 
       // Áp dụng deletedIds: loại bỏ bài đã xóa khỏi các store
+      try {
+        const pruneBy = (ids, list) =>
+          Array.isArray(list) && list.length > 0
+            ? ids.filter((id) => !list.some((it) => it && it.id === id))
+            : ids;
+        deletedIds.properties = pruneBy(deletedIds.properties, data.properties);
+        deletedIds.projects = pruneBy(deletedIds.projects, data.projects);
+        deletedIds.news = pruneBy(deletedIds.news, data.news);
+        deletedIds.residentServices = pruneBy(deletedIds.residentServices, data.residentServices);
+        deletedIds.stores = pruneBy(deletedIds.stores, data.stores);
+        deletedIds.ads = pruneBy(deletedIds.ads, data.ads);
+      } catch (pruneErr) {
+        console.warn("[DataStore] tombstone prune skipped:", pruneErr);
+      }
+
       propertiesStore = propertiesStore.filter(p => !deletedIds.properties.includes(p.id));
       projectsStore = projectsStore.filter(p => !deletedIds.projects.includes(p.id));
       newsStore = newsStore.filter(n => !deletedIds.news.includes(n.id));
@@ -1632,6 +1753,7 @@ ads: adsStore,
     fs.writeFileSync(DATA_STORE_PATH, jsonStr, "utf-8");
     // Also update backup file synchronously
     fs.writeFileSync(DATA_STORE_BACKUP_PATH, jsonStr, "utf-8");
+    scheduleSupabaseSave(jsonStr);
   } catch (err) {
     console.warn("Could not write app_data_store.json", err);
   }
@@ -1639,6 +1761,8 @@ ads: adsStore,
 
 // Initial load on server start
 loadDataStore();
+
+loadFromSupabase();
 
 // SECURITY: ADMIN_SEED_PASSWORD env luôn ghi đè mật khẩu admin.
 // Chạy SAU ensureDefaultAdmin() (async) để tránh bị reset ngược lại.
@@ -3640,6 +3764,49 @@ app.post("/api/properties/:id/renew", (req, res) => {
     message: `Đã gia hạn hiển thị thành công thêm ${days} ngày!`,
     property: prop,
     expiresAt: newExpiresAt
+  });
+});
+
+// ===== Bo sung API con thieu =====
+app.get("/api/system/pricing-config", (req, res) => {
+  res.json(pricingConfigStore);
+});
+app.post("/api/system/pricing-config", authenticateToken, requireAdmin, (req, res) => {
+  try {
+    pricingConfigStore = { ...(pricingConfigStore || {}), ...(req.body || {}) };
+    saveDataStore();
+    res.json({ success: true, pricingConfig: pricingConfigStore });
+  } catch (err) {
+    res.status(500).json({ error: "Khong luu duoc cau hinh gia." });
+  }
+});
+
+app.get("/api/user-storefronts", (req, res) => {
+  res.json(Array.isArray(storesStore) ? storesStore : []);
+});
+
+app.get("/api/workspace/config", (req, res) => {
+  res.json(workspaceConfigStore || {});
+});
+app.post("/api/workspace/config", authenticateToken, (req, res) => {
+  try {
+    workspaceConfigStore = { ...(workspaceConfigStore || {}), ...(req.body || {}) };
+    saveDataStore();
+    res.json({ success: true, config: workspaceConfigStore });
+  } catch (err) {
+    res.status(500).json({ error: "Khong luu duoc cau hinh Workspace." });
+  }
+});
+app.post("/api/workspace/sync-all", (req, res) => {
+  res.json({ success: true, synced: 0, message: "Workspace sync endpoint ready." });
+});
+
+app.get("/api/system/storage-status", (req, res) => {
+  res.json({
+    supabaseEnabled: SUPABASE_ENABLED,
+    supabaseTable: SUPABASE_TABLE,
+    dataFile: DATA_STORE_PATH,
+    hasSupabaseUrl: Boolean(SUPABASE_URL)
   });
 });
 
@@ -7860,7 +8027,7 @@ app.post("/api/recruitment/candidates/:id/unlock", (req, res) => {
 });
 
 // 10. POST Apply for Job (Ứng tuyển việc làm - Compatible with both /api/recruitment/applications & /api/recruitment/applicants/apply)
-app.post(["/api/recruitment/applications", "/api/recruitment/applicants/apply"], (req, res) => {
+app.post(["/api/recruitment/applications", "/api/recruitment/applicants/apply", "/api/recruitment/apply"], (req, res) => {
   const { 
     jobId, 
     candidateId, 
