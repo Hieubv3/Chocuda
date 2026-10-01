@@ -2046,10 +2046,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   return (
-    <div className={`cd24-admin${mobileTabFocus ? ' cd24-mobile-focus' : ''} max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4`}>
+    <div className={`cd24-admin cd24-admin-shell${mobileTabFocus ? ' cd24-mobile-focus' : ''} max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4`}>
       
       {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Điều hướng nhanh trực tiếp bên trong Admin */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
+      <div className="cd24-admin-topbar bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
         <div className="flex items-center gap-1.5 flex-wrap font-bold text-slate-700 dark:text-slate-300">
           <span className="text-slate-400 text-[11px] uppercase tracking-wider font-extrabold hidden md:inline">
             ĐIỀU HƯỚNG NHANH PHÂN HỆ:
@@ -2263,7 +2263,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       />
 
       {/* 1. TOP HEADER - Tinh gọn, hiện đại, không chiếm diện tích */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl border border-slate-800 shadow-xl">
+      <div className="cd24-admin-header flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl border border-slate-800 shadow-xl">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-600/20 text-emerald-400 rounded-xl border border-emerald-500/30 shrink-0">
             <ShieldCheck className="w-5 h-5" />
@@ -2356,7 +2356,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       </div>
 
       {/* 2. LIVE METRICS - THỐNG KÊ NHANH (Sổ ra / Thu gọn để tiết kiệm tối đa không gian) */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-xs transition">
+      <div className="cd24-admin-metrics bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-xs transition">
         <div className="flex items-center justify-between gap-2">
           {/* Quick summary chips — bấm chip nào nhảy thẳng tới khu đó ngay lập tức */}
           <div className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">

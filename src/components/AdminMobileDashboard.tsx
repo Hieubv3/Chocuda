@@ -25,7 +25,7 @@ export const AdminMobileDashboard: React.FC<AdminMobileDashboardProps> = ({ stat
   const dateStr = now.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit' });
 
   return (
-    <div className="lg:hidden space-y-3">
+    <div className="cd24-admin-mobile-overview lg:hidden space-y-3">
       {/* Lời chào + ngày */}
       <div className="px-0.5 flex items-end justify-between gap-2">
         <div>

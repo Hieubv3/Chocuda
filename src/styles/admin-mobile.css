@@ -1,80 +1,59 @@
 /* ==========================================================================
-   TỐI ƯU QUẢN TRỊ CHO DI ĐỘNG
-   Chỉ áp dụng dưới 1024px. Giao diện PC hoàn toàn giữ nguyên.
-   Phạm vi: chỉ trong khối .cd24-admin nên không ảnh hưởng phần còn lại.
+   ADMIN RESPONSIVE BEHAVIOR
+   Chỉ điều chỉnh layout dưới 1024px. Visual skin chung nằm ở admin-theme-v2.css.
+   Tất cả selector được giới hạn trong .cd24-admin-shell để không chạm admin login.
    ========================================================================== */
 
 @media (max-width: 1023px) {
-  /* Vùng nội dung: chừa lề và chừa chỗ cho thanh thao tác dưới cùng */
-  .cd24-admin {
+  .cd24-admin-shell {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
-    padding-bottom: 5.5rem;
+    padding-bottom: calc(6.25rem + env(safe-area-inset-bottom));
+    overscroll-behavior-y: contain;
   }
 
-  /* Thanh điều hướng nhanh dính trên đầu, luôn thao tác được khi cuộn */
-  .cd24-admin > div:first-child {
+  .cd24-admin-shell > .cd24-admin-topbar {
     position: sticky;
     top: 0.25rem;
     z-index: 30;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(12px);
   }
 
-  /* Cuộn ngang mượt cho bảng và dải chip */
-  .cd24-admin .overflow-x-auto {
+  .cd24-admin-shell .overflow-x-auto {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
   }
-  .cd24-admin .overflow-x-auto::-webkit-scrollbar { height: 6px; }
-  .cd24-admin .overflow-x-auto::-webkit-scrollbar-thumb {
-    background: rgba(100, 116, 139, 0.5);
+  .cd24-admin-shell .overflow-x-auto::-webkit-scrollbar { height: 6px; }
+  .cd24-admin-shell .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: rgba(53, 122, 83, 0.42);
     border-radius: 999px;
   }
-  /* Bảng nằm trong khung cuộn thì giữ cột đủ rộng, không bị bóp chữ */
-  .cd24-admin .overflow-x-auto > table { min-width: 640px; }
+  .cd24-admin-shell .overflow-x-auto > table { min-width: 640px; }
 
-  /* Sàn cỡ chữ: các nhãn quá nhỏ được nâng lên mức đọc được trên điện thoại */
-  .cd24-admin .text-\[9px\] { font-size: 10.5px; line-height: 1.35; }
-  .cd24-admin .text-\[10px\] { font-size: 11px; line-height: 1.35; }
-  .cd24-admin .text-\[11px\] { font-size: 11.5px; line-height: 1.4; }
+  .cd24-admin-shell .text-\[9px\] { font-size: 10.5px; line-height: 1.35; }
+  .cd24-admin-shell .text-\[10px\] { font-size: 11px; line-height: 1.35; }
+  .cd24-admin-shell .text-\[11px\] { font-size: 11.5px; line-height: 1.4; }
 
-  /* Vùng chạm tối thiểu cho nút bấm và ô nhập */
-  .cd24-admin button,
-  .cd24-admin input,
-  .cd24-admin select,
-  .cd24-admin textarea {
+  .cd24-admin-shell button,
+  .cd24-admin-shell input,
+  .cd24-admin-shell select,
+  .cd24-admin-shell textarea {
     touch-action: manipulation;
   }
-  .cd24-admin input,
-  .cd24-admin select { min-height: 40px; }
+  .cd24-admin-shell input,
+  .cd24-admin-shell select { min-height: 40px; }
 
-  /* Hộp thoại và bảng nổi: không tràn khỏi màn hình, cuộn được bên trong */
-  .cd24-admin .fixed.inset-0 > div {
+  /* Chỉ các dialog panel tự khai báo mới được giới hạn chiều cao.
+     Không áp dụng cho backdrop hoặc drawer full-height. */
+  .cd24-admin-shell .cd24-admin-dialog-panel {
     max-height: 90vh;
     overflow-y: auto;
   }
 
-  /* Bảng dữ liệu: hàng cao hơn một chút cho dễ chạm khi thao tác duyệt */
-  .cd24-admin table td,
-  .cd24-admin table th { padding-top: 0.6rem; padding-bottom: 0.6rem; }
-
-  /* Khu quản trị trên điện thoại: bớt bo góc lớn cho đỡ chiếm chỗ */
-  .cd24-admin .rounded-3xl { border-radius: 1rem; }
-
-  /* ===== Đợt 2-4 (28/09/2026): polish theo thiết kế mới ===== */
-
-  /* Chừa đáy cho bottom nav mới + safe-area iPhone */
-  .cd24-admin { padding-bottom: calc(6.25rem + env(safe-area-inset-bottom)); }
-
-  /* Cuộn mượt trong khối admin, hạn chế lọt cuộn ra ngoài */
-  .cd24-admin { overscroll-behavior-y: contain; }
-
-  /* Chip lọc dạng viên: vùng chạm tối thiểu 32px cho ngón tay */
-  .cd24-admin button.rounded-full { min-height: 32px; }
-
-  /* Thanh điều hướng nhanh trên cùng: nổi khối nhệ */
-  .cd24-admin > div:first-child { box-shadow: 0 6px 18px rgba(16, 40, 32, 0.06); }
-
-  /* Focus mode: an khoi tong quan khi vao phan he (chi <=1023px) */
+  .cd24-admin-shell table td,
+  .cd24-admin-shell table th { padding-top: 0.6rem; padding-bottom: 0.6rem; }
+  .cd24-admin-shell .rounded-3xl { border-radius: 1rem; }
+  .cd24-admin-shell button.rounded-full { min-height: 32px; }
+  .cd24-admin-shell .cd24-mobile-collapsible { min-width: 0; }
   .cd24-mobile-focus .cd24-mobile-collapsible { display: none; }
 }
