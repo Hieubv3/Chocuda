@@ -20,6 +20,8 @@ export const TechnicalServiceEscrowModal: React.FC<TechnicalServiceEscrowModalPr
   currentUser,
   onOpenAuth
 }) => {
+  // ESCROW_DISABLED: khong ky quy qua nen tang
+  return null;
   const [activeTab, setActiveTab] = useState<'orders' | 'wallet' | 'create_order' | 'bank_linking'>('orders');
   
   // Data states

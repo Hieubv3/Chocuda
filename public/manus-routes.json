@@ -1,0 +1,332 @@
+{
+  "routes": [
+    {
+      "path": "/auth/callback"
+    },
+    {
+      "path": "/",
+      "title": "Trang chủ Chợ Cư Dân 24H"
+    },
+    {
+      "path": "/du-an",
+      "title": "Dự án"
+    },
+    {
+      "path": "/du-an/:projectSlug"
+    },
+    {
+      "path": "/du-an/:projectSlug/phan-khu/:subdivisionSlug"
+    },
+    {
+      "path": "/phan-khu/:subdivisionSlug"
+    },
+    {
+      "path": "/du-an/:projectSlug/tien-ich/:amenitySlug"
+    },
+    {
+      "path": "/tien-ich/:amenitySlug"
+    },
+    {
+      "path": "/bat-dong-san"
+    },
+    {
+      "path": "/mua-ban",
+      "title": "Mua bán"
+    },
+    {
+      "path": "/ban"
+    },
+    {
+      "path": "/cho-thue",
+      "title": "Cho thuê"
+    },
+    {
+      "path": "/thue"
+    },
+    {
+      "path": "/bat-dong-san/:id"
+    },
+    {
+      "path": "/ban/:id"
+    },
+    {
+      "path": "/cho-thue/:id"
+    },
+    {
+      "path": "/thue/:id"
+    },
+    {
+      "path": "/:projectSlug/:id"
+    },
+    {
+      "path": "/tin-tuc",
+      "title": "Tin tức"
+    },
+    {
+      "path": "/tin-tuc/:categorySlug"
+    },
+    {
+      "path": "/tin-tuc/:categorySlug/:postSlug"
+    },
+    {
+      "path": "/tin-tuc/bai-viet/:postSlug"
+    },
+    {
+      "path": "/dich-vu-cu-dan",
+      "title": "Dịch vụ cư dân"
+    },
+    {
+      "path": "/dich-vu-cu-dan/danh-muc/:categorySlug"
+    },
+    {
+      "path": "/dich-vu-cu-dan/danh-muc/:categorySlug/:subCategorySlug"
+    },
+    {
+      "path": "/dich-vu-cu-dan/du-an/:projectSlug"
+    },
+    {
+      "path": "/cho-cu-dan",
+      "title": "Chợ cư dân"
+    },
+    {
+      "path": "/gian-hang",
+      "title": "Gian hàng"
+    },
+    {
+      "path": "/gian-hang/:storeSlug"
+    },
+    {
+      "path": "/gian-hang/:storeSlug/san-pham/:productId/:productSlug"
+    },
+    {
+      "path": "/gian-hang/:storeSlug/san-pham/:productId"
+    },
+    {
+      "path": "/gian-hang/:storeSlug/:productId"
+    },
+    {
+      "path": "/san-pham/:productId/:productSlug"
+    },
+    {
+      "path": "/san-pham/:productId"
+    },
+    {
+      "path": "/cho-cu-dan/san-pham/:productId/:productSlug"
+    },
+    {
+      "path": "/cho-cu-dan/san-pham/:productId"
+    },
+    {
+      "path": "/hang-hoa/:productId/:productSlug"
+    },
+    {
+      "path": "/hang-hoa/:productId"
+    },
+    {
+      "path": "/dich-vu-cu-dan/:serviceSlug"
+    },
+    {
+      "path": "/sitemap"
+    },
+    {
+      "path": "/so-do-website"
+    },
+    {
+      "path": "/cong-dong",
+      "title": "Cộng đồng"
+    },
+    {
+      "path": "/cong-dong/:groupSlug"
+    },
+    {
+      "path": "/tuyen-dung",
+      "title": "Tuyển dụng"
+    },
+    {
+      "path": "/tuyen-dung/viec-lam/:jobId/:slug"
+    },
+    {
+      "path": "/tuyen-dung/viec-lam/:jobId"
+    },
+    {
+      "path": "/tuyen-dung/ung-vien/:candidateId/:slug"
+    },
+    {
+      "path": "/tuyen-dung/ung-vien/:candidateId"
+    },
+    {
+      "path": "/tuyen-dung/cv/:candidateId"
+    },
+    {
+      "path": "/tuyen-dung/nha-tuyen-dung/:employerId/:slug"
+    },
+    {
+      "path": "/tuyen-dung/nha-tuyen-dung/:employerId"
+    },
+    {
+      "path": "/nha-tuyen-dung/:employerId/:slug"
+    },
+    {
+      "path": "/nha-tuyen-dung/:employerId"
+    },
+    {
+      "path": "/tuyen-dung/nganh-nghe/:industryId"
+    },
+    {
+      "path": "/tuyen-dung/du-an/:projectSlug"
+    },
+    {
+      "path": "/tuyen-dung/:tabName"
+    },
+    {
+      "path": "/dang-tin",
+      "title": "Đăng tin"
+    },
+    {
+      "path": "/tinh-lai-vay",
+      "title": "Tính lãi vay"
+    },
+    {
+      "path": "/ve-chung-toi"
+    },
+    {
+      "path": "/gioi-thieu"
+    },
+    {
+      "path": "/chuyen-gia"
+    },
+    {
+      "path": "/chuyen-gia/:expertSlug"
+    },
+    {
+      "path": "/bui-van-hieu"
+    },
+    {
+      "path": "/bui-trung-hieu"
+    },
+    {
+      "path": "/tai-khoan",
+      "title": "Tài khoản cư dân"
+    },
+    {
+      "path": "/chinh-sach-bao-mat",
+      "title": "Chính sách bảo mật"
+    },
+    {
+      "path": "/privacy"
+    },
+    {
+      "path": "/privacy-policy"
+    },
+    {
+      "path": "/dieu-khoan-su-dung",
+      "title": "Điều khoản sử dụng"
+    },
+    {
+      "path": "/terms"
+    },
+    {
+      "path": "/terms-of-service"
+    },
+    {
+      "path": "/admin",
+      "title": "Quản trị hệ thống"
+    },
+    {
+      "path": "/quantri"
+    },
+    {
+      "path": "/quantri24h"
+    },
+    {
+      "path": "/admin-login"
+    },
+    {
+      "path": "/index.html"
+    },
+    {
+      "path": "/bai-viet"
+    },
+    {
+      "path": "/bai-viet.html"
+    },
+    {
+      "path": "/cho-cu-dan.html"
+    },
+    {
+      "path": "/dich-vu-cu-dan.html"
+    },
+    {
+      "path": "/mua-ban.html"
+    },
+    {
+      "path": "/tuyen-dung.html"
+    },
+    {
+      "path": "/tin-tuc.html"
+    },
+    {
+      "path": "/du-an.html"
+    },
+    {
+      "path": "/dang-tin.html"
+    },
+    {
+      "path": "/tai-khoan.html"
+    },
+    {
+      "path": "/tinh-lai-vay.html"
+    },
+    {
+      "path": "/chinh-sach-bao-mat.html"
+    },
+    {
+      "path": "/dieu-khoan.html"
+    },
+    {
+      "path": "/san-pham.html"
+    },
+    {
+      "path": "/gian-hang.html"
+    },
+    {
+      "path": "/nganh-hang"
+    },
+    {
+      "path": "/nganh-hang.html"
+    },
+    {
+      "path": "/gio-hang"
+    },
+    {
+      "path": "/gio-hang.html"
+    },
+    {
+      "path": "/lien-he"
+    },
+    {
+      "path": "/lien-he.html"
+    },
+    {
+      "path": "/nang-cap"
+    },
+    {
+      "path": "/nang-cap.html"
+    },
+    {
+      "path": "/quan-tri-mobi"
+    },
+    {
+      "path": "/quan-tri-mobi.html"
+    },
+    {
+      "path": "/xem-mobi"
+    },
+    {
+      "path": "/xem-mobi.html"
+    },
+    {
+      "path": "*"
+    }
+  ]
+}

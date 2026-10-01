@@ -233,11 +233,8 @@ export const StraightLineAiChatbot: React.FC<StraightLineAiChatbotProps> = ({
     };
 
     try {
-      const res = await fetch('/api/chat-orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // CHAT_ORDER_DISABLED: khong dat hang qua nen tang
+      const res: any = { ok: false, json: async () => ({}) };
       const data = await res.json();
 
       if (data && data.order) {

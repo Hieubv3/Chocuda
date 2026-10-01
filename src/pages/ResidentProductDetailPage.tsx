@@ -130,32 +130,8 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
       });
 
       // 2. Submit order to server endpoint
-      await fetch('/api/store-orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          storeId: store.id,
-          storeName: store.storeName,
-          customerId: currentUser?.id || `guest-${Date.now()}`,
-          customerName,
-          customerPhone,
-          customerAddress,
-          note: orderNote,
-          items: [
-            {
-              productId: product.id,
-              productName: product.name,
-              price: product.price,
-              quantity: orderQty,
-              unit: product.unit
-            }
-          ],
-          totalAmount: product.price * orderQty,
-          paymentMethod,
-          paymentStatus: 'pending',
-          orderStatus: 'delivering'
-        })
-      }).catch(() => {});
+      // STORE_ORDER_DISABLED: nen tang chi thu tien GOI, khong ban hang qua web
+      window.open('https://zalo.me/' + String(store.ownerZalo || store.ownerPhone || '').replace(/\D/g, ''), '_blank');
 
       setOrderSuccess(true);
     } catch (err) {
@@ -597,7 +573,7 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                 <div className="space-y-1">
                   <h4 className="text-lg font-black text-ink-900 dark:text-white">ĐẶT HÀNG THÀNH CÔNG!</h4>
                   <p className="text-xs text-ink-600 dark:text-ink-300">
-                    Gian hàng <b>{store.storeName}</b> đã nhận được yêu cầu đặt món <b>{product.name}</b> (x{orderQty}).
+                    Gian hàng <b>{store.storeName}</b> sẽ liên hệ bạn trực tiếp (đặt món) <b>{product.name}</b> (x{orderQty}).
                   </p>
                   <p className="text-xs text-ink-500">
                     Chủ shop sẽ liên hệ qua SĐT <b>{customerPhone}</b> để giao hàng trong 15-30 phút!
@@ -749,12 +725,12 @@ export const ResidentProductDetailPage: React.FC<ResidentProductDetailPageProps>
                   {isSubmitting ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Đang gửi đơn hàng...</span>
+                      <span>Đang mở liên hệ...</span>
                     </>
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      <span>Xác Nhận Đặt Hàng ({(product.price * orderQty).toLocaleString('vi-VN')}₫)</span>
+                      <span>Liên Hệ Người Bán ({(product.price * orderQty).toLocaleString('vi-VN')}₫)</span>
                     </>
                   )}
                 </button>

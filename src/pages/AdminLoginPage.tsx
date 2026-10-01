@@ -88,13 +88,13 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center p-4 bg-slate-950 relative overflow-hidden">
+    <div className="cd24-admin cd24-admin-login min-h-[85vh] flex items-center justify-center p-4 bg-slate-950 relative overflow-hidden">
       
       {/* Background Decorative Elements - Mệnh Mộc Emerald Lights */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-600/20 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative w-full max-w-md bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-emerald-950/50 backdrop-blur-xl">
+      <div className="cd24-admin-login-card relative w-full max-w-md bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-emerald-950/50 backdrop-blur-xl">
         
         {/* Back button */}
         <button

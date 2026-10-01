@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
 export interface AdminMobileMenuItem {
@@ -26,15 +26,63 @@ interface AdminMobileMenuProps {
  * - Chỉ tồn tại trên màn < 1024px (lg:hidden).
  */
 export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose, groups }) => {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const panel = panelRef.current;
+    panel?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== 'Tab' || !panel) return;
+      const focusable = (Array.from(panel.querySelectorAll<HTMLElement>('button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])')) as HTMLElement[])
+        .filter((element: HTMLElement) => !element.hasAttribute('disabled'));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (document.activeElement === panel) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+        return;
+      }
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      previous?.focus?.();
+    };
+  }, [open, onClose]);
+
   if (!open) return null;
 
   return (
-    <div className="lg:hidden fixed inset-0 z-50">
+    <div className="cd24-admin-mobile-menu lg:hidden fixed inset-0 z-50">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={onClose} />
 
       {/* Panel */}
-      <div className="absolute right-0 top-0 bottom-0 w-[86%] max-w-[340px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col">
+      <div
+        ref={panelRef}
+        className="cd24-admin-mobile-menu-panel absolute right-0 top-0 bottom-0 w-[86%] max-w-[340px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Tất cả chức năng quản trị"
+        tabIndex={-1}
+      >
         <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-200 dark:border-slate-800 shrink-0">
           <div className="text-[15px] font-black text-slate-900 dark:text-white">Tất cả chức năng</div>
           <button

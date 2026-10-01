@@ -56,6 +56,11 @@ import { getProjectSlug } from './lib/slugs';
 import { AreaSelectModal, getStoredArea, AREA_STORAGE_KEY, AreaOption } from './components/AreaSelectModal';
 import { clearToken } from './lib/api';
 
+const RouteAlias: React.FC<{ to: string }> = ({ to }) => {
+  const location = useLocation();
+  return <Navigate to={{ pathname: to, search: location.search, hash: location.hash }} replace />;
+};
+
 export const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -242,6 +247,10 @@ export const App: React.FC = () => {
     } else {
       document.documentElement.classList.remove('dark');
     }
+    // Public UI uses the integrated Chợ Cư Dân design tokens. Keep the
+    // admin surface isolated while exposing theme state to CSS tokens.
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.skin = document.documentElement.dataset.skin || 'emerald';
   }, [theme]);
 
   // Giữ menu dưới luôn bám đáy vùng nhìn thực tế trên mobile.
@@ -899,7 +908,7 @@ export const App: React.FC = () => {
 
   // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
   return (
-    <div className="mapp-bg min-h-screen w-full max-w-full overflow-x-hidden bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 flex flex-col font-sans transition-colors duration-300 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="cd24-root mapp-bg min-h-screen w-full max-w-full overflow-x-hidden bg-bg text-fg flex flex-col transition-colors duration-300 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <ScrollToTop />
 
       {/* Top Banner (If active) */}
@@ -1848,6 +1857,36 @@ export const App: React.FC = () => {
           <Route path="/quantri" element={<Navigate to="/admin" replace />} />
           <Route path="/quantri24h" element={<Navigate to="/admin" replace />} />
           <Route path="/admin-login" element={<Navigate to="/admin" replace />} />
+
+          {/* Compatibility aliases for the integrated static UI package. */}
+          <Route path="/index.html" element={<RouteAlias to="/" />} />
+          <Route path="/bai-viet" element={<RouteAlias to="/tin-tuc" />} />
+          <Route path="/bai-viet.html" element={<RouteAlias to="/tin-tuc" />} />
+          <Route path="/cho-cu-dan.html" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/dich-vu-cu-dan.html" element={<RouteAlias to="/dich-vu-cu-dan" />} />
+          <Route path="/mua-ban.html" element={<RouteAlias to="/mua-ban" />} />
+          <Route path="/tuyen-dung.html" element={<RouteAlias to="/tuyen-dung" />} />
+          <Route path="/tin-tuc.html" element={<RouteAlias to="/tin-tuc" />} />
+          <Route path="/du-an.html" element={<RouteAlias to="/du-an" />} />
+          <Route path="/dang-tin.html" element={<RouteAlias to="/dang-tin" />} />
+          <Route path="/tai-khoan.html" element={<RouteAlias to="/tai-khoan" />} />
+          <Route path="/tinh-lai-vay.html" element={<RouteAlias to="/tinh-lai-vay" />} />
+          <Route path="/chinh-sach-bao-mat.html" element={<RouteAlias to="/chinh-sach-bao-mat" />} />
+          <Route path="/dieu-khoan.html" element={<RouteAlias to="/dieu-khoan-su-dung" />} />
+          <Route path="/san-pham.html" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/gian-hang.html" element={<RouteAlias to="/gian-hang" />} />
+          <Route path="/nganh-hang" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/nganh-hang.html" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/gio-hang" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/gio-hang.html" element={<RouteAlias to="/cho-cu-dan" />} />
+          <Route path="/lien-he" element={<RouteAlias to="/bui-van-hieu" />} />
+          <Route path="/lien-he.html" element={<RouteAlias to="/bui-van-hieu" />} />
+          <Route path="/nang-cap" element={<RouteAlias to="/tai-khoan" />} />
+          <Route path="/nang-cap.html" element={<RouteAlias to="/tai-khoan" />} />
+          <Route path="/quan-tri-mobi" element={<RouteAlias to="/admin" />} />
+          <Route path="/quan-tri-mobi.html" element={<RouteAlias to="/admin" />} />
+          <Route path="/xem-mobi" element={<RouteAlias to="/sitemap" />} />
+          <Route path="/xem-mobi.html" element={<RouteAlias to="/sitemap" />} />
 
           {/* Catch-all Wildcard Route -> Redirect Home */}
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Property, NewsArticle, LeadContact, User, UpTinPricingConfig, UpTinTransaction, AdBanner, Project, ResidentServiceItem, UserStorefront, StoreOrder, StoreProduct, BUSINESS_CATEGORIES, StorePackage, StorePackageOrder, AmenityArticle } from '../types';
 import { ShieldCheck, Check, Trash2, Phone, Mail, Sparkles, RefreshCw, RotateCcw, Archive, Eye, MessageSquare, Database, CheckCircle2, Clock, Zap, QrCode, Settings, Layers, UserCheck, Globe, Edit3, Plus, PlusCircle, MapPin, Building2, ImageIcon, FileText, Share2, X, Download, Search, Calendar, Filter, FileSpreadsheet, Upload, BarChart3, TrendingUp, UserX, UserPlus, PhoneCall, Award, Ban, Shield, Activity, Smartphone, Monitor, Tablet, ArrowUpRight, Wallet, Layout, Store, ShoppingBag, Wrench, Truck, Coffee, Star, BadgeCheck, ShieldAlert, DollarSign, Package, User as UserIcon, Briefcase, Home, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Menu, LogOut, Loader2, Save } from 'lucide-react';
 import { AdminRecruitmentManager } from '../components/AdminRecruitmentManager';
+import { AdminOverviewStats } from '../components/AdminOverviewStats';
 import { AdminTrashManager } from '../components/AdminTrashManager';
 import { AdminActivityLogManager } from '../components/AdminActivityLogManager';
 import { AdminSupportInbox } from '../components/AdminSupportInbox';
@@ -2046,10 +2047,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   };
 
   return (
-    <div className={`cd24-admin${mobileTabFocus ? ' cd24-mobile-focus' : ''} max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4`}>
+    <div className={`cd24-admin cd24-admin-shell${mobileTabFocus ? ' cd24-mobile-focus' : ''} max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-4`}>
       
       {/* 0. QUICK SHORTCUTS NAVIGATION BAR - Điều hướng nhanh trực tiếp bên trong Admin */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
+      <div className="cd24-admin-topbar bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 overflow-x-auto text-xs">
         <div className="flex items-center gap-1.5 flex-wrap font-bold text-slate-700 dark:text-slate-300">
           <span className="text-slate-400 text-[11px] uppercase tracking-wider font-extrabold hidden md:inline">
             ĐIỀU HƯỚNG NHANH PHÂN HỆ:
@@ -2263,7 +2264,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       />
 
       {/* 1. TOP HEADER - Tinh gọn, hiện đại, không chiếm diện tích */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl border border-slate-800 shadow-xl">
+      <div className="cd24-admin-header flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl border border-slate-800 shadow-xl">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-600/20 text-emerald-400 rounded-xl border border-emerald-500/30 shrink-0">
             <ShieldCheck className="w-5 h-5" />
@@ -2356,7 +2357,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       </div>
 
       {/* 2. LIVE METRICS - THỐNG KÊ NHANH (Sổ ra / Thu gọn để tiết kiệm tối đa không gian) */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-xs transition">
+      <div className="cd24-admin-metrics bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-xs transition">
         <div className="flex items-center justify-between gap-2">
           {/* Quick summary chips — bấm chip nào nhảy thẳng tới khu đó ngay lập tức */}
           <div className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
@@ -3314,6 +3315,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         <div className="flex-1 min-w-0 w-full space-y-4">
           
           {/* Thanh chuyển đổi nhanh trên Mobile / Tablet (< lg) */}
+          <AdminOverviewStats />
+
           <div className="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-2.5 shadow-md flex items-center justify-between gap-2">
             <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
               <Layers className="w-3.5 h-3.5" />
@@ -3335,55 +3338,64 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </button>
           </div>
 
+                    {/* ADMIN_ICON_MENU_4x2 — menu chinh dang luoi icon, thu gon/mo rong */}
           {isSubNavDropdownOpen && (
-            <div className="lg:hidden bg-slate-950 border border-slate-800 rounded-2xl p-3 shadow-xl grid grid-cols-2 gap-1.5 text-xs animate-in fade-in duration-150">
+            <div className="lg:hidden bg-slate-950 border border-slate-800 rounded-2xl p-2 shadow-xl grid grid-cols-4 gap-1.5 animate-in fade-in duration-150">
               <button
                 onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-emerald-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-xl bg-slate-900 border border-slate-800 text-emerald-400 active:scale-95 transition"
               >
-                <Building2 className="w-4 h-4" /> 1. BĐS ({properties.length})
+                <Building2 className="w-4 h-4" />
+                <span className="text-[9px] font-black leading-tight text-center">1. BĐS</span>
               </button>
               <button
-                onClick={() => { handleSelectMainTab('developer_units'); setActiveTab('developer_units'); setDevSubTab('matbang'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-violet-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                onClick={() => { handleSelectMainTab('developer_units'); setActiveTab('developer_units'); setIsSubNavDropdownOpen(false); }}
+                className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-xl bg-slate-900 border border-slate-800 text-violet-400 active:scale-95 transition"
               >
-                <MapPin className="w-4 h-4" /> 2. Bảng Hàng CĐT
+                <MapPin className="w-4 h-4" />
+                <span className="text-[9px] font-black leading-tight text-center">2. Bảng CĐT</span>
               </button>
               <button
                 onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-orange-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-xl bg-slate-900 border border-slate-800 text-orange-400 active:scale-95 transition"
               >
-                <Wrench className="w-4 h-4" /> 3. Thợ ({adminResidentServices.length})
+                <Wrench className="w-4 h-4" />
+                <span className="text-[9px] font-black leading-tight text-center">3. Thợ</span>
               </button>
               <button
                 onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-teal-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-xl bg-slate-900 border border-slate-800 text-teal-400 active:scale-95 transition"
               >
-                <Briefcase className="w-4 h-4" /> 4. Tuyển Dụng
+                <Briefcase className="w-4 h-4" />
+                <span className="text-[9px] font-black leading-tight text-center">4. Tuyển Dụng</span>
               </button>
               <button
                 onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-amber-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-xl bg-slate-900 border border-slate-800 text-amber-400 active:scale-95 transition"
               >
-                <Store className="w-4 h-4" /> 5. Chợ ({adminStores.length})
+                <Store className="w-4 h-4" />
+                <span className="text-[9px] font-black leading-tight text-center">5. Chợ Cư Dân</span>
               </button>
               <button
                 onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('users'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-blue-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-xl bg-slate-900 border border-slate-800 text-blue-400 active:scale-95 transition"
               >
-                <UserCheck className="w-4 h-4" /> 6. Thành Viên
+                <UserCheck className="w-4 h-4" />
+                <span className="text-[9px] font-black leading-tight text-center">6. Thành Viên</span>
               </button>
               <button
                 onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-rose-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-xl bg-slate-900 border border-slate-800 text-rose-400 active:scale-95 transition"
               >
-                <Sparkles className="w-4 h-4" /> 7. Quảng Cáo
+                <Sparkles className="w-4 h-4" />
+                <span className="text-[9px] font-black leading-tight text-center">7. Quảng Cáo</span>
               </button>
               <button
                 onClick={() => { handleSelectMainTab('tools'); setActiveTab('analytics'); setIsSubNavDropdownOpen(false); }}
-                className="col-span-2 p-2 bg-slate-900 text-indigo-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-xl bg-slate-900 border border-slate-800 text-indigo-400 active:scale-95 transition"
               >
-                <Settings className="w-4 h-4" /> 8. Công Cụ & Bot Hệ Thống
+                <Settings className="w-4 h-4" />
+                <span className="text-[9px] font-black leading-tight text-center">8. Công Cụ</span>
               </button>
             </div>
           )}

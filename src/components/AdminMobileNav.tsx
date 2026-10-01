@@ -20,7 +20,7 @@ interface AdminMobileNavProps {
 export const AdminMobileNav: React.FC<AdminMobileNavProps> = ({ items }) => {
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-6px_20px_rgba(16,40,32,0.06)]"
+      className="cd24-admin-mobile-nav lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-6px_20px_rgba(16,40,32,0.06)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       aria-label="Điều hướng quản trị"
     >
@@ -30,6 +30,7 @@ export const AdminMobileNav: React.FC<AdminMobileNavProps> = ({ items }) => {
             key={it.key}
             type="button"
             onClick={it.onClick}
+            data-admin-menu-trigger={it.key === 'menu' ? 'true' : undefined}
             className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-bold transition active:scale-95 cursor-pointer ${
               it.active
                 ? 'text-emerald-600 dark:text-emerald-400'
