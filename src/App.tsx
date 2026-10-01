@@ -984,7 +984,7 @@ export const App: React.FC = () => {
       <AdBannerWidget ads={ads} position="float_right_pc" />
 
       {/* Main Page Render via React Router */}
-      <main className="flex-1 w-full overflow-x-hidden">
+      <main className="mobile-app-main flex-1 w-full overflow-x-hidden">
         <Routes>
           {/* OAuth Redirect / Popup Callback Route */}
           <Route

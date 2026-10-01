@@ -287,3 +287,81 @@
 .mapp-strip-card b{ white-space:nowrap; }
 .mapp-filter button{ white-space:nowrap; }
 .mapp-account .rounded-full span, .mapp-account a[class*=rounded]{ white-space:nowrap; }
+
+/* ---------- GLOBAL MOBILE PAGE SKIN ----------
+   Áp dụng cho mọi route trong mobile-app-main, không chỉ trang chủ. */
+@media (max-width:767.98px){
+  .mobile-app-main{
+    background:#f8faf5 !important;
+    color:#15180f !important;
+  }
+  .dark .mobile-app-main{
+    background:#0a100d !important;
+    color:#eef7f0 !important;
+  }
+  .mobile-app-main > *{
+    background:transparent !important;
+  }
+  .mobile-app-main [class*="min-h-screen"]{
+    min-height:0 !important;
+    background:transparent !important;
+    padding-bottom:86px !important;
+  }
+  .mobile-app-main [class*="max-w-7xl"],
+  .mobile-app-main [class*="max-w-6xl"],
+  .mobile-app-main [class*="max-w-5xl"]{
+    max-width:none !important;
+    width:100% !important;
+    padding-left:14px !important;
+    padding-right:14px !important;
+  }
+  .mobile-app-main [class*="bg-ink-950"],
+  .mobile-app-main [class*="from-ink-900"],
+  .mobile-app-main [class*="from-ink-950"]{
+    background-image:
+      radial-gradient(120% 140% at 100% 0%, rgba(22,163,74,.48), transparent 55%),
+      linear-gradient(150deg,#0f8f4f,#166534) !important;
+    background-color:#166534 !important;
+    border-color:rgba(22,163,74,.35) !important;
+  }
+  .mobile-app-main [class*="bg-ink-900"]{
+    background-color:#ffffff !important;
+    color:#15180f !important;
+    border-color:#d9e9de !important;
+  }
+  .dark .mobile-app-main [class*="bg-ink-900"]{
+    background-color:#0f1a14 !important;
+    color:#eef7f0 !important;
+    border-color:rgba(255,255,255,.08) !important;
+  }
+  .mobile-app-main [class*="rounded-3xl"],
+  .mobile-app-main [class*="rounded-2xl"]{
+    border-radius:20px !important;
+  }
+  .mobile-app-main [class*="shadow-xl"],
+  .mobile-app-main [class*="shadow-2xl"],
+  .mobile-app-main [class*="shadow-md"]{
+    box-shadow:0 14px 28px rgba(15,120,63,.10) !important;
+  }
+  .mobile-app-main input,
+  .mobile-app-main select,
+  .mobile-app-main textarea{
+    min-height:44px;
+    border-radius:14px !important;
+    font-size:15px;
+  }
+  .mobile-app-main button,
+  .mobile-app-main a[class*="rounded"]{
+    min-height:40px;
+  }
+  .mobile-app-main .mapp-crumb{
+    background:#ffffff !important;
+    border-color:#d9e9de !important;
+    color:#4a5044 !important;
+  }
+  .dark .mobile-app-main .mapp-crumb{
+    background:#0f1a14 !important;
+    border-color:rgba(255,255,255,.08) !important;
+    color:#cde7d7 !important;
+  }
+}
