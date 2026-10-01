@@ -40,7 +40,6 @@ import { AdminSeoCenter } from '../components/AdminSeoCenter';
 import { AdminZaloGroupCenter } from '../components/AdminZaloGroupCenter';
 import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
-import { AdminMobileNav } from '../components/AdminMobileNav';
 import { AdminMobileDashboard } from '../components/AdminMobileDashboard';
 import { AdminMobileMenu } from '../components/AdminMobileMenu';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
@@ -10519,17 +10518,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           🏠 Tổng quan
         </button>
       )}
-
-      {/* Bottom navigation cho Admin trên mobile (thiết kế mới) */}
-      <AdminMobileNav
-        items={[
-          { key: 'bds', label: 'BĐS', icon: <Home className="w-4 h-4" />, onClick: () => handleSelectMainTab('bds'), active: effectiveMainTab === 'bds' },
-          { key: 'services', label: 'Dịch vụ', icon: <Wrench className="w-4 h-4" />, onClick: () => handleSelectMainTab('technicians'), active: effectiveMainTab === 'technicians' },
-          { key: 'jobs', label: 'Việc làm', icon: <Briefcase className="w-4 h-4" />, onClick: () => handleSelectMainTab('recruitment'), active: effectiveMainTab === 'recruitment' },
-          { key: 'stores', label: 'Gian hàng', icon: <Store className="w-4 h-4" />, onClick: () => handleSelectMainTab('resident_market'), active: effectiveMainTab === 'resident_market' },
-          { key: 'menu', label: 'Menu', icon: <Menu className="w-4 h-4" />, onClick: () => setShowMobileMenuDrawer(true) }
-        ]}
-      />
 
       {/* Drawer "Tất cả chức năng" cho mobile — bấm từng mục sẽ nhảy tới khu chức năng */}
       <AdminMobileMenu
