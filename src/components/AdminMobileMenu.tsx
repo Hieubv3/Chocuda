@@ -77,7 +77,7 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
       {/* Panel */}
       <div
         ref={panelRef}
-        className="cd24-admin-mobile-menu-panel absolute right-0 top-0 bottom-0 w-[86%] max-w-[340px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col"
+        className="cd24-admin-mobile-menu-panel absolute inset-0 w-full max-w-none bg-white dark:bg-slate-900 shadow-2xl flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-label="Tất cả chức năng quản trị"

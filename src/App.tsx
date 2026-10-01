@@ -915,7 +915,9 @@ export const App: React.FC = () => {
       <AdBannerWidget ads={ads} position="header_top" />
 
       {/* Mobile App Header (giao diện app — hiển thị trên MỌI trang mobile) */}
-      <MobileAppHeader currentUser={user} onOpenAuth={() => setAuthModalOpen(true)} />
+      {location.pathname !== '/admin' && (
+        <MobileAppHeader currentUser={user} onOpenAuth={() => setAuthModalOpen(true)} />
+      )}
 
       {/* Navigation Header (desktop) */}
       <div className="hidden md:block">
@@ -943,13 +945,15 @@ export const App: React.FC = () => {
       {/* (Đã gộp) Thanh 4 ngành rời đã được gộp vào đầu trang từng mục chính để tránh chồng lớp */}
 
       {/* Menu 4 nganh dang NOI cho DI DONG - chi hien khi bam */}
-      <MobileIndustryMenu
-        currentTab={getCurrentTabName()}
-        setCurrentTab={handleTabSwitch}
-      />
+      {location.pathname !== '/admin' && (
+        <MobileIndustryMenu
+          currentTab={getCurrentTabName()}
+          setCurrentTab={handleTabSwitch}
+        />
+      )}
 
       {/* Category-specific banner based on current tab — replaced with Industry News */}
-      {(() => {
+      {location.pathname !== '/admin' && (() => {
         const tabCategoryMap: Record<string, string> = {
           'sale': 'mua_ban',
           'rent': 'cho_thue',
@@ -1988,7 +1992,7 @@ export const App: React.FC = () => {
       />
 
       {/* Mobile Bottom Navigation Bar - Standard Uniform Size with Touch Zoom */}
-      <nav
+      {location.pathname !== '/admin' && <nav
         ref={bottomNavRef}
         className={`md:hidden mapp-nav${isTypingField ? ' hidden' : ''}`}
       >
@@ -2061,7 +2065,7 @@ export const App: React.FC = () => {
           </div>
           <span className="text-[10px] mt-0.5 font-medium whitespace-nowrap">Menu</span>
         </button>
-      </nav>
+      </nav>}
 
       {/* Global Modals & Popup */}
       <AdBannerWidget ads={ads} position="popup_modal" />
