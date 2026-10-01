@@ -965,7 +965,7 @@ export const App: React.FC = () => {
             <IndustryNewsBanner
               news={news}
               currentTab={currentTab}
-              className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8"
+              className="mobile-news-top max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8"
             />
           );
         }
@@ -1892,6 +1892,24 @@ export const App: React.FC = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+
+      {/* Mobile: bản tin ngành nằm cuối nội dung, không chiếm chỗ banner đầu trang */}
+      {location.pathname !== '/' && (() => {
+        const tabCategoryMap: Record<string, string> = {
+          sale: 'mua_ban', rent: 'cho_thue', services: 'dich_vu',
+          recruitment: 'tuyen_dung', projects: 'du_an', news: 'thi_truong'
+        };
+        const currentTab = getCurrentTabName();
+        return tabCategoryMap[currentTab] ? (
+          <div className="mobile-news-bottom md:hidden">
+            <IndustryNewsBanner
+              news={news}
+              currentTab={currentTab}
+              className="w-full px-3"
+            />
+          </div>
+        ) : null;
+      })()}
 
       {/* Popular Links Section at Bottom of Site (When not on Home page which already includes it) */}
       {location.pathname !== '/' && (
