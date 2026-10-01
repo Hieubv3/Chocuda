@@ -1853,6 +1853,36 @@ export const App: React.FC = () => {
           <Route path="/quantri24h" element={<Navigate to="/admin" replace />} />
           <Route path="/admin-login" element={<Navigate to="/admin" replace />} />
 
+          {/* Compatibility aliases for the integrated static UI package. */}
+          <Route path="/index.html" element={<Navigate to="/" replace />} />
+          <Route path="/bai-viet" element={<Navigate to="/tin-tuc" replace />} />
+          <Route path="/bai-viet.html" element={<Navigate to="/tin-tuc" replace />} />
+          <Route path="/cho-cu-dan.html" element={<Navigate to="/cho-cu-dan" replace />} />
+          <Route path="/dich-vu-cu-dan.html" element={<Navigate to="/dich-vu-cu-dan" replace />} />
+          <Route path="/mua-ban.html" element={<Navigate to="/mua-ban" replace />} />
+          <Route path="/tuyen-dung.html" element={<Navigate to="/tuyen-dung" replace />} />
+          <Route path="/tin-tuc.html" element={<Navigate to="/tin-tuc" replace />} />
+          <Route path="/du-an.html" element={<Navigate to="/du-an" replace />} />
+          <Route path="/dang-tin.html" element={<Navigate to="/dang-tin" replace />} />
+          <Route path="/tai-khoan.html" element={<Navigate to="/tai-khoan" replace />} />
+          <Route path="/tinh-lai-vay.html" element={<Navigate to="/tinh-lai-vay" replace />} />
+          <Route path="/chinh-sach-bao-mat.html" element={<Navigate to="/chinh-sach-bao-mat" replace />} />
+          <Route path="/dieu-khoan.html" element={<Navigate to="/dieu-khoan-su-dung" replace />} />
+          <Route path="/san-pham.html" element={<Navigate to="/cho-cu-dan" replace />} />
+          <Route path="/gian-hang.html" element={<Navigate to="/gian-hang" replace />} />
+          <Route path="/nganh-hang" element={<Navigate to="/cho-cu-dan" replace />} />
+          <Route path="/nganh-hang.html" element={<Navigate to="/cho-cu-dan" replace />} />
+          <Route path="/gio-hang" element={<Navigate to="/cho-cu-dan" replace />} />
+          <Route path="/gio-hang.html" element={<Navigate to="/cho-cu-dan" replace />} />
+          <Route path="/lien-he" element={<Navigate to="/bui-van-hieu" replace />} />
+          <Route path="/lien-he.html" element={<Navigate to="/bui-van-hieu" replace />} />
+          <Route path="/nang-cap" element={<Navigate to="/tai-khoan" replace />} />
+          <Route path="/nang-cap.html" element={<Navigate to="/tai-khoan" replace />} />
+          <Route path="/quan-tri-mobi" element={<Navigate to="/admin" replace />} />
+          <Route path="/quan-tri-mobi.html" element={<Navigate to="/admin" replace />} />
+          <Route path="/xem-mobi" element={<Navigate to="/sitemap" replace />} />
+          <Route path="/xem-mobi.html" element={<Navigate to="/sitemap" replace />} />
+
           {/* Catch-all Wildcard Route -> Redirect Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
