@@ -5429,6 +5429,21 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               >
                 <span>✨</span> + 1,000 Tin Test
               </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('bds');
+                  setActiveTab('properties');
+                  setPropertySubFilter('all');
+                  setIsAddingProperty(true);
+                }}
+                className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-300 font-black rounded-xl text-[11px] shrink-0 transition flex items-center gap-1 shadow-sm"
+                title="Tạo bài đăng bất động sản mới"
+              >
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>Thêm bài đăng mới</span>
+              </button>
             </div>
           </div>
 
@@ -10514,6 +10529,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           {
             title: '🏠 Bất động sản',
             items: [
+              { key: 'bds-add', label: '＋ Thêm bài đăng mới', active: false, onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('all'); setIsAddingProperty(true); }) },
               { key: 'bds-all', label: 'Bài đăng BĐS (tất cả)', active: activeTab === 'properties' && propertySubFilter === 'all', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('all'); }) },
               { key: 'bds-sale', label: 'BĐS Mua Bán', active: activeTab === 'properties' && propertySubFilter === 'sale', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); }) },
               { key: 'bds-rent', label: 'BĐS Cho Thuê', active: activeTab === 'properties' && propertySubFilter === 'rent', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('rent'); }) },
