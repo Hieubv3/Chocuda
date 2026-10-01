@@ -3786,7 +3786,9 @@ app.get("/api/user-storefronts", (req, res) => {
 });
 
 app.get("/api/workspace/config", (req, res) => {
-  res.json(workspaceConfigStore || {});
+  const safeConfig = { ...(workspaceConfigStore || {}) };
+  delete safeConfig.accessToken;
+  res.json(safeConfig);
 });
 app.post("/api/workspace/config", authenticateToken, (req, res) => {
   try {
@@ -3805,7 +3807,7 @@ app.get("/api/system/storage-status", (req, res) => {
   res.json({
     supabaseEnabled: SUPABASE_ENABLED,
     supabaseTable: SUPABASE_TABLE,
-    dataFile: DATA_STORE_PATH,
+    dataFile: path.basename(DATA_STORE_PATH),
     hasSupabaseUrl: Boolean(SUPABASE_URL)
   });
 });
