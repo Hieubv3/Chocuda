@@ -285,6 +285,30 @@ html[data-theme="dark"] .cd24-admin {
   .cd24-admin-login-card { padding: 22px 18px !important; border-radius: 24px !important; }
 }
 
+/* Admin mobile home: only the top-right hamburger remains visible. */
+.cd24-admin-mobile-menu-trigger { display:none; }
+@media (max-width: 767px) {
+  .cd24-admin-mobile-menu-trigger {
+    position:fixed;
+    top:12px;
+    right:12px;
+    z-index:45;
+    width:46px;
+    height:46px;
+    display:grid;
+    place-items:center;
+    border-radius:14px;
+    background:#087f52;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.25);
+    box-shadow:0 12px 26px rgba(5,88,58,.28);
+  }
+  .cd24-admin-topbar,
+  .cd24-admin-header { display:none !important; }
+  .cd24-admin-mobile-menu-panel { width:100% !important; max-width:none !important; }
+  .cd24-admin-mobile-menu-panel > div:first-child { padding-top:18px !important; }
+}
+
 /* Property editor: readable authoring surface instead of dense legacy controls. */
 .admin-property-editor {
   font-size: 14px !important;
