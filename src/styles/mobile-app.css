@@ -369,9 +369,15 @@
 @media (max-width:767.98px){
   /* Banner/phụ đề trang phụ: gọn, đọc nhanh, không chiếm nửa màn hình. */
   .mobile-app-main .mapp-page-hero{
+    width:100vw !important;
     margin-top:0 !important;
-    padding:13px 14px !important;
-    border-radius:18px !important;
+    margin-left:calc(50% - 50vw) !important;
+    margin-right:calc(50% - 50vw) !important;
+    padding:13px 18px !important;
+    border-radius:0 !important;
+    border-left:0 !important;
+    border-right:0 !important;
+    box-shadow:none !important;
   }
   .mobile-app-main .mapp-page-hero h1{
     font-size:16px !important;
