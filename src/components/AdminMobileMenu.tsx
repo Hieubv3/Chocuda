@@ -123,7 +123,7 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
   };
 
   return (
-    <div className={`cd24-admin-mobile-menu lg:hidden ${inline ? 'cd24-admin-mobile-menu-inline relative z-10' : 'fixed inset-0 z-50'}`}>
+    <div className={`cd24-admin-mobile-menu ${inline ? 'cd24-admin-mobile-menu-inline relative z-10' : 'lg:hidden fixed inset-0 z-50'}`}>
       {!inline && <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={onClose} />}
 
       {/* Panel */}
@@ -141,8 +141,8 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
               <MenuIcon className="w-5 h-5" />
             </span>
             <div>
-              <div className="text-[15px] font-black text-slate-900 dark:text-white">Menu quản trị</div>
-              <div className="text-[10px] text-slate-400 font-bold">Icon chức năng · chạm để mở</div>
+              <div className="text-[15px] font-black text-slate-900 dark:text-white">Chức năng quản trị</div>
+              <div className="text-[10px] text-slate-400 font-bold">Chọn nhóm để mở các ô chức năng</div>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -164,9 +164,9 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-3 pb-24 space-y-4">
+        <div className={`flex-1 overflow-y-auto p-3 pb-5 ${inline ? 'grid grid-cols-2 gap-3 items-start' : 'space-y-4'}`}>
           {groups.map((g) => (
-            <div key={g.title} className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/20 overflow-hidden">
+            <div key={g.title} className={`${inline ? (expandedGroups.has(g.title) ? 'col-span-2' : '') : ''} rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/20 overflow-hidden`}>
               <button
                 type="button"
                 onClick={() => toggleGroup(g.title)}
