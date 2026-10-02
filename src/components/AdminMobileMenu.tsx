@@ -36,6 +36,7 @@ interface AdminMobileMenuProps {
   open: boolean;
   onClose: () => void;
   groups: AdminMobileMenuGroup[];
+  inline?: boolean;
 }
 
 /**
@@ -44,13 +45,13 @@ interface AdminMobileMenuProps {
  * - Bấm từng mục sẽ điều hướng tới đúng khu chức năng (parent xử lý).
  * - Chỉ tồn tại trên màn < 1024px (lg:hidden).
  */
-export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose, groups }) => {
+export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose, groups, inline = false }) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (open) setExpandedGroups(new Set(groups.map(group => group.title)));
-  }, [open]);
+    if (open) setExpandedGroups(inline ? new Set([groups[0]?.title].filter(Boolean) as string[]) : new Set(groups.map(group => group.title)));
+  }, [open, inline]);
 
   useEffect(() => {
     if (!open) return;
@@ -122,16 +123,15 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
   };
 
   return (
-    <div className="cd24-admin-mobile-menu lg:hidden fixed inset-0 z-50">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={onClose} />
+    <div className={`cd24-admin-mobile-menu lg:hidden ${inline ? 'cd24-admin-mobile-menu-inline relative z-10' : 'fixed inset-0 z-50'}`}>
+      {!inline && <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={onClose} />}
 
       {/* Panel */}
       <div
         ref={panelRef}
-        className="cd24-admin-mobile-menu-panel absolute inset-0 w-full max-w-none bg-white dark:bg-slate-900 shadow-2xl flex flex-col"
-        role="dialog"
-        aria-modal="true"
+        className={`cd24-admin-mobile-menu-panel ${inline ? 'relative w-full rounded-2xl border border-emerald-900/40' : 'absolute inset-0 w-full max-w-none'} bg-white dark:bg-slate-900 shadow-2xl flex flex-col`}
+        role={inline ? 'region' : 'dialog'}
+        aria-modal={inline ? undefined : true}
         aria-label="Tất cả chức năng quản trị"
         tabIndex={-1}
       >
@@ -153,14 +153,14 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
             >
               {allExpanded ? 'Thu gọn' : 'Mở toàn bộ'}
             </button>
-            <button
+            {!inline && <button
               type="button"
               onClick={onClose}
               className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 active:scale-95 transition cursor-pointer"
               aria-label="Đóng menu"
             >
               <X className="w-4 h-4" />
-            </button>
+            </button>}
           </div>
         </div>
 
