@@ -169,6 +169,25 @@ html[data-theme="dark"] .cd24-admin {
   color: var(--admin-ink) !important;
   border-color: var(--admin-line) !important;
 }
+/* Màu đậm luôn đi với chữ trắng: tránh các badge/nút cũ dùng text-slate-950
+   trên nền emerald/teal/sky gây thiếu tương phản. */
+.cd24-admin-shell [class~="bg-emerald-500"],
+.cd24-admin-shell [class~="bg-emerald-600"],
+.cd24-admin-shell [class~="bg-emerald-700"],
+.cd24-admin-shell [class~="bg-teal-500"],
+.cd24-admin-shell [class~="bg-teal-600"],
+.cd24-admin-shell [class~="bg-teal-700"],
+.cd24-admin-shell [class~="bg-sky-500"],
+.cd24-admin-shell [class~="bg-sky-600"],
+.cd24-admin-shell [class~="bg-sky-700"],
+.cd24-admin-shell [class~="bg-blue-600"],
+.cd24-admin-shell [class~="bg-indigo-600"] {
+  color: #fff !important;
+  font-weight: 800;
+}
+.cd24-admin-shell [class~="bg-emerald-500"] { background: #087f52 !important; }
+.cd24-admin-shell [class~="bg-teal-500"] { background: #0f766e !important; }
+.cd24-admin-shell [class~="bg-sky-500"] { background: #0369a1 !important; }
 .cd24-admin-shell label { color: var(--admin-ink); }
 .cd24-admin-shell ::placeholder { color: #718579 !important; opacity: 1; }
 .cd24-admin-shell .rounded-2xl { border-radius: 18px !important; }

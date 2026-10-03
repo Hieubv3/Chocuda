@@ -2155,7 +2155,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             }}
             className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
               effectiveMainTab === 'recruitment'
-                ? 'bg-teal-500 text-slate-950 font-black shadow-xs'
+                ? 'bg-teal-500 text-white font-black shadow-xs'
                 : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
             }`}
             title="Quản lý Việc Làm & Tuyển Dụng"
@@ -2374,7 +2374,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase bg-emerald-500 text-slate-950 px-2 py-0.5 rounded">ADMIN TỔNG</span>
+              <span className="text-[10px] font-black uppercase bg-emerald-500 text-white px-2 py-0.5 rounded">ADMIN TỔNG</span>
               <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 Hệ Thống Đang Hoạt Động Realtime
@@ -3045,7 +3045,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 p-6 rounded-3xl border-2 border-emerald-500/40 shadow-2xl text-white flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                  <span className="px-2.5 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded-full uppercase tracking-wider">
                     QUẢN LÝ GIAN HÀNG & DỊCH VỤ CƯ DÂN
                   </span>
                   <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[10px] rounded-full">
@@ -3651,7 +3651,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 p-6 rounded-3xl border-2 border-teal-500/40 shadow-2xl text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 bg-teal-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                <span className="px-2.5 py-0.5 bg-teal-500 text-white font-black text-[10px] rounded-full uppercase tracking-wider">
                   TÀI CHÍNH CHỢ CƯ DÂN
                 </span>
               </div>
@@ -4765,7 +4765,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               onClick={() => setPropertySubFilter('all')}
               className={`px-2.5 py-1.5 rounded-xl text-xs transition shrink-0 ${
                 propertySubFilter === 'all'
-                  ? 'bg-slate-900 text-white dark:bg-emerald-500 dark:text-slate-950 shadow'
+                  ? 'bg-slate-900 text-white dark:bg-emerald-500 dark:text-white shadow'
                   : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
               }`}
             >
@@ -7568,7 +7568,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <div>
                   <span className="text-slate-400 block text-[11px]">Vai trò tài khoản:</span>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-black inline-block mt-0.5 ${
-                    selectedSellerDetail.sellerRole === 'owner' ? 'bg-amber-500 text-slate-950' : 'bg-teal-500 text-slate-950'
+                    selectedSellerDetail.sellerRole === 'owner' ? 'bg-amber-500 text-slate-950' : 'bg-teal-500 text-white'
                   }`}>
                     {selectedSellerDetail.sellerRole === 'owner' ? '🏠 CHỦ NHÀ GỐC' : '💼 MÔI GIỚI / SALE'}
                   </span>
@@ -8888,7 +8888,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   />
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full uppercase">
+                      <span className="px-2.5 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded-full uppercase">
                         {selectedAdminStore.category || 'Gian Hàng Cư Dân'}
                       </span>
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
