@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, X, ShieldCheck, UserRound, Home, Building2, BriefcaseBusiness } from 'lucide-react';
+import { Menu, X, ShieldCheck, UserRound, Home, Building2, BriefcaseBusiness, LogIn } from 'lucide-react';
 
 interface MobileAppHeaderProps {
   currentUser: any;
@@ -75,6 +75,11 @@ export const MobileAppHeader: React.FC<MobileAppHeaderProps> = ({ currentUser, o
           {(currentUser?.role === 'admin' || currentUser?.role === 'manager') && (
             <button className="mapp-header-admin-link" onClick={() => go('/admin')}>
               <ShieldCheck className="w-4 h-4" /> Bảng quản trị
+            </button>
+          )}
+          {!(currentUser?.role === 'admin' || currentUser?.role === 'manager') && (
+            <button className="mapp-header-admin-link" onClick={() => go('/admin')}>
+              <LogIn className="w-4 h-4" /> Đăng nhập quản trị
             </button>
           )}
         </div>

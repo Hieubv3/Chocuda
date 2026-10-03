@@ -7,6 +7,7 @@ import {
   ChevronUp,
   CircleDot,
   LayoutGrid,
+  LogOut,
   Map,
   Menu as MenuIcon,
   Newspaper,
@@ -37,6 +38,7 @@ interface AdminMobileMenuProps {
   onClose: () => void;
   groups: AdminMobileMenuGroup[];
   inline?: boolean;
+  onLogout?: () => void;
 }
 
 /**
@@ -45,7 +47,7 @@ interface AdminMobileMenuProps {
  * - Bấm từng mục sẽ điều hướng tới đúng khu chức năng (parent xử lý).
  * - Chỉ tồn tại trên màn < 1024px (lg:hidden).
  */
-export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose, groups, inline = false }) => {
+export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose, groups, inline = false, onLogout }) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
@@ -163,6 +165,24 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
             </button>}
           </div>
         </div>
+
+        {inline && onLogout && (
+          <div className="flex items-center justify-between gap-3 px-3 py-2.5 bg-emerald-50 dark:bg-emerald-950/30 border-b border-emerald-100 dark:border-emerald-900/50">
+            <div className="min-w-0">
+              <div className="text-[11px] font-black text-emerald-800 dark:text-emerald-300">Tài khoản quản trị</div>
+              <div className="text-[10px] font-bold text-emerald-600/80 dark:text-emerald-400/80">Đang đăng nhập hệ thống Admin</div>
+            </div>
+            <button
+              type="button"
+              onClick={onLogout}
+              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-black active:scale-95 transition cursor-pointer"
+              aria-label="Đăng xuất tài khoản quản trị"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              Đăng xuất
+            </button>
+          </div>
+        )}
 
         <div className={`flex-1 overflow-y-auto p-3 pb-5 ${inline ? 'grid grid-cols-2 gap-3 items-start' : 'space-y-4'}`}>
           {groups.map((g) => (
