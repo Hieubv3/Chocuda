@@ -111,11 +111,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (activeTab === 'developer_units') return 'developer_units';
     if (activeTab === 'resident_services_mgmt') return 'technicians';
     if (activeTab === 'recruitment_mgmt') return 'recruitment';
-    if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) return 'resident_market';
+    if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation', 'reputation'].includes(activeTab)) return 'resident_market';
     if (['users', 'leads', 'enterprise_core', 'business_mgmt'].includes(activeTab)) return 'users_leads';
     if (activeTab === 'ads') return 'ads';
-    if (activeTab === 'site_settings') return 'ads';
-    if (activeTab === 'trash' || activeTab === 'activity_history' || activeTab === 'support_inbox') return 'bds';
+    if (['site_settings', 'analytics', 'seo', 'marketing', 'zalo', 'n8n', 'ads', 'trash', 'activity_history', 'support_inbox'].includes(activeTab)) return 'tools';
     return 'tools';
   })();
 
@@ -143,7 +142,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       setActiveTab('recruitment_mgmt');
     } else if (tab === 'resident_market') {
       setAdminSector('resident_market');
-      if (!['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation'].includes(activeTab)) {
+      if (!['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation', 'reputation'].includes(activeTab)) {
         setActiveTab('stores_mgmt');
       }
     } else if (tab === 'users_leads') {
@@ -153,7 +152,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     } else if (tab === 'ads') {
       setActiveTab('ads');
     } else if (tab === 'tools') {
-      if (!['analytics', 'seo', 'marketing', 'zalo', 'n8n', 'reputation'].includes(activeTab)) {
+      if (!['analytics', 'seo', 'marketing', 'zalo', 'n8n', 'ads', 'site_settings', 'trash', 'activity_history', 'support_inbox'].includes(activeTab)) {
         setActiveTab('analytics');
       }
     }
@@ -1053,23 +1052,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newAmenityImages, setNewAmenityImages] = useState<string[]>([]);
   const [newAmenityVideo, setNewAmenityVideo] = useState('');
   const [addingAmenityTo, setAddingAmenityTo] = useState<string | null>(null); // projectId
-
-  // Sidebar "Dự Án & Mặt Bằng" dropdown submenu state
-  const [sidebarProjectsOpen, setSidebarProjectsOpen] = useState(false);
-  const [sidebarExpandedProjects, setSidebarExpandedProjects] = useState<Set<string>>(new Set());
-  const toggleSidebarProject = (id: string) => {
-    setSidebarExpandedProjects(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
-    });
-  };
-
-  // Sidebar collapsible state
-  const [expandedSidebarItem, setExpandedSidebarItem] = useState<string | null>(null);
-  const toggleSidebarItem = (item: string) => {
-    setExpandedSidebarItem(prev => prev === item ? null : item);
-  };
 
   const toggleProjectTree = (id: string) => {
     setExpandedProjectTree(prev => {
@@ -2217,7 +2199,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           </button>
           <button
             type="button"
-            onClick={() => { handleSelectMainTab('ads'); setActiveTab('site_settings'); }}
+            onClick={() => { handleSelectMainTab('tools'); setActiveTab('site_settings'); }}
             className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1 font-bold transition cursor-pointer active:scale-95 shadow-2xs ${
               activeTab === 'site_settings'
                 ? 'bg-emerald-600 text-white shadow-xs'
@@ -2308,18 +2290,26 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           {
             title: '🏪 Gian hàng & Cư dân',
             items: [
-              { key: 'stores', label: 'Gian hàng', active: activeTab === 'stores_mgmt', onClick: () => goMobileTab(() => handleSelectMainTab('resident_market')) },
+              { key: 'stores', label: 'Gian hàng', active: activeTab === 'stores_mgmt', onClick: () => goMobileTab(() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); }) },
               { key: 'orders', label: 'Đơn hàng', active: activeTab === 'orders_mgmt', onClick: () => goMobileTab(() => setActiveTab('orders_mgmt')) },
               { key: 'pkgo', label: 'Gói dịch vụ', active: activeTab === 'package_orders_mgmt', onClick: () => goMobileTab(() => setActiveTab('package_orders_mgmt')) },
               { key: 'fin', label: 'Tài chính cư dân', active: activeTab === 'resident_finance', onClick: () => goMobileTab(() => setActiveTab('resident_finance')) },
               { key: 'rep', label: 'Đánh giá đối tác', active: activeTab === 'partners_reputation', onClick: () => goMobileTab(() => setActiveTab('partners_reputation')) },
-              { key: 'reputation', label: '📰 Bảng tin cư dân & YouTube PR', active: activeTab === 'reputation', onClick: () => goMobileTab(() => setActiveTab('reputation')) }
+              { key: 'reputation', label: '📰 Bảng tin cư dân & YouTube PR', active: activeTab === 'reputation', onClick: () => goMobileTab(() => { setAdminSector('resident_market'); setActiveTab('reputation'); }) }
             ]
           },
           {
             title: '🏢 Chủ đầu tư',
             items: [
-              { key: 'dev', label: 'Căn hộ chủ đầu tư', active: activeTab === 'developer_units', onClick: () => goMobileTab(() => handleSelectMainTab('developer_units')) }
+              { key: 'dev-matbang', label: 'Mặt bằng & Bảng hàng', active: activeTab === 'developer_units' && devSubTab === 'matbang', onClick: () => goMobileTab(() => { handleSelectMainTab('developer_units'); setDevSubTab('matbang'); }) },
+              { key: 'dev-dashboard', label: 'Dashboard CĐT', active: activeTab === 'developer_units' && devSubTab === 'dashboard', onClick: () => goMobileTab(() => { handleSelectMainTab('developer_units'); setDevSubTab('dashboard'); }) },
+              { key: 'dev-import', label: 'Import Sheet', active: activeTab === 'developer_units' && devSubTab === 'import', onClick: () => goMobileTab(() => { handleSelectMainTab('developer_units'); setDevSubTab('import'); }) },
+              { key: 'dev-sodo', label: 'Sơ đồ mặt bằng', active: activeTab === 'developer_units' && devSubTab === 'sodo', onClick: () => goMobileTab(() => { handleSelectMainTab('developer_units'); setDevSubTab('sodo'); }) },
+              { key: 'dev-danhsach', label: 'Danh sách căn', active: activeTab === 'developer_units' && devSubTab === 'danhsach', onClick: () => goMobileTab(() => { handleSelectMainTab('developer_units'); setDevSubTab('danhsach'); }) },
+              { key: 'dev-chinhsach', label: 'Chính sách bán hàng', active: activeTab === 'developer_units' && devSubTab === 'chinhsach', onClick: () => goMobileTab(() => { handleSelectMainTab('developer_units'); setDevSubTab('chinhsach'); }) },
+              { key: 'dev-dottt', label: 'Đợt thanh toán', active: activeTab === 'developer_units' && devSubTab === 'dottt', onClick: () => goMobileTab(() => { handleSelectMainTab('developer_units'); setDevSubTab('dottt'); }) },
+              { key: 'dev-nganhang', label: 'Ngân hàng', active: activeTab === 'developer_units' && devSubTab === 'nganhang', onClick: () => goMobileTab(() => { handleSelectMainTab('developer_units'); setDevSubTab('nganhang'); }) },
+              { key: 'dev-export', label: 'Export dữ liệu', active: activeTab === 'developer_units' && devSubTab === 'export', onClick: () => goMobileTab(() => { handleSelectMainTab('developer_units'); setDevSubTab('export'); }) }
             ]
           },
           {
@@ -2370,7 +2360,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           else if (target === 'pending') { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('pending'); }
           else if (target === 'services') { handleSelectMainTab('technicians'); }
           else if (target === 'jobs') { handleSelectMainTab('recruitment'); }
-          else if (target === 'stores') { handleSelectMainTab('resident_market'); }
+      else if (target === 'stores') { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); }
           else if (target === 'analytics') { goMobileTab(() => setActiveTab('analytics')); }
         }}
       />
@@ -2674,7 +2664,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       </div>
       </div>{/* /cd24-mobile-collapsible — hết khối tổng quan */}
 
-      {/* 3. MAIN ADMIN WORKSPACE: 2-COLUMN WITH PERSISTENT LEFT SIDEBAR + MAIN WORKSPACE */}
+      {/* 3. MAIN ADMIN WORKSPACE */}
       <div className="flex flex-col lg:flex-row items-start gap-4">
         
         {/* === CỘT NỘI DUNG CHÍNH (MAIN WORKSPACE AREA) === */}
@@ -3917,11 +3907,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
           </div>
         </div>
-      )}
-
-      {/* ==================== MẢNG 2: TAB QUẢN TRỊ TUYỂN DỤNG & VIỆC LÀM ==================== */}
-      {activeTab === 'recruitment_mgmt' && (
-        <AdminRecruitmentManager onRefresh={onRefreshData} />
       )}
 
       {/* Tab: Zalo Groups Community Center */}
