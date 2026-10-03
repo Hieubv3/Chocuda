@@ -52,7 +52,14 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (open) setExpandedGroups(inline ? new Set([groups[0]?.title].filter(Boolean) as string[]) : new Set(groups.map(group => group.title)));
+    if (open) {
+      const isDesktop = typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches;
+      setExpandedGroups(
+        inline && !isDesktop
+          ? new Set([groups[0]?.title].filter(Boolean) as string[])
+          : new Set(inline ? [] : groups.map(group => group.title))
+      );
+    }
   }, [open, inline]);
 
   useEffect(() => {
@@ -137,7 +144,7 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
         aria-label="Tất cả chức năng quản trị"
         tabIndex={-1}
       >
-        <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        <div className="flex items-center justify-between px-4 py-3.5 lg:px-3 lg:py-2.5 border-b border-slate-200 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-emerald-600 text-white shadow-sm">
               <MenuIcon className="w-5 h-5" />
@@ -167,7 +174,7 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
         </div>
 
         {inline && onLogout && (
-          <div className="flex items-center justify-between gap-3 px-3 py-2.5 bg-emerald-50 dark:bg-emerald-950/30 border-b border-emerald-100 dark:border-emerald-900/50">
+          <div className="flex items-center justify-between gap-3 px-3 py-2.5 lg:py-1.5 bg-emerald-50 dark:bg-emerald-950/30 border-b border-emerald-100 dark:border-emerald-900/50">
             <div className="min-w-0">
               <div className="text-[11px] font-black text-emerald-800 dark:text-emerald-300">Tài khoản quản trị</div>
               <div className="text-[10px] font-bold text-emerald-600/80 dark:text-emerald-400/80">Đang đăng nhập hệ thống Admin</div>
@@ -184,25 +191,25 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
           </div>
         )}
 
-        <div className={`flex-1 overflow-y-auto p-3 pb-5 ${inline ? 'grid grid-cols-2 gap-3 items-start' : 'space-y-4'}`}>
+        <div className={`flex-1 overflow-y-auto p-3 pb-5 lg:p-2.5 lg:pb-3 ${inline ? 'grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-2 items-start' : 'space-y-4'}`}>
           {groups.map((g) => (
-            <div key={g.title} className={`${inline ? (expandedGroups.has(g.title) ? 'col-span-2' : '') : ''} rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/20 overflow-hidden`}>
+            <div key={g.title} className={`${inline ? (expandedGroups.has(g.title) ? 'col-span-2 lg:col-span-3' : '') : ''} rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/20 overflow-hidden`}>
               <button
                 type="button"
                 onClick={() => toggleGroup(g.title)}
-                className="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-left cursor-pointer"
+                className="w-full flex items-center justify-between gap-3 px-3 py-2.5 lg:px-2 lg:py-1.5 text-left cursor-pointer"
                 aria-expanded={expandedGroups.has(g.title)}
               >
                 <span className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                  <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm">
-                    <LayoutGrid className="w-3.5 h-3.5" />
+                  <span className="flex items-center justify-center w-7 h-7 lg:w-6 lg:h-6 rounded-lg bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm">
+                    <LayoutGrid className="w-3.5 h-3.5 lg:w-3 lg:h-3" />
                   </span>
                   {g.title}
                 </span>
                 {expandedGroups.has(g.title) ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
               </button>
               {expandedGroups.has(g.title) && (
-                <div className="grid grid-cols-2 gap-2 p-2 pt-0">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-1.5 p-2 lg:p-1.5 pt-0">
                   {g.items.map((it) => {
                     const Icon = iconFor(it.key, it.label);
                     return (
@@ -210,13 +217,13 @@ export const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({ open, onClose,
                         key={it.key}
                         type="button"
                         onClick={it.onClick}
-                        className={`min-h-[68px] text-center px-2 py-2 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-1.5 transition active:scale-[0.98] cursor-pointer ${
+                        className={`min-h-[68px] lg:min-h-[52px] text-center px-2 py-2 lg:px-1.5 lg:py-1.5 rounded-xl text-[11px] lg:text-[10px] font-bold flex flex-col items-center justify-center gap-1.5 lg:gap-1 transition active:scale-[0.98] cursor-pointer ${
                           it.active
                             ? 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-400/40'
                             : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-slate-800'
                         }`}
                       >
-                        <Icon className="w-5 h-5" />
+                        <Icon className="w-5 h-5 lg:w-4 lg:h-4" />
                         <span className="line-clamp-2 leading-tight">{it.label}</span>
                       </button>
                     );
