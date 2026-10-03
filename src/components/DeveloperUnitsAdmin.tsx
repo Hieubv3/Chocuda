@@ -749,7 +749,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
-            <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">MẶT BẰNG & BẢNG HÀNG CĐT</span>
+            <span className="px-2 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded uppercase tracking-wider">MẶT BẰNG & BẢNG HÀNG CĐT</span>
             <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2">
               <MapPin className="w-5 h-5" /> QUẢN LÝ QUỸ CĂN CHỦ ĐẦU TƯ & ĐẠI LÝ F1
             </h2>
@@ -967,7 +967,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const renderDashboard = () => (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white">
-        <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">DASHBOARD</span>
+        <span className="px-2 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded uppercase tracking-wider">DASHBOARD</span>
         <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2"><LayoutDashboard className="w-5 h-5" /> TỔNG QUAN BẢNG HÀNG CHỦ ĐẦU TƯ</h2>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1018,7 +1018,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const renderImport = () => (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white">
-        <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">IMPORT SHEET</span>
+        <span className="px-2 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded uppercase tracking-wider">IMPORT SHEET</span>
         <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2"><Import className="w-5 h-5" /> NHẬP DỮ LIỆU BẢNG HÀNG TỪ FILE</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1052,7 +1052,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const renderSodo = () => (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white">
-        <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">SƠ ĐỒ MẶT BẰNG</span>
+        <span className="px-2 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded uppercase tracking-wider">SƠ ĐỒ MẶT BẰNG</span>
         <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2"><MapIcon className="w-5 h-5" /> CHỈNH SỬA SƠ ĐỒ & VỊ TRÍ CĂN</h2>
       </div>
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow p-4 space-y-3">
@@ -1099,7 +1099,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const renderDanhSach = () => (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white">
-        <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">DANH SÁCH CĂN</span>
+        <span className="px-2 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded uppercase tracking-wider">DANH SÁCH CĂN</span>
         <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2"><Home className="w-5 h-5" /> TOÀN BỘ QUỸ CĂN ({units.length})</h2>
       </div>
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow p-4 space-y-3">
@@ -1171,7 +1171,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const renderChinhSach = () => (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white">
-        <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">CHÍNH SÁCH BÁN HÀNG</span>
+        <span className="px-2 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded uppercase tracking-wider">CHÍNH SÁCH BÁN HÀNG</span>
         <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2"><FileText className="w-5 h-5" /> CẤU HÌNH CHÍNH SÁCH CĐT</h2>
       </div>
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow p-5 space-y-4">
@@ -1206,7 +1206,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const renderDotTT = () => (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white">
-        <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">ĐỢT THANH TOÁN</span>
+        <span className="px-2 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded uppercase tracking-wider">ĐỢT THANH TOÁN</span>
         <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2"><CalendarClock className="w-5 h-5" /> LỊCH THANH TOÁN THEO TIẾN ĐỘ</h2>
       </div>
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow p-5 space-y-4">
@@ -1235,7 +1235,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const renderNganHang = () => (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white">
-        <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">NGÂN HÀNG</span>
+        <span className="px-2 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded uppercase tracking-wider">NGÂN HÀNG</span>
         <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2"><Landmark className="w-5 h-5" /> NGÂN HÀNG HỖ TRỢ VAY</h2>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1260,7 +1260,7 @@ export const DeveloperUnitsAdmin: React.FC<DeveloperUnitsAdminProps> = ({ subTab
   const renderExport = () => (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950/60 to-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/40 shadow-lg text-white">
-        <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[10px] rounded uppercase tracking-wider">EXPORT</span>
+        <span className="px-2 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded uppercase tracking-wider">EXPORT</span>
         <h2 className="text-base sm:text-lg font-black text-emerald-400 mt-1 flex items-center gap-2"><Share2 className="w-5 h-5" /> XUẤT DỮ LIỆU BẢNG HÀNG</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

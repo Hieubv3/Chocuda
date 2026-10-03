@@ -128,7 +128,7 @@ export const AdminActivityLogManager: React.FC = () => {
             onClick={() => setActionFilter('create')}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 ${
               actionFilter === 'create'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md'
+                ? 'bg-emerald-500 text-white font-bold shadow-md'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >

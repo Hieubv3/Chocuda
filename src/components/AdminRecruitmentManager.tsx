@@ -766,7 +766,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 bg-teal-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+              <span className="px-2.5 py-0.5 bg-teal-500 text-white font-black text-[10px] rounded-full uppercase tracking-wider">
                 ADMINISTRATION 24H
               </span>
               <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded-full">
@@ -2210,7 +2210,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
           <div className="bg-gradient-to-r from-sky-900 via-slate-900 to-indigo-950 p-4 rounded-2xl border border-sky-500/30 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 bg-sky-500 text-slate-950 text-[10px] font-black rounded uppercase">
+                <span className="px-2 py-0.5 bg-sky-500 text-white text-[10px] font-black rounded uppercase">
                   TELEGRAM ALERT 24/7
                 </span>
                 <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
@@ -3117,7 +3117,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-sky-950 via-slate-900 to-indigo-950 p-5 rounded-2xl border border-sky-500/30 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
             <div className="space-y-1">
-              <span className="px-2 py-0.5 bg-sky-500 text-slate-950 text-[10px] font-black rounded uppercase">
+              <span className="px-2 py-0.5 bg-sky-500 text-white text-[10px] font-black rounded uppercase">
                 ĐIỀU HÀNH HỆ THỐNG ĐA NHÁNH
               </span>
               <h3 className="text-base font-black text-sky-300 flex items-center gap-2">
@@ -3148,7 +3148,7 @@ export const AdminRecruitmentManager: React.FC<AdminRecruitmentManagerProps> = (
                 });
                 setShowTaskModal(true);
               }}
-              className="px-4 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow-md transition transform active:scale-95 cursor-pointer shrink-0"
+              className="px-4 py-2.5 bg-sky-500 hover:bg-sky-400 text-white font-black rounded-xl text-xs flex items-center gap-1.5 shadow-md transition transform active:scale-95 cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4 text-slate-950" />
               <span>+ Tạo & Giao Nhiệm Vụ Mới</span>

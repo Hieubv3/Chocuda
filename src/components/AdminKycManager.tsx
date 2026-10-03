@@ -564,7 +564,7 @@ export const AdminKycManager: React.FC<AdminKycManagerProps> = ({
                         href={doc.fileUrl} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow transition flex items-center gap-1 shrink-0"
+                        className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1 shrink-0"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>Xem File Scanned</span>
