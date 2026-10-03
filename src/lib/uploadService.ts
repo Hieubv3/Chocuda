@@ -8,6 +8,8 @@
  *   trả về URL public (/uploads/xxx.jpg). Chỉ URL được lưu trong dữ liệu.
  */
 
+import { getToken } from './api';
+
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB — ảnh lớn hơn sẽ được tự động nén xuống mức này
 const HARD_LIMIT = 50 * 1024 * 1024; // 50MB — giới hạn cứng tương ứng server, trên mức này mới từ chối
 
@@ -161,7 +163,7 @@ export async function uploadFiles(files: File[]): Promise<string[]> {
   prepared.forEach(f => formData.append('images', f));
 
   try {
-    const token = localStorage.getItem('chocudan24h_token');
+    const token = getToken();
     const headers: Record<string, string> = {};
     if (token) headers['Authorization'] = `Bearer ${token}`;
     const res = await fetch('/api/upload', {
@@ -169,10 +171,13 @@ export async function uploadFiles(files: File[]): Promise<string[]> {
       headers,
       body: formData
     });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.success) {
-      console.error('[UploadService] Upload failed:', data.error);
-      alert(data.error || 'Upload ảnh thất bại. Vui lòng thử lại!');
+      const message = res.status === 401 || res.status === 403
+        ? 'Phiên đăng nhập đã hết hạn hoặc không có quyền upload. Vui lòng đăng nhập lại rồi thử lại.'
+        : data.error || `Upload ảnh thất bại (HTTP ${res.status}). Vui lòng thử lại!`;
+      console.error('[UploadService] Upload failed:', message);
+      alert(message);
       return [];
     }
     return data.urls as string[];
@@ -205,7 +210,7 @@ export async function uploadBase64DataUrl(dataUrl: string, folder?: string): Pro
       finalDataUrl = await compressDataUrlToLimit(dataUrl);
     }
     // Lấy token từ localStorage để xác thực upload
-    const token = localStorage.getItem('chocudan24h_token');
+    const token = getToken();
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
     const res = await fetch('/api/upload/base64', {
@@ -213,9 +218,11 @@ export async function uploadBase64DataUrl(dataUrl: string, folder?: string): Pro
       headers,
       body: JSON.stringify({ dataUrl: finalDataUrl, folder })
     });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.success) {
-      const errMsg = data.error || `Upload thất bại (status ${res.status})`;
+      const errMsg = res.status === 401 || res.status === 403
+        ? 'Phiên đăng nhập đã hết hạn hoặc không có quyền upload. Vui lòng đăng nhập lại rồi thử lại.'
+        : data.error || `Upload thất bại (status ${res.status})`;
       console.error('[UploadService] base64 upload failed:', errMsg);
       throw new Error(errMsg);
     }
@@ -251,7 +258,7 @@ export async function normalizeImageRefs(refs: (string | null | undefined)[]): P
 export async function deleteUploadedImage(url: string): Promise<void> {
   if (!isUploadedUrl(url)) return;
   try {
-    const token = localStorage.getItem('chocudan24h_token');
+    const token = getToken();
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
     await fetch('/api/upload', {

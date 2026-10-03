@@ -145,6 +145,32 @@ html[data-theme="dark"] .cd24-admin {
   border-color: #159b68 !important;
 }
 .cd24-admin-shell button { touch-action: manipulation; }
+.cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.cd24-admin-shell select { min-height: 48px; }
+.cd24-admin-shell button[class*="bg-emerald-600"],
+.cd24-admin-shell button[class*="bg-emerald-700"],
+.cd24-admin-shell button[class*="bg-teal-600"],
+.cd24-admin-shell button[class*="bg-teal-700"],
+.cd24-admin-shell button[class*="bg-blue-600"],
+.cd24-admin-shell button[class*="bg-rose-600"] {
+  color: #fff !important;
+  font-weight: 800;
+  border-color: transparent !important;
+  box-shadow: 0 5px 14px rgba(8, 127, 82, .16);
+}
+.cd24-admin-shell button[class*="bg-amber-"],
+.cd24-admin-shell button[class*="bg-yellow-"] {
+  color: #2b2410 !important;
+  font-weight: 800;
+}
+.cd24-admin-shell button[class*="bg-slate-100"],
+.cd24-admin-shell button[class*="bg-slate-200"],
+.cd24-admin-shell button[class*="bg-white"] {
+  color: var(--admin-ink) !important;
+  border-color: var(--admin-line) !important;
+}
+.cd24-admin-shell label { color: var(--admin-ink); }
+.cd24-admin-shell ::placeholder { color: #718579 !important; opacity: 1; }
 .cd24-admin-shell .rounded-2xl { border-radius: 18px !important; }
 .cd24-admin-shell .rounded-3xl { border-radius: 22px !important; }
 .cd24-admin-shell .text-slate-950,
@@ -165,6 +191,13 @@ html[data-theme="dark"] .cd24-admin {
 .cd24-admin-shell [class*="bg-slate-950"] {
   background: #062117 !important;
   border-color: rgba(146, 224, 174, .18) !important;
+}
+.cd24-admin-shell [class*="bg-slate-900/90"],
+.cd24-admin-shell [class*="bg-slate-800/90"],
+.cd24-admin-shell [class*="bg-slate-900/60"] {
+  background: var(--admin-surface-soft) !important;
+  color: var(--admin-ink) !important;
+  border-color: var(--admin-line) !important;
 }
 .cd24-admin-shell [class*="bg-indigo-900"] {
   background: linear-gradient(145deg, #164a45, #0d6a55) !important;
@@ -275,6 +308,8 @@ html[data-theme="dark"] .cd24-admin {
   .cd24-admin-shell .text-\[9px\] { font-size: 10px; line-height: 1.35; }
   .cd24-admin-shell .text-\[10px\] { font-size: 11px; line-height: 1.35; }
   .cd24-admin-shell .text-\[11px\] { font-size: 11.5px; line-height: 1.4; }
+  .cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  .cd24-admin-shell select { min-height: 52px; }
 }
 
 @media (max-width: 480px) {
