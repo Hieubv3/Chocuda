@@ -146,7 +146,9 @@ setInterval(() => {
 // Verify JWT Token Middleware
 function authenticateToken(req: express.Request, res: express.Response, next: express.NextFunction) {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  const bearerToken = authHeader && /^Bearer\s+(.+)$/i.exec(authHeader)?.[1];
+  const cookieToken = req.headers.cookie?.match(/(?:^|;\s*)chocudan24h_token=([^;]+)/)?.[1];
+  const token = bearerToken || (cookieToken ? decodeURIComponent(cookieToken) : undefined);
 
   if (!token) {
     return res.status(401).json({
@@ -186,7 +188,9 @@ function authenticateToken(req: express.Request, res: express.Response, next: ex
 // Optional Auth — gắn user nếu có token, nhưng không chặn request
 function optionalAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const bearerToken = authHeader && /^Bearer\s+(.+)$/i.exec(authHeader)?.[1];
+  const cookieToken = req.headers.cookie?.match(/(?:^|;\s*)chocudan24h_token=([^;]+)/)?.[1];
+  const token = bearerToken || (cookieToken ? decodeURIComponent(cookieToken) : undefined);
 
   if (token) {
     if (tokenBlacklist.has(token)) {
@@ -254,7 +258,14 @@ async function comparePassword(password: string, hash: string): Promise<boolean>
 // Ảnh được lưu thành file vật lý trong /uploads,
 // trả về URL public thay vì base64 trong localStorage.
 // ==========================================
-const UPLOADS_DIR = path.join(process.cwd(), "uploads");
+// Render mount ổ đĩa persistent tại /app/uploads. Cho phép override khi chạy
+// local/hosting khác, nhưng production phải dùng đúng mount path để ảnh không
+// biến mất sau restart hoặc deploy lại service.
+const UPLOADS_DIR = process.env.UPLOADS_DIR
+  ? path.resolve(process.env.UPLOADS_DIR)
+  : process.env.NODE_ENV === 'production'
+    ? '/app/uploads'
+    : path.join(process.cwd(), "uploads");
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
