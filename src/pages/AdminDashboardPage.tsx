@@ -2264,6 +2264,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           open={true}
           inline
           onClose={() => undefined}
+          onLogout={onLogout}
           groups={[
           {
             title: '🏠 Bất động sản',
