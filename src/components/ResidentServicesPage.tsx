@@ -1156,7 +1156,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${viewMode === 'list-row' ? 'bg-brand-600 text-white shadow-xs' : 'text-ink-600 dark:text-ink-400'}`}
                 >
                   <List className="w-3 h-3" />
-                  <span>Ngang</span>
+                  <span>Danh sách</span>
                 </button>
                 <button
                   onClick={() => { setViewMode('grid-3col'); localStorage.setItem('hb_resident_services_view_mode', 'grid-3col'); }}
@@ -1281,8 +1281,8 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   })}
                 </div>
               ) : viewMode === 'grid-2col' ? (
-                /* 2 CỘT Ô VUÔNG DỰ DỰA TRÊN THIẾT BỊ DI ĐỘNG */
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
+                /* 2 CỘT ỔN ĐỊNH TRÊN MỌI KÍCH THƯỚC */
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
                   {servicesPager.pageItems.map(service => {
                     const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
                     const isVerified = service.verified || service.kycStatus === 'verified';
@@ -1366,11 +1366,11 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                   })}
                 </div>
               ) : (
-                /* 1 CỘT LỚN HOẶC 3 CỘT NHỎ */
+                /* 1 CỘT LỚN hoặc 3 CỘT theo đúng chế độ đã chọn */
                 <div className={
                   viewMode === 'grid-3col'
                     ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
-                    : "grid grid-cols-1 md:grid-cols-2 gap-6"
+                    : "grid grid-cols-1 gap-6"
                 }>
                   {servicesPager.pageItems.map(service => {
                     const projectObj = VIN_MAJOR_PROJECTS.find(p => p.id === service.project);
@@ -3328,4 +3328,3 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     </div>
   );
 };
-

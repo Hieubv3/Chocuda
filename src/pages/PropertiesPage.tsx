@@ -204,7 +204,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
               viewMode === 'grid-2col' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
             }`}
-            title="Hiển thị 2 cột ô vuông"
+            title="Hiển thị đúng 2 cột"
           >
             <Grid2x2 className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">2 Cột</span>
@@ -217,7 +217,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
               viewMode === 'grid' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
             }`}
-            title="Hiển thị 1 cột thẻ lớn"
+            title="Hiển thị đúng 1 cột"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">1 Cột</span>
@@ -300,9 +300,9 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
           viewMode === 'grid-3col'
             ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6'
             : viewMode === 'grid-2col'
-            ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5'
+            ? 'grid grid-cols-2 gap-3 sm:gap-5'
             : viewMode === 'grid'
-            ? 'grid grid-cols-1 md:grid-cols-2 gap-6'
+            ? 'grid grid-cols-1 gap-6'
             : 'space-y-4'
         }>
           {pageItems.map((property) => (
