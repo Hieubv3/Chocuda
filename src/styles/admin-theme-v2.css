@@ -199,6 +199,28 @@ html[data-theme="dark"] .cd24-admin {
 .cd24-admin-shell .text-slate-600,
 .cd24-admin-shell .text-slate-500,
 .cd24-admin-shell .text-slate-400 { color: var(--admin-muted) !important; }
+.cd24-admin-shell [class~="bg-emerald-500"],
+.cd24-admin-shell [class~="bg-emerald-600"],
+.cd24-admin-shell [class~="bg-emerald-700"],
+.cd24-admin-shell [class~="bg-teal-500"],
+.cd24-admin-shell [class~="bg-teal-600"],
+.cd24-admin-shell [class~="bg-teal-700"],
+.cd24-admin-shell [class~="bg-sky-500"],
+.cd24-admin-shell [class~="bg-sky-600"],
+.cd24-admin-shell [class~="bg-sky-700"],
+.cd24-admin-shell [class~="bg-blue-600"],
+.cd24-admin-shell [class~="bg-indigo-600"] {
+  color: #fff !important;
+}
+.cd24-admin-shell [class~="bg-emerald-500"] .text-slate-950,
+.cd24-admin-shell [class~="bg-emerald-600"] .text-slate-950,
+.cd24-admin-shell [class~="bg-teal-500"] .text-slate-950,
+.cd24-admin-shell [class~="bg-teal-600"] .text-slate-950,
+.cd24-admin-shell [class~="bg-sky-500"] .text-slate-950,
+.cd24-admin-shell [class~="bg-sky-600"] .text-slate-950,
+.cd24-admin-shell [class~="bg-blue-600"] .text-slate-950 {
+  color: #fff !important;
+}
 .cd24-admin-shell .bg-slate-100,
 .cd24-admin-shell .bg-slate-200,
 .cd24-admin-shell .bg-slate-50 { background: var(--admin-surface-soft) !important; }

@@ -267,7 +267,7 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
             onClick={() => setMistIntensity('medium')}
             className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
               mistIntensity === 'medium'
-                ? 'bg-sky-500 text-slate-950 font-black shadow'
+                ? 'bg-sky-600 text-white font-black shadow'
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >
@@ -280,7 +280,7 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
             onClick={() => setMistIntensity('deep')}
             className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
               mistIntensity === 'deep'
-                ? 'bg-sky-500 text-slate-950 font-black shadow'
+                ? 'bg-sky-600 text-white font-black shadow'
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >
@@ -362,4 +362,3 @@ export const SoDoCensorEditor: React.FC<SoDoCensorEditorProps> = ({
     </div>
   );
 };
-
