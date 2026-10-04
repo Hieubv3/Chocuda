@@ -226,13 +226,24 @@ html[data-theme="dark"] .cd24-admin {
 .cd24-admin-shell .bg-slate-50 { background: var(--admin-surface-soft) !important; }
 .cd24-admin-shell [class*="border-slate-"] { border-color: var(--admin-line) !important; }
 .cd24-admin-shell [class*="bg-slate-900"] {
-  background: linear-gradient(145deg, #0a3f2b, #0b6a48) !important;
+  background: linear-gradient(145deg, #123d2d, #176044) !important;
   border-color: rgba(146, 224, 174, .22) !important;
+  color: #f1fff5 !important;
 }
 .cd24-admin-shell [class*="bg-slate-950"] {
-  background: #062117 !important;
+  background: #0d3023 !important;
   border-color: rgba(146, 224, 174, .18) !important;
+  color: #f1fff5 !important;
 }
+.cd24-admin-shell [class*="bg-emerald-950"],
+.cd24-admin-shell [class*="bg-teal-950"],
+.cd24-admin-shell [class*="bg-indigo-900"],
+.cd24-admin-shell [class*="bg-blue-950"] {
+  color: #f1fff5 !important;
+}
+.cd24-admin-shell [class*="bg-emerald-950"] { background: #124432 !important; }
+.cd24-admin-shell [class*="bg-teal-950"] { background: #13443e !important; }
+.cd24-admin-shell [class*="bg-blue-950"] { background: #173d67 !important; }
 .cd24-admin-shell [class*="bg-slate-900/90"],
 .cd24-admin-shell [class*="bg-slate-800/90"],
 .cd24-admin-shell [class*="bg-slate-900/60"] {
@@ -244,6 +255,65 @@ html[data-theme="dark"] .cd24-admin {
   background: linear-gradient(145deg, #164a45, #0d6a55) !important;
   color: #eafff0 !important;
   border-color: rgba(146, 224, 174, .22) !important;
+}
+
+/* Dark surface text contract: dark cards must never inherit the paper-surface ink. */
+.cd24-admin-shell [class*="bg-slate-900"] .text-slate-950,
+.cd24-admin-shell [class*="bg-slate-900"] .text-slate-900,
+.cd24-admin-shell [class*="bg-slate-900"] .text-slate-800,
+.cd24-admin-shell [class*="bg-slate-900"] .text-slate-700,
+.cd24-admin-shell [class*="bg-slate-950"] .text-slate-950,
+.cd24-admin-shell [class*="bg-slate-950"] .text-slate-900,
+.cd24-admin-shell [class*="bg-slate-950"] .text-slate-800,
+.cd24-admin-shell [class*="bg-slate-950"] .text-slate-700,
+.cd24-admin-shell [class*="bg-emerald-950"] .text-emerald-700,
+.cd24-admin-shell [class*="bg-emerald-950"] .text-emerald-800,
+.cd24-admin-shell [class*="bg-teal-950"] .text-teal-700,
+.cd24-admin-shell [class*="bg-teal-950"] .text-teal-800 {
+  color: #e8faed !important;
+}
+.cd24-admin-shell [class*="bg-slate-900"] .text-slate-600,
+.cd24-admin-shell [class*="bg-slate-900"] .text-slate-500,
+.cd24-admin-shell [class*="bg-slate-900"] .text-slate-400,
+.cd24-admin-shell [class*="bg-slate-950"] .text-slate-600,
+.cd24-admin-shell [class*="bg-slate-950"] .text-slate-500,
+.cd24-admin-shell [class*="bg-slate-950"] .text-slate-400 {
+  color: #b7d7c1 !important;
+}
+.cd24-admin-shell [class*="bg-slate-900"] strong,
+.cd24-admin-shell [class*="bg-slate-950"] strong,
+.cd24-admin-shell [class*="bg-emerald-950"] strong,
+.cd24-admin-shell [class*="bg-teal-950"] strong {
+  color: #ffffff !important;
+}
+.cd24-admin-shell [class*="bg-slate-900"] input,
+.cd24-admin-shell [class*="bg-slate-900"] select,
+.cd24-admin-shell [class*="bg-slate-900"] textarea,
+.cd24-admin-shell [class*="bg-slate-950"] input,
+.cd24-admin-shell [class*="bg-slate-950"] select,
+.cd24-admin-shell [class*="bg-slate-950"] textarea {
+  background: #f8fcf9 !important;
+  color: #10251b !important;
+  border-color: #9bc9aa !important;
+}
+/* Opacity slate surfaces are intentionally paper-like, so retain dark readable copy there. */
+.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-950,
+.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-900,
+.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-800,
+.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-700,
+.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-950,
+.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-900,
+.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-800,
+.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-700 {
+  color: var(--admin-ink) !important;
+}
+.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-600,
+.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-500,
+.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-400,
+.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-600,
+.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-500,
+.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-400 {
+  color: var(--admin-muted) !important;
 }
 .cd24-admin-topbar,
 .cd24-admin-mobile-menu-panel {
