@@ -331,6 +331,30 @@ html[data-theme="dark"] .cd24-admin {
   .cd24-admin-shell select { min-height: 52px; }
 }
 
+/* Desktop command-center density: compact group headers without shrinking touch targets on mobile. */
+@media (min-width: 1024px) {
+  .cd24-admin-shell > * + * { margin-top: .75rem !important; }
+  .cd24-admin-mobile-menu-inline .cd24-admin-mobile-menu-panel {
+    border-radius: 14px !important;
+    box-shadow: 0 8px 24px rgba(21, 78, 52, .07) !important;
+  }
+  .cd24-admin-mobile-menu-inline .cd24-admin-mobile-menu-panel > div:first-child {
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
+  }
+  .cd24-admin-mobile-menu-inline .cd24-admin-mobile-menu-panel > div:first-child .text-\[15px\] {
+    font-size: 13px !important;
+  }
+  .cd24-admin-mobile-menu-inline .cd24-admin-mobile-menu-panel > div:first-child .w-9 {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .cd24-admin-mobile-menu-inline .cd24-admin-mobile-menu-panel > div:nth-child(2) {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+  }
+}
+
 @media (max-width: 480px) {
   .cd24-admin-header h1 { font-size: 13px !important; line-height: 1.35; }
   .cd24-admin-header > div:last-child { grid-template-columns: 1fr 1fr; gap: 6px; }

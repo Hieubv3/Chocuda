@@ -23,12 +23,23 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
   isCreate = false,
   inline = false
 }) => {
-  const [formData, setFormData] = useState<Property>({ ...property });
+  const [formData, setFormData] = useState<Property>({
+    ...property,
+    title: property.title || '',
+    priceDisplay: property.priceDisplay || '',
+    address: property.address || '',
+    description: property.description || '',
+    images: Array.isArray(property.images) ? property.images : []
+  });
   const [newImageUrl, setNewImageUrl] = useState('');
   const [imageError, setImageError] = useState('');
   const [notice, setNotice] = useState('');
   const [censorTargetIndex, setCensorTargetIndex] = useState<number | null>(null);
   const [showSoDoCensorAdmin, setShowSoDoCensorAdmin] = useState(false);
+
+  const updatePropertyField = <K extends keyof Property>(field: K, value: Property[K]) => {
+    setFormData(previous => ({ ...previous, [field]: value }));
+  };
 
   // Handle image upload from computer (compress -> upload server -> URL public)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -300,7 +311,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
                 <input
                   type="text"
                   value={formData.soDoImage || ''}
-                  onChange={(e) => setFormData({ ...formData, soDoImage: e.target.value })}
+                  onChange={(e) => updatePropertyField('soDoImage', e.target.value)}
                   placeholder="https://..."
                   className="w-full p-2 text-[11px] bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
                 />
@@ -312,7 +323,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
                 <input
                   type="text"
                   value={formData.soDoRedactedImage || formData.soDoImage || ''}
-                  onChange={(e) => setFormData({ ...formData, soDoRedactedImage: e.target.value })}
+                  onChange={(e) => updatePropertyField('soDoRedactedImage', e.target.value)}
                   placeholder="https://..."
                   className="w-full p-2 text-[11px] bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white"
                 />
@@ -324,7 +335,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
                 <SoDoCensorEditor
                   originalImageUrl={formData.soDoImage || formData.images[0]}
                   onSaveRedacted={(dataUrl) => {
-                    setFormData({ ...formData, soDoRedactedImage: dataUrl });
+                    updatePropertyField('soDoRedactedImage', dataUrl);
                     setShowSoDoCensorAdmin(false);
                     setNotice('Admin đã bôi đen/che mờ Sổ Đỏ thành công.');
                   }}
@@ -343,7 +354,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
                 type="text"
                 required
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) => updatePropertyField('title', e.target.value)}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
               />
             </div>
@@ -352,7 +363,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Nhu Cầu (*):</label>
               <select
                 value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value as 'sale' | 'rent' })}
+                onChange={(e) => updatePropertyField('type', e.target.value as 'sale' | 'rent')}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
               >
                 <option value="sale">Bán Bất Động Sản</option>
@@ -363,7 +374,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Loại Căn (*):</label>
               <select
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                onChange={(e) => updatePropertyField('category', e.target.value as any)}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
               >
                 <optgroup label="Cao tầng (căn hộ)">
@@ -394,7 +405,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Dự Án Vinhomes (*):</label>
               <select
                 value={formData.project}
-                onChange={(e) => setFormData({ ...formData, project: e.target.value as ProjectCategory })}
+                onChange={(e) => updatePropertyField('project', e.target.value as ProjectCategory)}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
               >
                 <option value="ocean-park-2">Vinhomes Ocean Park 2 (The Empire)</option>
@@ -414,7 +425,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
                 type="text"
                 required
                 value={formData.priceDisplay}
-                onChange={(e) => setFormData({ ...formData, priceDisplay: e.target.value })}
+                onChange={(e) => updatePropertyField('priceDisplay', e.target.value)}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-emerald-600 dark:text-emerald-400"
               />
             </div>
@@ -424,7 +435,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <input
                 type="number"
                 value={formData.area}
-                onChange={(e) => setFormData({ ...formData, area: Number(e.target.value) })}
+                onChange={(e) => updatePropertyField('area', Number(e.target.value))}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"
               />
             </div>
@@ -434,7 +445,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <input
                 type="text"
                 value={formData.subdivision || ''}
-                onChange={(e) => setFormData({ ...formData, subdivision: e.target.value })}
+                onChange={(e) => updatePropertyField('subdivision', e.target.value)}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
                 placeholder="VD: Phân khu Chà Là, Phố Biển, San Hô..."
               />
@@ -445,7 +456,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <div className="flex gap-2">
                 <select
                   value={formData.approved ? 'approved' : 'pending'}
-                  onChange={(e) => setFormData({ ...formData, approved: e.target.value === 'approved', status: e.target.value as any })}
+                  onChange={(e) => setFormData(previous => ({ ...previous, approved: e.target.value === 'approved', status: e.target.value as any }))}
                   className="w-1/2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-emerald-600"
                 >
                   <option value="approved">✓ Đã Duyệt</option>
@@ -454,7 +465,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
 
                 <select
                   value={formData.vipLevel || 'normal'}
-                  onChange={(e) => setFormData({ ...formData, vipLevel: e.target.value as any })}
+                  onChange={(e) => updatePropertyField('vipLevel', e.target.value as any)}
                   className="w-1/2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-purple-600"
                 >
                   <option value="normal">Tin Thường</option>
@@ -470,7 +481,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <input
                 type="text"
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(e) => updatePropertyField('address', e.target.value)}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
               />
             </div>
@@ -480,7 +491,7 @@ export const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <textarea
                 rows={4}
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) => updatePropertyField('description', e.target.value)}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
               />
             </div>
