@@ -208,6 +208,38 @@ html.dark .price, html.dark .price24, html.dark .price-display,
   color: var(--price, #ffa06b) !important;
 }
 
+/* Light-surface contrast contract.  Many legacy cards combine a paper
+   background with the old pastel 300/400 text palette; keep those accents
+   readable without changing the dark theme or text on dark hero surfaces. */
+html:not(.dark):not([data-theme="dark"]) .bg-white .text-ink-400,
+html:not(.dark):not([data-theme="dark"]) .bg-ink-50 .text-ink-400,
+html:not(.dark):not([data-theme="dark"]) .bg-ink-100 .text-ink-400,
+html:not(.dark):not([data-theme="dark"]) .bg-white .text-slate-400,
+html:not(.dark):not([data-theme="dark"]) .bg-slate-50 .text-slate-400,
+html:not(.dark):not([data-theme="dark"]) .bg-slate-100 .text-slate-400 {
+  color: #53665a !important;
+}
+html:not(.dark):not([data-theme="dark"]) .bg-white .text-brand-400,
+html:not(.dark):not([data-theme="dark"]) .bg-ink-50 .text-brand-400,
+html:not(.dark):not([data-theme="dark"]) .bg-white .text-emerald-400,
+html:not(.dark):not([data-theme="dark"]) .bg-ink-50 .text-emerald-400,
+html:not(.dark):not([data-theme="dark"]) .bg-white .text-teal-400,
+html:not(.dark):not([data-theme="dark"]) .bg-ink-50 .text-teal-400 {
+  color: #047857 !important;
+}
+html:not(.dark):not([data-theme="dark"]) .bg-white .text-blue-400,
+html:not(.dark):not([data-theme="dark"]) .bg-ink-50 .text-blue-400,
+html:not(.dark):not([data-theme="dark"]) .bg-white .text-sky-400,
+html:not(.dark):not([data-theme="dark"]) .bg-ink-50 .text-sky-400 {
+  color: #0369a1 !important;
+}
+html:not(.dark):not([data-theme="dark"]) .bg-white ::placeholder,
+html:not(.dark):not([data-theme="dark"]) .bg-ink-50 ::placeholder,
+html:not(.dark):not([data-theme="dark"]) .bg-slate-50 ::placeholder {
+  color: #5b6b61 !important;
+  opacity: 1 !important;
+}
+
 /* ===== MENU: khong de chu xuong dong tung chu ===== */
 header nav a,
 nav a{ white-space: nowrap; }

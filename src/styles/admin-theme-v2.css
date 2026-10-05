@@ -305,6 +305,37 @@ html[data-theme="dark"] .cd24-admin {
   color: var(--admin-ink) !important;
   border-color: var(--admin-line) !important;
 }
+
+/* These legacy dark-surface classes are intentionally restyled as paper above.
+   Their old emerald/blue light-copy utilities must therefore be darkened too. */
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-emerald-300,
+.cd24-admin-shell [class~="bg-slate-800/90"] .text-emerald-300,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-emerald-300,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-teal-300,
+.cd24-admin-shell [class~="bg-slate-800/90"] .text-teal-300,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-teal-300,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-blue-300,
+.cd24-admin-shell [class~="bg-slate-800/90"] .text-blue-300,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-blue-300,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-sky-300,
+.cd24-admin-shell [class~="bg-slate-800/90"] .text-sky-300,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-sky-300,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-brand-300,
+.cd24-admin-shell [class~="bg-slate-800/90"] .text-brand-300,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-brand-300 {
+  color: var(--admin-ink) !important;
+}
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-emerald-400,
+.cd24-admin-shell [class~="bg-slate-800/90"] .text-emerald-400,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-emerald-400,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-blue-400,
+.cd24-admin-shell [class~="bg-slate-800/90"] .text-blue-400,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-blue-400,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-slate-400,
+.cd24-admin-shell [class~="bg-slate-800/90"] .text-slate-400,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-slate-400 {
+  color: var(--admin-muted) !important;
+}
 .cd24-admin-shell [class~="bg-indigo-900"] {
   background: linear-gradient(145deg, #164a45, #0d6a55) !important;
   color: #eafff0 !important;
