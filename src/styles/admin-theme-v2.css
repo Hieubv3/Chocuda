@@ -78,6 +78,60 @@ html[data-theme="dark"] .cd24-admin {
   border-color: transparent !important;
 }
 
+/* Quick navigation: every shortcut keeps a readable foreground/background pair. */
+.cd24-admin-topbar > div:first-child > button[class*="bg-slate-100"],
+.cd24-admin-topbar > div:first-child > button[class*="bg-slate-800"] {
+  background: #f4faf6 !important;
+  color: #123326 !important;
+  border: 1px solid #b9d8c3 !important;
+}
+.cd24-admin-topbar > div:first-child > button[class*="bg-slate-100"] svg,
+.cd24-admin-topbar > div:first-child > button[class*="bg-slate-800"] svg {
+  color: #087f52 !important;
+  opacity: 1 !important;
+}
+.cd24-admin-topbar > div:first-child > button[class*="bg-emerald-600"],
+.cd24-admin-topbar > div:first-child > button[class*="bg-blue-600"],
+.cd24-admin-topbar > div:first-child > button[class*="bg-teal-500"],
+.cd24-admin-topbar > div:first-child > button[class*="bg-amber-600"] {
+  color: #ffffff !important;
+  border: 1px solid transparent !important;
+  font-weight: 800 !important;
+}
+.cd24-admin-topbar > div:first-child > button[class*="bg-emerald-600"] svg,
+.cd24-admin-topbar > div:first-child > button[class*="bg-blue-600"] svg,
+.cd24-admin-topbar > div:first-child > button[class*="bg-teal-500"] svg,
+.cd24-admin-topbar > div:first-child > button[class*="bg-amber-600"] svg {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+.cd24-admin-topbar > div:first-child > button[class*="bg-amber-500"],
+.cd24-admin-topbar > div:first-child > button[class*="bg-orange-500"] {
+  color: #2b2410 !important;
+  background: #f4c44f !important;
+  border: 1px solid #d49d19 !important;
+  font-weight: 800 !important;
+}
+.cd24-admin-topbar > div:first-child > button[class*="bg-amber-500"] svg,
+.cd24-admin-topbar > div:first-child > button[class*="bg-orange-500"] svg {
+  color: #513b08 !important;
+  opacity: 1 !important;
+}
+.cd24-admin-topbar > div:last-child button {
+  min-height: 38px !important;
+  font-weight: 800 !important;
+}
+.cd24-admin-topbar > div:last-child button[class*="bg-emerald-50"] {
+  background: #e7f5ed !important;
+  color: #075c3d !important;
+  border-color: #8fc7a6 !important;
+}
+.cd24-admin-topbar > div:last-child button[class*="bg-slate-100"] {
+  background: #f4faf6 !important;
+  color: #123326 !important;
+  border-color: #b9d8c3 !important;
+}
+
 /* Main identity header */
 .cd24-admin-header {
   border: 0 !important;
@@ -109,15 +163,15 @@ html[data-theme="dark"] .cd24-admin {
 /* All data surfaces: convert old flat slate cards into the new paper system */
 .cd24-admin-shell .bg-white.rounded-2xl,
 .cd24-admin-shell .bg-white.rounded-3xl,
-.cd24-admin-shell [class*="bg-slate-800/90"].rounded-3xl,
-.cd24-admin-shell [class*="bg-slate-900/90"].rounded-3xl {
+.cd24-admin-shell [class~="bg-slate-800/90"].rounded-3xl,
+.cd24-admin-shell [class~="bg-slate-900/90"].rounded-3xl {
   background: var(--admin-surface) !important;
   border-color: var(--admin-line) !important;
   box-shadow: var(--admin-shadow) !important;
 }
 .cd24-admin-shell .bg-slate-50,
 .cd24-admin-shell [class*="bg-slate-50"],
-.cd24-admin-shell [class*="bg-slate-900/60"] {
+.cd24-admin-shell [class~="bg-slate-900/60"] {
   background: var(--admin-surface-soft) !important;
   border-color: var(--admin-line) !important;
 }
@@ -225,95 +279,128 @@ html[data-theme="dark"] .cd24-admin {
 .cd24-admin-shell .bg-slate-200,
 .cd24-admin-shell .bg-slate-50 { background: var(--admin-surface-soft) !important; }
 .cd24-admin-shell [class*="border-slate-"] { border-color: var(--admin-line) !important; }
-.cd24-admin-shell [class*="bg-slate-900"] {
+.cd24-admin-shell [class~="bg-slate-900"] {
   background: linear-gradient(145deg, #123d2d, #176044) !important;
   border-color: rgba(146, 224, 174, .22) !important;
   color: #f1fff5 !important;
 }
-.cd24-admin-shell [class*="bg-slate-950"] {
+.cd24-admin-shell [class~="bg-slate-950"] {
   background: #0d3023 !important;
   border-color: rgba(146, 224, 174, .18) !important;
   color: #f1fff5 !important;
 }
-.cd24-admin-shell [class*="bg-emerald-950"],
-.cd24-admin-shell [class*="bg-teal-950"],
-.cd24-admin-shell [class*="bg-indigo-900"],
-.cd24-admin-shell [class*="bg-blue-950"] {
+.cd24-admin-shell [class~="bg-emerald-950"],
+.cd24-admin-shell [class~="bg-teal-950"],
+.cd24-admin-shell [class~="bg-indigo-900"],
+.cd24-admin-shell [class~="bg-blue-950"] {
   color: #f1fff5 !important;
 }
-.cd24-admin-shell [class*="bg-emerald-950"] { background: #124432 !important; }
-.cd24-admin-shell [class*="bg-teal-950"] { background: #13443e !important; }
-.cd24-admin-shell [class*="bg-blue-950"] { background: #173d67 !important; }
-.cd24-admin-shell [class*="bg-slate-900/90"],
-.cd24-admin-shell [class*="bg-slate-800/90"],
-.cd24-admin-shell [class*="bg-slate-900/60"] {
+.cd24-admin-shell [class~="bg-emerald-950"] { background: #124432 !important; }
+.cd24-admin-shell [class~="bg-teal-950"] { background: #13443e !important; }
+.cd24-admin-shell [class~="bg-blue-950"] { background: #173d67 !important; }
+.cd24-admin-shell [class~="bg-slate-900/90"],
+.cd24-admin-shell [class~="bg-slate-800/90"],
+.cd24-admin-shell [class~="bg-slate-900/60"] {
   background: var(--admin-surface-soft) !important;
   color: var(--admin-ink) !important;
   border-color: var(--admin-line) !important;
 }
-.cd24-admin-shell [class*="bg-indigo-900"] {
+.cd24-admin-shell [class~="bg-indigo-900"] {
   background: linear-gradient(145deg, #164a45, #0d6a55) !important;
   color: #eafff0 !important;
   border-color: rgba(146, 224, 174, .22) !important;
 }
 
 /* Dark surface text contract: dark cards must never inherit the paper-surface ink. */
-.cd24-admin-shell [class*="bg-slate-900"] .text-slate-950,
-.cd24-admin-shell [class*="bg-slate-900"] .text-slate-900,
-.cd24-admin-shell [class*="bg-slate-900"] .text-slate-800,
-.cd24-admin-shell [class*="bg-slate-900"] .text-slate-700,
-.cd24-admin-shell [class*="bg-slate-950"] .text-slate-950,
-.cd24-admin-shell [class*="bg-slate-950"] .text-slate-900,
-.cd24-admin-shell [class*="bg-slate-950"] .text-slate-800,
-.cd24-admin-shell [class*="bg-slate-950"] .text-slate-700,
-.cd24-admin-shell [class*="bg-emerald-950"] .text-emerald-700,
-.cd24-admin-shell [class*="bg-emerald-950"] .text-emerald-800,
-.cd24-admin-shell [class*="bg-teal-950"] .text-teal-700,
-.cd24-admin-shell [class*="bg-teal-950"] .text-teal-800 {
+.cd24-admin-shell [class~="bg-slate-900"] .text-slate-950,
+.cd24-admin-shell [class~="bg-slate-900"] .text-slate-900,
+.cd24-admin-shell [class~="bg-slate-900"] .text-slate-800,
+.cd24-admin-shell [class~="bg-slate-900"] .text-slate-700,
+.cd24-admin-shell [class~="bg-slate-950"] .text-slate-950,
+.cd24-admin-shell [class~="bg-slate-950"] .text-slate-900,
+.cd24-admin-shell [class~="bg-slate-950"] .text-slate-800,
+.cd24-admin-shell [class~="bg-slate-950"] .text-slate-700,
+.cd24-admin-shell [class~="bg-emerald-950"] .text-emerald-700,
+.cd24-admin-shell [class~="bg-emerald-950"] .text-emerald-800,
+.cd24-admin-shell [class~="bg-teal-950"] .text-teal-700,
+.cd24-admin-shell [class~="bg-teal-950"] .text-teal-800 {
   color: #e8faed !important;
 }
-.cd24-admin-shell [class*="bg-slate-900"] .text-slate-600,
-.cd24-admin-shell [class*="bg-slate-900"] .text-slate-500,
-.cd24-admin-shell [class*="bg-slate-900"] .text-slate-400,
-.cd24-admin-shell [class*="bg-slate-950"] .text-slate-600,
-.cd24-admin-shell [class*="bg-slate-950"] .text-slate-500,
-.cd24-admin-shell [class*="bg-slate-950"] .text-slate-400 {
+.cd24-admin-shell [class~="bg-slate-900"] .text-slate-600,
+.cd24-admin-shell [class~="bg-slate-900"] .text-slate-500,
+.cd24-admin-shell [class~="bg-slate-900"] .text-slate-400,
+.cd24-admin-shell [class~="bg-slate-950"] .text-slate-600,
+.cd24-admin-shell [class~="bg-slate-950"] .text-slate-500,
+.cd24-admin-shell [class~="bg-slate-950"] .text-slate-400 {
   color: #b7d7c1 !important;
 }
-.cd24-admin-shell [class*="bg-slate-900"] strong,
-.cd24-admin-shell [class*="bg-slate-950"] strong,
-.cd24-admin-shell [class*="bg-emerald-950"] strong,
-.cd24-admin-shell [class*="bg-teal-950"] strong {
+.cd24-admin-shell [class~="bg-slate-900"] strong,
+.cd24-admin-shell [class~="bg-slate-950"] strong,
+.cd24-admin-shell [class~="bg-emerald-950"] strong,
+.cd24-admin-shell [class~="bg-teal-950"] strong {
   color: #ffffff !important;
 }
-.cd24-admin-shell [class*="bg-slate-900"] input,
-.cd24-admin-shell [class*="bg-slate-900"] select,
-.cd24-admin-shell [class*="bg-slate-900"] textarea,
-.cd24-admin-shell [class*="bg-slate-950"] input,
-.cd24-admin-shell [class*="bg-slate-950"] select,
-.cd24-admin-shell [class*="bg-slate-950"] textarea {
+.cd24-admin-shell [class~="bg-slate-900"] input,
+.cd24-admin-shell [class~="bg-slate-900"] select,
+.cd24-admin-shell [class~="bg-slate-900"] textarea,
+.cd24-admin-shell [class~="bg-slate-950"] input,
+.cd24-admin-shell [class~="bg-slate-950"] select,
+.cd24-admin-shell [class~="bg-slate-950"] textarea {
   background: #f8fcf9 !important;
   color: #10251b !important;
   border-color: #9bc9aa !important;
 }
 /* Opacity slate surfaces are intentionally paper-like, so retain dark readable copy there. */
-.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-950,
-.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-900,
-.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-800,
-.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-700,
-.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-950,
-.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-900,
-.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-800,
-.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-700 {
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-slate-950,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-slate-900,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-slate-800,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-slate-700,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-slate-950,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-slate-900,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-slate-800,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-slate-700 {
   color: var(--admin-ink) !important;
 }
-.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-600,
-.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-500,
-.cd24-admin-shell [class*="bg-slate-900/90"] .text-slate-400,
-.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-600,
-.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-500,
-.cd24-admin-shell [class*="bg-slate-900/60"] .text-slate-400 {
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-slate-600,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-slate-500,
+.cd24-admin-shell [class~="bg-slate-900/90"] .text-slate-400,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-slate-600,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-slate-500,
+.cd24-admin-shell [class~="bg-slate-900/60"] .text-slate-400 {
   color: var(--admin-muted) !important;
+}
+
+/* Property list actions: keep edit/expand icons visible on both themes. */
+.cd24-admin-shell .cd24-property-action {
+  width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+  border: 1px solid #8fc7a6 !important;
+  box-shadow: 0 2px 7px rgba(16, 76, 50, .14) !important;
+  opacity: 1 !important;
+  color: #075c3d !important;
+  background: #e7f5ed !important;
+}
+.cd24-admin-shell .cd24-property-action svg {
+  color: currentColor !important;
+  stroke-width: 2.4;
+  opacity: 1 !important;
+}
+.cd24-admin-shell .cd24-property-action-edit:hover {
+  color: #ffffff !important;
+  background: #087f52 !important;
+  border-color: #087f52 !important;
+}
+.cd24-admin-shell .cd24-property-action-expand {
+  color: #174f83 !important;
+  background: #e7f0fb !important;
+  border-color: #8bb5df !important;
+}
+.cd24-admin-shell .cd24-property-action-expand:hover {
+  color: #ffffff !important;
+  background: #1d5f98 !important;
+  border-color: #1d5f98 !important;
 }
 .cd24-admin-topbar,
 .cd24-admin-mobile-menu-panel {
