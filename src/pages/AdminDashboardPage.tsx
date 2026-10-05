@@ -4972,13 +4972,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         )}
                         <button
                           onClick={() => setEditingProperty(p)}
-                          className="p-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg"
+                          className="cd24-property-action cd24-property-action-edit p-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg"
                         >
                           <Edit3 className="w-3 h-3" />
                         </button>
                         <button
                           onClick={() => toggleExpandAdminProp(p.id)}
-                          className="p-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg"
+                          className="cd24-property-action cd24-property-action-expand p-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg"
                         >
                           {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                         </button>
@@ -5224,7 +5224,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               <button
                                 type="button"
                                 onClick={() => setEditingProperty(p)}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-700/70 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition cursor-pointer"
+                                className="cd24-property-action cd24-property-action-edit w-7 h-7 flex items-center justify-center rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-700/70 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition cursor-pointer"
                                 title="Chỉnh sửa nội dung & che mờ ảnh"
                               >
                                 <Edit3 className="w-3.5 h-3.5" />
@@ -5302,7 +5302,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               <button
                                 type="button"
                                 onClick={() => toggleExpandAdminProp(p.id)}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+                                className="cd24-property-action cd24-property-action-expand w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition cursor-pointer"
                                 title={isExpanded ? 'Thu gọn chi tiết' : 'Mở rộng album ảnh & thông số'}
                               >
                                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />

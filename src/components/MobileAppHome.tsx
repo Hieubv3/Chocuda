@@ -48,6 +48,26 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], n
           </button>
         </div>
 
+        <div className="mapp-section-head">
+          <div>
+            <span className="mapp-eyebrow2">Tất cả chức năng</span>
+            <div className="mapp-title2">Danh mục chính</div>
+          </div>
+          <button style={{ fontSize: 12, fontWeight: 800, color: '#12a150', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/sitemap')}>
+            Xem tất cả →
+          </button>
+        </div>
+
+        <div className="mapp-grid">
+          {cells.map((c) => (
+            <button key={c.label} className="mapp-cell" onClick={() => navigate(c.to)}>
+              <span className="mapp-cell-ic">{c.icon}</span>
+              <span>{c.label}</span>
+              {c.tag ? <em>{c.tag}</em> : null}
+            </button>
+          ))}
+        </div>
+
         <div className="mapp-search">
           <span>⌕</span>
           <input
@@ -143,25 +163,6 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], n
           </button>
         ))}
 
-        <div className="mapp-section-head">
-          <div>
-            <span className="mapp-eyebrow2">Tất cả chức năng</span>
-            <div className="mapp-title2">Danh mục chính</div>
-          </div>
-          <button style={{ fontSize: 12, fontWeight: 800, color: '#12a150', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/sitemap')}>
-            Xem tất cả →
-          </button>
-        </div>
-
-        <div className="mapp-grid">
-          {cells.map((c) => (
-            <button key={c.label} className="mapp-cell" onClick={() => navigate(c.to)}>
-              <span className="mapp-cell-ic">{c.icon}</span>
-              <span>{c.label}</span>
-              {c.tag ? <em>{c.tag}</em> : null}
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   );

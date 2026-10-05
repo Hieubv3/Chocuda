@@ -28,6 +28,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   viewMode = 'grid'
 }) => {
   const t = getTranslation(language);
+  const fallbackPropertyImage = '/images/demo/property-interior-1.jpg';
   const [showShareModal, setShowShareModal] = useState(false);
 
   const projectNames: Record<string, string> = {
@@ -75,10 +76,20 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           onClick={() => onSelect(property)}
         >
           <img
-            src={property.images[0] || ''}
+            src={property.images?.[0] || fallbackPropertyImage}
             alt={property.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
+            onError={(event) => {
+              const image = event.currentTarget;
+              const nextImage = property.images?.find((url) => url && url !== image.src && !image.dataset.failedUrls?.split('|').includes(url));
+              if (nextImage) {
+                image.dataset.failedUrls = `${image.dataset.failedUrls || ''}${image.dataset.failedUrls ? '|' : ''}${image.src}`;
+                image.src = nextImage;
+              } else if (!image.src.endsWith(fallbackPropertyImage)) {
+                image.src = fallbackPropertyImage;
+              }
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 pointer-events-none" />
 
@@ -238,10 +249,20 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       {/* Image Thumbnail & Badges */}
       <div className="relative aspect-[16/10] overflow-hidden bg-ink-100 dark:bg-ink-900 cursor-pointer" onClick={() => onSelect(property)}>
         <img
-          src={property.images[0] || ''}
+          src={property.images?.[0] || fallbackPropertyImage}
           alt={property.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
+          onError={(event) => {
+            const image = event.currentTarget;
+            const nextImage = property.images?.find((url) => url && url !== image.src && !image.dataset.failedUrls?.split('|').includes(url));
+            if (nextImage) {
+              image.dataset.failedUrls = `${image.dataset.failedUrls || ''}${image.dataset.failedUrls ? '|' : ''}${image.src}`;
+              image.src = nextImage;
+            } else if (!image.src.endsWith(fallbackPropertyImage)) {
+              image.src = fallbackPropertyImage;
+            }
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-950/80 via-transparent to-black/30 pointer-events-none" />
 
@@ -498,4 +519,3 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     </div>
   );
 };
-
