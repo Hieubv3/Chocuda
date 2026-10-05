@@ -240,6 +240,45 @@ html:not(.dark):not([data-theme="dark"]) .bg-slate-50 ::placeholder {
   opacity: 1 !important;
 }
 
+/* Text-entry contract: make the insertion point and active field unmistakable. */
+input[type="text"], input[type="email"], input[type="password"],
+input[type="search"], input[type="url"], input[type="tel"], input[type="number"],
+input[type="date"], input[type="time"], input[type="datetime-local"],
+input[type="month"], input[type="week"], textarea {
+  caret-color: #047857;
+  transition: transform 180ms var(--ease), box-shadow 180ms var(--ease),
+    border-color 180ms var(--ease), background-color 180ms var(--ease);
+}
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus,
+input[type="search"]:focus, input[type="url"]:focus, input[type="tel"]:focus,
+input[type="number"]:focus, input[type="date"]:focus, input[type="time"]:focus,
+input[type="datetime-local"]:focus, input[type="month"]:focus,
+input[type="week"]:focus, textarea:focus {
+  caret-color: #047857;
+  outline: 3px solid rgba(4, 120, 87, .22) !important;
+  outline-offset: 2px;
+  border-color: #047857 !important;
+  box-shadow: 0 0 0 4px rgba(4, 120, 87, .12), 0 8px 22px rgba(4, 120, 87, .10) !important;
+  transform: scale(1.008);
+  position: relative;
+  z-index: 2;
+}
+textarea:focus {
+  min-height: 88px;
+}
+html.dark input[type="text"], html.dark input[type="email"], html.dark input[type="password"],
+html.dark input[type="search"], html.dark input[type="url"], html.dark input[type="tel"],
+html.dark input[type="number"], html.dark input[type="date"], html.dark input[type="time"],
+html.dark input[type="datetime-local"], html.dark input[type="month"], html.dark input[type="week"],
+html.dark textarea,
+[data-theme="dark"] input[type="text"], [data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"], [data-theme="dark"] input[type="search"],
+[data-theme="dark"] input[type="url"], [data-theme="dark"] input[type="tel"],
+[data-theme="dark"] input[type="number"], [data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="time"], [data-theme="dark"] input[type="datetime-local"],
+[data-theme="dark"] input[type="month"], [data-theme="dark"] input[type="week"],
+[data-theme="dark"] textarea { caret-color: #6ee7b7; }
+
 /* ===== MENU: khong de chu xuong dong tung chu ===== */
 header nav a,
 nav a{ white-space: nowrap; }

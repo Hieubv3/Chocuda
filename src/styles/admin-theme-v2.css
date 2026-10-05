@@ -198,6 +198,44 @@ html[data-theme="dark"] .cd24-admin {
   outline: 3px solid rgba(8, 127, 82, .16) !important;
   border-color: #159b68 !important;
 }
+.cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.cd24-admin-shell textarea,
+.cd24-admin-shell select {
+  caret-color: #087f52;
+  transition: transform 180ms ease, box-shadow 180ms ease,
+    border-color 180ms ease, background-color 180ms ease;
+}
+.cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+.cd24-admin-shell textarea:focus,
+.cd24-admin-shell select:focus {
+  outline: 3px solid rgba(8, 127, 82, .28) !important;
+  outline-offset: 2px;
+  border-color: #087f52 !important;
+  background: #ffffff !important;
+  color: #10251b !important;
+  box-shadow: 0 0 0 4px rgba(8, 127, 82, .14), 0 8px 22px rgba(8, 127, 82, .12) !important;
+  transform: scale(1.01);
+  position: relative;
+  z-index: 2;
+}
+.cd24-admin-shell textarea:focus { min-height: 92px; }
+.dark .cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.dark .cd24-admin-shell textarea,
+.dark .cd24-admin-shell select,
+html[data-theme="dark"] .cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html[data-theme="dark"] .cd24-admin-shell textarea,
+html[data-theme="dark"] .cd24-admin-shell select { caret-color: #6ee7b7; }
+.dark .cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+.dark .cd24-admin-shell textarea:focus,
+.dark .cd24-admin-shell select:focus,
+html[data-theme="dark"] .cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+html[data-theme="dark"] .cd24-admin-shell textarea:focus,
+html[data-theme="dark"] .cd24-admin-shell select:focus {
+  background: #10251b !important;
+  color: #edf9f0 !important;
+  border-color: #6ee7b7 !important;
+  box-shadow: 0 0 0 4px rgba(110, 231, 183, .18), 0 8px 22px rgba(0, 0, 0, .28) !important;
+}
 .cd24-admin-shell button { touch-action: manipulation; }
 .cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 .cd24-admin-shell select { min-height: 48px; }
