@@ -88,7 +88,7 @@
 .dark .mapp-strip-card strong{ color:#e6f3ea; }
 .mapp-strip-card b{ font-size:12.5px; font-weight:900; color:#15803d; }
 .dark .mapp-strip-card b{ color:#8fe3b0; }
-.mapp-strip-card em{ font-style:normal; font-size:10px; color:#7c8a80; }
+.mapp-strip-card em{ font-style:normal; font-size:10px; color:#5b6b61; }
 
 .mapp-section-head{ display:flex; align-items:baseline; justify-content:space-between; margin:18px 2px 10px; }
 .mapp-eyebrow2{ display:block; font-size:10px; font-weight:800; color:#d99a06; letter-spacing:.5px; text-transform:uppercase; margin-bottom:2px; }
@@ -130,7 +130,7 @@
 .mapp-logo-text{ text-align:left; }
 .mapp-logo-text strong{ display:block; font-size:13px; color:#166534; font-weight:900; line-height:1.1; }
 .dark .mapp-logo-text strong{ color:#eaf6ee; }
-.mapp-logo-text span{ font-size:9px; color:#7c8a80; letter-spacing:.5px; font-weight:700; }
+.mapp-logo-text span{ font-size:9px; color:#5b6b61; letter-spacing:.5px; font-weight:700; }
 .mapp-header-search{
   flex:1; display:flex; align-items:center; gap:6px; min-width:0;
   background:#fff; border:1px solid #d9e9de; border-radius:999px; padding:8px 13px;
@@ -260,7 +260,7 @@
   position:relative;
   flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
   padding:8px 2px; border-radius:16px; border:0; background:transparent; cursor:pointer;
-  color:#7c8a80; font-size:9.5px; font-weight:700; transition:color .15s, background .15s;
+  color:#5b6b61; font-size:9.5px; font-weight:700; transition:color .15s, background .15s;
 }
 .mapp-nav-item span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
 .mapp-nav-item.active{ color:#166534; background:#e3f5ea; font-weight:800; }
