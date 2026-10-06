@@ -512,6 +512,14 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
     return match ? `https://www.youtube.com/embed/${match[1]}` : null;
   };
 
+  const fallbackServiceImage = '/images/demo/ad-service.jpg';
+  const handleServiceImageError = (event: React.SyntheticEvent<HTMLImageElement>) => {
+    const image = event.currentTarget;
+    if (image.dataset.fallbackApplied === 'true') return;
+    image.dataset.fallbackApplied = 'true';
+    image.src = fallbackServiceImage;
+  };
+
   return (
     <div className="resident-services-page min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       
@@ -1205,9 +1213,10 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       >
                         <div className="relative w-full sm:w-48 md:w-56 h-36 sm:h-auto bg-ink-100 dark:bg-ink-800 shrink-0 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
                           <img loading="lazy"
-                            src={service.images[0] || ''}
+                            src={service.images?.[0] || fallbackServiceImage}
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={handleServiceImageError}
                           />
                           <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-10">
                             <span className="bg-ink-900/90 text-white text-[9px] font-black px-2 py-0.5 rounded-md border border-ink-700">
@@ -1294,9 +1303,10 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                       >
                         <div className="relative h-28 sm:h-36 bg-ink-100 dark:bg-ink-800 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
                           <img loading="lazy"
-                            src={service.images[0] || ''}
+                            src={service.images?.[0] || fallbackServiceImage}
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={handleServiceImageError}
                           />
                           
                           <div className="absolute top-1.5 left-1.5 flex flex-wrap gap-1 z-10">
@@ -1386,9 +1396,10 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
                         {/* Thumbnail Header */}
                         <div className="relative h-48 bg-ink-100 dark:bg-ink-800 overflow-hidden cursor-pointer" onClick={() => navigate(getServiceDetailUrl(service))}>
                           <img loading="lazy"
-                            src={service.images[0] || ''}
+                            src={service.images?.[0] || fallbackServiceImage}
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={handleServiceImageError}
                           />
                           
                           {/* Project & BLUE BADGE KYC Badges */}
