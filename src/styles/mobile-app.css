@@ -494,11 +494,22 @@
   }
   .dark .resident-services-page [class*="141f38"]{ background:#102b1d !important; border-color:rgba(143,227,176,.18) !important; }
   .resident-services-page [class*="141f38"] > button{
-    min-height:76px !important; padding:9px 4px !important; border-radius:16px !important;
+    min-height:86px !important; padding:10px 4px !important; border-radius:16px !important;
     background:#fff !important; color:#243528 !important; border:1px solid #d9e9de !important;
     box-shadow:0 5px 12px rgba(15,120,63,.06);
   }
+  .resident-services-page [class*="141f38"] > button > div:first-child > div:first-child{
+    width:38px !important; height:38px !important; border-radius:13px !important;
+    border:0 !important; background:#e3f5ea !important; color:#087f52 !important;
+    display:grid !important; place-items:center !important;
+  }
+  .resident-services-page [class*="141f38"] > button:nth-child(4n+2) > div:first-child > div:first-child{ background:#f7ecc9 !important; color:#8a6500 !important; }
+  .resident-services-page [class*="141f38"] > button:nth-child(4n+3) > div:first-child > div:first-child{ background:#e4eef8 !important; color:#2563a8 !important; }
+  .resident-services-page [class*="141f38"] > button:nth-child(4n+4) > div:first-child > div:first-child{ background:#f7e7e7 !important; color:#a34b58 !important; }
+  .resident-services-page [class*="141f38"] > button > div:first-child > div:last-child{ color:#243528 !important; }
   .resident-services-page [class*="141f38"] > button[class*="bg-brand-600"]{ background:linear-gradient(150deg,#16a34a,#087f52) !important; color:#fff !important; border-color:transparent !important; }
+  .resident-services-page [class*="141f38"] > button[class*="bg-brand-600"] > div:first-child > div:first-child{ background:rgba(255,255,255,.2) !important; color:#fff !important; }
+  .resident-services-page [class*="141f38"] > button[class*="bg-brand-600"] > div:first-child > div:last-child{ color:#fff !important; }
   .resident-services-page [class*="141f38"] > button:not([class*="bg-brand-600"]) > div{ color:#087f52 !important; }
   .resident-services-page [class*="141f38"] [class*="text-ink-400"]{ color:#5b6b61 !important; }
   .dark .resident-services-page [class*="141f38"] > button{ background:#0f1a14 !important; color:#d6e7da !important; border-color:rgba(255,255,255,.09) !important; }
