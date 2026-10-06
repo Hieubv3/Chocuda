@@ -2267,15 +2267,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
           onLogout={onLogout}
           groups={[
           {
-            title: '🏠 Bất động sản',
+            title: '🏠 BĐS & Nội dung thị trường',
             items: [
               { key: 'bds-add', label: '＋ Thêm bài đăng mới', active: false, onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('all'); setIsAddingProperty(true); }) },
               { key: 'bds-all', label: 'Bài đăng BĐS (tất cả)', active: activeTab === 'properties' && propertySubFilter === 'all', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('all'); }) },
               { key: 'bds-sale', label: 'BĐS Mua Bán', active: activeTab === 'properties' && propertySubFilter === 'sale', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); }) },
               { key: 'bds-rent', label: 'BĐS Cho Thuê', active: activeTab === 'properties' && propertySubFilter === 'rent', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('rent'); }) },
               { key: 'bds-pending', label: '⏳ Chờ duyệt', active: activeTab === 'properties' && propertySubFilter === 'pending', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('pending'); }) },
-              { key: 'bds-projects', label: 'Dự án & Mặt bằng', active: activeTab === 'projects', onClick: () => goMobileTab(() => setActiveTab('projects')) },
-              { key: 'bds-news', label: 'Tin tức', active: activeTab === 'news', onClick: () => goMobileTab(() => setActiveTab('news')) },
+              { key: 'bds-projects', label: 'Quản lý Dự án & Mặt bằng', active: activeTab === 'projects', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('projects'); }) },
+              { key: 'bds-news', label: 'Bản tin thị trường', active: activeTab === 'news', onClick: () => goMobileTab(() => { handleSelectMainTab('bds'); setActiveTab('news'); }) },
+              { key: 'bds-ai-writer', label: 'AI soạn bài BĐS', active: false, onClick: () => goMobileTab(onOpenAiWriter) },
               { key: 'bds-pricing', label: 'Bảng giá up-tin', active: activeTab === 'pricing', onClick: () => goMobileTab(() => setActiveTab('pricing')) },
               { key: 'bds-aff', label: 'Affiliate', active: activeTab === 'affiliate_mgmt', onClick: () => goMobileTab(() => setActiveTab('affiliate_mgmt')) },
               { key: 'bds-faq', label: 'FAQ', active: activeTab === 'faq', onClick: () => goMobileTab(() => setActiveTab('faq')) }
