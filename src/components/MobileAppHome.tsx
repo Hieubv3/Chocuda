@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPropertyDetailUrl } from '../lib/slugs';
 
@@ -20,6 +20,7 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], n
   const featured = (properties || []).slice(0, 6);
   const topServices = (services || []).slice(0, 6);
   const topNews = (news || []).slice(0, 3);
+  const [isCategoryExpanded, setIsCategoryExpanded] = useState(false);
 
   const cells: { icon: string; label: string; tag?: string; to: string }[] = [
     { icon: '👥', label: 'Cộng đồng', to: '/cong-dong' },
@@ -35,6 +36,7 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], n
     { icon: '🗺', label: 'Về chúng tôi', to: '/ve-chung-toi' },
     { icon: '📌', label: 'Sơ đồ web', to: '/sitemap' },
   ];
+  const visibleCells = isCategoryExpanded ? cells : cells.slice(0, 8);
 
   return (
     <div className="mapp-only">
@@ -53,13 +55,18 @@ export const MobileAppHome: React.FC<MobileAppHomeProps> = ({ properties = [], n
             <span className="mapp-eyebrow2">Tất cả chức năng</span>
             <div className="mapp-title2">Danh mục chính</div>
           </div>
-          <button style={{ fontSize: 12, fontWeight: 800, color: '#12a150', background: 'none', border: 0, cursor: 'pointer' }} onClick={() => navigate('/sitemap')}>
-            Xem tất cả →
-          </button>
+          <div className="mapp-section-actions">
+            <button className="mapp-section-toggle" type="button" aria-expanded={isCategoryExpanded} onClick={() => setIsCategoryExpanded(value => !value)}>
+              {isCategoryExpanded ? 'Thu gọn ↑' : 'Mở rộng ↓'}
+            </button>
+            <button className="mapp-section-link" type="button" onClick={() => navigate('/sitemap')}>
+              Xem tất cả →
+            </button>
+          </div>
         </div>
 
         <div className="mapp-grid">
-          {cells.map((c) => (
+          {visibleCells.map((c) => (
             <button key={c.label} className="mapp-cell" onClick={() => navigate(c.to)}>
               <span className="mapp-cell-ic">{c.icon}</span>
               <span>{c.label}</span>

@@ -11,32 +11,32 @@
 .mapp-wrap{ max-width:1100px; margin:0 auto; padding:14px 14px 0; }
 
 .mapp-hero{
-  position:relative; overflow:hidden; border-radius:24px; padding:22px 20px; color:#fff;
+  position:relative; overflow:hidden; border-radius:24px; padding:22px 20px; color:#122016;
   background:
-    radial-gradient(120% 140% at 100% 0%, rgba(22,163,74,.55), transparent 55%),
-    radial-gradient(90% 120% at 0% 100%, rgba(182,145,44,.32), transparent 55%),
-    linear-gradient(150deg,#166534,#14532d 80%);
-  box-shadow:0 18px 36px rgba(15,120,63,.22);
+    radial-gradient(120% 140% at 100% 0%, rgba(135,220,164,.42), transparent 55%),
+    radial-gradient(90% 120% at 0% 100%, rgba(246,217,122,.30), transparent 55%),
+    linear-gradient(150deg,#e4f5e9,#f4f8ed 80%);
+  border:1px solid #cfe7d7; box-shadow:0 18px 36px rgba(15,120,63,.12);
 }
 .mapp-hero::after{
   content:""; position:absolute; inset:0; opacity:.10; pointer-events:none;
-  background-image:repeating-linear-gradient(115deg, transparent 0 34px, rgba(240,223,168,.9) 34px 35px);
+  background-image:repeating-linear-gradient(115deg, transparent 0 34px, rgba(22,101,52,.35) 34px 35px);
 }
 .mapp-eyebrow{
   position:relative; z-index:1; display:inline-flex; align-items:center; gap:6px;
-  color:#ffe9a8; font-size:11px; font-weight:700; letter-spacing:.3px;
-  background:rgba(255,255,255,.12); padding:5px 11px; border-radius:999px;
+  color:#166534; font-size:11px; font-weight:800; letter-spacing:.3px;
+  background:#d9f3e1; padding:5px 11px; border-radius:999px;
 }
 .mapp-hero h2{
   position:relative; z-index:1; margin:10px 0 8px; font-weight:800; letter-spacing:-.3px;
   font-size:22px; line-height:1.15;
 }
-.mapp-hero p{ position:relative; z-index:1; color:#dcebe1; font-size:12.5px; line-height:1.6; }
+.mapp-hero p{ position:relative; z-index:1; color:#53665a; font-size:12.5px; line-height:1.6; }
 .mapp-hero-btn{
   position:relative; z-index:1; display:inline-flex; align-items:center; gap:6px;
   margin-top:14px; padding:10px 16px; border-radius:999px; font-size:12.5px; font-weight:800;
-  background:linear-gradient(135deg,#ffe9a8,#ffffff); color:#166534;
-  box-shadow:0 10px 22px rgba(0,0,0,.18); cursor:pointer; border:0;
+  background:linear-gradient(135deg,#16a34a,#087f52); color:#fff;
+  box-shadow:0 10px 22px rgba(15,120,63,.18); cursor:pointer; border:0;
 }
 
 .mapp-search{
@@ -91,11 +91,21 @@
 .mapp-strip-card em{ font-style:normal; font-size:10px; color:#5b6b61; }
 
 .mapp-section-head{ display:flex; align-items:baseline; justify-content:space-between; margin:18px 2px 10px; }
+.mapp-section-actions{ display:flex; align-items:center; gap:8px; }
+.mapp-section-toggle, .mapp-section-link{ border:0; background:transparent; color:#087f52; cursor:pointer; font-size:11px; font-weight:800; white-space:nowrap; padding:5px 2px; }
+.mapp-section-toggle{ padding:5px 9px; border:1px solid #cfe7d7; border-radius:999px; background:#eaf7ef; }
 .mapp-eyebrow2{ display:block; font-size:10px; font-weight:800; color:#d99a06; letter-spacing:.5px; text-transform:uppercase; margin-bottom:2px; }
 .mapp-title2{ font-size:17px; font-weight:800; letter-spacing:-.2px; color:#122016; }
 .dark .mapp-title2{ color:#eef7f0; }
 
-.mapp-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:9px; }
+.mapp-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:9px; padding:10px; border:1px solid #cfe7d7; border-radius:22px; background:#eaf7ef; }
+.dark .mapp-hero{ background:linear-gradient(150deg,#102b1d,#0f1a14 80%); border-color:rgba(143,227,176,.18); color:#eef7f0; }
+.dark .mapp-hero p{ color:#cde7d7; }
+.dark .mapp-hero::after{ background-image:repeating-linear-gradient(115deg, transparent 0 34px, rgba(143,227,176,.35) 34px 35px); }
+.dark .mapp-eyebrow{ background:rgba(22,163,74,.18); color:#a7f3c2; }
+.dark .mapp-grid{ background:#102b1d; border-color:rgba(143,227,176,.18); }
+.dark .mapp-section-toggle{ background:rgba(22,163,74,.18); border-color:rgba(143,227,176,.25); color:#a7f3c2; }
+.dark .mapp-section-link{ color:#8fe3b0; }
 .mapp-cell{
   border:1px solid #d9e9de; background:#fff; border-radius:16px; padding:12px 4px;
   display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;
@@ -449,4 +459,49 @@
   .mapp-header-drawer .mapp-header-admin-link{
     margin-top:5px; border-top:1px solid #d9e9de; border-radius:0 0 12px 12px; color:#047857;
   }
+}
+
+/* ---------- RESIDENT SERVICES: mobile app skin ---------- */
+@media (max-width:767.98px){
+  .resident-services-page{ background:#f8faf5 !important; }
+  .dark .resident-services-page{ background:#0a100d !important; }
+  .resident-services-page > section:first-child{
+    background:linear-gradient(150deg,#e4f5e9,#f4f8ed 80%) !important;
+    color:#122016 !important; border:1px solid #cfe7d7 !important;
+    border-radius:0 0 24px 24px !important; box-shadow:0 12px 26px rgba(15,120,63,.10);
+    padding:18px 14px !important;
+  }
+  .dark .resident-services-page > section:first-child{ background:linear-gradient(150deg,#102b1d,#0f1a14 80%) !important; border-color:rgba(143,227,176,.18) !important; }
+  .resident-services-page > section:first-child h1{ color:#122016 !important; font-size:18px !important; }
+  .dark .resident-services-page > section:first-child h1{ color:#eef7f0 !important; }
+  .resident-services-page > section:first-child p{ color:#53665a !important; }
+  .dark .resident-services-page > section:first-child p{ color:#cde7d7 !important; }
+  .resident-services-page > section:first-child [class*="bg-brand-500/20"]{ background:#d9f3e1 !important; color:#166534 !important; border-color:#b9e3c8 !important; }
+  .dark .resident-services-page > section:first-child [class*="bg-brand-500/20"]{ background:rgba(22,163,74,.18) !important; color:#a7f3c2 !important; border-color:rgba(143,227,176,.25) !important; }
+  .resident-services-page > section:first-child [class~="bg-ink-800/90"],
+  .resident-services-page > section:first-child [class~="bg-ink-900"]{ background:#fff !important; color:#166534 !important; border-color:#cfe7d7 !important; }
+  .resident-services-page > section:first-child [class~="bg-ink-800/90"] span,
+  .resident-services-page > section:first-child [class~="bg-ink-900"] span{ color:#166534 !important; }
+  .dark .resident-services-page > section:first-child [class~="bg-ink-800/90"],
+  .dark .resident-services-page > section:first-child [class~="bg-ink-900"]{ background:#0f1a14 !important; color:#d6e7da !important; border-color:rgba(143,227,176,.18) !important; }
+  .dark .resident-services-page > section:first-child [class~="bg-ink-800/90"] span,
+  .dark .resident-services-page > section:first-child [class~="bg-ink-900"] span{ color:#d6e7da !important; }
+
+  .resident-services-page [class*="141f38"]{
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:8px !important; padding:10px !important;
+    border-radius:22px !important; background:#eaf7ef !important; border:1px solid #cfe7d7 !important;
+    box-shadow:0 10px 24px rgba(15,120,63,.08);
+  }
+  .dark .resident-services-page [class*="141f38"]{ background:#102b1d !important; border-color:rgba(143,227,176,.18) !important; }
+  .resident-services-page [class*="141f38"] > button{
+    min-height:76px !important; padding:9px 4px !important; border-radius:16px !important;
+    background:#fff !important; color:#243528 !important; border:1px solid #d9e9de !important;
+    box-shadow:0 5px 12px rgba(15,120,63,.06);
+  }
+  .resident-services-page [class*="141f38"] > button[class*="bg-brand-600"]{ background:linear-gradient(150deg,#16a34a,#087f52) !important; color:#fff !important; border-color:transparent !important; }
+  .resident-services-page [class*="141f38"] > button:not([class*="bg-brand-600"]) > div{ color:#087f52 !important; }
+  .resident-services-page [class*="141f38"] [class*="text-ink-400"]{ color:#5b6b61 !important; }
+  .dark .resident-services-page [class*="141f38"] > button{ background:#0f1a14 !important; color:#d6e7da !important; border-color:rgba(255,255,255,.09) !important; }
+  .resident-services-page > div.max-w-7xl{ margin-top:18px !important; padding-left:14px !important; padding-right:14px !important; gap:16px !important; }
+  .resident-services-page [class*="bg-white"][class*="rounded-2xl"]:has(> div.relative){ border-radius:20px !important; box-shadow:0 10px 24px rgba(15,120,63,.08) !important; }
 }
