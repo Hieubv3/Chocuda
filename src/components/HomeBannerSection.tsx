@@ -53,11 +53,11 @@ export const HomeBannerSection: React.FC<HomeBannerSectionProps> = ({
     { id: 'recruitment', title: 'Việc Làm Nội Khu', sub: 'Tuyển dụng & tìm việc làm', Icon: Briefcase, tile: 'from-indigo-500/20 to-purple-500/20 border-indigo-500/40', ic: 'text-indigo-400', bd: 'border-indigo-500/30 hover:border-indigo-400/70', hv: 'group-hover:text-indigo-300' },
   ];
   return (
-    <section className="pt-2 sm:pt-4 pb-2 px-3 sm:px-6 lg:px-8 max-w-[1440px] mx-auto w-full">
-      <div className="bg-[#16284e] rounded-2xl p-4 sm:p-5 shadow-2xl border border-ink-700/50">
+    <section className="pt-2 sm:pt-4 pb-2 px-3 sm:px-6 lg:px-0 lg:max-w-none mx-auto w-full">
+      <div className="bg-[#16284e] rounded-2xl p-4 sm:p-5 shadow-2xl border border-ink-700/50 lg:rounded-none lg:border-0 lg:shadow-none lg:p-0">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-stretch">
-          <div className="lg:col-span-8 flex flex-col">
-            <div className="relative min-h-[175px] sm:min-h-[195px] md:min-h-[210px] w-full rounded-xl overflow-hidden border border-ink-700/60 shadow-lg flex items-center">
+          <div className="lg:col-span-9 flex flex-col">
+            <div className="relative min-h-[175px] sm:min-h-[195px] md:min-h-[210px] w-full rounded-xl lg:rounded-none overflow-hidden border border-ink-700/60 lg:border-0 shadow-lg lg:shadow-none flex items-center">
               <img src={img} alt="Kết nối cư dân Vinhomes" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0d172e]/95 via-[#0d172e]/80 to-transparent" />
               <div className="relative z-10 px-5 sm:px-8 max-w-xl space-y-1.5">
@@ -80,7 +80,7 @@ export const HomeBannerSection: React.FC<HomeBannerSectionProps> = ({
               ))}
             </div>
           </div>
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-3">
             <div className="w-full bg-[#0d172e] rounded-xl border border-ink-700/60 overflow-hidden shadow-lg h-full">
               <FeedModule title="BĐS Mới" count={properties.length} header="bg-orange-600" countCls="bg-orange-900/60" hover="group-hover:text-brand-400" empty="Chưa có tin" items={properties.slice(0, 3)} onItem={() => onNavigateTab('sale')} />
               <FeedModule title="Tin Tức Mới" count={news.length} header="bg-purple-600" countCls="bg-purple-900/60" hover="group-hover:text-purple-300" empty="Chưa có tin tức" items={news.slice(0, 3)} onItem={() => onNavigateTab('news')} />
