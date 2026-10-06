@@ -5666,7 +5666,7 @@ YÊU CẦU ĐẦU RA DUY NHẤT LÀ JSON OBJECT VỚI CẤU TRÚC:
 
 // Gemini AI Content Generation Endpoint
 app.post("/api/ai/generate-article", async (req, res) => {
-  const { topic, category, language, promptType } = req.body;
+  const { topic, category, language, promptType, basicInfo, strengths, limitations, audience, seoKeyword, competitor, monthlyIncome } = req.body;
 
   try {
     const ai = getGeminiClient();
@@ -5682,12 +5682,30 @@ app.post("/api/ai/generate-article", async (req, res) => {
         Nêu bật lợi thế vị trí, tiện ích đẳng cấp, khả năng kinh doanh hoặc tiềm năng tăng giá. Ngôn ngữ: ${language || "Tiếng Việt"}. 
         Trả về kết quả dưới dạng JSON có các trường: title, summary, content (dạng HTML hoặc markdown nhẹ).`;
     } else {
-      prompt = `Viết bài phân tích chuyên sâu tin tức thị trường BĐS chuẩn SEO dành cho website Chợ Cư Dân 24h (chocudan24h.com).
-        Chủ đề bài viết: "${topic}".
-        Danh mục: "${category || "vinhomes"}".
-        Yêu cầu: Văn phong chuyên nghiệp, tin cậy, am hiểu quy hoạch Vinhomes Ocean Park 1, 2, 3 và Hạ Long Xanh.
-        Ngôn ngữ: ${language || "Tiếng Việt"}.
-        Trả về kết quả dưới dạng JSON object với các keys: "title", "summary", "content".`;
+      prompt = `Vai trò: Bạn là chuyên gia tư vấn bất động sản thực chiến với 10 năm kinh nghiệm tại thị trường Việt Nam.
+      Giọng văn khách quan, sắc bén, chuyên nghiệp, đáng tin cậy. Tuyệt đối không dùng các cụm PR sáo rỗng như "vị trí đắc địa", "cơ hội ngàn vàng", "siêu phẩm".
+
+      Nhiệm vụ: Viết bài đánh giá/phân tích chuẩn SEO dài khoảng 1.200 từ về "${topic}" cho website Chợ Cư Dân 24h.
+      Độc giả chính: ${audience || "chưa xác định"}.
+      Từ khóa SEO chính: ${seoKeyword || "tự chọn tự nhiên theo chủ đề"}.
+      Danh mục: ${category || "vinhomes"}; Ngôn ngữ: ${language || "Tiếng Việt"}.
+
+      Dữ liệu người biên tập cung cấp (chỉ được dùng dữ liệu có thật bên dưới; không tự bịa số liệu, giá, khoảng cách, pháp lý hoặc tiến độ):
+      - Thông tin cơ bản: ${basicInfo || "Chưa có dữ liệu xác minh; phải ghi rõ phần nào cần kiểm chứng."}
+      - Điểm mạnh thực tế: ${strengths || "Chưa có dữ liệu khảo sát."}
+      - Hạn chế/nhược điểm: ${limitations || "Chưa có dữ liệu khảo sát."}
+      - Dự án/khu vực so sánh: ${competitor || "Chưa chỉ định; nếu không có dữ liệu thì không được tự dựng so sánh định lượng."}
+      - Thu nhập để tính phương án vay: ${monthlyIncome || "Chưa cung cấp; không tự ước tính khả năng trả nợ."} triệu đồng/tháng.
+
+      Cấu trúc bắt buộc:
+      1. Mở bài (Sapo): 3 câu đầu đi thẳng vào giá bán/hiện trạng và nhận định, có từ khóa chính.
+      2. H2 đánh giá vị trí và hạ tầng: phân tích khoảng cách, thời gian di chuyển và giao thông; nếu thiếu dữ liệu phải nêu rõ chưa xác minh.
+      3. H2 ưu điểm thực tế và H2 hạn chế/rủi ro.
+      4. H2 so sánh trực tiếp với đối thủ ${competitor || "được cung cấp"}; không bịa dữ liệu đối thủ.
+      5. H2 bài toán tài chính: nêu giả định, tiền tự có, khoản vay, lãi suất và nghĩa vụ trả nợ; chỉ tính khi có dữ liệu, nếu thiếu thì đưa công thức và cảnh báo.
+      6. H2 chân dung người nên mua/không nên mua và H2 kết luận chuyên gia.
+      Dùng H2/H3 rõ ràng, bullet points, in đậm con số/giá tiền/thông tin quan trọng. Phân biệt rõ dữ liệu được cung cấp, nhận định chuyên gia và thông tin cần kiểm chứng.
+      Trả về JSON object hợp lệ, chỉ gồm các keys: "title", "summary", "content"; content là Markdown nhẹ.`;
     }
 
     const response = await ai.models.generateContent({

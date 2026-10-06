@@ -9,6 +9,13 @@ interface AiWriterModalProps {
 
 export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublishNews }) => {
   const [topic, setTopic] = useState('Đánh giá tiềm năng tăng giá Shophouse Chà Là Vinhomes Ocean Park 2 năm 2026');
+  const [basicInfo, setBasicInfo] = useState('');
+  const [strengths, setStrengths] = useState('');
+  const [limitations, setLimitations] = useState('');
+  const [audience, setAudience] = useState('Người mua để ở');
+  const [seoKeyword, setSeoKeyword] = useState('');
+  const [competitor, setCompetitor] = useState('');
+  const [monthlyIncome, setMonthlyIncome] = useState('');
   const [category, setCategory] = useState<'vinhomes' | 'quy-hoach' | 'thi-truong' | 'kinh-nghiem'>('vinhomes');
   const [language, setLanguage] = useState<'Tiếng Việt' | 'English' | 'Chinese'>('Tiếng Việt');
   const [loading, setLoading] = useState(false);
@@ -32,7 +39,14 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
           topic,
           category,
           language,
-          promptType: 'article'
+          promptType: 'article',
+          basicInfo,
+          strengths,
+          limitations,
+          audience,
+          seoKeyword,
+          competitor,
+          monthlyIncome
         })
       });
 
@@ -111,6 +125,26 @@ export const AiWriterModal: React.FC<AiWriterModalProps> = ({ onClose, onPublish
               placeholder="Nhập chủ đề (Ví dụ: Phân tích tiềm năng cho thuê căn hộ Ocean Park 3...)"
               className="w-full p-3 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl font-medium focus:ring-2 focus:ring-brand-500"
             />
+          </div>
+
+          <div className="rounded-2xl border border-brand-200 dark:border-brand-900/60 bg-brand-50/70 dark:bg-ink-800/60 p-3 space-y-3">
+            <div className="flex items-center gap-2 text-brand-700 dark:text-brand-300 font-black"><Globe className="w-4 h-4" /> Dữ liệu thực tế để AI không viết chung chung</div>
+            <textarea rows={2} value={basicInfo} onChange={(e) => setBasicInfo(e.target.value)} placeholder="Thông tin cơ bản: vị trí chính xác, chủ đầu tư, quy mô, giá bán dự kiến, pháp lý..." className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-medium" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <textarea rows={3} value={strengths} onChange={(e) => setStrengths(e.target.value)} placeholder="Điểm mạnh thực tế khi khảo sát (hạ tầng, đường, tiện ích, pháp lý...)" className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-medium" />
+              <textarea rows={3} value={limitations} onChange={(e) => setLimitations(e.target.value)} placeholder="Hạn chế/nhược điểm: khoảng cách, kẹt xe, phí, thanh khoản..." className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-medium" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input value={seoKeyword} onChange={(e) => setSeoKeyword(e.target.value)} placeholder="Từ khóa SEO chính" className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-medium" />
+              <input value={competitor} onChange={(e) => setCompetitor(e.target.value)} placeholder="Dự án/khu vực so sánh trực tiếp" className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-medium" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <select value={audience} onChange={(e) => setAudience(e.target.value)} className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-semibold">
+                <option>Người mua để ở</option><option>Nhà đầu tư lướt sóng</option><option>Nhà đầu tư dài hạn</option>
+              </select>
+              <input value={monthlyIncome} onChange={(e) => setMonthlyIncome(e.target.value)} placeholder="Thu nhập/tháng để tính vay (triệu)" className="w-full p-3 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl font-medium" />
+            </div>
+            <p className="text-[10px] text-ink-500 dark:text-ink-400">Có thể để trống. AI sẽ ghi rõ “chưa có dữ liệu xác minh” thay vì tự bịa số liệu.</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

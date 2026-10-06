@@ -513,7 +513,7 @@ export const ResidentServicesPage: React.FC<ResidentServicesPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
+    <div className="resident-services-page min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       
       {/* 1. HERO BANNER & HEADER SECTION */}
       <section className="bg-[#16284e] text-white relative py-4 px-3 sm:px-6 lg:px-8 border-b border-ink-700/60 z-20">
