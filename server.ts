@@ -7693,6 +7693,33 @@ app.get('/api/admin/email/status', authenticateToken, requireAdmin, async (_req,
   }
 });
 
+// Tổng quan admin: số liệu nhanh cho trang 0. Tổng Quan
+app.get('/api/admin/overview', authenticateToken, requireAdmin, async (_req, res) => {
+  try {
+    let unreadEmails = 0;
+    try {
+      const inbox = await resendApi('/emails/receiving?limit=100');
+      const list: any[] = inbox?.data || [];
+      unreadEmails = list.filter((e: any) => e.read === false).length;
+    } catch { /* Resend chưa sẵn sàng thì coi như 0 */ }
+    res.json({
+      ok: true,
+      pendingProperties: propertiesStore.filter((p: any) => p.status === 'pending').length,
+      totalProperties: propertiesStore.length,
+      newOrders: storeOrdersStore.filter((o: any) => o.orderStatus === 'new').length,
+      totalOrders: storeOrdersStore.length,
+      unreadEmails,
+      newLeads: contactsStore.filter((c: any) => c.status === 'new').length,
+      totalLeads: contactsStore.length,
+      totalUsers: usersStore.length,
+      stores: storesStore.length,
+      reputationPosts: reputationPostsStore.length
+    });
+  } catch (e: any) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 // Kích hoạt Resend kiểm tra lại DNS
 app.post('/api/admin/email/verify', authenticateToken, requireAdmin, async (_req, res) => {
   try {
