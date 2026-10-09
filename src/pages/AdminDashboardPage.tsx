@@ -107,6 +107,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   >('properties');
   const [devSubTab, setDevSubTab] = useState('matbang');
   const [sidebarSearch, setSidebarSearch] = useState('');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarProjectsOpen, setSidebarProjectsOpen] = useState(false);
+  const [sidebarExpandedProjects, setSidebarExpandedProjects] = useState<Set<string>>(new Set());
+  const [isSubNavDropdownOpen, setIsSubNavDropdownOpen] = useState(false);
+
+  const toggleSidebarProject = (projectId: string) => {
+    setSidebarExpandedProjects((prev) => {
+      const next = new Set(prev);
+      if (next.has(projectId)) next.delete(projectId);
+      else next.add(projectId);
+      return next;
+    });
+  };
 
   // Compute active main category (Phân rõ các tab riêng biệt không bị gộp chung)
   const effectiveMainTab: 'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' | 'system' | 'overview' = (() => {
@@ -118,7 +131,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (['stores_mgmt', 'orders_mgmt', 'package_orders_mgmt', 'resident_finance', 'partners_reputation', 'reputation'].includes(activeTab)) return 'resident_market';
     if (['users', 'leads', 'enterprise_core', 'business_mgmt'].includes(activeTab)) return 'users_leads';
     if (activeTab === 'ads') return 'ads';
-    if (['site_settings', 'analytics', 'seo', 'marketing', 'zalo', 'n8n', 'ads', 'trash', 'activity_history', 'support_inbox'].includes(activeTab)) return 'tools';
+    if (['analytics', 'seo'].includes(activeTab)) return 'system';
+    if (['site_settings', 'marketing', 'zalo', 'n8n', 'ads', 'trash', 'activity_history', 'support_inbox'].includes(activeTab)) return 'tools';
     return 'tools';
   })();
 
@@ -128,7 +142,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { window.scrollTo(0, 0); }
     }
-    if (tab === 'bds') {
     if (tab === 'overview') {
       setActiveTab('overview');
     } else if (tab === 'bds') {
@@ -160,6 +173,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       setActiveTab('ads');
     } else if (tab === 'tools') {
       if (!['analytics', 'seo', 'marketing', 'zalo', 'n8n', 'ads', 'site_settings', 'trash', 'activity_history', 'support_inbox'].includes(activeTab)) {
+        setActiveTab('analytics');
+      }
     } else if (tab === 'system') {
       if (!['analytics', 'seo'].includes(activeTab)) {
         setActiveTab('analytics');
@@ -2077,6 +2092,46 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     }
   };
 
+  const normSearch = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const NAV_SEARCH_ITEMS: Array<{ label: string; group: string; go: () => void }> = [
+    { label: 'Tổng Quan', group: '0. Tổng Quan', go: () => handleSelectMainTab('overview') },
+    { label: 'Tất Cả BĐS', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('all'); } },
+    { label: 'Mua Bán', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); } },
+    { label: 'Cho Thuê', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('rent'); } },
+    { label: 'Chờ Duyệt', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('pending'); } },
+    { label: 'Dự Án & Mặt Bằng', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('projects'); } },
+    { label: 'Tin Tức & Bài Viết', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('news'); } },
+    { label: 'Q&A / FAQ', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('faq'); } },
+    { label: 'Giá Đăng Tin & Affiliate', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('pricing'); } },
+    { label: 'Dashboard', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('dashboard'); } },
+    { label: 'Mặt Bằng & Bảng Hàng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('matbang'); } },
+    { label: 'Import Sheet', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('import'); } },
+    { label: 'Sơ Đồ Mặt Bằng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('sodo'); } },
+    { label: 'Danh Sách Căn', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('danhsach'); } },
+    { label: 'Chính Sách Bán Hàng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('chinhsach'); } },
+    { label: 'Đợt Thanh Toán', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('dottt'); } },
+    { label: 'Ngân Hàng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('nganhang'); } },
+    { label: 'Export', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('export'); } },
+    { label: 'Dịch Vụ Cư Dân', group: '3. Thợ & Dịch Vụ', go: () => handleSelectMainTab('technicians') },
+    { label: 'Quản Lý Tuyển Dụng', group: '4. Tuyển Dụng & CV', go: () => handleSelectMainTab('recruitment') },
+    { label: 'Gian Hàng & Shop', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); } },
+    { label: 'Quản Lý Đơn Hàng', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('orders_mgmt'); } },
+    { label: 'Gói Tiện Ích Cư Dân', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('package_orders_mgmt'); } },
+    { label: 'Doanh Thu & Quyết Toán', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('resident_finance'); } },
+    { label: 'Đánh Giá Uy Tín', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('partners_reputation'); } },
+    { label: 'Bảng Tin Cộng Đồng', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('reputation'); } },
+    { label: 'Danh Sách Thành Viên', group: '6. Thành Viên & Khách', go: () => { handleSelectMainTab('users_leads'); setActiveTab('users'); } },
+    { label: 'Khách Hẹn Xem Nhà', group: '6. Thành Viên & Khách', go: () => { handleSelectMainTab('users_leads'); setActiveTab('leads'); } },
+    { label: 'Phân Quyền & Quản Trị', group: '6. Thành Viên & Khách', go: () => { handleSelectMainTab('users_leads'); setActiveTab('enterprise_core'); } },
+    { label: 'Banner Quảng Cáo', group: '7. Quảng Cáo & Banner', go: () => handleSelectMainTab('ads') },
+    { label: 'Trung Tâm Email', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('email'); } },
+    { label: 'Cộng Đồng Zalo', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('zalo'); } },
+    { label: 'Truyền Thông & Social', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('marketing'); } },
+    { label: 'Tự Động Hóa n8n', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('n8n'); } },
+    { label: 'Thống Kê Truy Cập', group: '9. Hệ Thống & Phân Tích', go: () => { handleSelectMainTab('system'); setActiveTab('analytics'); } },
+    { label: 'Tối Ưu SEO', group: '9. Hệ Thống & Phân Tích', go: () => { handleSelectMainTab('system'); setActiveTab('seo'); } }
+  ];
+
   return (
     <div className={`cd24-admin cd24-admin-shell${mobileTabFocus ? ' cd24-mobile-focus' : ''} max-w-[1550px] mx-auto px-3 sm:px-5 lg:px-6 py-4 space-y-3`}>
       
@@ -2901,47 +2956,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 {children.map((child) => {
                                   const cExpanded = sidebarExpandedProjects.has(child.id);
                                   const cSubs = child.subdivisions || [];
-// ===== Tìm kiếm chức năng (sidebar) =====
-  const normSearch = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const NAV_SEARCH_ITEMS: Array<{ label: string; group: string; go: () => void }> = [
-    { label: 'Tổng Quan', group: '0. Tổng Quan', go: () => handleSelectMainTab('overview') },
-    { label: 'Tất Cả BĐS', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('all'); } },
-    { label: 'Mua Bán', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); } },
-    { label: 'Cho Thuê', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('rent'); } },
-    { label: 'Chờ Duyệt', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('pending'); } },
-    { label: 'Dự Án & Mặt Bằng', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('projects'); } },
-    { label: 'Tin Tức & Bài Viết', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('news'); } },
-    { label: 'Q&A / FAQ', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('faq'); } },
-    { label: 'Giá Đăng Tin & Affiliate', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('pricing'); } },
-    { label: 'Dashboard', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('dashboard'); } },
-    { label: 'Mặt Bằng & Bảng Hàng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('matbang'); } },
-    { label: 'Import Sheet', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('import'); } },
-    { label: 'Sơ Đồ Mặt Bằng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('sodo'); } },
-    { label: 'Danh Sách Căn', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('danhsach'); } },
-    { label: 'Chính Sách Bán Hàng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('chinhsach'); } },
-    { label: 'Đợt Thanh Toán', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('dottt'); } },
-    { label: 'Ngân Hàng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('nganhang'); } },
-    { label: 'Export', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('export'); } },
-    { label: 'Dịch Vụ Cư Dân', group: '3. Thợ & Dịch Vụ', go: () => handleSelectMainTab('technicians') },
-    { label: 'Quản Lý Tuyển Dụng', group: '4. Tuyển Dụng & CV', go: () => handleSelectMainTab('recruitment') },
-    { label: 'Gian Hàng & Shop', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); } },
-    { label: 'Quản Lý Đơn Hàng', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('orders_mgmt'); } },
-    { label: 'Gói Tiện Ích Cư Dân', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('package_orders_mgmt'); } },
-    { label: 'Doanh Thu & Quyết Toán', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('resident_finance'); } },
-    { label: 'Đánh Giá Uy Tín', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('partners_reputation'); } },
-    { label: 'Bảng Tin Cộng Đồng', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('reputation'); } },
-    { label: 'Danh Sách Thành Viên', group: '6. Thành Viên & Khách', go: () => { handleSelectMainTab('users_leads'); setActiveTab('users'); } },
-    { label: 'Khách Hẹn Xem Nhà', group: '6. Thành Viên & Khách', go: () => { handleSelectMainTab('users_leads'); setActiveTab('leads'); } },
-    { label: 'Phân Quyền & Quản Trị', group: '6. Thành Viên & Khách', go: () => { handleSelectMainTab('users_leads'); setActiveTab('enterprise_core'); } },
-    { label: 'Banner Quảng Cáo', group: '7. Quảng Cáo & Banner', go: () => handleSelectMainTab('ads') },
-    { label: 'Trung Tâm Email', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('email'); } },
-    { label: 'Cộng Đồng Zalo', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('zalo'); } },
-    { label: 'Truyền Thông & Social', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('marketing'); } },
-    { label: 'Tự Động Hóa n8n', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('n8n'); } },
-    { label: 'Thống Kê Truy Cập', group: '9. Hệ Thống & Phân Tích', go: () => { handleSelectMainTab('system'); setActiveTab('analytics'); } },
-    { label: 'Tối Ưu SEO', group: '9. Hệ Thống & Phân Tích', go: () => { handleSelectMainTab('system'); setActiveTab('seo'); } }
-  ];
-
   return (
                                     <div key={child.id} className="space-y-0.5">
                                       <div
@@ -3568,6 +3582,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             )}
           </nav>
         </aside>
+        </div>
 
         {/* === CỘT NỘI DUNG CHÍNH (MAIN WORKSPACE AREA) === */}
         <div className="flex-1 min-w-0 w-full space-y-4">
@@ -9500,9 +9515,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </div>
       )}
 
-        </div>
-      </div>
-
       {/* Admin Tax Management Modal */}
       <AdminTaxManagementModal 
         isOpen={showTaxModal} 
@@ -10783,6 +10795,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         </button>
       )}
 
-    </div>
+        </div>
+      </div>
   );
 };

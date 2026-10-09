@@ -45,6 +45,7 @@ img[src=""], img:not([src]) {
     --primary-jade: #059669;
     --accent-thuy: #0284c7; /* Thủy sinh Mộc */
   }
+}
 
 .font-editorial {
   font-family: 'Newsreader', Georgia, Cambria, serif;
