@@ -3369,6 +3369,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </button>
                 </div>
               )}
+
+              {/* Nút Trung Tâm Email — luôn hiển thị, không cần mở nhóm Công Cụ */}
+              <button
+                onClick={() => setActiveTab('email')}
+                title="Trung Tâm Email"
+                className={`w-full mt-2 p-2.5 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  activeTab === 'email'
+                    ? 'bg-amber-500 text-slate-950 shadow-lg ring-1 ring-amber-400'
+                    : 'bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 shrink-0" />
+                  {!sidebarCollapsed && <span className="text-[11px] font-extrabold">Trung Tâm Email</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[9px] font-bold uppercase">Resend</span>
+                )}
+              </button>
             </div>
           </nav>
         </aside>
@@ -3376,6 +3397,87 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* === CỘT NỘI DUNG CHÍNH (MAIN WORKSPACE AREA) === */}
         <div className="flex-1 min-w-0 w-full space-y-4">
           
+          {/* Thanh chuyển đổi nhanh trên Mobile / Tablet (< lg) */}
+          <div className="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-2.5 shadow-md flex items-center justify-between gap-2">
+            <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
+              <Layers className="w-3.5 h-3.5" />
+              {effectiveMainTab === 'bds' && '1. Bất Động Sản'}
+              {effectiveMainTab === 'developer_units' && '2. Bảng Hàng CĐT'}
+              {effectiveMainTab === 'technicians' && '3. Thợ & Dịch Vụ'}
+              {effectiveMainTab === 'recruitment' && '4. Tuyển Dụng'}
+              {effectiveMainTab === 'resident_market' && '5. Chợ Cư Dân'}
+              {effectiveMainTab === 'users_leads' && '6. Thành Viên'}
+              {effectiveMainTab === 'ads' && '7. Banner QC'}
+              {effectiveMainTab === 'tools' && '8. Công Cụ'}
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsSubNavDropdownOpen(!isSubNavDropdownOpen)}
+              className="py-1 px-2.5 bg-amber-500 text-slate-950 font-black text-[11px] rounded-lg cursor-pointer"
+            >
+              {isSubNavDropdownOpen ? 'Đóng Menu ▲' : 'Chọn Phân Hệ ▼'}
+            </button>
+          </div>
+
+          {isSubNavDropdownOpen && (
+            <div className="lg:hidden bg-slate-950 border border-slate-800 rounded-2xl p-3 shadow-xl grid grid-cols-2 gap-1.5 text-xs animate-in fade-in duration-150">
+              <button
+                onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setIsSubNavDropdownOpen(false); }}
+                className="p-2 bg-slate-900 text-emerald-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <Building2 className="w-4 h-4" /> 1. BĐS ({properties.length})
+              </button>
+              <button
+                onClick={() => { handleSelectMainTab('developer_units'); setActiveTab('developer_units'); setDevSubTab('matbang'); setIsSubNavDropdownOpen(false); }}
+                className="p-2 bg-slate-900 text-violet-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <MapPin className="w-4 h-4" /> 2. Bảng Hàng CĐT
+              </button>
+              <button
+                onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); setIsSubNavDropdownOpen(false); }}
+                className="p-2 bg-slate-900 text-orange-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <Wrench className="w-4 h-4" /> 3. Thợ ({adminResidentServices.length})
+              </button>
+              <button
+                onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); setIsSubNavDropdownOpen(false); }}
+                className="p-2 bg-slate-900 text-teal-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <Briefcase className="w-4 h-4" /> 4. Tuyển Dụng
+              </button>
+              <button
+                onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); setIsSubNavDropdownOpen(false); }}
+                className="p-2 bg-slate-900 text-amber-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <Store className="w-4 h-4" /> 5. Chợ ({adminStores.length})
+              </button>
+              <button
+                onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('users'); setIsSubNavDropdownOpen(false); }}
+                className="p-2 bg-slate-900 text-blue-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <UserCheck className="w-4 h-4" /> 6. Thành Viên
+              </button>
+              <button
+                onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
+                className="p-2 bg-slate-900 text-rose-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <Sparkles className="w-4 h-4" /> 7. Quảng Cáo
+              </button>
+              <button
+                onClick={() => { handleSelectMainTab('tools'); setActiveTab('analytics'); setIsSubNavDropdownOpen(false); }}
+                className="col-span-2 p-2 bg-slate-900 text-indigo-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <Settings className="w-4 h-4" /> 8. Công Cụ & Bot Hệ Thống
+              </button>
+              <button
+                onClick={() => { setActiveTab('email'); setIsSubNavDropdownOpen(false); }}
+                className="col-span-2 p-2 bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <Mail className="w-4 h-4" /> Trung Tâm Email (Gửi & Nhận)
+              </button>
+            </div>
+           )}
+ 
       {/* ==================== TAB BẢNG HÀNG CĐT (MẶT BẰNG & BẢNG HÀNG CHỦ ĐẦU TƯ) ==================== */}
       {activeTab === 'developer_units' && (
         <DeveloperUnitsAdmin subTab={devSubTab} setSubTab={setDevSubTab} />
