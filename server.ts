@@ -9072,11 +9072,15 @@ app.get('/api/admin/email/status', authenticateToken, requireAdmin, async (_req,
 // Tổng quan admin: số liệu nhanh cho trang 0. Tổng Quan
 app.get('/api/admin/overview', authenticateToken, requireAdmin, async (_req, res) => {
   try {
-    let unreadEmails = 0;
+    let newEmails = 0;
     try {
       const inbox = await resendApi('/emails/receiving?limit=100');
       const list: any[] = inbox?.data || [];
-      unreadEmails = list.filter((e: any) => e.read === false).length;
+      const dayAgo = Date.now() - 24 * 3600 * 1000;
+      newEmails = list.filter((e: any) => {
+        const t = e?.created_at ? new Date(e.created_at).getTime() : 0;
+        return t >= dayAgo;
+      }).length;
     } catch { /* Resend chưa sẵn sàng thì coi như 0 */ }
     res.json({
       ok: true,
@@ -9084,7 +9088,7 @@ app.get('/api/admin/overview', authenticateToken, requireAdmin, async (_req, res
       totalProperties: propertiesStore.length,
       newOrders: storeOrdersStore.filter((o: any) => o.orderStatus === 'new').length,
       totalOrders: storeOrdersStore.length,
-      unreadEmails,
+      newEmails,
       newLeads: contactsStore.filter((c: any) => c.status === 'new').length,
       totalLeads: contactsStore.length,
       totalUsers: usersStore.length,

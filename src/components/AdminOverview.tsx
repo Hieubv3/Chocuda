@@ -9,7 +9,7 @@ interface OverviewData {
   totalProperties: number;
   newOrders: number;
   totalOrders: number;
-  unreadEmails: number;
+  newEmails: number;
   newLeads: number;
   totalLeads: number;
   totalUsers: number;
@@ -56,7 +56,7 @@ export default function AdminOverview({ onNavigate }: { onNavigate: (tab: string
   const cards: KpiCard[] = [
     { label: 'Tin chờ duyệt', value: data?.pendingProperties ?? 0, icon: FileText, tab: 'properties', sub: 'pending', hint: 'BĐS đang chờ duyệt' },
     { label: 'Đơn hàng mới', value: data?.newOrders ?? 0, icon: ShoppingBag, tab: 'orders_mgmt', hint: 'Chưa xác nhận' },
-    { label: 'Email chưa đọc', value: data?.unreadEmails ?? 0, icon: Mail, tab: 'email', hint: 'Resend inbox', highlight: true },
+    { label: 'Email mới 24h', value: data?.newEmails ?? 0, icon: Mail, tab: 'email', hint: 'Resend inbox', highlight: true },
     { label: 'Khách hẹn xem nhà', value: data?.newLeads ?? 0, icon: UserPlus, tab: 'leads', hint: 'Lead mới' },
     { label: 'Thành viên', value: data?.totalUsers ?? 0, icon: Users, tab: 'users', hint: 'Tổng tài khoản' },
   ];
@@ -167,14 +167,14 @@ export default function AdminOverview({ onNavigate }: { onNavigate: (tab: string
       </div>
 
       {/* Inbox teaser */}
-      {!loading && !error && (data?.unreadEmails ?? 0) > 0 && (
+      {!loading && !error && (data?.newEmails ?? 0) > 0 && (
         <button
           onClick={() => onNavigate('email')}
           className="mt-6 w-full flex items-center justify-between rounded-2xl bg-[#C66A32]/10 border border-[#C66A32]/30 px-4 py-3.5 hover:bg-[#C66A32]/15 transition"
         >
           <span className="flex items-center gap-2.5 text-sm font-bold text-[#102A43]">
             <Inbox className="w-4 h-4 text-[#C66A32]" />
-            Có {data?.unreadEmails} email chưa đọc trong hộp thư Resend
+            Có {data?.newEmails} email mới trong hộp thư Resend (24h qua)
           </span>
           <span className="flex items-center gap-1 text-xs font-bold text-[#C66A32]">
             Mở Trung Tâm Email <ArrowRight className="w-3.5 h-3.5" />
