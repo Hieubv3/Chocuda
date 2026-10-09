@@ -35,6 +35,7 @@ import { SocialShareModal } from '../components/SocialShareModal';
 import { AdminCreditInjectorModal } from '../components/AdminCreditInjectorModal';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
+import { AdminEmailCenter } from '../components/AdminEmailCenter';
 // GoogleWorkspaceCenter removed — feature not applied to chocudan24h.com
 
 interface AdminDashboardPageProps {
@@ -84,7 +85,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // 7 Mảng Quản Trị Chuyên Biệt Tách Rời (1. BĐS, 2. Thợ Dịch Vụ, 3. Tuyển Dụng, 4. Dịch Vụ Cư Dân, 5. Người Dùng, 6. Quảng Cáo, 7. Công Cụ)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
-    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'faq'
+    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'email' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'faq'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
     | 'developer_units'
   >('properties');
@@ -3086,6 +3087,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   >
                     • Cộng Đồng Zalo
                   </button>
+                  <button
+                    onClick={() => setActiveTab('email')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'email'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Trung Tâm Email
+                  </button>
                   {/* Google Workspace tab removed — feature not applied to chocudan24h.com */}
                   <button
                     onClick={() => setActiveTab('n8n')}
@@ -4428,6 +4439,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* Tab: Zalo Groups Community Center */}
       {activeTab === 'zalo' && (
         <AdminZaloGroupCenter />
+      )}
+
+      {/* Tab: Email Center (Resend send + receive) */}
+      {activeTab === 'email' && (
+        <AdminEmailCenter />
       )}
 
       {/* Tab: Dedicated SEO Web Center */}
