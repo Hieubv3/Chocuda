@@ -45,6 +45,7 @@ import { AdminMobileMenu } from '../components/AdminMobileMenu';
 import { EnterpriseAdminCore } from '../components/EnterpriseAdminCore';
 import { AdminBusinessManager } from '../components/AdminBusinessManager';
 import { AdminTaxManagementModal } from '../components/AdminTaxManagementModal';
+import { AdminEmailCenter } from '../components/AdminEmailCenter';
 // GoogleWorkspaceCenter removed — feature not applied to chocudan24h.com
 
 interface AdminDashboardPageProps {
@@ -97,7 +98,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // 7 Mảng Quản Trị Chuyên Biệt Tách Rời (1. BĐS, 2. Thợ Dịch Vụ, 3. Tuyển Dụng, 4. Dịch Vụ Cư Dân, 5. Người Dùng, 6. Quảng Cáo, 7. Công Cụ)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
-    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'faq'
+    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'email' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'faq'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
     | 'developer_units' | 'site_settings'
     | 'business_mgmt'
@@ -2669,6 +2670,709 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       {/* 3. MAIN ADMIN WORKSPACE */}
       <div className="flex flex-col lg:flex-row items-start gap-4">
         
+         {/* === CỘT TAB QUẢN TRỊ BÊN TRÁI (PERSISTENT LEFT SIDEBAR FOR DESKTOP) === */}
+         <aside className={`${sidebarCollapsed ? 'w-full lg:w-14' : 'w-full lg:w-64 xl:w-72'} shrink-0 lg:sticky lg:top-3 bg-slate-900 text-white border border-slate-800 rounded-2xl shadow-xl lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin transition-all duration-200`}>
+           <div className="flex items-center justify-between px-2 py-1 border-b border-slate-800/80 pb-2">
+             {!sidebarCollapsed && (
+               <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
+<Layers className="w-3.5 h-3.5 text-emerald-400" />
+                  MENU QUẢN TRỊ (8)
+                </span>
+             )}
+             <div className="flex items-center gap-1">
+               {!sidebarCollapsed && (
+                 <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded">
+                   v3.8
+                 </span>
+               )}
+               <button
+                 type="button"
+                 onClick={() => setSidebarCollapsed(prev => !prev)}
+                 className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                 title={sidebarCollapsed ? "Mở menu" : "Thu gọn menu"}
+               >
+                 {sidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+               </button>
+             </div>
+           </div>
+
+           <nav className={`text-xs ${sidebarCollapsed ? 'flex flex-row lg:flex-col gap-1 overflow-x-auto px-1 py-1' : 'space-y-1'}`} aria-label="Admin Navigation">
+            {/* 1. Bất Động Sản */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('bds');
+                  setActiveTab('properties');
+                }}
+                title={sidebarCollapsed ? '1. Bất Động Sản' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'bds'
+                    ? 'bg-emerald-600 text-white shadow-md ring-1 ring-emerald-400'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Building2 className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'bds' ? 'text-white' : 'text-emerald-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">1. Bất Động Sản</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                    {properties.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Sub-items if BDS active */}
+              {!sidebarCollapsed && effectiveMainTab === 'bds' && (
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-emerald-500/40 ml-3.5 animate-in fade-in duration-150">
+                  <button
+                    onClick={() => { setActiveTab('properties'); setPropertySubFilter('all'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'properties' && propertySubFilter === 'all'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Tất Cả BĐS</span>
+                    <span className="font-mono text-[10px]">{properties.length}</span>
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('properties'); setPropertySubFilter('sale'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'properties' && propertySubFilter === 'sale'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Mua Bán</span>
+                    <span className="font-mono text-[10px]">{saleProperties.length}</span>
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('properties'); setPropertySubFilter('rent'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'properties' && propertySubFilter === 'rent'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Cho Thuê</span>
+                    <span className="font-mono text-[10px]">{rentProperties.length}</span>
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('properties'); setPropertySubFilter('pending'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'properties' && propertySubFilter === 'pending'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Chờ Duyệt</span>
+                    <span className="font-mono text-[10px] text-amber-400 font-bold">{pendingProperties.length}</span>
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('projects'); setSidebarProjectsOpen(prev => !prev); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'projects'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span className="flex items-center gap-1 min-w-0">
+                      <ChevronRight className={`w-3 h-3 shrink-0 transition-transform ${sidebarProjectsOpen ? 'rotate-90' : ''}`} />
+                      <span className="truncate">• Dự Án & Mặt Bằng</span>
+                    </span>
+                    <span className="font-mono text-[10px] shrink-0">{projects.length}</span>
+                  </button>
+                  {sidebarProjectsOpen && (
+                    <div className="pl-2 pr-1 py-1 space-y-0.5 border-l-2 border-emerald-500/40 ml-3.5 animate-in fade-in duration-150">
+                      {parentProjects.map((p) => {
+                        const pExpanded = sidebarExpandedProjects.has(p.id);
+                        const children = childProjects(p.id);
+                        const subs = p.subdivisions || [];
+                        const hasChildren = children.length > 0 || subs.length > 0;
+                        return (
+                          <div key={p.id} className="space-y-0.5">
+                            <div
+                              className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-300 hover:bg-slate-800/60 cursor-pointer"
+                              onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(p.id); }}
+                            >
+                              {hasChildren && (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); toggleSidebarProject(p.id); }}
+                                  className="p-0.5 hover:bg-slate-700 rounded shrink-0"
+                                >
+                                  <ChevronRight className={`w-3 h-3 transition-transform ${pExpanded ? 'rotate-90' : ''}`} />
+                                </button>
+                              )}
+                              <Building2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                              <span className="truncate">{p.name.split(' - ')[0]}</span>
+                            </div>
+                            {pExpanded && (
+                              <div className="ml-3 border-l border-slate-700 pl-2 space-y-0.5">
+                                {children.map((child) => {
+                                  const cExpanded = sidebarExpandedProjects.has(child.id);
+                                  const cSubs = child.subdivisions || [];
+                                  return (
+                                    <div key={child.id} className="space-y-0.5">
+                                      <div
+                                        className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-300 hover:bg-slate-800/60 cursor-pointer"
+                                        onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(child.id); }}
+                                      >
+                                        {cSubs.length > 0 && (
+                                          <button
+                                            onClick={(e) => { e.stopPropagation(); toggleSidebarProject(child.id); }}
+                                            className="p-0.5 hover:bg-slate-700 rounded shrink-0"
+                                          >
+                                            <ChevronRight className={`w-3 h-3 transition-transform ${cExpanded ? 'rotate-90' : ''}`} />
+                                          </button>
+                                        )}
+                                        <Building2 className="w-3 h-3 text-emerald-400/70 shrink-0" />
+                                        <span className="truncate">{child.name.split(' - ')[0]}</span>
+                                      </div>
+                                      {cExpanded && cSubs.length > 0 && (
+                                        <div className="ml-3 border-l border-slate-700 pl-2 space-y-0.5">
+                                          {cSubs.map((sub: any) => (
+                                            <div
+                                              key={sub.id}
+                                              className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-400 hover:bg-slate-800/60 cursor-pointer"
+                                              onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(child.id); }}
+                                            >
+                                              <MapPin className="w-3 h-3 text-amber-400/70 shrink-0" />
+                                              <span className="truncate">{sub.name}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                                {subs.length > 0 && (
+                                  <div className="ml-3 border-l border-slate-700 pl-2 space-y-0.5">
+                                    {subs.map((sub: any) => (
+                                      <div
+                                        key={sub.id}
+                                        className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-400 hover:bg-slate-800/60 cursor-pointer"
+                                        onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(p.id); }}
+                                      >
+                                        <MapPin className="w-3 h-3 text-amber-400/70 shrink-0" />
+                                        <span className="truncate">{sub.name}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <button
+                    onClick={() => setActiveTab('news')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'news'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Tin Tức & Bài Viết</span>
+                    <span className="font-mono text-[10px]">{news.length}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('faq')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'faq'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Q&A / FAQ</span>
+                    <span className="font-mono text-[10px]">{adminFaq.length}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('pricing')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'pricing'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Bảng Giá Dịch Vụ
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('affiliate_mgmt')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'affiliate_mgmt'
+                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Đối Tác & Hoa Hồng
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Bảng Hàng CĐT (MỚI — Mặt Bằng & Bảng Hàng Chủ Đầu Tư) */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('developer_units');
+                  setDevSubTab('matbang');
+                }}
+                title={sidebarCollapsed ? '2. Bảng Hàng CĐT' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'developer_units'
+                    ? 'bg-violet-600 text-white shadow-md ring-1 ring-violet-400'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <MapPin className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'developer_units' ? 'text-white' : 'text-violet-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">2. Bảng Hàng CĐT</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                    9
+                  </span>
+                )}
+              </button>
+
+              {!sidebarCollapsed && effectiveMainTab === 'developer_units' && (
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-violet-500/40 ml-3.5 animate-in fade-in duration-150">
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('matbang'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'developer_units' && devSubTab === 'matbang'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• ✨ Mặt Bằng & Bảng Hàng CĐT</span>
+                    <span className="font-mono text-[10px] text-violet-400">32</span>
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('dashboard'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'dashboard'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📊 Dashboard
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('import'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'import'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📥 Import Sheet
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('sodo'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'sodo'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 🗺️ Sơ đồ MB
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('danhsach'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'danhsach'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 🏘️ Danh sách căn
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('chinhsach'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'chinhsach'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📋 Chính sách BH
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('dottt'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'dottt'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📅 Đợt thanh toán
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('nganhang'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'nganhang'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 🏦 Ngân hàng
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('developer_units'); setDevSubTab('export'); }}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'developer_units' && devSubTab === 'export'
+                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • 📤 Export
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 3. Thợ Dịch Vụ & Kỹ Thuật */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('technicians');
+                  setActiveTab('resident_services_mgmt');
+                }}
+                title={sidebarCollapsed ? '3. Thợ & Dịch Vụ' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'technicians'
+                    ? 'bg-orange-500 text-slate-950 font-black shadow-md ring-1 ring-orange-400'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Wrench className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'technicians' ? 'text-slate-950' : 'text-orange-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">3. Thợ & Dịch Vụ</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
+                    {adminResidentServices.length}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* 4. Tuyển Dụng & Việc Làm */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('recruitment');
+                  setActiveTab('recruitment_mgmt');
+                }}
+                title={sidebarCollapsed ? '4. Tuyển Dụng & CV' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'recruitment'
+                    ? 'bg-teal-500 text-slate-950 font-black shadow-md ring-1 ring-teal-400'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Briefcase className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'recruitment' ? 'text-slate-950' : 'text-teal-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">4. Tuyển Dụng & CV</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-bold">
+                    Việc làm
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* 5. Chợ Cư Dân */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('resident_market');
+                  setActiveTab('stores_mgmt');
+                }}
+                title={sidebarCollapsed ? '5. Chợ Cư Dân' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'resident_market'
+                    ? 'bg-amber-500 text-slate-950 font-black shadow-md ring-1 ring-amber-400'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Store className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'resident_market' ? 'text-slate-950' : 'text-amber-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">5. Chợ Cư Dân</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono font-bold">
+                    {adminStores.length}
+                  </span>
+                )}
+              </button>
+
+              {!sidebarCollapsed && effectiveMainTab === 'resident_market' && (
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-amber-500/40 ml-3.5 animate-in fade-in duration-150">
+                  <button
+                    onClick={() => setActiveTab('stores_mgmt')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'stores_mgmt'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Gian Hàng & Shop</span>
+                    <span className="font-mono text-[10px]">{adminStores.length}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('orders_mgmt')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'orders_mgmt'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Quản Lý Đơn Hàng</span>
+                    <span className="font-mono text-[10px]">{adminStoreOrders.length}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('package_orders_mgmt')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'package_orders_mgmt'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Gói Tiện Ích Cư Dân</span>
+                    <span className="font-mono text-[10px]">{adminPackageOrders.length}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('resident_finance')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'resident_finance'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Doanh Thu & Quyết Toán
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('partners_reputation')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'partners_reputation'
+                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Đánh Giá Uy Tín</span>
+                    <span className="font-mono text-[10px]">{adminReputationPosts.length}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 6. Thành Viên & Khách Hàng */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('users_leads');
+                  setActiveTab('users');
+                }}
+                title={sidebarCollapsed ? '6. Thành Viên & Khách' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'users_leads'
+                    ? 'bg-blue-600 text-white shadow-md ring-1 ring-blue-400'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <UserCheck className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'users_leads' ? 'text-white' : 'text-blue-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">6. Thành Viên & Khách</span>}
+                </div>
+                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                  {registeredUsers.length}
+                </span>
+              </button>
+
+              {!sidebarCollapsed && effectiveMainTab === 'users_leads' && (
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-blue-500/40 ml-3.5 animate-in fade-in duration-150">
+                  <button
+                    onClick={() => setActiveTab('users')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'users'
+                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Danh Sách Thành Viên</span>
+                    <span className="font-mono text-[10px]">{registeredUsers.length}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('leads')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'leads'
+                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <span>• Khách Hẹn Xem Nhà</span>
+                    <span className="font-mono text-[10px]">{contacts.length}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('enterprise_core')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'enterprise_core'
+                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Phân Quyền & Quản Trị
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 7. Banner & Quảng Cáo */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('ads');
+                  setActiveTab('ads');
+                }}
+                title={sidebarCollapsed ? '7. Quảng Cáo Banner' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'ads'
+                    ? 'bg-rose-600 text-white shadow-md ring-1 ring-rose-400'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Sparkles className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'ads' ? 'text-white' : 'text-rose-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">7. Quảng Cáo Banner</span>}
+                </div>
+                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
+                  {adsList.length}
+                </span>
+              </button>
+            </div>
+
+            {/* 8. Công Cụ & Hệ Thống */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('tools');
+                  setActiveTab('analytics');
+                }}
+                title={sidebarCollapsed ? '8. Công Cụ & Bot' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'tools'
+                    ? 'bg-indigo-600 text-white shadow-md ring-1 ring-indigo-400'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Settings className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'tools' ? 'text-white' : 'text-indigo-400'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">8. Công Cụ &amp; Bot</span>}
+                </div>
+                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-bold">
+                  SEO
+                </span>
+              </button>
+
+              {!sidebarCollapsed && effectiveMainTab === 'tools' && (
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-indigo-500/40 ml-3.5 animate-in fade-in duration-150">
+                  <button
+                    onClick={() => setActiveTab('analytics')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'analytics'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Thống Kê Truy Cập
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('seo')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'seo'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Tối Ưu SEO
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('marketing')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'marketing'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Truyền Thông & Social
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('zalo')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'zalo'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Cộng Đồng Zalo
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('email')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'email'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Trung Tâm Email
+                  </button>
+                  {/* Google Workspace tab removed — feature not applied to chocudan24h.com */}
+                  <button
+                    onClick={() => setActiveTab('n8n')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'n8n'
+                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    • Tự Động Hóa n8n
+                  </button>
+                </div>
+              )}
+            </div>
+          </nav>
+        </aside>
+
         {/* === CỘT NỘI DUNG CHÍNH (MAIN WORKSPACE AREA) === */}
         <div className="flex-1 min-w-0 w-full space-y-4">
           
@@ -3922,6 +4626,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
         {activeTab === 'zalo' && (
         <AdminZaloGroupCenter />
+      )}
+
+      {/* Tab: Email Center (Resend send + receive) */}
+      {activeTab === 'email' && (
+        <AdminEmailCenter />
       )}
 
       {/* Tab: Dedicated SEO Web Center */}

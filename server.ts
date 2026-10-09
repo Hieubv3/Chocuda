@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import path from "path";
 import fs from "fs";
@@ -6,6 +7,7 @@ import crypto from "crypto";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { INITIAL_PROJECTS, INITIAL_PROPERTIES, INITIAL_NEWS, INITIAL_ADS } from "./src/data/initialData.ts";
 import { PROJECT_FAQ_DATA } from "./src/data/projectFaqData.ts";
 import { INITIAL_RESIDENT_SERVICES } from "./src/data/residentServicesData.ts";
@@ -391,29 +393,17 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 const otpStore = new Map<string, { code: string; expiresAt: number; attempts?: number }>();
 const MAX_OTP_ATTEMPTS = 5;
 
-async function sendEmailOtp(toEmail: string, otpCode: string): Promise<{ sent: boolean; message?: string }> {
-  const gmailUser = process.env.GMAIL_USER || 'chocudan24h@gmail.com';
-  const gmailPass = process.env.GMAIL_APP_PASS;
+// Resend client (gửi email giao dịch từ tên miền thương hiệu @chocudan24h.com)
+let resendClient: Resend | null = null;
+function getResendClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  if (!resendClient) resendClient = new Resend(apiKey);
+  return resendClient;
+}
 
-  if (!gmailPass) {
-    console.log(`[OTP Engine] Live Gmail SMTP password not configured. Generated test OTP code for ${toEmail}: ${otpCode}`);
-    return { sent: false, message: `Mã OTP xác thực cho ${toEmail} là: ${otpCode} (Thêm GMAIL_APP_PASS vào Secrets để tự động gửi tới hòm thư thật).` };
-  }
-
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: gmailUser,
-        pass: gmailPass,
-      },
-    });
-
-    await transporter.sendMail({
-      from: `"Chợ Cư Dân 24h" <${gmailUser}>`,
-      to: toEmail,
-      subject: `[Chợ Cư Dân 24h] Mã xác thực OTP đăng ký tài khoản: ${otpCode}`,
-      html: `
+function buildOtpEmailHtml(otpCode: string): string {
+  return `
         <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff;">
           <div style="text-align: center; padding-bottom: 15px; border-bottom: 2px solid #f59e0b;">
             <h2 style="color: #0f172a; margin: 0;">🏬 CHỢ CƯ DÂN VINHOMES 24H</h2>
@@ -431,7 +421,56 @@ async function sendEmailOtp(toEmail: string, otpCode: string): Promise<{ sent: b
             <p>© 2026 chocudan24h.com - Nền Tảng BĐS & Dịch Vụ Cư Dân Vinhomes</p>
           </div>
         </div>
-      `,
+      `;
+}
+
+async function sendEmailOtp(toEmail: string, otpCode: string): Promise<{ sent: boolean; message?: string }> {
+  const otpHtml = buildOtpEmailHtml(otpCode);
+  const subject = `[Chợ Cư Dân 24h] Mã xác thực OTP đăng ký tài khoản: ${otpCode}`;
+
+  // 1) Ưu tiên Resend API — gửi từ mail thương hiệu riêng @chocudan24h.com
+  const resend = getResendClient();
+  if (resend) {
+    const fromAddress = process.env.EMAIL_FROM || '"Chợ Cư Dân 24h" <no-reply@chocudan24h.com>';
+    try {
+      const { data, error } = await resend.emails.send({
+        from: fromAddress,
+        to: toEmail,
+        subject,
+        html: otpHtml,
+      });
+      if (error) throw new Error(error.message || JSON.stringify(error));
+      console.log(`[OTP Engine] Resend queued id=${data?.id} -> ${toEmail}`);
+      return { sent: true, message: `Mã OTP đã được gửi tới email ${toEmail} (${fromAddress})` };
+    } catch (err: any) {
+      console.error("Resend Email OTP Error:", err);
+      // Không return ngay — thử fallback Gmail SMTP bên dưới nếu còn cấu hình.
+    }
+  }
+
+  // 2) Fallback: Gmail SMTP (Google App Password)
+  const gmailUser = process.env.GMAIL_USER || 'chocudan24h@gmail.com';
+  const gmailPass = process.env.GMAIL_APP_PASS;
+
+  if (!gmailPass) {
+    console.log(`[OTP Engine] Chưa cấu hình RESEND_API_KEY hoặc GMAIL_APP_PASS. OTP cho ${toEmail}: ${otpCode}`);
+    return { sent: false, message: `Mã OTP xác thực cho ${toEmail} là: ${otpCode} (Thêm RESEND_API_KEY hoặc GMAIL_APP_PASS vào Secrets để tự động gửi tới hòm thư thật).` };
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: gmailUser,
+        pass: gmailPass,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Chợ Cư Dân 24h" <${gmailUser}>`,
+      to: toEmail,
+      subject,
+      html: otpHtml,
     });
 
     return { sent: true, message: `Mã OTP đã được gửi trực tiếp tới email ${toEmail}` };
@@ -8984,6 +9023,164 @@ function registerSeoMetaMiddleware(app: express.Express) {
     }
   });
 }
+
+// ============================================================
+// EMAIL CENTER — Gửi & Nhận email thương hiệu riêng qua Resend
+// (chocudan24h.com) — chỉ admin truy cập, API key giữ kín ở server.
+// ============================================================
+const RESEND_DOMAIN_ID = process.env.RESEND_DOMAIN_ID || '8f414a63-dfba-4f62-8bbf-77bf4d1502e5';
+const ADMIN_EMAIL_FROM = process.env.EMAIL_FROM || '"Chợ Cư Dân 24h" <no-reply@chocudan24h.com>';
+
+// Gọi REST API Resend phía server (không bao giờ lộ key ra client)
+async function resendApi(pathname: string, init: RequestInit = {}): Promise<any> {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    const e: any = new Error('Chưa cấu hình RESEND_API_KEY trong biến môi trường.');
+    e.status = 400;
+    throw e;
+  }
+  const resp = await fetch(`https://api.resend.com${pathname}`, {
+    ...init,
+    headers: {
+      'Authorization': `Bearer ${key}`,
+      'Content-Type': 'application/json',
+      ...(init.headers || {}),
+    },
+  });
+  const raw = await resp.text();
+  let json: any = null;
+  try { json = raw ? JSON.parse(raw) : null; } catch { json = { raw }; }
+  if (!resp.ok) {
+    const e: any = new Error(json?.message || json?.error?.message || `Resend HTTP ${resp.status}`);
+    e.status = resp.status;
+    e.body = json;
+    throw e;
+  }
+  return json;
+}
+
+// Trạng thái domain + toàn bộ bản ghi DNS (gửi + nhận)
+app.get('/api/admin/email/status', authenticateToken, requireAdmin, async (_req, res) => {
+  try {
+    const data = await resendApi(`/domains/${RESEND_DOMAIN_ID}`);
+    res.json({ ok: true, domain: data, emailFrom: ADMIN_EMAIL_FROM });
+  } catch (e: any) {
+    res.status(e.status || 500).json({ ok: false, error: e.message, body: e.body });
+  }
+});
+
+// Kích hoạt Resend kiểm tra lại DNS
+app.post('/api/admin/email/verify', authenticateToken, requireAdmin, async (_req, res) => {
+  try {
+    const data = await resendApi(`/domains/${RESEND_DOMAIN_ID}/verify`, { method: 'POST' });
+    res.json({ ok: true, result: data });
+  } catch (e: any) {
+    res.status(e.status || 500).json({ ok: false, error: e.message });
+  }
+});
+
+// Lịch sử email ĐÃ GỬI
+app.get('/api/admin/email/logs', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(String(req.query.limit || '50'), 10) || 50, 100);
+    const data = await resendApi(`/emails?limit=${limit}`);
+    res.json({ ok: true, emails: data?.data || [], hasMore: data?.has_more || false });
+  } catch (e: any) {
+    res.status(e.status || 500).json({ ok: false, error: e.message });
+  }
+});
+
+// Chi tiết 1 email đã gửi
+app.get('/api/admin/email/logs/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const data = await resendApi(`/emails/${encodeURIComponent(req.params.id)}`);
+    res.json({ ok: true, email: data });
+  } catch (e: any) {
+    res.status(e.status || 500).json({ ok: false, error: e.message });
+  }
+});
+
+// Gửi 1 email (soạn tay / gửi thử / trả lời)
+app.post('/api/admin/email/send', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { to, subject, html, text, replyTo, inReplyTo, references } = req.body || {};
+    if (!to || !subject) {
+      return res.status(400).json({ ok: false, error: 'Thiếu người nhận (to) hoặc tiêu đề (subject).' });
+    }
+    const toList = Array.isArray(to) ? to : String(to).split(',').map((s: string) => s.trim()).filter(Boolean);
+    const payload: any = { from: ADMIN_EMAIL_FROM, to: toList, subject };
+    if (html) payload.html = html;
+    if (text) payload.text = text;
+    if (!html && !text) payload.text = subject;
+    if (replyTo) payload.reply_to = replyTo;
+    if (inReplyTo) payload.headers = { 'In-Reply-To': inReplyTo, ...(references ? { References: references } : {}) };
+    const data = await resendApi('/emails', { method: 'POST', body: JSON.stringify(payload) });
+    res.json({ ok: true, id: data?.id, message: `Đã gửi tới ${toList.join(', ')}` });
+  } catch (e: any) {
+    res.status(e.status || 500).json({ ok: false, error: e.message, body: e.body });
+  }
+});
+
+// HỘP THƯ ĐẾN — email user gửi tới @chocudan24h.com (Resend Inbound)
+app.get('/api/admin/email/inbox', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(String(req.query.limit || '50'), 10) || 50, 100);
+    const data = await resendApi(`/emails/receiving?limit=${limit}`);
+    res.json({ ok: true, emails: data?.data || [], hasMore: data?.has_more || false });
+  } catch (e: any) {
+    res.status(e.status || 500).json({ ok: false, error: e.message });
+  }
+});
+
+// Nội dung 1 email nhận được (html/text/headers)
+app.get('/api/admin/email/inbox/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const data = await resendApi(`/emails/receiving/${encodeURIComponent(req.params.id)}`);
+    res.json({ ok: true, email: data });
+  } catch (e: any) {
+    res.status(e.status || 500).json({ ok: false, error: e.message });
+  }
+});
+
+// GỬI HÀNG LOẠT cho user theo nhóm (dùng batch của Resend, 100/lần)
+app.post('/api/admin/email/broadcast', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { subject, html, text, audience, emails: rawEmails } = req.body || {};
+    if (!subject || (!html && !text)) {
+      return res.status(400).json({ ok: false, error: 'Thiếu tiêu đề hoặc nội dung email.' });
+    }
+    let list: string[] = [];
+    if (Array.isArray(rawEmails) && rawEmails.length) {
+      list = rawEmails.map((s: any) => String(s).trim()).filter(Boolean);
+    } else {
+      let users = usersStore;
+      if (audience && audience !== 'all') users = users.filter((u: any) => u.role === audience);
+      list = users.map((u: any) => u.email).filter((e: any) => e && String(e).includes('@'));
+    }
+    list = Array.from(new Set(list)).slice(0, 500);
+    if (!list.length) return res.status(400).json({ ok: false, error: 'Không tìm thấy người nhận hợp lệ.' });
+
+    let sent = 0;
+    const failed: Array<{ email: string; error: string }> = [];
+    for (let i = 0; i < list.length; i += 100) {
+      const chunk = list.slice(i, i + 100).map((addr) => {
+        const item: any = { from: ADMIN_EMAIL_FROM, to: [addr], subject };
+        if (html) item.html = html; else item.text = text;
+        return item;
+      });
+      try {
+        const data = await resendApi('/emails/batch', { method: 'POST', body: JSON.stringify(chunk) });
+        const arr = Array.isArray(data) ? data : (data?.data || []);
+        sent += arr.length;
+      } catch (e: any) {
+        chunk.forEach((c: any) => failed.push({ email: c.to[0], error: e.message }));
+      }
+    }
+    res.json({ ok: true, total: list.length, sent, failedCount: failed.length, failed });
+  } catch (e: any) {
+    res.status(e.status || 500).json({ ok: false, error: e.message });
+  }
+});
 
 async function startServer() {
   // SEO: chèn meta động (title/description/og:image) cho trang chi tiết trước khi serve HTML
