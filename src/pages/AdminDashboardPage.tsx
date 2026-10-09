@@ -3110,6 +3110,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   </button>
                 </div>
               )}
+
+              {/* Nút Trung Tâm Email — luôn hiển thị, không cần mở nhóm Công Cụ */}
+              <button
+                onClick={() => setActiveTab('email')}
+                title="Trung Tâm Email"
+                className={`w-full mt-2 p-2.5 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  activeTab === 'email'
+                    ? 'bg-amber-500 text-slate-950 shadow-lg ring-1 ring-amber-400'
+                    : 'bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 shrink-0" />
+                  {!sidebarCollapsed && <span className="text-[11px] font-extrabold">Trung Tâm Email</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[9px] font-bold uppercase">Resend</span>
+                )}
+              </button>
             </div>
           </nav>
         </aside>
@@ -3188,6 +3209,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 className="col-span-2 p-2 bg-slate-900 text-indigo-400 font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <Settings className="w-4 h-4" /> 8. Công Cụ & Bot Hệ Thống
+              </button>
+              <button
+                onClick={() => { setActiveTab('email'); setIsSubNavDropdownOpen(false); }}
+                className="col-span-2 p-2 bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <Mail className="w-4 h-4" /> Trung Tâm Email (Gửi & Nhận)
               </button>
             </div>
           )}
