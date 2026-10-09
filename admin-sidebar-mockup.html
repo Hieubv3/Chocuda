@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Sidebar Admin Chợ Cư Dân 24h (bản duyệt)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #102A43;
+    --navy-accent: #163A5F;
+    --terracotta: #C66A32;
+    --terracotta-soft: rgba(198,106,50,0.15);
+    --bg: #F5F7F9;
+    --text: #52606D;
+    --border: #E2E8F0;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Be Vietnam Pro', sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+  .sidebar { width:280px; background:var(--navy); color:#fff; padding:16px 12px; display:flex; flex-direction:column; gap:4px; position:sticky; top:0; height:100vh; overflow-y:auto; }
+  .logo { display:flex; align-items:center; gap:10px; padding:6px 8px 14px; border-bottom:1px solid rgba(255,255,255,0.12); margin-bottom:10px; }
+  .logo-box { background:#fff; border-radius:8px; padding:4px 8px; font-weight:900; font-size:13px; color:var(--navy); letter-spacing:0.5px; }
+  .logo-box span { color:var(--terracotta); }
+  .logo small { display:block; font-size:9px; color:#94A3B8; font-weight:600; }
+  .search { background:var(--navy-accent); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:8px 10px; font-size:11px; color:#CBD5E1; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .search input { background:transparent; border:none; outline:none; color:#fff; font-family:inherit; font-size:11px; width:100%; }
+  .search input::placeholder { color:#64748B; }
+  .group { margin-bottom:2px; }
+  .group-head { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-radius:10px; font-size:11px; font-weight:800; color:#CBD5E1; cursor:pointer; letter-spacing:0.3px; }
+  .group-head:hover { background:rgba(255,255,255,0.06); color:#fff; }
+  .group-head .badge { background:var(--terracotta); color:#fff; font-size:9px; font-weight:800; border-radius:99px; padding:1px 7px; }
+  .group-head .badge.navy { background:rgba(255,255,255,0.15); color:#CBD5E1; }
+  .group-head .arrow { font-size:8px; opacity:0.6; }
+  .group.active .group-head { background:var(--terracotta-soft); color:#fff; border:1px solid rgba(198,106,50,0.4); }
+  .items { padding-left:8px; border-left:2px solid rgba(198,106,50,0.35); margin-left:14px; display:flex; flex-direction:column; gap:1px; }
+  .item { display:flex; align-items:center; justify-content:space-between; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:600; color:#94A3B8; cursor:pointer; }
+  .item:hover { background:rgba(255,255,255,0.06); color:#fff; }
+  .item.active { background:var(--terracotta); color:#fff; font-weight:800; }
+  .item .count { font-size:9px; font-weight:800; background:rgba(255,255,255,0.15); border-radius:99px; padding:1px 6px; }
+  .item.active .count { background:rgba(0,0,0,0.2); }
+  .item.email { border:1px solid rgba(198,106,50,0.5); background:var(--terracotta-soft); color:#FDE8D8; font-weight:800; }
+  .item.email.active { background:var(--terracotta); color:#fff; }
+  .divider { height:1px; background:rgba(255,255,255,0.1); margin:8px 4px; }
+  .footer-btn { display:flex; align-items:center; gap:8px; padding:9px 10px; border-radius:10px; font-size:11px; font-weight:700; color:#CBD5E1; cursor:pointer; }
+  .footer-btn:hover { background:rgba(255,255,255,0.08); color:#fff; }
+  .footer-btn.cta { background:var(--terracotta); color:#fff; justify-content:center; font-weight:800; }
+  .main { flex:1; padding:24px 32px; }
+  .main h1 { color:var(--navy); font-size:20px; font-weight:900; margin-bottom:4px; }
+  .main .crumb { font-size:11px; color:var(--text); margin-bottom:20px; }
+  .main .crumb b { color:var(--terracotta); }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:24px; }
+  .card { background:#fff; border:1px solid var(--border); border-radius:14px; padding:14px; box-shadow:0 1px 3px rgba(16,42,67,0.06); }
+  .card .num { font-size:22px; font-weight:900; color:var(--navy); }
+  .card .num.terra { color:var(--terracotta); }
+  .card .lbl { font-size:10px; font-weight:700; color:var(--text); margin-top:2px; }
+  .quick { display:flex; gap:8px; flex-wrap:wrap; }
+  .quick button { background:var(--navy); color:#fff; border:none; border-radius:10px; padding:10px 16px; font-family:inherit; font-size:11px; font-weight:800; cursor:pointer; }
+  .quick button.terra { background:var(--terracotta); }
+  .note { margin-top:24px; background:#fff; border:1px solid var(--border); border-left:4px solid var(--terracotta); border-radius:10px; padding:14px; font-size:11px; line-height:1.7; }
+  .note b { color:var(--navy); }
+  .tag { display:inline-block; background:var(--terracotta-soft); color:var(--terracotta); font-size:9px; font-weight:800; border-radius:99px; padding:2px 8px; margin-left:6px; vertical-align:middle; }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR MOCKUP ===== -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-box">CHỢ CƯ DÂN <span>24H</span></div>
+    <div>Quản Trị Admin<small>chocudan24h.com</small></div>
+  </div>
+
+  <div class="search">🔍 <input placeholder="Tìm chức năng... (vd: email, đơn hàng, duyệt)"></div>
+
+  <!-- 0. TỔNG QUAN -->
+  <div class="group active">
+    <div class="group-head"><span>🏠 0. TỔNG QUAN</span><span class="badge">5 việc</span></div>
+  </div>
+
+  <!-- 1. BĐS -->
+  <div class="group">
+    <div class="group-head"><span>1. BẤT ĐỘNG SẢN</span><span class="badge navy">3</span><span class="arrow">▼</span></div>
+    <div class="items">
+      <div class="item">Mua Bán</div>
+      <div class="item">Cho Thuê</div>
+      <div class="item">Chờ Duyệt <span class="count">3</span></div>
+      <div class="item">Dự Án & Mặt Bằng</div>
+      <div class="item">Tin Tức & Bài Viết</div>
+      <div class="item">Q&A / FAQ</div>
+      <div class="item">Giá Đăng Tin & Affiliate</div>
+    </div>
+  </div>
+
+  <!-- 2. BẢNG HÀNG CĐT -->
+  <div class="group">
+    <div class="group-head"><span>2. BẢNG HÀNG CĐT</span><span class="arrow">▼</span></div>
+    <div class="items">
+      <div class="item">Dashboard</div>
+      <div class="item">Mặt Bằng & Bảng Hàng</div>
+      <div class="item">Import Sheet</div>
+      <div class="item">Sơ Đồ MB</div>
+      <div class="item">Danh Sách Căn</div>
+      <div class="item">Chính Sách BH</div>
+      <div class="item">Đợt TT</div>
+      <div class="item">Ngân Hàng</div>
+      <div class="item">Export</div>
+    </div>
+  </div>
+
+  <!-- 3. THỢ -->
+  <div class="group">
+    <div class="group-head"><span>3. THỢ & DỊCH VỤ</span><span class="arrow">▼</span></div>
+    <div class="items"><div class="item">Dịch Vụ Cư Dân</div></div>
+  </div>
+
+  <!-- 4. TUYỂN DỤNG -->
+  <div class="group">
+    <div class="group-head"><span>4. TUYỂN DỤNG & CV</span><span class="arrow">▼</span></div>
+    <div class="items"><div class="item">Quản Lý Tuyển Dụng</div></div>
+  </div>
+
+  <!-- 5. CHỢ CƯ DÂN -->
+  <div class="group">
+    <div class="group-head"><span>5. CHỢ CƯ DÂN</span><span class="badge navy">2</span><span class="arrow">▼</span></div>
+    <div class="items">
+      <div class="item">Gian Hàng & Shop</div>
+      <div class="item">Quản Lý Đơn Hàng <span class="count">2</span></div>
+      <div class="item">Gói Tiện Ích Cư Dân</div>
+      <div class="item">Doanh Thu & Quyết Toán</div>
+      <div class="item">Đánh Giá Uy Tín</div>
+    </div>
+  </div>
+
+  <!-- 6. THÀNH VIÊN -->
+  <div class="group">
+    <div class="group-head"><span>6. THÀNH VIÊN & KHÁCH</span><span class="arrow">▼</span></div>
+    <div class="items">
+      <div class="item">Danh Sách Thành Viên</div>
+      <div class="item">Khách Hỏi Xem Nhà</div>
+      <div class="item">Phân Quyền & Quản Trị</div>
+    </div>
+  </div>
+
+  <!-- 7. QUẢNG CÁO -->
+  <div class="group">
+    <div class="group-head"><span>7. QUẢNG CÁO & BANNER</span><span class="arrow">▼</span></div>
+    <div class="items"><div class="item">Banner QC</div></div>
+  </div>
+
+  <!-- 8. EMAIL & TRUYỀN THÔNG -->
+  <div class="group">
+    <div class="group-head"><span>✉️ 8. EMAIL & TRUYỀN THÔNG</span><span class="badge">2 mới</span><span class="arrow">▼</span></div>
+    <div class="items">
+      <div class="item email active">Trung Tâm Email (Gửi & Nhận) <span class="count">2</span></div>
+      <div class="item">Cộng Đồng Zalo</div>
+      <div class="item">Truyền Thông & Social</div>
+      <div class="item">Tự Động Hóa n8n</div>
+    </div>
+  </div>
+
+  <!-- 9. HỆ THỐNG -->
+  <div class="group">
+    <div class="group-head"><span>9. HỆ THỐNG & PHÂN TÍCH</span><span class="arrow">▼</span></div>
+    <div class="items">
+      <div class="item">Thống Kê Truy Cập</div>
+      <div class="item">Tối Ưu SEO</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="footer-btn">🌐 Xem Trang Chủ (site công khai)</div>
+  <div class="footer-btn">👤 admin@chocudan24h.com</div>
+  <div class="footer-btn cta">Đăng Xuất</div>
+</aside>
+
+<!-- ===== NỘI DUNG MẪU ===== -->
+<main class="main">
+  <h1>Trang Tổng Quan <span class="tag">MỚI</span></h1>
+  <div class="crumb">Admin › <b>0. Tổng Quan</b></div>
+
+  <div class="cards">
+    <div class="card"><div class="num">3</div><div class="lbl">Tin chờ duyệt</div></div>
+    <div class="card"><div class="num">2</div><div class="lbl">Đơn hàng mới</div></div>
+    <div class="card"><div class="num terra">2</div><div class="lbl">Email mới chưa đọc</div></div>
+    <div class="card"><div class="num">5</div><div class="lbl">Khách hỏi xem nhà</div></div>
+    <div class="card"><div class="num">12</div><div class="lbl">Thành viên mới tuần</div></div>
+  </div>
+
+  <div class="quick">
+    <button class="terra">✉️ Trung Tâm Email</button>
+    <button>+ Tin Mới</button>
+    <button>Duyệt Tin (3)</button>
+    <button>Đơn Hàng (2)</button>
+    <button>Thành Viên</button>
+  </div>
+
+  <div class="note">
+    <b>Ghi chú thiết kế:</b> Sidebar dùng đúng màu brand website — nền <b>navy #102A43</b>, nút active & badge <b>terracotta #C66A32</b> (màu "24H" trong logo), font <b>Be Vietnam Pro</b>. Nhóm <b>8. Email & Truyền Thông</b> có viền terracotta nổi bật + badge "2 mới". Thanh tìm kiếm đầu sidebar. Nút "Xem Trang Chủ" cuối sidebar. Mobile: menu xổ accordion cùng cấu trúc.
+  </div>
+</main>
+
+</body>
+</html>

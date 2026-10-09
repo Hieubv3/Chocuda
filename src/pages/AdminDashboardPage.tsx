@@ -36,6 +36,7 @@ import { compressImageFile } from '../lib/imageUtils';
 import { HeroCardConfig, loadHeroCards, saveHeroCards } from '../data/heroCardsData';
 import { EditPropertyModal, EditProjectModal, EditNewsModal, EditFaqModal } from '../components/AdminAssetManagerModals';
 import { AdminMarketingCenter } from '../components/AdminMarketingCenter';
+import AdminOverview from '../components/AdminOverview';
 import { AdminSeoCenter } from '../components/AdminSeoCenter';
 import { AdminZaloGroupCenter } from '../components/AdminZaloGroupCenter';
 import { SocialShareModal } from '../components/SocialShareModal';
@@ -98,16 +99,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   // 7 Mảng Quản Trị Chuyên Biệt Tách Rời (1. BĐS, 2. Thợ Dịch Vụ, 3. Tuyển Dụng, 4. Dịch Vụ Cư Dân, 5. Người Dùng, 6. Quảng Cáo, 7. Công Cụ)
   const [adminSector, setAdminSector] = useState<'bds' | 'resident_market'>('bds');
   const [activeTab, setActiveTab] = useState<
-    | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'email' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'faq'
+    | 'overview' | 'properties' | 'projects' | 'news' | 'ads' | 'pricing' | 'leads' | 'users' | 'analytics' | 'n8n' | 'marketing' | 'seo' | 'zalo' | 'email' | 'affiliate_mgmt' | 'reputation' | 'enterprise_core' | 'faq'
     | 'resident_services_mgmt' | 'recruitment_mgmt' | 'stores_mgmt' | 'orders_mgmt' | 'partners_reputation' | 'resident_finance' | 'package_orders_mgmt'
     | 'developer_units' | 'site_settings'
     | 'business_mgmt'
     | 'trash' | 'activity_history' | 'support_inbox'
   >('properties');
   const [devSubTab, setDevSubTab] = useState('matbang');
+  const [sidebarSearch, setSidebarSearch] = useState('');
 
   // Compute active main category (Phân rõ các tab riêng biệt không bị gộp chung)
-  const effectiveMainTab: 'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' = (() => {
+  const effectiveMainTab: 'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' | 'system' | 'overview' = (() => {
+    if (activeTab === 'overview') return 'overview';
     if (['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt', 'faq'].includes(activeTab)) return 'bds';
     if (activeTab === 'developer_units') return 'developer_units';
     if (activeTab === 'resident_services_mgmt') return 'technicians';
@@ -119,13 +122,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     return 'tools';
   })();
 
-  const handleSelectMainTab = (tab: 'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools') => {
+  const handleSelectMainTab = (tab: 'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' | 'system' | 'overview') => {
     // Mobile: bật chế độ tập trung + cuộn về đầu trang khi chuyển phân hệ
     setMobileTabFocus(true);
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { window.scrollTo(0, 0); }
     }
     if (tab === 'bds') {
+    if (tab === 'overview') {
+      setActiveTab('overview');
+    } else if (tab === 'bds') {
       setAdminSector('bds');
       if (!['properties', 'projects', 'news', 'pricing', 'affiliate_mgmt', 'faq'].includes(activeTab)) {
         setActiveTab('properties');
@@ -154,13 +160,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       setActiveTab('ads');
     } else if (tab === 'tools') {
       if (!['analytics', 'seo', 'marketing', 'zalo', 'n8n', 'ads', 'site_settings', 'trash', 'activity_history', 'support_inbox'].includes(activeTab)) {
+    } else if (tab === 'system') {
+      if (!['analytics', 'seo'].includes(activeTab)) {
         setActiveTab('analytics');
       }
     }
   };
 
   // Mobile Gesture Navigation (Gạt sang trái: Sang Tab tiếp theo / Sổ menu | Gạt sang phải: Quay lại Tab trước)
-  const MAIN_TAB_KEYS: Array<'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools'> = [
+  const MAIN_TAB_KEYS: Array<'bds' | 'developer_units' | 'technicians' | 'recruitment' | 'resident_market' | 'users_leads' | 'ads' | 'tools' | 'system' | 'overview'> = [
+    'overview',
     'bds',
     'developer_units',
     'technicians',
@@ -168,7 +177,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     'resident_market',
     'users_leads',
     'ads',
-    'tools'
+    'tools',
+    'system'
   ];
 
   const handleNextTab = () => {
@@ -2671,32 +2681,108 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       <div className="flex flex-col lg:flex-row items-start gap-4">
         
          {/* === CỘT TAB QUẢN TRỊ BÊN TRÁI (PERSISTENT LEFT SIDEBAR FOR DESKTOP) === */}
-         <aside className={`${sidebarCollapsed ? 'w-full lg:w-14' : 'w-full lg:w-64 xl:w-72'} shrink-0 lg:sticky lg:top-3 bg-slate-900 text-white border border-slate-800 rounded-2xl shadow-xl lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin transition-all duration-200`}>
-           <div className="flex items-center justify-between px-2 py-1 border-b border-slate-800/80 pb-2">
+         <aside className={`${sidebarCollapsed ? 'w-full lg:w-14' : 'w-full lg:w-64 xl:w-72'} shrink-0 lg:sticky lg:top-3 bg-[#102A43] text-white border border-[#163A5F] rounded-2xl shadow-xl lg:max-h-[calc(100vh-1.5rem)] lg:overflow-y-auto scrollbar-thin transition-all duration-200`}>
+           <div className="flex items-center justify-between px-2 py-1 border-b border-[#163A5F]/80 pb-2">
              {!sidebarCollapsed && (
                <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
-<Layers className="w-3.5 h-3.5 text-emerald-400" />
-                  MENU QUẢN TRỊ (8)
+<Layers className="w-3.5 h-3.5 text-[#C66A32]" />
+                  MENU QUẢN TRỊ (10)
                 </span>
              )}
              <div className="flex items-center gap-1">
                {!sidebarCollapsed && (
-                 <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded">
+                 <span className="px-1.5 py-0.5 bg-[#C66A32]/20 text-[#F5C9A8] text-[10px] font-bold rounded">
                    v3.8
                  </span>
                )}
                <button
                  type="button"
                  onClick={() => setSidebarCollapsed(prev => !prev)}
-                 className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                 className="p-1 rounded-lg hover:bg-[#163A5F] text-slate-400 hover:text-white transition cursor-pointer"
                  title={sidebarCollapsed ? "Mở menu" : "Thu gọn menu"}
                >
                  {sidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                </button>
              </div>
-           </div>
+</div>
 
-           <nav className={`text-xs ${sidebarCollapsed ? 'flex flex-row lg:flex-col gap-1 overflow-x-auto px-1 py-1' : 'space-y-1'}`} aria-label="Admin Navigation">
+            {/* Ô tìm kiếm chức năng */}
+            {!sidebarCollapsed && (
+              <div className="relative px-2 pt-2 pb-1">
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={sidebarSearch}
+                    onChange={(e) => setSidebarSearch(e.target.value)}
+                    placeholder="Tìm chức năng... (vd: email, đơn hàng)"
+                    className="w-full bg-[#163A5F]/60 border border-[#163A5F] rounded-lg pl-8 pr-7 py-1.5 text-[11px] text-white placeholder-slate-400 outline-none focus:border-[#C66A32]/60 focus:ring-1 focus:ring-[#C66A32]/40 transition"
+                  />
+                  {sidebarSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setSidebarSearch('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white cursor-pointer"
+                      title="Xóa tìm kiếm"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+                {sidebarSearch.trim() && (
+                  <div className="absolute left-2 right-2 z-50 mt-1 bg-[#0B1F33] border border-[#163A5F] rounded-xl shadow-2xl max-h-72 overflow-y-auto scrollbar-thin py-1">
+                    {NAV_SEARCH_ITEMS.filter((it) => {
+                      const q = normSearch(sidebarSearch.trim());
+                      return normSearch(it.label).includes(q) || normSearch(it.group).includes(q);
+                    }).map((it) => (
+                      <button
+                        key={it.group + '|' + it.label}
+                        type="button"
+                        onClick={() => { it.go(); setSidebarSearch(''); }}
+                        className="w-full text-left px-3 py-2 hover:bg-[#163A5F]/70 transition flex items-center justify-between gap-2 cursor-pointer"
+                      >
+                        <span className="text-[11px] font-bold text-white">{it.label}</span>
+                        <span className="text-[9px] text-slate-400 shrink-0">{it.group}</span>
+                      </button>
+                    ))}
+                    {NAV_SEARCH_ITEMS.filter((it) => {
+                      const q = normSearch(sidebarSearch.trim());
+                      return normSearch(it.label).includes(q) || normSearch(it.group).includes(q);
+                    }).length === 0 && (
+                      <div className="px-3 py-2 text-[11px] text-slate-400">Không tìm thấy chức năng "{sidebarSearch.trim()}"</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <nav className={`text-xs ${sidebarCollapsed ? 'flex flex-row lg:flex-col gap-1 overflow-x-auto px-1 py-1' : 'space-y-1'}`} aria-label="Admin Navigation">
+            {/* 0. Tổng Quan */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => handleSelectMainTab('overview')}
+                title={sidebarCollapsed ? '0. Tổng Quan' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'overview'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Home className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'overview' ? 'text-white' : 'text-[#C66A32]'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">0. Tổng Quan</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-[#C66A32]/20 text-[#F5C9A8] rounded text-[10px] font-bold">
+                    MỚI
+                  </span>
+                )}
+              </button>
+            </div>
+
             {/* 1. Bất Động Sản */}
             <div className="space-y-0.5">
               <button
@@ -2710,12 +2796,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   sidebarCollapsed ? 'justify-center' : 'justify-between'
                 } ${
                   effectiveMainTab === 'bds'
-                    ? 'bg-emerald-600 text-white shadow-md ring-1 ring-emerald-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Building2 className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'bds' ? 'text-white' : 'text-emerald-400'}`} />
+                  <Building2 className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'bds' ? 'text-white' : 'text-[#C66A32]'}`} />
                   {!sidebarCollapsed && <span className="text-[12px] font-extrabold">1. Bất Động Sản</span>}
                 </div>
                 {!sidebarCollapsed && (
@@ -2727,13 +2813,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
               {/* Sub-items if BDS active */}
               {!sidebarCollapsed && effectiveMainTab === 'bds' && (
-                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-emerald-500/40 ml-3.5 animate-in fade-in duration-150">
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-[#C66A32]/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => { setActiveTab('properties'); setPropertySubFilter('all'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'properties' && propertySubFilter === 'all'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Tất Cả BĐS</span>
@@ -2743,8 +2829,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('properties'); setPropertySubFilter('sale'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'properties' && propertySubFilter === 'sale'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Mua Bán</span>
@@ -2754,8 +2840,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('properties'); setPropertySubFilter('rent'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'properties' && propertySubFilter === 'rent'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Cho Thuê</span>
@@ -2765,19 +2851,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('properties'); setPropertySubFilter('pending'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'properties' && propertySubFilter === 'pending'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Chờ Duyệt</span>
-                    <span className="font-mono text-[10px] text-amber-400 font-bold">{pendingProperties.length}</span>
+                    <span className="font-mono text-[10px] text-[#F5C9A8] font-bold">{pendingProperties.length}</span>
                   </button>
                   <button
                     onClick={() => { setActiveTab('projects'); setSidebarProjectsOpen(prev => !prev); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'projects'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span className="flex items-center gap-1 min-w-0">
@@ -2787,7 +2873,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <span className="font-mono text-[10px] shrink-0">{projects.length}</span>
                   </button>
                   {sidebarProjectsOpen && (
-                    <div className="pl-2 pr-1 py-1 space-y-0.5 border-l-2 border-emerald-500/40 ml-3.5 animate-in fade-in duration-150">
+                    <div className="pl-2 pr-1 py-1 space-y-0.5 border-l-2 border-[#C66A32]/40 ml-3.5 animate-in fade-in duration-150">
                       {parentProjects.map((p) => {
                         const pExpanded = sidebarExpandedProjects.has(p.id);
                         const children = childProjects(p.id);
@@ -2796,7 +2882,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                         return (
                           <div key={p.id} className="space-y-0.5">
                             <div
-                              className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-300 hover:bg-slate-800/60 cursor-pointer"
+                              className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-300 hover:bg-[#163A5F]/60 cursor-pointer"
                               onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(p.id); }}
                             >
                               {hasChildren && (
@@ -2807,7 +2893,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   <ChevronRight className={`w-3 h-3 transition-transform ${pExpanded ? 'rotate-90' : ''}`} />
                                 </button>
                               )}
-                              <Building2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                              <Building2 className="w-3 h-3 text-[#C66A32] shrink-0" />
                               <span className="truncate">{p.name.split(' - ')[0]}</span>
                             </div>
                             {pExpanded && (
@@ -2815,10 +2901,51 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                 {children.map((child) => {
                                   const cExpanded = sidebarExpandedProjects.has(child.id);
                                   const cSubs = child.subdivisions || [];
-                                  return (
+// ===== Tìm kiếm chức năng (sidebar) =====
+  const normSearch = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const NAV_SEARCH_ITEMS: Array<{ label: string; group: string; go: () => void }> = [
+    { label: 'Tổng Quan', group: '0. Tổng Quan', go: () => handleSelectMainTab('overview') },
+    { label: 'Tất Cả BĐS', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('all'); } },
+    { label: 'Mua Bán', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('sale'); } },
+    { label: 'Cho Thuê', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('rent'); } },
+    { label: 'Chờ Duyệt', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('properties'); setPropertySubFilter('pending'); } },
+    { label: 'Dự Án & Mặt Bằng', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('projects'); } },
+    { label: 'Tin Tức & Bài Viết', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('news'); } },
+    { label: 'Q&A / FAQ', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('faq'); } },
+    { label: 'Giá Đăng Tin & Affiliate', group: '1. Bất Động Sản', go: () => { handleSelectMainTab('bds'); setActiveTab('pricing'); } },
+    { label: 'Dashboard', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('dashboard'); } },
+    { label: 'Mặt Bằng & Bảng Hàng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('matbang'); } },
+    { label: 'Import Sheet', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('import'); } },
+    { label: 'Sơ Đồ Mặt Bằng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('sodo'); } },
+    { label: 'Danh Sách Căn', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('danhsach'); } },
+    { label: 'Chính Sách Bán Hàng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('chinhsach'); } },
+    { label: 'Đợt Thanh Toán', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('dottt'); } },
+    { label: 'Ngân Hàng', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('nganhang'); } },
+    { label: 'Export', group: '2. Bảng Hàng CĐT', go: () => { handleSelectMainTab('developer_units'); setDevSubTab('export'); } },
+    { label: 'Dịch Vụ Cư Dân', group: '3. Thợ & Dịch Vụ', go: () => handleSelectMainTab('technicians') },
+    { label: 'Quản Lý Tuyển Dụng', group: '4. Tuyển Dụng & CV', go: () => handleSelectMainTab('recruitment') },
+    { label: 'Gian Hàng & Shop', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); } },
+    { label: 'Quản Lý Đơn Hàng', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('orders_mgmt'); } },
+    { label: 'Gói Tiện Ích Cư Dân', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('package_orders_mgmt'); } },
+    { label: 'Doanh Thu & Quyết Toán', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('resident_finance'); } },
+    { label: 'Đánh Giá Uy Tín', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('partners_reputation'); } },
+    { label: 'Bảng Tin Cộng Đồng', group: '5. Chợ Cư Dân', go: () => { handleSelectMainTab('resident_market'); setActiveTab('reputation'); } },
+    { label: 'Danh Sách Thành Viên', group: '6. Thành Viên & Khách', go: () => { handleSelectMainTab('users_leads'); setActiveTab('users'); } },
+    { label: 'Khách Hẹn Xem Nhà', group: '6. Thành Viên & Khách', go: () => { handleSelectMainTab('users_leads'); setActiveTab('leads'); } },
+    { label: 'Phân Quyền & Quản Trị', group: '6. Thành Viên & Khách', go: () => { handleSelectMainTab('users_leads'); setActiveTab('enterprise_core'); } },
+    { label: 'Banner Quảng Cáo', group: '7. Quảng Cáo & Banner', go: () => handleSelectMainTab('ads') },
+    { label: 'Trung Tâm Email', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('email'); } },
+    { label: 'Cộng Đồng Zalo', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('zalo'); } },
+    { label: 'Truyền Thông & Social', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('marketing'); } },
+    { label: 'Tự Động Hóa n8n', group: '8. Email & Truyền Thông', go: () => { handleSelectMainTab('tools'); setActiveTab('n8n'); } },
+    { label: 'Thống Kê Truy Cập', group: '9. Hệ Thống & Phân Tích', go: () => { handleSelectMainTab('system'); setActiveTab('analytics'); } },
+    { label: 'Tối Ưu SEO', group: '9. Hệ Thống & Phân Tích', go: () => { handleSelectMainTab('system'); setActiveTab('seo'); } }
+  ];
+
+  return (
                                     <div key={child.id} className="space-y-0.5">
                                       <div
-                                        className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-300 hover:bg-slate-800/60 cursor-pointer"
+                                        className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-300 hover:bg-[#163A5F]/60 cursor-pointer"
                                         onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(child.id); }}
                                       >
                                         {cSubs.length > 0 && (
@@ -2829,7 +2956,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                             <ChevronRight className={`w-3 h-3 transition-transform ${cExpanded ? 'rotate-90' : ''}`} />
                                           </button>
                                         )}
-                                        <Building2 className="w-3 h-3 text-emerald-400/70 shrink-0" />
+                                        <Building2 className="w-3 h-3 text-[#C66A32]/70 shrink-0" />
                                         <span className="truncate">{child.name.split(' - ')[0]}</span>
                                       </div>
                                       {cExpanded && cSubs.length > 0 && (
@@ -2837,10 +2964,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                           {cSubs.map((sub: any) => (
                                             <div
                                               key={sub.id}
-                                              className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-400 hover:bg-slate-800/60 cursor-pointer"
+                                              className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-400 hover:bg-[#163A5F]/60 cursor-pointer"
                                               onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(child.id); }}
                                             >
-                                              <MapPin className="w-3 h-3 text-amber-400/70 shrink-0" />
+                                              <MapPin className="w-3 h-3 text-[#F5C9A8]/70 shrink-0" />
                                               <span className="truncate">{sub.name}</span>
                                             </div>
                                           ))}
@@ -2854,10 +2981,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                     {subs.map((sub: any) => (
                                       <div
                                         key={sub.id}
-                                        className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-400 hover:bg-slate-800/60 cursor-pointer"
+                                        className="flex items-center gap-1 py-1 px-1.5 rounded-lg text-[11px] text-slate-400 hover:bg-[#163A5F]/60 cursor-pointer"
                                         onClick={() => { setActiveTab('projects'); setProjectCategoryFilter(p.id); }}
                                       >
-                                        <MapPin className="w-3 h-3 text-amber-400/70 shrink-0" />
+                                        <MapPin className="w-3 h-3 text-[#F5C9A8]/70 shrink-0" />
                                         <span className="truncate">{sub.name}</span>
                                       </div>
                                     ))}
@@ -2874,8 +3001,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('news')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'news'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Tin Tức & Bài Viết</span>
@@ -2885,8 +3012,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('faq')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'faq'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Q&A / FAQ</span>
@@ -2896,8 +3023,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('pricing')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'pricing'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • Bảng Giá Dịch Vụ
@@ -2906,8 +3033,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('affiliate_mgmt')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'affiliate_mgmt'
-                        ? 'bg-emerald-500/20 text-emerald-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • Đối Tác & Hoa Hồng
@@ -2929,12 +3056,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   sidebarCollapsed ? 'justify-center' : 'justify-between'
                 } ${
                   effectiveMainTab === 'developer_units'
-                    ? 'bg-violet-600 text-white shadow-md ring-1 ring-violet-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <MapPin className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'developer_units' ? 'text-white' : 'text-violet-400'}`} />
+                  <MapPin className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'developer_units' ? 'text-white' : 'text-[#C66A32]'}`} />
                   {!sidebarCollapsed && <span className="text-[12px] font-extrabold">2. Bảng Hàng CĐT</span>}
                 </div>
                 {!sidebarCollapsed && (
@@ -2945,24 +3072,24 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
 
               {!sidebarCollapsed && effectiveMainTab === 'developer_units' && (
-                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-violet-500/40 ml-3.5 animate-in fade-in duration-150">
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-[#C66A32]/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('matbang'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'developer_units' && devSubTab === 'matbang'
-                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• ✨ Mặt Bằng & Bảng Hàng CĐT</span>
-                    <span className="font-mono text-[10px] text-violet-400">32</span>
+                    <span className="font-mono text-[10px] text-[#C66A32]">32</span>
                   </button>
                   <button
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('dashboard'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'developer_units' && devSubTab === 'dashboard'
-                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • 📊 Dashboard
@@ -2971,8 +3098,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('import'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'developer_units' && devSubTab === 'import'
-                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • 📥 Import Sheet
@@ -2981,8 +3108,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('sodo'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'developer_units' && devSubTab === 'sodo'
-                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • 🗺️ Sơ đồ MB
@@ -2991,8 +3118,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('danhsach'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'developer_units' && devSubTab === 'danhsach'
-                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • 🏘️ Danh sách căn
@@ -3001,8 +3128,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('chinhsach'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'developer_units' && devSubTab === 'chinhsach'
-                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • 📋 Chính sách BH
@@ -3011,8 +3138,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('dottt'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'developer_units' && devSubTab === 'dottt'
-                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • 📅 Đợt thanh toán
@@ -3021,8 +3148,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('nganhang'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'developer_units' && devSubTab === 'nganhang'
-                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • 🏦 Ngân hàng
@@ -3031,8 +3158,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => { setActiveTab('developer_units'); setDevSubTab('export'); }}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'developer_units' && devSubTab === 'export'
-                        ? 'bg-violet-500/20 text-violet-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • 📤 Export
@@ -3054,12 +3181,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   sidebarCollapsed ? 'justify-center' : 'justify-between'
                 } ${
                   effectiveMainTab === 'technicians'
-                    ? 'bg-orange-500 text-slate-950 font-black shadow-md ring-1 ring-orange-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Wrench className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'technicians' ? 'text-slate-950' : 'text-orange-400'}`} />
+                  <Wrench className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'technicians' ? 'text-[#C66A32]' : 'text-[#C66A32]'}`} />
                   {!sidebarCollapsed && <span className="text-[12px] font-extrabold">3. Thợ & Dịch Vụ</span>}
                 </div>
                 {!sidebarCollapsed && (
@@ -3083,12 +3210,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   sidebarCollapsed ? 'justify-center' : 'justify-between'
                 } ${
                   effectiveMainTab === 'recruitment'
-                    ? 'bg-teal-500 text-slate-950 font-black shadow-md ring-1 ring-teal-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Briefcase className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'recruitment' ? 'text-slate-950' : 'text-teal-400'}`} />
+                  <Briefcase className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'recruitment' ? 'text-[#C66A32]' : 'text-[#C66A32]'}`} />
                   {!sidebarCollapsed && <span className="text-[12px] font-extrabold">4. Tuyển Dụng & CV</span>}
                 </div>
                 {!sidebarCollapsed && (
@@ -3112,12 +3239,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   sidebarCollapsed ? 'justify-center' : 'justify-between'
                 } ${
                   effectiveMainTab === 'resident_market'
-                    ? 'bg-amber-500 text-slate-950 font-black shadow-md ring-1 ring-amber-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Store className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'resident_market' ? 'text-slate-950' : 'text-amber-400'}`} />
+                  <Store className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'resident_market' ? 'text-[#C66A32]' : 'text-[#C66A32]'}`} />
                   {!sidebarCollapsed && <span className="text-[12px] font-extrabold">5. Chợ Cư Dân</span>}
                 </div>
                 {!sidebarCollapsed && (
@@ -3128,13 +3255,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
 
               {!sidebarCollapsed && effectiveMainTab === 'resident_market' && (
-                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-amber-500/40 ml-3.5 animate-in fade-in duration-150">
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-[#C66A32]/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => setActiveTab('stores_mgmt')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'stores_mgmt'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Gian Hàng & Shop</span>
@@ -3144,8 +3271,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('orders_mgmt')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'orders_mgmt'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Quản Lý Đơn Hàng</span>
@@ -3155,8 +3282,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('package_orders_mgmt')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'package_orders_mgmt'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Gói Tiện Ích Cư Dân</span>
@@ -3166,8 +3293,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('resident_finance')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'resident_finance'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • Doanh Thu & Quyết Toán
@@ -3176,11 +3303,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('partners_reputation')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'partners_reputation'
-                        ? 'bg-amber-500/20 text-amber-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Đánh Giá Uy Tín</span>
+                    <span className="font-mono text-[10px]">{adminReputationPosts.length}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('reputation')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'reputation'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
+                    }`}
+                  >
+                    <span>• Bảng Tin Cộng Đồng</span>
                     <span className="font-mono text-[10px]">{adminReputationPosts.length}</span>
                   </button>
                 </div>
@@ -3200,12 +3338,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   sidebarCollapsed ? 'justify-center' : 'justify-between'
                 } ${
                   effectiveMainTab === 'users_leads'
-                    ? 'bg-blue-600 text-white shadow-md ring-1 ring-blue-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <UserCheck className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'users_leads' ? 'text-white' : 'text-blue-400'}`} />
+                  <UserCheck className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'users_leads' ? 'text-white' : 'text-[#C66A32]'}`} />
                   {!sidebarCollapsed && <span className="text-[12px] font-extrabold">6. Thành Viên & Khách</span>}
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
@@ -3214,13 +3352,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
 
               {!sidebarCollapsed && effectiveMainTab === 'users_leads' && (
-                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-blue-500/40 ml-3.5 animate-in fade-in duration-150">
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-[#C66A32]/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => setActiveTab('users')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'users'
-                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Danh Sách Thành Viên</span>
@@ -3230,8 +3368,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('leads')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
                       activeTab === 'leads'
-                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     <span>• Khách Hẹn Xem Nhà</span>
@@ -3241,8 +3379,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('enterprise_core')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'enterprise_core'
-                        ? 'bg-blue-500/20 text-blue-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • Phân Quyền & Quản Trị
@@ -3264,12 +3402,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                   sidebarCollapsed ? 'justify-center' : 'justify-between'
                 } ${
                   effectiveMainTab === 'ads'
-                    ? 'bg-rose-600 text-white shadow-md ring-1 ring-rose-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Sparkles className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'ads' ? 'text-white' : 'text-rose-400'}`} />
+                  <Sparkles className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'ads' ? 'text-white' : 'text-[#C66A32]'}`} />
                   {!sidebarCollapsed && <span className="text-[12px] font-extrabold">7. Quảng Cáo Banner</span>}
                 </div>
                 <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono font-bold">
@@ -3278,40 +3416,117 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </button>
             </div>
 
-            {/* 8. Công Cụ & Hệ Thống */}
+            {/* 8. Email & Truyền Thông */}
             <div className="space-y-0.5">
               <button
                 type="button"
                 onClick={() => {
                   handleSelectMainTab('tools');
-                  setActiveTab('analytics');
+                  setActiveTab('email');
                 }}
-                title={sidebarCollapsed ? '8. Công Cụ & Bot' : undefined}
+                title={sidebarCollapsed ? '8. Email & Truyền Thông' : undefined}
                 className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
                   sidebarCollapsed ? 'justify-center' : 'justify-between'
                 } ${
                   effectiveMainTab === 'tools'
-                    ? 'bg-indigo-600 text-white shadow-md ring-1 ring-indigo-400'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white border border-[#C66A32]/30'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Settings className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'tools' ? 'text-white' : 'text-indigo-400'}`} />
-                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">8. Công Cụ &amp; Bot</span>}
+                  <Mail className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'tools' ? 'text-white' : 'text-[#C66A32]'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">8. Email &amp; Truyền Thông</span>}
                 </div>
-                <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-bold">
-                  SEO
-                </span>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-[#C66A32]/20 text-[#F5C9A8] rounded text-[10px] font-bold">
+                    Resend
+                  </span>
+                )}
               </button>
 
               {!sidebarCollapsed && effectiveMainTab === 'tools' && (
-                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-indigo-500/40 ml-3.5 animate-in fade-in duration-150">
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-[#C66A32]/40 ml-3.5 animate-in fade-in duration-150">
+                  <button
+                    onClick={() => setActiveTab('email')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition flex items-center justify-between ${
+                      activeTab === 'email'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
+                    }`}
+                  >
+                    <span>• Trung Tâm Email (Gửi &amp; Nhận)</span>
+                    <span className="font-mono text-[10px] text-[#F5C9A8]">Resend</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('zalo')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'zalo'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
+                    }`}
+                  >
+                    • Cộng Đồng Zalo
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('marketing')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'marketing'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
+                    }`}
+                  >
+                    • Truyền Thông &amp; Social
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('n8n')}
+                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
+                      activeTab === 'n8n'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
+                    }`}
+                  >
+                    • Tự Động Hóa n8n
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 9. Hệ Thống & Phân Tích */}
+            <div className="space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectMainTab('system');
+                  setActiveTab('analytics');
+                }}
+                title={sidebarCollapsed ? '9. Hệ Thống & Phân Tích' : undefined}
+                className={`${sidebarCollapsed ? 'w-auto lg:w-full shrink-0' : 'w-full'} p-2.5 rounded-xl font-bold flex items-center transition cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : 'justify-between'
+                } ${
+                  effectiveMainTab === 'system'
+                    ? 'bg-[#C66A32]/15 text-white border border-[#C66A32]/40 shadow-md'
+                    : 'text-slate-300 hover:bg-[#163A5F] hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Settings className={`w-4 h-4 shrink-0 ${effectiveMainTab === 'system' ? 'text-white' : 'text-[#C66A32]'}`} />
+                  {!sidebarCollapsed && <span className="text-[12px] font-extrabold">9. Hệ Thống &amp; Phân Tích</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <span className="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-bold">
+                    SEO
+                  </span>
+                )}
+              </button>
+
+              {!sidebarCollapsed && effectiveMainTab === 'system' && (
+                <div className="pl-4 pr-1 py-1 space-y-0.5 border-l-2 border-[#C66A32]/40 ml-3.5 animate-in fade-in duration-150">
                   <button
                     onClick={() => setActiveTab('analytics')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'analytics'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • Thống Kê Truy Cập
@@ -3320,77 +3535,37 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     onClick={() => setActiveTab('seo')}
                     className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
                       activeTab === 'seo'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
+                        ? 'bg-[#C66A32] text-white font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-[#163A5F]/60 font-medium'
                     }`}
                   >
                     • Tối Ưu SEO
                   </button>
-                  <button
-                    onClick={() => setActiveTab('marketing')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
-                      activeTab === 'marketing'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
-                    }`}
-                  >
-                    • Truyền Thông & Social
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('zalo')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
-                      activeTab === 'zalo'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
-                    }`}
-                  >
-                    • Cộng Đồng Zalo
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('email')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
-                      activeTab === 'email'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
-                    }`}
-                  >
-                    • Trung Tâm Email
-                  </button>
-                  {/* Google Workspace tab removed — feature not applied to chocudan24h.com */}
-                  <button
-                    onClick={() => setActiveTab('n8n')}
-                    className={`w-full text-left py-1.5 px-2 rounded-lg text-[11px] transition ${
-                      activeTab === 'n8n'
-                        ? 'bg-indigo-500/20 text-indigo-300 font-extrabold'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium'
-                    }`}
-                  >
-                    • Tự Động Hóa n8n
-                  </button>
                 </div>
               )}
-
-              {/* Nút Trung Tâm Email — luôn hiển thị, không cần mở nhóm Công Cụ */}
-              <button
-                onClick={() => setActiveTab('email')}
-                title="Trung Tâm Email"
-                className={`w-full mt-2 p-2.5 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer ${
-                  sidebarCollapsed ? 'justify-center' : 'justify-between'
-                } ${
-                  activeTab === 'email'
-                    ? 'bg-amber-500 text-slate-950 shadow-lg ring-1 ring-amber-400'
-                    : 'bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 shrink-0" />
-                  {!sidebarCollapsed && <span className="text-[11px] font-extrabold">Trung Tâm Email</span>}
-                </div>
-                {!sidebarCollapsed && (
-                  <span className="px-1.5 py-0.5 bg-black/20 rounded text-[9px] font-bold uppercase">Resend</span>
-                )}
-              </button>
             </div>
+
+            {/* Footer sidebar: Xem Trang Chủ + Đăng Xuất */}
+            {!sidebarCollapsed && (
+              <div className="pt-2 mt-1 border-t border-[#163A5F]/80 space-y-1">
+                <button
+                  type="button"
+                  onClick={() => navigate('/')}
+                  className="w-full p-2 rounded-xl text-[11px] font-bold flex items-center gap-2 text-slate-300 hover:bg-[#163A5F] hover:text-white transition cursor-pointer"
+                >
+                  <Globe className="w-4 h-4 text-[#C66A32]" />
+                  Xem Trang Chủ (site công khai)
+                </button>
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="w-full p-2 rounded-xl text-[11px] font-bold flex items-center gap-2 text-slate-300 hover:bg-[#C66A32]/15 hover:text-[#F5C9A8] transition cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4 text-[#C66A32]" />
+                  Đăng Xuất
+                </button>
+              </div>
+            )}
           </nav>
         </aside>
 
@@ -3398,9 +3573,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         <div className="flex-1 min-w-0 w-full space-y-4">
           
           {/* Thanh chuyển đổi nhanh trên Mobile / Tablet (< lg) */}
-          <div className="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-2.5 shadow-md flex items-center justify-between gap-2">
-            <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
+          <div className="lg:hidden bg-[#102A43] border border-[#163A5F] rounded-2xl p-2.5 shadow-md flex items-center justify-between gap-2">
+            <span className="text-xs font-black text-[#C66A32] flex items-center gap-1.5">
               <Layers className="w-3.5 h-3.5" />
+              {effectiveMainTab === 'overview' && '0. Tổng Quan'}
               {effectiveMainTab === 'bds' && '1. Bất Động Sản'}
               {effectiveMainTab === 'developer_units' && '2. Bảng Hàng CĐT'}
               {effectiveMainTab === 'technicians' && '3. Thợ & Dịch Vụ'}
@@ -3408,76 +3584,93 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               {effectiveMainTab === 'resident_market' && '5. Chợ Cư Dân'}
               {effectiveMainTab === 'users_leads' && '6. Thành Viên'}
               {effectiveMainTab === 'ads' && '7. Banner QC'}
-              {effectiveMainTab === 'tools' && '8. Công Cụ'}
+              {effectiveMainTab === 'tools' && '8. Email & Truyền Thông'}
+              {effectiveMainTab === 'system' && '9. Hệ Thống'}
             </span>
             <button
               type="button"
               onClick={() => setIsSubNavDropdownOpen(!isSubNavDropdownOpen)}
-              className="py-1 px-2.5 bg-amber-500 text-slate-950 font-black text-[11px] rounded-lg cursor-pointer"
+              className="py-1 px-2.5 bg-[#C66A32] text-white font-black text-[11px] rounded-lg cursor-pointer"
             >
               {isSubNavDropdownOpen ? 'Đóng Menu ▲' : 'Chọn Phân Hệ ▼'}
             </button>
           </div>
 
           {isSubNavDropdownOpen && (
-            <div className="lg:hidden bg-slate-950 border border-slate-800 rounded-2xl p-3 shadow-xl grid grid-cols-2 gap-1.5 text-xs animate-in fade-in duration-150">
+            <div className="lg:hidden bg-[#0B1F33] border border-[#163A5F] rounded-2xl p-3 shadow-xl grid grid-cols-2 gap-1.5 text-xs animate-in fade-in duration-150">
+              <button
+                onClick={() => { handleSelectMainTab('overview'); setIsSubNavDropdownOpen(false); }}
+                className="col-span-2 p-2 bg-[#C66A32]/15 text-[#F5C9A8] border border-[#C66A32]/30 font-bold rounded-xl text-left flex items-center gap-1.5"
+              >
+                <Home className="w-4 h-4" /> 0. Tổng Quan (MỚI)
+              </button>
               <button
                 onClick={() => { handleSelectMainTab('bds'); setActiveTab('properties'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-emerald-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="p-2 bg-[#102A43] text-[#C66A32] font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <Building2 className="w-4 h-4" /> 1. BĐS ({properties.length})
               </button>
               <button
                 onClick={() => { handleSelectMainTab('developer_units'); setActiveTab('developer_units'); setDevSubTab('matbang'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-violet-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="p-2 bg-[#102A43] text-[#C66A32] font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <MapPin className="w-4 h-4" /> 2. Bảng Hàng CĐT
               </button>
               <button
                 onClick={() => { handleSelectMainTab('technicians'); setActiveTab('resident_services_mgmt'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-orange-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="p-2 bg-[#102A43] text-[#C66A32] font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <Wrench className="w-4 h-4" /> 3. Thợ ({adminResidentServices.length})
               </button>
               <button
                 onClick={() => { handleSelectMainTab('recruitment'); setActiveTab('recruitment_mgmt'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-teal-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="p-2 bg-[#102A43] text-[#C66A32] font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <Briefcase className="w-4 h-4" /> 4. Tuyển Dụng
               </button>
               <button
                 onClick={() => { handleSelectMainTab('resident_market'); setActiveTab('stores_mgmt'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-amber-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="p-2 bg-[#102A43] text-[#F5C9A8] font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <Store className="w-4 h-4" /> 5. Chợ ({adminStores.length})
               </button>
               <button
                 onClick={() => { handleSelectMainTab('users_leads'); setActiveTab('users'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-blue-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="p-2 bg-[#102A43] text-[#C66A32] font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <UserCheck className="w-4 h-4" /> 6. Thành Viên
               </button>
               <button
                 onClick={() => { handleSelectMainTab('ads'); setActiveTab('ads'); setIsSubNavDropdownOpen(false); }}
-                className="p-2 bg-slate-900 text-rose-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                className="p-2 bg-[#102A43] text-[#C66A32] font-bold rounded-xl text-left flex items-center gap-1.5"
               >
                 <Sparkles className="w-4 h-4" /> 7. Quảng Cáo
               </button>
               <button
-                onClick={() => { handleSelectMainTab('tools'); setActiveTab('analytics'); setIsSubNavDropdownOpen(false); }}
-                className="col-span-2 p-2 bg-slate-900 text-indigo-400 font-bold rounded-xl text-left flex items-center gap-1.5"
+                onClick={() => { handleSelectMainTab('tools'); setActiveTab('email'); setIsSubNavDropdownOpen(false); }}
+                className="col-span-2 p-2 bg-[#102A43] text-[#C66A32] font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Settings className="w-4 h-4" /> 8. Công Cụ & Bot Hệ Thống
+                <Mail className="w-4 h-4" /> 8. Email &amp; Truyền Thông
               </button>
               <button
-                onClick={() => { setActiveTab('email'); setIsSubNavDropdownOpen(false); }}
-                className="col-span-2 p-2 bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold rounded-xl text-left flex items-center gap-1.5"
+                onClick={() => { handleSelectMainTab('system'); setActiveTab('analytics'); setIsSubNavDropdownOpen(false); }}
+                className="col-span-2 p-2 bg-[#102A43] text-[#C66A32] font-bold rounded-xl text-left flex items-center gap-1.5"
               >
-                <Mail className="w-4 h-4" /> Trung Tâm Email (Gửi & Nhận)
+                <Settings className="w-4 h-4" /> 9. Hệ Thống &amp; Phân Tích
               </button>
             </div>
            )}
- 
+
+      {/* ==================== TAB TỔNG QUAN (0) ==================== */}
+      {activeTab === 'overview' && (
+        <AdminOverview
+          onNavigate={(tab, sub) => {
+            setActiveTab(tab as any);
+            if (sub) setPropertySubFilter(sub as any);
+          }}
+        />
+      )}
+
       {/* ==================== TAB BẢNG HÀNG CĐT (MẶT BẰNG & BẢNG HÀNG CHỦ ĐẦU TƯ) ==================== */}
       {activeTab === 'developer_units' && (
         <DeveloperUnitsAdmin subTab={devSubTab} setSubTab={setDevSubTab} />

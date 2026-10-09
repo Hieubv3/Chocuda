@@ -5,41 +5,31 @@
 @import "./styles/mobile-app.css";
 @import "./styles/desktop-app.css";
 
+@layer base {
+  :root {
+    --brand-navy-dark: #102A43;
+    --brand-navy-accent: #163A5F;
+    --brand-terracotta: #C66A32;
+    --brand-bg: #F5F7F9;
+    --brand-text: #52606D;
+  }
+}
+
 html, body {
   max-width: 100vw;
   overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #F5F7F9;
+  color: #52606D;
+  font-size: 16px;
+  line-height: 1.65;
 }
 
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-body {
-  touch-action: manipulation;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Mobile-first controls: preserve vertical space while keeping horizontal
-   category and navigation strips easy to swipe. */
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
-/* Mobile smooth hardware acceleration */
-@media (max-width: 768px) {
-  * {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    padding-bottom: 4.75rem;
+@media (min-width: 768px) {
+  html, body {
+    font-size: 17px;
+    line-height: 1.75;
   }
 }
 
@@ -55,6 +45,9 @@ img[src=""], img:not([src]) {
     --primary-jade: #059669;
     --accent-thuy: #0284c7; /* Thủy sinh Mộc */
   }
+
+.font-editorial {
+  font-family: 'Newsreader', Georgia, Cambria, serif;
 }
 
 /* Custom Mệnh Mộc Element styling & Animations */
