@@ -99,9 +99,27 @@ export const App: React.FC = () => {
     window.location.hostname === 'quantri.chocudan24h.com' ||
     window.location.hostname.startsWith('quantri.')
   );
+  // Preview-only admin shell: chỉ cho phép trên hostname của sandbox và phải có
+  // query flag rõ ràng. Không ảnh hưởng domain production hoặc luồng đăng nhập thật.
+  const isSandboxAdminPreview = typeof window !== 'undefined' &&
+    window.location.hostname.endsWith('.manus.computer') &&
+    new URLSearchParams(window.location.search).get('preview') === 'admin';
+  const isAdminSurface = isAdminDomain || isSandboxAdminPreview;
 
   // User Auth - Restore session from local storage if existing
   const [user, setUser] = useState<User | null>(() => {
+    if (isSandboxAdminPreview) {
+      return {
+        id: 'sandbox-admin-preview',
+        name: 'Admin Preview',
+        email: 'preview-admin@manus.local',
+        role: 'admin',
+        provider: 'local',
+        tier: 'thuong',
+        balance: 0,
+        upTinCredits: 0,
+      };
+    }
     let raw = safeLocalStorageGet<User | null>('hb_user', null);
     if (!raw) {
       try {
@@ -863,7 +881,7 @@ export const App: React.FC = () => {
 
   // ==================== SPECIAL ADMIN DOMAIN MODE ====================
   // If user visits on quantri.chocudan24h.com, render Admin Dashboard / Admin Login
-  if (isAdminDomain) {
+  if (isAdminSurface) {
     return (
       <div className="min-h-screen w-full bg-ink-950 text-ink-100 font-sans">
         <ScrollToTop />
