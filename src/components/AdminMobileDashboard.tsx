@@ -132,6 +132,40 @@ export const AdminMobileDashboard: React.FC<AdminMobileDashboardProps> = ({ stat
           <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-1.5">Phân tích</div>
         </button>
       </div>
+
+      {/* Hàng đợi công việc: ưu tiên hành động thay vì chỉ hiển thị số liệu */}
+      <section className="cd24-mobile-work-queue rounded-2xl border border-orange-200/80 bg-orange-50/70 p-3 dark:border-orange-900/50 dark:bg-orange-950/20">
+        <div className="flex items-center justify-between gap-2 mb-2.5">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-orange-100 text-orange-600 dark:bg-orange-900/50 dark:text-orange-300">🔔</span>
+            <div>
+              <h2 className="text-sm font-black text-slate-900 dark:text-white">Cần xử lý hôm nay</h2>
+              <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">Các việc quan trọng đang chờ bạn</p>
+            </div>
+          </div>
+          <span className="rounded-full bg-orange-100 px-2 py-1 text-[10px] font-black text-orange-700 dark:bg-orange-900/60 dark:text-orange-300">{stats.pending + stats.stores + stats.jobs}</span>
+        </div>
+        <div className="space-y-1.5">
+          <button type="button" onClick={() => onNavigate('pending')} className="cd24-mobile-work-item">
+            <span className="cd24-mobile-work-icon">🏠</span>
+            <span className="min-w-0 flex-1 text-left"><b>Duyệt tin bất động sản</b><small>{stats.pending} tin đang chờ duyệt</small></span>
+            <span className="cd24-mobile-work-status">Xem →</span>
+          </button>
+          <button type="button" onClick={() => onNavigate('stores')} className="cd24-mobile-work-item">
+            <span className="cd24-mobile-work-icon">🏪</span>
+            <span className="min-w-0 flex-1 text-left"><b>Kiểm tra gian hàng</b><small>{stats.stores} gian hàng đang hoạt động</small></span>
+            <span className="cd24-mobile-work-status">Xem →</span>
+          </button>
+          <button type="button" onClick={() => onNavigate('jobs')} className="cd24-mobile-work-item">
+            <span className="cd24-mobile-work-icon">💼</span>
+            <span className="min-w-0 flex-1 text-left"><b>Theo dõi việc làm & leads</b><small>{stats.jobs} yêu cầu mới</small></span>
+            <span className="cd24-mobile-work-status">Xem →</span>
+          </button>
+        </div>
+        <button type="button" onClick={() => onNavigate('pending')} className="mt-2.5 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-black text-white shadow-sm transition active:scale-[.98]">
+          Xem toàn bộ công việc cần xử lý <span aria-hidden="true">→</span>
+        </button>
+      </section>
     </div>
   );
 };

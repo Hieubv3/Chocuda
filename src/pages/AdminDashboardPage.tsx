@@ -272,7 +272,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
 
   // Icon Compact & Expandable Table rows state
   const [adminViewMode, setAdminViewMode] = useState<'icon_compact' | 'detailed'>('icon_compact');
-  const [showMetricsDropdown, setShowMetricsDropdown] = useState<boolean>(false);
+  const [showMetricsDropdown, setShowMetricsDropdown] = useState<boolean>(true);
   const [expandedAdminPropIds, setExpandedAdminPropIds] = useState<Record<string, boolean>>({});
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);

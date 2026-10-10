@@ -1,0 +1,155 @@
+/*
+ * ADMIN UX V3
+ * Tích hợp trực tiếp theo mockup đã duyệt: desktop command center + mobile one-hand workflow.
+ * Chỉ áp dụng trong .cd24-admin-shell, không chạm khu vực public.
+ */
+.cd24-admin-shell {
+  --ux-navy: #102a43;
+  --ux-navy-soft: #183b5b;
+  --ux-green: #087f52;
+  --ux-orange: #c66a32;
+  --ux-paper: #f7f9fb;
+  background: var(--ux-paper) !important;
+  color: #102a43;
+}
+
+/* Desktop: một thanh topbar phẳng, dashboard rõ cấp bậc */
+@media (min-width: 1024px) {
+  .cd24-admin-shell {
+    padding: 18px clamp(22px, 3vw, 48px) 38px !important;
+    background:
+      radial-gradient(800px 320px at 0% 0%, rgba(8, 127, 82, .07), transparent 70%),
+      #f7f9fb !important;
+  }
+  .cd24-admin-shell .cd24-admin-quickbar {
+    min-height: 58px;
+    border-radius: 14px !important;
+    padding: 8px 12px !important;
+    box-shadow: 0 5px 18px rgba(16, 42, 67, .07) !important;
+  }
+  .cd24-admin-shell .cd24-admin-quickbar > div:first-child > button {
+    min-height: 38px;
+    border-radius: 10px !important;
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+  .cd24-admin-shell .cd24-admin-header {
+    min-height: 148px;
+    border-radius: 20px !important;
+    padding: 24px 28px !important;
+    background:
+      radial-gradient(520px 220px at 92% 0%, rgba(198, 106, 50, .28), transparent 70%),
+      linear-gradient(135deg, #102a43 0%, #163a5f 58%, #0b5e42 100%) !important;
+    box-shadow: 0 16px 32px rgba(16, 42, 67, .18) !important;
+  }
+  .cd24-admin-shell .cd24-admin-header h1 {
+    font-size: 19px !important;
+    letter-spacing: -.02em;
+  }
+  .cd24-admin-shell .cd24-admin-metrics {
+    padding: 14px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 22px rgba(16, 42, 67, .07) !important;
+  }
+  .cd24-admin-shell .cd24-admin-metrics > div:first-child {
+    display: none;
+  }
+  .cd24-admin-shell .cd24-admin-metrics > div:nth-child(2) {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .cd24-admin-shell .cd24-admin-metrics > div:nth-child(2) > button {
+    min-height: 74px;
+    border-radius: 14px !important;
+    padding: 14px !important;
+    background: #fff !important;
+    box-shadow: 0 4px 12px rgba(16, 42, 67, .05);
+  }
+  .cd24-admin-shell .cd24-admin-sidebar {
+    background: var(--ux-navy) !important;
+    border-color: #244965 !important;
+    border-radius: 16px !important;
+  }
+  .cd24-admin-shell .cd24-admin-sidebar nav > div > button {
+    min-height: 46px;
+    border-radius: 10px !important;
+  }
+}
+
+/* Mobile: app-like surface with explicit work queue */
+@media (max-width: 1023px) {
+  .cd24-admin-shell {
+    background: #f7f9fb !important;
+  }
+  .cd24-admin-shell .cd24-admin-mobile-overview {
+    gap: 12px !important;
+  }
+  .cd24-admin-shell .cd24-admin-mobile-overview > div:first-child {
+    padding: 8px 3px 4px;
+  }
+  .cd24-admin-shell .cd24-admin-mobile-overview > div:first-child .text-lg {
+    font-size: 22px !important;
+    letter-spacing: -.03em;
+  }
+  .cd24-admin-shell .cd24-admin-mobile-overview > div:nth-child(2) {
+    gap: 10px !important;
+  }
+  .cd24-admin-shell .cd24-admin-mobile-overview > div:nth-child(2) button {
+    min-height: 106px;
+    padding: 14px !important;
+    border-radius: 18px !important;
+    box-shadow: 0 6px 18px rgba(16, 42, 67, .06) !important;
+  }
+  .cd24-admin-shell .cd24-admin-mobile-overview > div:nth-child(2) button > div:first-child {
+    font-size: 12px;
+  }
+  .cd24-admin-shell .cd24-admin-mobile-overview > div:nth-child(2) button > div:nth-child(2) {
+    font-size: 28px;
+  }
+  .cd24-mobile-work-queue {
+    box-shadow: 0 8px 20px rgba(198, 106, 50, .08);
+  }
+  .cd24-mobile-work-item {
+    display: flex;
+    width: 100%;
+    min-height: 58px;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border: 1px solid rgba(198, 106, 50, .12);
+    border-radius: 14px;
+    background: rgba(255,255,255,.86);
+    color: #102a43;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .cd24-mobile-work-item:active { transform: scale(.985); background: #fff; }
+  .cd24-mobile-work-icon {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    place-items: center;
+    border-radius: 11px;
+    background: #fff3e9;
+    font-size: 16px;
+  }
+  .cd24-mobile-work-item b,
+  .cd24-mobile-work-item small { display: block; }
+  .cd24-mobile-work-item b { font-size: 11px; font-weight: 900; line-height: 1.2; }
+  .cd24-mobile-work-item small { margin-top: 3px; color: #718096; font-size: 10px; font-weight: 700; }
+  .cd24-mobile-work-status { color: #c66a32; font-size: 10px; font-weight: 900; white-space: nowrap; }
+  .cd24-admin-shell .cd24-mobile-context-bar {
+    border-radius: 16px !important;
+    box-shadow: 0 6px 16px rgba(16, 42, 67, .08);
+  }
+  .cd24-admin-shell .cd24-admin-mobile-menu-inline .cd24-admin-mobile-menu-panel {
+    border-radius: 18px !important;
+    box-shadow: 0 8px 24px rgba(16, 42, 67, .08) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .cd24-admin-shell .cd24-admin-metrics { display: none !important; }
+}
