@@ -56,4 +56,53 @@
   .cd24-admin-shell button.rounded-full { min-height: 32px; }
   .cd24-admin-shell .cd24-mobile-collapsible { min-width: 0; }
   .cd24-mobile-focus .cd24-mobile-collapsible { display: none; }
+
+  /* Mobile chỉ giữ một lớp điều hướng: menu nhóm ở đầu hoặc thanh ngữ cảnh
+     khi đang thao tác. Sidebar desktop không lặp lại bên dưới nội dung. */
+  .cd24-admin-shell .cd24-admin-sidebar { display: none; }
+  .cd24-admin-shell .cd24-admin-quickbar {
+    position: sticky;
+    top: 0.25rem;
+    z-index: 35;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding: 0.45rem;
+    margin-left: -0.15rem;
+    margin-right: -0.15rem;
+    border-radius: 14px !important;
+  }
+  .cd24-admin-shell .cd24-admin-quickbar > div:first-child {
+    flex-wrap: nowrap;
+    min-width: max-content;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .cd24-admin-shell .cd24-admin-quickbar > div:first-child::-webkit-scrollbar { display: none; }
+  .cd24-admin-shell .cd24-admin-quickbar > div:last-child { margin-left: auto; }
+  .cd24-admin-shell .cd24-admin-quickbar > div:last-child button { min-height: 36px !important; }
+  .cd24-admin-shell .cd24-admin-quickbar > div:last-child button:first-child,
+  .cd24-admin-shell .cd24-admin-quickbar > div:last-child button:nth-child(2) { display: none; }
+  .cd24-admin-shell .cd24-admin-quickbar > div:first-child > button {
+    min-height: 36px;
+    white-space: nowrap;
+    padding: 0.55rem 0.7rem;
+  }
+  .cd24-admin-shell .cd24-admin-quickbar > div:first-child > button span { display: none; }
+  .cd24-admin-shell .cd24-admin-quickbar > div:first-child > button svg { margin: 0; }
+  .cd24-admin-shell .cd24-admin-mobile-menu-inline { margin-top: 0.15rem; }
+  .cd24-admin-shell .cd24-mobile-context-bar { position: sticky; top: 3.75rem; z-index: 32; }
+  .cd24-admin-shell.cd24-mobile-focus .cd24-admin-mobile-menu-inline { display: none; }
+  .cd24-admin-shell .cd24-admin-mobile-menu-inline .cd24-admin-mobile-menu-panel { max-height: none; }
+  .cd24-admin-shell .cd24-admin-mobile-menu-inline .cd24-admin-mobile-menu-panel > div:last-child { padding-bottom: 0.35rem; }
+
+  /* Khi vào bảng/form, ưu tiên nội dung và tránh khoảng trống của layout cột. */
+  .cd24-admin-shell.cd24-mobile-focus > .flex.flex-col.lg\:flex-row {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cd24-admin-shell > .cd24-admin-topbar { top: 0.75rem; }
+  .cd24-admin-sidebar { top: 5.6rem !important; max-height: calc(100vh - 6.35rem) !important; }
+  .cd24-admin-sidebar nav { padding-bottom: 0.5rem; }
 }
