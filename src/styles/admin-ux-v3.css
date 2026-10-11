@@ -265,3 +265,31 @@
     row-gap: 8px;
   }
 }
+
+/* Structural desktop pass: match the approved mockup with a real left sidebar and right workspace. */
+@media (min-width: 1024px) {
+  .cd24-admin-shell {
+    display: grid !important;
+    grid-template-columns: 248px minmax(0, 1fr) !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    column-gap: 20px !important;
+    row-gap: 14px !important;
+    align-items: start;
+  }
+  .cd24-admin-shell > .cd24-admin-topbar,
+  .cd24-admin-shell > .cd24-admin-mobile-menu-inline { display: none !important; }
+  .cd24-admin-shell > .cd24-mobile-collapsible { grid-column: 2; grid-row: 1; min-width: 0; }
+  .cd24-admin-shell > .flex.flex-col.lg\\:flex-row { display: contents !important; }
+  .cd24-admin-shell > .flex-1.min-w-0.w-full.space-y-4 { grid-column: 2; grid-row: 2; min-width: 0; }
+  .cd24-admin-shell .cd24-admin-sidebar {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    width: 248px !important;
+    max-height: calc(100vh - 36px) !important;
+    top: 18px !important;
+    margin: 0 !important;
+    align-self: start;
+  }
+  .cd24-admin-shell .cd24-mobile-collapsible .cd24-admin-mobile-overview { display: none !important; }
+}
+@media (max-width: 1023px) { .cd24-admin-shell { display: block !important; } }
