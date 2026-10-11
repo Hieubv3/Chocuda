@@ -153,3 +153,115 @@
 @media (max-width: 767px) {
   .cd24-admin-shell .cd24-admin-metrics { display: none !important; }
 }
+
+/* Shared module system: applies to all admin sub-screens without changing business logic. */
+.cd24-admin-shell .space-y-6 > .bg-white,
+.cd24-admin-shell .space-y-6 > .dark\:bg-slate-900,
+.cd24-admin-shell .space-y-6 > .bg-gradient-to-r,
+.cd24-admin-shell .space-y-5 > .bg-white,
+.cd24-admin-shell .space-y-4 > .bg-white,
+.cd24-admin-shell .space-y-4 > .dark\:bg-slate-900 {
+  border-radius: 18px !important;
+  box-shadow: 0 8px 24px rgba(16, 42, 67, .06) !important;
+}
+.cd24-admin-shell h2,
+.cd24-admin-shell h3 {
+  letter-spacing: -.015em;
+}
+.cd24-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.cd24-admin-shell select,
+.cd24-admin-shell textarea {
+  border-radius: 12px !important;
+  border-color: #d7e1ea !important;
+  background-color: #fff !important;
+  color: #102a43 !important;
+}
+.cd24-admin-shell input:focus,
+.cd24-admin-shell select:focus,
+.cd24-admin-shell textarea:focus {
+  border-color: #087f52 !important;
+  box-shadow: 0 0 0 3px rgba(8, 127, 82, .12) !important;
+}
+.cd24-admin-shell button {
+  -webkit-tap-highlight-color: transparent;
+}
+.cd24-admin-shell table thead th {
+  background: #f3f6f8;
+  color: #52606d;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.cd24-admin-shell table tbody tr {
+  transition: background-color .15s ease;
+}
+.cd24-admin-shell table tbody tr:hover {
+  background-color: #f7fbf9;
+}
+.cd24-admin-shell .overflow-x-auto {
+  border-radius: 16px;
+}
+.cd24-admin-shell [class*="shadow-2xl"] {
+  box-shadow: 0 16px 36px rgba(16, 42, 67, .12) !important;
+}
+
+/* Each sub-module gets a calm, consistent content rhythm. */
+@media (min-width: 1024px) {
+  .cd24-admin-shell > .space-y-4,
+  .cd24-admin-shell > .space-y-5,
+  .cd24-admin-shell > .space-y-6,
+  .cd24-admin-shell > .space-y-8 {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cd24-admin-shell > .space-y-4,
+  .cd24-admin-shell > .space-y-5,
+  .cd24-admin-shell > .space-y-6,
+  .cd24-admin-shell > .space-y-8 {
+    gap: 18px !important;
+  }
+  .cd24-admin-shell .grid > [class*="rounded-3xl"],
+  .cd24-admin-shell .grid > [class*="rounded-2xl"] {
+    transition: transform .16s ease, box-shadow .16s ease;
+  }
+  .cd24-admin-shell .grid > [class*="rounded-3xl"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(16, 42, 67, .09) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .cd24-admin-shell > .space-y-4,
+  .cd24-admin-shell > .space-y-5,
+  .cd24-admin-shell > .space-y-6,
+  .cd24-admin-shell > .space-y-8 {
+    gap: 12px !important;
+  }
+  .cd24-admin-shell > .space-y-4 > *,
+  .cd24-admin-shell > .space-y-5 > *,
+  .cd24-admin-shell > .space-y-6 > *,
+  .cd24-admin-shell > .space-y-8 > * {
+    min-width: 0;
+  }
+  .cd24-admin-shell .grid {
+    gap: 10px !important;
+  }
+  .cd24-admin-shell .grid > [class*="rounded-3xl"],
+  .cd24-admin-shell .grid > [class*="rounded-2xl"] {
+    border-radius: 16px !important;
+  }
+  .cd24-admin-shell table {
+    font-size: 11px;
+  }
+  .cd24-admin-shell button:not([aria-hidden="true"]) {
+    min-height: 42px;
+  }
+  .cd24-admin-shell .overflow-x-auto > table {
+    min-width: 680px;
+  }
+  .cd24-admin-shell .flex.flex-wrap {
+    row-gap: 8px;
+  }
+}
