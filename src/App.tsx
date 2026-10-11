@@ -99,27 +99,12 @@ export const App: React.FC = () => {
     window.location.hostname === 'quantri.chocudan24h.com' ||
     window.location.hostname.startsWith('quantri.')
   );
-  // Preview-only admin shell: chỉ cho phép trên hostname của sandbox và phải có
-  // query flag rõ ràng. Không ảnh hưởng domain production hoặc luồng đăng nhập thật.
-  const isSandboxAdminPreview = typeof window !== 'undefined' &&
-    window.location.hostname.endsWith('.manus.computer') &&
-    new URLSearchParams(window.location.search).get('preview') === 'admin';
-  const isAdminSurface = isAdminDomain || isSandboxAdminPreview;
+  // Không dùng query/hostname để cấp quyền admin ở client. Mọi quyền phải đến
+  // từ phiên đăng nhập đã được server xác thực.
+  const isAdminSurface = isAdminDomain;
 
   // User Auth - Restore session from local storage if existing
   const [user, setUser] = useState<User | null>(() => {
-    if (isSandboxAdminPreview) {
-      return {
-        id: 'sandbox-admin-preview',
-        name: 'Admin Preview',
-        email: 'preview-admin@manus.local',
-        role: 'admin',
-        provider: 'local',
-        tier: 'thuong',
-        balance: 0,
-        upTinCredits: 0,
-      };
-    }
     let raw = safeLocalStorageGet<User | null>('hb_user', null);
     if (!raw) {
       try {
@@ -925,7 +910,7 @@ export const App: React.FC = () => {
   }
 
   // ==================== STANDARD USER PORTAL WITH FULL ROUTER ====================
-  const canAccessAdmin = user?.role === 'admin' || user?.role === 'manager';
+  const canAccessAdmin = user?.role === 'admin';
   return (
     <div className="cd24-root mapp-bg min-h-screen w-full max-w-full overflow-x-hidden bg-bg text-fg flex flex-col transition-colors duration-300 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <ScrollToTop />
@@ -1845,7 +1830,7 @@ export const App: React.FC = () => {
           <Route
             path="/admin"
             element={
-              user?.role === 'admin' || user?.role === 'manager' ? (
+              user?.role === 'admin' ? (
                 <AdminDashboardPage
                   properties={properties}
                   projects={projects}

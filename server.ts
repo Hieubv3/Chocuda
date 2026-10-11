@@ -220,6 +220,24 @@ function requireAdmin(req: express.Request, res: express.Response, next: express
   next();
 }
 
+// Query flag không bao giờ được tự nó cấp quyền xem dữ liệu quản trị.
+function requireAdminQuery(req: express.Request, res: express.Response, next: express.NextFunction) {
+  if (String(req.query.isAdmin || '').toLowerCase() === 'true') {
+    return authenticateToken(req, res, () => requireAdmin(req, res, next));
+  }
+  const requesterUserId = typeof req.query.requesterUserId === 'string' ? req.query.requesterUserId : '';
+  if (requesterUserId) {
+    return authenticateToken(req, res, () => {
+      const user = (req as any).user;
+      if (!user || (user.role !== 'admin' && user.userId !== requesterUserId)) {
+        return res.status(403).json({ success: false, error: 'Không có quyền xem hồ sơ này!' });
+      }
+      next();
+    });
+  }
+  next();
+}
+
 // Require quyền sở hữu tài nguyên (userId trong token phải khớp userId trong URL)
 // Admin có quyền quản lý tất cả người dùng
 function requireOwnership(req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -3552,8 +3570,10 @@ app.delete("/api/developer-floorplans/:id", authenticateToken, requireAdmin, (re
 // ============================================================
 app.post("/api/emergency/reset-admin-password", authLimiter, async (req, res) => {
   const emergencyKey = process.env.EMERGENCY_RESET_KEY;
-  if (!emergencyKey) {
-    return res.status(404).json({ error: "Not found" }); // Giả vờ route không tồn tại nếu chưa cấu hình
+  // Không cho phép cơ chế reset bằng secret tĩnh tồn tại trên production.
+  // Quy trình khôi phục phải đi qua nhà cung cấp/console quản trị có kiểm soát.
+  if (!emergencyKey || process.env.NODE_ENV === 'production') {
+    return res.status(404).json({ error: "Not found" });
   }
 
   const { key, newPassword } = req.body;
@@ -3736,7 +3756,7 @@ setInterval(() => {
 }, 6 * 60 * 60 * 1000); // Mỗi 6 tiếng
 
 // Properties GET with filters
-app.get("/api/properties", (req, res) => {
+app.get("/api/properties", requireAdminQuery, (req, res) => {
   const { type, project, category, minPrice, maxPrice, bedrooms, furniture, search, status, userId, isAdmin } = req.query;
 
   let filtered = [...propertiesStore];
@@ -3796,7 +3816,7 @@ app.get("/api/properties", (req, res) => {
 });
 
 // Property Renew / Extend Expiry Endpoint
-app.post("/api/properties/:id/renew", (req, res) => {
+app.post("/api/properties/:id/renew", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const { days = 30 } = req.body || {};
   const prop = propertiesStore.find(p => p.id === id);
@@ -3840,7 +3860,7 @@ app.get("/api/workspace/config", (req, res) => {
   delete safeConfig.accessToken;
   res.json(safeConfig);
 });
-app.post("/api/workspace/config", authenticateToken, (req, res) => {
+app.post("/api/workspace/config", authenticateToken, requireAdmin, (req, res) => {
   try {
     workspaceConfigStore = { ...(workspaceConfigStore || {}), ...(req.body || {}) };
     saveDataStore();
@@ -3849,7 +3869,7 @@ app.post("/api/workspace/config", authenticateToken, (req, res) => {
     res.status(500).json({ error: "Khong luu duoc cau hinh Workspace." });
   }
 });
-app.post("/api/workspace/sync-all", (req, res) => {
+app.post("/api/workspace/sync-all", authenticateToken, requireAdmin, (req, res) => {
   res.json({ success: true, synced: 0, message: "Workspace sync endpoint ready." });
 });
 
@@ -3869,8 +3889,8 @@ app.post("/api/properties", authenticateToken, (req, res) => {
   const data = req.body;
   // Never trust client-sent approved/isAdmin/status flags — verify the poster is
   // actually an admin against our own user records instead.
-  const posterUser = data.userId ? usersStore.find(u => u.id === data.userId) : undefined;
-  const isVerifiedAdmin = posterUser?.role === 'admin' || data.userId === 'user-admin';
+  const authenticatedUser = (req as any).user;
+  const isVerifiedAdmin = authenticatedUser?.role === 'admin';
   const newProperty: Property = {
     id: data.id || `prop-${Date.now()}`,
     title: data.title || "Bất động sản mới đăng",
@@ -3920,7 +3940,7 @@ app.post("/api/properties", authenticateToken, (req, res) => {
 });
 
 // Property PUT (Cập nhật tin BĐS - CHẶN tái sinh tin đã xóa)
-app.put("/api/properties/:id", authenticateToken, (req, res) => {
+app.put("/api/properties/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
 
   // CHẶN HỒI SINH: Nếu id đang nằm trong thùng rác hoặc danh sách đã xóa, từ chối
@@ -3947,7 +3967,7 @@ app.put("/api/properties/:id", authenticateToken, (req, res) => {
 });
 
 // Dedicated Property Approve endpoint
-app.put("/api/properties/:id/approve", (req, res) => {
+app.put("/api/properties/:id/approve", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const index = propertiesStore.findIndex(p => p.id === id);
   if (index === -1) {
@@ -3964,7 +3984,7 @@ app.put("/api/properties/:id/approve", (req, res) => {
 });
 
 // Property DELETE (Chuyển vào thùng rác + ghi lịch sử)
-app.delete("/api/properties/:id", authenticateToken, (req, res) => {
+app.delete("/api/properties/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const prop = propertiesStore.find(p => p.id === id);
   if (!prop) {
@@ -3986,7 +4006,7 @@ app.get("/api/projects", (req, res) => {
   res.json(projectsStore);
 });
 
-app.post("/api/projects", authenticateToken, (req, res) => {
+app.post("/api/projects", authenticateToken, requireAdmin, (req, res) => {
   const data = req.body;
   const newProject: Project = {
     id: data.id || `proj-${Date.now()}`,
@@ -4014,7 +4034,7 @@ app.post("/api/projects", authenticateToken, (req, res) => {
   res.status(201).json({ message: "Thêm dự án thành công", project: newProject, projects: projectsStore });
 });
 
-app.put("/api/projects/:id", authenticateToken, (req, res) => {
+app.put("/api/projects/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const index = projectsStore.findIndex(p => p.id === id);
   if (index === -1) {
@@ -4043,7 +4063,7 @@ app.put("/api/projects/:id", authenticateToken, (req, res) => {
   res.json({ message: "Đã cập nhật thông tin dự án", project: projectsStore[index], projects: projectsStore });
 });
 
-app.delete("/api/projects/:id", authenticateToken, (req, res) => {
+app.delete("/api/projects/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const proj = projectsStore.find(p => p.id === id);
   projectsStore = projectsStore.filter(p => p.id !== id);
@@ -4062,7 +4082,7 @@ app.get("/api/news", (req, res) => {
 });
 
 // News POST (Manual or Admin)
-app.post("/api/news", authenticateToken, (req, res) => {
+app.post("/api/news", authenticateToken, requireAdmin, (req, res) => {
   const data = req.body;
   const newArticle: NewsArticle = {
     id: data.id || `news-${Date.now()}`,
@@ -4084,7 +4104,7 @@ app.post("/api/news", authenticateToken, (req, res) => {
 });
 
 // News PUT (Edit news article)
-app.put("/api/news/:id", authenticateToken, (req, res) => {
+app.put("/api/news/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const index = newsStore.findIndex(n => n.id === id);
   if (index === -1) return res.status(404).json({ error: "Không tìm thấy bài viết" });
@@ -4094,7 +4114,7 @@ app.put("/api/news/:id", authenticateToken, (req, res) => {
 });
 
 // News DELETE (Soft delete)
-app.delete("/api/news/:id", authenticateToken, (req, res) => {
+app.delete("/api/news/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const article = newsStore.find(n => n.id === id);
   newsStore = newsStore.filter(n => n.id !== id);
@@ -4450,7 +4470,7 @@ app.post("/api/admin/import-data-store", authenticateToken, requireAdmin, (req, 
 });
 
 // ------------------- BATCH SYNC ROUTES (2-WAY RESILIENT SYNC) -------------------
-app.post("/api/sync-batch/properties", (req, res) => {
+app.post("/api/sync-batch/properties", authenticateToken, requireAdmin, (req, res) => {
   const { items } = req.body;
   if (Array.isArray(items)) {
     const existingMap = new Map(propertiesStore.map(p => [p.id, p]));
@@ -4469,7 +4489,7 @@ app.post("/api/sync-batch/properties", (req, res) => {
   res.json({ success: true, count: propertiesStore.length, properties: propertiesStore });
 });
 
-app.post("/api/sync-batch/resident-services", (req, res) => {
+app.post("/api/sync-batch/resident-services", authenticateToken, requireAdmin, (req, res) => {
   const { items } = req.body;
   if (Array.isArray(items)) {
     const existingMap = new Map(residentServicesStore.map(s => [s.id, s]));
@@ -4486,7 +4506,7 @@ app.post("/api/sync-batch/resident-services", (req, res) => {
   res.json({ success: true, count: residentServicesStore.length, services: residentServicesStore });
 });
 
-app.post("/api/sync-batch/stores", (req, res) => {
+app.post("/api/sync-batch/stores", authenticateToken, requireAdmin, (req, res) => {
   const { items } = req.body;
   if (Array.isArray(items)) {
     const existingMap = new Map(storesStore.map(s => [s.id, s]));
@@ -4592,7 +4612,7 @@ app.put("/api/homepage-category-images/:key", authenticateToken, requireAdmin, (
 });
 
 // Resident Services Endpoints (Dịch Vụ Cư Dân)
-app.get("/api/resident-services", (req, res) => {
+app.get("/api/resident-services", requireAdminQuery, (req, res) => {
   const { status, userId, isAdmin } = req.query;
 
   // Admin sees all
@@ -4645,8 +4665,8 @@ app.post("/api/resident-services", authenticateToken, (req, res) => {
   if (!item || !item.title) {
     return res.status(400).json({ error: "Dữ liệu không hợp lệ." });
   }
-  const posterUser = item.userId ? usersStore.find(u => u.id === item.userId) : undefined;
-  const isVerifiedAdmin = posterUser?.role === 'admin' || item.userId === 'user-admin';
+  const authenticatedUser = (req as any).user;
+  const isVerifiedAdmin = authenticatedUser?.role === 'admin';
   const newService = {
     ...item,
     id: item.id || `srv-${Date.now()}`,
@@ -4664,7 +4684,7 @@ app.post("/api/resident-services", authenticateToken, (req, res) => {
   });
 });
 
-app.put("/api/resident-services/:id", authenticateToken, (req, res) => {
+app.put("/api/resident-services/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const idx = residentServicesStore.findIndex(s => s.id === id);
   if (idx === -1) {
@@ -4683,7 +4703,7 @@ app.put("/api/resident-services/:id", authenticateToken, (req, res) => {
   res.json({ message: "Cập nhật dịch vụ cư dân thành công!", item: updated, service: updated });
 });
 
-app.put("/api/resident-services/:id/approve", (req, res) => {
+app.put("/api/resident-services/:id/approve", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const idx = residentServicesStore.findIndex(s => s.id === id);
   if (idx === -1) {
@@ -4695,7 +4715,7 @@ app.put("/api/resident-services/:id/approve", (req, res) => {
   res.json({ success: true, message: "🎉 Đã duyệt và cho phép hiển thị dịch vụ trên website!", service: residentServicesStore[idx] });
 });
 
-app.delete("/api/resident-services/:id", authenticateToken, (req, res) => {
+app.delete("/api/resident-services/:id", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const srv = (residentServicesStore as any[]).find(s => s.id === id);
   residentServicesStore = (residentServicesStore as any[]).filter(s => s.id !== id);
@@ -4921,7 +4941,7 @@ app.post("/api/stores/:id/orders", (req, res) => {
 });
 
 // Update Order status
-app.put("/api/stores/orders/:orderId", (req, res) => {
+app.put("/api/stores/orders/:orderId", authenticateToken, requireAdmin, (req, res) => {
   const { orderId } = req.params;
   const { orderStatus, paymentStatus } = req.body;
 
@@ -6421,13 +6441,13 @@ app.get("/api/marketing/config", (req, res) => {
 });
 
 // POST /api/marketing/config
-app.post("/api/marketing/config", (req, res) => {
+app.post("/api/marketing/config", authenticateToken, requireAdmin, (req, res) => {
   marketingConfigStore = { ...marketingConfigStore, ...req.body };
   res.json({ success: true, message: "Cập nhật cấu hình cổng API tin nhắn thành công!", config: marketingConfigStore });
 });
 
 // Bulk Messaging Broadcast Execution API (100% Real HTTP Dispatch)
-app.post("/api/marketing/broadcast", async (req, res) => {
+app.post("/api/marketing/broadcast", authenticateToken, requireAdmin, async (req, res) => {
   const { propertyId, propertyTitle, recipients, channels, content, webhookUrl, apiConfig } = req.body;
 
   if (apiConfig) {
@@ -6715,7 +6735,7 @@ app.get("/api/notifications", (req, res) => {
   res.json(notificationsStore);
 });
 
-app.post("/api/notifications", (req, res) => {
+app.post("/api/notifications", authenticateToken, requireAdmin, (req, res) => {
   const { targetUserId, title, body, type } = req.body;
   const newNotif = {
     id: `notif-${Date.now()}`,
@@ -6731,7 +6751,7 @@ app.post("/api/notifications", (req, res) => {
 });
 
 // Admin Broadcast System (System Notifications + Email + Zalo dispatch)
-app.post("/api/broadcast-notifications", (req, res) => {
+app.post("/api/broadcast-notifications", authenticateToken, requireAdmin, (req, res) => {
   const { title, message, targetRole, channels } = req.body;
 
   if (!title || !message) {
@@ -7090,7 +7110,7 @@ app.post("/api/tech-orders", (req, res) => {
 });
 
 // 3. POST Update Technical Order Status & Automated Payout Release Algorithm
-app.post("/api/tech-orders/:id/update-status", (req, res) => {
+app.post("/api/tech-orders/:id/update-status", authenticateToken, (req, res) => {
   const { id } = req.params;
   const { status, note, imagesAfter } = req.body;
 
@@ -7847,7 +7867,7 @@ app.delete("/api/recruitment/jobs/:id", authenticateToken, (req, res) => {
 });
 
 // 6. GET Candidate Profiles (Kho Hồ Sơ CV Cư Dân - With Masking & Filters)
-app.get("/api/recruitment/candidates", (req, res) => {
+app.get("/api/recruitment/candidates", requireAdminQuery, (req, res) => {
   const { industry, project, experience, q, userId, requesterUserId, isAdmin, lookingOnly } = req.query;
 
   let list = [...candidateProfilesStore];
@@ -7900,7 +7920,7 @@ app.get("/api/recruitment/candidates", (req, res) => {
 });
 
 // 7. GET Single Candidate Profile by ID
-app.get("/api/recruitment/candidates/:id", (req, res) => {
+app.get("/api/recruitment/candidates/:id", requireAdminQuery, (req, res) => {
   const { id } = req.params;
   const { requesterUserId, isAdmin } = req.query;
 
@@ -8001,7 +8021,7 @@ app.post("/api/recruitment/candidates", (req, res) => {
 });
 
 // 9. POST Unlock Candidate CV Contact Details (Nhà tuyển dụng trả phí mở khóa CV)
-app.post("/api/recruitment/candidates/:id/unlock", (req, res) => {
+app.post("/api/recruitment/candidates/:id/unlock", authenticateToken, (req, res) => {
   const { id } = req.params;
   const { recruiterUserId, recruiterName, recruiterPhone, paymentMethod, amountVnd } = req.body;
 
@@ -8198,7 +8218,7 @@ app.get(["/api/recruitment/applications", "/api/recruitment/applicants"], (req, 
 });
 
 // 12. POST/PUT Update Job Application Status (Supports /status & /update-status)
-app.post(["/api/recruitment/applicants/update-status", "/api/recruitment/applications/update-status"], (req, res) => {
+app.post(["/api/recruitment/applicants/update-status", "/api/recruitment/applications/update-status"], authenticateToken, requireAdmin, (req, res) => {
   const { applicantId, id, status, adminNotes } = req.body;
   const targetId = applicantId || id;
 
@@ -8234,7 +8254,7 @@ app.post(["/api/recruitment/applicants/update-status", "/api/recruitment/applica
   });
 });
 
-app.put("/api/recruitment/applications/:id/status", (req, res) => {
+app.put("/api/recruitment/applications/:id/status", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const { status, adminNotes } = req.body;
 
@@ -8525,7 +8545,7 @@ app.post("/api/recruitment/employer-registrations", (req, res) => {
 });
 
 // 24. POST Approve Employer Registration Request (Admin)
-app.post("/api/recruitment/employer-registrations/:id/approve", (req, res) => {
+app.post("/api/recruitment/employer-registrations/:id/approve", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const { adminName, adminNote } = req.body;
 
@@ -8603,7 +8623,7 @@ app.post("/api/recruitment/employer-registrations/:id/approve", (req, res) => {
 });
 
 // 25. POST Reject Employer Registration Request (Admin)
-app.post("/api/recruitment/employer-registrations/:id/reject", (req, res) => {
+app.post("/api/recruitment/employer-registrations/:id/reject", authenticateToken, requireAdmin, (req, res) => {
   const { id } = req.params;
   const { adminNote } = req.body;
 
