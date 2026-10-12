@@ -49,7 +49,11 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
   const [furniture, setFurniture] = useState('');
   const [sortBy, setSortBy] = useState('newest');
   const [viewMode, setViewMode] = useState<'grid-3col' | 'grid-2col' | 'grid' | 'list'>(() => {
-    return (localStorage.getItem('hb_properties_view_mode') as any) || 'list';
+    const savedMode = localStorage.getItem('hb_properties_view_mode_v2');
+    if (savedMode === 'grid-3col' || savedMode === 'grid-2col' || savedMode === 'grid' || savedMode === 'list') {
+      return savedMode;
+    }
+    return window.matchMedia('(max-width: 767px)').matches ? 'list' : 'grid-3col';
   });
 
   useEffect(() => {
@@ -186,7 +190,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
           <button
             onClick={() => {
               setViewMode('grid-3col');
-              localStorage.setItem('hb_properties_view_mode', 'grid-3col');
+              localStorage.setItem('hb_properties_view_mode_v2', 'grid-3col');
             }}
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
               viewMode === 'grid-3col' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
@@ -199,7 +203,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
           <button
             onClick={() => {
               setViewMode('grid-2col');
-              localStorage.setItem('hb_properties_view_mode', 'grid-2col');
+              localStorage.setItem('hb_properties_view_mode_v2', 'grid-2col');
             }}
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
               viewMode === 'grid-2col' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
@@ -212,7 +216,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
           <button
             onClick={() => {
               setViewMode('grid');
-              localStorage.setItem('hb_properties_view_mode', 'grid');
+              localStorage.setItem('hb_properties_view_mode_v2', 'grid');
             }}
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
               viewMode === 'grid' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
@@ -225,7 +229,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
           <button
             onClick={() => {
               setViewMode('list');
-              localStorage.setItem('hb_properties_view_mode', 'list');
+              localStorage.setItem('hb_properties_view_mode_v2', 'list');
             }}
             className={`px-2 py-1 rounded-md text-xs font-bold transition flex items-center gap-1 ${
               viewMode === 'list' ? 'bg-brand-500 text-ink-950 shadow-xs' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white'
