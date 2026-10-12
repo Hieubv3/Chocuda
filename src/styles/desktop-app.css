@@ -128,3 +128,36 @@
 .mapp-crumb nav span.font-bold{ color:#ffffff !important; }
 .mapp-crumb nav svg{ color: rgba(255,255,255,.75) !important; }
 .mapp-crumb a:hover{ color:#ffe9a8 !important; }
+
+/* Property readability: keep listing copy on opaque paper surfaces and keep image badges legible without relying on translucent blur. */
+.mapp-pcard > .p-2\.5,
+.mapp-pcard > .sm\:p-3\.5 {
+  background: #ffffff;
+  color: #17251d;
+}
+.dark .mapp-pcard > .p-2\.5,
+.dark .mapp-pcard > .sm\:p-3\.5 {
+  background: #0f1a14;
+  color: #e8f4eb;
+}
+.mapp-property-detail h1,
+.mapp-property-detail h2,
+.mapp-property-detail h3,
+.mapp-property-detail strong {
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+.mapp-property-detail .bg-ink-50,
+.mapp-property-detail .bg-ink-800\/40,
+.mapp-property-detail .bg-ink-800\/60,
+.mapp-property-detail .bg-ink-800\/30 {
+  opacity: 1 !important;
+}
+.mapp-property-detail .text-ink-400,
+.mapp-property-detail .text-ink-500 {
+  color: #53665a !important;
+}
+.dark .mapp-property-detail .text-ink-400,
+.dark .mapp-property-detail .text-ink-500 {
+  color: #a7b9ad !important;
+}

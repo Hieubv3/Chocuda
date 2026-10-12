@@ -56,6 +56,10 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
   );
 
   const property = propertyInMemory || fetchedProperty;
+  const detailImages = Array.from(new Set([
+    ...(Array.isArray(property?.images) ? property.images : []),
+    '/images/demo/property-interior-1.jpg'
+  ].filter((url): url is string => typeof url === 'string' && url.trim().length > 0)));
 
   // If not found in memory, try fetching directly from /api/properties/:id
   useEffect(() => {
@@ -190,11 +194,11 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                        property.project === 'smart-city' ? 'Vinhomes Smart City' : 'Vinhomes Ocean Park';
 
   return (
-    <div className="min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
+    <div className="mapp-property-detail min-h-screen bg-ink-50 dark:bg-ink-950 pb-20">
       <SEOHead
         title={`${property.title} - ${property.priceDisplay}`}
         description={`${property.title}. Giá: ${property.priceDisplay}, Diện tích: ${property.area}m2, Vị trí: ${property.address}. Liên hệ chính chủ/môi giới: ${property.sellerPhone}`}
-        image={property.images[0] || ''}
+        image={detailImages[0] || ''}
         url={shareUrl}
         keywords={`${property.title}, mua bán ${projectTitle}, bđs ${property.project}, biệt thự shophouse vinhomes`}
       />
@@ -238,9 +242,14 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
             <div className="bg-white dark:bg-ink-900 rounded-3xl p-4 sm:p-6 border border-ink-200 dark:border-ink-800 shadow-xl space-y-4">
               <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-ink-950">
                 <img loading="lazy"
-                  src={property.images[selectedImgIndex] || property.images[0]}
+                  src={detailImages[selectedImgIndex] || detailImages[0]}
                   alt={property.title}
                   className="w-full h-full object-cover"
+                  onError={(event) => {
+                    if (!event.currentTarget.src.endsWith('/images/demo/property-interior-1.jpg')) {
+                      event.currentTarget.src = '/images/demo/property-interior-1.jpg';
+                    }
+                  }}
                 />
 
                 {/* VIP Badge */}
@@ -274,14 +283,14 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
 
                 {/* Photo counter */}
                 <div className="absolute bottom-4 right-4 bg-ink-950/80 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
-                  {selectedImgIndex + 1} / {property.images.length} hình ảnh
+                  {Math.min(selectedImgIndex + 1, detailImages.length)} / {detailImages.length} hình ảnh
                 </div>
               </div>
 
               {/* Thumbnail Gallery */}
-              {property.images.length > 1 && (
+              {detailImages.length > 1 && (
                 <div className="flex gap-2.5 overflow-x-auto pb-2">
-                  {property.images.map((img, idx) => (
+                  {detailImages.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setSelectedImgIndex(idx)}
@@ -289,7 +298,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                         selectedImgIndex === idx ? 'border-brand-500 scale-95 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
                       }`}
                     >
-                      <img loading="lazy" src={img} alt="" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={img} alt={`${property.title} - ảnh ${idx + 1}`} className="w-full h-full object-cover" onError={(event) => { event.currentTarget.src = '/images/demo/property-interior-1.jpg'; }} />
                     </button>
                   ))}
                 </div>

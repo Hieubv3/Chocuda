@@ -29,6 +29,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 }) => {
   const t = getTranslation(language);
   const fallbackPropertyImage = '/images/demo/property-interior-1.jpg';
+  const imageList = Array.from(new Set([
+    ...(Array.isArray(property.images) ? property.images : []),
+    fallbackPropertyImage
+  ].filter((url): url is string => typeof url === 'string' && url.trim().length > 0)));
   const [showShareModal, setShowShareModal] = useState(false);
 
   const projectNames: Record<string, string> = {
@@ -76,15 +80,20 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           onClick={() => onSelect(property)}
         >
           <img
-            src={property.images?.[0] || fallbackPropertyImage}
+            src={imageList[0]}
             alt={property.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
             onError={(event) => {
               const image = event.currentTarget;
-              const nextImage = property.images?.find((url) => url && url !== image.src && !image.dataset.failedUrls?.split('|').includes(url));
+              const failedUrls = image.dataset.failedUrls?.split('|') || [];
+              const currentSrc = image.currentSrc || image.src;
+              const nextImage = imageList.find((url) => {
+                const absoluteUrl = new URL(url, window.location.href).href;
+                return absoluteUrl !== currentSrc && !failedUrls.includes(url) && !failedUrls.includes(absoluteUrl);
+              });
               if (nextImage) {
-                image.dataset.failedUrls = `${image.dataset.failedUrls || ''}${image.dataset.failedUrls ? '|' : ''}${image.src}`;
+                image.dataset.failedUrls = `${image.dataset.failedUrls || ''}${image.dataset.failedUrls ? '|' : ''}${currentSrc}`;
                 image.src = nextImage;
               } else if (!image.src.endsWith(fallbackPropertyImage)) {
                 image.src = fallbackPropertyImage;
@@ -249,22 +258,27 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       {/* Image Thumbnail & Badges */}
       <div className="relative aspect-[16/10] overflow-hidden bg-ink-100 dark:bg-ink-900 cursor-pointer" onClick={() => onSelect(property)}>
         <img
-          src={property.images?.[0] || fallbackPropertyImage}
+            src={imageList[0]}
           alt={property.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           onError={(event) => {
             const image = event.currentTarget;
-            const nextImage = property.images?.find((url) => url && url !== image.src && !image.dataset.failedUrls?.split('|').includes(url));
+            const failedUrls = image.dataset.failedUrls?.split('|') || [];
+            const currentSrc = image.currentSrc || image.src;
+            const nextImage = imageList.find((url) => {
+              const absoluteUrl = new URL(url, window.location.href).href;
+              return absoluteUrl !== currentSrc && !failedUrls.includes(url) && !failedUrls.includes(absoluteUrl);
+            });
             if (nextImage) {
-              image.dataset.failedUrls = `${image.dataset.failedUrls || ''}${image.dataset.failedUrls ? '|' : ''}${image.src}`;
+              image.dataset.failedUrls = `${image.dataset.failedUrls || ''}${image.dataset.failedUrls ? '|' : ''}${currentSrc}`;
               image.src = nextImage;
             } else if (!image.src.endsWith(fallbackPropertyImage)) {
               image.src = fallbackPropertyImage;
             }
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink-950/80 via-transparent to-black/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-black/35 pointer-events-none" />
 
         {/* Top Header Overlay with flex layout to prevent overlap between left badges and right actions */}
         <div className="absolute top-0 left-0 right-0 p-1.5 flex justify-between items-start gap-1 z-10 pointer-events-none">
@@ -311,7 +325,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               </span>
             )}
 
-            <span className="text-[8px] font-semibold bg-black/50 backdrop-blur-md text-brand-300 px-1 py-0.2 rounded border border-white/15 truncate max-w-[85px] sm:max-w-[105px]">
+            <span className="text-[8px] font-semibold bg-[#07150e] text-white px-1.5 py-0.5 rounded border border-white/25 shadow-md truncate max-w-[85px] sm:max-w-[105px]">
               {projectNames[property.project] || property.project}
             </span>
           </div>
@@ -366,11 +380,11 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
         {/* Bottom Image Overlay Badges - Micro semi-transparent tags */}
         <div className="absolute bottom-1.5 left-1.5 right-1.5 flex justify-between items-center text-white text-xs font-semibold pointer-events-none">
-          <span className="bg-black/75 backdrop-blur-xs px-1.5 py-0.5 rounded text-[8px] text-brand-300 font-black border border-brand-500/40 flex items-center gap-1 shadow-xs">
+          <span className="bg-[#07150e] px-1.5 py-0.5 rounded text-[8px] text-white font-black border border-white/25 flex items-center gap-1 shadow-md">
             <span> CHỢ CƯ DÂN 24H • chocudan24h.com</span>
           </span>
           {property.subdivision && (
-            <span className="text-[8px] text-brand-300 font-bold bg-black/75 backdrop-blur-xs px-1.5 py-0.5 rounded border border-brand-500/40 truncate max-w-[35%]">
+            <span className="text-[8px] text-white font-bold bg-[#07150e] px-1.5 py-0.5 rounded border border-white/25 shadow-md truncate max-w-[35%]">
               PK {property.subdivision}
             </span>
           )}
