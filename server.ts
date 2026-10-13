@@ -1425,9 +1425,10 @@ try {
 }
 
 
-// ===== SUPABASE: luu tru ben vung (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY hoac VITE_*) =====
-const SUPABASE_URL = String(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/+$/, "");
-const SUPABASE_KEY = String(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "").trim();
+// ===== SUPABASE: luu tru ben vung (cac alias tuong thich voi Render) =====
+// Service-role secret chi duoc doc o backend, tuyet doi khong dua vao Vite.
+const SUPABASE_URL = String(process.env.SUPABASE_URL || process.env.SUPABASE_DB_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/+$/, "");
+const SUPABASE_KEY = String(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "").trim();
 const SUPABASE_TABLE = String(process.env.SUPABASE_TABLE || "app_state").trim();
 const SUPABASE_ENABLED = Boolean(SUPABASE_URL && SUPABASE_KEY);
 const SUPABASE_ROW_ID = "main";
