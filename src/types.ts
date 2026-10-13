@@ -151,6 +151,12 @@ export interface ReputationPost {
 export interface ProjectSubdivision {
   id: string;
   name: string;
+  title?: string;
+  summary?: string;
+  content?: string;
+  author?: string;
+  status?: 'published' | 'draft';
+  publishedAt?: string;
   description?: string;
   images?: string[];
   youtubeUrl?: string;
@@ -160,6 +166,12 @@ export interface ProjectSubdivision {
 export interface AmenityArticle {
   id: string;
   name: string;
+  title?: string;
+  summary?: string;
+  content?: string;
+  author?: string;
+  status?: 'published' | 'draft';
+  publishedAt?: string;
   description?: string;
   images?: string[];
   youtubeUrl?: string;

@@ -230,16 +230,16 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
       {/* Property Detail Banner Ad */}
       <AdBannerWidget ads={ads || []} position="property_detail" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      <div className="mapp-property-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
         
         {/* Main Content Layout: Left Gallery & Info, Right Sticky Booking Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="mapp-property-layout grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
           {/* LEFT 2 COLS: Gallery + Details */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="mapp-property-main lg:col-span-2 space-y-6">
             
             {/* Gallery Card */}
-            <div className="bg-white dark:bg-ink-900 rounded-3xl p-4 sm:p-6 border border-ink-200 dark:border-ink-800 shadow-xl space-y-4">
+            <div className="mapp-property-gallery bg-white dark:bg-ink-900 rounded-3xl p-4 sm:p-6 border border-ink-200 dark:border-ink-800 shadow-xl space-y-4">
               <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-ink-950">
                 <img loading="lazy"
                   src={detailImages[selectedImgIndex] || detailImages[0]}
@@ -306,9 +306,9 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
             </div>
 
             {/* Property Key Details & Title */}
-            <div className="bg-white dark:bg-ink-900 rounded-3xl p-6 sm:p-8 border border-ink-200 dark:border-ink-800 shadow-xl space-y-6">
+            <div className="mapp-property-info bg-white dark:bg-ink-900 rounded-3xl p-6 sm:p-8 border border-ink-200 dark:border-ink-800 shadow-xl space-y-6">
               
-              <div className="space-y-2">
+              <div className="mapp-property-title space-y-2">
                 <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
                   <Building2 className="w-4 h-4" />
                   <span>{projectTitle}</span>
@@ -331,7 +331,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
               </div>
 
               {/* Price & Primary Stats Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700/60">
+              <div className="mapp-property-stats grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-ink-50 dark:bg-ink-800/60 rounded-2xl border border-ink-200 dark:border-ink-700/60">
                 <div className="space-y-0.5">
                   <span className="text-[11px] font-bold text-ink-400 uppercase">Mức Giá</span>
                   <div className="text-lg sm:text-xl font-black text-price dark:text-price-dark">
@@ -363,18 +363,18 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
               </div>
 
               {/* Detailed Specs List */}
-              <div className="space-y-3">
+              <div className="mapp-property-specs space-y-3">
                 <h2 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wide border-b border-ink-100 dark:border-ink-800 pb-2">
                   Đặc Điểm Chi Tiết
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                  <div className="flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
+                  <div className="mapp-property-spec flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
                     <span className="text-ink-500 dark:text-ink-400">Loại Hình:</span>
                     <span className="font-bold text-ink-900 dark:text-white capitalize">{property.category}</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
+                  <div className="mapp-property-spec flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
                     <span className="text-ink-500 dark:text-ink-400">Tình Trạng Pháp Lý:</span>
                     <span className="font-bold text-brand-600 dark:text-brand-400 flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5" />
@@ -382,14 +382,14 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
+                  <div className="mapp-property-spec flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
                     <span className="text-ink-500 dark:text-ink-400">Nội Thất Bàn Giao:</span>
                     <span className="font-bold text-ink-900 dark:text-white capitalize">
                       {property.furniture === 'full' ? 'Đầy đủ nội thất cao cấp' : property.furniture === 'basic' ? 'Nội thất cơ bản CĐT' : 'Thô nguyên bản'}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
+                  <div className="mapp-property-spec flex items-center justify-between p-3 bg-ink-50 dark:bg-ink-800/40 rounded-xl">
                     <span className="text-ink-500 dark:text-ink-400">Thời Gian Đăng:</span>
                     <span className="font-bold text-ink-900 dark:text-white">{property.createdAt || 'Hôm nay'}</span>
                   </div>
@@ -397,12 +397,12 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
               </div>
 
               {/* Description Content */}
-              <div className="space-y-3">
+              <div className="mapp-property-description space-y-3">
                 <h2 className="text-base font-black text-ink-900 dark:text-white uppercase tracking-wide border-b border-ink-100 dark:border-ink-800 pb-2">
                   Mô Tả Chi Tiết Từ Chủ Nhà / Môi Giới
                 </h2>
 
-                <div className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line bg-ink-50 dark:bg-ink-800/30 p-5 rounded-2xl border border-ink-100 dark:border-ink-800">
+                <div className="mapp-property-description-body text-sm text-ink-700 dark:text-ink-300 leading-relaxed whitespace-pre-line bg-ink-50 dark:bg-ink-800/30 p-5 rounded-2xl border border-ink-100 dark:border-ink-800">
                   {property.description || 'Vị trí đắc địa, căn góc thoáng mát, gần công viên trung tâm và trường học. Pháp lý rõ ràng, hỗ trợ vay ngân hàng lãi suất ưu đãi.'}
                 </div>
 

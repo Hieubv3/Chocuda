@@ -35,6 +35,7 @@ import { uploadBase64DataUrl, isBase64DataUrl, uploadFiles, uploadSingleFile } f
 import { compressImageFile } from '../lib/imageUtils';
 import { HeroCardConfig, loadHeroCards, saveHeroCards } from '../data/heroCardsData';
 import { EditPropertyModal, EditProjectModal, EditNewsModal, EditFaqModal } from '../components/AdminAssetManagerModals';
+import { AdminProjectContentModal } from '../components/AdminProjectContentModal';
 import { AdminMarketingCenter } from '../components/AdminMarketingCenter';
 import AdminOverview from '../components/AdminOverview';
 import { AdminSeoCenter } from '../components/AdminSeoCenter';
@@ -1078,6 +1079,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [newAmenityImages, setNewAmenityImages] = useState<string[]>([]);
   const [newAmenityVideo, setNewAmenityVideo] = useState('');
   const [addingAmenityTo, setAddingAmenityTo] = useState<string | null>(null); // projectId
+  const [editingSubdivisionContent, setEditingSubdivisionContent] = useState<{ projectId: string; item: any } | null>(null);
+  const [editingAmenityContent, setEditingAmenityContent] = useState<{ projectId: string; item: any } | null>(null);
 
   const toggleProjectTree = (id: string) => {
     setExpandedProjectTree(prev => {
@@ -1112,7 +1115,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     if (!name) return;
     const proj = projects.find(p => p.id === projectId);
     if (!proj || !onUpdateProject) return;
-    const newSub = { id: `sub-${Date.now()}`, name, streets: [] };
+    const newSub = { id: `sub-${Date.now()}`, name, title: `Phân tích ${name} và cơ hội sở hữu`, summary: '', content: '', author: 'Chuyên gia BĐS Chợ Cư Dân 24H', status: 'draft' as const, streets: [] };
     onUpdateProject({ ...proj, subdivisions: [...(proj.subdivisions || []), newSub] });
     setNewSubdivisionName('');
     setAddingSubdivisionTo(null);
@@ -1180,6 +1183,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     const proj = projects.find(p => p.id === projectId);
     if (!proj || !onUpdateProject) return;
     onUpdateProject({ ...proj, amenities: (proj.amenities || []).filter((a: AmenityArticle) => a.id !== amenityId) });
+  };
+  const handleSaveSubdivisionContent = (projectId: string, item: any) => {
+    const proj = projects.find(p => p.id === projectId);
+    if (!proj || !onUpdateProject) return;
+    onUpdateProject({ ...proj, subdivisions: (proj.subdivisions || []).map((s: any) => s.id === item.id ? { ...s, ...item } : s) });
+    setEditingSubdivisionContent(null);
+  };
+  const handleSaveAmenityContent = (projectId: string, item: any) => {
+    const proj = projects.find(p => p.id === projectId);
+    if (!proj || !onUpdateProject) return;
+    onUpdateProject({ ...proj, amenities: (proj.amenities || []).map((a: any) => a.id === item.id ? { ...a, ...item } : a) });
+    setEditingAmenityContent(null);
   };
 
   // User Add / Edit Modal States
@@ -6754,6 +6769,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                                   <Plus className="w-3 h-3" /> Dãy phố
                                 </button>
                                 <button
+                                  onClick={() => setEditingSubdivisionContent({ projectId: proj.id, item: sub })}
+                                  className="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-[10px]"
+                                  title="Soạn/chỉnh sửa bài viết phân khu"
+                                >
+                                  Bài viết
+                                </button>
+                                <button
                                   onClick={() => handleDeleteSubdivision(proj.id, sub.id)}
                                   className="px-1.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[10px]"
                                   title="Xóa phân khu"
@@ -6822,6 +6844,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                               {amenity.youtubeUrl && (
                                 <span title="Có video" className="text-red-600">🎬</span>
                               )}
+                              <button
+                                onClick={() => setEditingAmenityContent({ projectId: proj.id, item: amenity })}
+                                className="text-amber-600 hover:text-amber-800 font-black"
+                                title="Soạn/chỉnh sửa bài viết tiện ích"
+                              >
+                                ✎
+                              </button>
                               <button
                                 onClick={() => handleDeleteAmenity(proj.id, amenity.id)}
                                 className="text-rose-500 hover:text-rose-700"
@@ -9197,6 +9226,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             setEditingNews(null);
             setIsAddingNews(false);
           }}
+        />
+      )}
+
+      {editingSubdivisionContent && (
+        <AdminProjectContentModal
+          kind="subdivision"
+          value={editingSubdivisionContent.item}
+          onClose={() => setEditingSubdivisionContent(null)}
+          onSave={(item) => handleSaveSubdivisionContent(editingSubdivisionContent.projectId, item)}
+        />
+      )}
+      {editingAmenityContent && (
+        <AdminProjectContentModal
+          kind="amenity"
+          value={editingAmenityContent.item}
+          onClose={() => setEditingAmenityContent(null)}
+          onSave={(item) => handleSaveAmenityContent(editingAmenityContent.projectId, item)}
         />
       )}
 

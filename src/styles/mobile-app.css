@@ -516,3 +516,34 @@
   .resident-services-page > div.max-w-7xl{ margin-top:18px !important; padding-left:14px !important; padding-right:14px !important; gap:16px !important; }
   .resident-services-page [class*="bg-white"][class*="rounded-2xl"]:has(> div.relative){ border-radius:20px !important; box-shadow:0 10px 24px rgba(15,120,63,.08) !important; }
 }
+
+
+/* ---------- PROPERTY DETAIL REFINEMENT: MOBILE ---------- */
+@media (max-width: 767.98px){
+  .mapp-property-detail{ background:#f3f7f4 !important; color:#18251d; }
+  .mapp-property-detail .mapp-crumb{ padding:8px 0 !important; background:#fff !important; border-bottom-color:#d9e7dd !important; }
+  .mapp-property-content{ padding:10px 10px 78px !important; gap:10px !important; }
+  .mapp-property-layout{ gap:10px !important; }
+  .mapp-property-main{ gap:10px !important; }
+  .mapp-property-gallery,.mapp-property-info{ padding:10px !important; border-radius:18px !important; border-color:#d5e5da !important; box-shadow:0 6px 16px rgba(22,73,43,.08) !important; }
+  .mapp-property-gallery{ gap:8px !important; }
+  .mapp-property-gallery > div[class*="aspect-"]{ border-radius:14px !important; }
+  .mapp-property-info{ gap:14px !important; }
+  .mapp-property-title{ gap:6px !important; }
+  .mapp-property-title h1{ font-size:20px !important; line-height:1.2 !important; letter-spacing:-.3px; }
+  .mapp-property-title > div:last-child{ line-height:1.35 !important; color:#52645a !important; }
+  .mapp-property-stats{ gap:8px !important; padding:11px !important; background:#edf4ef !important; border:1px solid #cfe0d4 !important; border-radius:16px !important; }
+  .mapp-property-stats > div{ min-width:0; padding:2px 1px; }
+  .mapp-property-stats span{ color:#52645a !important; font-size:10px !important; line-height:1.2 !important; letter-spacing:.02em; }
+  .mapp-property-stats div div{ color:#18251d !important; font-size:17px !important; line-height:1.2 !important; margin-top:3px; }
+  .mapp-property-stats div div[class*="text-price"]{ color:#c45f26 !important; }
+  .mapp-property-specs{ gap:8px !important; }
+  .mapp-property-specs h2,.mapp-property-description h2{ font-size:13px !important; line-height:1.25 !important; padding-bottom:7px !important; color:#18251d !important; }
+  .mapp-property-spec{ min-height:44px; padding:10px 12px !important; gap:10px; background:#fff !important; border:1px solid #d8e6dc; border-radius:12px !important; line-height:1.25; }
+  .mapp-property-spec > span:first-child{ color:#52645a !important; font-size:11px !important; }
+  .mapp-property-spec > span:last-child{ color:#18251d !important; font-size:11px !important; text-align:right; }
+  .mapp-property-description{ gap:8px !important; }
+  .mapp-property-description-body{ padding:13px !important; background:#fff !important; border:1px solid #d8e6dc !important; border-radius:14px !important; color:#26382d !important; font-size:13px !important; line-height:1.55 !important; }
+  .mapp-property-description .pt-2{ padding-top:2px !important; }
+  .mapp-property-description .pt-2 button{ padding:5px 8px !important; font-size:10px !important; border-radius:9px !important; }
+}
